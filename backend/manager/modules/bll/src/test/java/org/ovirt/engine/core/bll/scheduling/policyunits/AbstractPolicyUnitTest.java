@@ -15,12 +15,18 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.ClassRule;
+import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AbstractPolicyUnitTest {
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
     String fieldToSetterName(String name) {
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
     }

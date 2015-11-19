@@ -19,6 +19,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
@@ -32,6 +34,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUn
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -39,6 +42,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +51,8 @@ public class PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(PolicyUnitImpl.class);
 
     public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);;
+
+    private VdsDynamicDao vdsDynamicDao;
 
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -121,6 +128,12 @@ public class PolicyUnitImpl {
             return new HostDeviceFilterPolicyUnit(policyUnit, pendingResourceManager);
         case "CpuPinning":
             return new CpuPinningPolicyUnit(policyUnit, pendingResourceManager);
+        case "InClusterUpgrade":
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
+                return new InClusterUpgradeFilterPolicyUnit(policyUnit, pendingResourceManager);
+            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
+                return new InClusterUpgradeWeightPolicyUnit(policyUnit, pendingResourceManager);
+            }
         default:
             break;
         }
@@ -134,6 +147,7 @@ public class PolicyUnitImpl {
     public PolicyUnitImpl(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
         this.policyUnit = policyUnit;
         this.pendingResourceManager = pendingResourceManager;
+        this.vdsDynamicDao = Injector.get(VdsDynamicDao.class);
     }
 
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
@@ -170,4 +184,12 @@ public class PolicyUnitImpl {
     public PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
     }
+
+    protected VdsDynamic getLastHost(final VM vm) {
+        if (vm.getRunOnVds() == null) {
+            return null;
+        }
+        return vdsDynamicDao.get(vm.getRunOnVds());
+    }
+
 }
