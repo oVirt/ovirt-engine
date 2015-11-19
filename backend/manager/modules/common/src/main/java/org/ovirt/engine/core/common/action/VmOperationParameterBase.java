@@ -36,11 +36,6 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
     }
 
     @Override
-    public int hashCode() {
-        return vmId == null ? 0 : vmId.hashCode();
-    }
-
-    @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb).append("vmId", getVmId());
     }

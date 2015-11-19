@@ -53,8 +53,8 @@ public class RunVmParams extends VmOperationParameterBase {
         }
 
         RunVmParams other = (RunVmParams) obj;
-        return bootSequence == other.bootSequence
-                && Objects.equals(getVmId(), other.getVmId())
+        return Objects.equals(getVmId(), other.getVmId())
+                && bootSequence == other.bootSequence
                 && Objects.equals(diskPath, other.diskPath)
                 && kvmEnable == other.kvmEnable
                 && Objects.equals(runAndPause, other.runAndPause)
@@ -79,30 +79,30 @@ public class RunVmParams extends VmOperationParameterBase {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((bootSequence == null) ? 0 : bootSequence.hashCode());
-        result = prime * result + ((diskPath == null) ? 0 : diskPath.hashCode());
-        result = prime * result + (kvmEnable ? 1231 : 1237);
-        result = prime * result + ((runAndPause == null) ? 0 : runAndPause.hashCode());
-        result = prime * result + (acpiEnable ? 1231 : 1237);
-        result = prime * result + ((win2kHackEnable == null) ? 0 : win2kHackEnable.hashCode());
-        result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
-        result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
-        result = prime * result + ((clientIp == null) ? 0 : clientIp.hashCode());
-        result = prime * result + ((requestingUser == null) ? 0 : requestingUser.hashCode());
-        result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
-        result = prime * result + ((runAsStateless == null) ? 0 : runAsStateless.hashCode());
-        result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
-        result = prime * result + ((kernelUrl == null) ? 0 : kernelUrl.hashCode());
-        result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
-        result = prime * result + ((payload == null) ? 0 : payload.hashCode());
-        result = prime * result + (balloonEnabled ? 1231 : 1237);
-        result = prime * result + cpuShares;
-        result = prime * result + ((bootMenuEnabled == null) ? 0 : bootMenuEnabled.hashCode());
-        result = prime * result + ((spiceFileTransferEnabled == null) ? 0 : spiceFileTransferEnabled.hashCode());
-        result = prime * result + ((spiceCopyPasteEnabled == null) ? 0 : spiceCopyPasteEnabled.hashCode());
-        return result;
+        return Objects.hash(
+                getVmId(),
+                bootSequence,
+                diskPath,
+                kvmEnable,
+                runAndPause,
+                acpiEnable,
+                win2kHackEnable,
+                customProperties,
+                floppyPath,
+                clientIp,
+                requestingUser,
+                initializationType,
+                runAsStateless,
+                initrdUrl,
+                kernelUrl,
+                kernelParams,
+                payload,
+                balloonEnabled,
+                cpuShares,
+                bootMenuEnabled,
+                spiceFileTransferEnabled,
+                spiceCopyPasteEnabled
+        );
     }
 
     public BootSequence getBootSequence() {

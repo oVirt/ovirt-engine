@@ -44,11 +44,11 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (forceMigrationForNonMigratableVm ? 1231 : 1237);
-        result = prime * result + ((targetVdsGroupId == null) ? 0 : targetVdsGroupId.hashCode());
-        return result;
+        return Objects.hash(
+                getVmId(),
+                forceMigrationForNonMigratableVm,
+                targetVdsGroupId
+        );
     }
 
     @Override
@@ -62,8 +62,8 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         }
 
         MigrateVmParameters other = (MigrateVmParameters) obj;
-        return forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
-                && Objects.equals(getVmId(), other.getVmId())
+        return Objects.equals(getVmId(), other.getVmId())
+                && forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
                 && Objects.equals(targetVdsGroupId, other.targetVdsGroupId);
     }
 
