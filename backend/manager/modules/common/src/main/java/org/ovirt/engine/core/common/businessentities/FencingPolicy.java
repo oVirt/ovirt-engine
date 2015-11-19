@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
@@ -80,21 +81,20 @@ public class FencingPolicy implements Serializable {
         }
         FencingPolicy other = (FencingPolicy) obj;
 
-        return fencingEnabled == other.fencingEnabled &&
-                skipFencingIfSDActive == other.skipFencingIfSDActive &&
-                skipFencingIfConnectivityBroken == other.skipFencingIfConnectivityBroken &&
-                hostsWithBrokenConnectivityThreshold == other.hostsWithBrokenConnectivityThreshold;
+        return fencingEnabled == other.fencingEnabled
+                && skipFencingIfSDActive == other.skipFencingIfSDActive
+                && skipFencingIfConnectivityBroken == other.skipFencingIfConnectivityBroken
+                && hostsWithBrokenConnectivityThreshold == other.hostsWithBrokenConnectivityThreshold;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (fencingEnabled ? 1231 : 1237);
-        result = prime * result + (skipFencingIfSDActive ? 1231 : 1237);
-        result = prime * result + (skipFencingIfConnectivityBroken ? 1231 : 1237);
-        result = prime * result + hostsWithBrokenConnectivityThreshold;
-        return result;
+        return Objects.hash(
+                fencingEnabled,
+                skipFencingIfSDActive,
+                skipFencingIfConnectivityBroken,
+                hostsWithBrokenConnectivityThreshold
+        );
     }
 
     @Override

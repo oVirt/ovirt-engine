@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
@@ -119,69 +120,37 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((issued == null) ? 0 : issued.hashCode());
-        result = prime * result + ((packages == null) ? 0 : packages.hashCode());
-        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
-        result = prime * result + ((solution == null) ? 0 : solution.hashCode());
-        result = prime * result + ((summary == null) ? 0 : summary.hashCode());
-        result = prime * result + ((title == null) ? 0 : title.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(
+                description,
+                id,
+                issued,
+                packages,
+                severity,
+                solution,
+                summary,
+                title,
+                type
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof Erratum)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         Erratum other = (Erratum) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (issued == null) {
-            if (other.issued != null)
-                return false;
-        } else if (!issued.equals(other.issued))
-            return false;
-        if (packages == null) {
-            if (other.packages != null)
-                return false;
-        } else if (!packages.equals(other.packages))
-            return false;
-        if (severity != other.severity)
-            return false;
-        if (solution == null) {
-            if (other.solution != null)
-                return false;
-        } else if (!solution.equals(other.solution))
-            return false;
-        if (summary == null) {
-            if (other.summary != null)
-                return false;
-        } else if (!summary.equals(other.summary))
-            return false;
-        if (title == null) {
-            if (other.title != null)
-                return false;
-        } else if (!title.equals(other.title))
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
+        return Objects.equals(description, other.description)
+                && Objects.equals(id, other.id)
+                && Objects.equals(issued, other.issued)
+                && Objects.equals(packages, other.packages)
+                && severity == other.severity
+                && Objects.equals(solution, other.solution)
+                && Objects.equals(summary, other.summary)
+                && Objects.equals(title, other.title)
+                && type == other.type;
     }
 
     public enum ErrataType {

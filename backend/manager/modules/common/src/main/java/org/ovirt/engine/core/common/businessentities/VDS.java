@@ -62,30 +62,28 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (vdsStatic == null ? 0 : vdsStatic.hashCode());
-        result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
-        result = prime * result + (spmStatus == null ? 0 : spmStatus.hashCode());
-        result = prime * result + (imagesLastCheck == null ? 0 : imagesLastCheck.hashCode());
-        result = prime * result + (imagesLastDelay == null ? 0 : imagesLastDelay.hashCode());
-        result = prime * result + (interfaces == null ? 0 : interfaces.hashCode());
-        result = prime * result + (networkNames == null ? 0 : networkNames.hashCode());
-        result = prime * result + maxVdsMemoryOverCommit;
-        result = prime * result + (privateDomains == null ? 0 : privateDomains.hashCode());
-        result = prime * result + (vdsSpmId == null ? 0 : vdsSpmId.hashCode());
-        result = prime * result + (storagePoolId == null ? 0 : storagePoolId.hashCode());
-        result = prime * result + (storagePoolName == null ? 0 : storagePoolName.hashCode());
-        result = prime * result
-                + (vdsGroupCompatibilityVersion == null ? 0 : vdsGroupCompatibilityVersion.hashCode());
-        result = prime * result + (vdsGroupCpuName == null ? 0 : vdsGroupCpuName.hashCode());
-        result = prime * result + (vdsGroupDescription == null ? 0 : vdsGroupDescription.hashCode());
-        result = prime * result + (vdsGroupName == null ? 0 : vdsGroupName.hashCode());
-        result = prime * result + (vdsGroupVirtService == null ? 0 : vdsGroupVirtService.hashCode());
-        result = prime * result + (vdsGroupGlusterService == null ? 0 : vdsGroupGlusterService.hashCode());
-        result = prime * result + (balloonEnabled ? 0 : 1);
-        result = prime * result + (countThreadsAsCores ? 0 : 1);
-        return result;
+        return Objects.hash(
+                vdsStatic,
+                cpuName,
+                spmStatus,
+                imagesLastCheck,
+                imagesLastDelay,
+                interfaces,
+                networkNames,
+                maxVdsMemoryOverCommit,
+                privateDomains,
+                vdsSpmId,
+                storagePoolId,
+                storagePoolName,
+                vdsGroupCompatibilityVersion,
+                vdsGroupCpuName,
+                vdsGroupDescription,
+                vdsGroupName,
+                vdsGroupVirtService,
+                vdsGroupGlusterService,
+                balloonEnabled,
+                countThreadsAsCores
+        );
     }
 
     @Override

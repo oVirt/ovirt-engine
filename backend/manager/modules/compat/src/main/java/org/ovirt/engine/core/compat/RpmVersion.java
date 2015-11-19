@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.compat;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,27 +149,23 @@ public class RpmVersion extends Version {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((rpmName == null) ? 0 : rpmName.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                rpmName
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!(obj instanceof RpmVersion)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         RpmVersion other = (RpmVersion) obj;
-        if (rpmName == null) {
-            if (other.rpmName != null)
-                return false;
-        } else if (!rpmName.equals(other.rpmName))
-            return false;
-        return true;
+        return super.equals(obj)
+                && Objects.equals(rpmName, other.rpmName);
     }
 
     public String getRpmRelease() {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Guid implements Serializable, Comparable<Guid> {
@@ -101,17 +102,20 @@ public class Guid implements Serializable, Comparable<Guid> {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Guid)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Guid)) {
             return false;
         }
-        Guid otherGuid = (Guid) other;
-        return uuid.equals(otherGuid.getUuid());
+        Guid other = (Guid) obj;
+        return Objects.equals(uuid, other.uuid);
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return Objects.hashCode(uuid);
     }
 
     @Override

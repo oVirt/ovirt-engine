@@ -80,36 +80,30 @@ public class DirectoryUser extends DirectoryEntry {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (firstName == null? 0: firstName.hashCode());
-        result = prime * result + (lastName == null? 0: lastName.hashCode());
-        result = prime * result + (title == null? 0: title.hashCode());
-        result = prime * result + (email == null? 0: email.hashCode());
-        result = prime * result + (department == null? 0: department.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                firstName,
+                lastName,
+                title,
+                email,
+                department
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
         if (this == obj) {
             return true;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        if (!super.equals(obj)) {
+        if (!(obj instanceof DirectoryUser)) {
             return false;
         }
         DirectoryUser other = (DirectoryUser) obj;
-        return
-            Objects.equals(firstName, other.firstName) &&
-                    Objects.equals(lastName, other.lastName) &&
-                    Objects.equals(title, other.title) &&
-                    Objects.equals(email, other.email) &&
-                    Objects.equals(department, other.department);
+        return super.equals(obj)
+                && Objects.equals(firstName, other.firstName)
+                && Objects.equals(lastName, other.lastName)
+                && Objects.equals(title, other.title)
+                && Objects.equals(email, other.email)
+                && Objects.equals(department, other.department);
     }
 }

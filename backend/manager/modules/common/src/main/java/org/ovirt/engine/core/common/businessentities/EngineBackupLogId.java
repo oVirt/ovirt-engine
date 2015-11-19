@@ -35,22 +35,22 @@ public class EngineBackupLogId implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(scope, doneAt);
+        return Objects.hash(
+                scope,
+                doneAt
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
         if (this == obj) {
             return true;
         }
         if (!(obj instanceof EngineBackupLogId)) {
             return false;
         }
-        EngineBackupLogId other = (EngineBackupLogId)obj;
-        return  Objects.equals(scope, other.scope)
+        EngineBackupLogId other = (EngineBackupLogId) obj;
+        return Objects.equals(scope, other.scope)
                 && Objects.equals(doneAt, other.doneAt);
     }
 

@@ -34,23 +34,22 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (Guid.isNullOrEmpty(commandId) ? 0 : commandId.hashCode());
-        result = prime * result + ((commandType == null) ? 0 : commandType.hashCode());
-        result = prime * result + (Guid.isNullOrEmpty(parentCommandId) ? 0 : parentCommandId.hashCode());
-        result = prime * result + (Guid.isNullOrEmpty(rootCommandId) ? 0 : rootCommandId.hashCode());
-        return result;
+        return Objects.hash(
+                commandId,
+                commandType,
+                parentCommandId,
+                rootCommandId
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof CommandEntity)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         CommandEntity other = (CommandEntity) obj;
         return Objects.equals(commandId, other.commandId)
                 && commandType == other.commandType

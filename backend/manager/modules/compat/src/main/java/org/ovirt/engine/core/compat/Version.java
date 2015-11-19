@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Version in .Net style: a.b.c.d when a: major version, b: minor version , c: major revision, d: minor revision
@@ -138,24 +139,27 @@ public class Version implements Comparable<Version>, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + major;
-        result = prime * result + minor;
-        result = prime * result + revision;
-        result = prime * result + build;
-        return result;
+        return Objects.hash(
+                major,
+                minor,
+                revision,
+                build
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null || getClass() != obj.getClass())
+        }
+        if (!(obj instanceof Version)) {
             return false;
-
+        }
         Version other = (Version) obj;
-        return major == other.major && minor == other.minor && revision == other.revision && build == other.build;
+        return major == other.major
+                && minor == other.minor
+                && revision == other.revision
+                && build == other.build;
     }
 
     public int getMajor() {

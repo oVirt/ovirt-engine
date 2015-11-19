@@ -3,6 +3,7 @@ package org.ovirt.engine.api.extensions;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,12 +32,15 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object o) {
-        return (
-            o != null &&
-            getClass() == o.getClass() &&
-            map.equals(((ExtMap)o).map)
-        );
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ExtMap)) {
+            return false;
+        }
+        ExtMap other = (ExtMap) obj;
+        return Objects.equals(map, other.map);
     }
 
     /**
@@ -44,7 +48,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      */
     @Override
     public int hashCode() {
-        return map.hashCode();
+        return Objects.hashCode(map);
     }
 
     /**

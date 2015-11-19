@@ -38,10 +38,9 @@ public class RoleGroupMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        return Objects.hash(
+                id
+        );
     }
 
     @Override
@@ -49,13 +48,10 @@ public class RoleGroupMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof RoleGroupMap)) {
             return false;
         }
         RoleGroupMap other = (RoleGroupMap) obj;
-        return (Objects.equals(id, other.id));
+        return Objects.equals(id, other.id);
     }
 }

@@ -65,7 +65,10 @@ public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBack
 
     @Override
     public int hashCode() {
-        return  Objects.hash(scope, doneAt);
+        return Objects.hash(
+                scope,
+                doneAt
+        );
     }
 
     @Override
@@ -73,15 +76,12 @@ public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBack
         if (obj == null) {
             return false;
         }
-        if (this == obj) {
-            return true;
-        }
-        if (obj.getClass() != this.getClass()) {
+        if (!(obj instanceof EngineBackupLog)) {
             return false;
         }
         EngineBackupLog other = (EngineBackupLog) obj;
         return Objects.equals(scope, other.scope)
-               && Objects.equals(doneAt, other.doneAt);
+                && Objects.equals(doneAt, other.doneAt);
     }
 
     @Override

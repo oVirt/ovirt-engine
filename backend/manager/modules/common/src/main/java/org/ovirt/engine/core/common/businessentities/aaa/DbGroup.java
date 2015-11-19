@@ -101,16 +101,15 @@ public class DbGroup implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((distinguishedName == null) ? 0 : distinguishedName.hashCode());
-        result = prime * result + ((memberOf == null) ? 0 : memberOf.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                externalId,
+                namespace,
+                domain,
+                name,
+                distinguishedName,
+                memberOf
+        );
     }
 
     @Override
@@ -118,18 +117,15 @@ public class DbGroup implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DbGroup)) {
             return false;
         }
         DbGroup other = (DbGroup) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(externalId, other.externalId)
                 && Objects.equals(domain, other.domain)
                 && Objects.equals(name, other.name)
                 && Objects.equals(distinguishedName, other.distinguishedName)
-                && Objects.equals(memberOf, other.memberOf));
+                && Objects.equals(memberOf, other.memberOf);
     }
 }

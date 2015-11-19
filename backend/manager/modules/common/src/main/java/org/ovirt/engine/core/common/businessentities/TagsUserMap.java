@@ -38,11 +38,10 @@ public class TagsUserMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((tagId == null) ? 0 : tagId.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        return result;
+        return Objects.hash(
+                tagId,
+                userId
+        );
     }
 
     @Override
@@ -50,14 +49,11 @@ public class TagsUserMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof TagsUserMap)) {
             return false;
         }
         TagsUserMap other = (TagsUserMap) obj;
-        return (Objects.equals(tagId, other.tagId)
-                && Objects.equals(userId, other.userId));
+        return Objects.equals(tagId, other.tagId)
+                && Objects.equals(userId, other.userId);
     }
 }

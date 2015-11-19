@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.notifier.transport.Transport;
@@ -161,20 +161,23 @@ public class FirstMatchSimpleFilter {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null ||
-                    !this.getClass().equals(obj.getClass())) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Recipient)) {
                 return false;
             }
-
-            Recipient that = (Recipient) obj;
-            return (StringUtils.equals(this.transport, that.transport) && StringUtils.equals(this.name, that.name));
+            Recipient other = (Recipient) obj;
+            return Objects.equals(transport, other.transport)
+                    && Objects.equals(name, other.name);
         }
 
         @Override
         public int hashCode() {
-            int result = transport != null ? transport.hashCode() : 0;
-            result = 31 * result + (name != null ? name.hashCode() : 0);
-            return result;
+            return Objects.hash(
+                    transport,
+                    name
+            );
         }
 
         @Override

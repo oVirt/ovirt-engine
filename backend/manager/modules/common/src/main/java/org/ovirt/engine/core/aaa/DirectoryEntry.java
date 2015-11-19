@@ -93,13 +93,12 @@ public class DirectoryEntry implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (id == null? 0: id.hashCode());
-        result = prime * result + (name == null? 0: name.hashCode());
-        result = prime * result + (status == null? 0: status.hashCode());
-        result = prime * result + (directoryName == null ? 0 : directoryName.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                name,
+                status,
+                directoryName
+        );
     }
 
     @Override
@@ -107,19 +106,14 @@ public class DirectoryEntry implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DirectoryEntry)) {
             return false;
         }
         DirectoryEntry other = (DirectoryEntry) obj;
-        return (
-                Objects.equals(id, other.id) &&
-                        Objects.equals(name, other.name) &&
-                        Objects.equals(status, other.status) &&
-                        Objects.equals(directoryName, other.directoryName)
-               );
+        return Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(status, other.status)
+                && Objects.equals(directoryName, other.directoryName);
     }
 
     public String toString() {

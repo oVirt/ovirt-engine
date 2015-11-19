@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.asynctasks;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,30 +10,23 @@ public class EntityInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                type
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof EntityInfo)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         EntityInfo other = (EntityInfo) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
+        return Objects.equals(id, other.id)
+                && Objects.equals(type, other.type);
     }
 
     /**

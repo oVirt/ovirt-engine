@@ -49,12 +49,11 @@ public class TagsTemplateMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id.tagId == null) ? 0 : id.tagId.hashCode());
-        result = prime * result + ((id.templateId == null) ? 0 : id.templateId.hashCode());
-        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
-        return result;
+        return Objects.hash(
+                id.tagId,
+                id.templateId,
+                defaultDisplayType
+        );
     }
 
     @Override
@@ -62,15 +61,12 @@ public class TagsTemplateMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof TagsTemplateMap)) {
             return false;
         }
         TagsTemplateMap other = (TagsTemplateMap) obj;
-        return (Objects.equals(id.tagId, other.id.tagId)
+        return Objects.equals(id.tagId, other.id.tagId)
                 && Objects.equals(id.templateId, other.id.templateId)
-                && Objects.equals(defaultDisplayType, other.defaultDisplayType));
+                && Objects.equals(defaultDisplayType, other.defaultDisplayType);
     }
 }

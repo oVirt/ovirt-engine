@@ -16,13 +16,12 @@ public class event_subscriber_id implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
-        result = prime * result + ((eventUpName == null) ? 0 : eventUpName.hashCode());
-        result = prime * result + ((eventNotificationMethod == null) ? 0 : eventNotificationMethod.hashCode());
-        result = prime * result + ((tagName == null) ? 0 : tagName.hashCode());
-        return result;
+        return Objects.hash(
+                subscriberId,
+                eventUpName,
+                eventNotificationMethod,
+                tagName
+        );
     }
 
     @Override
@@ -30,16 +29,13 @@ public class event_subscriber_id implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof event_subscriber_id)) {
             return false;
         }
         event_subscriber_id other = (event_subscriber_id) obj;
-        return (Objects.equals(subscriberId, other.subscriberId)
+        return Objects.equals(subscriberId, other.subscriberId)
                 && Objects.equals(eventUpName, other.eventUpName)
                 && eventNotificationMethod == other.eventNotificationMethod
-                && Objects.equals(tagName, other.tagName));
+                && Objects.equals(tagName, other.tagName);
     }
 }

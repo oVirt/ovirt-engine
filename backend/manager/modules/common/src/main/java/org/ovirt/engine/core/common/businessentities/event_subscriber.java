@@ -18,14 +18,10 @@ public class event_subscriber implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id.eventUpName == null) ? 0 : id.eventUpName.hashCode());
-        result = prime * result + ((methodAddress == null) ? 0 : methodAddress.hashCode());
-        result = prime * result + ((id.eventNotificationMethod == null) ? 0 : id.eventNotificationMethod.hashCode());
-        result = prime * result + ((id.subscriberId == null) ? 0 : id.subscriberId.hashCode());
-        result = prime * result + ((id.tagName == null) ? 0 : id.tagName.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                methodAddress
+        );
     }
 
     @Override
@@ -33,18 +29,12 @@ public class event_subscriber implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof event_subscriber)) {
             return false;
         }
         event_subscriber other = (event_subscriber) obj;
-        return (Objects.equals(id.eventUpName, other.id.eventUpName)
-                && Objects.equals(methodAddress, other.methodAddress)
-                && Objects.equals(id.eventNotificationMethod, other.id.eventNotificationMethod)
-                && Objects.equals(id.subscriberId, other.id.subscriberId)
-                && Objects.equals(id.tagName, other.id.tagName));
+        return Objects.equals(id, other.id)
+                && Objects.equals(methodAddress, other.methodAddress);
     }
 
     public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod,

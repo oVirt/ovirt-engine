@@ -17,11 +17,10 @@ public class VdcOption implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(
+                name,
+                value
+        );
     }
 
     @Override
@@ -29,15 +28,12 @@ public class VdcOption implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VdcOption)) {
             return false;
         }
         VdcOption other = (VdcOption) obj;
-        return (Objects.equals(name, other.name)
-                && Objects.equals(value, other.value));
+        return Objects.equals(name, other.name)
+                && Objects.equals(value, other.value);
     }
 
     public String getoption_name() {

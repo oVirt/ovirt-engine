@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.api.common.util.PackageExplorer;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
@@ -116,17 +117,22 @@ public class MappingLocator {
         }
 
         public int hashCode() {
-            return to.hashCode() + from.hashCode();
+            return Objects.hash(
+                    to,
+                    from
+            );
         }
 
-        public boolean equals(Object other) {
-            if (other == this) {
+        public boolean equals(Object obj) {
+            if (this == obj) {
                 return true;
-            } else if (other instanceof ClassPairKey) {
-                ClassPairKey key = (ClassPairKey) other;
-                return to == key.to && from == key.from;
             }
-            return false;
+            if (!(obj instanceof ClassPairKey)) {
+                return false;
+            }
+            ClassPairKey other = (ClassPairKey) obj;
+            return Objects.equals(to, other.to)
+                    && Objects.equals(from, other.from);
         }
 
         public String toString() {

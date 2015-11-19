@@ -467,44 +467,43 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (compatVersion == null ? 0 : compatVersion.hashCode());
-        result = prime * result + (compatibilityVersion == null ? 0 : compatibilityVersion.hashCode());
-        result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
-        result = prime * result + (description == null ? 0 : description.hashCode());
-        result = prime * result + maxVdsMemoryOverCommit;
-        result = prime * result + (countThreadsAsCores ? 1231 : 1237);
-        result = prime * result + (migrateOnError == null ? 0 : migrateOnError.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (storagePoolId == null ? 0 : storagePoolId.hashCode());
-        result = prime * result + (storagePoolName == null ? 0 : storagePoolName.hashCode());
-        result = prime * result + (transparentHugepages ? 1231 : 1237);
-        result = prime * result + (virtService ? 1231 : 1237);
-        result = prime * result + (glusterService ? 1231 : 1237);
-        result = prime * result + (glusterCliBasedSchedulingOn ? 1231 : 1237);
-        result = prime * result + (tunnelMigration ? 1231 : 1237);
-        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
-        result = prime * result + (trustedService ? 1231 : 1237);
-        result = prime * result + (haReservation ? 1231 : 1237);
-        result = prime * result + (clusterPolicyName == null ? 0 : clusterPolicyName.hashCode());
-        result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
-        result = prime * result + (requiredRngSources == null ? 0 : requiredRngSources.hashCode());
-        result = prime * result + (enableKsm ? 1231 : 1237);
-        result = prime * result + (enableBallooning ? 1231 : 1237);
-        result = prime * result + (optimizationType == null ? 0 : optimizationType.hashCode());
-        result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
-        result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
-        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
-        result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
-        result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
-        result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
-        result = prime * result + (glusterTunedProfile == null ? 0 : glusterTunedProfile.hashCode());
-        result = prime * result + (addtionalFeaturesSupported == null ? 0 : addtionalFeaturesSupported.hashCode());
-        result = prime * result + (maintenanceReasonRequired ? 1231 : 1237);
-        result = prime * result + (ksmMergeAcrossNumaNodes ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                id,
+                compatVersion,
+                compatibilityVersion,
+                cpuName,
+                description,
+                maxVdsMemoryOverCommit,
+                countThreadsAsCores,
+                migrateOnError,
+                name,
+                storagePoolId,
+                storagePoolName,
+                transparentHugepages,
+                virtService,
+                glusterService,
+                glusterCliBasedSchedulingOn,
+                tunnelMigration,
+                emulatedMachine,
+                trustedService,
+                haReservation,
+                clusterPolicyName,
+                clusterPolicyProperties,
+                requiredRngSources,
+                enableKsm,
+                enableBallooning,
+                optimizationType,
+                serialNumberPolicy,
+                customSerialNumber,
+                groupHostsAndVms,
+                fencingPolicy,
+                autoConverge,
+                migrateCompressed,
+                glusterTunedProfile,
+                addtionalFeaturesSupported,
+                maintenanceReasonRequired,
+                ksmMergeAcrossNumaNodes
+        );
     }
 
     @Override
@@ -518,7 +517,7 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
         VDSGroup other = (VDSGroup) obj;
         // *ATTENTION* when adding fields to this, please make sure that equals still works, if not this will
         // cause all kinds of havoc in the UI when clusters are refreshed.
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(compatVersion, other.compatVersion)
                 && Objects.equals(compatibilityVersion, other.compatibilityVersion)
                 && Objects.equals(cpuName, other.cpuName)
@@ -543,7 +542,7 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
                 && enableKsm == other.enableKsm
                 && enableBallooning == other.enableBallooning
                 && detectEmulatedMachine == other.detectEmulatedMachine
-                && optimizationType == other.optimizationType)
+                && optimizationType == other.optimizationType
                 && serialNumberPolicy == other.serialNumberPolicy
                 && Objects.equals(customSerialNumber, other.customSerialNumber)
                 && Objects.equals(groupHostsAndVms, other.groupHostsAndVms)

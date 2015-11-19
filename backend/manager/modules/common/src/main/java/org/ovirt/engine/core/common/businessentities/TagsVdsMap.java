@@ -38,11 +38,10 @@ public class TagsVdsMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id.tagId == null) ? 0 : id.tagId.hashCode());
-        result = prime * result + ((id.vdsId == null) ? 0 : id.vdsId.hashCode());
-        return result;
+        return Objects.hash(
+                id.tagId,
+                id.vdsId
+        );
     }
 
     @Override
@@ -50,14 +49,11 @@ public class TagsVdsMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof TagsVdsMap)) {
             return false;
         }
         TagsVdsMap other = (TagsVdsMap) obj;
-        return (Objects.equals(id.tagId, other.id.tagId)
-                && Objects.equals(id.vdsId, other.id.vdsId));
+        return Objects.equals(id.tagId, other.id.tagId)
+                && Objects.equals(id.vdsId, other.id.vdsId);
     }
 }

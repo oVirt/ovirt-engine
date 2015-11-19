@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.job;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -278,22 +279,21 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-        result = prime * result + ((externalSystem == null) ? 0 : externalSystem.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-        result = prime * result + ((parentStepId == null) ? 0 : parentStepId.hashCode());
-        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + stepNumber;
-        result = prime * result + ((stepType == null) ? 0 : stepType.hashCode());
-        result = prime * result + ((steps == null) ? 0 : steps.hashCode());
-        result = prime * result + (external ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                correlationId,
+                description,
+                endTime,
+                externalSystem,
+                id,
+                jobId,
+                parentStepId,
+                startTime,
+                status,
+                stepNumber,
+                stepType,
+                steps,
+                external
+        );
     }
 
     @Override
@@ -301,89 +301,23 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof Step)) {
             return false;
         }
         Step other = (Step) obj;
-        if (correlationId == null) {
-            if (other.correlationId != null) {
-                return false;
-            }
-        } else if (!correlationId.equals(other.correlationId)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (endTime == null) {
-            if (other.endTime != null) {
-                return false;
-            }
-        } else if (!endTime.equals(other.endTime)) {
-            return false;
-        }
-        if (externalSystem == null) {
-            if (other.externalSystem != null) {
-                return false;
-            }
-        } else if (!externalSystem.equals(other.externalSystem)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (jobId == null) {
-            if (other.jobId != null) {
-                return false;
-            }
-        } else if (!jobId.equals(other.jobId)) {
-            return false;
-        }
-        if (parentStepId == null) {
-            if (other.parentStepId != null) {
-                return false;
-            }
-        } else if (!parentStepId.equals(other.parentStepId)) {
-            return false;
-        }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        if (status != other.status) {
-            return false;
-        }
-        if (stepNumber != other.stepNumber) {
-            return false;
-        }
-        if (stepType != other.stepType) {
-            return false;
-        }
-        if (steps == null) {
-            if (other.steps != null) {
-                return false;
-            }
-        } else if (!steps.equals(other.steps)) {
-            return false;
-        }
-        if (external != other.external) {
-            return false;
-        }
-        return true;
+        return Objects.equals(correlationId, other.correlationId)
+                && Objects.equals(description, other.description)
+                && Objects.equals(endTime, other.endTime)
+                && Objects.equals(externalSystem, other.externalSystem)
+                && Objects.equals(id, other.id)
+                && Objects.equals(jobId, other.jobId)
+                && Objects.equals(parentStepId, other.parentStepId)
+                && Objects.equals(startTime, other.startTime)
+                && status == other.status
+                && stepNumber == other.stepNumber
+                && stepType == other.stepType
+                && Objects.equals(steps, other.steps)
+                && external == other.external;
     }
 
 }

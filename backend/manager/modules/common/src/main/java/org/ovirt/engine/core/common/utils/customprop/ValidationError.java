@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils.customprop;
 
+import java.util.Objects;
+
 /**
  * Class describing errors appear during custom properties validation
  */
@@ -42,22 +44,24 @@ public class ValidationError {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other instanceof ValidationError) {
-            ValidationError otherError = (ValidationError) other;
-            return keyName.equals(otherError.getKeyName()) && reason == otherError.getReason();
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof ValidationError)) {
+            return false;
+        }
+        ValidationError other = (ValidationError) obj;
+        return Objects.equals(keyName, other.keyName)
+                && reason == other.reason;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((keyName == null) ? 0 : keyName.hashCode());
-        result = prime * result + ((reason == null) ? 0 : reason.hashCode());
-        return result;
+        return Objects.hash(
+                keyName,
+                reason
+        );
     }
 
     /**

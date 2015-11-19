@@ -779,73 +779,71 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (supportedClusterVersionsSet == null ? 0 : supportedClusterVersionsSet.hashCode());
-        result = prime * result + (supportedEngineVersionsSet == null ? 0 : supportedEngineVersionsSet.hashCode());
-        result = prime * result + (buildName == null ? 0 : buildName.hashCode());
-        result = prime * result + (cpuCores == null ? 0 : cpuCores.hashCode());
-        result = prime * result + (cpuThreads == null ? 0 : cpuThreads.hashCode());
-        result = prime * result + (cpuFlags == null ? 0 : cpuFlags.hashCode());
-        result = prime * result + (cpuModel == null ? 0 : cpuModel.hashCode());
-        result = prime * result + (cpuSockets == null ? 0 : cpuSockets.hashCode());
-        result = prime * result + (cpuSpeedMh == null ? 0 : cpuSpeedMh.hashCode());
-        result = prime * result + (onlineCpus == null ? 0 : onlineCpus.hashCode());
-        result = prime * result + (guestOverhead == null ? 0 : guestOverhead.hashCode());
-        result = prime * result + (hooksStr == null ? 0 : hooksStr.hashCode());
-        result = prime * result + (hostOs == null ? 0 : hostOs.hashCode());
-        result = prime * result + (iScsiInitiatorName == null ? 0 : iScsiInitiatorName.hashCode());
-        result = prime * result + (ifTotalSpeed == null ? 0 : ifTotalSpeed.hashCode());
-        result = prime * result + (kernelVersion == null ? 0 : kernelVersion.hashCode());
-        result = prime * result + (kvmEnabled == null ? 0 : kvmEnabled.hashCode());
-        result = prime * result + (kvmVersion == null ? 0 : kvmVersion.hashCode());
-        result = prime * result + (libvirtVersion == null ? 0 : libvirtVersion.hashCode());
-        result = prime * result + (rpmVersion == null ? 0 : rpmVersion.hashCode());
-        result = prime * result + (memCommited == null ? 0 : memCommited.hashCode());
-        result = prime * result + (netConfigDirty == null ? 0 : netConfigDirty.hashCode());
-        result = prime * result + (nonOperationalReason == null ? 0 : nonOperationalReason.hashCode());
-        result = prime * result + (pendingVcpusCount == null ? 0 : pendingVcpusCount.hashCode());
-        result = prime * result + (pendingVmemSize == null ? 0 : pendingVmemSize.hashCode());
-        result = prime * result + (physicalMemMb == null ? 0 : physicalMemMb.hashCode());
-        result = prime * result + (previousStatus == null ? 0 : previousStatus.hashCode());
-        result = prime * result + (reservedMem == null ? 0 : reservedMem.hashCode());
-        result = prime * result + (softwareVersion == null ? 0 : softwareVersion.hashCode());
-        result = prime * result + (spiceVersion == null ? 0 : spiceVersion.hashCode());
-        result = prime * result + (glusterVersion == null ? 0 : glusterVersion.hashCode());
-        result = prime * result + (status == null ? 0 : status.hashCode());
-        result = prime * result + (supportedClusterLevels == null ? 0 : supportedClusterLevels.hashCode());
-        result = prime * result + (supportedEngines == null ? 0 : supportedEngines.hashCode());
-        result = prime * result + (transparentHugePagesState == null ? 0 : transparentHugePagesState.hashCode());
-        result = prime * result + (versionName == null ? 0 : versionName.hashCode());
-        result = prime * result + (vmActive == null ? 0 : vmActive.hashCode());
-        result = prime * result + vmCount;
-        result = prime * result + (supportedRngSources == null ? 0 : supportedRngSources.hashCode());
-        result = prime * result + (vmMigrating == null ? 0 : vmMigrating.hashCode());
-        result = prime * result + incomingMigrations;
-        result = prime * result + outgoingMigrations;
-        result = prime * result + (vmsCoresCount == null ? 0 : vmsCoresCount.hashCode());
-        result = prime * result + (hwManufacturer == null ? 0 : hwManufacturer.hashCode());
-        result = prime * result + (hwProductName == null ? 0 : hwProductName.hashCode());
-        result = prime * result + (hwVersion == null ? 0 : hwVersion.hashCode());
-        result = prime * result + (hwSerialNumber == null ? 0 : hwSerialNumber.hashCode());
-        result = prime * result + (hwUUID == null ? 0 : hwUUID.hashCode());
-        result = prime * result + (hwFamily == null ? 0 : hwFamily.hashCode());
-        result = prime * result + (HBAs == null ? 0 : HBAs.hashCode());
-        result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
-        result = prime * result + (kdumpStatus == null ? 0 : kdumpStatus.hashCode());
-        result = prime * result + (selinuxEnforceMode == null ? 0 : selinuxEnforceMode.hashCode());
-        result = prime * result + (numaNodeList == null ? 0 : numaNodeList.hashCode());
-        result = prime * result + autoNumaBalancing.getValue();
-        result = prime * result + (numaSupport ? 0 : 1);
-        result = prime * result + (liveSnapshotSupport ? 0 : 1);
-        result = prime * result + (liveMergeSupport ? 0 : 1);
-        result = prime * result + (additionalFeatures == null ? 0 : additionalFeatures.hashCode());
-        result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
-        result = prime * result + (updateAvailable ? 0 : 1);
-        result = prime * result + (hostDevicePassthroughEnabled ? 0 : 1);
-
-        return result;
+        return Objects.hash(
+                id,
+                supportedClusterVersionsSet,
+                supportedEngineVersionsSet,
+                buildName,
+                cpuCores,
+                cpuThreads,
+                cpuFlags,
+                cpuModel,
+                cpuSockets,
+                cpuSpeedMh,
+                onlineCpus,
+                guestOverhead,
+                hooksStr,
+                hostOs,
+                iScsiInitiatorName,
+                ifTotalSpeed,
+                kernelVersion,
+                kvmEnabled,
+                kvmVersion,
+                libvirtVersion,
+                rpmVersion,
+                memCommited,
+                netConfigDirty,
+                nonOperationalReason,
+                pendingVcpusCount,
+                pendingVmemSize,
+                physicalMemMb,
+                previousStatus,
+                reservedMem,
+                softwareVersion,
+                spiceVersion,
+                glusterVersion,
+                status,
+                supportedClusterLevels,
+                supportedEngines,
+                transparentHugePagesState,
+                versionName,
+                vmActive,
+                vmCount,
+                supportedRngSources,
+                vmMigrating,
+                incomingMigrations,
+                outgoingMigrations,
+                vmsCoresCount,
+                hwManufacturer,
+                hwProductName,
+                hwVersion,
+                hwSerialNumber,
+                hwUUID,
+                hwFamily,
+                HBAs,
+                powerManagementControlledByPolicy,
+                kdumpStatus,
+                selinuxEnforceMode,
+                numaNodeList,
+                autoNumaBalancing,
+                numaSupport,
+                liveSnapshotSupport,
+                liveMergeSupport,
+                additionalFeatures,
+                maintenanceReason,
+                updateAvailable,
+                hostDevicePassthroughEnabled
+        );
     }
 
     @Override
@@ -857,7 +855,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
             return false;
         }
         VdsDynamic other = (VdsDynamic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(getSupportedClusterVersionsSet(), other.getSupportedClusterVersionsSet())
                 && Objects.equals(supportedEngineVersionsSet, other.supportedEngineVersionsSet)
                 && Objects.equals(buildName, other.buildName)
@@ -912,7 +910,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(selinuxEnforceMode, other.selinuxEnforceMode)
                 && Objects.equals(numaNodeList, other.numaNodeList)
                 && autoNumaBalancing.getValue() == other.autoNumaBalancing.getValue()
-                && numaSupport == other.numaSupport)
+                && numaSupport == other.numaSupport
                 && Objects.equals(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && Objects.equals(supportedRngSources, other.supportedRngSources)

@@ -59,12 +59,11 @@ public class ActionVersionMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + actionType;
-        result = prime * result + ((clusterMinimalVersion == null) ? 0 : clusterMinimalVersion.hashCode());
-        result = prime * result + ((storagePoolMinimalVersion == null) ? 0 : storagePoolMinimalVersion.hashCode());
-        return result;
+        return Objects.hash(
+                actionType,
+                clusterMinimalVersion,
+                storagePoolMinimalVersion
+        );
     }
 
     @Override
@@ -72,15 +71,12 @@ public class ActionVersionMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ActionVersionMap)) {
             return false;
         }
         ActionVersionMap other = (ActionVersionMap) obj;
-        return (actionType == other.actionType
+        return actionType == other.actionType
                 && Objects.equals(clusterMinimalVersion, other.clusterMinimalVersion)
-                && Objects.equals(storagePoolMinimalVersion, other.storagePoolMinimalVersion));
+                && Objects.equals(storagePoolMinimalVersion, other.storagePoolMinimalVersion);
     }
 }

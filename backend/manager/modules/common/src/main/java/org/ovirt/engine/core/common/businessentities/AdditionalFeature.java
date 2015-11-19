@@ -74,22 +74,29 @@ public class AdditionalFeature implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, version, description, category);
+        return Objects.hash(
+                id,
+                name,
+                version,
+                description,
+                category
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof AdditionalFeature)) {
-            AdditionalFeature clusterFeature = (AdditionalFeature) obj;
-            if (Objects.equals(getId(), clusterFeature.getId())
-                    && Objects.equals(getName(), clusterFeature.getName())
-                    && Objects.equals(getVersion(), clusterFeature.getVersion())
-                    && Objects.equals(getDescription(), clusterFeature.getDescription())
-                    && Objects.equals(getCategory(), clusterFeature.getCategory())) {
-                return true;
-            }
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof AdditionalFeature)) {
+            return false;
+        }
+        AdditionalFeature other = (AdditionalFeature) obj;
+        return Objects.equals(id, other.id)
+                && Objects.equals(name, other.name)
+                && Objects.equals(version, other.version)
+                && Objects.equals(description, other.description)
+                && Objects.equals(category, other.category);
     }
 
     @Override

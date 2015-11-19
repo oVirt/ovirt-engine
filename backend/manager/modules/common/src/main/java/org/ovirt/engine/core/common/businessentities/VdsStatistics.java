@@ -66,33 +66,32 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (cpuIdle == null ? 0 : cpuIdle.hashCode());
-        result = prime * result + (cpuLoad == null ? 0 : cpuLoad.hashCode());
-        result = prime * result + (cpuSys == null ? 0 : cpuSys.hashCode());
-        result = prime * result + (cpuUser == null ? 0 : cpuUser.hashCode());
-        result = prime * result + (memAvailable == null ? 0 : memAvailable.hashCode());
-        result = prime * result + (memFree == null ? 0 : memFree.hashCode());
-        result = prime * result + (memShared == null ? 0 : memShared.hashCode());
-        result = prime * result + (usageCpuPercent == null ? 0 : usageCpuPercent.hashCode());
-        result = prime * result + (usageNetworkPercent == null ? 0 : usageNetworkPercent.hashCode());
-        result = prime * result + (ksmState == null ? 0 : ksmState.hashCode());
-        result = prime * result + (ksmPages == null ? 0 : ksmPages.hashCode());
-        result = prime * result + (ksmCpuPercent == null ? 0 : ksmCpuPercent.hashCode());
-        result = prime * result + (swapTotal == null ? 0 : swapTotal.hashCode());
-        result = prime * result + (swapFree == null ? 0 : swapFree.hashCode());
-        result = prime * result + anonymousHugePages;
-        result = prime * result + (bootTime == null ? 0 : bootTime.hashCode());
-        result = prime * result + highlyAvailableScore;
-        result = prime * result + (highlyAvailableIsConfigured ? 1231 : 1237);
-        result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
-        result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
-        result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
-        result = prime * result + (cpuCoreStatistics == null ? 0 : cpuCoreStatistics.hashCode());
-        result = prime * result + (cpuOverCommitTimeStamp == null ? 0 : cpuOverCommitTimeStamp.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                cpuIdle,
+                cpuLoad,
+                cpuSys,
+                cpuUser,
+                memAvailable,
+                memFree,
+                memShared,
+                usageCpuPercent,
+                usageNetworkPercent,
+                ksmState,
+                ksmPages,
+                ksmCpuPercent,
+                swapTotal,
+                swapFree,
+                anonymousHugePages,
+                bootTime,
+                highlyAvailableScore,
+                highlyAvailableIsConfigured,
+                highlyAvailableIsActive,
+                highlyAvailableGlobalMaintenance,
+                highlyAvailableLocalMaintenance,
+                cpuCoreStatistics,
+                cpuOverCommitTimeStamp
+        );
     }
 
     @Override
@@ -104,7 +103,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
             return false;
         }
         VdsStatistics other = (VdsStatistics) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && ObjectUtils.bigDecimalEqual(cpuIdle, other.cpuIdle)
                 && ObjectUtils.bigDecimalEqual(cpuLoad, other.cpuLoad)
                 && ObjectUtils.bigDecimalEqual(cpuSys, other.cpuSys)
@@ -127,7 +126,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
                 && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
                 && Objects.equals(cpuCoreStatistics, other.cpuCoreStatistics)
-                && Objects.equals(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp));
+                && Objects.equals(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp);
     }
 
     public int getAnonymousHugePages() {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.ovirt.engine.core.compat.Guid;
@@ -116,13 +117,12 @@ public class JsonSerializablePojo implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((guid == null) ? 0 : guid.hashCode());
-        result = prime * result + ((integer == null) ? 0 : integer.hashCode());
-        result = prime * result + ((object == null) ? 0 : object.hashCode());
-        result = prime * result + ((string == null) ? 0 : string.hashCode());
-        return result;
+        return Objects.hash(
+                guid,
+                integer,
+                object,
+                string
+        );
     }
 
     @Override
@@ -130,42 +130,14 @@ public class JsonSerializablePojo implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof JsonSerializablePojo)) {
             return false;
         }
         JsonSerializablePojo other = (JsonSerializablePojo) obj;
-        if (guid == null) {
-            if (other.guid != null) {
-                return false;
-            }
-        } else if (!guid.equals(other.guid)) {
-            return false;
-        }
-        if (integer == null) {
-            if (other.integer != null) {
-                return false;
-            }
-        } else if (!integer.equals(other.integer)) {
-            return false;
-        }
-        if (object == null) {
-            if (other.object != null) {
-                return false;
-            }
-        } else if (!object.equals(other.object)) {
-            return false;
-        }
-        if (string == null) {
-            if (other.string != null) {
-                return false;
-            }
-        } else if (!string.equals(other.string)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(guid, other.guid)
+                && Objects.equals(integer, other.integer)
+                && Objects.equals(object, other.object)
+                && Objects.equals(string, other.string);
     }
 
 }

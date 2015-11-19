@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 /**
@@ -42,10 +44,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> imp
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getPair().hashCode();
-        return result;
+        return Objects.hashCode(pair);
     }
 
     @Override
@@ -53,17 +52,11 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> imp
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof PairQueryable)) {
             return false;
         }
         PairQueryable other = (PairQueryable) obj;
-        if (!getPair().equals(other.getPair())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(pair, other.pair);
     }
 
     @Override

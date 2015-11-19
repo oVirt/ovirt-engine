@@ -22,11 +22,10 @@ public class RoleGroupMapId implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((actionGroup == null) ? 0 : actionGroup.hashCode());
-        result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
-        return result;
+        return Objects.hash(
+                actionGroup,
+                roleId
+        );
     }
 
     @Override
@@ -34,14 +33,11 @@ public class RoleGroupMapId implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof RoleGroupMapId)) {
             return false;
         }
         RoleGroupMapId other = (RoleGroupMapId) obj;
-        return (Objects.equals(actionGroup, other.actionGroup)
-                && Objects.equals(roleId, other.roleId));
+        return Objects.equals(actionGroup, other.actionGroup)
+                && Objects.equals(roleId, other.roleId);
     }
 }

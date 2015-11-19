@@ -210,19 +210,18 @@ public class DbUser implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
-        result = prime * result + ((department == null) ? 0 : department.hashCode());
-        result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + (isAdmin ? 1231 : 1237);
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((note == null) ? 0 : note.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
-        return result;
+        return Objects.hash(
+                externalId,
+                department,
+                domain,
+                namespace,
+                email,
+                isAdmin,
+                firstName,
+                note,
+                lastName,
+                loginName
+        );
     }
 
     @Override
@@ -230,14 +229,11 @@ public class DbUser implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DbUser)) {
             return false;
         }
         DbUser other = (DbUser) obj;
-        return  Objects.equals(externalId, other.externalId)
+        return Objects.equals(externalId, other.externalId)
                 && Objects.equals(department, other.department)
                 && Objects.equals(domain, other.domain)
                 && Objects.equals(namespace, other.namespace)

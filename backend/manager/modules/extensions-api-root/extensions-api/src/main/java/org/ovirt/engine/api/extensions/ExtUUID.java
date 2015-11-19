@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.extensions;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -44,12 +45,15 @@ public class ExtUUID implements Comparable<ExtUUID>, Cloneable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object other) {
-        return (
-            other != null &&
-            getClass() == other.getClass() &&
-            uuid.equals(((ExtUUID)other).uuid)
-        );
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ExtUUID)) {
+            return false;
+        }
+        ExtUUID other = (ExtUUID) obj;
+        return Objects.equals(uuid, other.uuid);
     }
 
     /**
@@ -57,7 +61,7 @@ public class ExtUUID implements Comparable<ExtUUID>, Cloneable, Serializable {
      */
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return Objects.hashCode(uuid);
     }
 
     /**

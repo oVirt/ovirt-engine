@@ -86,16 +86,15 @@ public class event_notification_hist implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (auditLogId ^ (auditLogId >>> 32));
-        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
-        result = prime * result + ((eventName == null) ? 0 : eventName.hashCode());
-        result = prime * result + ((methodType == null) ? 0 : methodType.hashCode());
-        result = prime * result + ((reason == null) ? 0 : reason.hashCode());
-        result = prime * result + ((sentAt == null) ? 0 : sentAt.hashCode());
-        result = prime * result + (status ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                auditLogId,
+                subscriberId,
+                eventName,
+                methodType,
+                reason,
+                sentAt,
+                status
+        );
     }
 
     @Override
@@ -103,19 +102,16 @@ public class event_notification_hist implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof event_notification_hist)) {
             return false;
         }
         event_notification_hist other = (event_notification_hist) obj;
-        return (auditLogId == other.auditLogId
+        return auditLogId == other.auditLogId
                 && Objects.equals(subscriberId, other.subscriberId)
                 && Objects.equals(eventName, other.eventName)
                 && Objects.equals(methodType, other.methodType)
                 && Objects.equals(reason, other.reason)
                 && Objects.equals(sentAt, other.sentAt)
-                && status == other.status);
+                && status == other.status;
     }
 }

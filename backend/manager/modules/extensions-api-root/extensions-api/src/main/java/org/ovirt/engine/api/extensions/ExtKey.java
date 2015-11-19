@@ -3,6 +3,7 @@ package org.ovirt.engine.api.extensions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -92,12 +93,15 @@ public class ExtKey implements Cloneable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object other) {
-        return (
-            other != null &&
-            getClass() == other.getClass() &&
-            uuid.equals(((ExtKey)other).uuid)
-        );
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ExtKey)) {
+            return false;
+        }
+        ExtKey other = (ExtKey) obj;
+        return Objects.equals(uuid, other.uuid);
     }
 
     /**
@@ -105,7 +109,7 @@ public class ExtKey implements Cloneable, Serializable {
      */
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        return Objects.hashCode(uuid);
     }
 
     /**

@@ -131,11 +131,10 @@ public class BusinessEntitySnapshot {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((commandId == null) ? 0 : commandId.hashCode());
-        result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
-        return result;
+        return Objects.hash(
+                commandId,
+                entityId
+        );
     }
 
     @Override
@@ -143,10 +142,7 @@ public class BusinessEntitySnapshot {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof BusinessEntitySnapshot)) {
             return false;
         }
         BusinessEntitySnapshot other = (BusinessEntitySnapshot) obj;

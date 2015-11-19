@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.junit.Before;
@@ -30,30 +31,23 @@ public class CopyOnAccessMapTest {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + age;
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            return result;
+            return Objects.hash(
+                    age,
+                    name
+            );
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (!(obj instanceof MyKey)) {
                 return false;
-            if (getClass() != obj.getClass())
-                return false;
+            }
             MyKey other = (MyKey) obj;
-            if (age != other.age)
-                return false;
-            if (name == null) {
-                if (other.name != null)
-                    return false;
-            } else if (!name.equals(other.name))
-                return false;
-            return true;
+            return age == other.age
+                    && Objects.equals(name, other.name);
         }
 
         public MyKey(String name, int age) {
@@ -89,27 +83,23 @@ public class CopyOnAccessMapTest {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + length;
-            result = prime * result + width;
-            return result;
+            return Objects.hash(
+                    length,
+                    width
+            );
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (!(obj instanceof MyValue)) {
                 return false;
-            if (getClass() != obj.getClass())
-                return false;
+            }
             MyValue other = (MyValue) obj;
-            if (length != other.length)
-                return false;
-            if (width != other.width)
-                return false;
-            return true;
+            return length == other.length
+                    && width == other.width;
         }
 
         public MyValue(int width, int length) {

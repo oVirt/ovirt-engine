@@ -367,27 +367,26 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (hostName == null ? 0 : hostName.hashCode());
-        result = prime * result + (consoleAddress == null ? 0 : consoleAddress.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
-        result = prime * result + (pmEnabled ? 1231 : 1237);
-        result = prime * result + (pmKdumpDetection ? 1 : 0);
-        result = prime * result + port;
-        result = prime * result + (protocol == null ? 0 : protocol.hashCode());
-        result = prime * result + sshPort;
-        result = prime * result + (sshUsername == null ? 0 : sshUsername.hashCode());
-        result = prime * result + (serverSslEnabled == null ? 0 : serverSslEnabled.hashCode());
-        result = prime * result + (uniqueId == null ? 0 : uniqueId.hashCode());
-        result = prime * result + (vdsGroupId == null ? 0 : vdsGroupId.hashCode());
-        result = prime * result + (vdsStrength == null ? 0 : vdsStrength.hashCode());
-        result = prime * result + (vdsType == null ? 0 : vdsType.hashCode());
-        result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
-        result = prime * result + (hostProviderId == null ? 0 : hostProviderId.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                hostName,
+                consoleAddress,
+                name,
+                otpValidity,
+                pmEnabled,
+                pmKdumpDetection,
+                port,
+                protocol,
+                sshPort,
+                sshUsername,
+                serverSslEnabled,
+                uniqueId,
+                vdsGroupId,
+                vdsStrength,
+                vdsType,
+                disablePowerManagementPolicy,
+                hostProviderId
+        );
     }
 
     @Override
@@ -399,7 +398,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             return false;
         }
         VdsStatic other = (VdsStatic) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(hostName, other.hostName)
                 && Objects.equals(consoleAddress, other.consoleAddress)
                 && Objects.equals(name, other.name)
@@ -415,7 +414,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(vdsGroupId, other.vdsGroupId)
                 && Objects.equals(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
-                && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint))
+                && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
                 && Objects.equals(hostProviderId, other.hostProviderId);
     }

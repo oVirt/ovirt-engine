@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
 public class DirectoryEntryKey {
@@ -18,11 +20,10 @@ public class DirectoryEntryKey {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((authz == null) ? 0 : authz.hashCode());
-        result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
-        return result;
+        return Objects.hash(
+                authz,
+                externalId
+        );
     }
 
     public String getAuthz() {
@@ -35,24 +36,15 @@ public class DirectoryEntryKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof DirectoryEntryKey)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         DirectoryEntryKey other = (DirectoryEntryKey) obj;
-        if (authz == null) {
-            if (other.authz != null)
-                return false;
-        } else if (!authz.equals(other.authz))
-            return false;
-        if (externalId == null) {
-            if (other.externalId != null)
-                return false;
-        } else if (!externalId.equals(other.externalId))
-            return false;
-        return true;
+        return Objects.equals(authz, other.authz)
+                && Objects.equals(externalId, other.externalId);
     }
 
 }

@@ -41,15 +41,14 @@ public class Role implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + (readOnly ? 1231 : 1237);
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((appMode == null) ? 0 : appMode.getValue());
-        return result;
+        return Objects.hash(
+                id,
+                description,
+                readOnly,
+                name,
+                type,
+                appMode
+        );
     }
 
     @Override
@@ -57,20 +56,17 @@ public class Role implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Role)) {
             return false;
         }
         Role other = (Role) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(description, other.description)
                 && readOnly == other.readOnly
                 && allowsViewingChildren == other.allowsViewingChildren
                 && Objects.equals(name, other.name)
                 && type == other.type
-                && appMode == other.appMode);
+                && appMode == other.appMode;
     }
 
     public String getDescription() {

@@ -263,19 +263,18 @@ public class FenceAgent implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (hostId == null ? 0 : hostId.hashCode());
-        result = prime * result + order;
-        result = prime * result + (type == null ? 0 : type.hashCode());
-        result = prime * result + (ip == null ? 0 : ip.hashCode());
-        result = prime * result + (port == null ? 0 : port.hashCode());
-        result = prime * result + (user == null ? 0 : user.hashCode());
-        result = prime * result + (password == null ? 0 : password.hashCode());
-        result = prime * result + (encryptOptions ? 1 : 0);
-        result = prime * result + (options == null ? 0 : options.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                hostId,
+                order,
+                type,
+                ip,
+                port,
+                user,
+                password,
+                encryptOptions,
+                options
+        );
     }
 
     public static class FenceAgentOrderComparator implements Comparator<FenceAgent> {

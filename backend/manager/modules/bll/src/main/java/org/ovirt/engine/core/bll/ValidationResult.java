@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -96,30 +97,23 @@ public final class ValidationResult {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getMessage() == null) ? 0 : getMessage().hashCode());
-        result = prime * result + ((getVariableReplacements() == null) ? 0 : getVariableReplacements().hashCode());
-        return result;
+        return Objects.hash(
+                message,
+                variableReplacements
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof ValidationResult)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         ValidationResult other = (ValidationResult) obj;
-        if (getMessage() != other.getMessage())
-            return false;
-        if (getVariableReplacements() == null) {
-            if (other.getVariableReplacements() != null)
-                return false;
-        } else if (!getVariableReplacements().equals(other.getVariableReplacements()))
-            return false;
-        return true;
+        return Objects.equals(message, other.message)
+                && Objects.equals(variableReplacements, other.variableReplacements);
     }
 
     @Override

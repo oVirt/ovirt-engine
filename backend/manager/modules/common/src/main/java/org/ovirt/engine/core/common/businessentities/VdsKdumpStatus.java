@@ -70,10 +70,10 @@ public class VdsKdumpStatus {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + (vdsId == null ? 0 : vdsId.hashCode());
-        result = 31 * result + (status == null ? 0 : status.hashCode());
-        result = 31 * result + (address == null ? 0 : address.hashCode());
-        return result;
+        return Objects.hash(
+                vdsId,
+                status,
+                address
+        );
     }
 }

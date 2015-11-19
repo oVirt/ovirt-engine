@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.job;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,11 +43,10 @@ public class ExternalSystem implements Serializable{
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
-        result = prime * result + ((externalSystemType == null) ? 0 : externalSystemType.hashCode());
-        return result;
+        return Objects.hash(
+                externalId,
+                externalSystemType
+        );
     }
 
     @Override
@@ -54,24 +54,12 @@ public class ExternalSystem implements Serializable{
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof ExternalSystem)) {
             return false;
         }
         ExternalSystem other = (ExternalSystem) obj;
-        if (externalId == null) {
-            if (other.externalId != null) {
-                return false;
-            }
-        } else if (!externalId.equals(other.externalId)) {
-            return false;
-        }
-        if (externalSystemType != other.externalSystemType) {
-            return false;
-        }
-        return true;
+        return Objects.equals(externalId, other.externalId)
+                && externalSystemType == other.externalSystemType;
     }
 
 }

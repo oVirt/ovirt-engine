@@ -36,11 +36,10 @@ public class SubjectEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(entityId);
-        result = prime * result + Objects.hashCode(entityType);
-        return result;
+        return Objects.hash(
+                entityId,
+                entityType
+        );
     }
 
     @Override
@@ -48,15 +47,12 @@ public class SubjectEntity {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof SubjectEntity)) {
             return false;
         }
         SubjectEntity other = (SubjectEntity) obj;
-        return Objects.equals(entityId, other.entityId) &&
-                Objects.equals(entityType, other.entityType);
+        return Objects.equals(entityId, other.entityId)
+                && Objects.equals(entityType, other.entityType);
     }
 
     @Override

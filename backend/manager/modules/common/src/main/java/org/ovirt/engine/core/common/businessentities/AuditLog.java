@@ -490,31 +490,30 @@ public class AuditLog implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (auditLogId ^ (auditLogId >>> 32));
-        result = prime * result + (logTime == null ? 0 : logTime.hashCode());
-        result = prime * result + logType;
-        result = prime * result + (message == null ? 0 : message.hashCode());
-        result = prime * result + (storageDomainId == null ? 0 : storageDomainId.hashCode());
-        result = prime * result + (storagePoolId == null ? 0 : storagePoolId.hashCode());
-        result = prime * result + severity;
-        result = prime * result + (userId == null ? 0 : userId.hashCode());
-        result = prime * result + (vdsId == null ? 0 : vdsId.hashCode());
-        result = prime * result + (quotaId == null ? 0 : quotaId.hashCode());
-        result = prime * result + (vmId == null ? 0 : vmId.hashCode());
-        result = prime * result + (vmTemplateId == null ? 0 : vmTemplateId.hashCode());
-        result = prime * result + (processed ? 1231 : 1237);
-        result = prime * result + (correlationId == null ? 0 : correlationId.hashCode());
-        result = prime * result + (jobId == null ? 0 : jobId.hashCode());
-        result = prime * result + (origin == null ? 0 : origin.hashCode());
-        result = prime * result + customEventId;
-        result = prime * result + eventFloodInSec;
-        result = prime * result + (customData == null ? 0 : customData.hashCode());
-        result = prime * result + (external ? 1231 : 1237);
-        result = prime * result + (deleted ? 1231 : 1237);
-        result = prime * result + (callStack == null ? 0 : callStack.hashCode());
-        return result;
+        return Objects.hash(
+                auditLogId,
+                logTime,
+                logType,
+                message,
+                storageDomainId,
+                storagePoolId,
+                severity,
+                userId,
+                vdsId,
+                quotaId,
+                vmId,
+                vmTemplateId,
+                processed,
+                correlationId,
+                jobId,
+                origin,
+                customEventId,
+                eventFloodInSec,
+                customData,
+                external,
+                deleted,
+                callStack
+        );
     }
 
     @Override
@@ -526,7 +525,7 @@ public class AuditLog implements IVdcQueryable {
             return false;
         }
         AuditLog other = (AuditLog) obj;
-        return (auditLogId == other.auditLogId
+        return auditLogId == other.auditLogId
                 && Objects.equals(logTime, other.logTime)
                 && logType == other.logType
                 && Objects.equals(message, other.message)
@@ -547,7 +546,7 @@ public class AuditLog implements IVdcQueryable {
                 && Objects.equals(customData, other.customData)
                 && external == other.external
                 && deleted == other.deleted
-                && Objects.equals(callStack, other.callStack));
+                && Objects.equals(callStack, other.callStack);
     }
 
     public String toStringForLogging() {

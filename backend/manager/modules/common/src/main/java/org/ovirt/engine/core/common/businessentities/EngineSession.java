@@ -100,11 +100,10 @@ public class EngineSession implements IVdcQueryable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((engineSessionId == null) ? 0 : engineSessionId.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        return result;
+        return Objects.hash(
+                engineSessionId,
+                userId
+        );
     }
 
     @Override
@@ -112,14 +111,11 @@ public class EngineSession implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof EngineSession)) {
             return false;
         }
         EngineSession other = (EngineSession) obj;
-        return  Objects.equals(engineSessionId, other.engineSessionId)
+        return Objects.equals(engineSessionId, other.engineSessionId)
                 && Objects.equals(userId, other.userId);
     }
 

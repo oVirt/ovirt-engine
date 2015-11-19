@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -296,22 +297,21 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((actionType == null) ? 0 : actionType.hashCode());
-        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
-        result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (isVisible ? 1231 : 1237);
-        result = prime * result + ((jobSubjectEntities == null) ? 0 : jobSubjectEntities.hashCode());
-        result = prime * result + ((lastUpdateTime == null) ? 0 : lastUpdateTime.hashCode());
-        result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
-        result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((steps == null) ? 0 : steps.hashCode());
-        result = prime * result + (external ? 1231 : 1237);
-        result = prime * result + (autoCleared ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                actionType,
+                correlationId,
+                endTime,
+                id,
+                isVisible,
+                jobSubjectEntities,
+                lastUpdateTime,
+                ownerId,
+                startTime,
+                status,
+                steps,
+                external,
+                autoCleared
+        );
     }
 
     @Override
@@ -319,84 +319,22 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof Job)) {
             return false;
         }
         Job other = (Job) obj;
-        if (actionType != other.actionType) {
-            return false;
-        }
-        if (correlationId == null) {
-            if (other.correlationId != null) {
-                return false;
-            }
-        } else if (!correlationId.equals(other.correlationId)) {
-            return false;
-        }
-        if (endTime == null) {
-            if (other.endTime != null) {
-                return false;
-            }
-        } else if (!endTime.equals(other.endTime)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (isVisible != other.isVisible) {
-            return false;
-        }
-        if (jobSubjectEntities == null) {
-            if (other.jobSubjectEntities != null) {
-                return false;
-            }
-        } else if (!jobSubjectEntities.equals(other.jobSubjectEntities)) {
-            return false;
-        }
-        if (lastUpdateTime == null) {
-            if (other.lastUpdateTime != null) {
-                return false;
-            }
-        } else if (!lastUpdateTime.equals(other.lastUpdateTime)) {
-            return false;
-        }
-        if (ownerId == null) {
-            if (other.ownerId != null) {
-                return false;
-            }
-        } else if (!ownerId.equals(other.ownerId)) {
-            return false;
-        }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        if (status != other.status) {
-            return false;
-        }
-        if (steps == null) {
-            if (other.steps != null) {
-                return false;
-            }
-        } else if (!steps.equals(other.steps)) {
-            return false;
-        }
-        if (external != other.external) {
-            return false;
-        }
-        if (autoCleared != other.autoCleared) {
-            return false;
-        }
-        return true;
+        return actionType == other.actionType
+                && Objects.equals(correlationId, other.correlationId)
+                && Objects.equals(endTime, other.endTime)
+                && Objects.equals(id, other.id)
+                && isVisible == other.isVisible
+                && Objects.equals(jobSubjectEntities, other.jobSubjectEntities)
+                && Objects.equals(lastUpdateTime, other.lastUpdateTime)
+                && Objects.equals(ownerId, other.ownerId)
+                && Objects.equals(startTime, other.startTime)
+                && status == other.status
+                && Objects.equals(steps, other.steps)
+                && external == other.external
+                && autoCleared == other.autoCleared;
     }
 }

@@ -48,16 +48,15 @@ public class Tags implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((_children == null) ? 0 : _children.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-        result = prime * result + ((readonly == null) ? 0 : readonly.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(
+                id,
+                _children,
+                description,
+                parent,
+                readonly,
+                name,
+                type
+        );
     }
 
     @Override
@@ -65,20 +64,17 @@ public class Tags implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Tags)) {
             return false;
         }
         Tags other = (Tags) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(_children, other._children)
                 && Objects.equals(description, other.description)
                 && Objects.equals(parent, other.parent)
                 && Objects.equals(readonly, other.readonly)
                 && Objects.equals(name, other.name)
-                && type == other.type);
+                && type == other.type;
     }
 
     public String getdescription() {

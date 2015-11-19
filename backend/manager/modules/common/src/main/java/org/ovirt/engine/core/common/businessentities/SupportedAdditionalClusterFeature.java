@@ -48,20 +48,26 @@ public class SupportedAdditionalClusterFeature implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(clusterId, feature, enabled);
+        return Objects.hash(
+                clusterId,
+                feature,
+                enabled
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof SupportedAdditionalClusterFeature)) {
-            SupportedAdditionalClusterFeature feature = (SupportedAdditionalClusterFeature) obj;
-            if (enabled == feature.isEnabled()
-                    && Objects.equals(getClusterId(), feature.getClusterId())
-                    && Objects.equals(getFeature(), feature.getFeature())) {
-                return true;
-            }
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof SupportedAdditionalClusterFeature)) {
+            return false;
+        }
+
+        SupportedAdditionalClusterFeature other = (SupportedAdditionalClusterFeature) obj;
+        return enabled == other.enabled
+                && Objects.equals(clusterId, other.clusterId)
+                && Objects.equals(feature, other.feature);
     }
 
     @Override

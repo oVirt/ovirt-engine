@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 public class KeyValuePairCompat<K, V> implements Map.Entry<K, V>, Serializable {
 
@@ -41,33 +42,23 @@ public class KeyValuePairCompat<K, V> implements Map.Entry<K, V>, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(
+                key,
+                value
+        );
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof KeyValuePairCompat)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         KeyValuePairCompat other = (KeyValuePairCompat) obj;
-        if (key == null) {
-            if (other.key != null)
-                return false;
-        } else if (!key.equals(other.key))
-            return false;
-        if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
+        return Objects.equals(key, other.key)
+                && Objects.equals(value, other.value);
     }
 
 }

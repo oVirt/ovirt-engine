@@ -20,10 +20,10 @@ public class CommandAssociatedEntity extends SubjectEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hashCode(commandId);
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                commandId
+        );
     }
 
     @Override
@@ -31,15 +31,12 @@ public class CommandAssociatedEntity extends SubjectEntity {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CommandAssociatedEntity)) {
             return false;
         }
         CommandAssociatedEntity other = (CommandAssociatedEntity) obj;
-        return Objects.equals(commandId, other.commandId) &&
-                super.equals(obj);
+        return super.equals(obj)
+                && Objects.equals(commandId, other.commandId);
     }
 
     public void setCommandId(Guid commandId) {

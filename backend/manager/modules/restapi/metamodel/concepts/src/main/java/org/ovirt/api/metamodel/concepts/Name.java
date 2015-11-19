@@ -16,12 +16,12 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.concepts;
 
+import static java.lang.String.join;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import static java.lang.String.join;
 
 /**
  * This class represents a name formed of multiple words. It is intended to simplify the use of different strategies for
@@ -103,16 +103,19 @@ public class Name implements Comparable<Name> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Name) {
-            Name that = (Name) obj;
-            return this.words.equals(that.words);
+        if (this == obj) {
+            return true;
         }
-        return false;
+        if (!(obj instanceof Name)) {
+            return false;
+        }
+        Name other = (Name) obj;
+        return Objects.equals(words, other.words);
     }
 
     @Override
     public int hashCode() {
-        return words.hashCode();
+        return Objects.hashCode(words);
     }
 
     /**

@@ -49,12 +49,11 @@ public class TagsVmMap implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id.tagId == null) ? 0 : id.tagId.hashCode());
-        result = prime * result + ((id.vmId == null) ? 0 : id.vmId.hashCode());
-        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
-        return result;
+        return Objects.hash(
+                id.tagId,
+                id.vmId,
+                defaultDisplayType
+        );
     }
 
     @Override
@@ -62,15 +61,12 @@ public class TagsVmMap implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof TagsVmMap)) {
             return false;
         }
         TagsVmMap other = (TagsVmMap) obj;
-        return (Objects.equals(id.tagId, other.id.tagId)
+        return Objects.equals(id.tagId, other.id.tagId)
                 && Objects.equals(id.vmId, other.id.vmId)
-                && Objects.equals(defaultDisplayType, other.defaultDisplayType));
+                && Objects.equals(defaultDisplayType, other.defaultDisplayType);
     }
 }
