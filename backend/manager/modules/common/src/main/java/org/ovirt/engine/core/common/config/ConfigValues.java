@@ -1524,6 +1524,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("Auto")
     ClientModeRdpDefault,
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Off")
     WebSocketProxy,
