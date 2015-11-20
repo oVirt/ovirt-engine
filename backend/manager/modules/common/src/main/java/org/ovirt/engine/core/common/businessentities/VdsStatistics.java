@@ -175,7 +175,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
      *
      * resident set size of qemu processes may grow - up to  memCommitted.
      * Thus, we deduct the growth potential of qemu processes, which is (memCommitted - resident)
-     * @return - free mem available for new vm
+     * @return - free mem available for new vm in MiB
      */
     public Long getMemAvailable() {
         return memAvailable;

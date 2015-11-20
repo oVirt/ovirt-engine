@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -185,7 +185,7 @@ public class HaReservationHandling {
 
             // Get available memory for the Host, round down to int
             int hostFreeMem = (int) host.getMaxSchedulingMemory()
-                    - PendingMemory.collectForHost(pendingResourceManager, host.getId());
+                    - PendingOvercommitMemory.collectForHost(pendingResourceManager, host.getId());
             innerUnutilizedCpuRamPair.setSecond(hostFreeMem);
 
             Pair<Guid, Pair<Integer, Integer>> outerUnutilizedCpuRamPair =

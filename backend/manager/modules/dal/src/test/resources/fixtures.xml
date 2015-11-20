@@ -3792,6 +3792,7 @@
         <column>usage_network_percent</column>
         <column>mem_available</column>
         <column>mem_shared</column>
+        <column>mem_free</column>
         <column>swap_free</column>
         <column>swap_total</column>
         <column>ksm_cpu_percent</column>
@@ -3817,6 +3818,7 @@
             <value>0</value>
             <value>14741</value>
             <value>0</value>
+            <value>13245</value>
             <value>15999</value>
             <value>15999</value>
             <value>0</value>
@@ -3843,6 +3845,7 @@
             <value>0</value>
             <value>14741</value>
             <value>0</value>
+            <value>13245</value>
             <value>15999</value>
             <value>15999</value>
             <value>0</value>
@@ -3869,6 +3872,7 @@
             <value>0</value>
             <value>14741</value>
             <value>0</value>
+            <value>13245</value>
             <value>15999</value>
             <value>15999</value>
             <value>0</value>
@@ -3895,6 +3899,7 @@
             <value>0</value>
             <value>14741</value>
             <value>0</value>
+            <value>13245</value>
             <value>15999</value>
             <value>15999</value>
             <value>0</value>
@@ -3921,6 +3926,7 @@
             <value>0</value>
             <value>14741</value>
             <value>0</value>
+            <value>13245</value>
             <value>15999</value>
             <value>15999</value>
             <value>0</value>
