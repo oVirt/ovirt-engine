@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -152,8 +154,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Override
     protected void executeVDSCommand() {
-        boolean isStartReconstruct = false;
-        synchronized (getCurrentIrsProxyData().syncObj) {
+        AtomicBoolean isStartReconstruct = new AtomicBoolean(false);
+        getCurrentIrsProxyData().runInControlledConcurrency(() -> {
             try {
                 if (getIrsProxy() != null) {
                     executeIrsBrokerCommand();
@@ -199,7 +201,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         && getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
                     failover();
                 } else {
-                    isStartReconstruct = true;
+                    isStartReconstruct.set(true);
                 }
             } catch (IRSUnicodeArgumentException ex) {
                 throw new IRSGenericException("UNICODE characters are not supported.", ex);
@@ -241,8 +243,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             } finally {
                 getCurrentIrsProxyData().getTriedVdssList().clear();
             }
-        }
-        if (isStartReconstruct) {
+        });
+        if (isStartReconstruct.get()) {
             startReconstruct();
         }
     }
