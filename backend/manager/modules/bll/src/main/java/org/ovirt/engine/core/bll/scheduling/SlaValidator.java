@@ -14,44 +14,68 @@ public class SlaValidator {
         return instance;
     }
 
-    public boolean hasMemoryToRunVM(VDS curVds, VM vm) {
-        boolean retVal = false;
-        if (curVds.getMemCommited() != null && curVds.getPhysicalMemMb() != null && curVds.getReservedMem() != null) {
-            double vdsCurrentMem = getVdsCurrentMemoryInUse(curVds) + vm.getMinAllocatedMem();
-            double vdsMemLimit = getVdsMemLimit(curVds);
-            log.debug("hasMemoryToRunVM: host '{}' physical vmem size is : {} MB",
+    /**
+     * Check whether a host has enough physical memory to start or receive the VM.
+     * We have to take swap into account here as it will increase the theoretical
+     * limit QEMU/kernel uses to determine whether the required memory space can
+     * be allocated (the actual memory is then allocated only when needed, but the
+     * full check is done in advance).
+     *
+     * The overcommit rules do not apply here as we can reclaim some memory back
+     * only after the VM was successfully started.
+     *
+     * @param curVds The host in question
+     * @param vm The currently scheduled VM
+     * @return true when there is enough memory, false otherwise
+     */
+    public boolean hasPhysMemoryToRunVM(VDS curVds, VM vm, int pendingMemory) {
+        if (curVds.getMemFree() != null && curVds.getGuestOverhead() != null) {
+            double vmMemRequired = vm.getMemSizeMb() + curVds.getGuestOverhead();
+            double vdsMemLimit = curVds.getMemFree() - pendingMemory;
+
+            log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
                     curVds.getName(),
-                    curVds.getPhysicalMemMb());
-            log.debug("Host Mem Conmmitted: '{}', pending vmem size is : {}, Host Guest Overhead {}, Host Reserved Mem: {}, VM Min Allocated Mem {}",
-                    curVds.getMemCommited(),
-                    curVds.getPendingVmemSize(),
-                    curVds.getGuestOverhead(),
-                    curVds.getReservedMem(),
-                    vm.getMinAllocatedMem());
-            log.debug("{} <= ???  {}", vdsCurrentMem, vdsMemLimit);
-            retVal = (vdsCurrentMem <= vdsMemLimit);
+                    vdsMemLimit,
+                    pendingMemory,
+                    curVds.getSwapFree(),
+                    vmMemRequired,
+                    curVds.getGuestOverhead());
+
+            if (curVds.getSwapFree() != null) {
+                vdsMemLimit += curVds.getSwapFree();
+            }
+
+            log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
+            return (vmMemRequired <= vdsMemLimit);
+        } else {
+            return false;
         }
-        return retVal;
     }
 
-    public int getHostAvailableMemoryLimit(VDS curVds) {
-        if (curVds.getMemCommited() != null && curVds.getPhysicalMemMb() != null && curVds.getReservedMem() != null) {
-            double vdsCurrentMem = getVdsCurrentMemoryInUse(curVds);
-            double vdsMemLimit = getVdsMemLimit(curVds);
-            return (int) (vdsMemLimit - vdsCurrentMem);
-        }
-        return 0;
-    }
+    /**
+     * Check whether a host has enough memory to host the new VM while
+     * taking the engine overcommit limits into account.
+     *
+     * Swap space and real available memory is not important here, only
+     * the theoretical sum of all VM assigned memory against the host
+     * memory multiplied by overcommit.
+     *
+     * @param curVds The host in question
+     * @param vm The currently scheduled VM
+     * @return true when there is enough memory, false otherwise
+     */
+    public boolean hasOvercommitMemoryToRunVM(VDS curVds, VM vm) {
+        double vmMemRequired = vm.getMemSizeMb() + curVds.getGuestOverhead();
+        double vdsMemLimit = curVds.getMaxSchedulingMemory();
 
-    private double getVdsMemLimit(VDS curVds) {
-        // if single vm on host. Disregard memory over commitment
-        int computedMemoryOverCommit = (curVds.getVmCount() == 0) ? 100 : curVds.getMaxVdsMemoryOverCommit();
-        return (computedMemoryOverCommit * curVds.getPhysicalMemMb() / 100.0);
-    }
+        log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Guest overhead {} MB",
+                curVds.getName(),
+                vdsMemLimit,
+                vmMemRequired,
+                curVds.getGuestOverhead());
 
-    private double getVdsCurrentMemoryInUse(VDS curVds) {
-        return curVds.getMemCommited() + curVds.getPendingVmemSize() + curVds.getGuestOverhead()
-                        + curVds.getReservedMem();
+        log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
+        return (vmMemRequired <= vdsMemLimit);
     }
 
     public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {

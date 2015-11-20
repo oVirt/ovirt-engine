@@ -39,8 +39,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Boolean kvmEnabled;
 
+    // The physical amount of memory the host has in MiB
     private Integer physicalMemMb;
 
+    // The amount of memory already occupied by running VMs in MiB
     private Integer memCommited;
 
     private Integer vmActive;
@@ -53,8 +55,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private int outgoingMigrations;
 
+    // Memory reserved for the host OS in MiB
     private Integer reservedMem;
 
+    // Memory overhead per each VM in MiB
     private Integer guestOverhead;
 
     private String softwareVersion;

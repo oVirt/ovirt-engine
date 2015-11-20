@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Represents a memory allocation that is going to be used
+ * Represents a physical memory allocation that is going to be used
  * by not yet started VM on a specified host
  */
 public class PendingMemory extends PendingResource {

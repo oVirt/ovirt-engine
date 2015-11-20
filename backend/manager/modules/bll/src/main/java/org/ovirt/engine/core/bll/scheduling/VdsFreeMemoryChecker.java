@@ -17,8 +17,8 @@ public class VdsFreeMemoryChecker {
     }
 
     public boolean evaluate(VDS vds, VM vm) {
-        // first check if this host has enough memory run the VM.
-        if (!SlaValidator.getInstance().hasMemoryToRunVM(vds, vm)) {
+        // first check if this host has enough free memory to run the VM.
+        if (!SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm)) {
 
             if (vds.getPendingVmemSize() == 0) {
                 // there are no pending VMs to run - we hit the hard limit of memory, no special treatment
@@ -34,7 +34,7 @@ public class VdsFreeMemoryChecker {
             vds = DbFacade.getInstance().getVdsDao().get(vds.getId());
 
             // check free memory on the updated host
-            return SlaValidator.getInstance().hasMemoryToRunVM(vds, vm);
+            return SlaValidator.getInstance().hasOvercommitMemoryToRunVM(vds, vm);
         }
         return true;
     }

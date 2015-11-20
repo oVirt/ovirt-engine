@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -47,15 +48,35 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
                 continue;
             }
-            if (!memoryChecker.evaluate(vds, vm)) {
-                int hostAavailableMem = SlaValidator.getInstance().getHostAvailableMemoryLimit(vds);
-                log.debug("Host '{}' has {} MB available. Insufficient memory to run the VM",
+
+            // Check physical memory needed to start / receive the VM
+            // This is probably not needed for all VMs, but QEMU might attempt full
+            // allocation without provoked and fail if there is not enough memory
+            int pendingRealMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
+
+            if (!SlaValidator.getInstance().hasPhysMemoryToRunVM(vds, vm, pendingRealMemory)) {
+                Long hostAvailableMem = vds.getMemFree() + vds.getSwapFree();
+                log.debug(
+                        "Host '{}' has insufficient memory to run the VM. Only {} MB of physical memory + swap are available.",
                         vds.getName(),
-                        hostAavailableMem);
-                messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAavailableMem));
+                        hostAvailableMem);
+
+                messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAvailableMem));
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
                 continue;
             }
+
+            // Check logical memory using overcommit, pending and guaranteed memory rules
+            if (!memoryChecker.evaluate(vds, vm)) {
+                log.debug("Host '{}' is already too close to the memory overcommitment limit. It can only accept {} MB of additional memory load.",
+                        vds.getName(),
+                        vds.getMaxSchedulingMemory());
+
+                messages.addMessage(vds.getId(), String.format("$availableMem %1$f", vds.getMaxSchedulingMemory()));
+                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
+                continue;
+            }
+
             // In case one of VM's virtual NUMA nodes (vNode) is pinned to physical NUMA nodes (pNode),
             // host will be excluded ('filter out') when:
             // * memory tune is strict (vNode memory cannot be spread across several pNodes' memory)

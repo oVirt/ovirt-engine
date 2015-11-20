@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -306,7 +307,20 @@ public class SchedulingManager implements BackendService {
 
             if (bestHost != null) {
                 getPendingResourceManager().addPending(new PendingCpuCores(bestHost, vm, vm.getNumOfCpus()));
-                getPendingResourceManager().addPending(new PendingMemory(bestHost, vm, vm.getMinAllocatedMem()));
+
+                VDS bestHostEntity = null;
+                for (VDS host: vdsList) {
+                    if (host.getId().equals(bestHost)) {
+                        bestHostEntity = host;
+                        break;
+                    }
+                }
+
+                // Will never happen (bestHost was selected from vdsList so it is always present)
+                assert bestHostEntity != null;
+
+                getPendingResourceManager().addPending(new PendingMemory(bestHost, vm, bestHostEntity.getGuestOverhead()));
+                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHost, vm, vm.getMemSizeMb()));
                 getPendingResourceManager().addPending(new PendingVM(bestHost, vm));
                 getPendingResourceManager().notifyHostManagers(bestHost);
 
@@ -356,7 +370,7 @@ public class SchedulingManager implements BackendService {
      */
     private void refreshCachedPendingValues(List<VDS> vdsList) {
         for (VDS vds: vdsList) {
-            int pendingMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
+            int pendingMemory = PendingOvercommitMemory.collectForHost(getPendingResourceManager(), vds.getId());
             int pendingCpuCount = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
 
             vds.setPendingVcpusCount(pendingCpuCount);

@@ -314,6 +314,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                     .getInt("previous_status")));
             entity.setMemAvailable(rs.getLong("mem_available"));
             entity.setMemShared(rs.getLong("mem_shared"));
+            entity.setMemFree(rs.getLong("mem_free"));
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setCpuFlags(rs.getString("cpu_flags"));
             entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));

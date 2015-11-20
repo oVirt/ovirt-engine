@@ -491,6 +491,26 @@ public class VdsDaoTest extends BaseDaoTestCase {
         assertNull(vds);
     }
 
+    /**
+     * Ensures that all VDS instances have memory information.
+     */
+    @Test
+    public void testGetAllWithMemory() {
+        List<VDS> result = dao.getAll();
+
+        for (VDS host: result) {
+            assertNotNull(host.getMemFree());
+            assertNotNull(host.getMemAvailable());
+            assertNotNull(host.getSwapFree());
+            assertNotNull(host.getSwapTotal());
+
+            assertNotEquals(0, (long)host.getMemFree());
+            assertNotEquals(0, (long)host.getMemAvailable());
+            assertNotEquals(0, (long)host.getSwapFree());
+            assertNotEquals(0, (long)host.getSwapTotal());
+        }
+    }
+
     private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
