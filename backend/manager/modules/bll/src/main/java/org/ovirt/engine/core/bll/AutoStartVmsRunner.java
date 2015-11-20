@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
@@ -250,15 +251,19 @@ public class AutoStartVmsRunner implements BackendService {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof AutoStartVmToRestart) {
-                return vmId.equals(((AutoStartVmToRestart) obj).vmId);
+            if (this == obj) {
+                return true;
             }
-            return super.equals(obj);
+            if (!(obj instanceof AutoStartVmToRestart)) {
+                return false;
+            }
+            AutoStartVmToRestart other = (AutoStartVmToRestart) obj;
+            return Objects.equals(vmId, other.vmId);
         }
 
         @Override
         public int hashCode() {
-            return vmId.hashCode();
+            return Objects.hashCode(vmId);
         }
     }
 }
