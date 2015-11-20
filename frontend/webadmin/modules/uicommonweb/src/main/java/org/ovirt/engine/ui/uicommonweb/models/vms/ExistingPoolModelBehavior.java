@@ -16,8 +16,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -90,9 +88,6 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        updateRngDevice(template.getId());
-        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-
         boolean isLatestPropertyChanged = pool.isUseLatestVersion() != (template instanceof LatestVmTemplate);
 
         // template ID changed but latest is not set, as it would cause false-positives
@@ -100,31 +95,16 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         // check if template-version selected requires to manually load the model instead of using the InstanceTypeManager
         if (isTemplateIdChangedSinceInit || isLatestPropertyChanged) {
-            if (instanceTypeManager.isActive()) {
-                deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
-                    @Override
-                    public void activated() {
-                        getInstanceTypeManager().updateAll();
-                    }
-                });
-            }
-            doChangeDefaultHost(pool.getDedicatedVmForVdsList());
-            setupWindowModelFrom(template);
+            setupWindowFromVmBase(template);
         } else {
-            if (!instanceTypeManager.isActive()) {
-                activateInstanceTypeManager();
-            } else {
-                setupWindowModelFrom(pool.getStaticData());
-            }
+            setupWindowFromVmBase(pool.getStaticData());
         }
     }
 
-    @Override
-    protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
-        super.buildModel(vmBase, callback);
-        if (!instanceTypeManager.isActive()) {
-            BuilderExecutor.build(vmBase, getModel(), new HwOnlyVmBaseToUnitBuilder());
-        }
+    public void setupWindowFromVmBase(VmBase from) {
+        doChangeDefaultHost(from.getDedicatedVmForVdsList());
+        getModel().getCustomPropertySheet().deserialize(from.getCustomProperties());
+        setupWindowModelFrom(from);
     }
 
     @Override
