@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -93,7 +94,9 @@ public class IrsProxyData {
     // and by that we caused a serialization of requests to the IRS.
     // This lock should be removed as soon as the IrsBroker is turned
     // multi threaded
-    public Object syncObj = new Object();
+    private static final boolean FAIR_LOCK_TYPE = true;
+    private final ReentrantLock syncLock = new ReentrantLock(FAIR_LOCK_TYPE);
+
 
     private final String storagePoolRefreshJobId;
     private final String domainRecoverOnHostJobId;
@@ -188,8 +191,8 @@ public class IrsProxyData {
 
     @OnTimerMethodAnnotation("updatingTimerElapsed")
     public void updatingTimerElapsed() {
-        try {
-            synchronized (syncObj) {
+        runInControlledConcurrency(() -> {
+            try {
                 if (!_disposed) {
                     StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao()
                             .get(_storagePoolId);
@@ -229,13 +232,24 @@ public class IrsProxyData {
                             }
                         }
                     }
-
                 }
+            } catch (Exception ex) {
             }
-        } catch (Exception ex) {
-        }
+        });
     }
 
+    public void runInControlledConcurrency(Runnable codeblock) {
+        try {
+            if (syncLock.isLocked() && !syncLock.isHeldByCurrentThread()) {
+                log.debug("Waiting on other task to finish ({} additional threads are queued)",
+                        syncLock.getQueueLength());
+            }
+            syncLock.lock();
+            codeblock.run();
+        } finally {
+            syncLock.unlock();
+        }
+    }
     private int _errorAttempts;
 
     private static Collection<Guid> getVdsConnectedToPool(Guid storagePoolId) {
@@ -1836,13 +1850,13 @@ public class IrsProxyData {
     private boolean _disposed;
 
     public void dispose() {
-        synchronized (syncObj) {
+        runInControlledConcurrency(() -> {
             log.info("IrsProxyData::disposing");
             resetIrs();
             getSchedulUtil().deleteJob(storagePoolRefreshJobId);
             getSchedulUtil().deleteJob(domainRecoverOnHostJobId);
             _disposed = true;
-        }
+        });
     }
 
     private static String getDomainIdTuple(Guid domainId) {
