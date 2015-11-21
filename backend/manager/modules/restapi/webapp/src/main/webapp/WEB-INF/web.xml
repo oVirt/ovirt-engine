@@ -111,6 +111,20 @@ limitations under the License.
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- The servlet that provides access to the model description: -->
+    <servlet>
+        <servlet-name>ModelServlet</servlet-name>
+        <servlet-class>org.ovirt.api.metamodel.server.ModelServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ModelServlet</servlet-name>
+        <url-pattern>/model</url-pattern>
+        <url-pattern>/model.xml</url-pattern>
+        <url-pattern>/model.json</url-pattern>
+        <url-pattern>/model.jar</url-pattern>
+        <url-pattern>/model.zip</url-pattern>
+    </servlet-mapping>
+
     <!-- confidentiality -->
     <security-constraint>
         <web-resource-collection>

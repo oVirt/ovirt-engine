@@ -20,6 +20,7 @@ limitations under the License.
 
   <deployment>
     <dependencies>
+      <module name="org.ovirt.api.metamodel-server" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.interface-common-jaxrs" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-definition" annotations="true" services="import"/>
       <module name="org.ovirt.engine.api.restapi-jaxrs" annotations="true" services="import"/>
