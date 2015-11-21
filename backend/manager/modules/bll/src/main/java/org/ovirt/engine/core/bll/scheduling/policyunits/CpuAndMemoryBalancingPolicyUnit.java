@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
@@ -29,8 +30,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,16 +227,13 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                                                 final int highUtilization,
                                                 final int cpuOverCommitDurationMinutes) {
 
-        List<VDS> overUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) >= highUtilization
-                        && p.getCpuOverCommitTimestamp() != null
-                        && (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime())
-                        >= TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)
-                        && p.getVmCount() > 0;
-            }
-        });
+        List<VDS> overUtilizedHosts = relevantHosts.stream()
+                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) >= highUtilization
+                    && p.getCpuOverCommitTimestamp() != null
+                    && (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime())
+                    >= TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)
+                    && p.getVmCount() > 0)
+                .collect(Collectors.toList());
 
         if (overUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
@@ -270,16 +266,13 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                                                  final int minVmCount,
                                                  final int cpuOverCommitDurationMinutes) {
 
-        List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < lowUtilization
-                        && p.getVmCount() >= minVmCount
-                        && (p.getCpuOverCommitTimestamp() == null
-                            || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
-                                TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes));
-            }
-        });
+        List<VDS> underUtilizedHosts = relevantHosts.stream()
+                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < lowUtilization
+                    && p.getVmCount() >= minVmCount
+                    && (p.getCpuOverCommitTimestamp() == null
+                        || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
+                            TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)))
+                .collect(Collectors.toList());
 
         if (underUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
