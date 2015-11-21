@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,8 +33,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -239,13 +238,8 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void startHostsWithPMInReboot(List<VDS> hosts) {
-        final List<VDS> hostsWithPMInReboot = LinqUtils.filter(hosts,
-                new Predicate<VDS>() {
-                    @Override
-                    public boolean eval(VDS host) {
-                        return (host.isPmEnabled() && host.getStatus() == VDSStatus.Reboot);
-                    }
-                });
+        final List<VDS> hostsWithPMInReboot = hosts.stream()
+                .filter(host -> host.isPmEnabled() && host.getStatus() == VDSStatus.Reboot).collect(Collectors.toList());
         if (hostsWithPMInReboot.size() > 0) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
