@@ -86,8 +86,6 @@ import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -605,26 +603,18 @@ public class VmHandler {
      *
      * @param interfaces
      *            - List of interfaces the VM/Template got.
-     * @param interfaceName
+     * @param candidateInterfaceName
      *            - Candidate for interface name.
      * @param messages
      *            - Messages for CanDoAction().
      * @return - True , if name is valid, false, if name already exist.
      */
     public static boolean isNotDuplicateInterfaceName(List<VmNic> interfaces,
-                                                      final String interfaceName,
+                                                      final String candidateInterfaceName,
                                                       List<String> messages) {
 
-        // Interface iface = interfaces.FirstOrDefault(i => i.name ==
-        // AddVmInterfaceParameters.Interface.name);
-        VmNic iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
-            @Override
-            public boolean eval(VmNic i) {
-                return i.getName().equals(interfaceName);
-            }
-        });
-
-        if (iface != null) {
+        boolean candidateNameUsed = interfaces.stream().anyMatch(i -> i.getName().equals(candidateInterfaceName));
+        if (candidateNameUsed) {
             messages.add(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE.name());
             return false;
         }
