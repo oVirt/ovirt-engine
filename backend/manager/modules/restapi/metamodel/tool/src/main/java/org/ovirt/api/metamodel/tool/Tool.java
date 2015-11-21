@@ -38,6 +38,8 @@ public class Tool {
     @Inject private JavaNames javaNames;
 
     // References to the objects used to generate code:
+    @Inject private XmlDescriptionGenerator xmlDescriptionGenerator;
+    @Inject private JsonDescriptionGenerator jsonDescriptionGenerator;
     @Inject private SchemaGenerator schemaGenerator;
     @Inject private JaxrsGenerator jaxrsGenerator;
 
@@ -45,6 +47,8 @@ public class Tool {
     private static final String MODEL_OPTION = "model";
     private static final String IN_SCHEMA_OPTION = "in-schema";
     private static final String OUT_SCHEMA_OPTION = "out-schema";
+    private static final String XML_OPTION = "xml";
+    private static final String JSON_OPTION = "json";
     private static final String JAVA_OPTION = "java";
 
     // Names of options for Java package names:
@@ -65,6 +69,32 @@ public class Tool {
             .argName("DIRECTORY|JAR")
             .build()
         );
+
+        // Options for the location of the generated XML and JSON model representations:
+        options.addOption(Option.builder()
+            .longOpt(XML_OPTION)
+            .desc(
+                "The location of the generated XML description of the model. If not specified then the XML " +
+                "description isn't generated.")
+            .type(File.class)
+            .required(false)
+            .hasArg(true)
+            .argName("FILE")
+            .build()
+        );
+        options.addOption(Option.builder()
+            .longOpt(JSON_OPTION)
+            .desc(
+                "The location of the generated JSON description of the model. If not specified then the JSON " +
+                "description isn't generated.")
+            .type(File.class)
+            .required(false)
+            .hasArg(true)
+            .argName("FILE")
+            .build()
+        );
+
+        // Options for the location of the input and output XML schemas:
         options.addOption(Option.builder()
             .longOpt(IN_SCHEMA_OPTION)
             .desc("The XML schema input file.")
@@ -83,6 +113,8 @@ public class Tool {
             .argName("FILE")
             .build()
         );
+
+        // Options for the names of generated Java sources:
         options.addOption(Option.builder()
             .longOpt(JAVA_OPTION)
             .desc("The directory where the generated Java source will be created.")
@@ -92,8 +124,6 @@ public class Tool {
             .argName("DIRECTORY")
             .build()
         );
-
-        // Options for the names of generated Java sources:
         options.addOption(Option.builder()
             .longOpt(JAXRS_PACKAGE_OPTION)
             .desc("The name of the Java package for JAX-RS interfaces.")
@@ -126,9 +156,31 @@ public class Tool {
 
         // Extract the locations of files and directories from the command line:
         File modelFile = (File) line.getParsedOptionValue(MODEL_OPTION);
+        File xmlFile = (File) line.getParsedOptionValue(XML_OPTION);
+        File jsonFile = (File) line.getParsedOptionValue(JSON_OPTION);
         File inSchemaFile = (File) line.getParsedOptionValue(IN_SCHEMA_OPTION);
         File outSchemaFile = (File) line.getParsedOptionValue(OUT_SCHEMA_OPTION);
         File javaDir = (File) line.getParsedOptionValue(JAVA_OPTION);
+
+        // Analyze the model files:
+        Model model = new Model();
+        ModelAnalyzer modelAnalyzer = new ModelAnalyzer();
+        modelAnalyzer.setModel(model);
+        modelAnalyzer.analyzeSource(modelFile);
+
+        // Generate the XML representation of the model:
+        if (xmlFile != null) {
+            File xmlDir = xmlFile.getParentFile();
+            FileUtils.forceMkdir(xmlDir);
+            xmlDescriptionGenerator.generate(model, xmlFile);
+        }
+
+        // Generate the JSON representation of the model:
+        if (jsonFile != null) {
+            File jsonDir = jsonFile.getParentFile();
+            FileUtils.forceMkdir(jsonDir);
+            jsonDescriptionGenerator.generate(model, jsonFile);
+        }
 
         // Extract the names of the Java packages from the command line and copy them to the object that manages them:
         String[] jaxrsPackages = line.getOptionValues(JAXRS_PACKAGE_OPTION);
@@ -141,12 +193,6 @@ public class Tool {
         if (xjcPackage != null) {
             javaPackages.setXjcPackageName(xjcPackage);
         }
-
-        // Analyze the model files:
-        Model model = new Model();
-        ModelAnalyzer modelAnalyzer = new ModelAnalyzer();
-        modelAnalyzer.setModel(model);
-        modelAnalyzer.analyzeSource(modelFile);
 
         // Generate the XML schema:
         if (inSchemaFile != null && outSchemaFile != null) {

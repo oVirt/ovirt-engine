@@ -154,6 +154,13 @@ public class Model {
     /**
      * Returns a stream that delivers the services of this model.
      */
+    public Stream<Service> services() {
+        return services.stream();
+    }
+
+    /**
+     * Returns a stream that delivers the services of this model.
+     */
     public Service getService(Name name) {
         return services.stream().filter(named(name)).findFirst().orElse(null);
     }

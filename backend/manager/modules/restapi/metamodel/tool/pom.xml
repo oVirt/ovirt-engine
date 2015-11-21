@@ -86,6 +86,13 @@ limitations under the License.
       <version>20110809</version>
     </dependency>
 
+    <!-- This is needed in order to generate JSON: -->
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+
     <!-- These log dependencies aren't needed to build, but are needed by
          other projects that execute the tool with Maven exec plugin. -->
     <dependency>

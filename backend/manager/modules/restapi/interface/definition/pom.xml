@@ -69,30 +69,43 @@
 
     <plugins>
 
-      <!-- Set properties pointing to the .jar files of the dependencies
-           so that we can use a property to locate the model sources .jar
-           file: -->
+      <!-- Add the model .jar file as a generated resource: -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
         <executions>
           <execution>
+            <id>copy-model-file</id>
+            <phase>generate-sources</phase>
             <goals>
-              <goal>properties</goal>
+              <goal>copy</goal>
             </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.ovirt.api</groupId>
+                  <artifactId>model</artifactId>
+                  <version>1.0.0-SNAPSHOT</version>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                  <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
+                  <destFileName>model.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
           </execution>
         </executions>
       </plugin>
 
-      <!-- Parse the model and generate the XML schema: -->
+      <!-- Parse the model and generate the XML and JSON descriptions, the
+           XML schema and the Java code: -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.4.0</version>
         <executions>
           <execution>
-            <id>generate-schema</id>
+            <id>generate-code</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>java</goal>
@@ -101,11 +114,15 @@
               <mainClass>org.ovirt.api.metamodel.tool.Main</mainClass>
               <arguments>
                 <argument>--model</argument>
-                <argument>${org.ovirt.api:model:jar:sources}</argument>
+                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--xml</argument>
+                <argument>${project.basedir}/target/generated-resources/model.xml</argument>
+                <argument>--json</argument>
+                <argument>${project.basedir}/target/generated-resources/model.json</argument>
                 <argument>--in-schema</argument>
                 <argument>${project.basedir}/src/main/schema/api.xsd</argument>
                 <argument>--out-schema</argument>
-                <argument>${project.basedir}/target/generated-schema/api.xsd</argument>
+                <argument>${project.basedir}/target/generated-resources/api.xsd</argument>
                 <argument>--java</argument>
                 <argument>${project.basedir}/target/generated-sources/model</argument>
                 <argument>--jaxrs-package</argument>
@@ -142,13 +159,13 @@
             <configuration>
               <generatePackage>org.ovirt.engine.api.model</generatePackage>
               <extension>true</extension>
-              <schemaDirectory>${project.basedir}/target/generated-schema</schemaDirectory>
+              <schemaDirectory>${project.basedir}/target/generated-resources</schemaDirectory>
               <schemaIncludes>
-                <include>*.xsd</include>
+                <include>api.xsd</include>
               </schemaIncludes>
               <bindingDirectory>${project.basedir}/src/main/schema</bindingDirectory>
               <bindingIncludes>
-                <include>*.xjb</include>
+                <include>api.xjb</include>
               </bindingIncludes>
             </configuration>
           </execution>
@@ -210,13 +227,14 @@
 
     <resources>
 
-      <!-- Include the regular resources directory and also the
-           XML schema: -->
+      <!-- Include the regular resources directory and also the generated
+           resources, including the descriptions of the model and the XML
+           schema: -->
       <resource>
         <directory>${project.basedir}/src/main/resources</directory>
       </resource>
       <resource>
-        <directory>${project.basedir}/target/generated-schema</directory>
+        <directory>${project.basedir}/target/generated-resources</directory>
       </resource>
 
     </resources>
