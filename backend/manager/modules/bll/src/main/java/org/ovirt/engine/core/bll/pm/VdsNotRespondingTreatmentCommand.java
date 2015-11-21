@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -225,14 +223,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {
             List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
             double hostsNumber = hosts.size();
-            List<VDS> hostsWithBrokenConnectivity = LinqUtils.filter(hosts,
-                    new Predicate<VDS>() {
-                        @Override
-                        public boolean eval(VDS a) {
-                            return (a.getStatus() == VDSStatus.Connecting || a.getStatus() == VDSStatus.NonResponsive);
-                        }
-                    });
-            double hostsWithBrokenConnectivityNumber = hostsWithBrokenConnectivity.size();
+            double hostsWithBrokenConnectivityNumber =
+                    hosts.stream().filter(h -> h.getStatus() == VDSStatus.Connecting || h.getStatus() == VDSStatus.NonResponsive).count();
             percents = (hostsWithBrokenConnectivityNumber/hostsNumber)*100.0;
             result = (percents >= cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
         }
