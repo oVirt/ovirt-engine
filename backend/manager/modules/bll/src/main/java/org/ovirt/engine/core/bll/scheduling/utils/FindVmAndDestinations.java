@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -12,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,17 +102,12 @@ public class FindVmAndDestinations {
     private List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
         List<VM> vmsFromDB = vmDao.getAllRunningForVds(hostId);
 
-        List<VM> vms = LinqUtils.filter(vmsFromDB, new Predicate<VM>() {
-            @Override
-            public boolean eval(VM v) {
-                // The VM has to allow migrations and...
-                return v.getMigrationSupport() == MigrationSupport.MIGRATABLE
+        return vmsFromDB.stream()
+                .filter(
+                        vm -> vm.getMigrationSupport() == MigrationSupport.MIGRATABLE
                         // must not be pinned to the host
-                        && v.getDedicatedVmForVdsList().contains(hostId) == false;
-            }
-        });
-
-        return vms;
+                        && !vm.getDedicatedVmForVdsList().contains(hostId)
+                ).collect(Collectors.toList());
     }
 
     /**
