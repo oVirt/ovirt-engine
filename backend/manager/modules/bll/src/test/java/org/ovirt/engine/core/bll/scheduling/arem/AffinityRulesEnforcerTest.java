@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +34,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AffinityRulesEnforcerTest {
@@ -242,11 +241,7 @@ public class AffinityRulesEnforcerTest {
         ag.setPositive(isPositive);
         ag.setClusterId(vdsGroup.getId());
         ag.setEnforcing(true);
-        ag.setEntityIds(LinqUtils.transformToList(Arrays.asList(vmList), new Function<VM, Guid>() {
-            @Override public Guid eval(VM vm) {
-                return vm.getId();
-            }
-        }));
+        ag.setEntityIds(Arrays.stream(vmList).map(VM::getId).collect(Collectors.toList()));
         return ag;
     }
 
