@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
@@ -19,8 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,16 +155,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     private List<VM> getMigrableVmsRunningOnVds(final Guid hostId, Map<Guid, List<VM>> hostId2HaVmMapping) {
-        List<VM> vms = hostId2HaVmMapping.get(hostId);
-
-        vms = LinqUtils.filter(vms, new Predicate<VM>() {
-            @Override
-            public boolean eval(VM v) {
-                return v.getMigrationSupport() == MigrationSupport.MIGRATABLE;
-            }
-        });
-
-        return vms;
+        return hostId2HaVmMapping.get(hostId).stream()
+                .filter(v -> v.getMigrationSupport() == MigrationSupport.MIGRATABLE).collect(Collectors.toList());
     }
-
 }
