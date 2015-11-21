@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -15,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,15 +205,7 @@ public class HaReservationHandling {
             return Collections.emptyMap();
         }
 
-        vms = LinqUtils.filter(vms, new Predicate<VM>() {
-            @Override
-            public boolean eval(VM v) {
-                return v.isAutoStartup();
-            }
-        });
-
+        vms = vms.stream().filter(VM::isAutoStartup).collect(Collectors.toList());
         return mapVmToHost(vms);
-
     }
-
 }
