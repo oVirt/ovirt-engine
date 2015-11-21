@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -27,8 +28,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,21 +208,19 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         /* We do have enough empty hosts to put something to maintenance */
         else if (requiredReserve < emptyHosts.size()) {
             /* Find hosts with automatic PM enabled that are not the current SPM */
-            List<VDS> hostsWithAutoPM = LinqUtils.filter(emptyHosts, new Predicate<VDS>() {
-                @Override
-                public boolean eval(VDS vds) {
-                    return !vds.isDisablePowerManagementPolicy()
-                            && vds.getSpmStatus() != VdsSpmStatus.SPM
-                            && vds.isPmEnabled();
-                }
-            });
 
-            if (hostsWithAutoPM.isEmpty()) {
+            Optional<VDS> hostsWithAutoPM = emptyHosts.stream()
+                    .filter(vds -> !vds.isDisablePowerManagementPolicy()
+                                && vds.getSpmStatus() != VdsSpmStatus.SPM
+                                && vds.isPmEnabled()
+                    ).findFirst();
+
+            if (!hostsWithAutoPM.isPresent()) {
                 log.info("Cluster '{}' does have too many spare hosts, but none can be put to maintenance.",
                         cluster.getName());
                 return null;
             } else {
-                return new Pair<>(hostsWithAutoPM.get(0), VDSStatus.Maintenance);
+                return new Pair<>(hostsWithAutoPM.get(), VDSStatus.Maintenance);
             }
         }
 
