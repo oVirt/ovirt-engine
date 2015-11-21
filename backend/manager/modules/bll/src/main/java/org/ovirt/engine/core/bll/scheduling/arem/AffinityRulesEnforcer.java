@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,8 +24,6 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,12 +294,8 @@ public class AffinityRulesEnforcer {
     }
 
     public List<AffinityGroup> getAllHardAffinityGroups(VDSGroup vdsGroup) {
-        return LinqUtils.filter(affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroup.getId()),
-                new Predicate<AffinityGroup>() {
-                    @Override public boolean eval(AffinityGroup affinityGroup) {
-                        return affinityGroup.isEnforcing();
-                    }
-                });
+        return affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroup.getId())
+                .stream().filter(AffinityGroup::isEnforcing).collect(Collectors.toList());
     }
 
     private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
