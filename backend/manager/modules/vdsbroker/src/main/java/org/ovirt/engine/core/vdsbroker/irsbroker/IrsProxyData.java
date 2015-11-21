@@ -662,7 +662,7 @@ public class IrsProxyData {
             @Override
             public void run() {
                 try {
-                    if (DbFacade.getInstance().isStoragePoolMasterUp(_storagePoolId)) {
+                    if (isMasterDomainUp())  {
                         ResourceManager.getInstance()
                                 .getEventListener()
                                 .storagePoolUpEvent(storagePool);
@@ -672,6 +672,12 @@ public class IrsProxyData {
                     log.debug("Exception", exp);
                 }
 
+            }
+
+            private boolean isMasterDomainUp() {
+                return DbFacade.getInstance().getStorageDomainDao().
+                        getStorageDomains(_storagePoolId, StorageDomainType.Master).stream()
+                        .anyMatch(d -> d.getStatus() == StorageDomainStatus.Active || d.getStatus() == StorageDomainStatus.Unknown);
             }
         });
     }

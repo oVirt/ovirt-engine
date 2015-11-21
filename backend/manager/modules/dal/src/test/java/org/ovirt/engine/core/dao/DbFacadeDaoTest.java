@@ -20,10 +20,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -71,8 +68,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     private static final int NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM = 2;
     private static final int NUM_OF_USERS_IN_FIXTURES = 4;
-    private static final Guid STORAGE_POOL_WITH_MASTER_UP = new Guid("386BFFD1-E7ED-4B08-BCE9-D7DF10F8C9A0");
-    private static final Guid STORAGE_POOL_WITH_MASTER_DOWN = new Guid("72B9E200-F48B-4687-83F2-62828F249A47");
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
 
     /**
@@ -184,29 +179,6 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     public void testGetSystemStatisticsValueWithoutSpecifiedStatus() {
         int numOfUsers = dbFacade.getSystemStatisticsValue("User", "");
         assertTrue(numOfUsers == NUM_OF_USERS_IN_FIXTURES);
-    }
-
-    @Test
-    public void testIsStoragePoolMasterUpWhenDown() {
-        StoragePool storagePoolToCheck = dbFacade.getStoragePoolDao().get(STORAGE_POOL_WITH_MASTER_DOWN);
-        assertNotNull(storagePoolToCheck);
-
-        Guid masterStorageDomainGuid =
-                dbFacade.getStorageDomainDao().getMasterStorageDomainIdForPool(STORAGE_POOL_WITH_MASTER_DOWN);
-        assertNotNull(masterStorageDomainGuid);
-
-        StoragePoolIsoMap storagePoolIsoMapToCheck = dbFacade.getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                masterStorageDomainGuid, storagePoolToCheck.getId()));
-        assertNotNull(storagePoolIsoMapToCheck);
-
-        storagePoolIsoMapToCheck.setStatus(StorageDomainStatus.Inactive);
-        dbFacade.getStoragePoolIsoMapDao().update(storagePoolIsoMapToCheck);
-        assertFalse(dbFacade.isStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_DOWN));
-    }
-
-    @Test
-    public void testIsStoragePoolMasterUpWhenUp() {
-        assertTrue(dbFacade.isStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_UP));
     }
 
     @Test

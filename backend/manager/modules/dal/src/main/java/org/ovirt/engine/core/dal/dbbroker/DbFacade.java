@@ -27,11 +27,8 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
@@ -179,8 +176,6 @@ import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -350,18 +345,6 @@ public class DbFacade {
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
         return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
-    }
-
-    public boolean isStoragePoolMasterUp(Guid storagePoolId) {
-        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
-        StorageDomain master = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
-            @Override
-            public boolean eval(StorageDomain storage_domains) {
-                return storage_domains.getStorageDomainType() == StorageDomainType.Master;
-            }
-        });
-        return master != null
-                && (master.getStatus() == StorageDomainStatus.Active || master.getStatus() == StorageDomainStatus.Unknown);
     }
 
     public Integer getSystemStatisticsValue(String entity) {
