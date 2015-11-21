@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -10,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +69,8 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
             return null;
         }
 
-        return LinqUtils.filter(candidateHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                return getOccupiedVmSlots(p, parameters) >= worstVdsOccupiedVmSlots;
-            }
-        });
+        return candidateHosts.stream().filter(p -> getOccupiedVmSlots(p, parameters) >= worstVdsOccupiedVmSlots)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -86,13 +81,11 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
         final VDS worstVDS = getWorstVDS(candidateHosts, parameters);
         final int worstVdsOccupiedVmSlots = getOccupiedVmSlots(worstVDS, parameters);
 
-        List<VDS> underUtilizedHosts = LinqUtils.filter(candidateHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                int distance = worstVdsOccupiedVmSlots - getOccupiedVmSlots(p, parameters);
-                return distance >= migrationThreshold;
-            }
-        });
+        List<VDS> underUtilizedHosts = candidateHosts.stream()
+                .filter(p -> {
+                    int distance = worstVdsOccupiedVmSlots - getOccupiedVmSlots(p, parameters);
+                    return distance >= migrationThreshold;
+                }).collect(Collectors.toList());
 
         if (underUtilizedHosts.size() == 0) {
             log.warn("There is no host with less than {} running guests",
