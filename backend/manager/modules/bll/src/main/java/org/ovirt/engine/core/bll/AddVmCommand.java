@@ -100,8 +100,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.utils.linq.All;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -351,9 +349,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean shouldCheckSpaceInStorageDomains() {
-        return !getImagesToCheckDestinationStorageDomains().isEmpty()
-                && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
-                        .getImageId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+        return !getImagesToCheckDestinationStorageDomains().stream().map(DiskImage::getImageId)
+                .findFirst().orElse(VmTemplateHandler.BLANK_VM_TEMPLATE_ID).equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
     }
 
     protected void setDefaultMigrationPolicy() {
