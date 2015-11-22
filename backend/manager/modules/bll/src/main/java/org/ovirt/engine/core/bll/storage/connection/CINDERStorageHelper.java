@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -108,6 +111,28 @@ public class CINDERStorageHelper extends StorageHelperBase {
             connectSucceeded &= handleLibvirtSecrets(cmdContext, parameters.getVds(), parameters.getStoragePoolId());
         }
         return connectSucceeded;
+    }
+
+    /**
+     * A utility method for commiting a previewed snapshot. The method filters out all the snapshots which will not be
+     * part of volume chain once the snapshot get commited, adn returns a list of redundant snapshots that should be
+     * deleted.
+     *
+     * @param diskId
+     *            - Disk id to fetch all volumes related to it.
+     * @param activeVolumeId
+     *            - The active volume id of the disk which about to get commited
+     * @return - A list of redundant snapshots that should be deleted.
+     */
+    public static List<Guid> getRedundantVolumesToDeleteAfterCommitSnapshot(Guid diskId, Guid activeVolumeId) {
+        List<Guid> redundantSnapshotIdsToDelete = new ArrayList<>();
+
+        // Fetch all the relevant snapshots to remove.
+        List<DiskImage> crucialSnapshotsChain = getDiskImageDao().getAllSnapshotsForLeaf(activeVolumeId);
+        List<DiskImage> allVolumesInCinderDisk = getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+        allVolumesInCinderDisk.removeAll(crucialSnapshotsChain);
+        redundantSnapshotIdsToDelete.addAll(allVolumesInCinderDisk.stream().map(DiskImage::getVmSnapshotId).collect(Collectors.toList()));
+        return redundantSnapshotIdsToDelete;
     }
 
     public static Pair<Boolean, EngineFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
@@ -319,5 +344,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private static DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    private static DiskImageDao getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
     }
 }
