@@ -31,87 +31,50 @@ public class GlusterGeoRepUtil {
         final List<Guid> existingSessionSlavesIds = getSessionSlaveVolumeIds();
 
 
-        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_BE_UP, new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                return slaveVolume.getStatus() == GlusterStatus.UP;
-            }
-        });
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_BE_UP, slaveVolume -> slaveVolume.getStatus() == GlusterStatus.UP);
 
-        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER, new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                return ! masterVolume.getClusterId().equals(slaveVolume.getClusterId());
-            }
-        });
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER, slaveVolume -> ! masterVolume.getClusterId().equals(slaveVolume.getClusterId()));
 
-        final Predicate<GlusterVolumeEntity> nonNullSlaveSizePredicate = new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                return slaveVolume.getAdvancedDetails().getCapacityInfo() != null;
-            }
-        };
+        final Predicate<GlusterVolumeEntity> nonNullSlaveSizePredicate = slaveVolume -> slaveVolume.getAdvancedDetails().getCapacityInfo() != null;
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SIZE_TO_BE_AVAILABLE, nonNullSlaveSizePredicate);
 
-        final Predicate<GlusterVolumeEntity> nonNullMasterSizePredicate = new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                return masterVolume.getAdvancedDetails().getCapacityInfo() != null;
-            }
-        };
+        final Predicate<GlusterVolumeEntity> nonNullMasterSizePredicate = slaveVolume -> masterVolume.getAdvancedDetails().getCapacityInfo() != null;
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.MASTER_VOLUME_SIZE_TO_BE_AVAILABLE, nonNullMasterSizePredicate);
 
-        Predicate<GlusterVolumeEntity> masterSlaveSizePredicate = new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                boolean eligible = nonNullSlaveSizePredicate.test(slaveVolume) && nonNullMasterSizePredicate.test(masterVolume);
-                if (eligible) {
-                    eligible = slaveVolume.getAdvancedDetails().getCapacityInfo().getTotalSize() >= masterVolume.getAdvancedDetails().getCapacityInfo().getTotalSize();
-                }
-                return eligible;
+        Predicate<GlusterVolumeEntity> masterSlaveSizePredicate = slaveVolume -> {
+            boolean eligible = nonNullSlaveSizePredicate.test(slaveVolume) && nonNullMasterSizePredicate.test(masterVolume);
+            if (eligible) {
+                eligible = slaveVolume.getAdvancedDetails().getCapacityInfo().getTotalSize() >= masterVolume.getAdvancedDetails().getCapacityInfo().getTotalSize();
             }
+            return eligible;
         };
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SIZE_SHOULD_BE_GREATER_THAN_MASTER_VOLUME_SIZE, masterSlaveSizePredicate);
 
-        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION, new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                return !existingSessionSlavesIds.contains(slaveVolume.getId());
-            }
-        });
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION, slaveVolume -> !existingSessionSlavesIds.contains(slaveVolume.getId()));
 
-        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH, new Predicate<GlusterVolumeEntity>() {
-            @Override
-            public boolean test(GlusterVolumeEntity slaveVolume) {
-                VdsGroupDao vdsGroupDao = getVdsGroupDao();
-                Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
-                Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
-                return masterCompatibilityVersion.equals(slaveCompatibilityVersion);
-            }
+        eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH, slaveVolume -> {
+            VdsGroupDao vdsGroupDao = getVdsGroupDao();
+            Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
+            Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
+            return masterCompatibilityVersion.equals(slaveCompatibilityVersion);
         });
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.NO_UP_SLAVE_SERVER,
-                new Predicate<GlusterVolumeEntity>() {
-                    @Override
-                    public boolean test(GlusterVolumeEntity slaveVolume) {
-                        Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
-                        if (slaveUpserverId == null) {
-                            return false;
-                        }
-                        return true;
+                slaveVolume -> {
+                    Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
+                    if (slaveUpserverId == null) {
+                        return false;
                     }
+                    return true;
                 });
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_TO_BE_EMPTY,
-                new Predicate<GlusterVolumeEntity>() {
-                    @Override
-                    public boolean test(GlusterVolumeEntity slaveVolume) {
-                        Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
-                        if(slaveUpserverId == null) {
-                            return false;
-                        }
-                        return checkEmptyGlusterVolume(slaveUpserverId, slaveVolume.getName());
+                slaveVolume -> {
+                    Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
+                    if(slaveUpserverId == null) {
+                        return false;
                     }
+                    return checkEmptyGlusterVolume(slaveUpserverId, slaveVolume.getName());
                 });
 
         return eligibilityPredicates;
