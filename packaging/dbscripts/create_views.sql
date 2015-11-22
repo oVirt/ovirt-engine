@@ -2551,7 +2551,7 @@ CREATE OR REPLACE VIEW user_vds_groups_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vds_groups_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions view for Data Center
 -- The user has permissions on a data center
@@ -2617,7 +2617,7 @@ CREATE OR REPLACE VIEW user_storage_pool_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_storage_pool_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions for Storage Domains
 -- The user has permissions on a storage domain
@@ -2695,7 +2695,7 @@ CREATE OR REPLACE VIEW user_storage_domain_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_storage_domain_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on Hosts
 -- The user has permissions on a host
@@ -2743,7 +2743,7 @@ CREATE OR REPLACE VIEW user_vds_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vds_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on VM Pools
 -- The user has permissions on the pool
@@ -2810,7 +2810,7 @@ CREATE OR REPLACE VIEW user_vm_pool_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vm_pool_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on Templates
 -- The user has permissions on the template
@@ -2872,7 +2872,7 @@ CREATE OR REPLACE VIEW user_vm_template_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vm_template_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on VMs
 -- The user has permission on the VM
@@ -2929,7 +2929,7 @@ CREATE OR REPLACE VIEW user_vm_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vm_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on disk
 -- The user has permissions on the disk directly
@@ -3010,7 +3010,7 @@ CREATE OR REPLACE VIEW user_disk_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_disk_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on permissions
 CREATE OR REPLACE VIEW user_permissions_permissions_view (
@@ -3154,7 +3154,7 @@ CREATE OR REPLACE VIEW user_vnic_profile_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_vnic_profile_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on Networks
 CREATE OR REPLACE VIEW user_network_permissions_view_base (
@@ -3178,7 +3178,7 @@ CREATE OR REPLACE VIEW user_network_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_network_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 -- Permissions on disk profiles
 -- The user has permissions on the disk profile directly
@@ -3201,7 +3201,7 @@ CREATE OR REPLACE VIEW user_disk_profile_permissions_view (
 SELECT DISTINCT entity_id,
     user_id
 FROM user_disk_profile_permissions_view_base NATURAL
-INNER JOIN engine_session_user_flat_groups;
+ JOIN engine_session_user_flat_groups;
 
 CREATE OR REPLACE VIEW gluster_volumes_view AS
 
