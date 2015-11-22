@@ -83,8 +83,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -490,15 +488,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
             for (final VmNic iface : interfaces) {
                 final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-                Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                    @Override
-                    public boolean eval(Network n) {
-                        return ObjectUtils.equals(n.getId(), network.getId());
-                    }
-                });
+                boolean networkFound = networks.stream().anyMatch(n -> ObjectUtils.equals(n.getId(), network.getId()));
 
                 // if network not exists in cluster we remove the network from the interface
-                if (net == null) {
+                if (!networkFound) {
                     iface.setVnicProfileId(null);
                     getVmNicDao().update(iface);
                 }
