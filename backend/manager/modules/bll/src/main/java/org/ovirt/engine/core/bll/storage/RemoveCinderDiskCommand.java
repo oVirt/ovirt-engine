@@ -66,6 +66,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         }
         getParameters().setRemovedVolume(getDisk());
         getParameters().setStorageDomainId(getDisk().getStorageIds().get(0));
+        getParameters().setUpdateSnapshot(true);
         if (getDisk().getImageStatus() == ImageStatus.ILLEGAL) {
             handleRemoveCinderVolumesForIllegal();
             setCommandStatus(CommandStatus.SUCCEEDED);

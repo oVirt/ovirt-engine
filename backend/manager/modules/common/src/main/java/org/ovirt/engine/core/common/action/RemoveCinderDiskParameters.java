@@ -14,6 +14,7 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
     private int removedVolumeIndex = 0;
     private Guid vmId;
     private Guid storageDomainId;
+    private boolean updateSnapshot;
 
     public RemoveCinderDiskParameters() {
     }
@@ -57,6 +58,14 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
 
     public void setRemovedVolumeIndex(int removedVolumeIndex) {
         this.removedVolumeIndex = removedVolumeIndex;
+    }
+
+    public boolean isUpdateSnapshot() {
+        return updateSnapshot;
+    }
+
+    public void setUpdateSnapshot(boolean updateSnapshot) {
+        this.updateSnapshot = updateSnapshot;
     }
 
     public Guid getVmId() {
