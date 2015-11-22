@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -28,7 +30,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 /** A Validator for various VM canDoAction needs */
 public class VmValidator {
@@ -234,17 +235,14 @@ public class VmValidator {
         for (VM vm : vms) {
             List<VmNetworkInterface> vnics =
                     getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-            List<VmNetworkInterface> passthroughVnics =
-                    LinqUtils.filter(vnics, new org.ovirt.engine.core.utils.linq.Predicate<VmNetworkInterface>() {
-                        public boolean eval(VmNetworkInterface vnic) {
-                            return vnic.isPassthrough();
-                        }
-                    });
 
-            Collection<String> replacements = ReplacementUtils.replaceWithNameable("interfaces", passthroughVnics);
+            List<String> passthroughVnicNames =
+                    vnics.stream().filter(VmNic::isPassthrough).map(VmNic::getName).collect(Collectors.toList());
+
+            Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
             replacements.add(String.format("$vmName %s", vm.getName()));
 
-            if (!passthroughVnics.isEmpty()) {
+            if (!passthroughVnicNames.isEmpty()) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
                         replacements);
             }
