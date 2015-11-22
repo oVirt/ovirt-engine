@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
@@ -76,11 +76,7 @@ public class GlusterGeoRepUtil {
 
     private List<Guid> getSessionSlaveVolumeIds() {
         List<GlusterGeoRepSession> existingSessions = getGeoRepDao().getAllSessions();
-        List<Guid> sessionSlavesIds = new ArrayList<>();
-        for(GlusterGeoRepSession currentSession : existingSessions) {
-            sessionSlavesIds.add(currentSession.getSlaveVolumeId());
-        }
-        return sessionSlavesIds;
+        return existingSessions.stream().map(GlusterGeoRepSession::getSlaveVolumeId).collect(Collectors.toList());
     }
 
     public boolean checkEmptyGlusterVolume(Guid slaveUpserverId, String slaveVolumeName) {
