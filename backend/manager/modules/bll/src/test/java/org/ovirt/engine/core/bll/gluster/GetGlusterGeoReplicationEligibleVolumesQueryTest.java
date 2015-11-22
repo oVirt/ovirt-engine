@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -45,7 +48,9 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     @Before
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
-        doReturn(getExpectedVolumes()).when(getQuery()).getEligibleVolumes(baseTest.getMasterVolume());
+        doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any(Guid.class));
+        doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(Guid.class), anyString());
+        doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(vdsGroupDao).when(getQuery()).getVdsGroupDao();
         baseTest.setupMock(geoRepUtil, geoRepDao, vdsGroupDao);

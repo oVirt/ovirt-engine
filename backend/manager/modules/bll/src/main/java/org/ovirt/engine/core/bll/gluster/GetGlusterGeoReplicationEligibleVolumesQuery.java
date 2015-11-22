@@ -40,7 +40,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
         return possiblyEligibleVolumes;
     }
 
-    private List<GlusterVolumeEntity> getAllGlusterVolumesWithMasterCompatibleVersion(Guid masterVolumeId) {
+    protected List<GlusterVolumeEntity> getAllGlusterVolumesWithMasterCompatibleVersion(Guid masterVolumeId) {
         GlusterVolumeEntity masterVolume = getGlusterVolumeDao().getById(masterVolumeId);
         VDSGroup masterCluster = getVdsGroupDao().get(masterVolume.getClusterId());
         List<VDSGroup> clusters = getVdsGroupDao().getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
