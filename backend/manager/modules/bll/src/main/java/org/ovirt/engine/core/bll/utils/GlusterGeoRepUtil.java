@@ -62,19 +62,13 @@ public class GlusterGeoRepUtil {
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.NO_UP_SLAVE_SERVER,
                 slaveVolume -> {
                     Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
-                    if (slaveUpserverId == null) {
-                        return false;
-                    }
-                    return true;
+                    return slaveUpserverId != null;
                 });
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_TO_BE_EMPTY,
                 slaveVolume -> {
                     Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
-                    if(slaveUpserverId == null) {
-                        return false;
-                    }
-                    return checkEmptyGlusterVolume(slaveUpserverId, slaveVolume.getName());
+                    return slaveUpserverId != null && checkEmptyGlusterVolume(slaveUpserverId, slaveVolume.getName());
                 });
 
         return eligibilityPredicates;
@@ -95,10 +89,7 @@ public class GlusterGeoRepUtil {
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
                                 new GlusterVolumeVDSParameters(slaveUpserverId, slaveVolumeName));
-        if (!returnValue.getSucceeded()) {
-            return false;
-        }
-        return (boolean) returnValue.getReturnValue();
+        return returnValue.getSucceeded() && (boolean) returnValue.getReturnValue();
     }
 
     public Guid getUpServerId(Guid clusterId) {
