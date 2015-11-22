@@ -99,7 +99,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     public void testGetEligibleVolumeListQuery() {
         doReturn(new IdQueryParameters(baseTest.getMASTER_VOLUME_ID())).when(getQuery()).getParameters();
         getQuery().executeQueryCommand();
-        List<GlusterVolumeEntity> returnValue = (List<GlusterVolumeEntity>)getQuery().getQueryReturnValue().getReturnValue();
+        List<GlusterVolumeEntity> returnValue = getQuery().getQueryReturnValue().getReturnValue();
         List<GlusterVolumeEntity> expectedVolumes = getExpectedVolumes();
         assertEquals(expectedVolumes.size(), returnValue.size());
         assertTrue(checkEquals(returnValue, expectedVolumes));
