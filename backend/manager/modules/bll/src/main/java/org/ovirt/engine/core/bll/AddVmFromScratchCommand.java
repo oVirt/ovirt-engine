@@ -66,7 +66,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
                                 @Override
                                 public boolean eval(StorageDomain a) {
                                     return (!a.getStorageDomainType().isIsoOrImportExportDomain())
-                                            && (a.getStatus() != null) && (a.getStatus() == StorageDomainStatus.Active);
+                                            && (a.getStatus() == StorageDomainStatus.Active);
                                 }
                             });
             storageDomainId = (storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty;
