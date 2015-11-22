@@ -34,10 +34,8 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
     public List<GlusterVolumeEntity> getEligibleVolumes(GlusterVolumeEntity masterVolume) {
         List<GlusterVolumeEntity> possiblyEligibleVolumes = getAllGlusterVolumesWithMasterCompatibleVersion(masterVolume.getId());
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMap = getGeoRepUtilInstance().getEligibilityPredicates(masterVolume);
-        for(Predicate<GlusterVolumeEntity> eligibilityPredicateMapEntries : eligibilityPredicateMap.values()) {
-            possiblyEligibleVolumes = possiblyEligibleVolumes.stream().filter(eligibilityPredicateMapEntries).collect(Collectors.toList());
-        }
-        return possiblyEligibleVolumes;
+        Predicate<GlusterVolumeEntity> andPredicate = eligibilityPredicateMap.values().stream().reduce(Predicate::and).orElse(t->true);
+        return possiblyEligibleVolumes.stream().filter(andPredicate).collect(Collectors.toList());
     }
 
     protected List<GlusterVolumeEntity> getAllGlusterVolumesWithMasterCompatibleVersion(Guid masterVolumeId) {
