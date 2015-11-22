@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -53,8 +54,6 @@ import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.springframework.util.CollectionUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
@@ -181,12 +180,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }
 
-        pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
-            @Override
-            public boolean eval(T a) {
-                return a.getDiskInterface() == DiskInterface.VirtIO;
-            }
-        }).size();
+        pciInUse += disks.stream().filter(a-> a.getDiskInterface() == DiskInterface.VirtIO).count();
 
         // VirtIO SCSI controller requires one PCI slot
         pciInUse += virtioScsiEnabled ? 1 : 0;
@@ -208,30 +202,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
-        else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<T>() {
-            @Override
-            public boolean eval(T a) {
-                return a.getDiskInterface() == DiskInterface.IDE;
-            }
-        }).size()) {
+        else if (MAX_IDE_SLOTS < disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
         }
-        else if (MAX_VIRTIO_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
-            @Override
-            public boolean eval(T a) {
-                return a.getDiskInterface() == DiskInterface.VirtIO_SCSI;
-            }
-        }).size()) {
+        else if (MAX_VIRTIO_SCSI_DISKS <
+                disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
         }
-        else if (MAX_SPAPR_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
-            @Override
-            public boolean eval(T a) {
-                return a.getDiskInterface() == DiskInterface.SPAPR_VSCSI;
-            }
-        }).size()) {
+        else if (MAX_SPAPR_SCSI_DISKS <
+                disks.stream().filter(a -> a.getDiskInterface() == DiskInterface.SPAPR_VSCSI).count()) {
             result = false;
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
         }
@@ -345,14 +326,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (guids.size() == 6) {
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
-            boolean postZero =
-                    LinqUtils.filter(getDiskDao().getAllForVm(getVm().getId()),
-                            new Predicate<Disk>() {
-                                @Override
-                                public boolean eval(Disk disk) {
-                                    return disk.isWipeAfterDelete();
-                                }
-                            }).size() > 0;
+            boolean postZero = getDiskDao().getAllForVm(getVm().getId()).stream().anyMatch(BaseDisk::isWipeAfterDelete);
 
             Guid taskId1 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_PRIMARY_IMAGE_TASK_KEY);
 
