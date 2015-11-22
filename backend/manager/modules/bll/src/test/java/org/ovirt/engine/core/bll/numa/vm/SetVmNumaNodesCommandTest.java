@@ -14,6 +14,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,8 +37,6 @@ import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SetVmNumaNodesCommandTest extends BaseCommandTest {
 
@@ -73,11 +72,7 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
         existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
-        existingNumaNodeIds = LinqUtils.transformToList(existingNumaNodes, new Function<VmNumaNode, Guid>() {
-            @Override public Guid eval(VmNumaNode vmNumaNode) {
-                return vmNumaNode.getId();
-            }
-        });
+        existingNumaNodeIds = existingNumaNodes.stream().map(VmNumaNode::getId).collect(Collectors.toList());
         newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
