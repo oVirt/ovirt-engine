@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class HostNetworkAttachmentsPersister {
 
@@ -131,13 +129,10 @@ public class HostNetworkAttachmentsPersister {
 
     private NetworkAttachment getNetworkAttachmentRelatedToNetwork(List<NetworkAttachment> networkAttachments,
         final Network network) {
-        return LinqUtils.firstOrNull(networkAttachments,
-            new Predicate<NetworkAttachment>() {
-                @Override
-                public boolean eval(NetworkAttachment networkAttachment) {
-                    return network.getId().equals(networkAttachment.getNetworkId());
-                }
-            });
+        return networkAttachments.stream()
+                .filter(networkAttachment -> network.getId().equals(networkAttachment.getNetworkId()))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
