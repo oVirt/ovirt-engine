@@ -22,8 +22,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * This class adds a thinly provisioned VM based on disks list.
@@ -58,16 +56,11 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     public Guid getStorageDomainId() {
         Guid storageDomainId = super.getStorageDomainId();
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
-            List<StorageDomain> storagesInPool =
-                    LinqUtils.filter(getStorageDomainDao().getAllForStoragePool(getStoragePoolId()),
-                            new Predicate<StorageDomain>() {
-                                @Override
-                                public boolean eval(StorageDomain a) {
-                                    return (!a.getStorageDomainType().isIsoOrImportExportDomain())
-                                            && (a.getStatus() == StorageDomainStatus.Active);
-                                }
-                            });
-            storageDomainId = (storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty;
+            storageDomainId =
+                    getStorageDomainDao().getAllForStoragePool(getStoragePoolId()).stream().filter(
+                            a -> (!a.getStorageDomainType().isIsoOrImportExportDomain())
+                                    && (a.getStatus() == StorageDomainStatus.Active))
+                            .map(StorageDomain::getId).findFirst().orElse(Guid.Empty);
 
             getParameters().setStorageDomainId(storageDomainId);
             setStorageDomainId(storageDomainId);
