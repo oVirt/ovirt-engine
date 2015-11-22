@@ -55,7 +55,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     }
 
     private List<GlusterVolumeEntity> getVolumesByClusterId() {
-        List<GlusterVolumeEntity> volumeInCluster = new ArrayList<GlusterVolumeEntity>();
+        List<GlusterVolumeEntity> volumeInCluster = new ArrayList<>();
 
         volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 10000L, 0L)));
         volumeInCluster.add(baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_2_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.DOWN, new GlusterVolumeSizeInfo(4000L, 0L, 0L)));
@@ -66,7 +66,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     }
 
     private List<VDSGroup> getClustersByServiceAndCompatibilityVersion() {
-        List<VDSGroup> possiblyEligibleClusters = new ArrayList<VDSGroup>();
+        List<VDSGroup> possiblyEligibleClusters = new ArrayList<>();
 
         VDSGroup possiblyEligibleVDSGroup = new VDSGroup();
         possiblyEligibleVDSGroup.setId(baseTest.getSLAVE_CLUSTER_ID());
