@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.inject.Singleton;
 
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 public class GlusterGeoRepUtil {
@@ -33,21 +33,21 @@ public class GlusterGeoRepUtil {
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_BE_UP, new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 return slaveVolume.getStatus() == GlusterStatus.UP;
             }
         });
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER, new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 return ! masterVolume.getClusterId().equals(slaveVolume.getClusterId());
             }
         });
 
         final Predicate<GlusterVolumeEntity> nonNullSlaveSizePredicate = new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 return slaveVolume.getAdvancedDetails().getCapacityInfo() != null;
             }
         };
@@ -55,7 +55,7 @@ public class GlusterGeoRepUtil {
 
         final Predicate<GlusterVolumeEntity> nonNullMasterSizePredicate = new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 return masterVolume.getAdvancedDetails().getCapacityInfo() != null;
             }
         };
@@ -63,8 +63,8 @@ public class GlusterGeoRepUtil {
 
         Predicate<GlusterVolumeEntity> masterSlaveSizePredicate = new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
-                boolean eligible = nonNullSlaveSizePredicate.eval(slaveVolume) && nonNullMasterSizePredicate.eval(masterVolume);
+            public boolean test(GlusterVolumeEntity slaveVolume) {
+                boolean eligible = nonNullSlaveSizePredicate.test(slaveVolume) && nonNullMasterSizePredicate.test(masterVolume);
                 if (eligible) {
                     eligible = slaveVolume.getAdvancedDetails().getCapacityInfo().getTotalSize() >= masterVolume.getAdvancedDetails().getCapacityInfo().getTotalSize();
                 }
@@ -75,14 +75,14 @@ public class GlusterGeoRepUtil {
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION, new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 return !existingSessionSlavesIds.contains(slaveVolume.getId());
             }
         });
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH, new Predicate<GlusterVolumeEntity>() {
             @Override
-            public boolean eval(GlusterVolumeEntity slaveVolume) {
+            public boolean test(GlusterVolumeEntity slaveVolume) {
                 VdsGroupDao vdsGroupDao = getVdsGroupDao();
                 Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
                 Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
@@ -93,7 +93,7 @@ public class GlusterGeoRepUtil {
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.NO_UP_SLAVE_SERVER,
                 new Predicate<GlusterVolumeEntity>() {
                     @Override
-                    public boolean eval(GlusterVolumeEntity slaveVolume) {
+                    public boolean test(GlusterVolumeEntity slaveVolume) {
                         Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
                         if (slaveUpserverId == null) {
                             return false;
@@ -105,7 +105,7 @@ public class GlusterGeoRepUtil {
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_TO_BE_EMPTY,
                 new Predicate<GlusterVolumeEntity>() {
                     @Override
-                    public boolean eval(GlusterVolumeEntity slaveVolume) {
+                    public boolean test(GlusterVolumeEntity slaveVolume) {
                         Guid slaveUpserverId = getUpServerId(slaveVolume.getClusterId());
                         if(slaveUpserverId == null) {
                             return false;

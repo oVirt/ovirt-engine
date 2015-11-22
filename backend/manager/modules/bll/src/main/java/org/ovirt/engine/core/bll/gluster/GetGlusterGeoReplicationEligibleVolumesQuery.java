@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -11,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<IdQueryParameters> {
 
@@ -35,7 +35,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
         List<GlusterVolumeEntity> possiblyEligibleVolumes = getAllGlusterVolumesWithMasterCompatibleVersion(masterVolume.getId());
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMap = getGeoRepUtilInstance().getEligibilityPredicates(masterVolume);
         for(Map.Entry<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicateMapEntries : eligibilityPredicateMap.entrySet()) {
-            possiblyEligibleVolumes = LinqUtils.filter(possiblyEligibleVolumes, eligibilityPredicateMapEntries.getValue());
+            possiblyEligibleVolumes = possiblyEligibleVolumes.stream().filter(eligibilityPredicateMapEntries.getValue()).collect(Collectors.toList());
         }
         return possiblyEligibleVolumes;
     }
