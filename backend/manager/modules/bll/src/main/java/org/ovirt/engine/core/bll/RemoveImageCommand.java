@@ -48,7 +48,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     protected RemoveImageCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     protected void initImage() {
