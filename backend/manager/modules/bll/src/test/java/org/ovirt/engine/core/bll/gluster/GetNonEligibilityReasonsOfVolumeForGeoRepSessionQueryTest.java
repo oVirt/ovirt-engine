@@ -44,12 +44,6 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
         baseTest.setupMock(geoRepUtil, geoRepDao, vdsGroupDao);
     }
 
-    protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume1() {
-        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
-
-        return nonEligibilityreasons;
-    }
-
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume2() {
         List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
 
@@ -88,8 +82,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
         doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any(Guid.class));
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerId, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actualNonEligibilityReasons = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
-        assertTrue(actualNonEligibilityReasons.size() == getNonEligibilityReasonsForSlaveVolume1().size());
-        assertTrue(getNonEligibilityReasonsForSlaveVolume1().equals(actualNonEligibilityReasons));
+        assertTrue(actualNonEligibilityReasons.isEmpty());
     }
 
     @Test
