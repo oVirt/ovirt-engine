@@ -18,8 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
@@ -55,12 +53,7 @@ public class OvfVmReader extends OvfReader {
     protected void readDiskImageItem(XmlNode node) {
         final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
 
-        DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
-            @Override
-            public boolean eval(DiskImage diskImage) {
-                return diskImage.getImageId().equals(guid);
-            }
-        });
+        DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
         image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
                 "rasd:HostResource", _xmlNS).innerText));
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {

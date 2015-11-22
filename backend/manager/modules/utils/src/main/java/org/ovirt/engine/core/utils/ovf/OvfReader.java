@@ -45,8 +45,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -123,12 +121,7 @@ public abstract class OvfReader implements IOvfBuilder {
         for (XmlNode node : list) {
             final Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
 
-            DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
-                @Override
-                public boolean eval(DiskImage diskImage) {
-                    return diskImage.getImageId().equals(guid);
-                }
-            });
+            DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
 
             if (node.attributes.get("ovf:vm_snapshot_id") != null) {
                 image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
@@ -305,12 +298,7 @@ public abstract class OvfReader implements IOvfBuilder {
         VmNetworkInterface iface;
         if (!StringUtils.isNumeric(str)) { // 3.1 and above OVF format
             guid = new Guid(str);
-            iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-                @Override
-                public boolean eval(VmNetworkInterface iface) {
-                    return iface.getId().equals(guid);
-                }
-            });
+            iface = interfaces.stream().filter(i -> i.getId().equals(guid)).findFirst().orElse(null);
             if (iface == null) {
                 iface = new VmNetworkInterface();
                 iface.setId(guid);
