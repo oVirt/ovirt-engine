@@ -45,13 +45,13 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     }
 
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume1() {
-        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<GlusterGeoRepNonEligibilityReason>();
+        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
 
         return nonEligibilityreasons;
     }
 
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume2() {
-        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<GlusterGeoRepNonEligibilityReason>();
+        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
 
         nonEligibilityreasons.add(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_BE_UP);
         nonEligibilityreasons.add(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SIZE_SHOULD_BE_GREATER_THAN_MASTER_VOLUME_SIZE);
@@ -62,7 +62,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     }
 
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume3() {
-        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<GlusterGeoRepNonEligibilityReason>();
+        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
 
         nonEligibilityreasons.add(GlusterGeoRepNonEligibilityReason.SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER);
 
@@ -70,7 +70,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     }
 
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume4() {
-        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<GlusterGeoRepNonEligibilityReason>();
+        List<GlusterGeoRepNonEligibilityReason> nonEligibilityreasons = new ArrayList<>();
 
         nonEligibilityreasons.add(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SIZE_TO_BE_AVAILABLE);
         nonEligibilityreasons.add(GlusterGeoRepNonEligibilityReason.MASTER_VOLUME_SIZE_TO_BE_AVAILABLE);
