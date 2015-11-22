@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -60,8 +59,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
         Guid storageDomainId = super.getStorageDomainId();
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             List<StorageDomain> storagesInPool =
-                    LinqUtils.filter(DbFacade.getInstance()
-                            .getStorageDomainDao().getAllForStoragePool(getStoragePoolId()),
+                    LinqUtils.filter(getStorageDomainDao().getAllForStoragePool(getStoragePoolId()),
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {
@@ -84,8 +82,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
 
     @Override
     protected boolean addVmImages() {
-        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(
-                getParameters().getVmStaticData().getVmtGuid());
+        List<Disk> disks = getDiskDao().getAllForVm(getParameters().getVmStaticData().getVmtGuid());
         if (disks.isEmpty() && !getParameters().getVmStaticData().getVmtGuid().equals(Guid.Empty)) {
             throw new EngineException(EngineError.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
