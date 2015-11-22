@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
@@ -64,16 +62,12 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         for (final VmNic iface : interfaces) {
             if (iface.getVnicProfileId() != null) {
                 final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-                Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                    @Override
-                    public boolean eval(Network n) {
-                        return ObjectUtils.equals(n.getId(), network.getId());
-                    }
-                });
+                boolean networkFoundInCluster =
+                        networks.stream().anyMatch(n -> ObjectUtils.equals(n.getId(), network.getId()));
 
                 // if network not exists in cluster we remove the network to
                 // interface connection
-                if (net == null) {
+                if (!networkFoundInCluster) {
                     iface.setVnicProfileId(null);
                     getVmNicDao().update(iface);
                 }
