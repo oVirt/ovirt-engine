@@ -239,10 +239,9 @@ public class VmValidator {
             List<String> passthroughVnicNames =
                     vnics.stream().filter(VmNic::isPassthrough).map(VmNic::getName).collect(Collectors.toList());
 
-            Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
-            replacements.add(String.format("$vmName %s", vm.getName()));
-
             if (!passthroughVnicNames.isEmpty()) {
+                Collection<String> replacements = ReplacementUtils.replaceWith("interfaces", passthroughVnicNames);
+                replacements.add(String.format("$vmName %s", vm.getName()));
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
                         replacements);
             }
