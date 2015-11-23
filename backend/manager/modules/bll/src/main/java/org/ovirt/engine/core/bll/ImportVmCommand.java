@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -79,8 +80,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -572,12 +571,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                     new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
-            List<Guid> domainsId = LinqUtils.transformToList(domains, new Function<StorageDomain, Guid>() {
-                @Override
-                public Guid eval(StorageDomain storageDomainStatic) {
-                    return storageDomainStatic.getId();
-                }
-            });
+            List<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toList());
 
             if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
