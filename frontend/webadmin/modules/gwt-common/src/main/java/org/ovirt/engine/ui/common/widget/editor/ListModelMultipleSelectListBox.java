@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,16 +114,18 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
 
     @Override
     public void setAcceptableValues(Collection<List<T>> newValues) {
-        if (newValues == null || newValues.isEmpty()) {
-            return;
+        if (newValues == null) {
+            newValues = Collections.emptyList();
         }
         // Set a value in the super class, so calling setAcceptableValues doesn't add a null value and
         // potentially NPE if the renderer doesn't take kindly to getting a null value passed to it.
-        super.setValue(newValues.iterator().next(), false);
+        List<T> val = newValues.isEmpty() ? Collections.<T>emptyList() :  newValues.iterator().next();
+        super.setValue(val, false);
         // Populate the list box.
         super.setAcceptableValues(newValues);
         // Store the rendered values so we can reverse them to find the right typed value. This will
         // break if more than one type value renders to the same string.
+        typedItemList.clear();
         for (List<T> value : newValues) {
             addToItems(value);
         }

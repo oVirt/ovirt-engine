@@ -63,8 +63,7 @@ public class ListModelMultipleSelectListBoxEditor<T>
 
         @Override
         protected String renderNullSafe(List<T> list) {
-            assert list.size() == 1;
-            return renderer.render(list.get(0));
+            return list.isEmpty() ? "" : renderer.render(list.get(0));
         }
 
     }
