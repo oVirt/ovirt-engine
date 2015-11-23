@@ -234,6 +234,11 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return false;
     }
 
+    @Override
+    protected List<VDS> getAllRunningVdssInPool() {
+        return getVdsDao().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+    }
+
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
         if (isLastMaster || !commandSucceeded) {
             log.warn("skipping connect and refresh for all hosts, last master '{}', command status '{}'",
