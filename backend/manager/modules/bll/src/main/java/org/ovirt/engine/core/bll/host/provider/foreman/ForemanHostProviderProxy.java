@@ -53,7 +53,13 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     private static final String KATELLO_API_ENTRY_POINT = "/katello/api/v2";
     private static final String CONTENT_HOSTS_ENTRY_POINT = KATELLO_API_ENTRY_POINT + "/systems";
-    private static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata";
+
+    /**
+     * per_page=99999 used to bypass Satellite pagination limit (20 by default), while pagination is not
+     * supported by Katello.
+     */
+    private static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT
+            + "/%1$s/errata?per_page=99999";
     private static final String CONTENT_HOST_ERRATUM_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata/%2$s";
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
