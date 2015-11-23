@@ -115,7 +115,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private List<DiskImage> getDiskImagesForVm() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
-        allDisks.addAll(ImagesHandler.getCinderLeafImages(disks, true));
+        allDisks.addAll(ImagesHandler.getCinderLeafImages(disks, false));
         return allDisks;
     }
 
