@@ -522,7 +522,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
-        if (getStoragePool().getStatus() != StoragePoolStatus.Up) {
+        if (!isExternalVM() && getStoragePool().getStatus() != StoragePoolStatus.Up) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 
@@ -719,6 +719,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         return true;
+    }
+
+    private boolean isExternalVM() {
+        return getParameters().getVmStaticData().getOrigin() == OriginType.EXTERNAL;
     }
 
     protected Guid getSmallIconId() {
