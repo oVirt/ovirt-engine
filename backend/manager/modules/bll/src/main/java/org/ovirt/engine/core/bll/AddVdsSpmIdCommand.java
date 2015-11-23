@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -17,8 +18,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @InternalCommandAttribute
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
@@ -60,13 +59,9 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     protected void insertSpmIdToDb(List<vds_spm_id_map> vds_spm_id_mapList) {
         int selectedId = 1;
-        List<Integer> list = LinqUtils.transformToList(vds_spm_id_mapList, new Function<vds_spm_id_map, Integer>() {
-            @Override
-            public Integer eval(vds_spm_id_map vds_spm_id_map) {
-                return vds_spm_id_map.getvds_spm_id();
-            }
-        });
-        Collections.sort(list);
+        List<Integer> list =
+                vds_spm_id_mapList.stream().map(vds_spm_id_map::getvds_spm_id).sorted().collect(Collectors.toList());
+
         for (int id : list) {
             if (selectedId == id) {
                 selectedId++;
