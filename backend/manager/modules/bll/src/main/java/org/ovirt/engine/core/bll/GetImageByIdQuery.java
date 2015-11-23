@@ -5,8 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("unused")
 public class GetImageByIdQuery<P extends GetImageByIdParameters> extends QueriesCommandBase<P> {
@@ -21,12 +19,8 @@ public class GetImageByIdQuery<P extends GetImageByIdParameters> extends Queries
                 .getUserRequestForStorageDomainRepoFileList(
                         getParameters().getStorageDomainId(), ImageFileType.All, true);
 
-        getQueryReturnValue().setReturnValue(LinqUtils.firstOrNull(imageList, new Predicate<RepoImage>() {
-            @Override
-            public boolean eval(RepoImage repoImage) {
-                return repoImage.getRepoImageId().equals(getParameters().getRepoImageId());
-            }
-        }));
+        getQueryReturnValue().setReturnValue(imageList.stream().filter(
+                repoImage -> repoImage.getRepoImageId().equals(getParameters().getRepoImageId())).findFirst().orElse(null));
     }
 
 }
