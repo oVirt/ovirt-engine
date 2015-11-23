@@ -3,13 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
@@ -23,8 +24,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 
 public class OvfUpdateProcessHelper {
@@ -43,13 +42,8 @@ public class OvfUpdateProcessHelper {
         String vmMeta = generateVmMetadata(vm, allVmImages);
         metaDictionary.put(
                 vm.getId(),
-                new KeyValuePairCompat<>(vmMeta, LinqUtils.transformToList(vm.getDiskMap().values(),
-                        new Function<Disk, Guid>() {
-                            @Override
-                            public Guid eval(Disk a) {
-                                return a.getId();
-                            }
-                        })));
+                new KeyValuePairCompat<>
+                        (vmMeta, vm.getDiskMap().values().stream().map(BaseDisk::getId).collect(Collectors.toList())));
         return vmMeta;
     }
 
@@ -65,12 +59,7 @@ public class OvfUpdateProcessHelper {
         List<DiskImage> allTemplateImages = template.getDiskList();
         String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
         metaDictionary.put(template.getId(), new KeyValuePairCompat<>(
-                templateMeta, LinqUtils.transformToList(allTemplateImages, new Function<DiskImage, Guid>() {
-            @Override
-            public Guid eval(DiskImage diskImage) {
-                return diskImage.getId();
-            }
-        })));
+                templateMeta, allTemplateImages.stream().map(BaseDisk::getId).collect(Collectors.toList())));
         return templateMeta;
     }
 
