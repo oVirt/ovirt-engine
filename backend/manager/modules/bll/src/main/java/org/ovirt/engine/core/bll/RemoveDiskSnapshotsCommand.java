@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -47,8 +48,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,12 +220,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             ImagesHandler.sortImageList(images);
 
             // Get a sorted list of the selected images
-            List<DiskImage> sortedImages = LinqUtils.filter(images, new Predicate<DiskImage>() {
-                @Override
-                public boolean eval(DiskImage image) {
-                    return getImages().contains(image);
-                }
-            });
+            List<DiskImage> sortedImages =
+                    images.stream().filter(image -> getImages().contains(image)).collect(Collectors.toList());
             getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(sortedImages)));
             getParameters().setImageIdsSorted(true);
         }
