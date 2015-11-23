@@ -55,8 +55,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -470,14 +468,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {
                 Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
-                VmTemplate tmpl = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
-                    @Override
-                    public boolean eval(VmTemplate vmTemplate) {
-                        return vmTemplate.getId().equals(tmplId);
-                    }
-                });
-
-                retVal = tmpl != null;
+                retVal = templates.keySet().stream().anyMatch(vmTemplate -> vmTemplate.getId().equals(tmplId));
             } else {
                 retVal = true;
             }
