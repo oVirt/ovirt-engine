@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -309,16 +308,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     @Override
     protected List<VDS> getAllRunningVdssInPool() {
         Set<VDSStatus> vdsStatus = EnumSet.copyOf(StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus);
-        if (isStoragePoolMemoryBackend()) {
-            vdsStatus.addAll(StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus);
-        }
+        vdsStatus.addAll(StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus);
 
         return getVdsDao().getAllForStoragePoolAndStatuses(getStoragePool().getId(), vdsStatus);
-    }
-
-    private boolean isStoragePoolMemoryBackend() {
-        return FeatureSupported.storagePoolMemoryBackend(
-                getStoragePool().getCompatibilityVersion());
     }
 
     private void deactivateCinderStorageDomain() {
