@@ -571,7 +571,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                     new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
-            List<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toList());
+            Set<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 
             if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
