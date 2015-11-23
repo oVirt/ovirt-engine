@@ -67,4 +67,13 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
         }
         return cachedUserProfile;
     }
+
+    protected void executeCommandUpdateSSHPublicKey(UserProfile existingProfile) {
+        UserProfile newProfile = getParameters().getUserProfile();
+        existingProfile.setSshPublicKey(newProfile.getSshPublicKey());
+        /* backend must make sure that the ID changes each time the key content changes */
+        existingProfile.setSshPublicKeyId(Guid.newGuid());
+        userProfileDao.update(existingProfile);
+        setSucceeded(true);
+    }
 }

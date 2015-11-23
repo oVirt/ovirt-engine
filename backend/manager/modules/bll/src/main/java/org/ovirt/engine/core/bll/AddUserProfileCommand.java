@@ -21,7 +21,8 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
             return false;
         }
 
-        if (getUserProfile() != null) {
+        UserProfile existingProfile = getUserProfile();
+        if (existingProfile != null && !isSSHPublicKeyUpdate(existingProfile)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
         }
 
@@ -30,24 +31,52 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_ADD_PROFILE : AuditLogType.USER_ADD_PROFILE_FAILED;
+        UserProfile existingProfile = getUserProfile();
+        if (existingProfile != null) { /* same as executeCommand below */
+            return getSucceeded() ? AuditLogType.USER_UPDATE_PROFILE : AuditLogType.USER_UPDATE_PROFILE_FAILED;
+        } else {
+            return getSucceeded() ? AuditLogType.USER_ADD_PROFILE : AuditLogType.USER_ADD_PROFILE_FAILED;
+        }
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        UserProfile existingProfile = getUserProfile();
+        if (existingProfile != null && isSSHPublicKeyUpdate(existingProfile)) {
+            addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        } else {
+            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        }
         addValidationMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
     }
 
     @Override
     protected void executeCommand() {
-        UserProfile profile = getParameters().getUserProfile();
-        profile.setId(Guid.newGuid());
-        profile.setUserId(getUserId()); /* must be overridden */
-        if (!StringUtils.isEmpty(profile.getSshPublicKey()) && Guid.isNullOrEmpty(profile.getSshPublicKeyId())) {
-            profile.setSshPublicKeyId(Guid.newGuid());
+        UserProfile existingProfile = getUserProfile();
+        if (existingProfile != null) {
+            /*
+             * if validate() allowed us to get this far, then we must expect
+             * isSSHPublicKeyUpdate(existingProfile) == true
+             */
+            executeCommandUpdateSSHPublicKey(existingProfile);
+        } else {
+            UserProfile profile = getParameters().getUserProfile();
+            profile.setId(Guid.newGuid());
+            profile.setUserId(getUserId()); /* must be overridden */
+            if (!StringUtils.isEmpty(profile.getSshPublicKey())) {
+                profile.setSshPublicKeyId(Guid.newGuid());
+            }
+            userProfileDao.save(profile);
+            setSucceeded(true);
         }
-        userProfileDao.save(profile);
-        setSucceeded(true);
+    }
+
+    private boolean isSSHPublicKeyUpdate(UserProfile existingProfile) {
+        /* fake Add on key which was wiped previously (rhbz#1283499) */
+        if (StringUtils.isEmpty(existingProfile.getSshPublicKey()) &&
+                !StringUtils.isEmpty(getParameters().getUserProfile().getSshPublicKey())) {
+            return true;
+        }
+        return false;
     }
 }
