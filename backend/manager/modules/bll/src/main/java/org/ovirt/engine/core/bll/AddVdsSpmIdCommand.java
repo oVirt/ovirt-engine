@@ -58,7 +58,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         setSucceeded(true);
     }
 
-    private void insertSpmIdToDb(List<vds_spm_id_map> vds_spm_id_mapList) {
+    protected void insertSpmIdToDb(List<vds_spm_id_map> vds_spm_id_mapList) {
         // according to shaharf the first id is 1
         int selectedId = 1;
         List<Integer> list = LinqUtils.transformToList(vds_spm_id_mapList, new Function<vds_spm_id_map, Integer>() {
