@@ -28,8 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
@@ -53,13 +51,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     protected boolean canDoAction() {
         boolean retVal = validate(templateExists());
         if (retVal) {
-            List<DiskImage> images = templatesFromExport.get(LinqUtils.firstOrNull(templatesFromExport.keySet(),
-                        new Predicate<VmTemplate>() {
-                            @Override
-                            public boolean eval(VmTemplate t) {
-                                return t.getId().equals(getParameters().getVmTemplateId());
-                            }
-                        }));
+            List<DiskImage> images = templatesFromExport.get(templatesFromExport.keySet().stream().filter(
+                    t -> t.getId().equals(getParameters().getVmTemplateId())).findFirst().orElse(null));
 
             if (images != null) {
                 getParameters().setImages(images);
@@ -166,12 +159,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
             if (qretVal.getSucceeded()) {
                 templatesFromExport = qretVal.getReturnValue();
-                exportTemplate = LinqUtils.firstOrNull(templatesFromExport.keySet(), new Predicate<VmTemplate>() {
-                    @Override
-                    public boolean eval(VmTemplate t) {
-                        return t.getId().equals(getParameters().getVmTemplateId());
-                    }
-                });
+                exportTemplate = templatesFromExport.keySet().stream().filter(
+                        t -> t.getId().equals(getParameters().getVmTemplateId())).findFirst().orElse(null);
                 setVmTemplate(exportTemplate);
             }
         }
