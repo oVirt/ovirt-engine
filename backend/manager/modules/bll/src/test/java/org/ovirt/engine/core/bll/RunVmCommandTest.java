@@ -331,11 +331,15 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     @Before
+    public void setUp() {
+        initMockitoAnnotations();
+        createCommand();
+    }
+
     public void initMockitoAnnotations() {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Before
     public void createCommand() {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
