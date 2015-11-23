@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
@@ -49,8 +48,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected void executeCommand() {
-        List<vds_spm_id_map> vds_spm_id_mapList = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
-                getVds().getStoragePoolId());
+        List<vds_spm_id_map> vds_spm_id_mapList = getVdsSpmIdMapDao().getAll(getVds().getStoragePoolId());
         if (vds_spm_id_mapList.size() >= Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
             buildFaultResult();
             return;
@@ -80,7 +78,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         // get the dc id from cluster if DC was removed and cluster is attached to a new DC
         Guid dcId = (getVds().getStoragePoolId().equals(Guid.Empty) ? getVdsGroup().getStoragePoolId() : getVds().getStoragePoolId());
         vds_spm_id_map newMap = new vds_spm_id_map(dcId, getVdsId(), selectedId);
-        DbFacade.getInstance().getVdsSpmIdMapDao().save(newMap);
+        getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);
             getCompensationContext().stateChanged();
