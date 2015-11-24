@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 
 public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";
+    private static final int NUM_LUN_MAPS = 3;
 
     private StorageServerConnectionLunMapDao dao;
     private LUNStorageServerConnectionMap existingLUNStorageMap;
@@ -51,7 +52,7 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetAll() {
+    public void testGetAllByLunId() {
         List<LUNStorageServerConnectionMap> result =
                 dao.getAll(existingLUNStorageMap.getId().lunId);
 
@@ -60,5 +61,11 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
         for (LUNStorageServerConnectionMap mapping : result) {
             assertEquals(existingLUNStorageMap.getId().lunId, mapping.getId().lunId);
         }
+    }
+
+    @Test
+    public void testGetAll() {
+        List<LUNStorageServerConnectionMap> result = dao.getAll();
+        assertEquals(NUM_LUN_MAPS, result.size());
     }
 }

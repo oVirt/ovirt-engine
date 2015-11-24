@@ -60,7 +60,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
 
     @Override
     public List<LUNStorageServerConnectionMap> getAll(final String lunId) {
-        return LinqUtils.filter(getAllLUNStorageServerConnection(),
+        return LinqUtils.filter(getAll(),
                 new Predicate<LUNStorageServerConnectionMap>() {
                     @Override
                     public boolean eval(LUNStorageServerConnectionMap a) {
@@ -69,17 +69,13 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
                 });
     }
 
-    private List<LUNStorageServerConnectionMap> getAllLUNStorageServerConnection() {
+    @Override
+    public List<LUNStorageServerConnectionMap> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromLUN_storage_server_connection_map",
                 StorageServerConnectionLunMapRowMapper.instance,
                 parameterSource);
-    }
-
-    @Override
-    public List<LUNStorageServerConnectionMap> getAll() {
-        throw new NotImplementedException();
     }
 
     @Override
