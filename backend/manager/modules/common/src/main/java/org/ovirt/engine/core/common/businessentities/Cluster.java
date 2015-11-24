@@ -134,6 +134,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     @Min(1)
     private Integer customMigrationNetworkBandwidth;
 
+    private Guid migrationPolicyId;
+
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
@@ -503,6 +505,14 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.migrationBandwidthLimitType = migrationBandwidthLimitType;
     }
 
+    public Guid getMigrationPolicyId() {
+        return migrationPolicyId;
+    }
+
+    public void setMigrationPolicyId(Guid migrationPolicyId) {
+        this.migrationPolicyId = migrationPolicyId;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -542,7 +552,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 maintenanceReasonRequired,
                 ksmMergeAcrossNumaNodes,
                 customMigrationNetworkBandwidth,
-                migrationBandwidthLimitType
+                migrationBandwidthLimitType,
+                migrationPolicyId
         );
     }
 
@@ -595,7 +606,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && Objects.equals(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
                 && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
                 && Objects.equals(customMigrationNetworkBandwidth, other.customMigrationNetworkBandwidth)
-                && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType);
+                && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType)
+                && Objects.equals(migrationPolicyId, other.migrationPolicyId);
     }
 
 }

@@ -97,6 +97,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
@@ -193,6 +194,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class AsyncDataProvider {
+
     //TODO MM: fix duplicity with org.ovirt.engine.core.bll.RunVmCommand.ISO_PREFIX  ?
     public static final String ISO_PREFIX = "iso://";    //$NON-NLS-1$
     private static AsyncDataProvider instance;
@@ -816,6 +818,22 @@ public class AsyncDataProvider {
 
     public void getDataCenterList(AsyncQuery aQuery) {
         getDataCenterList(aQuery, true);
+    }
+
+    public void getMigrationPolicies(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
+                if (returnValue == null) {
+                    return new ArrayList<MigrationPolicy>();
+                }
+
+                return returnValue;
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllMigrationPolicies,
+                new VdcQueryParametersBase(), aQuery);
     }
 
     public void getDataCenterList(AsyncQuery aQuery, boolean doRefresh) {

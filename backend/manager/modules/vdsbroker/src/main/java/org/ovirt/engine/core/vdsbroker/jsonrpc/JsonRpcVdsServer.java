@@ -331,7 +331,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo) {
+    public StatusOnlyReturnForXmlRpc migrate(Map<String, Object> migrationInfo) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.migrate").withParameter("vmID", getVmId(migrationInfo))
                         .withParameter("params", migrationInfo)

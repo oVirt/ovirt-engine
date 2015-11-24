@@ -248,7 +248,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("gluster_tuned_profile", group.getGlusterTunedProfile())
                 .addValue("ksm_merge_across_nodes", group.isKsmMergeAcrossNumaNodes())
                 .addValue("migration_bandwidth_limit_type", group.getMigrationBandwidthLimitType().name())
-                .addValue("custom_migration_bandwidth_limit", group.getCustomMigrationNetworkBandwidth());
+                .addValue("custom_migration_bandwidth_limit", group.getCustomMigrationNetworkBandwidth())
+                .addValue("migration_policy_id", group.getMigrationPolicyId());
 
         return parameterSource;
     }
@@ -321,6 +322,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
             entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
             entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
+            entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
 
             return entity;
         }

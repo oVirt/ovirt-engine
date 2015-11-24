@@ -848,6 +848,7 @@
         <column>ksm_merge_across_nodes</column>
         <column>migration_bandwidth_limit_type</column>
         <column>custom_migration_bandwidth_limit</column>
+        <column>migration_policy_id</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -885,6 +886,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -923,6 +925,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -961,6 +964,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -999,6 +1003,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -1037,6 +1042,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -1075,6 +1081,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -1113,6 +1120,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -1151,6 +1159,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -1189,6 +1198,7 @@
             <value>true</value>
             <value>AUTO</value>
             <null/>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1b</value>
         </row>
     </table>
 

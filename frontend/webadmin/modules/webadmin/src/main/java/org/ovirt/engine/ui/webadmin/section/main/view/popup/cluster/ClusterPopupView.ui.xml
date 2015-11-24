@@ -70,6 +70,7 @@
             height: 20px;
             width: 160px;
         }
+
         .minLabel {
             height: 10px;
             width: 10px;
@@ -77,6 +78,7 @@
             margin-left: 6px;
             background-color: #AFBF27;
         }
+
         .maxLabel {
             height: 10px;
             width: 10px;
@@ -171,6 +173,10 @@
 
         .keyValueWidget {
             padding: 0 5px;
+        }
+
+        .migrationPolicyEditor {
+            width: 320px;
         }
     </ui:style>
 
@@ -299,7 +305,19 @@
                     <t:DialogTab ui:field="migrationTab" label="{constants.clusterPopupMigrationTabLabel}">
                         <t:content>
                             <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.firstRow}">
+                                <b:Row addStyleNames="{style.groupTitle} {style.firstRow}">
+                                    <b:Column size="LG_12">
+                                        <g:Label text="{constants.clusterMigrationPolicyLabel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="LG_12">
+                                        <e:ListModelListBoxEditor ui:field="migrationPolicyEditor" addStyleNames="{style.floatLeft}" contentWidgetContainerStyleName="{style.migrationPolicyEditor}"/>
+                                        <g:HTML ui:field="migrationPolicyDetails" />
+                                    </b:Column>
+                                </b:Row>
+
+                                <b:Row addStyleNames="{style.groupTitle}">
                                     <b:Column size="LG_12">
                                         <g:Label text="{constants.clusterPopupBandwidthLabel}" />
                                     </b:Column>

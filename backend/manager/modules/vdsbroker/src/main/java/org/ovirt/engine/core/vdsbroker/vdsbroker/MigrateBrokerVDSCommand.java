@@ -18,8 +18,8 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         proceedProxyReturnValue();
     }
 
-    private Map<String, String> createMigrationInfo() {
-        Map<String, String> migrationInfo = new HashMap<>();
+    private Map<String, Object> createMigrationInfo() {
+        Map<String, Object> migrationInfo = new HashMap<>();
 
         P parameters = getParameters();
         migrationInfo.put(VdsProperties.vm_guid, parameters.getVmId().toString());
@@ -47,6 +47,14 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
 
         if (parameters.getConsoleAddress() != null) {
             migrationInfo.put(VdsProperties.CONSOLE_ADDRESS, parameters.getConsoleAddress());
+        }
+
+        if (parameters.getMaxBandwidth() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_BANDWIDTH, parameters.getMaxBandwidth());
+        }
+
+        if (parameters.getConvergenceSchedule() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_CONVERGENCE_SCHEDULE, parameters.getConvergenceSchedule());
         }
 
         return migrationInfo;

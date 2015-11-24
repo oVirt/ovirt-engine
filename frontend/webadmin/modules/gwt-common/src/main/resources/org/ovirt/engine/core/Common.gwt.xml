@@ -450,6 +450,14 @@
         <include name="common/businessentities/ErrataCount.java"/>
         <include name="common/businessentities/ErrataData.java"/>
         <include name="common/businessentities/MigrationBandwidthLimitType.java"/>
+
+        <!-- Migration -->
+        <include name="common/migration/ConvergenceConfig.java"/>
+        <include name="common/migration/NoConvergenceConfig.java"/>
+        <include name="common/migration/ConvergenceItem.java"/>
+        <include name="common/migration/ConvergenceItemWithStallingLimit.java"/>
+        <include name="common/migration/MigrationPolicy.java"/>
+        <include name="common/migration/NoMigrationPolicy.java"/>
     </source>
 
     <super-source path="ui/uioverrides" />

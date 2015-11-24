@@ -94,7 +94,8 @@ public enum ConfigurationValues {
     UploadImageChunkSizeKB,
     UploadImageXhrTimeoutInSeconds,
     UploadImageXhrRetryIntervalInSeconds,
-    UploadImageXhrMaxRetries;
+    UploadImageXhrMaxRetries,
+    MigrationPolicies;
 
     public static enum ConfigAuthType {
         Admin,

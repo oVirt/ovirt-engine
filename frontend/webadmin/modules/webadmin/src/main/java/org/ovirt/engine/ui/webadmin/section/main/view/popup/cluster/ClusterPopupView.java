@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Version;
@@ -43,6 +44,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
@@ -50,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -67,6 +70,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -391,6 +395,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Ignore
     DialogTab consoleTab;
 
+    @UiField(provided = true)
+    @Path(value = "migrationPolicies.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<MigrationPolicy> migrationPolicyEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    HTML migrationPolicyDetails;
+
     @UiField
     @Path(value = "spiceProxy.entity")
     @WithElementId
@@ -573,6 +587,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
         migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
+        migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
     }
 
     private void initCheckBoxEditors() {
@@ -741,7 +756,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingRow.setVisible(allowOverbookingEditor.isVisible());
 
-        serialNumberPolicyEditor.setVisible(true);
+        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (object.getVersion().getSelectedItem() != null) {
+                    Version clusterVersion = object.getVersion().getSelectedItem();
+                    migrationPolicyDetails.setVisible(AsyncDataProvider.getInstance().isMigrationPoliciesSupported(clusterVersion));
+                }
+            }
+        });
 
         object.getAdditionalClusterFeatures().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
@@ -751,6 +774,20 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 // Hide the fields if there is no feature to show
                 additionalFeaturesExpander.setVisible(!items.get(0).isEmpty());
                 additionalFeaturesExpanderContent.setVisible(!items.get(0).isEmpty());
+            }
+        });
+
+        object.getMigrationPolicies().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                MigrationPolicy selectedPolicy = object.getMigrationPolicies().getSelectedItem();
+                if (selectedPolicy != null) {
+                    migrationPolicyDetails.setHTML(
+                            templates.migrationPolicyDetails(selectedPolicy.getName(), selectedPolicy.getDescription())
+                    );
+                } else {
+                    migrationPolicyDetails.setText(""); //$NON-NLS-1$
+                }
             }
         });
     }

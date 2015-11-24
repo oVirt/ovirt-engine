@@ -71,6 +71,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setGlusterCliBasedSchedulingOn(true);
         newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
         newGroup.setCustomMigrationNetworkBandwidth(1000);
+        newGroup.setMigrationPolicyId(Guid.newGuid());
     }
 
     /**

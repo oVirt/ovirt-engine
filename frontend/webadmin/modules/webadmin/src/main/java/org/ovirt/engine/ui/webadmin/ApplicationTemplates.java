@@ -179,6 +179,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "<td style='text-align: left;'>{3}</td>")
     SafeHtml vmCountInOutMigrations(String prefix, String vmCountStr, SafeHtml image, String postfix);
 
+    @Template("<div style='width: 100%; float: left;'><div style='font-weight: bold; width: 100%;'>{0}</div><div style='width: 100%;'>{1}</div></div>")
+    SafeHtml migrationPolicyDetails(String name, String description);
+
     @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'>{0}</div>")
     SafeHtml italicWordWrapMaxWidth(String text);
 

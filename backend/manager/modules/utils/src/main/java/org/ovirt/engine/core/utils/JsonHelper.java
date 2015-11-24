@@ -13,8 +13,7 @@ public class JsonHelper {
     private JsonHelper() {
     }
 
-    public static String mapToJson(Map<String, Object> input, boolean prettyPrint)
-            throws IOException {
+    public static String objectToJson(Object input, boolean prettyPrint) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = new JsonFactory();
         StringWriter writer = new StringWriter();
@@ -24,6 +23,11 @@ public class JsonHelper {
         }
         mapper.writeValue(generator, input);
         return writer.toString();
+    }
+
+    public static String mapToJson(Map<String, Object> input, boolean prettyPrint)
+            throws IOException {
+        return objectToJson(input, prettyPrint);
     }
 
     public static String mapToJson(Map<String, Object> input)

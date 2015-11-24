@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
+import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -25,6 +29,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,6 +45,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
@@ -49,6 +55,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
+
+    @Inject
+    ConvergenceConfigProvider convergenceConfigProvider;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -183,6 +192,18 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         String dstVdsHost = String.format("%1$s:%2$s",
                 getDestinationVds().getHostName(),
                 getDestinationVds().getPort());
+        Map<String, Object> convergenceSchedule = null;
+        Integer maxBandwidth = null;
+
+        if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
+            MigrationPolicy migrationPolicy = convergenceConfigProvider.getMigrationPolicy(getCluster().getMigrationPolicyId());
+            convergenceSchedule = ConvergenceSchedule.from(migrationPolicy.getConfig()).asMap();
+
+            MigrationBandwidthLimitType migrationBandwidthLimitType = getCluster().getMigrationBandwidthLimitType();
+            if (migrationBandwidthLimitType == MigrationBandwidthLimitType.CUSTOM) {
+                maxBandwidth = getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations();
+            }
+        }
 
         return new MigrateVDSCommandParameters(getVdsId(),
                 getVmId(),
@@ -196,7 +217,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getMaximumMigrationDowntime(),
                 getAutoConverge(),
                 getMigrateCompressed(),
-                getDestinationVds().getConsoleAddress());
+                getDestinationVds().getConsoleAddress(),
+                maxBandwidth,
+                convergenceSchedule);
     }
 
     @Override

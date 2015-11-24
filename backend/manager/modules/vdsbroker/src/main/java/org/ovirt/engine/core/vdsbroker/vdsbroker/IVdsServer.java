@@ -94,7 +94,7 @@ public interface IVdsServer {
 
     HostDevListReturnForXmlRpc hostDevListByCaps();
 
-    StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo);
+    StatusOnlyReturnForXmlRpc migrate(Map<String, Object> migrationInfo);
 
     MigrateStatusReturnForXmlRpc migrateStatus(String vmId);
 

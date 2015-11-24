@@ -368,6 +368,12 @@ public final class VdsProperties {
     public static final String MIGRATE_COMPRESSED = "compressed";
     public static final String ADDITIONAL_FEATURES = "additionalFeatures";
     public static final String CONSOLE_ADDRESS = "consoleAddress";
+    public static final String MIGRATION_CONVERGENCE_SCHEDULE = "convergenceSchedule";
+    public static final String MIGRATION_BANDWIDTH = "maxBandwidth";
+    public static final String MIGRATION_INIT_STEPS = "init";
+    public static final String MIGRATION_STALLING_STEPS = "stalling";
+
+
     // storage domains
     public static final String code = "code";
     public static final String lastCheck = "lastCheck";

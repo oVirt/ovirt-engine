@@ -43,7 +43,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_gluster_tuned_profile VARCHAR(50),
     v_ksm_merge_across_nodes BOOLEAN,
     v_migration_bandwidth_limit_type VARCHAR(16),
-    v_custom_migration_bandwidth_limit INT
+    v_custom_migration_bandwidth_limit INT,
+    v_migration_policy_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -87,7 +88,8 @@ BEGIN
         gluster_tuned_profile,
         ksm_merge_across_nodes,
         migration_bandwidth_limit_type,
-        custom_migration_bandwidth_limit
+        custom_migration_bandwidth_limit,
+        migration_policy_id
         )
     VALUES (
         v_cluster_id,
@@ -129,7 +131,8 @@ BEGIN
         v_gluster_tuned_profile,
         v_ksm_merge_across_nodes,
         v_migration_bandwidth_limit_type,
-        v_custom_migration_bandwidth_limit
+        v_custom_migration_bandwidth_limit,
+        v_migration_policy_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -175,7 +178,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_gluster_tuned_profile VARCHAR(50),
     v_ksm_merge_across_nodes BOOLEAN,
     v_migration_bandwidth_limit_type VARCHAR(16),
-    v_custom_migration_bandwidth_limit INT
+    v_custom_migration_bandwidth_limit INT,
+    v_migration_policy_id UUID
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -222,7 +226,8 @@ BEGIN
         gluster_tuned_profile = v_gluster_tuned_profile,
         ksm_merge_across_nodes = v_ksm_merge_across_nodes,
         migration_bandwidth_limit_type = v_migration_bandwidth_limit_type,
-        custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit
+        custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit,
+        migration_policy_id = v_migration_policy_id
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

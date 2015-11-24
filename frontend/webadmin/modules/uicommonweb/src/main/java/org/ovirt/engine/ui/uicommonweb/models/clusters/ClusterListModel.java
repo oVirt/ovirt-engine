@@ -695,6 +695,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
 
+        if (model.getMigrationPolicies().getSelectedItem() != null) {
+            cluster.setMigrationPolicyId(model.getMigrationPolicies().getSelectedItem().getId());
+        }
+
         cluster.getFencingPolicy().setFencingEnabled(model.getFencingEnabledModel().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());

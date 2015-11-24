@@ -283,7 +283,7 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo) {
+    public StatusOnlyReturnForXmlRpc migrate(Map<String, Object> migrationInfo) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.migrate(migrationInfo);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);

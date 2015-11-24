@@ -477,6 +477,9 @@ public enum VdcQueryType implements Serializable {
 
     IsUserApplicationContainerManager,
 
+    // migration profiles
+    GetAllMigrationPolicies,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

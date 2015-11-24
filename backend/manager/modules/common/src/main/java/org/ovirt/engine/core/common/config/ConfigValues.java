@@ -1846,5 +1846,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MigrationPoliciesSupported,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    MigrationPolicies,
+
     Invalid
 }

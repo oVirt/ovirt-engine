@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,11 +19,15 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Boolean autoConverge;
     private Boolean migrateCompressed;
     private String consoleAddress;
+    private Integer maxBandwidth;
+
+    private Map<String, Object> convergenceSchedule;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId,
                                        String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
                                        String dstQemu, Version clusterVersion, int migrationDowntime,
-                                       Boolean autoConverge, Boolean migrateCompressed, String consoleAddress) {
+                                       Boolean autoConverge, Boolean migrateCompressed, String consoleAddress,
+                                       Integer maxBandwidth, Map<String, Object> convergenceSchedule) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -34,6 +40,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
         this.consoleAddress = consoleAddress;
+        this.maxBandwidth = maxBandwidth;
+        this.convergenceSchedule = convergenceSchedule;
     }
 
     public String getSrcHost() {
@@ -100,6 +108,22 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.consoleAddress = consoleAddress;
     }
 
+    public Map<String, Object> getConvergenceSchedule() {
+        return convergenceSchedule;
+    }
+
+    public void setConvergenceSchedule(Map<String, Object> convergenceSchedule) {
+        this.convergenceSchedule = convergenceSchedule;
+    }
+
+    public Integer getMaxBandwidth() {
+        return maxBandwidth;
+    }
+
+    public void setMaxBandwidth(Integer maxBandwidth) {
+        this.maxBandwidth = maxBandwidth;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -111,6 +135,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("migrationDowntime", getMigrationDowntime())
                 .append("autoConverge", getAutoConverge())
                 .append("migrateCompressed", getMigrateCompressed())
-                .append("consoleAddress", getConsoleAddress());
+                .append("consoleAddress", getConsoleAddress())
+                .append("maxBandwidth", getMaxBandwidth())
+                .append("convergenceSchedule", getConvergenceSchedule());
     }
 }
