@@ -939,11 +939,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
+            if (model.getProviders().getSelectedItem() != null) {
+                parameters.getVdsStaticData().setHostProviderId(model.getProviders().getSelectedItem().getId());
+            }
             if (Boolean.TRUE.equals(model.getIsDiscoveredHosts().getEntity())) {
                 Provider<?> provider = model.getProviders().getSelectedItem();
                 ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
                 ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
-                ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost)model.getExternalDiscoveredHosts().getSelectedItem();
+                ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost) model.getExternalDiscoveredHosts().getSelectedItem();
                 parameters.initVdsActionParametersForProvision(
                         provider.getId(),
                         hostGroup,
