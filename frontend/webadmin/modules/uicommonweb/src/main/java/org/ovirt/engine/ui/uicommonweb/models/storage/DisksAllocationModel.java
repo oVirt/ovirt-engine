@@ -172,48 +172,45 @@ public class DisksAllocationModel extends EntityModel {
         getDynamicWarning().setIsAvailable(false);
     }
 
-    private void updateQuota(Guid storageDomainId, final ListModel isItem) {
+    private void updateQuota(Guid storageDomainId, final ListModel<Quota> isItem, final Guid diskQuotaId) {
         if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
-                    new IdQueryParameters(storageDomainId),
-                    new AsyncQuery(this,
-                            new INewAsyncCallback() {
-
-                                @Override
-                                public void onSuccess(Object innerModel, Object innerReturnValue) {
-                                    ArrayList<Quota> list =
-                                            (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
-                                    DisksAllocationModel diskAllocationModel = (DisksAllocationModel) innerModel;
-                                    if (list != null) {
-                                        if (isItem == null) {
-                                            for (DiskModel diskModel : diskAllocationModel.getDisks()) {
-                                                diskModel.getQuota().setItems(list);
-                                                for (Quota quota : list) {
-                                                    if (diskModel.getDisk() instanceof DiskImage
-                                                            &&
-                                                            quota.getId()
-                                                                    .equals(((DiskImage) diskModel.getDisk()).getQuotaId())) {
-                                                        diskModel.getQuota().setSelectedItem(quota);
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            Quota selectedQuota = null;
-                                            if (isItem.getSelectedItem() != null) {
-                                                selectedQuota = (Quota) isItem.getSelectedItem();
-                                            }
-                                            isItem.setItems(list);
-                                            if (selectedQuota != null && list.size() > 1) {
-                                                for (Quota quota : list) {
-                                                    if (quota.getId().equals(selectedQuota.getId())) {
-                                                        isItem.setSelectedItem(quota);
-                                                    }
-                                                }
+            AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            List<Quota> list = (List<Quota>) returnValue;
+                            if (list == null) {
+                                return;
+                            }
+                            if (isItem == null) {
+                                for (DiskModel diskModel : getDisks()) {
+                                    diskModel.getQuota().setItems(list);
+                                    if (diskModel.getDisk() instanceof DiskImage) {
+                                        DiskImage diskImage = (DiskImage) diskModel.getDisk();
+                                        for (Quota quota : list) {
+                                            if (quota.getId().equals(diskImage.getQuotaId())) {
+                                                diskModel.getQuota().setSelectedItem(quota);
+                                                break;
                                             }
                                         }
                                     }
                                 }
-                            }));
+                            } else {
+                                Guid selectedQuota = isItem.getSelectedItem() != null ?
+                                        isItem.getSelectedItem().getId() : null;
+                                selectedQuota = selectedQuota != null ? selectedQuota : diskQuotaId;
+                                isItem.setItems(list);
+                                if (selectedQuota != null && list.size() > 1) {
+                                    for (Quota quota : list) {
+                                        if (quota.getId().equals(selectedQuota)) {
+                                            isItem.setSelectedItem(quota);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }), storageDomainId, null);
         }
     }
 
@@ -335,7 +332,13 @@ public class DisksAllocationModel extends EntityModel {
         if (storageDomain != null) {
             for (DiskModel innerDisk : disks) {
                 if (innerDisk.getStorageDomain().equals(sender)) {
-                    updateQuota(storageDomain.getId(), innerDisk.getQuota());
+                    Guid diskQuotaId = null;
+                    if (innerDisk.getDisk() instanceof DiskImage) {
+                        DiskImage img = (DiskImage) innerDisk.getDisk();
+                        diskQuotaId = img.getQuotaId();
+                    }
+
+                    updateQuota(storageDomain.getId(), innerDisk.getQuota(), diskQuotaId);
                     updateDiskProfile(storageDomain.getId(), innerDisk.getDiskProfile());
                     break;
                 }

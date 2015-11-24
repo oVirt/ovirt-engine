@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -287,6 +288,9 @@ public class InstanceImageLineModel extends EntityModel {
         vm.setVdsGroupId(parentModel.getUnitVmModel().getSelectedCluster().getId());
         vm.setStoragePoolId(parentModel.getUnitVmModel().getSelectedDataCenter().getId());
         vm.setVdsGroupCompatibilityVersion(parentModel.getUnitVmModel().getSelectedCluster().getCompatibilityVersion());
+
+        Quota selectedQuota = parentModel.getUnitVmModel().getQuota().getSelectedItem();
+        vm.setQuotaId(selectedQuota == null ? null : selectedQuota.getId());
         model.setVm(vm);
         model.getSizeExtend().setIsAvailable(false);
 

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -176,6 +177,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.IAsyncConverter;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.comparators.QuotaComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
@@ -4268,5 +4270,37 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.NetworkExclusivenessPermissiveValidation,
                 version);
+    }
+
+    private static final class QuotaConverter implements IAsyncConverter<List<Quota>> {
+        private final Guid topId;
+
+        public QuotaConverter(Guid topId) {
+            this.topId = topId;
+        }
+
+        @Override
+        public List<Quota> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            List<Quota> quotaList = (List<Quota>) returnValue;
+            if (quotaList != null && !quotaList.isEmpty()) {
+                Comparator<Quota> comparator = (topId == null) ? QuotaComparator.NAME :
+                        QuotaComparator.withTopId(topId, QuotaComparator.NAME);
+
+                Collections.sort(quotaList, comparator);
+            }
+            return quotaList;
+        }
+    }
+
+    public void getAllRelevantQuotasForStorageSorted(AsyncQuery asyncQuery, Guid storageId, Guid topQuotaId) {
+        asyncQuery.converterCallback = new QuotaConverter(topQuotaId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                new IdQueryParameters(storageId), asyncQuery);
+    }
+
+    public void getAllRelevantQuotasForClusterSorted(AsyncQuery asyncQuery, Guid clusterId, Guid topQuotaId) {
+        asyncQuery.converterCallback = new QuotaConverter(topQuotaId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+                new IdQueryParameters(clusterId), asyncQuery);
     }
 }
