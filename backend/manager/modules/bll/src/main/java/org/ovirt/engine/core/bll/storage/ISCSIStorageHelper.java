@@ -233,9 +233,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     .getAllForStorageServerConnection(failedConnection);
             if (!failedLuns.isEmpty()) {
                 for (LUNs lun : failedLuns) {
-                    /**
-                     * TODO: check if LUNs in the same pool.
-                     */
+                    // TODO: check if LUNs in the same pool.
                     List<String> strings =
                             LinqUtils.transformToList(
                                     DbFacade.getInstance()
