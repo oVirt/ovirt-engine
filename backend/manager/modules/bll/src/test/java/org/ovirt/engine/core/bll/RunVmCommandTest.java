@@ -369,7 +369,6 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     private void mockIsoDomainListSyncronizer() {
-        doNothing().when(isoDomainListSyncronizer).init();
         doReturn(isoDomainListSyncronizer).when(command).getIsoDomainListSyncronizer();
     }
 

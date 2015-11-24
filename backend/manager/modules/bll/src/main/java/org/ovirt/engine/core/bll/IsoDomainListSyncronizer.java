@@ -99,10 +99,6 @@ public class IsoDomainListSyncronizer {
      * private constructor to initialize the quartz scheduler
      */
     private IsoDomainListSyncronizer() {
-        init();
-    }
-
-    protected void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         providerDao = DbFacade.getInstance().getProviderDao();
