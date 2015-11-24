@@ -358,26 +358,22 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "           {\n" +
                 "                \"name\": \"host_ovirt_id\",\n" +
                 "                \"value\": \"" + vds.getStaticData().getId() + "\",\n" +
-                "                \"_destroy\": \"false\",\n" +
-                "                \"nested\": \"\"\n" +
+                "                \"_destroy\": \"false\"\n" +
                 "            },\n" +
                 "           {\n" +
                 "                \"name\": \"compute_resource_id\",\n" +
                 "                \"value\": \"" + computeResource.getId() + "\",\n" +
-                "                \"_destroy\": \"false\",\n" +
-                "                \"nested\": \"\"\n" +
+                "                \"_destroy\": \"false\"\n" +
                 "            },\n" +
                 "           {\n" +
                 "                \"name\": \"pass\",\n" +
                 "                \"value\": \"" + CryptMD5.crypt(rootPassword) + "\",\n" +
-                "                \"_destroy\": \"false\",\n" +
-                "                \"nested\": \"\"\n" +
+                "                \"_destroy\": \"false\"\n" +
                 "            },\n" +
                 "           {\n" +
                 "                \"name\": \"management\",\n" +
                 "                \"value\": \"" + computeResource.getUrl().replaceAll("(http://|/api|/ovirt-engine)", "") + "\",\n" +
-                "                \"_destroy\": \"false\",\n" +
-                "                \"nested\": \"\"\n" +
+                "                \"_destroy\": \"false\"\n" +
                 "            }\n" +
                 "        ]\n" +
                 "    }\n" +
