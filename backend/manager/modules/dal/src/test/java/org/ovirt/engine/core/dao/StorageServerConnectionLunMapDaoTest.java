@@ -13,12 +13,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 
 public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";
-    private static final String EXISTING_DOMAIN_STORAGE_NAME = "fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk";
 
     private StorageServerConnectionLunMapDao dao;
-    private StorageServerConnectionDao storageServerConnectionDao;
-    private StorageServerConnections newServerConnection;
-    private StorageServerConnections existingConnection;
     private LUNStorageServerConnectionMap existingLUNStorageMap;
     private LUNStorageServerConnectionMap newLUNStorageMap;
 
@@ -27,13 +23,9 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStorageServerConnectionLunMapDao();
-        storageServerConnectionDao = dbFacade.getStorageServerConnectionDao();
+        StorageServerConnectionDao storageServerConnectionDao = dbFacade.getStorageServerConnectionDao();
 
-        existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297e");
-
-        newServerConnection = new StorageServerConnections();
-        newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");
-        newServerConnection.setconnection(EXISTING_DOMAIN_STORAGE_NAME);
+        StorageServerConnections existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297e");
 
         existingLUNStorageMap =
                 dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", existingConnection.getid()));
