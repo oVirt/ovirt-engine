@@ -51,6 +51,6 @@ public class ThawVmCommand<T extends VmOperationParameterBase> extends VmOperati
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.THAW_VM_SUCCESS : AuditLogType.USER_FAILED_TO_FREEZE_VM;
+        return getSucceeded() ? AuditLogType.THAW_VM_SUCCESS : AuditLogType.USER_FAILED_TO_THAW_VM;
     }
 }
