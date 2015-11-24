@@ -10,8 +10,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -60,13 +58,11 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
 
     @Override
     public List<LUNStorageServerConnectionMap> getAll(final String lunId) {
-        return LinqUtils.filter(getAll(),
-                new Predicate<LUNStorageServerConnectionMap>() {
-                    @Override
-                    public boolean eval(LUNStorageServerConnectionMap a) {
-                        return a.getLunId().equals(lunId);
-                    }
-                });
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", lunId);
+
+        return getCallsHandler().executeReadList("GetLUN_storage_server_connection_mapByLUN",
+                StorageServerConnectionLunMapRowMapper.instance,
+                parameterSource);
     }
 
     @Override

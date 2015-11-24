@@ -685,6 +685,20 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetLUN_storage_server_connection_mapByLUN (
+    v_LUN_id VARCHAR(50)
+    )
+RETURNS SETOF LUN_storage_server_connection_map STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM LUN_storage_server_connection_map lUN_storage_server_connection_map
+    WHERE LUN_id = v_LUN_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION GetLUN_storage_server_connection_mapByLUNBystorage_server_conn (
     v_LUN_id VARCHAR(50),
     v_storage_server_connection VARCHAR(50)
