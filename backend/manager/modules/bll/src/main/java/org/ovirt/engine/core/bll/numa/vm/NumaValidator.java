@@ -89,7 +89,7 @@ public class NumaValidator {
     }
 
     /**
-     * Check if a VM can run on a specific hostNumaNodes with the provided numa configuration. The numa nodes for
+     * Check if a VM can run on specific hostNumaNodes with the provided numa configuration. The numa nodes for
      * validation need to be passed in separately because the numa nodes are not necessarily part of the VM when the
      * validation takes place.
      *

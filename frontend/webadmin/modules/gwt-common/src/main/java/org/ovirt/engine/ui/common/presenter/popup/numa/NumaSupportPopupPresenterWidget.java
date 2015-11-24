@@ -85,8 +85,12 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
 
             @Override
             public void onUpdatedVnuma(UpdatedVnumaEvent event) {
-                supportModel.pinVNodeToNumaNode(event.getSourceVmGuid(), event.isPinned(),
-                        event.getSourceVNumaNodeIndex(), event.getTargetNumaNodeIndex());
+                if (event.getTargetNumaNodeIndex() != -1) {
+                    supportModel.pinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex(),
+                            event.getTargetNumaNodeIndex());
+                } else {
+                    supportModel.unpinVNode(event.getSourceVmGuid(), event.getSourceVNumaNodeIndex());
+                }
             }
         }));
 

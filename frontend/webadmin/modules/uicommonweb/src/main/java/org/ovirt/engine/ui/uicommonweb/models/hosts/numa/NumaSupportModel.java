@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.numa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,12 +40,13 @@ public class NumaSupportModel extends Model {
     private ListModel<VDS> hosts;
     private List<VdsNumaNode> numaNodeList;
     private List<VM> vmsWithvNumaNodeList;
-    private List<VNodeModel> unassignedVNodeModelList;
-    protected Map<Integer, List<VNodeModel>> p2vNumaNodesMap;
+    private Set<VNodeModel> unassignedNumaNodes;
+    protected Map<Integer, Set<VNodeModel>> assignedNumaNodes;
     private List<Pair<Integer, Set<VdsNumaNode>>> firstLevelDistanceSetList;
     private final Event modelReady = new Event(new EventDefinition("ModelReady", NumaSupportModel.class)); //$NON-NLS-1$
     private Map<Integer, VdsNumaNode> indexNodeMap;
-    private final Map<Guid, VdcActionParametersBase> updateParametersMap = new HashMap<Guid, VdcActionParametersBase>();
+    private Map <Guid, Map<Integer, VNodeModel>> numaModelsPerVm = new HashMap<>();
+    private Set <Guid> vmsToUpdate = new HashSet<>();
 
     public NumaSupportModel(List<VDS> hosts, VDS host, Model parentModel) {
         this.parentModel = parentModel;
@@ -97,6 +100,7 @@ public class NumaSupportModel extends Model {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         NumaSupportModel.this.setVmsWithvNumaNodeList((List<VM>) returnValue);
+                        initVNumaNodes();
                         NumaSupportModel.this.modelReady();
                     }
 
@@ -107,50 +111,42 @@ public class NumaSupportModel extends Model {
     }
 
     protected void initVNumaNodes() {
-        unassignedVNodeModelList = new ArrayList<VNodeModel>();
-        p2vNumaNodesMap = new HashMap<Integer, List<VNodeModel>>();
+        unassignedNumaNodes = new LinkedHashSet<>();
+        assignedNumaNodes = new HashMap<>();
         final Set<Integer> hostIndices = new HashSet<>();
-        for (VdsNumaNode numaNode : numaNodeList){
+        for (VdsNumaNode numaNode : numaNodeList) {
             hostIndices.add(numaNode.getIndex());
         }
 
         for (final VM vm : getVmsWithvNumaNodeList()) {
-            if (vm.getvNumaNodeList() != null) {
-                for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
-                    VNodeModel vNodeModel = new VNodeModel(this, vm, vmNumaNode, false);
-                    if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()) {
-                        for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                            Integer hostIndex = pair.getSecond().getSecond();
-                            boolean pinned = pair.getSecond().getFirst();
-                            if (pinned) {
-                                if (!hostIndices.contains(hostIndex)) {
-                                    vNodeModel.setPinned(false);
-                                } else {
-                                    vNodeModel.setPinned(true);
-                                    assignVNumaToPhysicalNuma(vNodeModel, hostIndex);
-                                }
-                                break; //Stop on mapping error and on valid pinning
-                            }
-                        }
+            numaModelsPerVm.put(vm.getId(), new HashMap<Integer, VNodeModel>());
+            for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
+                VNodeModel vNodeModel = new VNodeModel(vm, vmNumaNode);
+                numaModelsPerVm.get(vm.getId()).put(vNodeModel.getIndex(), vNodeModel);
+                if (vNodeModel.isPinned()) {
+                    if (!hostIndices.contains(vNodeModel.getHostNodeIndex())) {
+                        // host numa node does not exist. Unpin the numa node and update the configuration
+                        vNodeModel.unpin();
+                        vmsToUpdate.add(vm.getId());
                     }
-                    if (!vNodeModel.isPinned()){
-                        unassignedVNodeModelList.add(vNodeModel);
-                        if (vmNumaNode.getVdsNumaNodeList() != null) {
-                            // Reset vdsNumaNodeList since the model says that the node should not be pinned
-                            vmNumaNode.getVdsNumaNodeList().clear();
-                        }
-                    }
+                }
+                if (!vNodeModel.isPinned()) {
+                    // virtual numa node is not assigned to any host numa node
+                    unassignedNumaNodes.add(vNodeModel);
+                } else {
+                    // virtual numa node is assigned to a host numa node
+                    assignVNumaToPhysicalNuma(vNodeModel);
                 }
             }
         }
     }
 
-    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel, Integer hostNodeIndex) {
-        if (!p2vNumaNodesMap.containsKey(hostNodeIndex)) {
-            p2vNumaNodesMap.put(hostNodeIndex, new ArrayList<VNodeModel>());
+    private void assignVNumaToPhysicalNuma(VNodeModel vNodeModel) {
+        final Integer hostNodeIndex = vNodeModel.getHostNodeIndex();
+        if (!assignedNumaNodes.containsKey(hostNodeIndex)) {
+            assignedNumaNodes.put(hostNodeIndex, new LinkedHashSet<VNodeModel>());
         }
-        p2vNumaNodesMap.get(hostNodeIndex)
-                .add(vNodeModel);
+        assignedNumaNodes.get(hostNodeIndex).add(vNodeModel);
     }
 
     private VdsNumaNode getNodeByIndex(Integer index) {
@@ -163,8 +159,8 @@ public class NumaSupportModel extends Model {
         return indexNodeMap.get(index);
     }
 
-    public List<VNodeModel> getVNumaNodeByNodeIndx(Integer nodeIdx) {
-        return p2vNumaNodesMap.get(nodeIdx);
+    public Collection<VNodeModel> getVNumaNodeByNodeIndx(Integer nodeIdx) {
+        return assignedNumaNodes.get(nodeIdx);
     }
 
     private void initFirstLevelDistanceSetList() {
@@ -206,7 +202,6 @@ public class NumaSupportModel extends Model {
     }
 
     private void modelReady() {
-        initVNumaNodes();
         getModelReady().raise(this, EventArgs.EMPTY);
         stopProgress();
     }
@@ -239,16 +234,12 @@ public class NumaSupportModel extends Model {
         this.vmsWithvNumaNodeList = vmsWithvNumaNodeList;
     }
 
-    public List<VNodeModel> getUnassignedVNodeModelList() {
-        return unassignedVNodeModelList;
+    public Collection<VNodeModel> getUnassignedNumaNodes() {
+        return unassignedNumaNodes;
     }
 
     public List<Pair<Integer, Set<VdsNumaNode>>> getFirstLevelDistanceSetList() {
         return firstLevelDistanceSetList;
-    }
-
-    public void setFirstLevelDistanceSetList(List<Pair<Integer, Set<VdsNumaNode>>> firstLevelDistanceSetList) {
-        this.firstLevelDistanceSetList = firstLevelDistanceSetList;
     }
 
     public Event getModelReady() {
@@ -274,35 +265,73 @@ public class NumaSupportModel extends Model {
         }
     }
 
-    public void pinVNodeToNumaNode(Guid sourceVMGuid, boolean isPinned, int sourceVNumaIndex, int targetPNumaNodeIndex) {
-        boolean breakFlag = false;
-        for (VM vm : getVmsWithvNumaNodeList()) {
-            if (vm.getId().equals(sourceVMGuid)) {
-                for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
-                    if (vmNumaNode.getIndex() == sourceVNumaIndex) {
-                        vmNumaNode.setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
-                        if (targetPNumaNodeIndex != -1) {
-                            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
-                            pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
-                            pair.setSecond(new Pair<Boolean, Integer>());
-                            pair.getSecond().setFirst(true);
-                            pair.getSecond().setSecond(targetPNumaNodeIndex);
-                            vmNumaNode.getVdsNumaNodeList().add(pair);
-                        }
-                        break;
-                    }
-                }
-                updateParametersMap.put(vm.getId(),
-                        new VmNumaNodeOperationParameters(vm.getId(), vm.getvNumaNodeList()));
-            }
-            if (breakFlag) {
-                break;
-            }
+    /**
+     * Dragging virtual numa nodes to host numa nodes emits a pin event. The pin event calls this callback.
+     * @param sourceVMGuid Guid of the VM the numa node belongs to
+     * @param sourceVNumaIndex Index of the VM numa node
+     * @param pNumaNodeIndex Index of the host numa node
+     */
+    public void pinVNode(Guid sourceVMGuid, int sourceVNumaIndex, int pNumaNodeIndex) {
+        VNodeModel vNodeModel = getNodeModel(sourceVMGuid, sourceVNumaIndex);
+        if (vNodeModel.isPinned()) {
+            assignedNumaNodes.get(vNodeModel.getHostNodeIndex()).remove(vNodeModel);
+        } else {
+            unassignedNumaNodes.remove(vNodeModel);
         }
+        vmsToUpdate.add(vNodeModel.getVm().getId());
+        vNodeModel.pinTo(pNumaNodeIndex);
+        assignVNumaToPhysicalNuma(vNodeModel);
         modelReady();
     }
 
+    /**
+     * Moving an virtual numa node away from a host numa node triggers an unpin event. The unpin event calls this
+     * method.
+     * @param sourceVMGuid Guid of the VM
+     * @param sourceVNumaIndex Index of the VM numa node
+     */
+    public void unpinVNode(Guid sourceVMGuid, int sourceVNumaIndex) {
+        VNodeModel vNodeModel = getNodeModel(sourceVMGuid, sourceVNumaIndex);
+        if (vNodeModel.isPinned()) {
+            assignedNumaNodes.get(vNodeModel.getHostNodeIndex()).remove(vNodeModel);
+            unassignedNumaNodes.add(vNodeModel);
+        }
+        vNodeModel.unpin();
+        vmsToUpdate.add(vNodeModel.getVm().getId());
+        modelReady();
+    }
+
+    /**
+     * Get the current numa node pinning - as currently visible for the user - for a specific VM.
+     * @param vmId guid of the VM
+     * @return List of numa nodes with current mapping
+     */
+    public List<VmNumaNode> getNumaNodes(Guid vmId) {
+        final List<VmNumaNode> numaNodes = new ArrayList<>();
+        for (final VNodeModel model : numaModelsPerVm.get(vmId).values()) {
+            numaNodes.add(model.toVmNumaNode());
+        }
+        return numaNodes;
+    }
+
+    private VNodeModel getNodeModel(Guid vmId, int nodeIndex) {
+        return numaModelsPerVm.get(vmId).get(nodeIndex);
+    }
+
+    /**
+     * Return a list of action parameters which contain numa pinning updates for different VMs.
+     * Used when accessing the numa support screen from the host list panel.
+     * @return List of updated numa configurations
+     */
     public ArrayList<VdcActionParametersBase> getUpdateParameters() {
-        return new ArrayList<VdcActionParametersBase>(updateParametersMap.values());
+        final ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        for (Guid vmId : vmsToUpdate) {
+            final List<VmNumaNode> numaNodes = new ArrayList<>();
+            for (final VNodeModel model : numaModelsPerVm.get(vmId).values()) {
+                numaNodes.add(model.toVmNumaNode());
+            }
+            parameters.add(new VmNumaNodeOperationParameters(vmId, numaNodes));
+        }
+        return parameters;
     }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.presenter.popup.numa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.ui.common.presenter.CollapsiblePanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -51,8 +53,8 @@ public class UnassignedVNumaNodesPanelPresenterWidget extends
 
     public void populateView() {
         getView().clear();
-        List<VNodeModel> unassignedNodeList = model.getUnassignedVNodeModelList();
-        Map<VM, List<VNodeModel>> vmToNodeMap = new HashMap<VM, List<VNodeModel>>();
+        Collection<VNodeModel> unassignedNodeList = model.getUnassignedNumaNodes();
+        Map<VM, List<VNodeModel>> vmToNodeMap = new HashMap<>();
         for(VM currentVM: this.model.getVmsWithvNumaNodeList()) {
             List<VNodeModel> nodeModelList = new ArrayList<VNodeModel>();
             vmToNodeMap.put(currentVM, nodeModelList);
