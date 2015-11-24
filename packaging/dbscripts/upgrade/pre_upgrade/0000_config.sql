@@ -214,6 +214,7 @@ select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_6
 select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '3.6');
 select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '3.5');
+select fn_db_add_config_value('HotPlugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '3.6');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
