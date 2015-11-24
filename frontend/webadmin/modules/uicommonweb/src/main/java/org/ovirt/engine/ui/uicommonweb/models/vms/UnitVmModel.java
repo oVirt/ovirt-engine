@@ -3142,7 +3142,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
         VmNumaSupportModel model = (VmNumaSupportModel) getWindow();
-        setVmNumaNodes(model.getVm().getvNumaNodeList());
+        setVmNumaNodes(model.getNumaNodes(model.getVm().getId()));
+        model.getVm().setvNumaNodeList(getVmNumaNodes());
     }
 
     public void setNumaChanged(boolean numaChanged) {

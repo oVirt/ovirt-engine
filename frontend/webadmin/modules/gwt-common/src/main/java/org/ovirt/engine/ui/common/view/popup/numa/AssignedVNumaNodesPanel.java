@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup.numa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -8,6 +9,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.view.CollapsiblePanelView;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
@@ -61,7 +63,7 @@ public class AssignedVNumaNodesPanel extends Composite {
         collapsiblePanel.addContentWidget(scrollPanel);
     }
 
-    public void setNodes(List<VNodeModel> virtualNodes, int numaNodeIndex, List<VdsNumaNode> numaNodeList) {
+    public void setNodes(Collection<VNodeModel> virtualNodes, int numaNodeIndex, List<VdsNumaNode> numaNodeList) {
         String myImageHtml = AbstractImagePrototype.create(resources.vNumaTitleIcon()).getHTML();
         SafeHtml mySafeImageHtml = new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(myImageHtml);
         if (virtualNodes == null) {

@@ -140,7 +140,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         }
         event.setData("VM_GID", nodeModel.getVm().getId().toString()); //$NON-NLS-1$
         event.setData("PINNED", String.valueOf(nodeModel.isPinned())); //$NON-NLS-1$
-        event.setData("INDEX", String.valueOf(nodeModel.getVmNumaNode().getIndex())); //$NON-NLS-1$
+        event.setData("INDEX", String.valueOf(nodeModel.getIndex())); //$NON-NLS-1$
         // show a ghost of the widget under cursor.
         NativeEvent nativeEvent = event.getNativeEvent();
         int x = nativeEvent.getClientX() - getAbsoluteLeft();
@@ -185,7 +185,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         if (nodeModel.isLocked()) {
             enableDrag(false);
         } else {
-            createMenu(numaNodeList, nodeModel.getVmNumaNode().getIndex());
+            createMenu(numaNodeList, nodeModel.getIndex());
         }
     }
 
@@ -198,7 +198,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
                 @Override
                 public void execute() {
                     UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
-                            nodeModel.isPinned(), nodeModel.getVmNumaNode().getIndex(), nodeIndex);
+                            true, nodeModel.getIndex(), nodeIndex);
                     menuPopup.hide();
                 }
             });
@@ -210,7 +210,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
                 @Override
                 public void execute() {
                     UpdatedVnumaEvent.fire(DraggableVirtualNumaPanel.this, nodeModel.getVm().getId(),
-                            nodeModel.isPinned(), nodeModel.getVmNumaNode().getIndex(), -1);
+                            false, nodeModel.getIndex(), -1);
                     menuPopup.hide();
                 }
             });

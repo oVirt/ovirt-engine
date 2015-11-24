@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.numa;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,14 +42,14 @@ public class VmNumaSupportModel extends NumaSupportModel {
     }
 
     private void lockOtherVmNodes() {
-        for (VNodeModel nodeModel : getUnassignedVNodeModelList()) {
+        for (VNodeModel nodeModel : getUnassignedNumaNodes()) {
             if (!nodeModel.getVm().getId().equals(vm.getId())) {
                 nodeModel.setLocked(true);
             }
         }
 
-        for (List<VNodeModel> list : p2vNumaNodesMap.values()) {
-            for (VNodeModel nodeModel : list) {
+        for (Set<VNodeModel> nodeModelSet : assignedNumaNodes.values()) {
+            for (VNodeModel nodeModel : nodeModelSet) {
                 if (!nodeModel.getVm().getId().equals(vm.getId())) {
                     nodeModel.setLocked(true);
                 }

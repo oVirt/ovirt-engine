@@ -65,7 +65,7 @@ public class VirtualNumaPanel extends Composite implements HasWidgets {
     }
 
     public void setModel(VNodeModel nodeModel) {
-        virtualNodeName.setText(messages.vNumaName(nodeModel.getVm().getName(), nodeModel.getVmNumaNode().getIndex()));
+        virtualNodeName.setText(messages.vNumaName(nodeModel.getVm().getName(), nodeModel.getIndex()));
         setStatusIcon(nodeModel);
         setTypeIcon(nodeModel);
     }
