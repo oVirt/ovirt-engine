@@ -367,6 +367,14 @@ class Defaults(object):
     DEFAULT_PKI_RENEWAL_DOC_URL = \
         'http://www.ovirt.org/OVirt_3.5.4_Release_Notes#PKI'
 
+    DEFAULT_ADDITIONAL_PACKAGES = (
+        'ovirt-host-deploy'
+        ',ovirt-engine-cli'
+        ',ovirt-image-uploader'
+        ',ovirt-iso-uploader'
+        ',ovirt-log-collector'
+    )
+
 
 @util.export
 class Stages(object):
@@ -757,6 +765,7 @@ class RPMDistroEnv(object):
     ENGINE_PACKAGES = 'OVESETUP_RPMDISTRO/enginePackages'
     ENGINE_SETUP_PACKAGES = 'OVESETUP_RPMDISTRO/engineSetupPackages'
     UPGRADE_YUM_GROUP = 'OVESETUP_RPMDISTRO/upgradeYumGroup'
+    ADDITIONAL_PACKAGES = 'OVESETUP_RPMDISTRO/additionalPackages'
 
 
 @util.export
