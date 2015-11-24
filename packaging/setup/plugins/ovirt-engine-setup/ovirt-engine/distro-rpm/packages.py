@@ -57,6 +57,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP,
             oenginecons.Const.UPGRADE_YUM_GROUP_NAME
         )
+        self.environment.setdefault(
+            oenginecons.RPMDistroEnv.ADDITIONAL_PACKAGES,
+            oenginecons.Defaults.DEFAULT_ADDITIONAL_PACKAGES
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -111,9 +115,16 @@ class Plugin(plugin.PluginBase):
                     'group': self.environment[
                         oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
                     ],
-                    'packages': tolist(
-                        self.environment[
-                            oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
+                    'packages': (
+                        tolist(
+                            self.environment[
+                                oenginecons.RPMDistroEnv.ENGINE_PACKAGES
+                            ]
+                        ) + tolist(
+                            self.environment[
+                                oenginecons.RPMDistroEnv.ADDITIONAL_PACKAGES
+                            ]
+                        )
                     ),
                 },
             )
