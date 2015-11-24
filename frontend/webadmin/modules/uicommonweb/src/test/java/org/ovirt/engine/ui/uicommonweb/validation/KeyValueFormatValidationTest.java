@@ -23,15 +23,15 @@ public class KeyValueFormatValidationTest {
     @Mock
     private UIMessages mockUiMessages;
 
-    private final String NOT_VALID = "a"; //$NON-NLS-1$
-    private final String ERROR_MESSAGE_EMPTY_NOT_ALLOWED = "ERROR_MESSAGE_EMPTY_NOT_ALLOWED";//$NON-NLS-1$
-    private final String ERROR_MESSAGE_EMPTY_ALLOWED = "ERROR_MESSAGE_EMPTY_ALLOWED";//$NON-NLS-1$
-    private final String FORMAT = "FORMAT";//$NON-NLS-1$
-    private final ValidationResult failureValidationResultEmptyNotAllowed = new ValidationResult(false,
+    private final static String NOT_VALID = "a"; //$NON-NLS-1$
+    private final static String ERROR_MESSAGE_EMPTY_NOT_ALLOWED = "ERROR_MESSAGE_EMPTY_NOT_ALLOWED";//$NON-NLS-1$
+    private final static String ERROR_MESSAGE_EMPTY_ALLOWED = "ERROR_MESSAGE_EMPTY_ALLOWED";//$NON-NLS-1$
+    private final static String FORMAT = "FORMAT";//$NON-NLS-1$
+    private final static ValidationResult failureValidationResultEmptyNotAllowed = new ValidationResult(false,
             Arrays.asList(ERROR_MESSAGE_EMPTY_NOT_ALLOWED));
-    private final ValidationResult failureValidationResultEmptyAllowed = new ValidationResult(false,
+    private final static ValidationResult failureValidationResultEmptyAllowed = new ValidationResult(false,
             Arrays.asList(ERROR_MESSAGE_EMPTY_ALLOWED));
-    private final ValidationResult successfulValidationResult = new ValidationResult();
+    private final static ValidationResult successfulValidationResult = new ValidationResult();
     private KeyValueFormatValidation underTest;
 
     @Before
