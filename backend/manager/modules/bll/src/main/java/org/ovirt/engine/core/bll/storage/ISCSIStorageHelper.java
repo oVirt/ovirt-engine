@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -26,9 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,15 +143,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
-                lunId.isEmpty() ? LinqUtils.transformToList(DbFacade.getInstance()
+                lunId.isEmpty() ? DbFacade.getInstance()
                         .getLunDao()
-                        .getAllForVolumeGroup(vgId),
-                        new Function<LUNs, String>() {
-                            @Override
-                            public String eval(LUNs a) {
-                                return a.getLUN_id();
-                            }
-                        }) : null;
+                        .getAllForVolumeGroup(vgId)
+                        .stream()
+                        .map(LUNs::getLUN_id)
+                        .collect(Collectors.toList()) : null;
         // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
         // at that case they should left at db
         List<String> lunsByVgWithNoDisks = new ArrayList<>();
@@ -171,14 +166,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         for (StorageServerConnections connection : connections) {
             fillConnectionDetailsIfNeeded(connection);
             if (connection.getid() != null) {
-                List<String> list = LinqUtils.transformToList(
-                        DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
-                        new Function<LUNs, String>() {
-                            @Override
-                            public String eval(LUNs a) {
-                                return a.getLUN_id();
-                            }
-                        });
+                List<String> list = DbFacade.getInstance()
+                        .getLunDao()
+                        .getAllForStorageServerConnection(connection.getid())
+                        .stream()
+                        .map(LUNs::getLUN_id)
+                        .collect(Collectors.toList());
 
                 if (0 < CollectionUtils.subtract(list, lunsByVgWithNoDisks).size()) {
                     toRemove.add(connection);
@@ -222,12 +215,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     public boolean isConnectSucceeded(final Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         boolean result = true;
-        List<String> failedConnectionsList = LinqUtils.filter(returnValue.keySet(), new Predicate<String>() {
-            @Override
-            public boolean eval(String a) {
-                return !"0".equals(returnValue.get(a));
-            }
-        });
+        List<String> failedConnectionsList =
+                returnValue.keySet().stream().filter(a -> !"0".equals(returnValue.get(a))).collect(Collectors.toList());
         for (String failedConnection : failedConnectionsList) {
             List<LUNs> failedLuns = DbFacade.getInstance().getLunDao()
                     .getAllForStorageServerConnection(failedConnection);
@@ -235,16 +224,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 for (LUNs lun : failedLuns) {
                     // TODO: check if LUNs in the same pool.
                     List<String> strings =
-                            LinqUtils.transformToList(
-                                    DbFacade.getInstance()
-                                            .getStorageServerConnectionLunMapDao()
-                                            .getAll(lun.getLUN_id()),
-                                    new Function<LUNStorageServerConnectionMap, String>() {
-                                        @Override
-                                        public String eval(LUNStorageServerConnectionMap a) {
-                                            return a.getstorage_server_connection();
-                                        }
-                                    });
+                            DbFacade.getInstance()
+                                    .getStorageServerConnectionLunMapDao()
+                                    .getAll(lun.getLUN_id())
+                                    .stream()
+                                    .map(LUNStorageServerConnectionMap::getstorage_server_connection)
+                                    .collect(Collectors.toList());
                     if (CollectionUtils.subtract(strings, failedConnectionsList).size() == 0) {
                         // At case of failure the appropriate log message will be
                         // added
