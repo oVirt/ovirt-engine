@@ -69,7 +69,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setClientIp(String clientIp) {
-        if (!ObjectUtils.objectsEqual(clientIp, clientIp)) {
+        if (!ObjectUtils.objectsEqual(this.clientIp, clientIp)) {
             this.clientIp = clientIp;
             onPropertyChanged(new PropertyChangedEventArgs("ClientIp")); //$NON-NLS-1$
         }
@@ -80,7 +80,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     }
 
     public void setConsoleUserName(String consoleUserName) {
-        if (!ObjectUtils.objectsEqual(consoleUserName, consoleUserName)) {
+        if (!ObjectUtils.objectsEqual(this.consoleUserName, consoleUserName)) {
             this.consoleUserName = consoleUserName;
             onPropertyChanged(new PropertyChangedEventArgs("ConsoleUserName")); //$NON-NLS-1$
         }
