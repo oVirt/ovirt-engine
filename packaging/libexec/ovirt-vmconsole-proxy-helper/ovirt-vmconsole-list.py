@@ -27,6 +27,10 @@ import sys
 import urllib2
 import urlparse
 
+import ovirt_vmconsole_conf as config
+
+from ovirt_engine import configfile, service, ticket
+
 if sys.version_info[0] < 3:
     from httplib import HTTPSConnection
     from urllib2 import HTTPSHandler
@@ -35,10 +39,6 @@ else:
     from http.client import HTTPSConnection
     from urllib.request import HTTPSHandler
     from urllib.request import build_opener
-
-import ovirt_vmconsole_conf as config
-
-from ovirt_engine import configfile, service, ticket
 
 
 _HTTP_STATUS_CODE_SUCCESS = 200
