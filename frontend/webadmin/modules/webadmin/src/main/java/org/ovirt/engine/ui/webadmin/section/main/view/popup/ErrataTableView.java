@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -265,7 +266,7 @@ public class ErrataTableView extends ResizeComposite {
         return errataTable;
     }
 
-    private static class ErrataTypeComparator implements Comparator<Erratum> {
+    private static class ErrataTypeComparator implements Comparator<Erratum>, Serializable {
 
         @Override
         public int compare(Erratum erratum0, Erratum erratum1) {
