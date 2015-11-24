@@ -779,38 +779,37 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (cluster == null) {
                 return;
             }
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
-                    new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
-                            new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery(getModel(),
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            UnitVmModel vmModel = (UnitVmModel) model;
+                            List<Quota> quotaList =  (List<Quota>) returnValue;
+                            if (quotaList == null) {
+                                return;
+                            }
 
-                                @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    UnitVmModel vmModel = (UnitVmModel) model;
-                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    if (quotaList != null && !quotaList.isEmpty()) {
-                                        vmModel.getQuota().setItems(quotaList);
-                                    }
-                                    if (quotaList != null && defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
-                                        boolean hasQuotaInList = false;
-                                        for (Quota quota : quotaList) {
-                                            if (quota.getId().equals(defaultQuota)) {
-                                                vmModel.getQuota().setSelectedItem(quota);
-                                                hasQuotaInList = true;
-                                                break;
-                                            }
-                                        }
-                                        // Add the quota to the list only in edit mode
-                                        if (!hasQuotaInList && !getModel().getIsNew()) {
-                                            Quota quota = new Quota();
-                                            quota.setId(defaultQuota);
-                                            quota.setQuotaName(quotaName);
-                                            quotaList.add(quota);
-                                            vmModel.getQuota().setItems(quotaList);
-                                            vmModel.getQuota().setSelectedItem(quota);
-                                        }
-                                    }
+                            if (!quotaList.isEmpty()) {
+                                vmModel.getQuota().setItems(quotaList);
+                            }
+                            if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
+                                boolean hasQuotaInList = false;
+                                if (!quotaList.isEmpty()) {
+                                    hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
                                 }
-                            }));
+
+                                // Add the quota to the list only in edit mode
+                                if (!hasQuotaInList && !getModel().getIsNew()) {
+                                    Quota quota = new Quota();
+                                    quota.setId(defaultQuota);
+                                    quota.setQuotaName(quotaName);
+                                    quotaList.add(0, quota);
+                                    vmModel.getQuota().setItems(quotaList);
+                                    vmModel.getQuota().setSelectedItem(quota);
+                                }
+                            }
+                        }
+                    }), cluster.getId(), defaultQuota);
         }
     }
 

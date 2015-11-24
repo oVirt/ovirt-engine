@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,12 +10,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -251,22 +248,20 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             return;
         }
 
-        INewAsyncCallback callback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<Quota> quotas = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                model.getQuota().setItems(quotas);
-                model.getQuota().setIsEmpty(quotas.isEmpty());
-                model.updateControlsAvailability();
-                stopProgress();
-            }
-        };
-
         startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
-                new IdQueryParameters(storageDomain.getId()),
-                new AsyncQuery(this, callback));
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<Quota> quotas = (List<Quota>) returnValue;
+                        quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
+
+                        getQuota().setItems(quotas);
+                        getQuota().setIsEmpty(quotas.isEmpty());
+                        updateControlsAvailability();
+                        stopProgress();
+                    }
+                }), storageDomain.getId(), null);
     }
 
     protected void cancel() {

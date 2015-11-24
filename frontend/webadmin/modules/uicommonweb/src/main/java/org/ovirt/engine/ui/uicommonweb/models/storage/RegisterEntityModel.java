@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -103,15 +102,17 @@ public abstract class RegisterEntityModel<T> extends Model {
             return;
         }
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
-                new IdQueryParameters(storageDomainId), new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
+                new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object innerModel, Object innerReturnValue) {
-                        ArrayList<Quota> quotas = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<Quota> quotas = (List<Quota>)returnValue;
+                        quotas = (quotas != null) ? quotas : new ArrayList<Quota>();
+
                         getStorageQuota().setItems(quotas);
                         getStorageQuota().setSelectedItem(Linq.firstOrNull(quotas));
                     }
-                }));
+                }), storageDomainId, null);
     }
 
     private void updateClusterQuota(ArrayList<Cluster> clusters) {

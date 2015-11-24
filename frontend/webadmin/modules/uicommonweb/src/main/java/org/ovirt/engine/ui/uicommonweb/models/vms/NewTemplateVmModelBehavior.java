@@ -298,7 +298,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
-        updateQuotaByCluster(null, null);
+        updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
@@ -419,7 +419,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             ArrayList<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
                             for (DiskModel diskModel : diskImages) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);
-                                diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
                             }
                             ArrayList<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
                             if (!cinderDisks.isEmpty()) {

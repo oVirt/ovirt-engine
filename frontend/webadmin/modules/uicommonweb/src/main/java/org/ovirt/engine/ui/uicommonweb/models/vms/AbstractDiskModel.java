@@ -663,35 +663,39 @@ public abstract class AbstractDiskModel extends DiskModel {
             return;
         }
 
-        IdQueryParameters parameters = new IdQueryParameters(storageDomain.getId());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage, parameters, new AsyncQuery(this,
+        final Guid diskQuota = getDisk() != null ? ((DiskImage) getDisk()).getQuotaId() : null;
+        final Guid vmQuota = getVm() != null ? getVm().getQuotaId() : null;
+        final Guid defaultQuota = diskQuota != null ? diskQuota : vmQuota;
+
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForStorageSorted(new AsyncQuery(
                 new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object innerModel, Object innerReturnValue) {
-                        ArrayList<Quota> quotaList = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<Quota> quotaList = (List<Quota>) returnValue;
                         if (quotaList != null && !quotaList.isEmpty()) {
                             getQuota().setItems(quotaList);
+
+                            // If list contains default quota, return
+                            if (quotaList.get(0).getId().equals(defaultQuota)) {
+                                return;
+                            }
                         }
 
-                        Guid defaultQuota = getDisk() != null ? ((DiskImage) getDisk()).getQuotaId() : null;
-                        if (defaultQuota != null) {
-                            for (Quota quota : quotaList) {
-                                if (quota.getId().equals(defaultQuota)) {
-                                    getQuota().setSelectedItem(quota);
-                                    return;
-                                }
-                            }
+                        if (diskQuota != null) {
                             Quota quota = new Quota();
-                            quota.setId(defaultQuota);
-                            if (getDisk() != null) {
-                                quota.setQuotaName(getDiskImage().getQuotaName());
+                            quota.setId(diskQuota);
+                            quota.setQuotaName(getDiskImage().getQuotaName());
+
+                            if (quotaList == null) {
+                                quotaList = new ArrayList<>();
                             }
+
                             quotaList.add(quota);
                             getQuota().setItems(quotaList);
                             getQuota().setSelectedItem(quota);
                         }
                     }
-                }));
+                }), storageDomain.getId(), defaultQuota);
     }
 
     private boolean isHostAvailable(VDS host) {
