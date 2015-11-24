@@ -278,6 +278,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("memSize")
     public MemorySizeEntityModelTextBoxEditor memSizeEditor;
 
+    @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
     public StringEntityModelTextBoxOnlyEditor totalvCPUsEditor;
@@ -563,6 +564,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected DialogTab rngDeviceTab;
 
+    @UiField(provided = true)
     @Path(value = "isRngEnabled.entity")
     @WithElementId("isRngEnabled")
     public EntityModelCheckBoxOnlyEditor isRngEnabledEditor;
@@ -718,6 +720,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected DialogTab highAvailabilityTab;
 
+    @UiField(provided = true)
     @Path(value = "isHighlyAvailable.entity")
     @WithElementId("isHighlyAvailable")
     public EntityModelCheckBoxEditor isHighlyAvailableEditor;
@@ -941,6 +944,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initListBoxEditors();
         // Contains a special parser/renderer
         memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        memSizeEditor.setLabel(constants.memSizeVmPopup());
 
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<>(
                 new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
@@ -1027,8 +1031,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vcpusAdvancedParameterExpander.initWithContent(vcpusAdvancedParameterExpanderContent.getElement());
 
         applyStyles();
-
-        localize();
 
         generateIds();
 
@@ -1474,135 +1476,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         } else {
             return templates.typeAheadEmptyContent().asString();
         }
-    }
-
-    protected void localize() {
-        // Tabs
-        highAvailabilityTab.setLabel(constants.highAvailVmPopup());
-        resourceAllocationTab.setLabel(constants.resourceAllocVmPopup());
-        bootOptionsTab.setLabel(constants.bootOptionsVmPopup());
-        customPropertiesTab.setLabel(constants.customPropsVmPopup());
-        systemTab.setLabel(constants.systemVmPopup());
-
-        // General Tab
-        generalTab.setLabel(constants.GeneralVmPopup());
-        dataCenterWithClusterEditor.setLabel(constants.hostClusterVmPopup());
-        quotaEditor.setLabel(constants.quotaVmPopup());
-        nameLabel.setText(constants.nameVmPopup());
-        templateVersionNameEditor.setLabel(constants.templateVersionName());
-
-        vmIdEditor.setLabel(constants.vmIdPopup());
-        descriptionEditor.setLabel(constants.descriptionVmPopup());
-        commentEditor.setLabel(constants.commentLabel());
-
-        baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
-        templateWithVersionEditor.setLabel(constants.template());
-        detachableInstanceTypesEditor.setLabel(constants.instanceType());
-
-        oSTypeEditor.setLabel(constants.osVmPopup());
-        vmTypeEditor.setLabel(constants.optimizedFor());
-        isStatelessEditor.setLabel(constants.statelessVmPopup());
-        isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
-        isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
-        isConsoleDeviceEnabledEditor.setLabel(constants.consoleDeviceEnabled());
-        copyTemplatePermissionsEditor.setLabel(constants.copyTemplatePermissions());
-        isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
-        isMemoryBalloonDeviceEnabled.setLabel(constants.memoryBalloonDeviceEnabled());
-        isIoThreadsEnabled.setLabel(constants.ioThreadsEnabled());
-        isVirtioScsiEnabled.setLabel(constants.isVirtioScsiEnabled());
-
-        // Rng device tab
-        rngDeviceTab.setLabel(constants.rngDeviceTab());
-        isRngEnabledEditor.setLabel(constants.rngDevEnabled());
-        rngPeriodEditor.setLabel(constants.rngPeriod());
-        rngBytesEditor.setLabel(constants.rngBytes());
-        rngSourceRandom.setLabel(constants.rngSourceRandom());
-        rngSourceHwrng.setLabel(constants.rngSourceHwrng());
-
-
-        // Pools Tab
-        poolTab.setLabel(constants.poolVmPopup());
-        poolTypeEditor.setLabel(constants.poolTypeVmPopup());
-        editPrestartedVmsLabel.setText(constants.prestartedVms());
-
-        prestartedLabel.setText(constants.prestartedPoolPopup());
-        numOfVmsEditor.setLabel(constants.numOfVmsPoolPopup());
-        maxAssignedVmsPerUserEditor.setLabel(constants.maxAssignedVmsPerUser());
-        editMaxAssignedVmsPerUserEditor.setLabel(constants.maxAssignedVmsPerUser());
-
-        // initial run Tab
-        initialRunTab.setLabel(constants.initialRunVmPopup());
-
-        vmInitEnabledEditor.setLabel(constants.cloudInitOrSysprep());
-
-        // Console Tab
-        consoleTab.setLabel(constants.consoleVmPopup());
-        displayTypeEditor.setLabel(constants.videoType());
-        graphicsTypeEditor.setLabel(constants.graphicsProtocol());
-        vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
-        usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
-        consoleDisconnectActionEditor.setLabel(constants.consoleDisconnectActionVmPopup());
-        numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
-        allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
-        isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
-        isSingleQxlEnabledEditor.setLabel(constants.singleQxlEnabled());
-        ssoMethodNone.setLabel(constants.none());
-        ssoMethodGuestAgent.setLabel(constants.guestAgent());
-        spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
-        spiceFileTransferEnabledEditor.setLabel(constants.spiceFileTransferEnabled());
-        spiceCopyPasteEnabledEditor.setLabel(constants.spiceCopyPasteEnabled());
-
-        // Host Tab
-        hostTab.setLabel(constants.hostVmPopup());
-        isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
-        // specificHostEditor.setLabel("Specific");
-        hostCpuEditor.setLabel(constants.passThroughHostCpu());
-        cpuPinning.setLabel(constants.cpuPinningLabel());
-
-        // numa
-        numaTuneMode.setLabel(constants.numaTunaModeLabel());
-        numaNodeCount.setLabel(constants.numaNodeCountLabel());
-        numaSupportButton.setLabel(constants.numaSupportButtonLabel());
-        // High Availability Tab
-        isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
-
-        // watchdog
-        watchdogActionEditor.setLabel(constants.watchdogAction());
-        watchdogModelEditor.setLabel(constants.watchdogModel());
-
-        // priority
-        priorityEditor.setLabel(constants.priorityVm());
-
-        // Resource Allocation Tab
-        cpuProfilesEditor.setLabel(constants.cpuProfileLabel());
-        provisioningEditor.setLabel(constants.templateProvisVmPopup());
-        provisioningThinEditor.setLabel(constants.thinVmPopup());
-        provisioningCloneEditor.setLabel(constants.cloneVmPopup());
-        minAllocatedMemoryEditor.setLabel(constants.physMemGuarVmPopup());
-        numOfIoThreadsEditor.setLabel(constants.numOfIoThreadsVmPopup());
-
-        // Boot Options
-        firstBootDeviceEditor.setLabel(constants.firstDeviceVmPopup());
-        secondBootDeviceEditor.setLabel(constants.secondDeviceVmPopup());
-        kernel_pathEditor.setLabel(constants.kernelPathVmPopup());
-        initrd_pathEditor.setLabel(constants.initrdPathVmPopup());
-        kernel_parametersEditor.setLabel(constants.kernelParamsVmPopup());
-
-        // System tab
-        memSizeEditor.setLabel(constants.memSizeVmPopup());
-        detachableMemSizeEditor.setLabel(constants.memSizeVmPopup());
-        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
-        corePerSocketEditorWithDetachable.setLabel(constants.coresPerSocket());
-        numOfSocketsEditorWithDetachable.setLabel(constants.numOfSockets());
-        threadsPerCoreEditorWithDetachable.setLabel(constants.threadsPerCore());
-        emulatedMachine.setLabel(constants.emulatedMachineLabel());
-        customCpu.setLabel(constants.cpuModelLabel());
-
-        // Icon tab
-        iconTab.setLabel(constants.iconTabVmPopup());
-
-        // Foreman tab
-        foremanTab.setLabel(constants.foremanLabel());
     }
 
     protected void applyStyles() {
