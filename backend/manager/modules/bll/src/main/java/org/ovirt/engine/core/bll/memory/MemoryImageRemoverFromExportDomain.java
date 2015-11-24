@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.memory;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.storage.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;

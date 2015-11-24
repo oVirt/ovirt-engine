@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.RoleGroupMapDao;
@@ -38,6 +39,8 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -760,6 +763,18 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DiskDao getDiskDao() {
         return getDbFacade().getDiskDao();
+    }
+
+    public LunDao getLunDao() {
+        return getDbFacade().getLunDao();
+    }
+
+    public StorageServerConnectionDao getStorageServerConnectionDao() {
+        return getDbFacade().getStorageServerConnectionDao();
+    }
+
+    public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
+        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     public DbFacade getDbFacade() {

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;

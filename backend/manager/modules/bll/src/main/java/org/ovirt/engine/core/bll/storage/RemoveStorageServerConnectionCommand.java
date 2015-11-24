@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 @NonTransactiveCommandAttribute
 public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand<T> {
@@ -98,10 +97,6 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
            return true;
         }
-
-    protected StorageServerConnectionDao getStorageServerConnectionDao() {
-        return getDbFacade().getStorageServerConnectionDao();
-    }
 
     private String prepareEntityNamesForMessage(List<String> entityNames) {
         return StringUtils.join(entityNames, ",");

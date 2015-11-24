@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.storage.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;

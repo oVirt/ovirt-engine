@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -320,10 +319,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected StorageDomainDynamicDao getStorageDomainDynamicDao() {
         return getDbFacade().getStorageDomainDynamicDao();
-    }
-
-    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.AttachStorageDomainsMultipleActionRunner;
-import org.ovirt.engine.core.bll.storage.DeactivateStorageDomainsMultipleActionRunner;
+import org.ovirt.engine.core.bll.storage.domain.AttachStorageDomainsMultipleActionRunner;
+import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

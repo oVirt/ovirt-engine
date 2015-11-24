@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;

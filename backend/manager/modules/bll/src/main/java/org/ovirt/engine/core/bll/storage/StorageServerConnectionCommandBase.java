@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public abstract class StorageServerConnectionCommandBase<T extends StorageServerConnectionParametersBase> extends
@@ -45,10 +44,6 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
 
     protected StorageServerConnectionDao getStorageConnDao() {
         return getDbFacade().getStorageServerConnectionDao();
-    }
-
-    protected LunDao getLunDao() {
-        return getDbFacade().getLunDao();
     }
 
     protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {

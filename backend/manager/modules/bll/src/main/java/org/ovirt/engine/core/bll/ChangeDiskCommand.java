@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;

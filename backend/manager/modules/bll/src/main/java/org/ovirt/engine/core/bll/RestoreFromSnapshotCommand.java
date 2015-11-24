@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.PostZeroHandler;
+import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;

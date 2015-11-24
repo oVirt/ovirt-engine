@@ -44,7 +44,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -287,13 +286,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected BaseDiskDao getBaseDiskDao() {
         return getDbFacade().getBaseDiskDao();
-    }
-
-    /**
-     * @return The StoragePoolIsoMapDao
-     */
-    protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     public String getDiskAlias() {

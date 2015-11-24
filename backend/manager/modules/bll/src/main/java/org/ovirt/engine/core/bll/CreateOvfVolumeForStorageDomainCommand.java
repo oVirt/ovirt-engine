@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
