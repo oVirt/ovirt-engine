@@ -78,7 +78,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             }
         }
         EngineFault engineFault = null;
-        if (!isSuccess && returnValue != null && returnValue.getVdsError() != null) {
+        if (!isSuccess && returnValue.getVdsError() != null) {
             engineFault = new EngineFault();
             engineFault.setError(returnValue.getVdsError().getCode());
         }
