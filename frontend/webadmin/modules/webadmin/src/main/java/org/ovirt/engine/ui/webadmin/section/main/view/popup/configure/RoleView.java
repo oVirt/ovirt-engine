@@ -149,18 +149,20 @@ public class RoleView extends Composite {
         this.table = new SimpleActionTable<Role>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
+        this.table.enableColumnResizing();
         AbstractTextColumn<Role> nameColumn = new AbstractTextColumn<Role>() {
             @Override
             public String getValue(Role object) {
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
 
-        table.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "20px"); //$NON-NLS-1$
+        table.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
 
-        table.addColumn(new RoleTypeColumn(), constants.empty(), "20px"); //$NON-NLS-1$
+        table.addColumn(new RoleTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
 
-        table.addColumn(nameColumn, constants.nameRole(), "100px"); //$NON-NLS-1$
+        table.addColumn(nameColumn, constants.nameRole(), "175px"); //$NON-NLS-1$
 
         AbstractTextColumn<Role> descColumn = new AbstractTextColumn<Role>() {
             @Override
@@ -168,7 +170,8 @@ public class RoleView extends Composite {
                 return object.getDescription();
             }
         };
-        table.addColumn(descColumn, constants.descriptionRole(), "300px"); //$NON-NLS-1$
+        descColumn.makeSortable();
+        table.addColumn(descColumn, constants.descriptionRole(), "575px"); //$NON-NLS-1$
 
         table.addActionButton(new WebAdminButtonDefinition<Role>(constants.newRole()) {
             @Override
@@ -219,12 +222,15 @@ public class RoleView extends Composite {
         permissionTable = new SimpleActionTable<Permission>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
+        permissionTable.enableColumnResizing();
+
         AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
             @Override
             public String getValue(Permission object) {
                 return object.getOwnerName();
             }
         };
+        userColumn.makeSortable();
         permissionTable.addColumn(userColumn, constants.userPermission());
 
         AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
@@ -233,6 +239,7 @@ public class RoleView extends Composite {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
+        permissionColumn.makeSortable();
         permissionTable.addColumn(permissionColumn, constants.objectPermission());
 
         permissionTable.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
