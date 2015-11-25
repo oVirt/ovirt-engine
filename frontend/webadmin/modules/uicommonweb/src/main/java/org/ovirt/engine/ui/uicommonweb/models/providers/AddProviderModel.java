@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -35,13 +37,24 @@ public class AddProviderModel extends ProviderModel {
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
                 ProviderModel providerModel = (ProviderModel) model;
 
+                // Filter-out unsupported DCs
+                Collection<StoragePool> supportedDataCenters = Linq.where(dataCenters,
+                        new Linq.IPredicate<StoragePool>() {
+                            @Override
+                            public boolean match(StoragePool storagePool) {
+                                return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                                        ConfigurationValues.CinderProviderSupported,
+                                        storagePool.getCompatibilityVersion().toString());
+                            }
+                        });
+
                 // add an empty DataCenter to the list
                 StoragePool noneStoragePool = new StoragePool();
                 noneStoragePool.setId(Guid.Empty);
                 noneStoragePool.setName("(none)"); //$NON-NLS-1$
-                dataCenters.add(noneStoragePool);
+                supportedDataCenters.add(noneStoragePool);
 
-                providerModel.getDataCenter().setItems(dataCenters);
+                providerModel.getDataCenter().setItems(supportedDataCenters);
             }
         }));
     }
