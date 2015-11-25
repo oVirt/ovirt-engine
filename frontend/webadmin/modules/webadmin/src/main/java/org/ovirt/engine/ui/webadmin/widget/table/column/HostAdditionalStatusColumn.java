@@ -45,8 +45,10 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
         }
         if (externalStatus != null && host.getExternalStatus() != ExternalStatus.Ok) {
             ImageResource statusImage = getStatusImage(externalStatus);
-            imagesToText.put(getImageSafeHtml(statusImage),
-                    constants.ExternalStatus() + externalStatus.name());
+            if (statusImage != null) {
+                imagesToText.put(getImageSafeHtml(statusImage),
+                        constants.ExternalStatus() + externalStatus.name());
+            }
         }
         return imagesToText;
     }
