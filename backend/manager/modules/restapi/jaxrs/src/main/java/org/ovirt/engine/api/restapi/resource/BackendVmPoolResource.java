@@ -134,6 +134,9 @@ public class BackendVmPoolResource
                 vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
                 vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
             }
+            if (incoming.isSetUseLatestTemplateVersion()) {
+                vm.setUseLatestVersion(incoming.isUseLatestTemplateVersion());
+            }
 
             final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));

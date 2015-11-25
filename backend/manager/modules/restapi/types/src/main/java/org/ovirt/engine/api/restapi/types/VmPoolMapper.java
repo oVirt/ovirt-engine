@@ -78,6 +78,9 @@ public class VmPoolMapper {
                 model.getCluster().isSetId()) {
             entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
+        if (model.isSetUseLatestTemplateVersion()) {
+            entity.setUseLatestVersion(model.isUseLatestTemplateVersion());
+        }
         return entity;
     }
 
@@ -114,6 +117,7 @@ public class VmPoolMapper {
         vmModel.setTemplate(null);
         vmModel.setVmPool(null);
         model.setVm(vmModel);
+        model.setUseLatestTemplateVersion(vm.isUseLatestVersion());
         return model;
     }
 
