@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -53,8 +53,6 @@ import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
@@ -331,13 +329,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<UserSession> searchSessions() {
-        final List<EngineSession> engineSessions = genericSearch(getDbFacade().getEngineSessionDao(), false);
-        return LinqUtils.transformToList(engineSessions, new Function<EngineSession, UserSession>() {
-            @Override
-            public UserSession eval(EngineSession engineSession) {
-                return new UserSession(engineSession);
-            }
-        });
+        return genericSearch(getDbFacade().getEngineSessionDao(), false).stream().map(UserSession::new)
+                .collect(Collectors.toList());
     }
 
     private static final String[] AD_SEARCH_TYPES = {
