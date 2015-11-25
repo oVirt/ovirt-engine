@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -12,8 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class BackendVirtualFunctionAllowedLabelsResource extends AbstractBaseHostNicLabelsResource
         implements LabelsResource {
@@ -36,14 +36,7 @@ public class BackendVirtualFunctionAllowedLabelsResource extends AbstractBaseHos
             return Collections.emptyList();
         }
         final Set<String> networkLabelIds = vfsConfig.getNetworkLabels();
-        final List<NetworkLabel> networkLabels =
-                LinqUtils.transformToList(networkLabelIds, new Function<String, NetworkLabel>() {
-                    @Override
-                    public NetworkLabel eval(String labelId) {
-                        return new NetworkLabel(labelId);
-                    }
-                });
-        return networkLabels;
+        return networkLabelIds.stream().map(NetworkLabel::new).collect(toList());
     }
 
     @Override
