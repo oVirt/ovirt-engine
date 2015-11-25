@@ -8,7 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,7 +23,7 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
 
 
     @Override
-    public vds_spm_id_map get(Guid vdsId) {
+    public VdsSpmIdMap get(Guid vdsId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vds_id", vdsId);
         return getCallsHandler().executeRead("Getvds_spm_id_mapByvds_id",
                 VdsSpmIdMapRowMapper.instance,
@@ -31,10 +31,10 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
     }
 
     @Override
-    public void save(vds_spm_id_map vds_spm_id_map) {
+    public void save(VdsSpmIdMap vdsSpmIdMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
-                vds_spm_id_map.getstorage_pool_id()).addValue("vds_id", vds_spm_id_map.getId()).addValue(
-                "vds_spm_id", vds_spm_id_map.getvds_spm_id());
+                vdsSpmIdMap.getStoragePoolId()).addValue("vds_id", vdsSpmIdMap.getId()).addValue(
+                "vds_spm_id", vdsSpmIdMap.getVdsSpmId());
 
         getCallsHandler().executeModification("Insertvds_spm_id_map", parameterSource);
     }
@@ -47,7 +47,7 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
     }
 
     @Override
-    public List<vds_spm_id_map> getAll(Guid storagePoolId) {
+    public List<VdsSpmIdMap> getAll(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId);
         return getCallsHandler().executeReadList("Getvds_spm_id_mapBystorage_pool_id",
@@ -64,7 +64,7 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
     }
 
     @Override
-    public vds_spm_id_map get(Guid storagePoolId, int spmId ) {
+    public VdsSpmIdMap get(Guid storagePoolId, int spmId ) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId).addValue("vds_spm_id", spmId);
         return getCallsHandler().executeRead("Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id",
@@ -73,24 +73,24 @@ public class VdsSpmIdMapDaoImpl extends BaseDao implements VdsSpmIdMapDao{
     }
 
     @Override
-    public List<vds_spm_id_map> getAll() {
+    public List<VdsSpmIdMap> getAll() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void update(vds_spm_id_map entity) {
+    public void update(VdsSpmIdMap entity) {
         throw new NotImplementedException();
     }
 
-    private static final class VdsSpmIdMapRowMapper implements RowMapper<vds_spm_id_map> {
+    private static final class VdsSpmIdMapRowMapper implements RowMapper<VdsSpmIdMap> {
         public static final VdsSpmIdMapRowMapper instance = new VdsSpmIdMapRowMapper();
 
         @Override
-        public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-            vds_spm_id_map entity = new vds_spm_id_map();
-            entity.setstorage_pool_id(getGuidDefaultEmpty(rs, "storage_pool_id"));
+        public VdsSpmIdMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VdsSpmIdMap entity = new VdsSpmIdMap();
+            entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setvds_spm_id(rs.getInt("vds_spm_id"));
+            entity.setVdsSpmId(rs.getInt("vds_spm_id"));
             return entity;
         }
     }

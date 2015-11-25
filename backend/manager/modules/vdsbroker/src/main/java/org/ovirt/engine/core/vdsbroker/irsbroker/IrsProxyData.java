@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -939,7 +939,7 @@ public class IrsProxyData {
     }
 
     private boolean wasVdsManuallyFenced(int spmId) {
-        vds_spm_id_map map = DbFacade.getInstance().getVdsSpmIdMapDao().get(
+        VdsSpmIdMap map = DbFacade.getInstance().getVdsSpmIdMapDao().get(
                 _storagePoolId, spmId);
         return map != null && map.getId().equals(getFencedIrs());
     }
@@ -1044,7 +1044,7 @@ public class IrsProxyData {
                 }
             }
             if (startSpm) {
-                vds_spm_id_map map = DbFacade.getInstance().getVdsSpmIdMapDao().get(
+                VdsSpmIdMap map = DbFacade.getInstance().getVdsSpmIdMapDao().get(
                         _storagePoolId, vdsSpmIdToFence);
                 if (map != null) {
                     VDS vdsToFenceObject = DbFacade.getInstance().getVdsDao().get(map.getId());

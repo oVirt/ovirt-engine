@@ -23,11 +23,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -61,7 +61,7 @@ public class JsonObjectSerializationEntitiesTest {
                         { vdsStatic },
                         { randomVdsDynamic() },
                         { randomVdsStatistics() },
-                        { new vds_spm_id_map(Guid.newGuid(), Guid.newGuid(), random.nextInt()) },
+                        { new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt()) },
                         { randomStorageDomainStatic() },
                         { new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()) },
                         { randomStoragePool() },
@@ -69,7 +69,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 Guid.newGuid(),
                                 random.nextEnum(StorageDomainStatus.class)) },
                         { randomRole() },
-                        { new IdContainerClass<vds_spm_id_map>(new vds_spm_id_map(Guid.newGuid(),
+                        { new IdContainerClass<VdsSpmIdMap>(new VdsSpmIdMap(Guid.newGuid(),
                                 Guid.newGuid(),
                                 random.nextInt())) },
                         { new IdContainerClass<Guid>(Guid.newGuid()) }

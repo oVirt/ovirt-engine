@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
@@ -20,8 +20,8 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
     private VdsDao vdsDao;
     private VdsSpmIdMapDao dao;
     private VDS existingVds;
-    private vds_spm_id_map existingVdsSpmIdMap;
-    private vds_spm_id_map newVdsSpmIdMap;
+    private VdsSpmIdMap existingVdsSpmIdMap;
+    private VdsSpmIdMap newVdsSpmIdMap;
 
     @Override
     public void setUp() throws Exception {
@@ -30,12 +30,12 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
         vdsDao = dbFacade.getVdsDao();
         existingVds = vdsDao.get(EXISTING_VDS_ID);
         existingVdsSpmIdMap = dao.get(existingVds.getId());
-        newVdsSpmIdMap = new vds_spm_id_map(FREE_STORAGE_POOL_ID, FREE_VDS_ID, 1);
+        newVdsSpmIdMap = new VdsSpmIdMap(FREE_STORAGE_POOL_ID, FREE_VDS_ID, 1);
     }
 
     @Test
     public void testGet() {
-        vds_spm_id_map result = dao.get(existingVdsSpmIdMap.getId());
+        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
 
         assertNotNull(result);
         assertEquals(existingVdsSpmIdMap, result);
@@ -45,7 +45,7 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
     public void testSave() {
         dao.save(newVdsSpmIdMap);
 
-        vds_spm_id_map result = dao.get(newVdsSpmIdMap.getId());
+        VdsSpmIdMap result = dao.get(newVdsSpmIdMap.getId());
 
         assertNotNull(result);
         assertEquals(newVdsSpmIdMap, result);
@@ -55,35 +55,35 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
     public void testRemove() {
         dao.remove(existingVdsSpmIdMap.getId());
 
-        vds_spm_id_map result = dao.get(existingVdsSpmIdMap.getId());
+        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
 
         assertNull(result);
     }
 
     @Test
     public void testDeleteByPoolvds_spm_id_map() {
-        dao.removeByVdsAndStoragePool(existingVdsSpmIdMap.getId(), existingVdsSpmIdMap.getstorage_pool_id());
-        vds_spm_id_map result = dao.get(existingVdsSpmIdMap.getId());
+        dao.removeByVdsAndStoragePool(existingVdsSpmIdMap.getId(), existingVdsSpmIdMap.getStoragePoolId());
+        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
 
         assertNull(result);
     }
 
     @Test
     public void testGetAll() {
-        List<vds_spm_id_map> result = dao.getAll(EXISTING_STORAGE_POOL_ID);
+        List<VdsSpmIdMap> result = dao.getAll(EXISTING_STORAGE_POOL_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (vds_spm_id_map mapping : result) {
-            assertEquals(EXISTING_STORAGE_POOL_ID, mapping.getstorage_pool_id());
+        for (VdsSpmIdMap mapping : result) {
+            assertEquals(EXISTING_STORAGE_POOL_ID, mapping.getStoragePoolId());
         }
     }
 
     @Test
     public void testGetVdsSpmIdMapForStoragePoolAndVdsId() {
-        vds_spm_id_map result =
-                dao.get(existingVdsSpmIdMap.getstorage_pool_id(),
-                        existingVdsSpmIdMap.getvds_spm_id());
+        VdsSpmIdMap result =
+                dao.get(existingVdsSpmIdMap.getStoragePoolId(),
+                        existingVdsSpmIdMap.getVdsSpmId());
 
         assertNotNull(result);
         assertEquals(existingVdsSpmIdMap, result);

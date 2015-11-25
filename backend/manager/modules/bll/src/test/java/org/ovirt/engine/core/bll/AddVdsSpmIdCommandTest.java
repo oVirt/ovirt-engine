@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 
@@ -64,9 +64,9 @@ public class AddVdsSpmIdCommandTest extends BaseCommandTest {
     }
 
     private void insertSpmIdToDb(int expected, int... given) {
-        List<vds_spm_id_map> list =
-                Arrays.stream(given).mapToObj(i -> new vds_spm_id_map(spId, vdsId, i)).collect(Collectors.toList());
+        List<VdsSpmIdMap> list =
+                Arrays.stream(given).mapToObj(i -> new VdsSpmIdMap(spId, vdsId, i)).collect(Collectors.toList());
         cmd.insertSpmIdToDb(list);
-        verify(vdsSpmIdMapDao).save(new vds_spm_id_map(spId, vdsId, expected));
+        verify(vdsSpmIdMapDao).save(new VdsSpmIdMap(spId, vdsId, expected));
     }
 }

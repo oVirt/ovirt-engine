@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -47,20 +47,19 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected void executeCommand() {
-        List<vds_spm_id_map> vds_spm_id_mapList = getVdsSpmIdMapDao().getAll(getVds().getStoragePoolId());
-        if (vds_spm_id_mapList.size() >= Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
+        List<VdsSpmIdMap> vdsSpmIdMapList = getVdsSpmIdMapDao().getAll(getVds().getStoragePoolId());
+        if (vdsSpmIdMapList.size() >= Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
             buildFaultResult();
             return;
         }
-        insertSpmIdToDb(vds_spm_id_mapList);
+        insertSpmIdToDb(vdsSpmIdMapList);
 
         setSucceeded(true);
     }
 
-    protected void insertSpmIdToDb(List<vds_spm_id_map> vds_spm_id_mapList) {
+    protected void insertSpmIdToDb(List<VdsSpmIdMap> vdsSpmIdMapList) {
         int selectedId = 1;
-        List<Integer> list =
-                vds_spm_id_mapList.stream().map(vds_spm_id_map::getvds_spm_id).sorted().collect(Collectors.toList());
+        List<Integer> list = vdsSpmIdMapList.stream().map(VdsSpmIdMap::getVdsSpmId).sorted().collect(Collectors.toList());
 
         for (int id : list) {
             if (selectedId == id) {
@@ -71,7 +70,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         }
         // get the dc id from cluster if DC was removed and cluster is attached to a new DC
         Guid dcId = (getVds().getStoragePoolId().equals(Guid.Empty) ? getVdsGroup().getStoragePoolId() : getVds().getStoragePoolId());
-        vds_spm_id_map newMap = new vds_spm_id_map(dcId, getVdsId(), selectedId);
+        VdsSpmIdMap newMap = new VdsSpmIdMap(dcId, getVdsId(), selectedId);
         getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);

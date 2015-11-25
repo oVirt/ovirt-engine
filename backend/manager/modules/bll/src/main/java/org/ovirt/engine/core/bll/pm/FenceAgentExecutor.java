@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
@@ -208,7 +208,7 @@ public class FenceAgentExecutor {
         if (fencingPolicy.isSkipFencingIfSDActive()) {
             map = new HashMap<>();
 
-            vds_spm_id_map hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(
+            VdsSpmIdMap hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(
                     fencedHost.getId());
 
             // create a map SD_GUID -> HOST_ID
@@ -217,7 +217,7 @@ public class FenceAgentExecutor {
                 if (sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master ||
                         sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data) {
                     // VDS_SPM_ID identifies the host in sanlock
-                    map.put(sd.getId(), hostIdRecord.getvds_spm_id());
+                    map.put(sd.getId(), hostIdRecord.getVdsSpmId());
                 }
             }
         }
