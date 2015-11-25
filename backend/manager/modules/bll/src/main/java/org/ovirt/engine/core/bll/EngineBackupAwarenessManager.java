@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -47,7 +49,7 @@ public class EngineBackupAwarenessManager implements BackendService {
     }
 
     private static final Logger log = LoggerFactory.getLogger(EngineBackupAwarenessManager.class);
-    private volatile boolean active;
+    private Lock lock = new ReentrantLock();
     @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
@@ -76,16 +78,13 @@ public class EngineBackupAwarenessManager implements BackendService {
     @OnTimerMethodAnnotation("backupCheck")
     public void backupCheck() {
         // skip backup check if previous operation is not completed yet
-        if (!active) {
+        if (lock.tryLock()) {
             try {
-                synchronized (this) {
-                    log.info("Backup check started.");
-                    active = true;
-                    doBackupCheck();
-                    log.info("Backup check completed.");
-                }
+                log.info("Backup check started.");
+                doBackupCheck();
+                log.info("Backup check completed.");
             } finally {
-                active = false;
+                lock.unlock();
             }
         }
     }
