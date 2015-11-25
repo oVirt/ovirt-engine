@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -47,8 +49,7 @@ import org.slf4j.LoggerFactory;
 public class PmHealthCheckManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(PmHealthCheckManager.class);
-    private boolean active = false;
-
+    private Lock lock = new ReentrantLock();
     @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
@@ -78,22 +79,18 @@ public class PmHealthCheckManager implements BackendService {
     @OnTimerMethodAnnotation("pmHealthCheck")
     public void pmHealthCheck() {
         // skip PM health check if previous operation is not completed yet
-        if (!active) {
+        if (lock.tryLock()) {
             try {
-                synchronized (this) {
-                    log.info("Power Management Health Check started.");
-                    active = true;
-                    List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
-                    for (VDS host : hosts) {
-                        if (host.isPmEnabled()) {
-                            pmHealthCheck(host);
-                        }
+                log.info("Power Management Health Check started.");
+                List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
+                for (VDS host : hosts) {
+                    if (host.isPmEnabled()) {
+                        pmHealthCheck(host);
                     }
-                    log.info("Power Management Health Check completed.");
                 }
-            }
-            finally {
-                active = false;
+                log.info("Power Management Health Check completed.");
+            } finally {
+                lock.unlock();
             }
         }
     }
