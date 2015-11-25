@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
-import org.ovirt.engine.core.bll.AbstractSPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.storage.AbstractSPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
