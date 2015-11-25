@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static java.util.stream.Collectors.toMap;
 import static org.ovirt.engine.core.common.action.VdcActionType.SetupNetworks;
 
 import java.util.ArrayList;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNic, VdsNetworkInterface>
@@ -124,18 +124,7 @@ public class BackendHostNicsResource
         final List<HostNicVfsConfig> hostNicVfsConfigs = getBackendCollection(HostNicVfsConfig.class,
                 VdcQueryType.GetAllVfsConfigByHostId,
                 new IdQueryParameters(asGuid(hostId)));
-        return LinqUtils.toMap(hostNicVfsConfigs,
-                new org.ovirt.engine.core.utils.linq.Mapper<HostNicVfsConfig, Guid, HostNicVfsConfig>() {
-                    @Override
-                    public Guid createKey(HostNicVfsConfig hostNicVfsConfig) {
-                        return hostNicVfsConfig.getNicId();
-                    }
-
-                    @Override
-                    public HostNicVfsConfig createValue(HostNicVfsConfig hostNicVfsConfig) {
-                        return hostNicVfsConfig;
-                    }
-                });
+        return hostNicVfsConfigs.stream().collect(toMap(HostNicVfsConfig::getNicId, x -> x));
     }
 
     public Map<Guid, Guid> retriveVfMap() {
