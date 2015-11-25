@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -13,8 +14,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.otopi.dialog.Event;
@@ -137,14 +136,8 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             vdsmid
         );
 
-        final List<VDS> list = LinqUtils.filter(
-            DbFacade.getInstance().getVdsDao().getAllWithUniqueId(vdsmid),
-            new Predicate<VDS>() {
-                @Override
-                public boolean eval(VDS vds) {
-                    return !vds.getId().equals(_deploy.getVds().getId());
-                }
-            }
+        final List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(vdsmid).stream().filter(
+                vds -> !vds.getId().equals(_deploy.getVds().getId())).collect(Collectors.toList()
         );
 
         if (!list.isEmpty()) {
