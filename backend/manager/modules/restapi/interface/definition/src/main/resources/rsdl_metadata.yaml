@@ -3308,6 +3308,7 @@ actions:
           vm_pool.name: xs:string
           vm_pool.size: xs:int
           vm_pool.template.id|name: xs:string
+          vm_pool.use_latest_template_version: xs:boolean
         description: update the specified virtual machine pool in the system
 - name: /vmpools/{vmpool:id}/allocatevm|rel=allocatevm
   description: attach the user to a vm from the vmpool and run the vm
@@ -3334,6 +3335,7 @@ actions:
           vm_pool.size: xs:int
           vm_pool.soundcard_enabled: xs:boolean
           vm_pool.type: xs:string
+          vm_pool.use_latest_template_version: xs:boolean
         description: add a new vm pool to the system
 - name: /vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
