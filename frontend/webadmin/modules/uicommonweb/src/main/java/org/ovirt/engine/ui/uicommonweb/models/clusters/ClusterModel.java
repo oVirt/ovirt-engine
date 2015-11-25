@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -837,8 +838,28 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
                     glusterTunedProfiles.addAll((List<String>)(((VdcQueryReturnValue) returnValue).getReturnValue()));
                 }
-                glusterTunedProfile.setItems(glusterTunedProfiles, glusterTunedProfile.getSelectedItem());
+                final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
+                glusterTunedProfile.setItems(glusterTunedProfiles);
                 glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
+                if (oldSelectedProfile != null) {
+                    String newSelectedItem =
+                            Linq.firstOrNull(glusterTunedProfiles,  new IPredicate<String>() {
+                                @Override
+                                public boolean match(String item) {
+                                    return item.equals(oldSelectedProfile);
+                                }
+                            });
+                    if (newSelectedItem != null) {
+                        glusterTunedProfile.setSelectedItem(newSelectedItem);
+                    } else if (getIsEdit()) {
+                        glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, new IPredicate<String>() {
+                            @Override
+                            public boolean match(String item) {
+                                return item.equals(getEntity().getGlusterTunedProfile());
+                            }
+                        }));
+                    }
+                }
             }
         }));
     }
