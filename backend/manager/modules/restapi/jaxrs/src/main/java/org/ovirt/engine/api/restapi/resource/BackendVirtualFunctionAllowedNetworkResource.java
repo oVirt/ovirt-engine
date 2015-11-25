@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class BackendVirtualFunctionAllowedNetworkResource
         extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
@@ -27,12 +25,7 @@ public class BackendVirtualFunctionAllowedNetworkResource
     @Override
     public Network get() {
         final Networks networks = getParent().list();
-        final Network network = LinqUtils.firstOrNull(networks.getNetworks(), new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getId().equals(id);
-            }
-        });
+        final Network network = networks.getNetworks().stream().filter(n -> n.getId().equals(id)).findFirst().orElse(null);
         if (network == null) {
             notFound();
         }
