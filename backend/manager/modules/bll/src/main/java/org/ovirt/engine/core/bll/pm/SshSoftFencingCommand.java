@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.pm;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -127,7 +128,8 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      */
     private boolean checkIfHostBecomeUp() {
         VdsManager vdsManager = getResourceManager().getVdsManager(getVdsId());
-        long sleepInterval = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+        long sleepInterval = TimeUnit.SECONDS.toMillis(
+                Config.<Integer> getValue(ConfigValues.VdsRefreshRate));
         while (vdsManager.isHostInGracePeriod(true)) {
             if (vdsManager.getCopyVds().getStatus() == VDSStatus.Up) {
                 // host became Up during grace period

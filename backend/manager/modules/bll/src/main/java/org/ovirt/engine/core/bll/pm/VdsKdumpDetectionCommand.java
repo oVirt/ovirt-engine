@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.pm;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
@@ -108,7 +109,8 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
     private KdumpDetectionResult detectHostKdumping() {
         VdsKdumpStatus kdumpStatus;
-        long messageInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval) * 1000;
+        long messageInterval = TimeUnit.SECONDS.toMillis(
+                Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval));
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, Config.<Integer>getValue(ConfigValues.KdumpStartedTimeout));

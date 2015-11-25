@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -101,7 +102,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         log.info("Waiting {} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
-        ThreadUtils.sleep(sleepTimeInSec * 1000);
+        ThreadUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTimeInSec));
         setVdsStatus(status);
     }
 
