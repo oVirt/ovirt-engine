@@ -837,8 +837,18 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
                     glusterTunedProfiles.addAll((List<String>)(((VdcQueryReturnValue) returnValue).getReturnValue()));
                 }
-                glusterTunedProfile.setItems(glusterTunedProfiles, glusterTunedProfile.getSelectedItem());
+                final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
+                glusterTunedProfile.setItems(glusterTunedProfiles);
                 glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
+                if (oldSelectedProfile != null) {
+                    String newSelectedItem =
+                            Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(oldSelectedProfile));
+                    if (newSelectedItem != null) {
+                        glusterTunedProfile.setSelectedItem(newSelectedItem);
+                    } else if (getIsEdit()) {
+                        glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(getEntity().getGlusterTunedProfile())));
+                    }
+                }
             }
         }));
     }
