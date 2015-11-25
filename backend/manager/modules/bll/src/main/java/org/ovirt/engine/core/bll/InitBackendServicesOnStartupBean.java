@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
+import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;

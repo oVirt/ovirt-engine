@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
-import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
+import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
