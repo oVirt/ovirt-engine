@@ -26,8 +26,6 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class HostSetupNetworksParametersBuilder {
 
@@ -102,13 +100,10 @@ public abstract class HostSetupNetworksParametersBuilder {
             return null;
         }
 
-        return LinqUtils.firstOrNull(getNics(baseNic.getVdsId()), new Predicate<VdsNetworkInterface>() {
-
-            @Override
-            public boolean eval(VdsNetworkInterface t) {
-                return (baseNic.getName().equals(t.getBaseInterface()) && Objects.equals(t.getVlanId(), vlanId));
-            }
-        });
+        return getNics(baseNic.getVdsId()).stream()
+                .filter(t -> baseNic.getName().equals(t.getBaseInterface()) && Objects.equals(t.getVlanId(), vlanId))
+                .findFirst()
+                .orElse(null);
     }
 
     /**

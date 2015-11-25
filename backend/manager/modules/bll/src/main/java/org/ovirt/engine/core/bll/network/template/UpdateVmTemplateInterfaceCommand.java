@@ -20,8 +20,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
+
 
 public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
@@ -59,12 +58,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
         // Interface oldIface = interfaces.First(i => i.id ==
         // AddVmInterfaceParameters.Interface.id);
-        VmNic oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
-            @Override
-            public boolean eval(VmNic i) {
-                return i.getId().equals(getParameters().getInterface().getId());
-            }
-        });
+        VmNic oldIface = interfaces.stream()
+                .filter(i -> i.getId().equals(getParameters().getInterface().getId())).findFirst().orElse(null);
 
         if (oldIface == null) {
             addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);

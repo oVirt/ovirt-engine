@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
 
@@ -43,8 +43,8 @@ public class GetManagementNetworkCandidatesQueryTest extends BaseCommandTest {
     @Before
     public void setUp() throws Exception {
         when(mockUser.getId()).thenReturn(USER_ID);
-        when(mockNetworkPredicate.eval(mockExternalNetwork)).thenReturn(false);
-        when(mockNetworkPredicate.eval(mockManagementNetworkCandidate)).thenReturn(true);
+        when(mockNetworkPredicate.test(mockExternalNetwork)).thenReturn(false);
+        when(mockNetworkPredicate.test(mockManagementNetworkCandidate)).thenReturn(true);
         when(mockNetworkDao.getAllForDataCenter(DC_ID, USER_ID, true)).thenReturn(dcNetworks);
 
         final IdQueryParameters params = new IdQueryParameters(DC_ID);

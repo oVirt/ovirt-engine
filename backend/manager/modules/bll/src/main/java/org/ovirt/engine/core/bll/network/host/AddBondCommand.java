@@ -18,8 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<T> {
 
@@ -87,25 +85,16 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 getParameters().getVdsId());
 
         // check that bond exists
-        VdsNetworkInterface bond = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface anInterface) {
-                return anInterface.getName().equals(getParameters().getBondName());
-            }
-        });
+        boolean bondNotExists =
+                interfaces.stream().noneMatch(anInterface -> anInterface.getName().equals(getParameters().getBondName()));
 
-        if (bond == null) {
+        if (bondNotExists) {
             return failCanDoAction(EngineMessage.NETWORK_BOND_NAME_EXISTS);
         }
 
         // check that each nic is valid
         for (final String nic : getParameters().getNics()) {
-            VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                @Override
-                public boolean eval(VdsNetworkInterface i) {
-                    return i.getName().equals(nic);
-                }
-            });
+            VdsNetworkInterface iface = interfaces.stream().filter(i -> i.getName().equals(nic)).findFirst().orElse(null);
 
             if (iface == null) {
                 return failCanDoAction(EngineMessage.NETWORK_BOND_NAME_EXISTS);
@@ -121,17 +110,10 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network not in use
-        VdsNetworkInterface I = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                if (i.getNetworkName() != null) {
-                    return i.getNetworkName().equals(getParameters().getNetwork().getName());
-                }
-                return false;
-            }
-        });
+        boolean networkInUse = interfaces.stream().anyMatch
+                (i ->  i.getNetworkName() != null && i.getNetworkName().equals(getParameters().getNetwork().getName()));
 
-        if (I != null) {
+        if (networkInUse) {
             return failCanDoAction(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
         }
 

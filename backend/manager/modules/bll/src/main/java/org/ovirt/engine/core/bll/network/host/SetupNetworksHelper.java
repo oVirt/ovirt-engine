@@ -42,8 +42,6 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.violation.DetailedViolation;
 import org.ovirt.engine.core.utils.violation.Violation;
 import org.ovirt.engine.core.utils.violation.ViolationRenderer;
@@ -274,22 +272,11 @@ public class SetupNetworksHelper {
             if (!checkedNetworks.contains(network.getName())) {
                 List<Network> networksOnInterface = findNetworksOnInterface(ifacesByNetworkName.get(network.getName()));
                 boolean mtuMismatched = false;
-                final Network nonVlanNetwork = LinqUtils.firstOrNull(networksOnInterface, new Predicate<Network>() {
-                    @Override
-                    public boolean eval(Network network) {
-                        return !NetworkUtils.isVlan(network);
-                    }
-                });
+                final Network nonVlanNetwork = networksOnInterface.stream().
+                        filter(n -> !NetworkUtils.isVlan(n)).findFirst().orElse(null);
 
                 if (nonVlanNetwork != null) {
-                    final Network mismatchMtuNetwork =
-                            LinqUtils.firstOrNull(networksOnInterface, new Predicate<Network>() {
-                                @Override
-                                public boolean eval(Network network) {
-                                    return network.getMtu() != nonVlanNetwork.getMtu();
-                                }
-                            });
-                    mtuMismatched = mismatchMtuNetwork != null;
+                    mtuMismatched = networksOnInterface.stream().anyMatch(n -> n.getMtu() != nonVlanNetwork.getMtu());
                 }
 
                 if (mtuMismatched) {

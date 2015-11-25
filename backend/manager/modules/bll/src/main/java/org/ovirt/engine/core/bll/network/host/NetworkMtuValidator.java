@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class NetworkMtuValidator {
 
@@ -74,25 +72,14 @@ public class NetworkMtuValidator {
 
     private boolean networksOnNicMatchMtu(List<Network> networksOnNic) {
 
-        final Network nonVlanNetwork = LinqUtils.firstOrNull(networksOnNic, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return !NetworkUtils.isVlan(network);
-            }
-        });
+        final Network nonVlanNetwork = networksOnNic.stream().filter(network -> !NetworkUtils.isVlan(network))
+                .findFirst().orElse(null);
 
         if (nonVlanNetwork == null) {
             return true;
         }
 
-        final Network mismatchMtuNetwork = LinqUtils.firstOrNull(networksOnNic, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getMtu() != nonVlanNetwork.getMtu();
-            }
-        });
-
-        return mismatchMtuNetwork == null;
+        return networksOnNic.stream().noneMatch(network -> network.getMtu() != nonVlanNetwork.getMtu());
     }
 
 }

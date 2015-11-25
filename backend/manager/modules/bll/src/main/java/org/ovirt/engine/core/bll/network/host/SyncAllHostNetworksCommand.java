@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SyncAllHostNetworksCommand extends VdsCommand {
 
@@ -58,7 +58,7 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
                 new IdQueryParameters(getVdsId()));
         List<NetworkAttachment> networkAttachments = returnValue.getReturnValue();
         List<NetworkAttachment> unSyncNetworkAttachments =
-                LinqUtils.filter(networkAttachments, new NetworkNotInSyncPredicate());
+                networkAttachments.stream().filter(new NetworkNotInSyncPredicate()).collect(Collectors.toList());
         for (NetworkAttachment networkAttachment : unSyncNetworkAttachments) {
             networkAttachment.setOverrideConfiguration(true);
         }

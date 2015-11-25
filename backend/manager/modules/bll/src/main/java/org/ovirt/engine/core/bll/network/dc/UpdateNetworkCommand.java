@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -54,8 +56,6 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
@@ -314,11 +314,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
             }
 
-            final List<VM> runningVmNotSupportNetworkChange = LinqUtils.filter(runningVms, new Predicate<VM>() {
+            final List<VM> runningVmNotSupportNetworkChange = runningVms.stream().filter(new Predicate<VM>() {
                 final Map<Guid, Version> clusterVersions = new HashMap<>();
 
                 @Override
-                public boolean eval(VM vm) {
+                public boolean test(VM vm) {
                     final Guid clusterId = vm.getVdsGroupId();
                     Version clusterVersion = clusterVersions.get(clusterId);
                     if (clusterVersion == null) {
@@ -329,7 +329,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
                     return !FeatureSupported.changeNetworkUsedByVmSupported(clusterVersion);
                 }
-            });
+            }).collect(Collectors.toList());
 
             return networkNotUsed(runningVmNotSupportNetworkChange,
                     EngineMessage.VAR__ENTITIES__VMS,

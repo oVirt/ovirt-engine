@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,8 +20,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 public class VfSchedulerImpl implements VfScheduler {
@@ -85,13 +84,7 @@ public class VfSchedulerImpl implements VfScheduler {
     }
 
     private List<VmNetworkInterface> getPluggedPassthroughVnics(List<VmNetworkInterface> vnics) {
-        return LinqUtils.filter(vnics, new Predicate<VmNetworkInterface>() {
-
-            @Override
-            public boolean eval(VmNetworkInterface vnic) {
-                return vnic.isPassthrough() && vnic.isPlugged();
-            }
-        });
+        return vnics.stream().filter(vnic -> vnic.isPassthrough() && vnic.isPlugged()).collect(Collectors.toList());
     }
 
    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,

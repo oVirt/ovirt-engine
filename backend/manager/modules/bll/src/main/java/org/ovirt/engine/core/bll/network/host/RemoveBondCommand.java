@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCommand<T> {
 
@@ -30,7 +28,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     }
 
     private String network;
-    private ArrayList<String> interfaces;
+    private List<String> interfaces;
 
     @Override
     protected void executeCommand() {
@@ -78,12 +76,8 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that bond exists
-        final VdsNetworkInterface bond = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return i.getName().equals(getParameters().getBondName());
-            }
-        });
+        final VdsNetworkInterface bond = vdsInterfaces.stream().filter
+                (i -> i.getName().equals(getParameters().getBondName())).findFirst().orElse(null);
         if (bond == null) {
             addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
             return false;
@@ -101,27 +95,14 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             return false;
         }
 
-        vdsInterfaces = LinqUtils.filter(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return NetworkUtils.interfaceBasedOn(bond, i.getBondName());
-            }
-        });
-        interfaces = new ArrayList<>();
-        for (VdsNetworkInterface iface : vdsInterfaces) {
-            interfaces.add(iface.getName());
-        }
+        interfaces =  vdsInterfaces.stream().filter(i -> NetworkUtils.interfaceBasedOn(bond, i.getBondName()))
+                .map(VdsNetworkInterface::getName).collect(Collectors.toList());
 
         VDS vds = getVdsDao().get(getParameters().getVdsId());
         // check if network in cluster and vds active
         if (vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing) {
             List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
-            if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network n) {
-                    return n.getName().equals(bond.getName());
-                }
-            })) {
+            if (networks.stream().anyMatch(n -> n.getName().equals(bond.getName()))) {
                 addCanDoActionMessage(EngineMessage.NETWORK_CLUSTER_NETWORK_IN_USE);
                 return false;
             }
@@ -132,16 +113,9 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         for (VM vm : vmList) {
             if (vm.getStatus() != VMStatus.Down) {
                 List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-                VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
-                    @Override
-                    public boolean eval(VmNetworkInterface i) {
-                        if (i.getNetworkName() != null) {
-                            return i.getNetworkName().equals(bond.getNetworkName());
-                        }
-                        return false;
-                    }
-                });
-                if (iface != null) {
+                if (vmInterfaces.stream().anyMatch
+                        (i -> i.getNetworkName() != null && i.getNetworkName().equals(bond.getNetworkName()))) {
+
                     addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_IN_USE_BY_VM);
                     return false;
                 }

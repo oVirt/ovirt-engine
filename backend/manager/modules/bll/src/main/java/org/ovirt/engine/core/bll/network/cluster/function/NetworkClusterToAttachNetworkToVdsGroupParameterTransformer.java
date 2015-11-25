@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster.function;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.Function;
 
 @Singleton
 @Named
@@ -26,7 +26,7 @@ final class NetworkClusterToAttachNetworkToVdsGroupParameterTransformer
     }
 
     @Override
-    public AttachNetworkToVdsGroupParameter eval(NetworkCluster networkCluster) {
+    public AttachNetworkToVdsGroupParameter apply(NetworkCluster networkCluster) {
         final Network network = networkDao.get(networkCluster.getNetworkId());
         network.setCluster(networkCluster);
         return new AttachNetworkToVdsGroupParameter(networkCluster.getClusterId(), network);

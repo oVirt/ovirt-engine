@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -175,12 +173,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getInterface().getId(), getVmId()));
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
-        oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
-            @Override
-            public boolean eval(VmNic i) {
-                return i.getId().equals(getInterface().getId());
-            }
-        });
+        oldIface = interfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
 
         if (oldIface == null || oldVmDevice == null) {
             addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);

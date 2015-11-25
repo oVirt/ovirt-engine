@@ -19,8 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
 
@@ -78,12 +76,8 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected boolean canDoAction() {
         List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId());
-        iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return i.getName().equals(getParameters().getInterface().getName());
-            }
-        });
+        iface = interfaces.stream().filter(i -> i.getName().equals(getParameters().getInterface().getName()))
+                .findFirst().orElse(null);
         if (iface == null) {
             addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
@@ -123,12 +117,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                 && getParameters().getNetwork().getCluster() != null
                 && getParameters().getNetwork().getCluster().getStatus() == NetworkStatus.OPERATIONAL) {
             List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId());
-            if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network network) {
-                    return network.getName().equals(getParameters().getNetwork().getName());
-                }
-            })) {
+            if (networks.stream().anyMatch(network -> network.getName().equals(getParameters().getNetwork().getName()))) {
                 addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }

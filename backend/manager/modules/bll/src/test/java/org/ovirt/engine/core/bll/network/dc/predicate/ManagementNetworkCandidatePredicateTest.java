@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.dc.predicate;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +9,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.DummyPredicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ManagementNetworkCandidatePredicateTest {
 
-    @Mock
-    private Predicate<Network> mockExternalNetworkPredicate;
+    private DummyPredicate<Network> mockExternalNetworkPredicate = new DummyPredicate<>();
 
     @Mock
     private Network mockNetwork;
@@ -30,15 +28,13 @@ public class ManagementNetworkCandidatePredicateTest {
 
     @Test
     public void testEvalNegative() {
-        when(mockExternalNetworkPredicate.eval(mockNetwork)).thenReturn(true);
-
-        assertFalse(underTest.eval(mockNetwork));
+        mockExternalNetworkPredicate.setTestResult(true);
+        assertFalse(underTest.test(mockNetwork));
     }
 
     @Test
     public void testEvalPositive() {
-        when(mockExternalNetworkPredicate.eval(mockNetwork)).thenReturn(false);
-
-        assertTrue(underTest.eval(mockNetwork));
+        mockExternalNetworkPredicate.setTestResult(false);
+        assertTrue(underTest.test(mockNetwork));
     }
 }

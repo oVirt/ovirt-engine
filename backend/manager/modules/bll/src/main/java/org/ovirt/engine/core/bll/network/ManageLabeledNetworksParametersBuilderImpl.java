@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.network;
 
-import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -48,7 +48,9 @@ final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworks
                         labeledNetworksToBeRemoved);
         final PersistentHostSetupNetworksParameters combinedParams =
                 combine(addSetupNetworksParameters, removeSetupNetworksParameters);
-        final Collection<Network> affectedNetworks = concat(labeledNetworksToBeAdded, labeledNetworksToBeRemoved);
+        final Collection<Network> affectedNetworks =
+                Stream.concat(labeledNetworksToBeAdded.stream(), labeledNetworksToBeRemoved.stream())
+                        .collect(Collectors.toList());
         combinedParams.setNetworkNames(StringUtils.join(Entities.objectNames(affectedNetworks), ", "));
         return combinedParams;
     }

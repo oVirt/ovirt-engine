@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultManagementNetworkFinderImplTest {
@@ -88,7 +88,7 @@ public class DefaultManagementNetworkFinderImplTest {
     @Test
     public void testFindSingleDcNetwork() {
         when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Collections.singletonList(mockNetwork));
-        when(mockManagementNetworkCandidatePredicate.eval(mockNetwork)).thenReturn(true);
+        when(mockManagementNetworkCandidatePredicate.test(mockNetwork)).thenReturn(true);
 
         final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
 
@@ -98,7 +98,7 @@ public class DefaultManagementNetworkFinderImplTest {
     @Test
     public void testFindSingleNotAppropriateDcNetwork() {
         when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Collections.singletonList(mockNetwork));
-        when(mockManagementNetworkCandidatePredicate.eval(mockNetwork)).thenReturn(false);
+        when(mockManagementNetworkCandidatePredicate.test(mockNetwork)).thenReturn(false);
 
         final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
 

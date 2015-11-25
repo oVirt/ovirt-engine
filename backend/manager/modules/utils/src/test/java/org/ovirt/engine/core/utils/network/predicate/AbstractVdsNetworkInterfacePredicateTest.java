@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.utils.network.predicate;
 
+import java.util.function.Predicate;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 abstract public class AbstractVdsNetworkInterfacePredicateTest {
 
@@ -27,17 +28,17 @@ abstract public class AbstractVdsNetworkInterfacePredicateTest {
 
     @Test
     public void checkNullAddress() {
-        Assert.assertFalse(underTest.eval(generateVdsNetworkInterface(null)));
+        Assert.assertFalse(underTest.test(generateVdsNetworkInterface(null)));
     }
 
     @Test
     public void checkInvalidAddress() {
-        Assert.assertFalse(underTest.eval(generateVdsNetworkInterface(getINVALID())));
+        Assert.assertFalse(underTest.test(generateVdsNetworkInterface(getINVALID())));
     }
 
     @Test
     public void checkValidAddress() {
-        Assert.assertTrue(underTest.eval(generateVdsNetworkInterface(getVALID())));
+        Assert.assertTrue(underTest.test(generateVdsNetworkInterface(getVALID())));
     }
 
 }

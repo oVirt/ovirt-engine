@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,8 +44,7 @@ import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkDeviceHelperImplTest {
@@ -393,13 +393,7 @@ public class NetworkDeviceHelperImplTest {
         excludedVfs.add(freeVfs.get(1));
         freeVfs.removeAll(excludedVfs);
 
-        List<String> excludedVfsNames = LinqUtils.transformToList(excludedVfs, new Function<HostDevice, String>() {
-
-            @Override
-            public String eval(HostDevice excludedVf) {
-                return excludedVf.getDeviceName();
-            }
-        });
+        List<String> excludedVfsNames = excludedVfs.stream().map(HostDevice::getDeviceName).collect(Collectors.toList());
 
         assertTrue(freeVfs.contains(networkDeviceHelper.getFreeVf(nic, excludedVfsNames)));
     }

@@ -32,7 +32,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -99,9 +98,12 @@ public class NetworkConfigurator {
         if (managementNetworkName == null) {
             return null;
         }
-        VdsNetworkInterface iface = LinqUtils.firstOrNull(host.getInterfaces(),
-                new InterfaceByNetworkNamePredicate(managementNetworkName));
-        return (iface != null) ? iface.getAddress() : null;
+        return host.getInterfaces()
+                .stream()
+                .filter(new InterfaceByNetworkNamePredicate(managementNetworkName))
+                .map(VdsNetworkInterface::getAddress)
+                .findFirst()
+                .orElse(null);
     }
 
     private ManagementNetworkUtil getManagementNetworkUtil() {

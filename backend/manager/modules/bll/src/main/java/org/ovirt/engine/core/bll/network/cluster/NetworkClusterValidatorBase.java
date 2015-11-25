@@ -18,8 +18,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * Validator class for {@link NetworkCluster} instances.
@@ -83,13 +81,8 @@ public abstract class NetworkClusterValidatorBase {
         final List<VdsNetworkInterface> interfacesByClusterId =
                 interfaceDao.getAllInterfacesByClusterId(networkCluster.getClusterId());
         final VdsNetworkInterface missingIpNic =
-                LinqUtils.firstOrNull(interfacesByClusterId, new Predicate<VdsNetworkInterface>() {
-                    @Override
-                    public boolean eval(VdsNetworkInterface nic) {
-                        return networkName.equals(nic.getNetworkName()) &&
-                                StringUtils.isEmpty(nic.getAddress());
-                    }
-                });
+                interfacesByClusterId.stream().filter(nic -> networkName.equals(nic.getNetworkName()) &&
+                        StringUtils.isEmpty(nic.getAddress())).findFirst().orElse(null);
 
         return missingIpNic;
     }

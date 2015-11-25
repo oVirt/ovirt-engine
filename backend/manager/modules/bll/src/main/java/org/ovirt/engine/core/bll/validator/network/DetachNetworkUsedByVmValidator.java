@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll.validator.network;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class DetachNetworkUsedByVmValidator {
 
@@ -30,23 +31,25 @@ public class DetachNetworkUsedByVmValidator {
         final int removedNetworksAmount = removedNetworks.size();
         if (vmsAmount > 1 && removedNetworksAmount > 1) {
             return new ValidationResult(EngineMessage.MULTIPLE_NETWORKS_CANNOT_DETACH_NETWORKS_USED_BY_VMS,
-                    LinqUtils.concat(ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks),
-                            ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList)));
+                    Stream.concat(
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks).stream(),
+                            ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList).stream()).collect(Collectors.toList()));
+
         } else if (vmsAmount > 1) {
             return new ValidationResult(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                    LinqUtils.concat(
-                            ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks),
-                            ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList)));
+                    Stream.concat(
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks).stream(),
+                            ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList).stream()).collect(Collectors.toList()));
         } else if (removedNetworksAmount > 1) {
             return new ValidationResult(EngineMessage.MULTIPLE_NETWORKS_CANNOT_DETACH_NETWORKS_USED_BY_SINGLE_VM,
-                    LinqUtils.concat(
-                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks),
-                            ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList)));
+                    Stream.concat(
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks).stream(),
+                            ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList).stream()).collect(Collectors.toList()));
         } else {
             return new ValidationResult(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM,
-                    LinqUtils.concat(
-                            ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks),
-                            ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList)));
+                    Stream.concat(
+                            ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks).stream(),
+                            ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList).stream()).collect(Collectors.toList()));
         }
     }
 }

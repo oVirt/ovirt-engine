@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,15 +24,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Mapper;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<ManageNetworkClustersParameters> {
-
-    public static final NetworkClusterMapper NETWORK_CLUSTER_MAPPER = new NetworkClusterMapper();
-
     @Inject
     private NetworkClustersToSetupNetworksParametersTransformerFactory
             networkClustersToSetupNetworksParametersTransformerFactory;
@@ -81,12 +77,10 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
 
     private Map<Guid, ManageNetworkClustersParameters> mapParametersByClusterId() {
         final Map<Guid, ManageNetworkClustersParameters> paramsByClusterId = new HashMap<>();
-        final Map<Guid, List<NetworkCluster>> attachmentByClusterId = LinqUtils.toMultiMap(
-                getParameters().getAttachments(),
-                NETWORK_CLUSTER_MAPPER);
-        final Map<Guid, List<NetworkCluster>> detachmentByClusterId = LinqUtils.toMultiMap(
-                getParameters().getDetachments(),
-                NETWORK_CLUSTER_MAPPER);
+        final Map<Guid, List<NetworkCluster>> attachmentByClusterId =
+                getParameters().getAttachments().stream().collect(Collectors.groupingBy(NetworkCluster::getClusterId));
+        final Map<Guid, List<NetworkCluster>> detachmentByClusterId =
+                getParameters().getDetachments().stream().collect(Collectors.groupingBy(NetworkCluster::getClusterId));
         for (Entry<Guid, List<NetworkCluster>> singleClusterAttachments: attachmentByClusterId.entrySet()) {
             final Guid clusterId = singleClusterAttachments.getKey();
             final List<NetworkCluster> networkAttachments = singleClusterAttachments.getValue();
@@ -122,17 +116,4 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
     }
-
-    private static class NetworkClusterMapper implements Mapper<NetworkCluster, Guid, NetworkCluster> {
-        @Override
-        public Guid createKey(NetworkCluster networkCluster) {
-            return networkCluster.getClusterId();
-        }
-
-        @Override
-        public NetworkCluster createValue(NetworkCluster networkCluster) {
-            return networkCluster;
-        }
-    }
-
 }

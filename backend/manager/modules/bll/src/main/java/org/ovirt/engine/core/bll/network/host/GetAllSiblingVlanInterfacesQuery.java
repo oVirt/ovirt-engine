@@ -8,8 +8,6 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * This query get vlan interface and return all it's siblings, i.e input: eth2.2
@@ -26,12 +24,8 @@ public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParam
         ArrayList<VdsNetworkInterface> retVal = new ArrayList<>();
         List<VdsNetworkInterface> vdsInterfaces =
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
-        VdsNetworkInterface iface = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return i.getName().equals(getParameters().getInterface().getName());
-            }
-        });
+        VdsNetworkInterface iface = vdsInterfaces.stream()
+                .filter(i -> i.getName().equals(getParameters().getInterface().getName())).findFirst().orElse(null);
 
         if (iface != null && NetworkUtils.isVlan(iface)) {
             for (int i = 0; i < vdsInterfaces.size(); i++) {

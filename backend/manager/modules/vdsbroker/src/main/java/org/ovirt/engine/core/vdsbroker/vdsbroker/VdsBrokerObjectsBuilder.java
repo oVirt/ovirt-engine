@@ -88,7 +88,6 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByAddressPredicate;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.slf4j.Logger;
@@ -1699,8 +1698,8 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
         final String managementAddress = hostIp;
-        VdsNetworkInterface activeIface =
-                LinqUtils.firstOrNull(host.getInterfaces(), new InterfaceByAddressPredicate(managementAddress));
+        VdsNetworkInterface activeIface = host.getInterfaces().stream()
+                .filter(new InterfaceByAddressPredicate(managementAddress)).findFirst().orElse(null);
         return activeIface;
     }
 

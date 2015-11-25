@@ -29,13 +29,13 @@ public class NetworkNotInSyncPredicateTest {
     @Test
     public void checkNotSync() {
         initSyncStatus(mockNetworkAttachment, false);
-        Assert.assertTrue(underTest.eval(mockNetworkAttachment));
+        Assert.assertTrue(underTest.test(mockNetworkAttachment));
     }
 
     @Test
     public void checkSync() {
         initSyncStatus(mockNetworkAttachment, true);
-        Assert.assertFalse(underTest.eval(mockNetworkAttachment));
+        Assert.assertFalse(underTest.test(mockNetworkAttachment));
     }
 
 }

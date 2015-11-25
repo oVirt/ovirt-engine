@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,9 +27,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Mapper;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
@@ -74,23 +74,14 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         final Collection<VdsNetworkInterface> hostInterfaces =
                 hostNics == null ? interfaceDao.getAllInterfacesForVds(netDevice.getHostId()) : hostNics;
 
-        return LinqUtils.firstOrNull(hostInterfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface iface) {
-                return iface.getName().equals(netDevice.getNetworkInterfaceName());
-            }
-        });
+        return hostInterfaces.stream().filter(iface -> iface.getName().equals(netDevice.getNetworkInterfaceName()))
+                .findFirst().orElse(null);
     }
 
     private HostDevice getFirstChildDevice(final HostDevice pciDevice, final Collection<HostDevice> devices) {
         Collection<HostDevice> hostDevices = devices == null ? getDevicesByHostId(pciDevice.getHostId()) : devices;
-        return LinqUtils.firstOrNull(hostDevices, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice device) {
-                return pciDevice.getDeviceName().equals(device.getParentDeviceName());
-            }
-        });
+        return hostDevices.stream().filter(device -> pciDevice.getDeviceName().equals(device.getParentDeviceName()))
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -145,13 +136,8 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
             List<HostDevice> deviceList,
             Map<String, HostDevice> devicesByName) {
         final String nicName = nic.getName();
-        final HostDevice netDevice = LinqUtils.firstOrNull(deviceList, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice device) {
-                return nicName.equals(device.getNetworkInterfaceName());
-            }
-        });
+        final HostDevice netDevice = deviceList.stream()
+                .filter(device -> nicName.equals(device.getNetworkInterfaceName())).findFirst().orElse(null);
 
         Objects.requireNonNull(netDevice,
                 String.format("Host \"%s\": nic \"%s\" doesn't have a net device", nic.getVdsName(), nicName));
@@ -187,13 +173,9 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
     }
 
     private List<HostDevice> getVfs(final HostDevice pciDevice, List<HostDevice> deviceList) {
-        return LinqUtils.filter(deviceList, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice device) {
-                return pciDevice.getDeviceName().equals(device.getParentPhysicalFunction());
-            }
-        });
+        return deviceList.stream()
+                .filter(device -> pciDevice.getDeviceName().equals(device.getParentPhysicalFunction()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -249,15 +231,10 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
         List<HostDevice> vfs = getVfs(pciDevice, deviceList);
 
-        HostDevice vf = LinqUtils.firstOrNull(vfs, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice vf) {
-                return isVfFree(vf) == shouldBeFree && (excludeVfs == null || !excludeVfs.contains(vf.getDeviceName()));
-            }
-        });
-
-       return vf;
+        return vfs.stream()
+                .filter(vf -> isVfFree(vf) == shouldBeFree && (excludeVfs == null || !excludeVfs.contains(vf.getDeviceName())))
+                .findFirst()
+                .orElse(null);
     }
 
     private HostDevice getVf(VdsNetworkInterface nic, final boolean shouldBeFree) {
@@ -282,13 +259,8 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
         List<HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId);
 
-        List<HostDevice> vfs = LinqUtils.filter(hostDevices, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice device) {
-                return vfsNames.contains(device.getDeviceName()) && isVf(device);
-            }
-        });
+        List<HostDevice> vfs = hostDevices.stream()
+                .filter(device -> vfsNames.contains(device.getDeviceName()) && isVf(device)).collect(Collectors.toList());
 
         setVmIdOnVfsDevices(vmId, new HashSet<>(vfs));
     }
@@ -303,13 +275,8 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
     public Guid removeVmIdFromVfs(final Guid vmId) {
         List<HostDevice> hostDevices = hostDeviceDao.getAll();
 
-        List<HostDevice> vfsUsedByVm = LinqUtils.filter(hostDevices, new Predicate<HostDevice>() {
-
-            @Override
-            public boolean eval(HostDevice device) {
-                return vmId.equals(device.getVmId()) && isVf(device);
-            }
-        });
+        List<HostDevice> vfsUsedByVm = hostDevices.stream()
+                .filter(device -> vmId.equals(device.getVmId()) && isVf(device)).collect(Collectors.toList());
 
         Guid hostId = vfsUsedByVm.isEmpty() ? null : vfsUsedByVm.get(0).getHostId();
         if (hostId != null) {
@@ -330,19 +297,17 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         final List<HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId);
         final Map<String, HostDevice> hostDevicesByName = Entities.entitiesByName(hostDevices);
 
-        final List<VdsNetworkInterface> vfNics = LinqUtils.filter(hostNics,
-                new VfNicPredicate(hostDevices, hostDevicesByName));
-        final Map<Guid, Guid> result =
-                LinqUtils.toMap(vfNics, new VfNicToPfNicMapper(hostDevices, hostDevicesByName, hostNics));
-
-        return result;
+        return hostNics.stream()
+                .filter(new VfNicPredicate(hostDevices, hostDevicesByName))
+                .collect(Collectors.toMap(VdsNetworkInterface::getId,
+                        new VfNicToPfNicMapper(hostDevices, hostDevicesByName, hostNics)));
     }
 
     private boolean isVf(HostDevice device) {
         return StringUtils.isNotBlank(device.getParentPhysicalFunction());
     }
 
-    private class VfNicToPfNicMapper implements Mapper<VdsNetworkInterface, Guid, Guid> {
+    private class VfNicToPfNicMapper implements Function<VdsNetworkInterface, Guid> {
         private final List<HostDevice> hostDevices;
         private final Map<String, HostDevice> hostDevicesByName;
         private final List<VdsNetworkInterface> hostNics;
@@ -356,12 +321,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         }
 
         @Override
-        public Guid createKey(VdsNetworkInterface nic) {
-            return nic.getId();
-        }
-
-        @Override
-        public Guid createValue(VdsNetworkInterface nic) {
+        public Guid apply(VdsNetworkInterface nic) {
             final HostDevice vfPciDevice =
                     getPciDeviceByNic(nic, hostDevices, hostDevicesByName);
             final HostDevice pfPciDevice = hostDevicesByName.get(vfPciDevice.getParentPhysicalFunction());
@@ -381,7 +341,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         }
 
         @Override
-        public boolean eval(VdsNetworkInterface nic) {
+        public boolean test(VdsNetworkInterface nic) {
             if (nic.isBond() || NetworkUtils.isVlan(nic)) {
                 return false;
             }

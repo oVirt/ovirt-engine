@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 final class ManagementNetworkUtilImpl implements ManagementNetworkUtil {
@@ -40,14 +38,7 @@ final class ManagementNetworkUtilImpl implements ManagementNetworkUtil {
     @Override
     public boolean isManagementNetwork(Guid networkId) {
         final List<NetworkCluster> networkClusters = networkClusterDao.getAllForNetwork(networkId);
-        final NetworkCluster managementNetworkCluster =
-                LinqUtils.firstOrNull(networkClusters, new Predicate<NetworkCluster>() {
-                    @Override
-                    public boolean eval(NetworkCluster networkCluster) {
-                        return networkCluster.isManagement();
-                    }
-                });
-        return managementNetworkCluster != null;
+        return networkClusters.stream().anyMatch(NetworkCluster::isManagement);
     }
 
     @Override

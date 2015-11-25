@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.utils.network.predicate;
 
+import java.util.function.Predicate;
+
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class InterfaceByAddressPredicate implements Predicate<VdsNetworkInterface> {
 
@@ -12,7 +13,7 @@ public class InterfaceByAddressPredicate implements Predicate<VdsNetworkInterfac
     }
 
     @Override
-    public boolean eval(VdsNetworkInterface iface) {
+    public boolean test(VdsNetworkInterface iface) {
         return managementAddress == null ? false : managementAddress.equals(iface.getAddress());
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -10,7 +11,6 @@ import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 final class DefaultManagementNetworkFinderImpl implements DefaultManagementNetworkFinder {
@@ -54,7 +54,7 @@ final class DefaultManagementNetworkFinderImpl implements DefaultManagementNetwo
         final List<Network> dcNetworks = networkDao.getAllForDataCenter(dataCenterId);
         if (dcNetworks.size() == 1) {
             final Network singleDcNetwork = dcNetworks.get(0);
-            if (managementNetworkCandidatePredicate.eval(singleDcNetwork)) {
+            if (managementNetworkCandidatePredicate.test(singleDcNetwork)) {
                 return singleDcNetwork;
             }
         } else {

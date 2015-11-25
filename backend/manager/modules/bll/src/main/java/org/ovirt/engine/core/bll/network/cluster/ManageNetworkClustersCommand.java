@@ -3,16 +3,16 @@ package org.ovirt.engine.core.bll.network.cluster;
 import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToVdsGroup;
 import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToVdsGroup;
 import static org.ovirt.engine.core.common.action.VdcActionType.UpdateNetworkOnCluster;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.concat;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.filter;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
-import static org.ovirt.engine.core.utils.linq.LinqUtils.transformToList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -74,14 +72,14 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             public Boolean runInTransaction() {
                 final Collection<NetworkCluster> attachments = getParameters().getAttachments();
                 final List<NetworkCluster> managementNetworkAttachments =
-                        filter(attachments, managementNetworkAppointmentPredicate);
+                        attachments.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
                 final List<NetworkCluster> nonManagementNetworkAttachments =
-                        filter(attachments, not(managementNetworkAppointmentPredicate));
+                        attachments.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
                 final Collection<NetworkCluster> updates = getParameters().getUpdates();
                 final List<NetworkCluster> managementNetworkUpdates =
-                        filter(updates, managementNetworkAppointmentPredicate);
+                        updates.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
                 final List<NetworkCluster> nonManagementNetworkUpdates =
-                        filter(updates, not(managementNetworkAppointmentPredicate));
+                        updates.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
 
                 boolean resultStatus = attachNetworks(managementNetworkAttachments);
                 resultStatus = resultStatus && updateNetworkAttachments(managementNetworkUpdates);
@@ -130,7 +128,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             VdcActionType actionType,
             Function<NetworkCluster, ? extends VdcActionParametersBase> networkClusterToParameterTransformer) {
         final List<? extends VdcActionParametersBase> parameters =
-                transformToList(networkClusters, networkClusterToParameterTransformer);
+                networkClusters.stream().map(networkClusterToParameterTransformer).collect(Collectors.toList());
         return runMultipleInternalCommandsSynchronously(actionType, parameters);
     }
 
@@ -239,10 +237,10 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
 
     private ValidationResult validateInputForDuplication() {
         final Set<NetworkClusterId> networkClusterIds = new HashSet<>();
-        final Iterable<NetworkCluster> inputNetworkClusters = concat(
+        final Iterable<NetworkCluster> inputNetworkClusters = Stream.of(
                 getParameters().getAttachments(),
                 getParameters().getDetachments(),
-                getParameters().getUpdates());
+                getParameters().getUpdates()).flatMap(Collection::stream).collect(Collectors.toList());
         for (NetworkCluster networkCluster : inputNetworkClusters) {
             if (networkClusterIds.contains(networkCluster.getId())) {
                 final String networkClusterReplacement = String.format("${NetworkCluster} %s", networkCluster.getId());

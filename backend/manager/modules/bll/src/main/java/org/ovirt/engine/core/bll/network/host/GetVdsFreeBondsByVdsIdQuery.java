@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetVdsFreeBondsByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsFreeBondsByVdsIdQuery(P parameters) {
@@ -20,18 +19,10 @@ public class GetVdsFreeBondsByVdsIdQuery<P extends IdQueryParameters> extends Qu
 
         // we return only bonds that are not active (that have no interfaces
         // related to them)
-        List<VdsNetworkInterface> interfaces = LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(final VdsNetworkInterface bond) {
-                return (bond.getBonded() != null && bond.getBonded())
-                        && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
-                            @Override
-                            public boolean eval(VdsNetworkInterface iface) {
-                                return iface.getBondName() != null && iface.getBondName().equals(bond.getName());
-                            }
-                        }).isEmpty();
-            }
-        });
+        List<VdsNetworkInterface> interfaces = list.stream().filter(bond ->
+                (bond.getBonded() != null && bond.getBonded())
+                && list.stream().noneMatch(iface -> iface.getBondName() != null && iface.getBondName().equals(bond.getName()))
+        ).collect(Collectors.toList());
 
         getQueryReturnValue().setReturnValue(interfaces);
     }

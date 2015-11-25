@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll.network.dc.predicate;
 
-import static org.ovirt.engine.core.utils.linq.LinqUtils.not;
-
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @Singleton
 @Named
@@ -22,11 +20,11 @@ public class ManagementNetworkCandidatePredicate implements Predicate<Network> {
             @Named("externalNetworkPredicate") Predicate<Network> externalNetworkPredicate) {
         Objects.requireNonNull(externalNetworkPredicate, "externalNetworkPredicate cannot be null");
 
-        this.externalNetworkPredicate = not(externalNetworkPredicate);
+        this.externalNetworkPredicate = externalNetworkPredicate.negate();
     }
 
     @Override
-    public boolean eval(Network network) {
-        return externalNetworkPredicate.eval(network);
+    public boolean test(Network network) {
+        return externalNetworkPredicate.test(network);
     }
 }

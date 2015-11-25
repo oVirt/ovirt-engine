@@ -30,8 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Dns;
 import org.ovirt.engine.core.utils.IPAddress;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsParameters> extends VdsNetworkCommand<T> {
@@ -169,12 +167,8 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
-            VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                @Override
-                public boolean eval(VdsNetworkInterface x) {
-                    return x.getName().equals(i.getName());
-                }
-            });
+            VdsNetworkInterface iface =
+                    interfaces.stream().filter(x -> x.getName().equals(i.getName())).findFirst().orElse(null);
             if (iface == null) {
                 addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
@@ -191,32 +185,18 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         VDS vds = getVdsDao().get(getParameters().getVdsId());
         if (vds.getStatus() != VDSStatus.Maintenance) {
             // check that the old network exists in host
-            VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                @Override
-                public boolean eval(VdsNetworkInterface i) {
-                    if (i.getNetworkName() != null) {
-                        return i.getNetworkName().equals(getParameters().getNetwork().getName());
-                    }
-                    return false;
-                }
-            });
-            if (iface != null) {
+            boolean ifaceFound = interfaces.stream()
+                    .anyMatch(i -> i.getNetworkName() != null && i.getNetworkName().equals(getParameters().getNetwork().getName()));
+            if (ifaceFound) {
                 addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
 
         // check that the old network exists in host
-        VdsNetworkInterface ifacenet = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                if (i.getNetworkName() != null) {
-                    return i.getNetworkName().equals(getParameters().getOldNetworkName());
-                }
-                return false;
-            }
-        });
-        if (ifacenet == null) {
+        boolean ifacenetNotFound = interfaces.stream()
+                .noneMatch(i -> i.getNetworkName() != null && i.getNetworkName().equals(getParameters().getOldNetworkName()));
+        if (ifacenetNotFound) {
             addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }

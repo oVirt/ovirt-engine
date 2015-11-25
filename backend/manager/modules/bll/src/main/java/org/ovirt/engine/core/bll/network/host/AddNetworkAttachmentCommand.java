@@ -18,8 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @NonTransactiveCommandAttribute
 public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> extends VdsCommand<T> {
@@ -88,14 +86,8 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
         VdsNetworkInterface configuredNic = interfaceDao.get(configuredNicId);
         List<NetworkAttachment> attachmentsOnNic = networkAttachmentDao.getAllForNic(configuredNic.getId());
 
-        NetworkAttachment createNetworkAttachment = LinqUtils.firstOrNull(attachmentsOnNic,
-                new Predicate<NetworkAttachment>() {
-
-                    @Override
-                    public boolean eval(NetworkAttachment networkAttachment) {
-                        return networkAttachment.getNetworkId().equals(requiredNetworkId);
-                    }
-                });
+        NetworkAttachment createNetworkAttachment = attachmentsOnNic.stream().filter
+                (networkAttachment -> networkAttachment.getNetworkId().equals(requiredNetworkId)).findFirst().orElse(null);
 
         if (createNetworkAttachment == null) {
             throw new IllegalStateException();

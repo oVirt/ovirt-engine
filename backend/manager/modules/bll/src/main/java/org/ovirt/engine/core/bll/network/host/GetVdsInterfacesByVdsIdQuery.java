@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -19,8 +20,6 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -99,11 +98,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
 
     private List<VdsNetworkInterface> getSlavesOfBond(List<VdsNetworkInterface> vdsInterfaces,
         final VdsNetworkInterface nic) {
-        return LinqUtils.filter(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface bond) {
-                return StringUtils.equals(bond.getBondName(), nic.getName());
-            }
-        });
+        return vdsInterfaces.stream().filter(bond -> StringUtils.equals(bond.getBondName(), nic.getName()))
+                .collect(Collectors.toList());
     }
 }
