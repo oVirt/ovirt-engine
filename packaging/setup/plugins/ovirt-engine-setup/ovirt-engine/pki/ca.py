@@ -89,6 +89,7 @@ class Plugin(plugin.PluginBase):
         )
 
     def _extractPKCS12CertificateString(self, pkcs12):
+        res = False
         rc, stdout, stderr = self.execute(
             args=(
                 self.command.get('openssl'),
@@ -99,15 +100,37 @@ class Plugin(plugin.PluginBase):
                 ],
                 '-nokeys',
             ),
+            raiseOnError=False,
         )
-        return '\n'.join(stdout)
+        if rc == 0 and stdout:
+            res = '\n'.join(stdout)
+        else:
+            self.logger.warn(
+                _(
+                    "Failed to read or parse '{pkcs12}'"
+                ).format(
+                    pkcs12=pkcs12,
+                )
+            )
+            self.dialog.note(
+                text='\n'.join(
+                    [
+                        _(
+                            "Perhaps it was changed since last Setup."
+                        ),
+                        _(
+                            "Error was:"
+                        ),
+                    ] + stderr
+                )+'\n\n')
+        return res
 
     def _extractPKCS12Certificate(self, pkcs12):
-        return X509.load_cert_string(
-            str(
-                self._extractPKCS12CertificateString(pkcs12)
-            )
-        )
+        res = False
+        cert = self._extractPKCS12CertificateString(pkcs12)
+        if cert:
+            res = X509.load_cert_string(str(cert))
+        return res
 
     def _expandPKCS12(self, pkcs12, name, owner, uninstall_files):
         rc, key, stderr = self.execute(
@@ -238,7 +261,7 @@ class Plugin(plugin.PluginBase):
         res = False
         if os.path.exists(pkcs12):
             x509 = self._extractPKCS12Certificate(pkcs12)
-            if self._expired(x509):
+            if x509 and self._expired(x509):
                 if not extract:
                     res = True
                 else:
