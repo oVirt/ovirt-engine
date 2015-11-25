@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -83,8 +84,6 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -383,18 +382,15 @@ public class VdsEventListener implements IVdsEventListener {
 
     private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
             final VDS vds) {
-        return LinqUtils.transformToList(vmsToMigrate,
-                new Function<VmStatic, VdcActionParametersBase>() {
-                    @Override
-                    public VdcActionParametersBase eval(VmStatic vm) {
-                        MigrateVmToServerParameters parameters =
-                                new MigrateVmToServerParameters(false,
-                                        vm.getId(),
-                                        vds.getId());
-                        parameters.setShouldBeLogged(false);
-                        return parameters;
-                    }
-                });
+        return vmsToMigrate.stream().map(
+                vm -> {
+                    MigrateVmToServerParameters parameters =
+                            new MigrateVmToServerParameters(false,
+                                    vm.getId(),
+                                    vds.getId());
+                    parameters.setShouldBeLogged(false);
+                    return parameters;
+                }).collect(Collectors.toList());
     }
 
     @Override
