@@ -17,7 +17,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.storage.IStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;

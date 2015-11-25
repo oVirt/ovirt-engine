@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.storage.GLUSTERFSStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.GLUSTERFSStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;

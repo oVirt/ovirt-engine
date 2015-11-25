@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
-import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Provider;

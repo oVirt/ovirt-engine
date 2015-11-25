@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
-import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;

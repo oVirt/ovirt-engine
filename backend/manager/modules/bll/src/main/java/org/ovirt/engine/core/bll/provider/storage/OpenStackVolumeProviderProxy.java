@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
