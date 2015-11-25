@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
 
@@ -97,7 +97,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     protected boolean isSystemSuperUser() {
-        return isSystemSuperUserPredicate.eval(getCurrentUser().getId());
+        return isSystemSuperUserPredicate.test(getCurrentUser().getId());
     }
 
     // TODO - this code is shared with addPermissionCommand - check if

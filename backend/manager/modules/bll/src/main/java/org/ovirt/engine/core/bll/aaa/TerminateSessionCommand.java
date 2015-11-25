@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.aaa;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * Terminates session of the user identified by its session database id. Only admins can execute this command.
@@ -64,7 +64,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        if (isSystemSuperUserPredicate.eval(getCurrentUser().getId())) {
+        if (isSystemSuperUserPredicate.test(getCurrentUser().getId())) {
             return true;
         } else {
             addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
