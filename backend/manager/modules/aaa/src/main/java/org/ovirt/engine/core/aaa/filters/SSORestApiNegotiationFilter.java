@@ -194,7 +194,7 @@ public class SSORestApiNegotiationFilter implements Filter {
         // empty
     }
 
-    class AuthResult {
+    static class AuthResult {
         String username;
         ExtMap authRecord;
     }
