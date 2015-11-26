@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -424,40 +423,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             return failCanDoAction(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
         return true;
-    }
-
-    /**
-     * Updating managed device map of VM, with the new disk {@link Guid}s.<br/>
-     * The update of managedDeviceMap is based on the newDiskIdForDisk map,
-     * so this method should be called only after newDiskIdForDisk is initialized.
-     *
-     * @param disk
-     *            - The disk which is about to be cloned
-     * @param managedDeviceMap
-     *            - The managed device map contained in the VM.
-     */
-    protected void updateManagedDeviceMap(DiskImage disk, Map<Guid, VmDevice> managedDeviceMap) {
-        Guid oldDiskId = newDiskIdForDisk.get(disk.getId()).getId();
-        managedDeviceMap.put(disk.getId(), managedDeviceMap.get(oldDiskId));
-        managedDeviceMap.remove(oldDiskId);
-    }
-
-    /**
-     * Cloning a new disk with a new generated id, with the same parameters as <code>disk</code>. Also
-     * adding the disk to <code>newDiskGuidForDisk</code> map, so we will be able to link between the new cloned disk
-     * and the old disk id.
-     *
-     * @param disk
-     *            - The disk which is about to be cloned
-     */
-    protected Guid generateNewDiskId(DiskImage disk) {
-        Guid newGuidForDisk = Guid.newGuid();
-
-        // Copy the disk so it will preserve the old disk id and image id.
-        newDiskIdForDisk.put(newGuidForDisk, DiskImage.copyOf(disk));
-        disk.setId(newGuidForDisk);
-        disk.setImageId(Guid.newGuid());
-        return newGuidForDisk;
     }
 
     protected void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {
