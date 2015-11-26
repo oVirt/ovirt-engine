@@ -24,7 +24,7 @@ public class DetachNetworkUsedByVmValidatorTest {
         final List<String> removedNetworks = Arrays.asList(NETWORK_A);
         underTest = new DetachNetworkUsedByVmValidator(vmsNames, removedNetworks);
         assertThat(underTest.validate(),
-                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                failsWith(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
                         concat(replaceWith(DetachNetworkUsedByVmValidator.VAR_VM_NAMES, vmsNames),
                                 replaceWith(DetachNetworkUsedByVmValidator.VAR_NETWORK_NAME, removedNetworks))));
     }
@@ -35,7 +35,7 @@ public class DetachNetworkUsedByVmValidatorTest {
         final List<String> removedNetworks = Arrays.asList(NETWORK_A);
         underTest = new DetachNetworkUsedByVmValidator(vmsNames, removedNetworks);
         assertThat(underTest.validate(),
-                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM,
+                failsWith(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM,
                         concat(replaceWith(DetachNetworkUsedByVmValidator.VAR_VM_NAME, vmsNames),
                                 replaceWith(DetachNetworkUsedByVmValidator.VAR_NETWORK_NAME, removedNetworks))));
     }
