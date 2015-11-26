@@ -427,24 +427,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     /**
-     * Cloning a new disk and all its volumes with a new generated id.<br/>
-     * The disk will have the same parameters as <code>disk</code>.<br/>
-     * Also adding the disk to <code>newDiskGuidForDisk</code> map, so we will be able to link between the new cloned disk
-     * and the old disk id.
-     *
-     * @param diskImagesList
-     *            - All the disk volumes
-     * @param disk
-     *            - The disk which is about to be cloned
-     */
-    protected void generateNewDiskId(List<DiskImage> diskImagesList, DiskImage disk) {
-        Guid generatedGuid = generateNewDiskId(disk);
-        for (DiskImage diskImage : diskImagesList) {
-            diskImage.setId(generatedGuid);
-        }
-    }
-
-    /**
      * Updating managed device map of VM, with the new disk {@link Guid}s.<br/>
      * The update of managedDeviceMap is based on the newDiskIdForDisk map,
      * so this method should be called only after newDiskIdForDisk is initialized.
