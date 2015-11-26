@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -63,7 +63,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             if (iface.getVnicProfileId() != null) {
                 final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
                 boolean networkFoundInCluster =
-                        networks.stream().anyMatch(n -> ObjectUtils.equals(n.getId(), network.getId()));
+                        networks.stream().anyMatch(n -> Objects.equals(n.getId(), network.getId()));
 
                 // if network not exists in cluster we remove the network to
                 // interface connection
