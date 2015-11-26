@@ -7,8 +7,6 @@ import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVirtualFunctionAllowedNetworkResource
         extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
@@ -30,11 +28,6 @@ public class BackendVirtualFunctionAllowedNetworkResource
             notFound();
         }
         return network;
-    }
-
-    private org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {
-        return getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                VdcQueryType.GetNetworkById, new IdQueryParameters(guid), guid.toString());
     }
 
     public BackendVirtualFunctionAllowedNetworksResource getParent() {
