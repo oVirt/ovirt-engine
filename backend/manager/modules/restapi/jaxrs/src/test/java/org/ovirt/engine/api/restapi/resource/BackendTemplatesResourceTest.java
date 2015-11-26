@@ -657,7 +657,9 @@ public class BackendTemplatesResourceTest
                  assertEquals(template.getVersion().getVersionNumber(), new Integer(2));
                  assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
             } else {
-                assertNull(template.getVersion());
+                assertFalse(template.getVersion().isSetVersionName());
+                assertEquals(template.getVersion().getVersionNumber(), new Integer(1));
+                assertEquals(template.getVersion().getBaseTemplate().getId(), template.getId());
             }
         }
     }
