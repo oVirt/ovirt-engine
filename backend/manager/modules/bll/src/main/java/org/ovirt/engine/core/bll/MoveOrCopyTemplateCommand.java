@@ -156,8 +156,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
-            return false;
+            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
         }
         if (entityFromConfiguration == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
@@ -275,15 +274,13 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
                     alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
                 } else {
-                    addCanDoActionMessageVariable("sdName", getStorageDomain(targetStorageDomainId).getName());
-                    addCanDoActionMessage(EngineMessage.ERROR_GET_IMAGE_LIST);
-                    return false;
+                    return failCanDoAction(EngineMessage.ERROR_GET_IMAGE_LIST,
+                            String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
                 }
             }
 
             if (imagesOnStorageDomain.contains(disk.getId())) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
-                return false;
+                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
             }
         }
         return true;
@@ -414,10 +411,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    addCanDoActionMessageVariable("IfaceName ", iface.getName());
-                    addCanDoActionMessageVariable("MacAddress ", iface.getMacAddress());
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID);
-                    return false;
+                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
+                            String.format("$IfaceName %1$s", iface.getName()),
+                            String.format("$MacAddress %1$s", iface.getMacAddress()));
                 }
             }
             else {
@@ -425,8 +421,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            addCanDoActionMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
-            return false;
+            return failCanDoAction(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
         return true;
     }
