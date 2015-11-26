@@ -36,7 +36,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MockConfigRule;
-import org.ovirt.engine.ui.frontend.server.gwt.GwtDynamicHostPageServlet.MD5Attributes;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,11 +97,9 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     public void testDoGet_ExtraAttributes_WithoutUserInfoObject() throws IOException, ServletException {
         doReturn(mockApplicationModeObject).when(testServlet).getApplicationModeObject(any(Integer.class));
         doReturn(mockPluginDefinitionsArray).when(testServlet).getPluginDefinitionsArray(anyListOf(PluginData.class));
-        doReturn(mockEngineSessionTimeoutObject).when(testServlet).getEngineSessionTimeoutObject(any(Integer.class), any(Integer.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE, mockApplicationModeObject);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS, mockPluginDefinitionsArray);
-        verify(mockRequest).setAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey(), mockEngineSessionTimeoutObject);
     }
 
     @Test
@@ -110,11 +107,10 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         UnsupportedEncodingException {
         MessageDigest result = testServlet.getMd5Digest(mockRequest);
         assertEquals(result, mockDigest);
-        verify(mockDigest, atLeast(4)).update(byteArrayCaptor.capture());
+        verify(mockDigest, atLeast(3)).update(byteArrayCaptor.capture());
         assertArrayEquals(SELECTOR_SCRIPT.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(0));
-        assertArrayEquals(mockEngineSessionTimeoutObject.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(1));
-        assertArrayEquals(APPLICATION_MODE.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(2));
-        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(3));
+        assertArrayEquals(APPLICATION_MODE.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(1));
+        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(2));
     }
 
     @Test

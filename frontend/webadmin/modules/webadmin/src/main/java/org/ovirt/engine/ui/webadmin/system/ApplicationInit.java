@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.system;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
@@ -45,13 +44,12 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend,
             PlaceManager placeManager,
-            RestApiSessionManager restApiSessionManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
             Provider<CommonModel> commonModelProvider) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager,
-                localStorageLogHandler, frontend, currentUserRole, restApiSessionManager);
+                localStorageLogHandler, frontend, currentUserRole);
         this.placeManager = placeManager;
         this.dynamicMessages = dynamicMessages;
         this.commonModelProvider = commonModelProvider;
@@ -83,9 +81,8 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Override
     protected void onLogin(final LoginModel loginModel) {
-        super.onLogin(loginModel);
-
         // Initialize reports
+        ReportInit.getInstance().setSsoToken(user.getEngineSessionId());
         ReportInit.getInstance().init();
 
         // Update Reports availability after reports xml has been retrieved
@@ -97,14 +94,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         });
 
         performLogin(loginModel);
-    }
-
-    @Override
-    protected void initFrontend() {
-
-        super.initFrontend();
-
-        ReportInit.getInstance().initHandlers(eventBus);
     }
 
 }

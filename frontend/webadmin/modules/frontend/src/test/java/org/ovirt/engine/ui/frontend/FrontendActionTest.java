@@ -52,12 +52,13 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.rpc.XsrfToken;
 import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 
-@RunWith(MockitoJUnitRunner.class)
 /**
  * Do the actions in a separate unit test as the environment testing is different between queries and
  * actions
  */
+@RunWith(MockitoJUnitRunner.class)
 public class FrontendActionTest {
+
     /**
      * Instance of the class under test.
      */
@@ -85,8 +86,6 @@ public class FrontendActionTest {
     IFrontendEventsHandler mockEventsHandler;
     @Mock
     Event<FrontendFailureEventArgs> mockFrontendFailureEvent;
-    @Mock
-    FrontendLoginHandler mockLoginHandler;
     @Mock
     UIConstants mockConstants;
     @Mock
@@ -125,7 +124,6 @@ public class FrontendActionTest {
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
-        frontend.setLoginHandler(mockLoginHandler);
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
         when(mockConstants.noValidateMessage()).thenReturn(NO_MESSAGE);
     }

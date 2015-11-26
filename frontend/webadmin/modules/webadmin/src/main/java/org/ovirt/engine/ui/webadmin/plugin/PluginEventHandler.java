@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionAcquiredEvent;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionAcquiredEvent.RestApiSessionAcquiredHandler;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginInvocationCondition;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.SystemTreeItemObject;
@@ -69,17 +67,6 @@ public class PluginEventHandler {
                 } else {
                     manager.invokePluginsNowOrLater("UserLogout", null); //$NON-NLS-1$
                 }
-            }
-        });
-
-        // Engine REST API session management
-        eventBus.addHandler(RestApiSessionAcquiredEvent.getType(), new RestApiSessionAcquiredHandler() {
-            @Override
-            public void onRestApiSessionAcquired(RestApiSessionAcquiredEvent event) {
-                logger.warning("In future versions, RestApiSessionAcquired event will be replaced " + //$NON-NLS-1$
-                        "with API to create authenticated requests for Engine services"); //$NON-NLS-1$
-                manager.invokePluginsNowOrLater("RestApiSessionAcquired", //$NON-NLS-1$
-                        JsArrayHelper.createStringArray(event.getSessionId()));
             }
         });
 

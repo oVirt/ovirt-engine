@@ -3,17 +3,14 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent;
-import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent.SsoTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
+
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -43,8 +40,6 @@ public class ReportInit {
 
     private Map<String, Resource> resourceMap;
     private Map<String, Dashboard> dashboardMap;
-
-    private HandlerRegistration ssoTokenHandlerRegistration;
 
     public static ReportInit getInstance() {
         return INSTANCE;
@@ -238,27 +233,6 @@ public class ReportInit {
                 initEventRaised = true;
             }
         }
-    }
-
-    public void initHandlers(EventBus eventBus) {
-        if (ssoTokenHandlerRegistration != null) {
-            ssoTokenHandlerRegistration.removeHandler();
-        }
-        // Register to listen for session id acquired events.
-        ssoTokenHandlerRegistration = eventBus.addHandler(SsoTokenChangeEvent.getType(),
-                new SsoTokenChangeHandler() {
-
-                    @Override
-                    public void onSsoTokenChange(SsoTokenChangeEvent event) {
-                        ReportInit.this.ssoToken = event.getToken();
-                        if (ReportInit.this.ssoToken == null) { //This should not happen
-                            //This will make the login continue, just the reports will be broken.
-                            ReportInit.this.ssoToken = "";
-                        }
-                        checkIfInitFinished();
-                    }
-                }
-        );
     }
 
 }

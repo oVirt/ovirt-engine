@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.auth;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -40,5 +41,13 @@ public final class AutoLoginData extends JavaScriptObject {
         user.setAdmin(isAdmin());
         return user;
     }
+
+    public native String getEngineSessionId() /*-{
+        return this.engineSessionId;
+    }-*/;
+
+    public native String getSsoToken() /*-{
+        return this.ssoToken;
+    }-*/;
 
 }

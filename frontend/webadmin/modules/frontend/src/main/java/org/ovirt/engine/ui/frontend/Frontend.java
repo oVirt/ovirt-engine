@@ -108,11 +108,6 @@ public class Frontend implements HasHandlers {
     private IFrontendEventsHandler eventsHandler;
 
     /**
-     * The loginHandler.
-     */
-    private FrontendLoginHandler loginHandler;
-
-    /**
      * The {@code frontendFailureEvent} event.
      */
     Event<FrontendFailureEventArgs> frontendFailureEvent = new Event<>("FrontendFailure", Frontend.class); //$NON-NLS-1$
@@ -842,9 +837,6 @@ public class Frontend implements HasHandlers {
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$
                 callback.getDel().onSuccess(callback.getModel(), result);
-                if (getLoginHandler() != null) {
-                    getLoginHandler().onLogout();
-                }
             }
 
             @Override
@@ -1049,22 +1041,6 @@ public class Frontend implements HasHandlers {
      */
     public void setEventsHandler(final IFrontendEventsHandler frontendEventsHandler) {
         this.eventsHandler = frontendEventsHandler;
-    }
-
-    /**
-     * Getter for the login handler.
-     * @return The login handler.
-     */
-    public FrontendLoginHandler getLoginHandler() {
-        return loginHandler;
-    }
-
-    /**
-     * Setter for the login handler.
-     * @param frontendLoginHandler The new login handler.
-     */
-    public void setLoginHandler(final FrontendLoginHandler frontendLoginHandler) {
-        this.loginHandler = frontendLoginHandler;
     }
 
     /**

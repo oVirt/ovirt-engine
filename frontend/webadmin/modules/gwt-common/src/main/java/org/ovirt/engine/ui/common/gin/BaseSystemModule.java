@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.logging.ClientLogProvider;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.BrowserHacks;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.common.system.ClientStorageImpl;
 import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.common.utils.HttpUtils;
 import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.frontend.AppErrors;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -25,7 +23,6 @@ import org.ovirt.engine.ui.frontend.VdsmErrors;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
-import org.ovirt.engine.ui.frontend.communication.SsoTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
@@ -34,12 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.XsrfTokenService;
@@ -92,7 +84,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(VdcOperationManager.class).in(Singleton.class);
         bind(OperationProcessor.class).in(Singleton.class);
         bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
-        bind(RestApiSessionManager.class).in(Singleton.class);
+        bind(XsrfRpcRequestBuilder.class).in(Singleton.class);
     }
 
     protected void bindResourceConfiguration(
@@ -130,36 +122,10 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public XsrfRpcRequestBuilder getXsrfRequestBuilder(final EventBus eventBus) {
-        return new XsrfRpcRequestBuilder() {
-            @Override
-            protected void doSetCallback(RequestBuilder rb, final RequestCallback callback) {
-                rb.setCallback(new RequestCallback() {
-
-                    @Override
-                    public void onResponseReceived(Request request, Response response) {
-                        String tokenValue = HttpUtils.getHeader(response, "OVIRT-SSO-TOKEN"); //$NON-NLS-1$
-                        if (tokenValue != null) {
-                            //Login result received.
-                            SsoTokenChangeEvent.fire(eventBus, tokenValue);
-                        }
-                        callback.onResponseReceived(request, response);
-                    }
-
-                    @Override
-                    public void onError(Request request, Throwable exception) {
-                        callback.onError(request, exception);
-                    }
-                });
-            }
-        };
-    }
-
-    @Provides
-    @Singleton
     public XsrfTokenServiceAsync getXsrfTokenService() {
         XsrfTokenServiceAsync service = GWT.create(XsrfTokenService.class);
         ((ServiceDefTarget) service).setServiceEntryPoint(GWT.getModuleBaseURL() + XsrfRpcRequestBuilder.XSRF_PATH);
         return service;
     }
+
 }

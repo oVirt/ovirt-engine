@@ -483,7 +483,6 @@ public class PluginManager implements HasHandlers {
                 return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::getConfigObject(Ljava/lang/String;)(this.pluginName);
             },
 
-            // TODO(vszocs) inject API functions into "pluginApi.fn" dynamically using EventBus
             addMainTab: function(label, historyToken, contentUrl, options) {
                 if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,historyToken,contentUrl,sanitizeObject(options));
@@ -552,6 +551,11 @@ public class PluginManager implements HasHandlers {
             loginUserId: function() {
                 if (validatePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserId()();
+                }
+            },
+            ssoToken: function() {
+                if (validatePluginAction(this.pluginName)) {
+                    return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getSsoToken()();
                 }
             },
             engineBaseUrl: function() {

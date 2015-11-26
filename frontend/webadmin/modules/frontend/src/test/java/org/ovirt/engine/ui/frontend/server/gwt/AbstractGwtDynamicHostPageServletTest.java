@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.server.gwt.GwtDynamicHostPageServlet.MD5Attributes;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
 
@@ -85,9 +84,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Mock
     private ObjectNode mockUserInfoObject;
 
-    @Mock
-    protected ObjectNode mockEngineSessionTimeoutObject;
-
     @Captor
     protected ArgumentCaptor<byte[]> byteArrayCaptor;
 
@@ -98,7 +94,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
                 MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).
                 thenReturn(SELECTOR_SCRIPT);
-        when(mockRequest.getAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey())).thenReturn(mockEngineSessionTimeoutObject);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockRequest.getSession().getServletContext()).thenReturn(mockServletContext);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
@@ -206,10 +201,12 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Test
     public void testGetUserInfoObject() {
-        ObjectNode result = testServlet.getUserInfoObject(mockUser);
+        ObjectNode result = testServlet.getUserInfoObject(mockUser, "mockEngineSessionId", "mockSsoToken"); //$NON-NLS-1$ //$NON-NLS-2$
         assertNotNull(result.get("id")); //$NON-NLS-1$
         assertEquals(result.get("userName").asText(), "admin"); //$NON-NLS-1$ //$NON-NLS-2$
         assertEquals(result.get("domain").asText(), "internal"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals(result.get("engineSessionId").asText(), "mockEngineSessionId"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals(result.get("ssoToken").asText(), "mockSsoToken"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
@@ -232,13 +229,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         verify(mockDigest, atLeast(2)).update(byteArrayCaptor.capture());
         assertArrayEquals(SELECTOR_SCRIPT.getBytes(), byteArrayCaptor.getAllValues().get(0));
         assertArrayEquals(userInfo.getBytes(), byteArrayCaptor.getAllValues().get(1));
-    }
-
-    @Test
-    public void testGetEngineSessionTimeoutObject() {
-        ObjectNode result = testServlet.getEngineSessionTimeoutObject(30, 60);
-        assertEquals(result.get("sessionTimeout").asInt(), 30); //$NON-NLS-1$
-        assertEquals(result.get("sessionHardLimit").asInt(), 60); //$NON-NLS-1$
     }
 
     void stubGetUserBySessionIdQuery() {
@@ -279,10 +269,8 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         return new ArgumentMatcher<GetConfigurationValueParameters>() {
             @Override
             public boolean matches(Object argument) {
-                if (argument instanceof GetConfigurationValueParameters) {
-                    return ((GetConfigurationValueParameters) argument).getConfigValue() == configValue;
-                }
-                return false;
+                return argument instanceof GetConfigurationValueParameters
+                        && ((GetConfigurationValueParameters) argument).getConfigValue() == configValue;
             }
         };
     }

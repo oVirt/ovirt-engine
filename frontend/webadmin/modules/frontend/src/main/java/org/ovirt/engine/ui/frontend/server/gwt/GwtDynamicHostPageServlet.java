@@ -49,16 +49,15 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * Request attributes that participate in MD5 checksum calculation.
      */
     public enum MD5Attributes {
+
         ATTR_SELECTOR_SCRIPT("selectorScript"), //$NON-NLS-1$
         ATTR_USER_INFO("userInfo"), //$NON-NLS-1$
         ATTR_STYLES("brandingStyle"), //$NON-NLS-1$
         ATTR_MESSAGES("messages"), //$NON-NLS-1$
         ATTR_BASE_CONTEXT_PATH("baseContextPath"), //$NON-NLS-1$
         ATTR_LOCALE(LocaleFilter.LOCALE),
-        ATTR_SSO_TOKEN("ssoToken"), //$NON-NLS-1$
         ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME),
         ATTR_DISPLAY_LOCALES("visibleLocales"), //$NON-NLS-1$
-        ATTR_ENGINE_SESSION_TIMEOUT("engineSessionTimeout"), //$NON-NLS-1$
         ATTR_ENGINE_RPM_VERSION("engineRpmVersion"), //$NON-NLS-1$
         ATTR_DISPLAY_UNCAUGHT_UI_EXCEPTIONS("DISPLAY_UNCAUGHT_UI_EXCEPTIONS"); //$NON-NLS-1$
 
@@ -86,9 +85,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
 
     private BackendLocal backend;
-
     private ObjectMapper mapper;
-
     private BrandingManager brandingManager;
 
     @EJB(beanInterface = BackendLocal.class,
@@ -108,8 +105,9 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
-        ServletException {
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException, ServletException {
+        final String engineSessionId = getEngineSessionId(request);
 
         // Set attribute for selector script
         request.setAttribute(MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey(), getSelectorScriptName());
@@ -125,21 +123,15 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                 getDisplayUncaughtUIExceptions() ? BooleanNode.TRUE : BooleanNode.FALSE);
 
         // Set attributes for userInfo object
-        DbUser loggedInUser = getLoggedInUser(getEngineSessionId(request));
+        DbUser loggedInUser = getLoggedInUser(engineSessionId);
         if (loggedInUser != null) {
-            request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
-            String ssoToken = (String) request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
-            if (ssoToken != null) {
-                request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(ssoToken));
-            }
+            String ssoToken = getSsoToken(engineSessionId);
+            request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(),
+                    getUserInfoObject(loggedInUser, engineSessionId, ssoToken));
         }
 
-        // Set attributes for engineSessionTimeout object
-        request.setAttribute(MD5Attributes.ATTR_ENGINE_SESSION_TIMEOUT.getKey(),
-                getEngineSessionTimeoutObject(getUserSessionTimeout(), getUserSessionHardTimeout()));
-
         // Set attribute for engineRpmVersion object
-        String engineRpmVersion = getEngineRpmVersion(getEngineSessionId(request));
+        String engineRpmVersion = getEngineRpmVersion(engineSessionId);
         request.setAttribute(MD5Attributes.ATTR_ENGINE_RPM_VERSION.getKey(),
                 getValueObject(engineRpmVersion));
 
@@ -165,6 +157,10 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected String getEngineSessionId(final HttpServletRequest request) {
         return (String) request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+    }
+
+    private String getSsoToken(final String engineSessionId) {
+        return (String) runQuery(VdcQueryType.GetEngineSessionIdToken, new VdcQueryParametersBase(), engineSessionId);
     }
 
     protected Boolean getDisplayUncaughtUIExceptions() {
@@ -272,12 +268,15 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         return (DbUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
     }
 
-    protected ObjectNode getUserInfoObject(DbUser loggedInUser) {
+    // TODO Engine session ID is required until the Reports portal is integrated with Engine SSO infra
+    protected ObjectNode getUserInfoObject(DbUser loggedInUser, String engineSessionId, String ssoToken) {
         ObjectNode obj = createObjectNode();
         obj.put("id", loggedInUser.getId().toString()); //$NON-NLS-1$
         obj.put("userName", loggedInUser.getLoginName()); //$NON-NLS-1$
         obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
         obj.put("isAdmin", loggedInUser.isAdmin()); //$NON-NLS-1$
+        obj.put("engineSessionId", engineSessionId); //$NON-NLS-1$
+        obj.put("ssoToken", ssoToken); //$NON-NLS-1$
         return obj;
     }
 
@@ -311,21 +310,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected MessageDigest createMd5Digest() throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("MD5"); //$NON-NLS-1$
-    }
-
-    protected Integer getUserSessionTimeout() {
-        return Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
-    }
-
-    protected Integer getUserSessionHardTimeout() {
-        return Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
-    }
-
-    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout, Integer userSessionHardLimit) {
-        ObjectNode obj = createObjectNode();
-        obj.put("sessionTimeout", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
-        obj.put("sessionHardLimit", String.valueOf(userSessionHardLimit)); //$NON-NLS-1$
-        return obj;
     }
 
     protected String getEngineRpmVersion(String sessionId) {

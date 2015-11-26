@@ -50,8 +50,6 @@ public class FiltersHelper {
         public static final String HEADER_AUTHORIZATION = "Authorization";
         public static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
         public static final String HEADER_PREFER = "Prefer";
-        public static final String HEADER_JSESSIONID_COOKIE = "JSESSIONID";
-        public static final String HEADER_ENGINE_AUTH_TOKEN = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN";
         public static final String LOGOUT_INPROGRESS = "LOGOUT_INPROGRESS";
     }
 

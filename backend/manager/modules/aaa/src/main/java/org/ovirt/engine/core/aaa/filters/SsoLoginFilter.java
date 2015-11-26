@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +51,6 @@ public class SsoLoginFilter implements Filter {
                 res.sendRedirect(url);
             } else {
                 log.debug("Already logged in, executing next filter in chain.");
-                res.addHeader("OVIRT-SSO-TOKEN",
-                        URLEncoder.encode((String) ((HttpServletRequest) request)
-                                .getSession(true)
-                                .getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY), "UTF-8"));
                 chain.doFilter(request, response);
             }
         }

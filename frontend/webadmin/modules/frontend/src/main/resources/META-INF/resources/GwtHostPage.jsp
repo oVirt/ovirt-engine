@@ -13,16 +13,12 @@
     <script type="text/javascript">
         <c:if test="${requestScope['userInfo'] != null}">
             var userInfo = <c:out value="${requestScope['userInfo']}" escapeXml="false"/>;
-            var ssoToken = <c:out value="${requestScope['ssoToken']}" escapeXml="false"/>;
         </c:if>
         <c:if test="${requestScope['applicationMode'] != null}">
             var applicationMode = <c:out value="${requestScope['applicationMode']}" escapeXml="false"/>;
         </c:if>
         <c:if test="${requestScope['pluginDefinitions'] != null}">
             var pluginDefinitions = <c:out value="${requestScope['pluginDefinitions']}" escapeXml="false"/>;
-        </c:if>
-        <c:if test="${requestScope['engineSessionTimeout'] != null}">
-            var engineSessionTimeout = <c:out value="${requestScope['engineSessionTimeout']}" escapeXml="false"/>;
         </c:if>
         <c:if test="${requestScope['engineRpmVersion'] != null}">
             var engineRpmVersion = <c:out value="${requestScope['engineRpmVersion']}" escapeXml="false"/>;

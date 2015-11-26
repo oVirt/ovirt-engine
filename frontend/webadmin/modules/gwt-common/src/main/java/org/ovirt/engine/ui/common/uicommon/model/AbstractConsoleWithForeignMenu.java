@@ -6,19 +6,20 @@ import org.ovirt.engine.ui.common.uicommon.AbstractConsole;
 import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 
 public abstract class AbstractConsoleWithForeignMenu extends AbstractConsole implements HasForeignMenuData {
-    private String sessionId;
+
+    private String ssoToken;
     private Guid vmId;
     private String engineHost;
     private boolean admin;
 
     @Override
-    public String getSessionId() {
-        return sessionId;
+    public String getSsoToken() {
+        return ssoToken;
     }
 
     @Override
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setSsoToken(String ssoToken) {
+        this.ssoToken = ssoToken;
     }
 
     @Override
@@ -53,7 +54,7 @@ public abstract class AbstractConsoleWithForeignMenu extends AbstractConsole imp
         configBuilder.append("\n[ovirt]") //$NON-NLS-1$
                 .append("\nhost=").append(engineHost) //$NON-NLS-1$
                 .append("\nvm-guid=").append(vmId.toString()) //$NON-NLS-1$
-                .append("\njsessionid=").append(sessionId) //$NON-NLS-1$
+                .append("\nsso-token=").append(ssoToken) //$NON-NLS-1$
                 .append("\nadmin=").append(admin ? 1 : 0); //$NON-NLS-1$
 
         if (options.getTrustStore() != null) {
@@ -62,4 +63,5 @@ public abstract class AbstractConsoleWithForeignMenu extends AbstractConsole imp
         }
 
     }
+
 }

@@ -26,6 +26,7 @@ public class CurrentUser implements HasHandlers {
 
     private boolean loggedIn = false;
     private DbUser loggedUser;
+    private AutoLoginData userInfo;
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
@@ -123,6 +124,18 @@ public class CurrentUser implements HasHandlers {
     @Override
     public void fireEvent(GwtEvent<?> event) {
         eventBus.fireEvent(event);
+    }
+
+    public void setUserInfo(AutoLoginData userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public String getEngineSessionId() {
+        return userInfo != null ? userInfo.getEngineSessionId() : null;
+    }
+
+    public String getSsoToken() {
+        return userInfo != null ? userInfo.getSsoToken() : null;
     }
 
 }

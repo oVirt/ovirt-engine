@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.userportal.system;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
@@ -16,6 +15,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -40,11 +40,10 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             Frontend frontend,
             PlaceManager placeManager,
             UserPortalCurrentUserRole userRole,
-            ApplicationDynamicMessages dynamicMessages,
-            RestApiSessionManager restApiSessionManager) {
+            ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager,
-                localStorageLogHandler, frontend, userRole, restApiSessionManager);
+                localStorageLogHandler, frontend, userRole);
         this.placeManager = placeManager;
         this.userRole = userRole;
         this.dynamicMessages = dynamicMessages;
@@ -94,8 +93,6 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     @Override
     protected void onLogin(UserPortalLoginModel loginModel) {
-        super.onLogin(loginModel);
-
         // Instead of performing login now, request update for "IsENGINEUser" property
         loginModel.updateIsENGINEUser(loginModel.getLoggedUser());
     }

@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.ovirt.engine.core.common.action.SetSesssionSoftLimitCommandParameters;
@@ -62,13 +61,10 @@ public class RestApiSessionMgmtFilter implements Filter {
                 try {
                     int ttlMinutes = Integer.parseInt(req.getHeader("Session-TTL"));
                     if (ttlMinutes >= MINIMAL_SESSION_TTL) {
-                        // Save Session-TTL on the HTTP session (in seconds).
-                        // TODO: Once UI plugins stop manipulating sessions using the 'Session-TTL' header
-                        // (https://bugzilla.redhat.com/1236976) - do this only for new sessions, i.e,
-                        // move it into the next 'if' block.
-                        session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(ttlMinutes));
                         // For new sessions:
                         if (isNewSession(req)) {
+                            // Save Session-TTL on the HTTP session (in seconds).
+                            session.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(ttlMinutes));
                             // Save Session-TTL in the Engine.
                             setEngineSessionSoftLimit(engineSessionId, ttlMinutes);
                         }
@@ -81,13 +77,7 @@ public class RestApiSessionMgmtFilter implements Filter {
             chain.doFilter(request, response);
 
             if (FiltersHelper.isAuthenticated(req)) {
-                if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
-                    HttpSession session = req.getSession(false);
-                    if (session != null) {
-                        ((HttpServletResponse) response).addHeader(FiltersHelper.Constants.HEADER_JSESSIONID_COOKIE,
-                                session.getId());
-                    }
-                } else {
+                if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) == 0) {
                     InitialContext ctx = new InitialContext();
                     try {
                         FiltersHelper.getBackend(ctx).runAction(

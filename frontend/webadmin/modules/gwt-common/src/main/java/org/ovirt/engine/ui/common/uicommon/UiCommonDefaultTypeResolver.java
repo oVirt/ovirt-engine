@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.ui.common.restapi.RestApiSessionAcquiredEvent;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
@@ -18,11 +18,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
-import com.google.gwt.event.shared.EventBus;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessionAcquiredEvent.RestApiSessionAcquiredHandler {
+public class UiCommonDefaultTypeResolver implements ITypeResolver {
 
     private final Configurator configurator;
     private final ILogger logger;
@@ -30,6 +30,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
     private final ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister;
     private final ConsoleUtils consoleUtils;
     private final ErrorPopupManager errorPopupManager;
+    private final CurrentUser currentUser;
     private final CurrentUserRole currentUserRole;
 
     // we inject providers for the console impls since they
@@ -44,14 +45,11 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
     private final Provider<INoVnc> noVncProvider;
     private final DynamicMessages dynamicMessages;
 
-    private String sessionId;
-
     @Inject
     public UiCommonDefaultTypeResolver(Configurator configurator, ILogger logger,
             ConsoleUtils consoleUtils,  ErrorPopupManager errorPopupManager,
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
-            CurrentUserRole currentUserRole,
-            EventBus eventBus,
+            CurrentUser currentUser, CurrentUserRole currentUserRole,
             Provider<ISpicePlugin> spicePluginProvider, // deprecated in 4.0
             Provider<ISpiceNative> spiceNativeProvider,
             Provider<ISpiceHtml5> spiceHtml5Provider,
@@ -65,6 +63,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         this.consoleOptionsFrontendPersister = consoleOptionsFrontendPersister;
         this.consoleUtils = consoleUtils;
         this.errorPopupManager = errorPopupManager;
+        this.currentUser = currentUser;
         this.currentUserRole = currentUserRole;
 
         this.spicePluginProvider = spicePluginProvider;
@@ -75,8 +74,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         this.vncNativeProvider = vncNativeProvider;
         this.noVncProvider = noVncProvider;
         this.dynamicMessages = dynamicMessages;
-
-        eventBus.addHandler(RestApiSessionAcquiredEvent.getType(), this);
     }
 
     @SuppressWarnings("rawtypes")
@@ -91,7 +88,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         } else if (type == ISpicePlugin.class) {// deprecated in 4.0
             return spicePluginProvider.get();
         } else if (type == ISpiceNative.class) {
-            return withSessionId(spiceNativeProvider.get());
+            return withSsoToken(spiceNativeProvider.get());
         } else if (type == ISpiceHtml5.class) {
             return spiceHtml5Provider.get();
         } else if (type == IRdpPlugin.class) {
@@ -101,7 +98,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         } else if (type == INoVnc.class) {
             return noVncProvider.get();
         } else if (type == IVncNative.class) {
-            return withSessionId(vncNativeProvider.get());
+            return withSsoToken(vncNativeProvider.get());
         } else if (type == ConsoleOptionsFrontendPersister.class) {
             return consoleOptionsFrontendPersister;
         } else if (type == ConsoleUtils.class) {
@@ -117,13 +114,9 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver, RestApiSessio
         throw new RuntimeException("UiCommon Resolver cannot resolve type: " + type); //$NON-NLS-1$
     }
 
-    public <T extends HasForeignMenuData> T withSessionId(T consoleImpl) {
-        consoleImpl.setSessionId(sessionId);
+    public <T extends HasForeignMenuData> T withSsoToken(T consoleImpl) {
+        consoleImpl.setSsoToken(currentUser.getSsoToken());
         return consoleImpl;
     }
 
-    @Override
-    public void onRestApiSessionAcquired(RestApiSessionAcquiredEvent event) {
-        this.sessionId = event.getSessionId();
-    }
 }
