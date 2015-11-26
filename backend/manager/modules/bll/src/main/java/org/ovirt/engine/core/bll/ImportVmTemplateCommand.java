@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.export.MoveOrCopyTemplateCommand;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -85,6 +87,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected ImportVmTemplateCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {
+        return super.validateSpaceRequirements(diskImages);
     }
 
     @Override
@@ -629,5 +636,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         disk.setId(newGuidForDisk);
         disk.setImageId(Guid.newGuid());
         return newGuidForDisk;
+    }
+
+    protected DiskImage getNewDiskIdForDisk(Guid diskId) {
+        return newDiskIdForDisk.get(diskId);
     }
 }
