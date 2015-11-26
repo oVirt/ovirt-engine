@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
@@ -488,7 +487,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
             for (final VmNic iface : interfaces) {
                 final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-                boolean networkFound = networks.stream().anyMatch(n -> ObjectUtils.equals(n.getId(), network.getId()));
+                boolean networkFound = networks.stream().anyMatch(n -> Objects.equals(n.getId(), network.getId()));
 
                 // if network not exists in cluster we remove the network from the interface
                 if (!networkFound) {
