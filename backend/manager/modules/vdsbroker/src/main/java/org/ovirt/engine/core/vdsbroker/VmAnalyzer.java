@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -338,8 +337,7 @@ public class VmAnalyzer {
                 auditLogable.setVmId(vmDynamic.getId());
                 auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
                 // for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
-                auditLogable.addCustomValue("wdevent",
-                        ObjectUtils.toString(new Date(vmDynamic.getLastWatchdogEvent().longValue() * 1000)));
+                auditLogable.addCustomValue("wdevent", new Date(vmDynamic.getLastWatchdogEvent() * 1000).toString());
                 auditLog(auditLogable, AuditLogType.WATCHDOG_EVENT);
             }
         }
