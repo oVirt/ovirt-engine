@@ -33,7 +33,7 @@ public class DetachNetworkUsedByVmValidator {
                     LinqUtils.concat(ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks),
                             ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList)));
         } else if (vmsAmount > 1) {
-            return new ValidationResult(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+            return new ValidationResult(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
                     LinqUtils.concat(
                             ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks),
                             ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNamesList)));
@@ -43,7 +43,7 @@ public class DetachNetworkUsedByVmValidator {
                             ReplacementUtils.replaceWith(VAR_NETWORK_NAMES, removedNetworks),
                             ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList)));
         } else {
-            return new ValidationResult(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM,
+            return new ValidationResult(EngineMessage.SINGLE_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_SINGLE_VM,
                     LinqUtils.concat(
                             ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworks),
                             ReplacementUtils.replaceWith(VAR_VM_NAME, vmNamesList)));
