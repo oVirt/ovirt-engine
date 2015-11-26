@@ -67,7 +67,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -119,9 +118,6 @@ public class AddVmCommandTest extends BaseCommandTest {
     VmDao vmDao;
 
     @Mock
-    DiskImageDao diskImageDao;
-
-    @Mock
     VdsGroupDao vdsGroupDao;
 
     @Mock
@@ -160,7 +156,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockStorageDomainDaoGetForStoragePool();
         mockVdsGroupDaoReturnVdsGroup();
         mockVmTemplateDaoReturnVmTemplate();
-        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -255,7 +250,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
-        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -329,7 +323,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
-        mockDiskImageDaoGetSnapshotById();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockMaxPciSlots();
@@ -475,7 +468,6 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     private VM initializeMock(final int domainSizeGB) {
         mockVmTemplateDaoReturnVmTemplate();
-        mockDiskImageDaoGetSnapshotById();
         mockStorageDomainDaoGetForStoragePool(domainSizeGB);
         mockStorageDomainDaoGet(domainSizeGB);
         mockConfig();
@@ -570,10 +562,6 @@ public class AddVmCommandTest extends BaseCommandTest {
         i.setImageId(Guid.newGuid());
         i.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
         return i;
-    }
-
-    private void mockDiskImageDaoGetSnapshotById() {
-        when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(createDiskImage(REQUIRED_DISK_SIZE_GB));
     }
 
     private static DiskImage createDiskImage(int size) {
