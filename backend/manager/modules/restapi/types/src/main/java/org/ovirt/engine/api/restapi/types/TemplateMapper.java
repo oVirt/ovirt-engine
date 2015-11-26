@@ -114,18 +114,13 @@ public class TemplateMapper extends VmBaseMapper {
         model.setDisplay(DisplayMapper.map(entity, null));
         model.getDisplay().setDisconnectAction(map(entity.getConsoleDisconnectAction(), null).toString());
 
-        // if this is not a base template, that means this is a template version
-        // so need to populate template version properties
-        if (!entity.isBaseTemplate()) {
-            TemplateVersion version = new TemplateVersion();
-            version.setVersionName(entity.getTemplateVersionName());
-            version.setVersionNumber(entity.getTemplateVersionNumber());
-            Template baseTemplate = new Template();
-            baseTemplate.setId(entity.getBaseTemplateId().toString());
-            version.setBaseTemplate(baseTemplate);
-            model.setVersion(version);
-        }
-
+        TemplateVersion version = new TemplateVersion();
+        version.setVersionName(entity.getTemplateVersionName());
+        version.setVersionNumber(entity.getTemplateVersionNumber());
+        Template baseTemplate = new Template();
+        baseTemplate.setId(entity.getBaseTemplateId().toString());
+        version.setBaseTemplate(baseTemplate);
+        model.setVersion(version);
 
         return model;
     }
