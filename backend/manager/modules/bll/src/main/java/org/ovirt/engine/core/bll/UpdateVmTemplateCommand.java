@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -342,7 +342,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
-        boolean templateNameChanged = !ObjectUtils.equals(oldTemplate.getName(), getVmTemplate().getName());
+        boolean templateNameChanged = !Objects.equals(oldTemplate.getName(), getVmTemplate().getName());
         if (templateNameChanged) {
             getVmDao().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }

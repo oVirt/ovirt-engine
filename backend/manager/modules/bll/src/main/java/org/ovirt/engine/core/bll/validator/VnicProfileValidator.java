@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -71,7 +71,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult networkNotChanged() {
-        if (ObjectUtils.equals(vnicProfile.getNetworkId(), getOldVnicProfile().getNetworkId())) {
+        if (Objects.equals(vnicProfile.getNetworkId(), getOldVnicProfile().getNetworkId())) {
             return ValidationResult.VALID;
         }
 

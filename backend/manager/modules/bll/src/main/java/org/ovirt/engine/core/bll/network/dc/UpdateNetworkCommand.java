@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
@@ -354,11 +353,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
          * @return A valid result iff the details that shouldn't be changed remained unchanged, An error otherwise.
          */
         public ValidationResult externalNetworkDetailsUnchanged(Network newNetwork) {
-            return ObjectUtils.equals(network.getVlanId(), newNetwork.getVlanId())
+            return Objects.equals(network.getVlanId(), newNetwork.getVlanId())
                     && network.getMtu() == newNetwork.getMtu()
                     && network.getStp() == newNetwork.getStp()
                     && network.isVmNetwork() == newNetwork.isVmNetwork()
-                    && ObjectUtils.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
+                    && Objects.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
                     ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
         }

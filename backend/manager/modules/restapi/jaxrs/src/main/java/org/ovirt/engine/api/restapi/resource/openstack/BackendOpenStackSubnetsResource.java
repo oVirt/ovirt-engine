@@ -17,9 +17,9 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
+import java.util.Objects;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
@@ -99,7 +99,7 @@ public class BackendOpenStackSubnetsResource
 
     private ExternalSubnet lookupSubnetByName(String name) {
         for (ExternalSubnet subnet : getSubnets()) {
-            if (ObjectUtils.equals(subnet.getName(), name)) {
+            if (Objects.equals(subnet.getName(), name)) {
                 return subnet;
             }
         }

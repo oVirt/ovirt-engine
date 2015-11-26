@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -122,7 +122,7 @@ public class VnicProfileHelper {
         }
 
         for (VnicProfileView vnicProfile : getVnicProfilesInDc()) {
-            if (ObjectUtils.equals(vnicProfile.getNetworkId(), network.getId())
+            if (Objects.equals(vnicProfile.getNetworkId(), network.getId())
                     && vnicProfileName.equals(vnicProfile.getName())) {
                 return vnicProfile;
             }

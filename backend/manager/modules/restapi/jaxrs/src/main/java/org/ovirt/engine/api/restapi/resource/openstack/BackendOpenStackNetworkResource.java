@@ -19,9 +19,9 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworksResource.SUB_COLLECTIONS;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkResource;
@@ -60,7 +60,7 @@ public class BackendOpenStackNetworkResource
                 for (Map.Entry<Network, Set<Guid>> entry : networks.entrySet()) {
                     Network current = entry.getKey();
                     ProviderNetwork providedBy = current.getProvidedBy();
-                    if (ObjectUtils.equals(providedBy.getExternalId(), id)) {
+                    if (Objects.equals(providedBy.getExternalId(), id)) {
                         network = current;
                         break;
                     }

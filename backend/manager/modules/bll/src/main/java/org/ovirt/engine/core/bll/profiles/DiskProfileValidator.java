@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.profiles;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,7 +30,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
 
     @Override
     public ValidationResult parentEntityNotChanged() {
-        if (ObjectUtils.equals(getProfile().getStorageDomainId(), getProfileFromDb().getStorageDomainId())) {
+        if (Objects.equals(getProfile().getStorageDomainId(), getProfileFromDb().getStorageDomainId())) {
             return ValidationResult.VALID;
         }
 

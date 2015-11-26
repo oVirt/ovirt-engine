@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -63,7 +63,7 @@ public abstract class QosValidator<T extends QosBase> {
         List<T> allQosInDcByType = getAllQosInDcByType();
         if (allQosInDcByType != null) {
             for (T iterQos : allQosInDcByType) {
-                if (ObjectUtils.equals(iterQos.getName(), qos.getName())) {
+                if (Objects.equals(iterQos.getName(), qos.getName())) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QOS_NAME_EXIST);
                 }
             }

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.profiles;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -33,7 +33,7 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     @Override
     public ValidationResult parentEntityNotChanged() {
-        if (ObjectUtils.equals(getProfile().getClusterId(), getProfileFromDb().getClusterId())) {
+        if (Objects.equals(getProfile().getClusterId(), getProfileFromDb().getClusterId())) {
             return ValidationResult.VALID;
         }
 

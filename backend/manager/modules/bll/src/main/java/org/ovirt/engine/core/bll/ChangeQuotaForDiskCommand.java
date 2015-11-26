@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.quota.ChangeQuotaCommand;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -48,7 +48,7 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        if (!ObjectUtils.equals(getQuotaId(), disk.getQuotaId())) {
+        if (!Objects.equals(getQuotaId(), disk.getQuotaId())) {
             if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
                         disk.getQuotaId(),

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -79,7 +79,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             if (isVnicProfileChanged(oldIface, getInterface())) {
                 Network newNetwork = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
                 Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
-                if (ObjectUtils.notEqual(oldNetwork, newNetwork)) {
+                if (!Objects.equals(oldNetwork, newNetwork)) {
                     new ExternalNetworkManager(oldIface).deallocateIfExternal();
                 }
             }
@@ -145,7 +145,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
-        return !ObjectUtils.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
+        return !Objects.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
                 || oldIface.isLinked() != getInterface().isLinked();
     }
 
@@ -308,7 +308,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
-        return !ObjectUtils.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
+        return !Objects.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
     }
 
     private enum RequiredAction {

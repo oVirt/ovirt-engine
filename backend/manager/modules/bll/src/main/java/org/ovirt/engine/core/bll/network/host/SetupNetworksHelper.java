@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.Backend;
@@ -731,10 +730,10 @@ public class SetupNetworksHelper {
             return true;
         }
 
-        return !ObjectUtils.equals(iface.getNetworkName(), existingIface.getNetworkName())
+        return !Objects.equals(iface.getNetworkName(), existingIface.getNetworkName())
                 || iface.getBootProtocol() != existingIface.getBootProtocol()
                 || staticBootProtoPropertiesChanged(iface, existingIface)
-                || !ObjectUtils.equals(iface.getQos(), existingIface.getQos())
+                || !Objects.equals(iface.getQos(), existingIface.getQos())
                 || customPropertiesChanged(iface);
     }
 
@@ -759,9 +758,9 @@ public class SetupNetworksHelper {
      */
     private boolean staticBootProtoPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
         return iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
-                && (!ObjectUtils.equals(iface.getAddress(), existingIface.getAddress())
-                        || !ObjectUtils.equals(iface.getGateway(), existingIface.getGateway())
-                        || !ObjectUtils.equals(iface.getSubnet(), existingIface.getSubnet()));
+                && (!Objects.equals(iface.getAddress(), existingIface.getAddress())
+                        || !Objects.equals(iface.getGateway(), existingIface.getGateway())
+                        || !Objects.equals(iface.getSubnet(), existingIface.getSubnet()));
     }
 
     /**
@@ -842,7 +841,7 @@ public class SetupNetworksHelper {
             return true;
         }
 
-        return !ObjectUtils.equals(iface.getBondOptions(), existingIface.getBondOptions());
+        return !Objects.equals(iface.getBondOptions(), existingIface.getBondOptions());
     }
 
     /**

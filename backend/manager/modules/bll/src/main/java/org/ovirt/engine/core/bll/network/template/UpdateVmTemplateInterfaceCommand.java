@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.network.template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -160,6 +160,6 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     }
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
-        return !ObjectUtils.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
+        return !Objects.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
     }
 }
