@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.OvfHelper;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;

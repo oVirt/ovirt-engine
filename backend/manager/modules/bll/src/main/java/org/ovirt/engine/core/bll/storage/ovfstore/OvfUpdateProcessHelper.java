@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.ImagesHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -36,7 +39,7 @@ public class OvfUpdateProcessHelper {
     /**
      * Adds the given vm metadata to the given map
      */
-    protected String buildMetadataDictionaryForVm(VM vm,
+    public String buildMetadataDictionaryForVm(VM vm,
                                                   Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
                                                   ArrayList<DiskImage> allVmImages) {
         String vmMeta = generateVmMetadata(vm, allVmImages);
@@ -54,7 +57,7 @@ public class OvfUpdateProcessHelper {
     /**
      * Adds the given template metadata to the given map
      */
-    protected String buildMetadataDictionaryForTemplate(VmTemplate template,
+    public String buildMetadataDictionaryForTemplate(VmTemplate template,
                                                         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         List<DiskImage> allTemplateImages = template.getDiskList();
         String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
@@ -66,7 +69,7 @@ public class OvfUpdateProcessHelper {
     /**
      * Loads additional need vm data for it's ovf
      */
-    protected void loadVmData(VM vm) {
+    public void loadVmData(VM vm) {
         VmDeviceUtils.setVmDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
@@ -86,7 +89,7 @@ public class OvfUpdateProcessHelper {
     }
 
 
-    protected ArrayList<DiskImage> getVmImagesFromDb(VM vm) {
+    public ArrayList<DiskImage> getVmImagesFromDb(VM vm) {
         ArrayList<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
@@ -99,7 +102,7 @@ public class OvfUpdateProcessHelper {
     /**
      * Loads additional need template data for it's ovf
      */
-    protected void loadTemplateData(VmTemplate template) {
+    public void loadTemplateData(VmTemplate template) {
         VmDeviceUtils.setVmDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
             template.setInterfaces(getVmNetworkInterfaceDao()
@@ -139,7 +142,7 @@ public class OvfUpdateProcessHelper {
     /**
      * Update the information contained in the given meta dictionary table in the given storage pool/storage domain.
      */
-    protected boolean executeUpdateVmInSpmCommand(Guid storagePoolId,
+    public boolean executeUpdateVmInSpmCommand(Guid storagePoolId,
                                                   Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
                                                   Guid storageDomainId) {
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, metaDictionary);

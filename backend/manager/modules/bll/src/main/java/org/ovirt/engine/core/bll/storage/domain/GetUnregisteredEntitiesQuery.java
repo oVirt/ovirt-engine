@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.OvfHelper;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

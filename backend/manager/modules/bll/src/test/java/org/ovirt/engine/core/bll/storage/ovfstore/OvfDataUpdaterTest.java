@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;

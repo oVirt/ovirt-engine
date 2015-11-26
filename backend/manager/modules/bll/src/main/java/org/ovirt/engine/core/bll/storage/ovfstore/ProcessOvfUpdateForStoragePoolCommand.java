@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -58,6 +63,11 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         setStoragePoolId(parameters.getStoragePoolId());
         ovfUpdateProcessHelper = new OvfUpdateProcessHelper();
         activeDataDomainsIds = new LinkedList<>();
+    }
+
+    @Override
+    protected Object getActionReturnValue() {
+        return super.getActionReturnValue();
     }
 
     protected OvfUpdateProcessHelper getOvfUpdateProcessHelper() {
