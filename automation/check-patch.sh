@@ -28,7 +28,7 @@ cat >"$MAVEN_SETTINGS" <<EOS
         <mirror>
                 <id>ovirt-maven-repository</id>
                 <name>oVirt artifactory proxy</name>
-                <url>http://artifactory.ovirt.org:8081/artifactory/ovirt-mirror</url>
+                <url>http://artifactory.ovirt.org/artifactory/ovirt-mirror</url>
                 <mirrorOf>*</mirrorOf>
         </mirror>
         <mirror>
