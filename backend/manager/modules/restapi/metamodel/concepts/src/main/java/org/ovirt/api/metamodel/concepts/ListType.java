@@ -28,6 +28,7 @@ public class ListType extends Type {
 
     public void setElementType(Type elementType) {
         this.elementType = elementType;
+        setModule(elementType.getModule());
     }
 
     @Override

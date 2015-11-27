@@ -162,6 +162,11 @@ public class SchemaNames {
         if (type == model.getDecimalType()) {
             return "xs:decimal";
         }
+        if (type instanceof ListType) {
+            ListType listType = (ListType) type;
+            Type elementType = listType.getElementType();
+            return getSchemaTypeName(names.getPlural(elementType.getName()));
+        }
         return getSchemaTypeName(type.getName());
     }
 
