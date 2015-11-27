@@ -32,17 +32,36 @@ public interface StorageDomainService {
     interface IsAttached {
         @In Host host();
         @Out Boolean isAttached();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Update {
         @In @Out StorageDomain storageDomain();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface RefreshLuns {
         @In LogicalUnit[] logicalUnits();
+
+        /**
+         * Indicates if the refresh should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedDiskProfilesService diskProfiles();

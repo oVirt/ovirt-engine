@@ -26,10 +26,18 @@ import types.Nic;
 public interface VmNicService extends MeasurableService {
     // TODO remove on 4.1
     interface Activate {
+        /**
+         * Indicates if the activation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     // TODO remove on 4.1
     interface Deactivate {
+        /**
+         * Indicates if the deactivation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -38,9 +46,18 @@ public interface VmNicService extends MeasurableService {
 
     interface Update {
         @In @Out Nic nic();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service VmReportedDevicesService reportedDevices();

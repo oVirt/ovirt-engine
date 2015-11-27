@@ -32,5 +32,9 @@ public interface OpenstackVolumeAuthenticationKeyService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

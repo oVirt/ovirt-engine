@@ -235,7 +235,7 @@ public class JaxrsGenerator extends JavaGenerator {
         else if (LIST.equals(name)) {
             generateListMethod(method);
         }
-        else if (REMOVE.equals(name) && method.getParameters().isEmpty()) {
+        else if (REMOVE.equals(name)) {
             generateRemoveMethod(method);
         }
         else if (UPDATE.equals(name)) {
@@ -348,10 +348,21 @@ public class JaxrsGenerator extends JavaGenerator {
         javaBuffer.addImport(DELETE.class);
         javaBuffer.addImport(Response.class);
 
-        // Generate the method:
+        // The remove methods that have structured parameters (currently only the method that removes a set of Gluster
+        // bricks) need to receive an "Action" to carry those parameters.
+        // TODO: Fix this renaming that method to "RemoveBricks" or something similar.
+        boolean needsAction = method.parameters()
+            .map(Parameter::getType)
+            .anyMatch(x -> x instanceof StructType || x instanceof ListType);
         generateDoc(method);
         javaBuffer.addLine("@DELETE");
-        javaBuffer.addLine("Response remove();");
+        if (needsAction) {
+            javaBuffer.addImport(javaPackages.getXjcPackageName(), "Action");
+            javaBuffer.addLine("Response remove(Action action);");
+        }
+        else {
+            javaBuffer.addLine("Response remove();");
+        }
 
         javaBuffer.addLine();
     }

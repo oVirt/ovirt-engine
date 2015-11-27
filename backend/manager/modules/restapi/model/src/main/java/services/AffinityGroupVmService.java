@@ -16,10 +16,15 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Service;
 
 @Service
 public interface AffinityGroupVmService {
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

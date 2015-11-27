@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.aaa;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.AssignedPermissionsService;
@@ -30,6 +31,10 @@ public interface UserService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedRolesService roles();

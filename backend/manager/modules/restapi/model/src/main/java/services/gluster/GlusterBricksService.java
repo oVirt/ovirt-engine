@@ -25,6 +25,11 @@ import types.GlusterBrick;
 public interface GlusterBricksService {
     interface Activate {
         @In GlusterBrick[] bricks();
+
+        /**
+         * Indicates if the activation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -49,6 +54,11 @@ public interface GlusterBricksService {
 
     interface Migrate {
         @In GlusterBrick[] bricks();
+
+        /**
+         * Indicates if the migration should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -59,10 +69,20 @@ public interface GlusterBricksService {
          * The list of bricks to be removed
          */
         @In GlusterBrick[] bricks();
+
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface StopMigrate {
         @In GlusterBrick[] bricks();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service GlusterBrick brick(String id);

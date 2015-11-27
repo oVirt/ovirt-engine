@@ -29,6 +29,11 @@ public interface DisksService {
 
     interface List {
         @Out Disk[] disks();
+
+        /**
+         * Sets the maximum number of disks to return. If not specified all the disks are returned.
+         */
+        @In Integer max();
     }
 
     @Service DiskService disk(String id);

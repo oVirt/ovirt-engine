@@ -24,10 +24,19 @@ import types.Job;
 @Service
 public interface JobService {
     interface Clear {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface End {
         @In Boolean force();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {

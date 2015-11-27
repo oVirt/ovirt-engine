@@ -577,12 +577,6 @@ public class SchemaGenerator {
         writer.writeStartElement(XS_URI, "extension");
         writer.writeAttribute("base", "BaseResource");
         writer.writeStartElement(XS_URI, "sequence");
-        writer.writeStartElement(XS_URI, "element");
-        writer.writeAttribute("name", "async");
-        writer.writeAttribute("type", "xs:boolean");
-        writer.writeAttribute("minOccurs", "0");
-        writer.writeAttribute("maxOccurs", "1");
-        writer.writeEndElement();
         writer.writeStartElement(XS_URI, "group");
         writer.writeAttribute("ref", "ActionParameterGroup");
         writer.writeEndElement();

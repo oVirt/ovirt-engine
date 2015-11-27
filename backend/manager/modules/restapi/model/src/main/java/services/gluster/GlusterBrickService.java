@@ -32,6 +32,10 @@ public interface GlusterBrickService extends MeasurableService {
      * Removes this brick from the volume and deletes it from the database.
      */
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -40,5 +44,10 @@ public interface GlusterBrickService extends MeasurableService {
     @Deprecated
     interface Replace {
         @In Boolean force();
+
+        /**
+         * Indicates if the replacement should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

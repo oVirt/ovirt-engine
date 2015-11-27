@@ -26,6 +26,11 @@ public interface StepService extends MeasurableService {
     interface End {
         @In Boolean force();
         @In Boolean succeeded();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {

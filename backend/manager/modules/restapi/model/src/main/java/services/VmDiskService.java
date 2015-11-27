@@ -24,12 +24,24 @@ import types.Disk;
 @Service
 public interface VmDiskService extends MeasurableService {
     interface Activate {
+        /**
+         * Indicates if the activation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Deactivate {
+        /**
+         * Indicates if the deactivation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Export {
+        /**
+         * Indicates if the export should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -37,13 +49,26 @@ public interface VmDiskService extends MeasurableService {
     }
 
     interface Move {
+        /**
+         * Indicates if the move should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Update {
         @In @Out Disk disk();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

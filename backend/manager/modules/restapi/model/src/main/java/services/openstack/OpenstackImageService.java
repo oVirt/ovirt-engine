@@ -35,5 +35,10 @@ public interface OpenstackImageService {
         @In Boolean importAsTemplate();
         @In StorageDomain storageDomain();
         @In Template template();
+
+        /**
+         * Indicates if the import should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

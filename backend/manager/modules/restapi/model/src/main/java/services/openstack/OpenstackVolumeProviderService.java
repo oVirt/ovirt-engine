@@ -20,7 +20,6 @@ import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.ExternalProviderService;
-import types.OpenStackImageProvider;
 import types.OpenStackVolumeProvider;
 
 @Service
@@ -31,9 +30,18 @@ public interface OpenstackVolumeProviderService extends ExternalProviderService 
 
     interface Update {
         @In @Out OpenStackVolumeProvider provider();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service OpenstackVolumeTypesService volumeTypes();

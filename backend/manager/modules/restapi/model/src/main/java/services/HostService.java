@@ -33,28 +33,59 @@ import types.StorageDomain;
 @Service
 public interface HostService extends MeasurableService {
     interface Activate {
+        /**
+         * Indicates if the activation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Approve {
         @In Cluster cluster();
+
+        /**
+         * Indicates if the approval should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface CommitNetConfig {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Deactivate {
         @In String reason();
+
+        /**
+         * Indicates if the deactivation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface EnrollCertificate {
+        /**
+         * Indicates if the enrollment should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Fence {
         @In String fenceType();
         @Out PowerManagement powerManagement();
+
+        /**
+         * Indicates if the fencing should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ForceSelectSpm {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -82,33 +113,70 @@ public interface HostService extends MeasurableService {
          * When installing an oVirt node a image ISO file is needed.
          */
         @In String image();
+
+        /**
+         * Indicates if the installation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface IscsiDiscover {
         @In IscsiDetails iscsi();
         @Out String[] iscsiTargets();
+
+        /**
+         * Indicates if the discovery should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface IscsiLogin {
         @In IscsiDetails iscsi();
+
+        /**
+         * Indicates if the login should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface UnregisteredStorageDomainsDiscover {
         @In IscsiDetails iscsi();
         @Out StorageDomain[] storageDomains();
+
+        /**
+         * Indicates if the discovery should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Update {
         @In @Out Host host();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Upgrade {
+        /**
+         * Indicates if the upgrade should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Refresh {
+        /**
+         * Indicates if the refresh should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface SetupNetworks {
@@ -121,6 +189,11 @@ public interface HostService extends MeasurableService {
         @In Label[] removedLabels();
         @In Boolean checkConnectivity();
         @In Integer connectivityTimeout();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

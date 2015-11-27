@@ -19,7 +19,6 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.DiskSnapshot;
 
 @Service
@@ -29,5 +28,9 @@ public interface DiskSnapshotService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

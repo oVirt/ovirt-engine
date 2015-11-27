@@ -27,6 +27,10 @@ public interface ExternalProviderService {
     }
 
     interface TestConnectivity {
+        /**
+         * Indicates if the test should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service ExternalProviderCertificatesService certificates();

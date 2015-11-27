@@ -33,5 +33,10 @@ public interface ImageService {
         @In Cluster cluster();
         @In Disk disk();
         @In Boolean importAsTemplate();
+
+        /**
+         * Indicates if the import should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

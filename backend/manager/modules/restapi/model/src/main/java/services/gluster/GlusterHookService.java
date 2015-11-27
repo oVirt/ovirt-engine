@@ -29,6 +29,10 @@ public interface GlusterHookService {
      * cluster. This updates the hook status to `DISABLED` in database.
      */
     interface Disable {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -36,6 +40,10 @@ public interface GlusterHookService {
      * cluster. This updates the hook status to `DISABLED` in database.
      */
     interface Enable {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -46,6 +54,10 @@ public interface GlusterHookService {
      * Removes the this Gluster hook from all servers in cluster and deletes it from the database.
      */
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -62,5 +74,10 @@ public interface GlusterHookService {
     interface Resolve {
         @In Host host();
         @In String resolutionType();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

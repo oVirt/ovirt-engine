@@ -24,6 +24,10 @@ import types.VmPool;
 @Service
 public interface VmPoolService {
     interface AllocateVm {
+        /**
+         * Indicates if the allocation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -32,9 +36,18 @@ public interface VmPoolService {
 
     interface Update {
         @In @Out VmPool pool();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

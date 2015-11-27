@@ -29,8 +29,17 @@ public interface VmWatchdogService {
 
     interface Update {
         @In @Out Watchdog watchdog();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

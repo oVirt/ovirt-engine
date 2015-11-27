@@ -29,8 +29,17 @@ public interface StorageServerConnectionService {
 
     interface Update {
         @In @Out StorageConnection connection();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

@@ -29,9 +29,18 @@ public interface VnicProfileService {
 
     interface Update {
         @In @Out VnicProfile profile();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

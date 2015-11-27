@@ -29,8 +29,17 @@ public interface InstanceTypeNicService {
 
     interface Update {
         @In @Out Nic nic();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

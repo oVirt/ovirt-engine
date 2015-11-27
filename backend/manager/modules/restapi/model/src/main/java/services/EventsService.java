@@ -37,6 +37,10 @@ public interface EventsService {
     }
 
     interface Undelete {
+        /**
+         * Indicates if the un-delete should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service EventService event(String id);

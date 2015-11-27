@@ -31,9 +31,18 @@ public interface OpenstackImageProviderService extends ExternalProviderService {
 
     interface Update {
         @In @Out OpenStackImageProvider provider();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service OpenstackImagesService images();

@@ -29,9 +29,18 @@ public interface AffinityGroupService {
 
     interface Update {
         @In @Out AffinityGroup group();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AffinityGroupVmsService vms();

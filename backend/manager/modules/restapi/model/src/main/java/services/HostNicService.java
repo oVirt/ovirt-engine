@@ -27,9 +27,18 @@ import types.Network;
 public interface HostNicService extends MeasurableService {
     interface Attach {
         @In Network network();
+
+        /**
+         * Indicates if the attach should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Detach {
+        /**
+         * Indicates if the detach should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -38,9 +47,18 @@ public interface HostNicService extends MeasurableService {
 
     interface Update {
         @In @Out HostNic nic();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -54,6 +72,11 @@ public interface HostNicService extends MeasurableService {
      */
     interface UpdateVirtualFunctionsConfiguration {
         @In HostNicVirtualFunctionsConfiguration virtualFunctionsConfiguration();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service LabelsService labels();

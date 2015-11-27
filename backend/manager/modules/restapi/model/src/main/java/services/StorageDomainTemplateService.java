@@ -37,6 +37,11 @@ public interface StorageDomainTemplateService {
         @In StorageDomain storageDomain();
         @In Template template();
         @In Vm vm();
+
+        /**
+         * Indicates if the import should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Register {
@@ -44,9 +49,18 @@ public interface StorageDomainTemplateService {
         @In Cluster cluster();
         @In Boolean exclusive();
         @In Template template();
+
+        /**
+         * Indicates if the registration should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service StorageDomainContentDisksService disks();

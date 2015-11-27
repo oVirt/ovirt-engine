@@ -19,7 +19,6 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.InstanceType;
 
 @Service
@@ -30,9 +29,18 @@ public interface InstanceTypeService {
 
     interface Update {
         @In @Out InstanceType instanceType();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service InstanceTypeNicsService nics();

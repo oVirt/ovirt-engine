@@ -27,10 +27,20 @@ public interface DiskService extends MeasurableService {
     interface Copy {
         @In Disk disk();
         @In StorageDomain storageDomain();
+
+        /**
+         * Indicates if the copy should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Export {
         @In StorageDomain storageDomain();
+
+        /**
+         * Indicates if the export should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -39,9 +49,18 @@ public interface DiskService extends MeasurableService {
 
     interface Move {
         @In StorageDomain storageDomain();
+
+        /**
+         * Indicates if the move should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

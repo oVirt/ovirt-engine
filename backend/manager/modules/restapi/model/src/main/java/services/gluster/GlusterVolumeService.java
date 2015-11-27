@@ -38,38 +38,83 @@ public interface GlusterVolumeService extends MeasurableService {
     interface Rebalance {
         @In Boolean fixLayout();
         @In Boolean force();
+
+        /**
+         * Indicates if the rebalance should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ResetAllOptions {
+        /**
+         * Indicates if the reset should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ResetOption {
         @In Boolean force();
         @In Option option();
+
+        /**
+         * Indicates if the reset should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface SetOption {
         @In Option option();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Start {
         @In Boolean force();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface StartProfile {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Stop {
         @In Boolean force();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface StopProfile {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface StopRebalance {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service GlusterBricksService glusterBricks();

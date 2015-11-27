@@ -30,25 +30,51 @@ import types.Vm;
 @Service
 public interface VmService extends MeasurableService {
     interface CancelMigration {
+        /**
+         * Indicates if the migration should cancelled asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface CommitSnapshot {
+        /**
+         * Indicates if the snapshots should be committed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Clone {
         @In Vm vm();
+
+        /**
+         * Indicates if the clone should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Detach {
+        /**
+         * Indicates if the detach should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Export {
         @In Boolean discardSnapshots();
         @In Boolean exclusive();
         @In StorageDomain storageDomain();
+
+        /**
+         * Indicates if the export should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface FreezeFilesystems {
+        /**
+         * Indicates if the freeze should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -56,16 +82,30 @@ public interface VmService extends MeasurableService {
     }
 
     interface Logon {
+        /**
+         * Indicates if the logon should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Maintenance {
         @In Boolean maintenanceEnabled();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Migrate {
         @In Cluster cluster();
         @In Boolean force();
         @In Host host();
+
+        /**
+         * Indicates if the migration should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     /**
@@ -74,6 +114,11 @@ public interface VmService extends MeasurableService {
     @Deprecated
     interface Move {
         @In StorageDomain storageDomain();
+
+        /**
+         * Indicates if the move should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface PreviewSnapshot {
@@ -81,22 +126,48 @@ public interface VmService extends MeasurableService {
         @In Boolean restoreMemory();
         @In Snapshot snapshot();
         @In Vm vm();
+
+        /**
+         * Indicates if the preview should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Update {
         @In @Out Vm vm();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Reboot {
+        /**
+         * Indicates if the reboot should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ReorderMacAddresses {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Shutdown {
+        /**
+         * Indicates if the shutdown should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Start {
@@ -104,22 +175,48 @@ public interface VmService extends MeasurableService {
         @In Vm vm();
         @In Boolean useCloudInit();
         @In Boolean useSysprep();
+
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Stop {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Suspend {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ThawFilesystems {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Ticket {
         @In @Out Ticket ticket();
+
+        /**
+         * Indicates if the generation of the ticket should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface UndoSnapshot {
+        /**
+         * Indicates if the action should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AssignedPermissionsService permissions();

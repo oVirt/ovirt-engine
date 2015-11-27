@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Root;
 import org.ovirt.api.metamodel.annotations.Service;
 import services.aaa.DomainsService;
@@ -30,6 +31,10 @@ import services.openstack.OpenstackVolumeProvidersService;
 @Root
 public interface SystemService {
     interface ReloadConfigurations {
+        /**
+         * Indicates if the reload should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service BookmarksService bookmarks();

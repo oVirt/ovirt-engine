@@ -19,15 +19,22 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.Disk;
 
 @Service
 public interface TemplateDiskService {
     interface Copy {
+        /**
+         * Indicates if the copy should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Export {
+        /**
+         * Indicates if the export should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -35,5 +42,9 @@ public interface TemplateDiskService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

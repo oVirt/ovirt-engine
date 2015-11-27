@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.StorageDomain;
@@ -23,9 +24,17 @@ import types.StorageDomain;
 @Service
 public interface AttachedStorageDomainService {
     interface Activate {
+        /**
+         * Indicates if the activation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Deactivate {
+        /**
+         * Indicates if the deactivation should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Get {
@@ -33,6 +42,10 @@ public interface AttachedStorageDomainService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service DisksService disks();

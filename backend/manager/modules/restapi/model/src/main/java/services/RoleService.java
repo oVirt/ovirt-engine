@@ -27,10 +27,19 @@ public interface RoleService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Update {
         @In @Out Role role();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service PermitsService permits();

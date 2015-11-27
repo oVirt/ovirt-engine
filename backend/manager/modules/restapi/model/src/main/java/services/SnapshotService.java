@@ -29,11 +29,20 @@ public interface SnapshotService {
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Restore {
         @In Disk[] disks();
         @In Boolean restoreMemory();
+
+        /**
+         * Indicates if the restore should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service SnapshotCdromsService cdroms();

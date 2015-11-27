@@ -29,8 +29,17 @@ public interface VmCdromService {
 
     interface Update {
         @In @Out Cdrom cdorm();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

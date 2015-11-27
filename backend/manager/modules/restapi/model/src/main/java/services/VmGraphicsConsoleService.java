@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 
@@ -23,5 +24,10 @@ import org.ovirt.api.metamodel.annotations.Service;
 public interface VmGraphicsConsoleService extends GraphicsConsoleService {
     interface ProxyTicket {
         @Out ProxyTicket proxyTicket();
+
+        /**
+         * Indicates if the generation of the ticket should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

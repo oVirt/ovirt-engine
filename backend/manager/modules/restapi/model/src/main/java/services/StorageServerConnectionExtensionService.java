@@ -29,8 +29,17 @@ public interface StorageServerConnectionExtensionService {
 
     interface Update {
         @In @Out StorageConnectionExtension extension();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 }

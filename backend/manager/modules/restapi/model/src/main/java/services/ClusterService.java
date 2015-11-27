@@ -31,12 +31,25 @@ public interface ClusterService {
 
     interface Update {
         @In @Out Cluster cluster();
+
+        /**
+         * Indicates if the update should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface Remove {
+        /**
+         * Indicates if the remove should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     interface ResetEmulatedMachine {
+        /**
+         * Indicates if the reset should be performed asynchronously.
+         */
+        @In Boolean async();
     }
 
     @Service AffinityGroupsService affinityGroups();
