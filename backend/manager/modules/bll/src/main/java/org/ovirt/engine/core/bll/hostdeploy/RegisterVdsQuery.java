@@ -305,7 +305,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         p.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         VdcReturnValueBase rc = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, p);
 
-        if (rc == null || !rc.getSucceeded()) {
+        if (!rc.getSucceeded()) {
             error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
             log.debug(
                     "RegisterVdsQuery::Register - Failed to update existing VDS Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}', IsPending: '{}'",
@@ -353,7 +353,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.AddVds, p);
 
-            if (ret == null || !ret.getSucceeded()) {
+            if (!ret.getSucceeded()) {
                 log.error(
                         "RegisterVdsQuery::Register - Registration failed for VDS - Name: '{}', Hostname: '{}', UniqueID: '{}', Subnet mask: '{}'",
                         getParameters().getVdsName(),
@@ -432,7 +432,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
                         VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
 
-                        if (ret == null || !ret.getSucceeded()) {
+                        if (!ret.getSucceeded()) {
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
                             logable.addCustomValue("VdsName2", vds_byHostName.getStaticData().getName());
                             log.error(
@@ -507,7 +507,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         parameters.setFenceAgents(hostToRegister.getFenceAgents());
                     }
                     VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
-                    if (ret == null || !ret.getSucceeded()) {
+                    if (!ret.getSucceeded()) {
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
                         logable.addCustomValue("VdsName2", newName);
                         log.error("could not update VDS '{}'", nameToRegister);
