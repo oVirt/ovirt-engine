@@ -145,6 +145,27 @@ public class SchemaNames {
         }
     }
 
+    public String getSchemaTypeName(Type type) {
+        Model model = type.getModel();
+        if (type == model.getBooleanType()) {
+            return "xs:boolean";
+        }
+        if (type == model.getStringType()) {
+            return "xs:string";
+        }
+        if (type == model.getIntegerType()) {
+            return "xs:int";
+        }
+        if (type == model.getDateType()) {
+            return "xs:dateTime";
+        }
+        if (type == model.getDecimalType()) {
+            return "xs:decimal";
+        }
+        return getSchemaTypeName(type.getName());
+    }
+
+
     public String getSchemaTypeName(Name name) {
         String result = javaNames.getJavaClassStyleName(name);
         String exception = TYPE_NAME_EXCEPTIONS.get(result);

@@ -365,7 +365,7 @@ public class SchemaGenerator {
         // Tag for the entity:
         writer.writeStartElement(XS_URI, "element");
         writer.writeAttribute("name", schemaNames.getSchemaTagName(typeName));
-        writer.writeAttribute("type", getSchemaTypeName(type));
+        writer.writeAttribute("type", schemaNames.getSchemaTypeName(type));
         writer.writeEndElement();
         writeLine(writer);
 
@@ -373,7 +373,7 @@ public class SchemaGenerator {
         String baseComplexTypeName = null;
         Type baseType = type.getBase();
         if (baseType != null && baseType != identifiedType) {
-            baseComplexTypeName = getSchemaTypeName(baseType);
+            baseComplexTypeName = schemaNames.getSchemaTypeName(baseType);
         }
         else {
            if (isRoot) {
@@ -383,7 +383,7 @@ public class SchemaGenerator {
 
         // Complex type for the entity:
         writer.writeStartElement(XS_URI, "complexType");
-        writer.writeAttribute("name", getSchemaTypeName(type));
+        writer.writeAttribute("name", schemaNames.getSchemaTypeName(type));
         if (baseComplexTypeName != null) {
             writer.writeStartElement(XS_URI, "complexContent");
             writer.writeStartElement(XS_URI, "extension");
@@ -536,7 +536,7 @@ public class SchemaGenerator {
 
         // Generate the XML schema enumerated type that will for attributes whose value is of this enum type:
         writer.writeStartElement(XS_URI, "simpleType");
-        writer.writeAttribute("name", getSchemaTypeName(type));
+        writer.writeAttribute("name", schemaNames.getSchemaTypeName(type));
         writer.writeStartElement(XS_URI, "restriction");
         writer.writeAttribute("base", "xs:string");
         for (EnumValue value : values) {
@@ -730,7 +730,7 @@ public class SchemaGenerator {
         if (type instanceof ListType) {
             ListType listType = (ListType) type;
             Type elementType = listType.getElementType();
-            String elementTypeName = getSchemaTypeName(elementType);
+            String elementTypeName = schemaNames.getSchemaTypeName(elementType);
             if (elementTypeName.startsWith("xs:")) {
                 writer.writeStartElement(XS_URI, "complexType");
                 writeJaxbClass(writer, schemaNames.getSchemaTypeName(name) + "List");
@@ -754,7 +754,7 @@ public class SchemaGenerator {
         }
         else {
             writer.writeAttribute("name", schemaNames.getSchemaTagName(name));
-            writer.writeAttribute("type", getSchemaTypeName(type));
+            writer.writeAttribute("type", schemaNames.getSchemaTypeName(type));
             writer.writeAttribute("minOccurs", "0");
             writer.writeAttribute("maxOccurs", "1");
         }
@@ -799,28 +799,8 @@ public class SchemaGenerator {
         if (exception != null) {
             return exception;
         }
-        return getSchemaTypeName(memberType);
+        return schemaNames.getSchemaTypeName(memberType);
     }
-
-    private String getSchemaTypeName(Type type) {
-        if (type == model.getBooleanType()) {
-            return "xs:boolean";
-        }
-        if (type == model.getStringType()) {
-            return "xs:string";
-        }
-        if (type == model.getIntegerType()) {
-            return "xs:int";
-        }
-        if (type == model.getDateType()) {
-            return "xs:dateTime";
-        }
-        if (type == model.getDecimalType()) {
-            return "xs:decimal";
-        }
-        return schemaNames.getSchemaTypeName(type.getName());
-    }
-
 
     private String getSchemaEnumTypeValuesName(Name name) {
         return schemaNames.getSchemaTypeName(name) + "Values";
