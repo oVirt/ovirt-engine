@@ -23,11 +23,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Certificate;
@@ -141,7 +141,7 @@ public class BackendVmsResource extends
                 // if VM is based on a template, and going to be on another cluster then template, clear the cpu_profile
                 // since the template cpu_profile doesn't match cluster.
                 if (!vm.isSetCpuProfile() && vm.isSetCluster()
-                        && !ObjectUtils.equals(template.getVdsGroupId(), vm.getCluster().getId())) {
+                        && !Objects.equals(Objects.toString(template.getVdsGroupId(), null), vm.getCluster().getId())) {
                     builtFromTemplate.setCpuProfileId(null);
                 }
 
@@ -447,8 +447,8 @@ public class BackendVmsResource extends
                             && disk.isSetStorageDomains()
                             && disk.getStorageDomains().isSetStorageDomains()
                             && disk.getStorageDomains().getStorageDomains().get(0).isSetId()
-                            && !ObjectUtils.equals(disk.getStorageDomains().getStorageDomains().get(0).getId(),
-                                    templateDisk.getStorageIds().get(0))) {
+                            && !Objects.equals(disk.getStorageDomains().getStorageDomains().get(0).getId(),
+                                    Objects.toString(templateDisk.getStorageIds().get(0), null))) {
                         templateDisk.setDiskProfileId(null);
                     }
                     disksMap.put(templateDisk.getId(), map(disk, templateDisk));
