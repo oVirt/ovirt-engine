@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Statistic;
@@ -24,6 +25,11 @@ import types.Statistic;
 public interface StatisticsService {
     interface List {
         @Out Statistic[] statistics();
+
+        /**
+         * Sets the maximum number of statistics to return. If not specified all the statistics are returned.
+         */
+        @In Integer max();
     }
 
     @Service StatisticService statistic(String id);

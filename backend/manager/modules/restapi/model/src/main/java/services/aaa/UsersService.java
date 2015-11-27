@@ -29,6 +29,11 @@ public interface UsersService {
 
     interface List {
         @Out User[] users();
+
+        /**
+         * Sets the maximum number of users to return. If not specified all the users are returned.
+         */
+        @In Integer max();
     }
 
     @Service UserService user(String id);

@@ -19,7 +19,6 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.StorageConnection;
 
 @Service
@@ -30,6 +29,11 @@ public interface StorageDomainServerConnectionsService {
 
     interface List {
         @Out StorageConnection[] connections();
+
+        /**
+         * Sets the maximum number of connections to return. If not specified all the connections are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageDomainServerConnectionService connection(String id);

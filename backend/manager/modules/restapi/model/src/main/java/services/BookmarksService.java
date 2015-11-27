@@ -29,6 +29,11 @@ public interface BookmarksService {
 
     interface List {
         @Out Bookmark[] bookmarks();
+
+        /**
+         * Sets the maximum number of bookmarks to return. If not specified all the bookmarks are returned.
+         */
+        @In Integer max();
     }
 
     @Service BookmarkService bookmark(String id);

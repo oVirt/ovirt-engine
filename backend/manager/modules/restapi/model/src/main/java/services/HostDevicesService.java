@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.HostDevice;
@@ -24,6 +25,11 @@ import types.HostDevice;
 public interface HostDevicesService {
     interface List {
         @Out HostDevice[] devices();
+
+        /**
+         * Sets the maximum number of devices to return. If not specified all the devices are returned.
+         */
+        @In Integer max();
     }
 
     @Service HostDeviceService device(String id);

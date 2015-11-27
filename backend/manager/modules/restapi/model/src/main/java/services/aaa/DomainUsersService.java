@@ -16,15 +16,20 @@ limitations under the License.
 
 package services.aaa;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Group;
 import types.User;
 
 @Service
 public interface DomainUsersService {
     interface List {
         @Out User[] users();
+
+        /**
+         * Sets the maximum number of users to return. If not specified all the users are returned.
+         */
+        @In Integer max();
     }
 
     @Service DomainUserService user(String id);

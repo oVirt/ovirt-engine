@@ -29,6 +29,11 @@ public interface ClustersService {
 
     interface List {
         @Out Cluster[] clusters();
+
+        /**
+         * Sets the maximum number of clusters to return. If not specified all the clusters are returned.
+         */
+        @In Integer max();
     }
 
     @Service ClusterService cluster(String id);

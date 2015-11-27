@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Image;
@@ -24,6 +25,11 @@ import types.Image;
 public interface ImagesService {
     interface List {
         @Out Image[] images();
+
+        /**
+         * Sets the maximum number of images to return. If not specified all the images are returned.
+         */
+        @In Integer max();
     }
 
     @Service ImageService image(String id);

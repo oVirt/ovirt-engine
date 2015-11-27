@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.externalhostproviders;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.KatelloErratum;
@@ -24,6 +25,11 @@ import types.KatelloErratum;
 public interface KatelloErrataService {
     interface List {
         @Out KatelloErratum[] errata();
+
+        /**
+         * Sets the maximum number of errata to return. If not specified all the errata are returned.
+         */
+        @In Integer max();
     }
 
     @Service KatelloErratumService katelloErratum(String id);

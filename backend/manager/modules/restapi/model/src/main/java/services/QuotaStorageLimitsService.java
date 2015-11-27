@@ -29,6 +29,11 @@ public interface QuotaStorageLimitsService {
 
     interface List {
         @Out QuotaStorageLimit[] limits();
+
+        /**
+         * Sets the maximum number of limits to return. If not specified all the limits are returned.
+         */
+        @In Integer max();
     }
 
     @Service QuotaStorageLimitService limit(String id);

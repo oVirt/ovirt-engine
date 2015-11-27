@@ -19,7 +19,6 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.MacPool;
 
 @Service
@@ -30,6 +29,11 @@ public interface MacPoolsService {
 
     interface List {
         @Out MacPool[] pools();
+
+        /**
+         * Sets the maximum number of pools to return. If not specified all the pools are returned.
+         */
+        @In Integer max();
     }
 
     @Service MacPoolService macPool(String id);

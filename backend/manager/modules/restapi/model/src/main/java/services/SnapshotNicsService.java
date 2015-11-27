@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Nic;
@@ -24,6 +25,11 @@ import types.Nic;
 public interface SnapshotNicsService {
     interface List {
         @Out Nic[] nics();
+
+        /**
+         * Sets the maximum number of NICs to return. If not specified all the NICs are returned.
+         */
+        @In Integer max();
     }
 
     @Service SnapshotNicService nic(String id);

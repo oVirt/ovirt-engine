@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.UnmanagedNetwork;
@@ -24,6 +25,11 @@ import types.UnmanagedNetwork;
 public interface UnmanagedNetworksService {
     interface List {
         @Out UnmanagedNetwork[] networks();
+
+        /**
+         * Sets the maximum number of networks to return. If not specified all the networks are returned.
+         */
+        @In Integer max();
     }
 
     @Service UnmanagedNetworkService unmanagedNetwork(String id);

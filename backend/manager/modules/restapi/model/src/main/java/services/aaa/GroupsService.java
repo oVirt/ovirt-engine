@@ -29,6 +29,11 @@ public interface GroupsService {
 
     interface List {
         @Out Group[] groups();
+
+        /**
+         * Sets the maximum number of groups to return. If not specified all the groups are returned.
+         */
+        @In Integer max();
     }
 
     @Service GroupService group(String id);

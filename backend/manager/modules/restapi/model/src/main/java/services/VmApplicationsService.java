@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Application;
@@ -24,6 +25,11 @@ import types.Application;
 public interface VmApplicationsService {
     interface List {
         @Out Application[] applications();
+
+        /**
+         * Sets the maximum number of applications to return. If not specified all the applications are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmApplicationService application(String id);

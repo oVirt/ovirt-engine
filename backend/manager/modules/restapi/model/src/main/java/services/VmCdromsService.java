@@ -29,6 +29,11 @@ public interface VmCdromsService {
 
     interface List {
         @Out Cdrom[] cdroms();
+
+        /**
+         * Sets the maximum number of CDROMs to return. If not specified all the CDROMs are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmCdromService cdrom(String id);

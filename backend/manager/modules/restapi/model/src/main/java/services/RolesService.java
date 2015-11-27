@@ -32,6 +32,11 @@ public interface RolesService {
 
     interface List {
         @Out Role[] roles();
+
+        /**
+         * Sets the maximum number of roles to return. If not specified all the roles are returned.
+         */
+        @In Integer max();
     }
 
     /**

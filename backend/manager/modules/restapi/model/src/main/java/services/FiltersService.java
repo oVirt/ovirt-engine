@@ -29,6 +29,11 @@ public interface FiltersService {
 
     interface List {
         @Out Filter[] filters();
+
+        /**
+         * Sets the maximum number of filters to return. If not specified all the filters are returned.
+         */
+        @In Integer max();
     }
 
     @Service FilterService filter(String id);

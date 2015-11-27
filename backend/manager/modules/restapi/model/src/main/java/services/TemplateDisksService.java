@@ -19,13 +19,17 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.Disk;
 
 @Service
 public interface TemplateDisksService {
     interface List {
         @Out Disk[] disks();
+
+        /**
+         * Sets the maximum number of disks to return. If not specified all the disks are returned.
+         */
+        @In Integer max();
     }
 
     @Service TemplateDiskService disk(String id);

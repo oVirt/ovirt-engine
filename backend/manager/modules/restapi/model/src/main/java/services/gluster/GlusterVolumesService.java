@@ -37,6 +37,11 @@ public interface GlusterVolumesService {
 
     interface List {
         @Out GlusterVolume[] volumes();
+
+        /**
+         * Sets the maximum number of volumes to return. If not specified all the volumes are returned.
+         */
+        @In Integer max();
     }
 
     @Service GlusterVolumeService volume(String id);

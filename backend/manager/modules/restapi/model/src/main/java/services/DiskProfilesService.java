@@ -29,6 +29,11 @@ public interface DiskProfilesService {
 
     interface List {
         @Out DiskProfile[] profile();
+
+        /**
+         * Sets the maximum number of profiles to return. If not specified all the profiles are returned.
+         */
+        @In Integer max();
     }
 
     @Service DiskProfileService diskProfile(String id);

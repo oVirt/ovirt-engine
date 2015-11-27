@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.externalhostproviders;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.ExternalDiscoveredHost;
@@ -24,6 +25,11 @@ import types.ExternalDiscoveredHost;
 public interface ExternalDiscoveredHostsService {
     interface List {
         @Out ExternalDiscoveredHost[] hosts();
+
+        /**
+         * Sets the maximum number of hosts to return. If not specified all the hosts are returned.
+         */
+        @In Integer max();
     }
 
     @Service ExternalDiscoveredHostService host(String id);

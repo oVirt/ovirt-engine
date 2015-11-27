@@ -16,15 +16,20 @@ limitations under the License.
 
 package services.externalhostproviders;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.ExternalDiscoveredHost;
 import types.ExternalHostGroup;
 
 @Service
 public interface ExternalHostGroupsService {
     interface List {
         @Out ExternalHostGroup[] groups();
+
+        /**
+         * Sets the maximum number of groups to return. If not specified all the groups are returned.
+         */
+        @In Integer max();
     }
 
     @Service ExternalHostGroupService group(String id);

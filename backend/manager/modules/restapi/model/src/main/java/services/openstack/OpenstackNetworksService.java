@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.openstack;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.OpenStackNetwork;
@@ -24,6 +25,11 @@ import types.OpenStackNetwork;
 public interface OpenstackNetworksService {
     interface List {
         @Out OpenStackNetwork[] networks();
+
+        /**
+         * Sets the maximum number of networks to return. If not specified all the networks are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackNetworkService network(String id);

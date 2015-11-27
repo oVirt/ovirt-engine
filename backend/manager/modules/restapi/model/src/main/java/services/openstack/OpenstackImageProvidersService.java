@@ -29,6 +29,11 @@ public interface OpenstackImageProvidersService {
 
     interface List {
         @Out OpenStackImageProvider[] providers();
+
+        /**
+         * Sets the maximum number of providers to return. If not specified all the providers are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackImageProviderService provider(String id);

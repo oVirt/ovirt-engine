@@ -29,6 +29,11 @@ public interface NetworksService {
 
     interface List {
         @Out Network[] networks();
+
+        /**
+         * Sets the maximum number of networks to return. If not specified all the networks are returned.
+         */
+        @In Integer max();
     }
 
     @Service NetworkService network(String id);

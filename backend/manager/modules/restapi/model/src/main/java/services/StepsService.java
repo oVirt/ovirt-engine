@@ -29,6 +29,11 @@ public interface StepsService {
 
     interface List {
         @Out Step[] steps();
+
+        /**
+         * Sets the maximum number of steps to return. If not specified all the steps are returned.
+         */
+        @In Integer max();
     }
 
     @Service StepService step(String id);

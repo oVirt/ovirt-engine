@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.NumaNode;
@@ -24,6 +25,11 @@ import types.NumaNode;
 public interface HostNumaNodesService {
     interface List {
         @Out NumaNode[] nodes();
+
+        /**
+         * Sets the maximum number of nodes to return. If not specified all the nodes are returned.
+         */
+        @In Integer max();
     }
 
     @Service HostNumaNodeService node(String id);

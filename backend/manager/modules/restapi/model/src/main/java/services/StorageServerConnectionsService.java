@@ -29,6 +29,11 @@ public interface StorageServerConnectionsService {
 
     interface List {
         @Out StorageConnection[] connections();
+
+        /**
+         * Sets the maximum number of connections to return. If not specified all the connections are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageServerConnectionService storageConnection(String id);

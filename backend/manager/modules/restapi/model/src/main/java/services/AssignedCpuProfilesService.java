@@ -26,8 +26,14 @@ public interface AssignedCpuProfilesService {
     interface Add {
         @In @Out CpuProfile profile();
     }
+
     interface List {
         @Out CpuProfile[] profiles();
+
+        /**
+         * Sets the maximum number of profiles to return. If not specified all the profiles are returned.
+         */
+        @In Integer max();
     }
 
     @Service AssignedCpuProfileService profile(String id);

@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.DiskSnapshot;
@@ -24,6 +25,11 @@ import types.DiskSnapshot;
 public interface DiskSnapshotsService {
     interface List {
         @Out DiskSnapshot[] snapshots();
+
+        /**
+         * Sets the maximum number of snapshots to return. If not specified all the snapshots are returned.
+         */
+        @In Integer max();
     }
 
     @Service DiskSnapshotService snapshot(String id);

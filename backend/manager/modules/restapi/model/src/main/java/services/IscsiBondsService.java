@@ -29,6 +29,11 @@ public interface IscsiBondsService {
 
     interface List {
         @Out IscsiBond[] bonds();
+
+        /**
+         * Sets the maximum number of bonds to return. If not specified all the bonds are returned.
+         */
+        @In Integer max();
     }
 
     @Service IscsiBondService iscsiBond(String id);

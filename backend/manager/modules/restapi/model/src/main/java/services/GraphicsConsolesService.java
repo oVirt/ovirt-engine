@@ -29,6 +29,11 @@ public interface GraphicsConsolesService {
 
     interface List {
         @Out GraphicsConsole[] consoles();
+
+        /**
+         * Sets the maximum number of consoles to return. If not specified all the consoles are returned.
+         */
+        @In Integer max();
     }
 
     @Service GraphicsConsoleService console(String id);

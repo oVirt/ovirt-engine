@@ -29,6 +29,12 @@ public interface AffinityGroupVmsService {
 
     interface List {
         @Out Vm[] vms();
+
+        /**
+         * Sets the maximum number of virtual machines to return. If not specified all the virtual machines are
+         * returned.
+         */
+        @In Integer max();
     }
 
     @Service AffinityGroupVmService vm(String id);

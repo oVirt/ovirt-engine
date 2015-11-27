@@ -29,6 +29,11 @@ public interface BalancesService {
 
     interface List {
         @Out Balance[] balances();
+
+        /**
+         * Sets the maximum number of balances to return. If not specified all the balances are returned.
+         */
+        @In Integer max();
     }
 
     @Service BalanceService balance(String id);

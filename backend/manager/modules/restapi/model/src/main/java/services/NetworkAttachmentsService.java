@@ -29,6 +29,11 @@ public interface NetworkAttachmentsService {
 
     interface List {
         @Out NetworkAttachment[] attachments();
+
+        /**
+         * Sets the maximum number of attachments to return. If not specified all the attachments are returned.
+         */
+        @In Integer max();
     }
 
     @Service NetworkAttachmentService attachment(String id);

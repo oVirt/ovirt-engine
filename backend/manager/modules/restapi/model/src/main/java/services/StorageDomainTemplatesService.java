@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Template;
@@ -24,6 +25,11 @@ import types.Template;
 public interface StorageDomainTemplatesService {
     interface List {
         @Out Template[] templates();
+
+        /**
+         * Sets the maximum number of templates to return. If not specified all the templates are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageDomainTemplateService template(String id);

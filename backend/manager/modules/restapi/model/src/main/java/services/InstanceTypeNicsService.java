@@ -29,6 +29,11 @@ public interface InstanceTypeNicsService {
 
     interface List {
         @Out Nic[] nics();
+
+        /**
+         * Sets the maximum number of NICs to return. If not specified all the NICs are returned.
+         */
+        @In Integer max();
     }
 
     @Service InstanceTypeNicService nic(String id);

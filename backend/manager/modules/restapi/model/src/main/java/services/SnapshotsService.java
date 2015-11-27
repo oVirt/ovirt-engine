@@ -29,6 +29,11 @@ public interface SnapshotsService {
 
     interface List {
         @Out Snapshot[] snapshots();
+
+        /**
+         * Sets the maximum number of snapshots to return. If not specified all the snapshots are returned.
+         */
+        @In Integer max();
     }
 
     @Service SnapshotService snapshot(String id);

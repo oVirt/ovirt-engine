@@ -29,6 +29,11 @@ public interface VmNicsService {
 
     interface List {
         @Out Nic[] nics();
+
+        /**
+         * Sets the maximum number of NICs to return. If not specified all the NICs are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmNicService nic(String id);

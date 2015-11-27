@@ -29,6 +29,11 @@ public interface SshPublicKeysService {
 
     interface List {
         @Out SshPublicKey[] keys();
+
+        /**
+         * Sets the maximum number of keys to return. If not specified all the keys are returned.
+         */
+        @In Integer max();
     }
 
     @Service SshPublicKeyService key(String id);

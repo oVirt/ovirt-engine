@@ -29,6 +29,11 @@ public interface VmPoolsService {
 
     interface List {
         @Out VmPool[] pools();
+
+        /**
+         * Sets the maximum number of pools to return. If not specified all the pool are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmPoolService pool(String id);

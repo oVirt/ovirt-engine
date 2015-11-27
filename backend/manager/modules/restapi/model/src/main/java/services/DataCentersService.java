@@ -29,6 +29,11 @@ public interface DataCentersService {
 
     interface List {
         @Out DataCenter[] dataCenters();
+
+        /**
+         * Sets the maximum number of data centers to return. If not specified all the data centers are returned.
+         */
+        @In Integer max();
     }
 
     @Service DataCenterService dataCenter(String id);

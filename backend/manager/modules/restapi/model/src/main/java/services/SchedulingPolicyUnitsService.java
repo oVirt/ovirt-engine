@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.SchedulingPolicyUnit;
@@ -24,6 +25,11 @@ import types.SchedulingPolicyUnit;
 public interface SchedulingPolicyUnitsService {
     interface List {
         @Out SchedulingPolicyUnit[] units();
+
+        /**
+         * Sets the maximum number of policy units to return. If not specified all the policy units are returned.
+         */
+        @In Integer max();
     }
 
     @Service SchedulingPolicyUnitService unit(String id);

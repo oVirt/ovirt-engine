@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Cdrom;
@@ -24,6 +25,11 @@ import types.Cdrom;
 public interface SnapshotCdromsService {
     interface List {
         @Out Cdrom[] cdroms();
+
+        /**
+         * Sets the maximum number of CDROMS to return. If not specified all the CDROMS are returned.
+         */
+        @In Integer max();
     }
 
     @Service SnapshotCdromService cdrom(String id);

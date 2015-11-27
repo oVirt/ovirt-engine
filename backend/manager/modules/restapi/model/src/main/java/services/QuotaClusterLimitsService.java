@@ -29,6 +29,11 @@ public interface QuotaClusterLimitsService {
 
     interface List {
         @Out QuotaClusterLimit[] limits();
+
+        /**
+         * Sets the maximum number of limits to return. If not specified all the limits are returned.
+         */
+        @In Integer max();
     }
 
     @Service QuotaClusterLimitService limit(String id);

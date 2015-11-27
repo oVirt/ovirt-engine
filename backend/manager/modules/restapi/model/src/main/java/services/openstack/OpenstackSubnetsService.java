@@ -29,6 +29,11 @@ public interface OpenstackSubnetsService {
 
     interface List {
         @Out OpenStackSubnet[] subnets();
+
+        /**
+         * Sets the maximum number of sub-networks to return. If not specified all the sub-networks are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackSubnetService subnet(String id);

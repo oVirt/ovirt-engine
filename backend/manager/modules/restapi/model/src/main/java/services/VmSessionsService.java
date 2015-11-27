@@ -19,13 +19,17 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.Session;
 
 @Service
 public interface VmSessionsService {
     interface List {
         @Out Session[] session();
+
+        /**
+         * Sets the maximum number of sessions to return. If not specified all the sessions are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmSessionService session(String id);

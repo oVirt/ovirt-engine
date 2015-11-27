@@ -29,6 +29,11 @@ public interface QuotasService {
 
     interface List {
         @Out Quota[] quotas();
+
+        /**
+         * Sets the maximum number of quota descriptors to return. If not specified all the descriptors are returned.
+         */
+        @In Integer max();
     }
 
     @Service QuotaService quota(String id);

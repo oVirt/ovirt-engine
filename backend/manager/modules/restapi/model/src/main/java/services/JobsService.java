@@ -29,6 +29,11 @@ public interface JobsService {
 
     interface List {
         @Out Job[] jobs();
+
+        /**
+         * Sets the maximum number of jobs to return. If not specified all the jobs are returned.
+         */
+        @In Integer max();
     }
 
     @Service JobService job(String id);

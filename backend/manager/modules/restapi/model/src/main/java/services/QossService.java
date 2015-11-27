@@ -29,6 +29,11 @@ public interface QossService {
 
     interface List {
         @Out Qos[] qoss();
+
+        /**
+         * Sets the maximum number of QoS descriptors to return. If not specified all the descriptors are returned.
+         */
+        @In Integer max();
     }
 
     @Service QosService qos(String id);

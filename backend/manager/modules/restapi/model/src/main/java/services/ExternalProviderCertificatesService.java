@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Certificate;
@@ -24,6 +25,11 @@ import types.Certificate;
 public interface ExternalProviderCertificatesService {
     interface List {
         @Out Certificate[] certificates();
+
+        /**
+         * Sets the maximum number of certificates to return. If not specified all the certificates are returned.
+         */
+        @In Integer max();
     }
 
     @Service ExternalProviderCertificateService certificate(String id);

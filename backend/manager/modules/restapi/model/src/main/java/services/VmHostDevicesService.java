@@ -29,6 +29,11 @@ public interface VmHostDevicesService {
 
     interface List {
         @Out HostDevice[] device();
+
+        /**
+         * Sets the maximum number of devices to return. If not specified all the devices are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmHostDeviceService device(String id);

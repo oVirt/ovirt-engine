@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.File;
@@ -24,6 +25,11 @@ import types.File;
 public interface FilesService {
     interface List {
         @Out File[] file();
+
+        /**
+         * Sets the maximum number of files to return. If not specified all the files are returned.
+         */
+        @In Integer max();
     }
 
     @Service FileService file(String id);

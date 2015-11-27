@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.externalhostproviders;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.ExternalComputeResource;
@@ -24,6 +25,11 @@ import types.ExternalComputeResource;
 public interface ExternalComputeResourcesService {
     interface List {
         @Out ExternalComputeResource[] resources();
+
+        /**
+         * Sets the maximum number of resources to return. If not specified all the resources are returned.
+         */
+        @In Integer max();
     }
 
     @Service ExternalComputeResourceService resource(String id);

@@ -29,6 +29,11 @@ public interface WeightsService {
 
     interface List {
         @Out Weight[] weights();
+
+        /**
+         * Sets the maximum number of weights to return. If not specified all the weights are returned.
+         */
+        @In Integer max();
     }
 
     @Service WeightService weight(String id);

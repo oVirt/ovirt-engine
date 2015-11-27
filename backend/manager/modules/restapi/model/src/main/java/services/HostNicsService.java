@@ -29,6 +29,11 @@ public interface HostNicsService {
 
     interface List {
         @Out HostNic[] nics();
+
+        /**
+         * Sets the maximum number of NICs to return. If not specified all the NICs are returned.
+         */
+        @In Integer max();
     }
 
     interface SetupNetworks {

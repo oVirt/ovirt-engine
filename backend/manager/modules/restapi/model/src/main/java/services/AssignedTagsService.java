@@ -26,8 +26,14 @@ public interface AssignedTagsService {
     interface Add {
         @In @Out Tag tag();
     }
+
     interface List {
         @Out Tag[] tags();
+
+        /**
+         * Sets the maximum number of tags to return. If not specified all the tags are returned.
+         */
+        @In Integer max();
     }
 
     @Service AssignedTagService tag(String id);

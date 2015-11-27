@@ -19,13 +19,17 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.ReportedDevice;
 
 @Service
 public interface VmReportedDevicesService {
     interface List {
         @Out ReportedDevice[] reportedDevice();
+
+        /**
+         * Sets the maximum number of devices to return. If not specified all the devices are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmReportedDeviceService reportedDevice(String id);

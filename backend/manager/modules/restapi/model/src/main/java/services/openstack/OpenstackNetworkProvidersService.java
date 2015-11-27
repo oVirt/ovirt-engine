@@ -29,6 +29,11 @@ public interface OpenstackNetworkProvidersService {
 
     interface List {
         @Out OpenStackNetworkProvider[] providers();
+
+        /**
+         * Sets the maximum number of providers to return. If not specified all the providers are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackNetworkProviderService provider(String id);

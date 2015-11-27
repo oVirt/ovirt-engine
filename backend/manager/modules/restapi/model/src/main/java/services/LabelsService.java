@@ -29,6 +29,11 @@ public interface LabelsService {
 
     interface List {
         @Out Label[] labels();
+
+        /**
+         * Sets the maximum number of labels to return. If not specified all the labels are returned.
+         */
+        @In Integer max();
     }
 
     @Service LabelService label(String id);

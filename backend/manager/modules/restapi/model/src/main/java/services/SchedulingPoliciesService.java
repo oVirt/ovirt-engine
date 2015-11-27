@@ -29,6 +29,11 @@ public interface SchedulingPoliciesService {
 
     interface List {
         @Out SchedulingPolicy[] policies();
+
+        /**
+         * Sets the maximum number of policies to return. If not specified all the policies are returned.
+         */
+        @In Integer max();
     }
 
     @Service SchedulingPolicyService policy(String id);

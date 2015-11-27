@@ -16,8 +16,6 @@ limitations under the License.
 
 package services;
 
-import javax.xml.ws.Response;
-
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
@@ -39,6 +37,11 @@ public interface PermitsService {
 
     interface List {
         @Out Permit[] permits();
+
+        /**
+         * Sets the maximum number of permits to return. If not specified all the permits are returned.
+         */
+        @In Integer max();
     }
 
     /**

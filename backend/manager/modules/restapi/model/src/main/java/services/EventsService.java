@@ -29,6 +29,11 @@ public interface EventsService {
 
     interface List {
         @Out Event[] events();
+
+        /**
+         * Sets the maximum number of events to return. If not specified all the events are returned.
+         */
+        @In Integer max();
     }
 
     interface Undelete {

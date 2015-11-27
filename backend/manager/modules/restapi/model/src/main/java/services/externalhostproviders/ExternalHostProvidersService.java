@@ -29,6 +29,11 @@ public interface ExternalHostProvidersService {
 
     interface List {
         @Out ExternalHostProvider[] providers();
+
+        /**
+         * Sets the maximum number of providers to return. If not specified all the providers are returned.
+         */
+        @In Integer max();
     }
 
     @Service ExternalHostProviderService provider(String id);

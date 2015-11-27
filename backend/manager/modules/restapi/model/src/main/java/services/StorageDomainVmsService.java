@@ -19,13 +19,18 @@ package services;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.Bookmark;
 import types.Vm;
 
 @Service
 public interface StorageDomainVmsService {
     interface List {
         @Out Vm[] vm();
+
+        /**
+         * Sets the maximum number of virtual machines to return. If not specified all the virtual machines are
+         * returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageDomainVmService vm(String id);

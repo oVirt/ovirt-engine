@@ -20,7 +20,6 @@ import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Agent;
-import types.Bookmark;
 
 @Service
 public interface FenceAgentsService {
@@ -30,6 +29,11 @@ public interface FenceAgentsService {
 
     interface List {
         @Out Agent[] agents();
+
+        /**
+         * Sets the maximum number of agents to return. If not specified all the agents are returned.
+         */
+        @In Integer max();
     }
 
     @Service FenceAgentService agent(String id);

@@ -19,14 +19,17 @@ package services.openstack;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import services.externalhostproviders.ExternalHostProviderService;
-import types.ExternalHostProvider;
 import types.OpenStackImage;
 
 @Service
 public interface OpenstackImagesService {
     interface List {
         @Out OpenStackImage[] images();
+
+        /**
+         * Sets the maximum number of images to return. If not specified all the images are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackImageService image(String id);

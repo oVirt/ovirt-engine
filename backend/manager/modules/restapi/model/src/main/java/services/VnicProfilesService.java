@@ -29,6 +29,11 @@ public interface VnicProfilesService {
 
     interface List {
         @Out VnicProfile[] profiles();
+
+        /**
+         * Sets the maximum number of profiles to return. If not specified all the profiles are returned.
+         */
+        @In Integer max();
     }
 
     @Service VnicProfileService profile(String id);

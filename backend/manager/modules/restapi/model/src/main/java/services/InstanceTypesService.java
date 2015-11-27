@@ -29,6 +29,11 @@ public interface InstanceTypesService {
 
     interface List {
         @Out InstanceType[] instanceType();
+
+        /**
+         * Sets the maximum number of instance types to return. If not specified all the instance types are returned.
+         */
+        @In Integer max();
     }
 
     @Service InstanceTypeService instanceType(String id);

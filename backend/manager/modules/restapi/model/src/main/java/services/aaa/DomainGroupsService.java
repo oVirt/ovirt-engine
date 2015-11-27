@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.aaa;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Group;
@@ -24,6 +25,11 @@ import types.Group;
 public interface DomainGroupsService {
     interface List {
         @Out Group[] groups();
+
+        /**
+         * Sets the maximum number of groups to return. If not specified all the groups are returned.
+         */
+        @In Integer max();
     }
 
     @Service DomainGroupService group(String id);

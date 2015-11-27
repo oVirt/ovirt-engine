@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Hook;
@@ -24,6 +25,11 @@ import types.Hook;
 public interface HostHooksService {
     interface List {
         @Out Hook[] hooks();
+
+        /**
+         * Sets the maximum number of hooks to return. If not specified all the hooks are returned.
+         */
+        @In Integer max();
     }
 
     @Service HostHookService hook(String id);

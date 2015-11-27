@@ -29,6 +29,11 @@ public interface StorageDomainsService {
 
     interface List {
         @Out StorageDomain[] storageDomain();
+
+        /**
+         * Sets the maximum number of storage domains to return. If not specified all the storage domains are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageDomainService storageDomain(String id);

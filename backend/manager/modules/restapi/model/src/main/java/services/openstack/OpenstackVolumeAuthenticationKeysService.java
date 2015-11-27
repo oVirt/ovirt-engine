@@ -19,7 +19,6 @@ package services.openstack;
 import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
-import types.OpenStackImageProvider;
 import types.OpenstackVolumeAuthenticationKey;
 
 @Service
@@ -30,6 +29,11 @@ public interface OpenstackVolumeAuthenticationKeysService {
 
     interface List {
         @Out OpenstackVolumeAuthenticationKey[] keys();
+
+        /**
+         * Sets the maximum number of keys to return. If not specified all the keys are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackVolumeAuthenticationKeyService key(String id);

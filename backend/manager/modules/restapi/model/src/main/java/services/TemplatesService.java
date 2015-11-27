@@ -29,6 +29,11 @@ public interface TemplatesService {
 
     interface List {
         @Out Template[] templates();
+
+        /**
+         * Sets the maximum number of templates to return. If not specified all the templates are returned.
+         */
+        @In Integer max();
     }
 
     @Service TemplateService template(String id);

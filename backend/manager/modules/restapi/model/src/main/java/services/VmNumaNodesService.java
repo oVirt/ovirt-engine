@@ -29,6 +29,11 @@ public interface VmNumaNodesService {
 
     interface List {
         @Out VirtualNumaNode[] nodes();
+
+        /**
+         * Sets the maximum number of nodes to return. If not specified all the nodes are returned.
+         */
+        @In Integer max();
     }
 
     @Service VmNumaNodeService node(String id);

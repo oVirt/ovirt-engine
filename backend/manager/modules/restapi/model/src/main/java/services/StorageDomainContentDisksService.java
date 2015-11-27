@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Disk;
@@ -24,6 +25,11 @@ import types.Disk;
 public interface StorageDomainContentDisksService {
     interface List {
         @Out Disk[] disks();
+
+        /**
+         * Sets the maximum number of disks to return. If not specified all the disks are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageDomainContentDiskService disk(String id);

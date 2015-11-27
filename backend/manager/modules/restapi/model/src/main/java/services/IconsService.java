@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Icon;
@@ -24,6 +25,11 @@ import types.Icon;
 public interface IconsService {
     interface List {
         @Out Icon[] icons();
+
+        /**
+         * Sets the maximum number of icons to return. If not specified all the icons are returned.
+         */
+        @In Integer max();
     }
 
     @Service IconService icon(String id);

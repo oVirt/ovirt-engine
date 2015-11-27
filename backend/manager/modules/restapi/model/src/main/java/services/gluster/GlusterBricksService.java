@@ -40,6 +40,11 @@ public interface GlusterBricksService {
 
     interface List {
         @Out GlusterBrick[] bricks();
+
+        /**
+         * Sets the maximum number of bricks to return. If not specified all the bricks are returned.
+         */
+        @In Integer max();
     }
 
     interface Migrate {

@@ -16,6 +16,7 @@ limitations under the License.
 
 package services;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.Role;
@@ -27,6 +28,11 @@ import types.Role;
 public interface AssignedRolesService {
     interface List {
         @Out Role[] roles();
+
+        /**
+         * Sets the maximum number of roles to return. If not specified all the roles are returned.
+         */
+        @In Integer max();
     }
 
     /**

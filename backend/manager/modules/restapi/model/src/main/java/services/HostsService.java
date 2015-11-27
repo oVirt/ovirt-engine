@@ -37,6 +37,11 @@ public interface HostsService {
 
     interface List {
         @Out Host[] hosts();
+
+        /**
+         * Sets the maximum number of hosts to return. If not specified all the hosts are returned.
+         */
+        @In Integer max();
     }
 
     @Service HostService host(String id);

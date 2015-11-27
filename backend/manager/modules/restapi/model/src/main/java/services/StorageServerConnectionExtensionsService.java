@@ -29,6 +29,11 @@ public interface StorageServerConnectionExtensionsService {
 
     interface List {
         @Out StorageConnectionExtension[] extensions();
+
+        /**
+         * Sets the maximum number of extensions to return. If not specified all the extensions are returned.
+         */
+        @In Integer max();
     }
 
     @Service StorageServerConnectionExtensionService storageConnectionExtension(String id);

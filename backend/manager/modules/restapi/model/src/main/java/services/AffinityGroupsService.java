@@ -28,7 +28,12 @@ public interface AffinityGroupsService {
     }
 
     interface List {
-       @Out AffinityGroup[] list();
+        @Out AffinityGroup[] list();
+
+        /**
+         * Sets the maximum number of affinity groups to return. If not specified all the affinity groups are returned.
+         */
+        @In Integer max();
     }
 
     @Service AffinityGroupService group(String id);

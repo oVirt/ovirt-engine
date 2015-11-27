@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.gluster;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.GlusterHook;
@@ -24,6 +25,11 @@ import types.GlusterHook;
 public interface GlusterHooksService {
     interface List {
         @Out GlusterHook[] hooks();
+
+        /**
+         * Sets the maximum number of hooks to return. If not specified all the hooks are returned.
+         */
+        @In Integer max();
     }
 
     @Service GlusterHookService hook(String id);

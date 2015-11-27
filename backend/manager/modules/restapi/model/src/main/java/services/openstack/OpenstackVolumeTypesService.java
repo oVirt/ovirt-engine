@@ -16,6 +16,7 @@ limitations under the License.
 
 package services.openstack;
 
+import org.ovirt.api.metamodel.annotations.In;
 import org.ovirt.api.metamodel.annotations.Out;
 import org.ovirt.api.metamodel.annotations.Service;
 import types.OpenStackVolumeType;
@@ -24,6 +25,11 @@ import types.OpenStackVolumeType;
 public interface OpenstackVolumeTypesService {
     interface List {
         @Out OpenStackVolumeType[] types();
+
+        /**
+         * Sets the maximum number of volume types to return. If not specified all the volume types are returned.
+         */
+        @In Integer max();
     }
 
     @Service OpenstackVolumeTypeService type(String id);
