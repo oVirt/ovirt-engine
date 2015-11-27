@@ -275,7 +275,6 @@ public class NumaSupportModel extends Model {
     }
 
     public void pinVNodeToNumaNode(Guid sourceVMGuid, boolean isPinned, int sourceVNumaIndex, int targetPNumaNodeIndex) {
-        boolean breakFlag = false;
         for (VM vm : getVmsWithvNumaNodeList()) {
             if (vm.getId().equals(sourceVMGuid)) {
                 for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
@@ -294,9 +293,6 @@ public class NumaSupportModel extends Model {
                 }
                 updateParametersMap.put(vm.getId(),
                         new VmNumaNodeOperationParameters(vm.getId(), vm.getvNumaNodeList()));
-            }
-            if (breakFlag) {
-                break;
             }
         }
         modelReady();
