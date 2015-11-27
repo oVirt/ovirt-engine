@@ -146,6 +146,14 @@ public interface CommonApplicationMessages extends Messages {
             " Please consult documentation for your guest operating system to ensure it has proper support for CPU Hot Add")
     String hotPlugUnplugCpuWarning();
 
+    @DefaultMessage("Set simultaneous multithreading.\n" +
+            "Please check host architecture properly before changing the value.\n" +
+            "When not sure, keep threads-per-core set to 1.\n" +
+            "Recommended values for:\n" +
+            " - x86: 1\n" +
+            " - Power8: 1..8 (8 for high load VMs)")
+    String threadsPerCoreInfo();
+
     @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
     String serialNumberInfo();
 

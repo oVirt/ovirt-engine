@@ -424,6 +424,9 @@
             width: 270px;
         }
 
+        .threadsPerCoreStyle {
+            width: 270px;
+        }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -533,7 +536,7 @@
                             <g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
                                 <ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" label="{constants.numOfSockets}" />
                                 <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" label="{constants.coresPerSocket}" />
-                                <ge:EntityModelDetachableWidgetWithLabel ui:field="threadsPerCoreEditorWithDetachable" label="{constants.threadsPerCore}" />
+                                <w:EntityModelDetachableWidgetWithInfo ui:field="threadsPerCoreEditorWithInfoIcon"/>
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" />
                                 <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" label="{constants.cpuModelLabel}" />
                             </g:FlowPanel>

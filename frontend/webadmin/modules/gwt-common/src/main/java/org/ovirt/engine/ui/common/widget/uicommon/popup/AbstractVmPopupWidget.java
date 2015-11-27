@@ -118,7 +118,9 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.client.IntegerRenderer;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -166,6 +168,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String isVirtioScsiEnabledEditor();
 
         String totalVcpusStyle();
+
+        String threadsPerCoreStyle();
     }
 
     @UiField
@@ -305,7 +309,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @Path(value = "threadsPerCore.selectedItem")
     @WithElementId("threadsPerCore")
-    public ListModelListBoxEditor<Integer> threadsPerCoreEditor;
+    public ListModelListBoxOnlyEditor<Integer> threadsPerCoreEditor;
 
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithLabel numOfSocketsEditorWithDetachable;
@@ -314,7 +318,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelDetachableWidgetWithLabel corePerSocketEditorWithDetachable;
 
     @UiField(provided = true)
-    public EntityModelDetachableWidgetWithLabel threadsPerCoreEditorWithDetachable;
+    public EntityModelDetachableWidgetWithInfo threadsPerCoreEditorWithInfoIcon;
 
     @UiField(provided = true)
     @Path(value = "emulatedMachine.selectedItem")
@@ -992,11 +996,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        cpuPinningInfo =
-                new InfoIcon(SafeHtmlUtils.fromTrustedString(templates.italicText(
-                        constants.cpuPinningLabelExplanation())
-                        .asString()
-                        .replaceAll("(\r\n|\n)", "<br />")));//$NON-NLS-1$ //$NON-NLS-2$
+        cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
+
         cpuPinningInfo.setTooltipMaxWidth(Width.W420);
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
@@ -1089,6 +1090,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(templates.italicText(messages.hotPlugUnplugCpuWarning()));
+    }
+
+    private void initThreadsPerCore() {
+        EnableableFormLabel label = new EnableableFormLabel();
+        label.setText(constants.threadsPerCore());
+
+        threadsPerCoreEditor = new ListModelListBoxOnlyEditor<>(IntegerRenderer.instance(),
+                new ModeSwitchingVisibilityRenderer());
+        threadsPerCoreEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, threadsPerCoreEditor);
+        threadsPerCoreEditorWithInfoIcon.setExplanation(multiLineItalicSafeHtml(messages.threadsPerCoreInfo()));
+    }
+
+    private SafeHtml multiLineItalicSafeHtml(String text) {
+        return SafeHtmlUtils.fromTrustedString(templates.italicText(text)
+                .asString()
+                .replaceAll("(\r\n|\n)", "<br />")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void setSpiceProxyOverrideExplanation(String explanation) {
@@ -1350,8 +1367,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
         corePerSocketEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
         corePerSocketEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(corePerSocketEditor);
-        threadsPerCoreEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
-        threadsPerCoreEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(threadsPerCoreEditor);
+        initThreadsPerCore();
 
         // Pools
         poolTypeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
@@ -1492,6 +1508,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected void applyStylesForDetachableWithInfoIcon() {
         totalvCPUsEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.totalVcpusStyle());
+        threadsPerCoreEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.threadsPerCoreStyle());
     }
 
     @Override
@@ -2098,7 +2115,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 totalvCPUsEditorWithInfoIcon,
                 numOfSocketsEditorWithDetachable,
                 corePerSocketEditorWithDetachable,
-                threadsPerCoreEditorWithDetachable,
+                threadsPerCoreEditorWithInfoIcon,
                 isHighlyAvailableEditorWithDetachable,
                 priorityLabelWithDetachable,
                 migrationModeEditorWithDetachable,
