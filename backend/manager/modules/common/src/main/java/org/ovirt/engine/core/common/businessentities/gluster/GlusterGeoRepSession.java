@@ -144,7 +144,7 @@ public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithSt
             return false;
         }
         GlusterGeoRepSession other = (GlusterGeoRepSession) obj;
-        return Objects.equals(sessionId, sessionId)
+        return Objects.equals(sessionId, other.sessionId)
                 && Objects.equals(masterVolumeId, other.masterVolumeId)
                 && Objects.equals(sessionKey, other.sessionKey)
                 && Objects.equals(slaveHostName, other.slaveHostName)
