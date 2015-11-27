@@ -53,7 +53,7 @@ import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.utils.ReflectionHelper;
+import org.ovirt.engine.api.resource.SystemResource;
 
 public class RsdlBuilder {
 
@@ -220,26 +220,24 @@ public class RsdlBuilder {
     public Collection<DetailedLink> getLinks() throws ClassNotFoundException, IOException {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<DetailedLink> results = new ArrayList<DetailedLink>();
-        List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : rels) {
-            Class<?> resource = findResource(path, classes);
+            Class<?> resource = findResource(path);
             results.addAll(describe(resource, path, new HashMap<String, Type>()));
         }
         return results;
     }
 
-    private Class<?> findResource(String path, List<Class<?>> classes) throws ClassNotFoundException, IOException {
-        path = "/" + path;
-        for (Class<?> clazz : classes) {
-            if (path.equals(getPath(clazz))) {
-                return clazz;
+    private Class<?> findResource(String path) throws ClassNotFoundException, IOException {
+        for (Method locator : SystemResource.class.getDeclaredMethods()) {
+            if (path.equals(getPath(locator))) {
+                return locator.getReturnType();
             }
         }
         return null;
     }
 
-    private String getPath(Class<?> clazz) {
-        Path pathAnnotation = clazz.getAnnotation(Path.class);
+    private String getPath(Method method) {
+        Path pathAnnotation = method.getAnnotation(Path.class);
         return pathAnnotation==null ? null : pathAnnotation.value();
     }
 
