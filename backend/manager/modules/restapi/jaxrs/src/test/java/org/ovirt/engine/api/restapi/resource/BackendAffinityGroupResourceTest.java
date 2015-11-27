@@ -106,8 +106,8 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         expect(entity.getName()).andReturn(NAMES[index].toString()).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index].toString()).anyTimes();
         expect(entity.getClusterId()).andReturn(CLUSTER_ID).anyTimes();
-        expect(entity.isEnforcing()).andReturn(GUIDS[index].hashCode() % 2 == 0).anyTimes();
-        expect(entity.isPositive()).andReturn(GUIDS[index].hashCode() % 2 == 1).anyTimes();
+        expect(entity.isEnforcing()).andReturn((GUIDS[index].hashCode() & 1) == 0).anyTimes();
+        expect(entity.isPositive()).andReturn((GUIDS[index].hashCode() & 1) == 1).anyTimes();
         return entity;
     }
 
@@ -118,8 +118,8 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         model.setDescription(DESCRIPTIONS[index]);
         model.setCluster(new Cluster());
         model.getCluster().setId(CLUSTER_ID.toString());
-        model.setEnforcing(GUIDS[index].hashCode() % 2 == 0);
-        model.setPositive(GUIDS[index].hashCode() % 2 == 1);
+        model.setEnforcing((GUIDS[index].hashCode() & 1) == 0);
+        model.setPositive((GUIDS[index].hashCode() & 1) == 1);
 
         return model;
     }
