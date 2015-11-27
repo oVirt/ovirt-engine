@@ -46,27 +46,33 @@ public class Model {
     public Model() {
         // Create the anonymous module:
         Module anonymousModule = new Module();
+        anonymousModule.setModel(this);
         modules.add(anonymousModule);
 
         // Add the builtin types:
         booleanType = new PrimitiveType();
         booleanType.setName(NameParser.parseUsingCase("Boolean"));
+        booleanType.setModule(anonymousModule);
         addType(booleanType);
 
         stringType = new PrimitiveType();
         stringType.setName(NameParser.parseUsingCase("String"));
+        stringType.setModule(anonymousModule);
         addType(stringType);
 
         integerType = new PrimitiveType();
         integerType.setName(NameParser.parseUsingCase("Integer"));
+        integerType.setModule(anonymousModule);
         addType(integerType);
 
         dateType = new PrimitiveType();
         dateType.setName(NameParser.parseUsingCase("Date"));
+        dateType.setModule(anonymousModule);
         addType(dateType);
 
         decimalType = new PrimitiveType();
         decimalType.setName(NameParser.parseUsingCase("Decimal"));
+        decimalType.setModule(anonymousModule);
         addType(decimalType);
     }
 
