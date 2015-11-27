@@ -1777,7 +1777,7 @@ public enum ConfigValues {
     DefaultMaximumMigrationDowntime,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"x86\":\"true\",\"ppc\":\"false\"}")
     HotPlugCpuSupported,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1785,15 +1785,15 @@ public enum ConfigValues {
     IoThreadsSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
     HotUnplugCpuSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"true\"}")
+    @DefaultValueAttribute("{\"x86\":\"true\",\"ppc\":\"true\"}")
     HotPlugMemorySupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"x86_64\":\"false\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
     HotUnplugMemorySupported,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1813,15 +1813,15 @@ public enum ConfigValues {
     ImportGlanceImageAsTemplate,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsMigrationSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsMemorySnapshotSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86\":\"true\",\"ppc\":\"true\"}")
     IsSuspendSupported,
 
     @TypeConverterAttribute(Boolean.class)
