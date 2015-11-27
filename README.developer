@@ -21,6 +21,7 @@ Install the following system components:
  - python-daemon
  - otopi >= 1.1.0
  - ovirt-host-deploy >= 1.1.0
+ - ovirt-setup-lib
  - maven-3 (optional)
  - pyflakes (optional)
  - python-pep8 / pep8 (optional)
