@@ -229,7 +229,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             options.setSecurePort(graphicsInfo.getTlsPort());
         }
 
-        if (getConfigValue(ConfigValues.SSLEnabled)) {
+        if ((boolean) getConfigValue(ConfigValues.SSLEnabled)) {
             String spiceSecureChannels = getConfigValue(ConfigValues.SpiceSecureChannels);
             if (!StringUtils.isBlank(spiceSecureChannels)) {
                 options.setSslChanels(spiceSecureChannels);
@@ -243,7 +243,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         String certificateSubject = "";
         String caCertificate = "";
 
-        if (getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)) {
+        if ((boolean) getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)) {
             VdcQueryReturnValue certificate = getCACertificate();
             if (!certificate.getSucceeded()) {
                 getQueryReturnValue().setExceptionString("Spice Root Certificate Validation enforced, but no CA found!");
