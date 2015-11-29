@@ -898,8 +898,7 @@ public final class ImagesHandler {
         return diskDummies;
     }
 
-    public static DiskImage cloneDiskImage(Guid newVmId,
-            Guid storageDomainId,
+    public static DiskImage cloneDiskImage(Guid storageDomainId,
             Guid newImageGroupId,
             Guid newImageGuid,
             DiskImage srcDiskImage,

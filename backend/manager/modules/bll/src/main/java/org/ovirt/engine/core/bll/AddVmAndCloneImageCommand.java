@@ -76,8 +76,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             Guid destStorageDomainId,
             Guid diskProfileId,
             VdcActionType parentCommandType) {
-        DiskImage newDiskImage = ImagesHandler.cloneDiskImage(getVmId(),
-                destStorageDomainId,
+        DiskImage newDiskImage = ImagesHandler.cloneDiskImage(destStorageDomainId,
                 Guid.newGuid(),
                 Guid.newGuid(),
                 diskImage,
