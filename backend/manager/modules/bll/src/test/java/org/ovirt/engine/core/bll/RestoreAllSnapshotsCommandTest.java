@@ -42,7 +42,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 
-public class RestoreAllSnapshotCommandTest extends BaseCommandTest {
+public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
