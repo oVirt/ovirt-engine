@@ -40,7 +40,7 @@ public final class CommandsFactory {
         "org.ovirt.engine.core.bll.storage.pool",
         "org.ovirt.engine.core.bll.storage.ovfstore",
         "org.ovirt.engine.core.bll.storage.export",
-        "org.ovirt.engine.core.bll.lsm",
+        "org.ovirt.engine.core.bll.storage.lsm",
         "org.ovirt.engine.core.bll.gluster",
         "org.ovirt.engine.core.bll.network",
         "org.ovirt.engine.core.bll.network.dc",

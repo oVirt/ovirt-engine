@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.lsm;
+package org.ovirt.engine.core.bll.storage.lsm;
 
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.AbstractSPMAsyncTaskHandler;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.lsm;
+package org.ovirt.engine.core.bll.storage.lsm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
