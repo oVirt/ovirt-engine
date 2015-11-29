@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.host;
 
 import java.security.KeyStoreException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,6 +17,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Predicate;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
@@ -31,7 +36,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public boolean isUpdateAvailable(final VDS host) {
-        Collection<String> packages = Config.getPackagesForCheckUpdate();
+        Collection<String> packages = getPackagesForCheckUpdate();
         try (final VdsDeploy hostPackagesManager = createPackagesManager(host, false)) {
             VdsDeployPackagesUnit unit = new VdsDeployPackagesUnit(packages, true);
             hostPackagesManager.addUnit(unit);
@@ -80,7 +85,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host) {
-        Collection<String> packages = Config.getPackagesForCheckUpdate();
+        Collection<String> packages = getPackagesForCheckUpdate();
         try (final VdsDeploy hostPackagesManager = createPackagesManager(host, true)) {
             hostPackagesManager.addUnit(new VdsDeployPackagesUnit(packages, false));
             hostPackagesManager.execute();
@@ -97,5 +102,23 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         hostPackagesManager.useDefaultKeyPair();
         hostPackagesManager.setCorrelationId(CorrelationIdTracker.getCorrelationId());
         return hostPackagesManager;
+    }
+
+    protected static Collection<String> getPackagesForCheckUpdate() {
+        List<String> systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate);
+        List<String> userPackages = Config.getValue(ConfigValues.UserPackageNamesForCheckUpdate);
+
+        userPackages = ListUtils.filter(userPackages, new ListUtils.PredicateFilter<>(new Predicate<String>() {
+            @Override
+            public boolean evaluate(String obj) {
+                return obj != null && !obj.isEmpty();
+            }
+        }));
+
+        Set<String> packagesForUpdate = new HashSet<>();
+        packagesForUpdate.addAll(systemPackages);
+        packagesForUpdate.addAll(userPackages);
+
+        return packagesForUpdate;
     }
 }
