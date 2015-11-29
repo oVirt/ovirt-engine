@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -38,7 +36,6 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -88,7 +85,7 @@ import org.slf4j.LoggerFactory;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmCommandBase<T>
-        implements QuotaStorageDependent, TaskHandlerCommand<T> {
+        implements QuotaStorageDependent {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
@@ -1109,65 +1106,4 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected List<DiskImage> getImages() {
         return getVm().getImages();
     }
-
-    // /////////////////////////////////////
-    // TaskHandlerCommand Implementation //
-    // /////////////////////////////////////
-
-    @Override
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    @Override
-    public VdcActionType getActionType() {
-        return super.getActionType();
-    }
-
-    @Override
-    public VdcReturnValueBase getReturnValue() {
-        return super.getReturnValue();
-    }
-
-    @Override
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
-        // Not implemented
-    }
-
-    @Override
-    public void preventRollback() {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
 }
