@@ -60,11 +60,10 @@ public class SearchQueryTest extends DbDependentTestBase {
     List<StoragePool> storagePoolResultList = new ArrayList<>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<>();
     List<NetworkView> networkResultList = new ArrayList<>();
-    private DbFacade facadeMock;
 
     @Before
     public void setup() {
-        facadeMock = DbFacade.getInstance();
+        DbFacade facadeMock = DbFacade.getInstance();
         final DiskDao diskDao = mock(DiskDao.class);
         final QuotaDao quotaDao = mock(QuotaDao.class);
         final VmDao vmDao = mock(VmDao.class);
