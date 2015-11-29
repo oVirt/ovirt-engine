@@ -2439,16 +2439,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return getSessionDataContainer().getEngineSessionSeqId(sessionId);
     }
 
+    /**
+     * This method is used to return the parameters that'll determine the command that will
+     * be called when the created async tasks will end.
+     */
     public VdcActionParametersBase getParentParameters() {
-        VdcActionParametersBase parentParameters = getParameters();
+        // When the parent has callback the the current command parameters should always be returned as the callback is
+        // responsible to execute the parent endAction() and not the AsyncTaskManager
         if (parentHasCallback()) {
-            if (!getParameters().getShouldBeEndedByParent() || getTaskType() == AsyncTaskType.notSupported) {
-                parentParameters = getParameters().getParentParameters();
-            }
-        } else if (getParameters().getShouldBeEndedByParent()) {
-            parentParameters = getParameters().getParentParameters();
+            return getParameters();
         }
-        return parentParameters;
+
+        return getParameters().getParentParameters();
     }
 
     protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {
