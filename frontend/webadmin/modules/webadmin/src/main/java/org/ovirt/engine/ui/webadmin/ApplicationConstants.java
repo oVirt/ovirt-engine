@@ -686,7 +686,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Type")
     String hostPopupPmTypeLabel();
 
-    @DefaultStringValue("SSH Port")
+    @DefaultStringValue("Port")
     String hostPopupPmPortLabel();
 
     @DefaultStringValue("Slot")
