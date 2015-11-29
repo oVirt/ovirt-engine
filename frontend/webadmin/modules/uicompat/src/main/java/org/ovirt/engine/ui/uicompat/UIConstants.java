@@ -1648,7 +1648,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The relevant Data Center is not active.")
     String relevantDCnotActive();
 
-    @DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
+    @DefaultStringValue("Host name must be at least one character long and may contain only 'a-z', '0-9', '_', '.' or '-' characters.")
     String hostNameValidationMsg();
 
     // Role tree
