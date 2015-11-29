@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;

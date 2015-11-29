@@ -10,13 +10,13 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
-import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;

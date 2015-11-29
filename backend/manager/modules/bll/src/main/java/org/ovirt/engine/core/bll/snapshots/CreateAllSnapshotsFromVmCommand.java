@@ -12,7 +12,6 @@ import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
-import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -27,6 +26,7 @@ import org.ovirt.engine.core.bll.memory.StatelessSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.AbstractSPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;

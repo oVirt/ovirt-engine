@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.io.File;
 
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;

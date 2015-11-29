@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.MetadataDiskDescriptionHandler;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
+import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandler;
 import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;

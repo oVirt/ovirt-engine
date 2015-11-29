@@ -5,8 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;

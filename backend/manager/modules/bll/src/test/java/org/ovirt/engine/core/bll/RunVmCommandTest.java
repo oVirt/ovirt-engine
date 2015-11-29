@@ -39,6 +39,7 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.RunVmCommand.RunVmFlow;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;

@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.ImagesHandler;
-import org.ovirt.engine.core.bll.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.disk.MoveOrCopyDiskCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;

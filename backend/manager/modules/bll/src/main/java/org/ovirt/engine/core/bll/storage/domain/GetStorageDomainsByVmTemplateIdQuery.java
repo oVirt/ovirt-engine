@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.GetVmTemplatesDisksQuery;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.storage.disk.GetVmTemplatesDisksQuery;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
