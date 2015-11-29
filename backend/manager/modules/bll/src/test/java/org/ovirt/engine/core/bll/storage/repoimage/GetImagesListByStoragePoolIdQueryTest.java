@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -77,7 +78,7 @@ public class GetImagesListByStoragePoolIdQueryTest
         StorageDomainDao storageDomainDaoMock = mock(StorageDomainDao.class);
         when(storageDomainDaoMock.getIsoStorageDomainIdForPool(getQueryParameters().getStoragePoolId(),
                 StorageDomainStatus.Active)).thenReturn(storageDomainId);
-        when(getQuery().getDbFacade().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
 
         assertEquals("wrong storage domain id", storageDomainId, getQuery().getStorageDomainIdForQuery());
     }
@@ -104,6 +105,6 @@ public class GetImagesListByStoragePoolIdQueryTest
                 storagePoolId,
                 getUser().getId(),
                 getQueryParameters().isFiltered())).thenReturn(pool);
-        when(getQuery().getDbFacade().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
+        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDaoMock);
     }
 }

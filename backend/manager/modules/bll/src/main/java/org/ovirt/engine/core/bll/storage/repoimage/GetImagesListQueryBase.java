@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParametersBase;

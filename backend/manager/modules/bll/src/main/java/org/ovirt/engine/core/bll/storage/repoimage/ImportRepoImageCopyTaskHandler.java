@@ -1,5 +1,8 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.ImagesHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.storage.AbstractSPMAsyncTaskHandler;

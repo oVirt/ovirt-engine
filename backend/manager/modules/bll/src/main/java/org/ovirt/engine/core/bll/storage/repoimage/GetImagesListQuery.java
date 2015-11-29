@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.compat.Guid;

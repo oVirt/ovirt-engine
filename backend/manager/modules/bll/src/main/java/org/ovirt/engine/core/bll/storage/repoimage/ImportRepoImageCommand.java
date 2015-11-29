@@ -1,10 +1,12 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -9,13 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 
-/** A test case for {@link org.ovirt.engine.core.bll.ImportRepoImageCommandTest} */
+/** A test case for {@link ImportRepoImageCommand} */
 @RunWith(MockitoJUnitRunner.class)
 public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 

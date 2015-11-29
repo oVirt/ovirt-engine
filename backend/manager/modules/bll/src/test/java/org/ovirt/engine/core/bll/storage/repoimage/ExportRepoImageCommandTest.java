@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.repoimage;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
 
-/** A test case for {@link org.ovirt.engine.core.bll.ExportRepoImageCommandTest} */
+/** A test case for {@link ExportRepoImageCommand} */
 @RunWith(MockitoJUnitRunner.class)
 public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
