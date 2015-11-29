@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -713,6 +714,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         return true;
+    }
+
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(Collection<DiskImage> disksList) {
+        return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                ImagesHandler.getAllStorageIdsForImageIds(disksList));
     }
 
     @Override
