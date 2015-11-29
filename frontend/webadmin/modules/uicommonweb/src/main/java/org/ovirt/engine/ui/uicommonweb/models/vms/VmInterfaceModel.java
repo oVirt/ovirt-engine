@@ -103,9 +103,7 @@ public abstract class VmInterfaceModel extends Model {
             @Override
             public void setSelectedItem(VnicProfileView value) {
                 super.setSelectedItem(value);
-                if (value != null && value.isPassthrough()) {
-                    getNicType().setSelectedItem(VmInterfaceType.pciPassthrough);
-                }
+                getNicType().setSelectedItem(getDeafultNicTypeByProfile());
                 updateLinkChangability();
             }
         });
@@ -426,6 +424,8 @@ public abstract class VmInterfaceModel extends Model {
 
                 // fetch completed
                 okCommand.setIsExecutionAllowed(true);
+
+                initSelectedType();
             }
         };
 
@@ -508,5 +508,16 @@ public abstract class VmInterfaceModel extends Model {
 
     public ProfileBehavior getProfileBehavior() {
         return profileBehavior;
+    }
+
+    protected VmInterfaceType getDeafultNicTypeByProfile() {
+        VnicProfileView profile = getProfile().getSelectedItem();
+
+        ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
+        nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
+        boolean passthroughSupported = nicTypes.contains(VmInterfaceType.pciPassthrough);
+
+        return profile != null && profile.isPassthrough() && passthroughSupported ? VmInterfaceType.pciPassthrough
+                : AsyncDataProvider.getInstance().getDefaultNicType(getNicType().getItems());
     }
 }
