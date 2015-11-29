@@ -35,7 +35,7 @@ public enum PredefinedRoles {
 
     private Guid id;
 
-    private PredefinedRoles(Guid value) {
+    PredefinedRoles(Guid value) {
         id = value;
     }
 
