@@ -68,7 +68,6 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     }
 
     private void postNicInit() {
-        initSelectedType();
         getName().setEntity(AsyncDataProvider.getInstance().getNewNicName(getVmNicList()));
         initMAC();
 
@@ -103,7 +102,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(AsyncDataProvider.getInstance().getDefaultNicType(getNicType().getItems()));
+        getNicType().setSelectedItem(getDeafultNicTypeByProfile());
     }
 
     @Override

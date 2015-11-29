@@ -62,8 +62,6 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     }
 
     private void postNicInit() {
-        initSelectedType();
-
         getName().setEntity(getNic().getName());
         initMAC();
 
@@ -105,7 +103,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
         nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
 
         if (selectedNicType == null || !nicTypes.contains(selectedNicType)) {
-            selectedNicType = AsyncDataProvider.getInstance().getDefaultNicType(nicTypes);
+            selectedNicType = getDeafultNicTypeByProfile();
         }
 
         getNicType().setSelectedItem(selectedNicType);
