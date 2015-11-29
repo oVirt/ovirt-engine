@@ -1,8 +1,8 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

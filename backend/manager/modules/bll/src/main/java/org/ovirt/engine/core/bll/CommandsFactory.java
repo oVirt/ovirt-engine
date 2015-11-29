@@ -33,6 +33,7 @@ public final class CommandsFactory {
         "org.ovirt.engine.core.bll",
         "org.ovirt.engine.core.bll.aaa",
         "org.ovirt.engine.core.bll.hostdeploy",
+        "org.ovirt.engine.core.bll.snapshots",
         "org.ovirt.engine.core.bll.storage",
         "org.ovirt.engine.core.bll.storage.domain",
         "org.ovirt.engine.core.bll.storage.connection",

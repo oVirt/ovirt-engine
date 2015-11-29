@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
