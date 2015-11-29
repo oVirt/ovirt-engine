@@ -549,7 +549,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean checkStoragePoolNameLengthValid() {
         boolean result = true;
-        if (getStoragePool().getName().length() > getStoragePoolNameSizeLimit()) {
+        if (getStoragePool().getName().length() > Config.<Integer>getValue(ConfigValues.StoragePoolNameSizeLimit)) {
             result = false;
             addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
@@ -619,13 +619,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
         }
         return jobProperties;
-    }
-
-    /* Config methods - for easier testing */
-
-    /** @return The maximum length for a storage pool's name, from the configuration. */
-    protected Integer getStoragePoolNameSizeLimit() {
-        return Config.<Integer> getValue(ConfigValues.StoragePoolNameSizeLimit);
     }
 
     /* Overidden Dao access methods, for easier testing */

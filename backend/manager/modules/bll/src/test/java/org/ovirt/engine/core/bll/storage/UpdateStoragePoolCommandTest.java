@@ -70,7 +70,8 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4.getValue(), true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5.getValue(), true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.getValue(), false),
-            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.getValue(), false)
+            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.getValue(), false),
+            mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10)
     );
 
 
@@ -104,7 +105,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
                 new UpdateStoragePoolCommand<>(params);
 
         cmd = spy(realCommand);
-        doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
         doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)
                 .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDao();
