@@ -2,10 +2,11 @@ package org.ovirt.engine.core.bll.host;
 
 import java.security.KeyStoreException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,8 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ListUtils.Predicate;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
@@ -108,17 +107,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         List<String> systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate);
         List<String> userPackages = Config.getValue(ConfigValues.UserPackageNamesForCheckUpdate);
 
-        userPackages = ListUtils.filter(userPackages, new ListUtils.PredicateFilter<>(new Predicate<String>() {
-            @Override
-            public boolean evaluate(String obj) {
-                return obj != null && !obj.isEmpty();
-            }
-        }));
-
-        Set<String> packagesForUpdate = new HashSet<>();
-        packagesForUpdate.addAll(systemPackages);
-        packagesForUpdate.addAll(userPackages);
-
-        return packagesForUpdate;
+        return Stream.concat(systemPackages.stream(),
+                userPackages.stream().filter(StringUtils::isNotEmpty)).collect(Collectors.toSet());
     }
 }
