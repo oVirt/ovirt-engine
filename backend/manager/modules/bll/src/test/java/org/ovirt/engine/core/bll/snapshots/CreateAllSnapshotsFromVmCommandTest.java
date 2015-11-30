@@ -86,7 +86,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testPositiveCanDoActionWithNoDisks() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -165,7 +165,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(true).when(cmd).isLiveSnapshotApplicable();
-        doReturn(getEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
@@ -200,7 +200,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testPositiveCanDoActionWithDisks() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -210,7 +210,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testImagesLocked() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).when(diskImagesValidator)
                 .diskImagesNotLocked();
@@ -224,7 +224,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testImagesIllegal() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getSnappableVmDisks();
+        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).when(diskImagesValidator)
                 .diskImagesNotIllegal();
@@ -256,7 +256,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testAllDomainsExistAndActive() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -270,7 +270,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
-        doReturn(disksList).when(cmd).getSnappableVmDisks();
+        doReturn(disksList).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsHaveSpaceForNewDisks(disksList);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -282,7 +282,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         List<DiskImage> disksList = Collections.emptyList();
-        doReturn(disksList).when(cmd).getSnappableVmDisks();
+        doReturn(disksList).when(cmd).getDisksList();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
         verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
@@ -292,7 +292,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testAllDomainsWithinThreshold() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -305,7 +305,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testAllDomainsHaveSpaceForAllDisksFailure() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
@@ -318,7 +318,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testAllDomainsHaveSpaceForAllDisksSuccess() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(Collections.emptyList()).when(cmd).getSnappableVmDisks();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         cmd.getParameters().setSaveMemory(true);
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
