@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -259,10 +258,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
         }
         return true;
-    }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
     }
 
     protected VdcActionType getImagesActionType() {

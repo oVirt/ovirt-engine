@@ -46,8 +46,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -496,14 +494,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     protected VmValidator createVmValidator(VM vm) {
         return new VmValidator(vm);
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return super.getDiskImageDao();
-    }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
     }
 
     protected DiskImage getRepresentativeImage() {

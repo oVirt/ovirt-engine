@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * Abstract base-class for watchdog manipulation commands.
@@ -31,9 +30,6 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
     protected List<VmDevice> getWatchdogs() {
         return getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
                 VmDeviceGeneralType.WATCHDOG);
-    }
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
     }
 
     @Override

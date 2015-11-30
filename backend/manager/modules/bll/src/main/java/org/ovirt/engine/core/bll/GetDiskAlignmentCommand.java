@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.GetDiskImageAlignmentVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.GetDiskLunAlignmentVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -249,10 +248,6 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             }
         }
         return vdsInPool;
-    }
-
-    protected BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
     }
 
     @Override

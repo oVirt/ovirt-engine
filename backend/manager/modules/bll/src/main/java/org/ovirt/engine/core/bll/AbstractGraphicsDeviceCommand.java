@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters> extends CommandBase<T> {
 
@@ -52,9 +51,4 @@ public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters
                 getActionType().getActionGroup()));
         return permissionList;
     }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
-    }
-
 }

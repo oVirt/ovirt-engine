@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * Base class for crud for random number generator devices
@@ -95,10 +94,6 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
 
     protected List<VmDevice> getRngDevices() {
         return cachedRngDevices;
-    }
-
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
     }
 
     protected VmEntityType getTemplateType() {

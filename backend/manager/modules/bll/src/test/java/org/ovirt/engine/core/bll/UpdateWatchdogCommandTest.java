@@ -82,7 +82,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
             }
 
             @Override
-            protected VmDeviceDao getVmDeviceDao() {
+            public VmDeviceDao getVmDeviceDao() {
                 return deviceDao;
             }
         };

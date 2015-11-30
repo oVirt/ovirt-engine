@@ -388,7 +388,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         }
 
         @Override
-        protected DiskImageDao getDiskImageDao() {
+        public DiskImageDao getDiskImageDao() {
             return diskImageDao;
         }
     }

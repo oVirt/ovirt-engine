@@ -61,7 +61,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
@@ -628,10 +627,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Override
     public BackendInternal getBackend() {
         return super.getBackend();
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 
     /* Transaction methods */

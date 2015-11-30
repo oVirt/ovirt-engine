@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -39,9 +38,6 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Inject
     private HostDeviceDao hostDeviceDao;
-
-    @Inject
-    private VmDeviceDao vmDeviceDao;
 
     @Inject
     private HostDeviceManager hostDeviceManager;
@@ -80,7 +76,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
         List<HostDevice> fetchedDevices = (List<HostDevice>) vdsReturnValue.getReturnValue();
         List<HostDevice> oldDevices = hostDeviceDao.getHostDevicesByHostId(getVdsId());
-        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
+        List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
 
         fetchedMap = Entities.entitiesByName(fetchedDevices);
         oldMap = Entities.entitiesByName(oldDevices);
@@ -128,7 +124,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
                     handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
 
-                    vmDeviceDao.removeAllInBatch(removedVmDevices);
+                    getVmDeviceDao().removeAllInBatch(removedVmDevices);
 
                     return null;
                 }

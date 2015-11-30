@@ -51,12 +51,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -299,19 +293,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return true;
     }
 
-    protected VmDeviceDao getVmDeviceDao() {
-        return DbFacade.getInstance()
-                .getVmDeviceDao();
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
-    }
-
-    public DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
-    }
-
     @Override
     protected void executeCommand() {
         switch (getDisk().getDiskStorageType()) {
@@ -529,13 +510,5 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-    }
-
-    protected BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
-    }
-
-    protected DiskImageDynamicDao getDiskImageDynamicDao() {
-        return getDbFacade().getDiskImageDynamicDao();
     }
 }

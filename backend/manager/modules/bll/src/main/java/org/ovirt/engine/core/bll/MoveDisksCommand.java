@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
@@ -248,10 +247,6 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         }
 
         return permissionList;
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 
     protected List<MoveDiskParameters> getMoveDiskParametersList() {

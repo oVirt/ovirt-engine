@@ -46,9 +46,7 @@ import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -467,16 +465,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         addCanDoActionMessageVariable("status", messageParameter);
     }
 
-    protected BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
-    }
-
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    protected DiskImageDynamicDao getDiskImageDynamicDao() {
-        return getDbFacade().getDiskImageDynamicDao();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {

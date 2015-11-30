@@ -20,12 +20,8 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParameters> extends VmCommand<P> {
-
-    @Inject
-    private VmDeviceDao vmDeviceDao;
 
     @Inject
     private HostDeviceDao hostDeviceDao;
@@ -76,10 +72,6 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         return primaryDeviceNames;
     }
 
-    protected VmDeviceDao getVmDeviceDao() {
-        return vmDeviceDao;
-    }
-
     private List<HostDevice> getHostDevices() {
         if (hostDevices == null) {
             hostDevices = new ArrayList<>();
@@ -122,7 +114,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     protected Map<String, VmHostDevice> getExistingVmHostDevicesByName() {
-        List<VmDevice> existingDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+        List<VmDevice> existingDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
         List<VmHostDevice> result = new ArrayList<>();
         for (VmDevice device : existingDevices) {
             result.add(new VmHostDevice(device));

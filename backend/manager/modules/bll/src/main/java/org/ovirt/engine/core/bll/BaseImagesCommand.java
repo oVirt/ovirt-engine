@@ -26,8 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
@@ -76,11 +74,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     @Override
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    @Override
-    protected DiskImageDynamicDao getDiskImageDynamicDao() {
-        return getDbFacade().getDiskImageDynamicDao();
     }
 
     protected void setImage(DiskImage image) {
@@ -298,11 +291,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
     }
 
     protected void lockImage() {

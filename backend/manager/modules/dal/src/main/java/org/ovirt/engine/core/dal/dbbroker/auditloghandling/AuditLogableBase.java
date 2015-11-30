@@ -26,9 +26,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
@@ -48,6 +51,7 @@ import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -763,6 +767,22 @@ public class AuditLogableBase extends TimeoutBase {
 
     public DiskDao getDiskDao() {
         return getDbFacade().getDiskDao();
+    }
+
+    public DiskImageDao getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
+    }
+
+    public VmDeviceDao getVmDeviceDao() {
+        return getDbFacade().getVmDeviceDao();
+    }
+
+    public BaseDiskDao getBaseDiskDao() {
+        return getDbFacade().getBaseDiskDao();
+    }
+
+    public DiskImageDynamicDao getDiskImageDynamicDao() {
+        return getDbFacade().getDiskImageDynamicDao();
     }
 
     public LunDao getLunDao() {

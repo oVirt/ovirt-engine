@@ -44,11 +44,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.TagDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.util.CollectionUtils;
@@ -511,10 +508,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return true;
     }
 
-    protected VmDeviceDao getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDao();
-    }
-
     /** Overriding to allow spying from this package */
     @Override
     protected VmNicDao getVmNicDao() {
@@ -523,14 +516,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected TagDao getTagDao() {
         return getDbFacade().getTagDao();
-    }
-
-    public DiskDao getDiskDao() {
-        return getDbFacade().getDiskDao();
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 
     protected ImageDao getImageDao() {

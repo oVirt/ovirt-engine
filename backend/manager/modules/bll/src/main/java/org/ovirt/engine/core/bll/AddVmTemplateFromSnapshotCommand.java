@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -201,10 +200,6 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
             cachedSnapshot = getSnapshotDao().get(getParameters().getSourceSnapshotId());
         }
         return cachedSnapshot;
-    }
-
-    protected DiskImageDao getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 
     protected VM getVmFromConfiguration() {

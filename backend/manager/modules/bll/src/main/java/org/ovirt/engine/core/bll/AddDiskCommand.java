@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -334,10 +333,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected DiskLunMapDao getDiskLunMapDao() {
         return DbFacade.getInstance().getDiskLunMapDao();
-    }
-
-    protected DiskImageDynamicDao getDiskImageDynamicDao() {
-        return getDbFacade().getDiskImageDynamicDao();
     }
 
     /**

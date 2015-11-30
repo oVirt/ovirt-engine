@@ -41,11 +41,9 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -60,9 +58,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     @Inject
     private VmDao vmDao;
-
-    @Inject
-    private VmDeviceDao vmDeviceDao;
 
     public AbstractDiskVmCommand(T parameters) {
         this(parameters, null);
@@ -284,10 +279,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return getDbFacade().getImageStorageDomainMapDao();
     }
 
-    protected BaseDiskDao getBaseDiskDao() {
-        return getDbFacade().getBaseDiskDao();
-    }
-
     public String getDiskAlias() {
         return getParameters().getDiskInfo().getDiskAlias();
     }
@@ -399,7 +390,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         vmDevice.setAddress(address);
         getCompensationContext().snapshotEntity(vmDevice);
         getCompensationContext().stateChanged();
-        vmDeviceDao.update(vmDevice);
+        getVmDeviceDao().update(vmDevice);
     }
 
     protected EngineLock lockVmDiskHotPlugWithWait() {

@@ -57,7 +57,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
             }
 
             @Override
-            protected VmDeviceDao getVmDeviceDao() {
+            public VmDeviceDao getVmDeviceDao() {
                 return vmDeviceDaoMock;
             }
 
