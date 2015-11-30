@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -269,10 +268,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
 
         return true;
-    }
-
-    protected ImageDao getImageDao() {
-        return getDbFacade().getImageDao();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {

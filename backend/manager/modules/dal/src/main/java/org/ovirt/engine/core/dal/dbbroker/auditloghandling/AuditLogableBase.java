@@ -32,6 +32,7 @@ import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
+import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -722,7 +724,7 @@ public class AuditLogableBase extends TimeoutBase {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    protected VmNicDao getVmNicDao() {
+    public VmNicDao getVmNicDao() {
         return getDbFacade().getVmNicDao();
     }
 
@@ -795,6 +797,14 @@ public class AuditLogableBase extends TimeoutBase {
 
     public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
+    }
+
+    public TagDao getTagDao() {
+        return getDbFacade().getTagDao();
+    }
+
+    public ImageDao getImageDao() {
+        return getDbFacade().getImageDao();
     }
 
     public DbFacade getDbFacade() {

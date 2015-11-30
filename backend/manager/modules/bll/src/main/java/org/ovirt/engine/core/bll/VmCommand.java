@@ -44,9 +44,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.TagDao;
-import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -506,20 +503,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
 
         return true;
-    }
-
-    /** Overriding to allow spying from this package */
-    @Override
-    protected VmNicDao getVmNicDao() {
-        return super.getVmNicDao();
-    }
-
-    protected TagDao getTagDao() {
-        return getDbFacade().getTagDao();
-    }
-
-    protected ImageDao getImageDao() {
-        return getDbFacade().getImageDao();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {
