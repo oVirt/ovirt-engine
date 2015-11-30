@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -90,10 +91,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setVdsId(parameters.getVdsId());
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
 
     @Override
     protected boolean canDoAction() {
-        if (!isVmExist() || !acquireLockInternal()) {
+        if (!isVmExist()) {
             return false;
         }
 
