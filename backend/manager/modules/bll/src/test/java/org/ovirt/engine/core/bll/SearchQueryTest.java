@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -58,6 +59,7 @@ public class SearchQueryTest extends DbDependentTestBase {
     List<Quota> quotaResultList = new ArrayList<>();
     List<VM> vmResultList = new ArrayList<>();
     List<VmTemplate> vmTemplateResultList = new ArrayList<>();
+    List<VmTemplate> vmTemplateDaoResultList = new ArrayList<>();
     List<VDS> vdsResultList = new ArrayList<>();
     List<VDSGroup> vdsGroupResultList = new ArrayList<>();
     List<StoragePool> storagePoolResultList = new ArrayList<>();
@@ -233,6 +235,19 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vmTemplateDao.getAllWithQuery(matches(getVMTemplateRegexString(search))))
                 .thenReturn(vmTemplateResultList);
+
+        // A template returned by the DAO and by the SearchQuery
+        VmTemplate goodTemplate = new VmTemplate();
+        goodTemplate.setName("Good template");
+        goodTemplate.setTemplateType(VmEntityType.TEMPLATE);
+        vmTemplateDaoResultList.add(goodTemplate);
+        vmTemplateResultList.add(goodTemplate);
+
+        // A template returned by the DAO and removed by the SearchQuery
+        VmTemplate badTemplate = new VmTemplate();
+        badTemplate.setTemplateType(VmEntityType.INSTANCE_TYPE);
+        badTemplate.setName("Bad template");
+        vmTemplateDaoResultList.add(badTemplate);
     }
 
     /**
