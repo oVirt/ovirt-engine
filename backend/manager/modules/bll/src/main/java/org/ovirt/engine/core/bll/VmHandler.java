@@ -1103,16 +1103,20 @@ public class VmHandler {
                                                 VmBase parametersStaticData,
                                                 VDSGroup cluster,
                                                 Map<GraphicsType, GraphicsDevice> graphicsDevices) {
-        if (parametersStaticData.getOsId() == OsRepository.AUTO_SELECT_OS ||
-                parametersStaticData.getDefaultDisplayType() != null) {
+        if (parametersStaticData.getOsId() == OsRepository.AUTO_SELECT_OS) {
             return;
         }
 
-        DisplayType defaultDisplayType = DisplayType.qxl;
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
                 parametersStaticData.getOsId(),
                 CompatibilityVersionUtils.getEffective(parametersStaticData, cluster));
 
+        if (parametersStaticData.getDefaultDisplayType() != null
+                && isDisplayTypeSupported(parametersStaticData.getDefaultDisplayType(), graphicsAndDisplays)) {
+            return;
+        }
+
+        DisplayType defaultDisplayType = null;
         // map holding display type -> set of supported graphics types for this display type
         Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();
 
@@ -1133,6 +1137,24 @@ public class VmHandler {
             }
         }
 
+        if (defaultDisplayType == null) {
+            if (!displayGraphicsSupport.isEmpty()) {// when not found otherwise, let's take osinfo's record as the default
+                Map.Entry<DisplayType, Set<GraphicsType>> entry = displayGraphicsSupport.entrySet().iterator().next();
+                defaultDisplayType = entry.getKey();
+            } else {// no osinfo record
+                defaultDisplayType = DisplayType.qxl;
+            }
+        }
+
         parametersStaticData.setDefaultDisplayType(defaultDisplayType);
+    }
+
+    private static boolean isDisplayTypeSupported(DisplayType displayType, List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays) {
+        for (Pair<GraphicsType, DisplayType> pair : graphicsAndDisplays) {
+            if (displayType.equals(pair.getSecond())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
