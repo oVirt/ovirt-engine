@@ -112,11 +112,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         restoreSnapshotAndRemoveObsoleteSnapshots(getSnapshot());
 
         boolean succeeded = true;
-        List<CinderDisk> cinderDisks = new ArrayList<>();
+        List<CinderDisk> cinderDisksToRestore = new ArrayList<>();
         for (DiskImage image : imagesToRestore) {
             if (image.getImageStatus() != ImageStatus.ILLEGAL) {
                 if (image.getDiskStorageType() == DiskStorageType.CINDER) {
-                    cinderDisks.add((CinderDisk) image);
+                    cinderDisksToRestore.add((CinderDisk) image);
                     continue;
                 }
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
@@ -130,7 +130,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         }
 
-        if (!restoreCinder(cinderDisks, removedSnapshotId)) {
+        if (!restoreCinder(cinderDisksToRestore, removedSnapshotId)) {
             log.error("Error to restore Cinder volumes snapshots");
         }
 
