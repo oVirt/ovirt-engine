@@ -166,6 +166,26 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return true;
     }
 
+    /**
+     * Returns the initial Cinder volume to delete all the Cinder volumes from. The restore process of the Cinder volume
+     * should use this volume to get all its descendants and remove them all. The initial volume is chosen by taking the
+     * previewed snapshot, fetch the parent volume, and retun the other volume.
+     *
+     * @param cinderVolume
+     *            - The cinder volume we fetch the initial volume from (Most of the time it will be the active volume) -
+     * @return - The initial volume of the Cinder disk to delete from.
+     */
+    private CinderDisk getInitialCinderVolumeToDelete(DiskImage cinderVolume) {
+        CinderDisk initialVolumeToDelete = null;
+        List<DiskImage> snapshotsForParent = getDiskImageDao().getAllSnapshotsForParent(cinderVolume.getParentId());
+        for (DiskImage snapshot : snapshotsForParent) {
+            if (!snapshot.getImageId().equals(cinderVolume.getImageId())) {
+                initialVolumeToDelete = (CinderDisk) snapshot;
+            }
+        }
+        return initialVolumeToDelete;
+    }
+
     private RestoreAllCinderSnapshotsParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks,
             Guid removedSnapshotId) {
         RestoreAllCinderSnapshotsParameters restoreParams =
