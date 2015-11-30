@@ -280,7 +280,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         super.setItems(snapshots);
 
         // Try to select the last created snapshot (fallback to active snapshot)
-        if (getSelectedItem() == null) {
+        if (getSelectedItem() == null && !snapshots.isEmpty()) {
             setSelectedItem(snapshots.size() > 1 ? snapshots.get(1) : snapshots.get(0));
         }
 
