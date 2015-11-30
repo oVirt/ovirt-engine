@@ -3542,6 +3542,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it has insufficient CPU cores to run the VM")
     String VAR__DETAIL__NOT_ENOUGH_CORES();
 
+    @DefaultStringValue("$detailMessage missing online cpu core(s) ${missingCores}")
+    String VAR__DETAIL__VM_PINNING_PCPU_DOES_NOT_EXIST();
+
     @DefaultStringValue("$detailMessage it has insufficient NUMA node free memory to run the VM")
     String VAR__DETAIL__NUMA_PINNING_FAILED();
 

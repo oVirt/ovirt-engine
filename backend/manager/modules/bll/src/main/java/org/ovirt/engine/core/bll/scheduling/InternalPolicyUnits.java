@@ -9,6 +9,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
@@ -56,6 +57,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(PowerSavingWeightPolicyUnit.class);
         enabledUnits.add(VmAffinityFilterPolicyUnit.class);
         enabledUnits.add(VmAffinityWeightPolicyUnit.class);
+        enabledUnits.add(CpuPinningPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {

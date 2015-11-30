@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -721,7 +723,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // check cpuPinning
-        if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
+        if (!validate(isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData()))) {
             return false;
         }
 
