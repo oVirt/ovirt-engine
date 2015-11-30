@@ -273,6 +273,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void unlockVm() {
+        // Set VM property to null in order to refresh it from db
+        setVm(null);
         if (getVm() != null) {
             if (getVm().getStatus() == VMStatus.ImageLocked) {
                 VmHandler.unlockVm(getVm(), getCompensationContext());
