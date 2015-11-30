@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -15,8 +16,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -66,23 +65,23 @@ public class SearchQueryTest extends DbDependentTestBase {
     @Before
     public void setup() {
         facadeMock = DbFacade.getInstance();
-        final DiskDao diskDao = Mockito.mock(DiskDao.class);
-        final QuotaDao quotaDao = Mockito.mock(QuotaDao.class);
-        final VmDao vmDao = Mockito.mock(VmDao.class);
-        final VdsDao vdsDao = Mockito.mock(VdsDao.class);
-        final VdsGroupDao vdsGroupDao = Mockito.mock(VdsGroupDao.class);
-        final StoragePoolDao storagePoolDao = Mockito.mock(StoragePoolDao.class);
-        final GlusterVolumeDao glusterVolumeDao = Mockito.mock(GlusterVolumeDao.class);
-        final NetworkViewDao networkViewDao = Mockito.mock(NetworkViewDao.class);
+        final DiskDao diskDao = mock(DiskDao.class);
+        final QuotaDao quotaDao = mock(QuotaDao.class);
+        final VmDao vmDao = mock(VmDao.class);
+        final VdsDao vdsDao = mock(VdsDao.class);
+        final VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
+        final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
+        final GlusterVolumeDao glusterVolumeDao = mock(GlusterVolumeDao.class);
+        final NetworkViewDao networkViewDao = mock(NetworkViewDao.class);
 
-        Mockito.when(facadeMock.getDiskDao()).thenReturn(diskDao);
-        Mockito.when(facadeMock.getQuotaDao()).thenReturn(quotaDao);
-        Mockito.when(facadeMock.getVmDao()).thenReturn(vmDao);
-        Mockito.when(facadeMock.getVdsDao()).thenReturn(vdsDao);
-        Mockito.when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDao);
-        Mockito.when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
-        Mockito.when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
-        Mockito.when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
+        when(facadeMock.getDiskDao()).thenReturn(diskDao);
+        when(facadeMock.getQuotaDao()).thenReturn(quotaDao);
+        when(facadeMock.getVmDao()).thenReturn(vmDao);
+        when(facadeMock.getVdsDao()).thenReturn(vdsDao);
+        when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDao);
+        when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
+        when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
         // mock Daos
         mockDiskSao(diskDao);
         mockQuotaDao(quotaDao);
@@ -104,13 +103,13 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockDiskSao(final DiskDao diskDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(diskDao.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
+        when(diskDao.getAllWithQuery(matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
     private void mockQuotaDao(final QuotaDao quotaDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(quotaDao.getAllWithQuery(Matchers.matches(getQuotaRegexString(search))))
+        when(quotaDao.getAllWithQuery(matches(getQuotaRegexString(search))))
                 .thenReturn(quotaResultList);
     }
 
@@ -136,7 +135,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockVdsGroupDao(final VdsGroupDao vdsGroupDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vdsGroupDao.getAllWithQuery(Matchers.matches(getVdsGroupRegexString(search))))
+        when(vdsGroupDao.getAllWithQuery(matches(getVdsGroupRegexString(search))))
                 .thenReturn(vdsGroupResultList);
     }
 
@@ -150,7 +149,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockStoragePoolDao(final StoragePoolDao storagePoolDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(storagePoolDao.getAllWithQuery(Matchers.matches(getStoragePoolRegexString(search))))
+        when(storagePoolDao.getAllWithQuery(matches(getStoragePoolRegexString(search))))
                 .thenReturn(storagePoolResultList);
     }
 
@@ -164,13 +163,13 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockGlusterVolumeDao(final GlusterVolumeDao glusterVolumeDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(glusterVolumeDao.getAllWithQuery(Matchers.matches(getGlusterVolumeRegexString(search))))
+        when(glusterVolumeDao.getAllWithQuery(matches(getGlusterVolumeRegexString(search))))
                 .thenReturn(glusterVolumeList);
     }
 
     private void mockNetworkDao(final NetworkViewDao networkViewDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(networkViewDao.getAllWithQuery(Matchers.matches(getNetworkRegexString(search))))
+        when(networkViewDao.getAllWithQuery(matches(getNetworkRegexString(search))))
                 .thenReturn(networkResultList);
     }
 
@@ -199,7 +198,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockVdsDao(final VdsDao vdsDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vdsDao.getAllWithQuery(Matchers.matches(getVdsRegexString(search))))
+        when(vdsDao.getAllWithQuery(matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
     }
 
@@ -213,7 +212,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      */
     private void mockVMDao(final VmDao vmDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        Mockito.when(vmDao.getAllUsingQuery(Matchers.matches(getVMRegexString(search))))
+        when(vmDao.getAllUsingQuery(matches(getVMRegexString(search))))
                 .thenReturn(vmResultList);
     }
 
