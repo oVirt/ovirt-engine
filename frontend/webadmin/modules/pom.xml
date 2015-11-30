@@ -35,7 +35,6 @@
     <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <!-- Using older maven-processor-plugin version for Maven 2 compatibility -->
     <maven-processor-plugin.version>1.3.7</maven-processor-plugin.version>
-    <maven-checkstyle-plugin.version>2.8</maven-checkstyle-plugin.version>
     <!-- Activate load time weaving of aspects via AspectJ JVM agent -->
     <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
     <!-- Control verbosity of GWT compiler -->
