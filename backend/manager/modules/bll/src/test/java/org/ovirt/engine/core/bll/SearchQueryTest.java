@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.doNothing;
@@ -320,7 +320,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Disks" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(diskImageResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -331,7 +331,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Disk" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(diskImageResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -339,7 +339,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("VM" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vmResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -347,7 +347,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("VMs" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VM);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vmResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -355,7 +355,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Host" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -363,7 +363,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Hosts" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VDS);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -374,7 +374,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vdsGroupResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -385,7 +385,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(vdsGroupResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -393,7 +393,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Datacenter" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(storagePoolResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     // TODO: Search using search text "Datacenters:" is not supported.
@@ -403,7 +403,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.StoragePool);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(storagePoolResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -411,7 +411,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Volumes" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.GlusterVolume);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(glusterVolumeList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(glusterVolumeList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -419,7 +419,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Quota" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Quota);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(quotaResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
@@ -427,6 +427,6 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchParameters searchParam = new SearchParameters("Network" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Network);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertTrue(networkResultList == searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(networkResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 }
