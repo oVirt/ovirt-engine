@@ -18,6 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -207,6 +209,10 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vdsDao.getAllWithQuery(matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
+        VDS vds = new VDS();
+        vds.setCpuFlags("flag");
+        vds.setVdsGroupCompatibilityVersion(Version.getLast());
+        vdsResultList.add(vds);
     }
 
     /**
@@ -356,6 +362,12 @@ public class SearchQueryTest extends DbDependentTestBase {
         QuotaManager quotaManager = mock(QuotaManager.class);
         doNothing().when(quotaManager).updateUsage(anyListOf(Quota.class));
         when(searchQuery.getQuotaManager()).thenReturn(quotaManager);
+
+        CpuFlagsManagerHandler cpuFlagsManagerHandler = mock(CpuFlagsManagerHandler.class);
+        ServerCpu resultCpu = new ServerCpu();
+        resultCpu.setCpuName("cpu");
+        when(cpuFlagsManagerHandler.findMaxServerCpuByFlags("flag", Version.getLast())).thenReturn(resultCpu);
+        when(searchQuery.getCpuFlagsManagerHandler()).thenReturn(cpuFlagsManagerHandler);
     }
 
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
@@ -414,6 +426,8 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(1, vdsResultList.size());
+        assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
     }
 
     @Test
@@ -422,6 +436,8 @@ public class SearchQueryTest extends DbDependentTestBase {
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertEquals(vdsResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(1, vdsResultList.size());
+        assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
     }
 
     @Test
