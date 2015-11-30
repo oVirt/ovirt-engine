@@ -124,7 +124,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
     private VM mockVmAndReturnFromDao() {
         vm = mockVm();
-        when(vmDao.get(vmId, getQuery().getUserID(), getQueryParameters().isFiltered())).thenReturn(vm);
+        when(vmDao.get(vmId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(vm);
         return vm;
     }
 }
