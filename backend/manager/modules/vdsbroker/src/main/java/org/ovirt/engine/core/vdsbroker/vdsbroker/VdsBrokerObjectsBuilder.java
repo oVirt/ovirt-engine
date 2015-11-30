@@ -193,7 +193,7 @@ public class VdsBrokerObjectsBuilder {
         if (devices != null) {
             for (Object device : devices) {
                 Map<String, Object> deviceMap = (Map<String, Object>) device;
-                if (VdsProperties.INTERFACE.equals(deviceMap.get(VdsProperties.Type))) {
+                if (VdsProperties.VM_INTERFACE_DEVICE_TYPE.equals(deviceMap.get(VdsProperties.Type))) {
                     VmNetworkInterface nic = new VmNetworkInterface();
                     nic.setMacAddress((String) deviceMap.get(VdsProperties.MAC_ADDR));
                     nic.setName((String) deviceMap.get(VdsProperties.Name));
