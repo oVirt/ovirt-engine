@@ -230,14 +230,14 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
 					CMD1="TRUNCATE TABLE business_entity_snapshot cascade;"
 					if [ -n "${CLEAR_JOB_STEPS}" ]; then
 						caution "This will remove all Tasks in async_tasks table, its related Job Steps and Compensation data!!!"
-						CMD1="${CMD1}TRUNCATE TABLE step cascade;"
+						CMD1="${CMD1}TRUNCATE TABLE step cascade;TRUNCATE TABLE job CASCADE;"
 					else
 						caution "This will remove all async_tasks table content and its related Compensation data!!!"
 					fi
 				else
 					if [ -n "${CLEAR_JOB_STEPS}" ]; then
 						caution "This will remove all Tasks in async_tasks table and its related Job Steps!!!"
-						CMD1="${CMD1}TRUNCATE TABLE step cascade;"
+						CMD1="${CMD1}TRUNCATE TABLE step cascade;TRUNCATE TABLE job CASCADE;"
 					else
 						caution "This will remove all async_tasks table content!!!"
 					fi
