@@ -118,10 +118,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteOrphanJobs() RETURNS VOID
+   AS $procedure$
+BEGIN
+    DELETE FROM job WHERE NOT EXISTS (SELECT 1 from step where step.job_id = job.job_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION DeleteJobStepsByZombieCommandId(v_command_id UUID) RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM step WHERE step_id IN (SELECT step_id from GetAsyncTasksZombies() WHERE command_id = v_command_id);
+    PERFORM DeleteOrphanJobs();
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -129,6 +138,7 @@ CREATE OR REPLACE FUNCTION DeleteJobStepsByCommandId(v_command_id UUID) RETURNS 
    AS $procedure$
 BEGIN
     DELETE FROM step WHERE step_id IN (SELECT step_id from async_tasks WHERE command_id = v_command_id);
+    PERFORM DeleteOrphanJobs();
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -136,6 +146,7 @@ CREATE OR REPLACE FUNCTION DeleteJobStepsZombies() RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM step WHERE step_id IN (SELECT step_id FROM GetAsyncTasksZombies());
+    PERFORM DeleteOrphanJobs();
 END; $procedure$
 LANGUAGE plpgsql;
 
