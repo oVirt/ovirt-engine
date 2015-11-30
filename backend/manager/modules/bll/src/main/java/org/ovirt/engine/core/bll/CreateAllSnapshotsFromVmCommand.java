@@ -164,13 +164,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return toReturn;
     }
 
-    protected List<DiskImage> getSnappableVmDisks() {
-        List<Disk> disks = getDiskDao().getAllForVm(getVm().getId());
-        return ImagesHandler.filterImageDisks(disks, false, true, false);
-    }
-
     private boolean validateStorage() {
-        List<DiskImage> vmDisksList = getSnappableVmDisks();
+        List<DiskImage> vmDisksList = getDisksListForChecks();
         vmDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(vmDisksList);
         List<DiskImage> allDisks = new ArrayList<>(vmDisksList);
 
