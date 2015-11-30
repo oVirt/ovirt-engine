@@ -116,6 +116,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
 
     @Override
     protected void endSuccessfully() {
+        removeRedundantVolumesForOrphanedDisks();
         if (!getParameters().isParentHasTasks()) {
             getBackend().endAction(getParameters().getParentCommand(),
                     getParameters().getParentParameters(),
@@ -125,6 +126,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
 
     @Override
     protected void endWithFailure() {
+        removeRedundantVolumesForOrphanedDisks();
         if (!getParameters().isParentHasTasks()) {
             getParameters().getParentParameters().setTaskGroupSuccess(false);
             getBackend().endAction(getParameters().getParentCommand(),
@@ -132,6 +134,14 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
                     cloneContextAndDetachFromParent());
         }
         setSucceeded(true);
+    }
+
+    private void removeRedundantVolumesForOrphanedDisks() {
+        List<CinderDisk> cinderVolumesToRemove = getParameters().getCinderVolumesToRemove();
+        for (CinderDisk cinderVolume : cinderVolumesToRemove) {
+            getDbFacade().getImageStorageDomainMapDao().remove(cinderVolume.getImageId());
+            getImageDao().remove(cinderVolume.getImageId());
+        }
     }
 
     @Override
