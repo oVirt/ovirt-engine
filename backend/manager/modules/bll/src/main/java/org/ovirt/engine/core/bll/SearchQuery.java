@@ -41,8 +41,6 @@ import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDao;
@@ -175,16 +173,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VDS> searchVDSsByDb() {
-        return genericSearch(getDbFacade().getVdsDao(), true, new Filter<VDS>() {
-            @Override
-            public List<VDS> filter(List<VDS> data) {
-                for (VDS vds : data) {
-                    vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
-                            vds.getVdsGroupCompatibilityVersion()));
-                }
-                return data;
-            }
-        });
+        List<VDS> data = genericSearch(getDbFacade().getVdsDao(), true);
+        for (VDS vds : data) {
+            vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
+                    vds.getVdsGroupCompatibilityVersion()));
+        }
+        return data;
     }
 
     private List<DirectoryUser> searchDirectoryUsers() {
@@ -245,20 +239,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<VmTemplate> searchVMTemplates() {
 
-        return genericSearch(getDbFacade().getVmTemplateDao(), true, new Filter<VmTemplate>() {
-            @Override
-            public List<VmTemplate> filter(final List<VmTemplate> data) {
-                List<VmTemplate> filtered = new ArrayList<>();
-                for (IVdcQueryable vmt_helper : data) {
-                    VmTemplate vmt = (VmTemplate) vmt_helper;
-                    if (vmt.getTemplateType() != VmEntityType.TEMPLATE) {
-                        continue;
-                    }
-                    filtered.add(vmt);
-                }
-                return filtered;
-            }
-        });
+        return genericSearch(getDbFacade().getVmTemplateDao(), true).stream()
+                .filter(v -> v.getTemplateType() == VmEntityType.TEMPLATE)
+                .collect(Collectors.toList());
     }
 
     private List<VmTemplate> searchInstanceTypes() {
@@ -267,19 +250,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
             final boolean useCache) {
-        return genericSearch(dao, useCache, null);
-    }
-
-    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
-            final boolean useCache,
-            final Filter<T> filter) {
         final QueryData data = initQueryData(useCache);
         if (data == null) {
             return new ArrayList<>();
         }
 
         log.debug("Executing generic query: {}", data.getQuery());
-        return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
+        return dao.getAllWithQuery(data.getQuery());
     }
 
     private List<AuditLog> searchAuditLogEvents() {
