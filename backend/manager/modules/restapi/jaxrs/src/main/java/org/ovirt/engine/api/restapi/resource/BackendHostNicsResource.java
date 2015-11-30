@@ -48,9 +48,11 @@ public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNic, VdsNetworkInterface>
         implements HostNicsResource {
 
-    static final String[] PF_SUB_COLLECTIONS = { "virtualfunctionallowedlabels", "virtualfunctionallowednetworks" };
+    static final String VIRTUAL_FUNCTION_ALLOWED_LABELS = "virtualfunctionallowedlabels";
+    static final String LABELS = "labels";
+    static final String[] PF_SUB_COLLECTIONS = { VIRTUAL_FUNCTION_ALLOWED_LABELS, "virtualfunctionallowednetworks" };
     static final String[] SUB_COLLECTIONS = ArrayUtils.concat(
-            new String[] { "statistics", "labels", "networkattachments" }, PF_SUB_COLLECTIONS);
+            new String[] { "statistics", LABELS, "networkattachments" }, PF_SUB_COLLECTIONS);
     private static final String UPDATE_VFS_CONFIG_ACTION = "updatevirtualfunctionsconfiguration";
 
     private String hostId;

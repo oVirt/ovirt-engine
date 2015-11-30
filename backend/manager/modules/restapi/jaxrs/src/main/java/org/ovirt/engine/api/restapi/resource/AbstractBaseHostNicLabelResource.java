@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Labels;
 import org.ovirt.engine.api.resource.LabelResource;
@@ -37,6 +38,27 @@ public abstract class AbstractBaseHostNicLabelResource extends AbstractBackendSu
 
         return notFound();
     }
+
+    @Override
+    protected Label addLinks(Label label, String... subCollectionMembersToExclude) {
+        super.addLinks(label, subCollectionMembersToExclude);
+        overrideHref(label);
+        return label;
+    }
+
+    void overrideHref(Label label) {
+        final String href = label.getHref();
+        if (href != null) {
+            final String[] hRefSegments = href.split("/");
+            if (hRefSegments.length>=2) {
+                hRefSegments[hRefSegments.length - 2] = getUriPath();
+                final String fixedHref = StringUtils.join(hRefSegments, '/');
+                label.setHref(fixedHref);
+            }
+        }
+    }
+
+    protected abstract String getUriPath();
 
     @Override
     public Response remove() {
