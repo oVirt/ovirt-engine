@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
@@ -55,6 +57,7 @@ public class SearchQueryTest extends DbDependentTestBase {
     List<Disk> diskImageResultList = new ArrayList<>();
     List<Quota> quotaResultList = new ArrayList<>();
     List<VM> vmResultList = new ArrayList<>();
+    List<VmTemplate> vmTemplateResultList = new ArrayList<>();
     List<VDS> vdsResultList = new ArrayList<>();
     List<VDSGroup> vdsGroupResultList = new ArrayList<>();
     List<StoragePool> storagePoolResultList = new ArrayList<>();
@@ -67,6 +70,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         final DiskDao diskDao = mock(DiskDao.class);
         final QuotaDao quotaDao = mock(QuotaDao.class);
         final VmDao vmDao = mock(VmDao.class);
+        final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
         final VdsDao vdsDao = mock(VdsDao.class);
         final VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
         final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
@@ -76,6 +80,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         when(facadeMock.getDiskDao()).thenReturn(diskDao);
         when(facadeMock.getQuotaDao()).thenReturn(quotaDao);
         when(facadeMock.getVmDao()).thenReturn(vmDao);
+        when(facadeMock.getVmTemplateDao()).thenReturn(vmTemplateDao);
         when(facadeMock.getVdsDao()).thenReturn(vdsDao);
         when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDao);
         when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
@@ -85,6 +90,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         mockDiskDao(diskDao);
         mockQuotaDao(quotaDao);
         mockVMDao(vmDao);
+        mockVMTemplateDao(vmTemplateDao);
         mockVdsDao(vdsDao);
         mockVdsGroupDao(vdsGroupDao);
         mockStoragePoolDao(storagePoolDao);
@@ -216,6 +222,20 @@ public class SearchQueryTest extends DbDependentTestBase {
     }
 
     /**
+     * Mock VM Template Dao so that when getAllWithQuery will be called with the appropriate query string, a unique list
+     * will be returned. <BR/>
+     * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
+     * API.
+     * @param vmTemplateDao
+     *            - The dao to be used
+     */
+    private void mockVMTemplateDao(final VmTemplateDao vmTemplateDao) {
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
+        when(vmTemplateDao.getAllWithQuery(matches(getVMTemplateRegexString(search))))
+                .thenReturn(vmTemplateResultList);
+    }
+
+    /**
      * Regex string which contains all of the VM properties.
      * @param search
      */
@@ -225,6 +245,20 @@ public class SearchQueryTest extends DbDependentTestBase {
                 .append(search.getDefaultSort(SearchObjects.VM_OBJ_NAME))
                 .append(".*")
                 .append(search.getRelatedTableName(SearchObjects.VM_OBJ_NAME, false))
+                .append(".* ");
+        return query.toString();
+    }
+
+    /**
+     * Regex string which contains all of the VM Template properties.
+     * @param search
+     */
+    private static String getVMTemplateRegexString(SearchObjectAutoCompleter search) {
+        StringBuilder query = new StringBuilder();
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.TEMPLATE_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableName(SearchObjects.TEMPLATE_OBJ_NAME, false))
                 .append(".* ");
         return query.toString();
     }
@@ -341,6 +375,15 @@ public class SearchQueryTest extends DbDependentTestBase {
         searchQuery.executeQueryCommand();
         assertEquals(vmResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
+
+    @Test
+    public void testGetAllVMTemplatesSearch() throws Exception {
+        SearchParameters searchParam = new SearchParameters("Template" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.VmTemplate);
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
+        searchQuery.executeQueryCommand();
+        assertEquals(vmTemplateResultList, searchQuery.getQueryReturnValue().getReturnValue());
+    }
+
 
     @Test
     public void testGetAllMultiVmSearch() throws Exception {
