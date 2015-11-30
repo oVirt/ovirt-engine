@@ -41,9 +41,11 @@ public class SSOLogoutServlet extends HttpServlet {
             if (StringUtils.isNotEmpty(engineSessionId)) {
                 InitialContext ctx = new InitialContext();
                 try {
+                    VdcQueryParametersBase params = new VdcQueryParametersBase(engineSessionId);
+                    params.setFiltered(true);
                     VdcQueryReturnValue retValue = FiltersHelper.getBackend(ctx).runQuery(
                             VdcQueryType.GetEngineSessionIdToken,
-                            new VdcQueryParametersBase(engineSessionId)
+                            params
                     );
                     token = retValue.getReturnValue();
                     FiltersHelper.getBackend(ctx).runAction(
