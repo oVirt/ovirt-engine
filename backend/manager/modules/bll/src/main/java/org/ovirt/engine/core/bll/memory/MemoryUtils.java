@@ -69,8 +69,8 @@ public class MemoryUtils {
 
         DiskImage dataVolume = new DiskImage();
         dataVolume.setDiskAlias("metadata");
-        dataVolume.setvolumeFormat(VolumeFormat.COW);
-        dataVolume.setVolumeType(VolumeType.Sparse);
+        dataVolume.setvolumeFormat(VolumeFormat.RAW);
+        dataVolume.setVolumeType(VolumeType.Preallocated);
         dataVolume.setSize(metadataSize);
         dataVolume.setActualSizeInBytes(metadataSize);
         dataVolume.getSnapshots().add(dataVolume);
@@ -88,8 +88,8 @@ public class MemoryUtils {
     public static DiskImage createMetadataDisk() {
         DiskImage image = new DiskImage();
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
-        image.setVolumeType(VolumeType.Sparse);
-        image.setvolumeFormat(VolumeFormat.COW);
+        image.setVolumeType(VolumeType.Preallocated);
+        image.setvolumeFormat(VolumeFormat.RAW);
         image.setDiskInterface(DiskInterface.VirtIO);
         return image;
     }
