@@ -924,14 +924,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             return;
         }
 
-        VM vm = getEntity();
+        final VM vm = getEntity();
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
                 StoragePool dataCenter = (StoragePool) returnValue;
-                VM vm = model.getEntity();
 
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getCompatibilityVersion();
