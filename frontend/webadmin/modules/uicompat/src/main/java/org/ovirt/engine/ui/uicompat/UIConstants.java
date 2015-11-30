@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
-
 import com.google.gwt.i18n.client.Constants;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
@@ -2041,6 +2040,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("V4")
     String nfsVersion4();
+
+    @DefaultStringValue("V4.1")
+    String nfsVersion41();
 
     @DefaultStringValue("DirectLUN disk is not supported by the Data Center Compatibility Version")
     String directLUNDiskNotSupported();

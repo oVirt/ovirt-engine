@@ -69,6 +69,14 @@ public interface Enums extends LocalizedEnums {
 
     String StorageType___UNKNOWN();
 
+    String NfsVersion___V3();
+
+    String NfsVersion___V4();
+
+    String NfsVersion___V41();
+
+    String NfsVersion___AUTO();
+
     String StorageFormatType___V1();
 
     String StorageFormatType___V2();
