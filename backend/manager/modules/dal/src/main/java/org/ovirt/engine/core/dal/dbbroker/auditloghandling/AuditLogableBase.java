@@ -47,6 +47,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
@@ -805,6 +806,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public ImageDao getImageDao() {
         return getDbFacade().getImageDao();
+    }
+
+    public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
+        return getDbFacade().getUnregisteredOVFDataDao();
     }
 
     public DbFacade getDbFacade() {

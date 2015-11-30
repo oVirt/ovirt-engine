@@ -61,7 +61,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -124,8 +123,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected Guid getMasterDomainIdFromDb() {
         Guid ret = Guid.Empty;
         if (getStoragePool() != null) {
-            ret = DbFacade.getInstance()
-                    .getStorageDomainDao()
+            ret = getStorageDomainDao()
                     .getMasterStorageDomainIdForPool(getStoragePool().getId());
         }
 
@@ -174,7 +172,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         List<VM> vmRelatedToDomain = getVmDao().getAllForStorageDomain(storageDomain.getId());
         List<String> vmsInPreview = vmRelatedToDomain.stream().filter(vm -> !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()).map(VM::getName).collect(Collectors.toList());
 
-        List<VM> vmsWithDisksOnMultipleStorageDomain = getDbFacade().getVmDao().getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
+        List<VM> vmsWithDisksOnMultipleStorageDomain = getVmDao().getAllVMsWithDisksOnOtherStorageDomain(storageDomain.getId());
         vmRelatedToDomain.removeAll(vmsWithDisksOnMultipleStorageDomain);
         List<String> entitiesDeleteProtected = new ArrayList<>();
         List<String> vmsInPool = new ArrayList<>();
@@ -273,10 +271,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 }
             });
         }
-    }
-
-    protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-        return getDbFacade().getUnregisteredOVFDataDao();
     }
 
     protected boolean checkStoragePoolStatus(StoragePoolStatus status) {
@@ -384,7 +378,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         ovfDisk.getId(),
                         StorageDomainOvfInfoStatus.OUTDATED,
                         null);
-        getDbFacade().getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
+        getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
     }
 
     protected void updateStorageDomainFormatIfNeeded(StorageDomain domain) {

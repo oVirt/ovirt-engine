@@ -206,7 +206,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
-            protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
+            public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
                 return unregisteredOVFDataDao;
             }
 

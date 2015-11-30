@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -362,10 +361,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected StorageDomain getStorageDomain(Guid domainId) {
         return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
-    }
-
-    protected UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-        return getDbFacade().getUnregisteredOVFDataDao();
     }
 
     @Override
