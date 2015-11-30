@@ -72,10 +72,13 @@ public abstract class AbstractBaseHostNicLabelsResource extends AbstractBackendC
     }
 
     @Override
-    protected Label addLinks(Label model,
+    protected Label addLinks(Label label,
             Class<? extends BaseResource> suggestedParent,
             String... excludeSubCollectionMembers) {
-        return super.addLinks(model, HostNIC.class);
+        Label resultLabel = super.addLinks(label, HostNIC.class);
+        final AbstractBaseHostNicLabelResource labelResource = createSingularResource(resultLabel.getId());
+        labelResource.overrideHref(resultLabel);
+        return resultLabel;
     }
 
     public Guid getHostNicId() {

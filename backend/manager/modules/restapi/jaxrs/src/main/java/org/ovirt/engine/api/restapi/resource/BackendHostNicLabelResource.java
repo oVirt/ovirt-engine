@@ -19,6 +19,11 @@ public class BackendHostNicLabelResource extends AbstractBaseHostNicLabelResourc
     }
 
     @Override
+    protected String getUriPath() {
+        return BackendHostNicsResource.LABELS;
+    }
+
+    @Override
     protected Response performRemove() {
         return performAction(VdcActionType.UnlabelNic, new LabelNicParameters(parent.getHostNicId(), id));
     }

@@ -19,6 +19,11 @@ public class BackendVirtualFunctionAllowedLabelResource extends AbstractBaseHost
     }
 
     @Override
+    protected String getUriPath() {
+        return BackendHostNicsResource.VIRTUAL_FUNCTION_ALLOWED_LABELS;
+    }
+
+    @Override
     protected Response performRemove() {
         return performAction(VdcActionType.RemoveVfsConfigLabel,
                 new VfsConfigLabelParameters(parent.getHostNicId(), id));
