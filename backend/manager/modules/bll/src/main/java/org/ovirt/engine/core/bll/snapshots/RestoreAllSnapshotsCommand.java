@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -171,6 +172,22 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns the initial Cinder volume to delete all the Cinder volumes from. The restore process of the Cinder volume
+     * should use this volume to get all its descendants and remove them all. The initial volume is chosen by taking the
+     * previewed snapshot, fetch the parent volume, and retun the other volume.
+     *
+     * @param cinderVolume
+     *            - The cinder volume we fetch the initial volume from (Most of the time it will be the active volume) -
+     * @return - The initial volume of the Cinder disk to delete from.
+     */
+    private CinderDisk getInitialCinderVolumeToDelete(DiskImage cinderVolume) {
+        List<DiskImage> snapshotsForParent = getDiskImageDao().getAllSnapshotsForParent(cinderVolume.getParentId());
+        Optional<DiskImage> cinderVolumeToRemove = snapshotsForParent.stream().filter(snapshot ->
+                !snapshot.getImageId().equals(cinderVolume.getImageId())).map(Optional::ofNullable).findFirst().orElse(null);
+        return cinderVolumeToRemove != null ? (CinderDisk) cinderVolumeToRemove.get() : null;
     }
 
     private RestoreAllCinderSnapshotsParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks,
