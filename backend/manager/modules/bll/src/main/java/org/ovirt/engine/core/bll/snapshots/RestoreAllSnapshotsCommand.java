@@ -138,15 +138,16 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         }
 
-        if (!restoreCinder(cinderDisksToRestore, removedSnapshotId)) {
-            log.error("Error to restore Cinder volumes snapshots");
-        }
-
+        List<CinderDisk> cinderVolumesToRemove = new ArrayList<>();
+        List<CinderDisk> cinderDisksToRemove = new ArrayList<>();
         removeSnapshotsFromDB();
-        removeUnusedImages();
+        removeUnusedImages(cinderVolumesToRemove);
 
-        if (!getTaskIdList().isEmpty()) {
-            deleteOrphanedImages();
+        if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
+            deleteOrphanedImages(cinderDisksToRemove);
+            if (!restoreCinderDisks(removedSnapshotId, cinderDisksToRestore, cinderDisksToRemove, cinderVolumesToRemove)) {
+                log.error("Error to restore Cinder volumes snapshots");
+            }
         } else {
             getVmStaticDao().incrementDbGeneration(getVm().getId());
             getSnapshotDao().updateStatus(getSnapshot().getId(), SnapshotStatus.OK);
@@ -156,12 +157,18 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         setSucceeded(succeeded);
     }
 
-    protected boolean restoreAllCinderDisks(List<CinderDisk> cinderDisks, Guid removedSnapshotId) {
+    protected boolean restoreAllCinderDisks(List<CinderDisk> cinderDisksToRestore,
+                                            List<CinderDisk> cinderDisksToRemove,
+                                            List<CinderDisk> cinderVolumesToRemove,
+                                            Guid removedSnapshotId) {
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                 VdcActionType.RestoreAllCinderSnapshots,
-                buildCinderChildCommandParameters(cinderDisks, removedSnapshotId),
+                        buildCinderChildCommandParameters(cinderDisksToRestore,
+                                cinderDisksToRemove,
+                                cinderVolumesToRemove,
+                                removedSnapshotId),
                 cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisks));
+                CINDERStorageHelper.getStorageEntities(cinderDisksToRestore));
         try {
             VdcReturnValueBase vdcReturnValueBase = future.get();
             if (!vdcReturnValueBase.getSucceeded()) {
@@ -192,10 +199,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return cinderVolumeToRemove != null ? (CinderDisk) cinderVolumeToRemove.get() : null;
     }
 
-    private RestoreAllCinderSnapshotsParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks,
+    private RestoreAllCinderSnapshotsParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisksToRestore,
+            List<CinderDisk> cinderDisksToRemove,
+            List<CinderDisk> cinderVolumesToRemove,
             Guid removedSnapshotId) {
         RestoreAllCinderSnapshotsParameters restoreParams =
-                new RestoreAllCinderSnapshotsParameters(getVmId(), cinderDisks);
+                new RestoreAllCinderSnapshotsParameters(getVmId(),
+                        cinderDisksToRestore,
+                        cinderDisksToRemove,
+                        cinderVolumesToRemove);
         restoreParams.setRemovedSnapshotId(removedSnapshotId);
         restoreParams.setSnapshot(getSnapshot());
         restoreParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
@@ -248,17 +260,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
     }
 
-    protected void deleteOrphanedImages() {
+    protected void deleteOrphanedImages(List<CinderDisk> cinderDisksToRemove) {
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
         Set<Guid> deletedDisksIds = new HashSet<>();
-        List<CinderDisk> cinderDisks = new ArrayList<>();
         for (DiskImage image : getDiskImageDao().getImagesWithNoDisk(getVm().getId())) {
             if (!deletedDisksIds.contains(image.getId())) {
                 deletedDisksIds.add(image.getId());
                 if (image.getDiskStorageType() == DiskStorageType.CINDER) {
-                    cinderDisks.add((CinderDisk) image);
-                    noImagesRemovedYet = false;
+                    cinderDisksToRemove.add((CinderDisk) image);
                     continue;
                 }
                 returnValue = runAsyncTask(VdcActionType.RemoveImage,
@@ -272,40 +282,45 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 noImagesRemovedYet = false;
             }
         }
-        if (!restoreCinder(cinderDisks, null)) {
-            log.error("Error deleting orphaned Cinder volumes to restore snapshots");
-        }
     }
 
-    private boolean restoreCinder(List<CinderDisk> cinderDisks, Guid removedSnapshotId) {
-        if (!cinderDisks.isEmpty()) {
-            return restoreAllCinderDisks(cinderDisks, removedSnapshotId);
+    private boolean restoreCinderDisks(Guid removedSnapshotId, List<CinderDisk> cinderDisksToRestore,
+                                  List<CinderDisk> cinderDisksToRemove,
+                                  List<CinderDisk> cinderVolumesToRemove) {
+        if (!cinderDisksToRestore.isEmpty() || !cinderDisksToRemove.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
+            return restoreAllCinderDisks(cinderDisksToRestore,
+                    cinderDisksToRemove,
+                    cinderVolumesToRemove,
+                    removedSnapshotId);
         }
         return true;
     }
 
-    private void removeUnusedImages() {
+    private void removeUnusedImages(List<CinderDisk> cinderVolumesToRemove) {
         Set<Guid> imageIdsUsedByActiveSnapshot = new HashSet<>();
         for (DiskImage diskImage : getImagesList()) {
             imageIdsUsedByActiveSnapshot.add(diskImage.getId());
         }
 
         List<DiskImage> imagesToRemove = new ArrayList<>();
+
         for (Guid snapshotToRemove : snapshotsToRemove) {
             List<DiskImage> snapshotDiskImages = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotToRemove);
             imagesToRemove.addAll(snapshotDiskImages);
         }
 
         Set<Guid> removeInProcessImageIds = new HashSet<>();
-        List<CinderDisk> cinderDisks = new ArrayList<>();
         for (DiskImage diskImage : imagesToRemove) {
             if (imageIdsUsedByActiveSnapshot.contains(diskImage.getId()) ||
                     removeInProcessImageIds.contains(diskImage.getId())) {
                 continue;
             }
 
-            if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
-                cinderDisks.add((CinderDisk) diskImage);
+            List<DiskImage> diskImagesFromPreviewSnap = imagesFromPreviewSnapshot.stream().filter(diskImageFromPreview ->
+                    diskImageFromPreview.getImageId().equals(diskImage.getImageId())).collect(Collectors.toList());
+            if (!diskImagesFromPreviewSnap.isEmpty() &&
+                    diskImagesFromPreviewSnap.get(0).getDiskStorageType() == DiskStorageType.CINDER) {
+                cinderVolumesToRemove.add((CinderDisk) diskImagesFromPreviewSnap.get(0));
                 continue;
             }
             VdcReturnValueBase retValue = runAsyncTask(VdcActionType.RemoveImage,
@@ -316,9 +331,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             } else {
                 log.error("Failed to remove image '{}'", diskImage.getImageId());
             }
-        }
-        if (!restoreCinder(cinderDisks, null)) {
-            log.error("Error to restore Cinder volumes snapshots");
         }
     }
 
