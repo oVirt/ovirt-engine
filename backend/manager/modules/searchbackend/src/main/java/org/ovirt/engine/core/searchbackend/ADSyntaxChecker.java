@@ -111,9 +111,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     curConditionField = nextObject;
                     curStartPos = idx + 1;
 
-                } else if (!AdConditionFieldAC.validateCompletion(nextObject)) // &&
-                                                                               // (!mSortbyAC.validateCompletion(nextObject)))
-                {
+                } else if (!AdConditionFieldAC.validateCompletion(nextObject)) {
                     retval.setErr(SyntaxError.INVALID_CONDITION_FILED, curStartPos, idx + 1);
                     return retval;
                 }

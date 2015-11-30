@@ -161,8 +161,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
             throws SQLException {
 
         Map<String, Object> values = paramSource.getValues();
-        for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet())
-        {
+        for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet()) {
             String paramName = paramOrderEntry.getKey();
             Object value = values.get(paramName);
             if (value == null && paramName.startsWith(DbFacade.getInstance().getDbEngineDialect().getParamNamePrefix())) {

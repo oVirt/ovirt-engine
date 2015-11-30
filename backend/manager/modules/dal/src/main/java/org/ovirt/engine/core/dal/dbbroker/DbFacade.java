@@ -189,8 +189,7 @@ public class DbFacade {
     private final static Logger log = LoggerFactory.getLogger(DbFacade.class);
 
     @SuppressWarnings("serial")
-    private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
-    {
+    private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>() {
         {
             put(StoragePool.class, StoragePoolDao.class);
             put(StoragePoolIsoMap.class, StoragePoolIsoMapDao.class);

@@ -173,8 +173,7 @@ public class GlusterDBUtils {
         return hostName;
     }
 
-    public GlusterBrickEntity getGlusterBrickByServerUuidAndBrickDir(Guid serverId, String brickDir)
-    {
+    public GlusterBrickEntity getGlusterBrickByServerUuidAndBrickDir(Guid serverId, String brickDir) {
         return getGlusterBrickDao().getBrickByServerIdAndDirectory(serverId, brickDir);
     }
 

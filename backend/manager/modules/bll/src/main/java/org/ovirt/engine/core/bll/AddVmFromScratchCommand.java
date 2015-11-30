@@ -114,10 +114,8 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
                 if (!tmpRetValue.getSucceeded()) {
                     log.error("concreteAddVmImages: AddImageFromScratch Command failed.");
                     ret = false;
-                }
-
-                else // the AddImageFromScratch task created ended successfully:
-                {
+                } else {
+                    // the AddImageFromScratch task created ended successfully:
                     getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
                 }
             }

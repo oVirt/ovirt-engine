@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.4</version>
+      <version>${checkstyle.version}</version>
     </dependency>
   </dependencies>
 </project>

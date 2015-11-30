@@ -19,8 +19,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedVmGuestInfoPresenter
-  extends AbstractSubTabExtendedVmPresenter<VmGuestInfoModel, SubTabExtendedVmGuestInfoPresenter.ViewDef, SubTabExtendedVmGuestInfoPresenter.ProxyDef>
-{
+  extends AbstractSubTabExtendedVmPresenter<VmGuestInfoModel, SubTabExtendedVmGuestInfoPresenter.ViewDef, SubTabExtendedVmGuestInfoPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 

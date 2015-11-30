@@ -136,8 +136,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
         importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
 
-        dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NameRenderer<StoragePool>())
-        {
+        dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NameRenderer<StoragePool>()) {
             @Override
             public ListModel<StoragePool> getValue(ExternalNetwork network) {
                 return network.getDataCenters();

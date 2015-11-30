@@ -58,8 +58,7 @@ public final class RegistrationResult {
         RetrievedEventDefinition = new EventDefinition("RetrievedEvent", RegistrationResult.class); //$NON-NLS-1$
     }
 
-    public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data)
-    {
+    public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data) {
         setRetrievedEvent(new Event<EventArgs>(RetrievedEventDefinition));
 
         setId(id);

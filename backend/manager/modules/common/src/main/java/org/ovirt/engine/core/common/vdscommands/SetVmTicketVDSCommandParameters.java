@@ -17,8 +17,7 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
     }
 
     public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName,
-                                           Guid userId, GraphicsType graphicsType, ConsoleDisconnectAction disconnectAction)
-    {
+                                           Guid userId, GraphicsType graphicsType, ConsoleDisconnectAction disconnectAction) {
         super(vdsId, vmId);
         this.ticket = ticket;
         this.validTime = validTime;

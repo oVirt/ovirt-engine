@@ -421,8 +421,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     /**
      * This validation is for thin provisioning, when done differently on other commands, this method should be overridden.
      */
-    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList)
-    {
+    protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         Collection<DiskImage> disks = ImagesHandler.getDisksDummiesForStorageAllocations(disksList);
         return validate(storageDomainValidator.hasSpaceForNewDisks(disks));
     }

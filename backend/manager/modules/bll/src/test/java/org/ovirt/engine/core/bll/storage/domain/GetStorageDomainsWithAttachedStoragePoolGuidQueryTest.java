@@ -32,8 +32,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
-        AbstractQueryTest<StorageDomainsAndStoragePoolIdQueryParameters, GetStorageDomainsWithAttachedStoragePoolGuidQuery<StorageDomainsAndStoragePoolIdQueryParameters>>
-{
+        AbstractQueryTest<StorageDomainsAndStoragePoolIdQueryParameters, GetStorageDomainsWithAttachedStoragePoolGuidQuery<StorageDomainsAndStoragePoolIdQueryParameters>> {
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontendMock;
 
