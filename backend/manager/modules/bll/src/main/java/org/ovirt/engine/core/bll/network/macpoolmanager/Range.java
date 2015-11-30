@@ -9,6 +9,7 @@ import org.apache.commons.lang.Validate;
 class Range {
     private final long rangeStart;
     private final long rangeEnd;
+    private final int numberOfMacsInRange;
 
     /**
      * object counter, which holds number of MACs duplicates.
@@ -17,6 +18,7 @@ class Range {
     private int availableMacsCount;
 
     private BitSet usedMacs;
+    private int startingLocationWhenSearchingForUnusedMac = 0;
 
     public Range(long rangeStart, long rangeEnd) {
         this.rangeStart = rangeStart;
@@ -27,10 +29,10 @@ class Range {
                 String.format("Range too big; Range shouldn't be bigger than %1$s, but passed one "
                         + "contains %2$s elements.", Integer.MAX_VALUE, numberOfMacsLong));
 
-        int numberOfMacs = (int) numberOfMacsLong;
+        numberOfMacsInRange = (int) numberOfMacsLong;
 
-        this.availableMacsCount = numberOfMacs;
-        this.usedMacs = new BitSet(numberOfMacs);
+        this.availableMacsCount = numberOfMacsInRange;
+        this.usedMacs = new BitSet(numberOfMacsInRange);
     }
 
     public boolean contains(long mac) {
@@ -115,7 +117,12 @@ class Range {
     }
 
     private long findUnusedMac() {
-        int index = usedMacs.nextClearBit(0);
+        int index = usedMacs.nextClearBit(startingLocationWhenSearchingForUnusedMac);
+        boolean notFound = index == numberOfMacsInRange;
+        if (notFound) {
+            index = usedMacs.nextClearBit(0);
+        }
+        startingLocationWhenSearchingForUnusedMac = (index + 1) % numberOfMacsInRange;
 
         return rangeStart + index;
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.macpoolmanager;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.math.LongRange;
@@ -131,5 +132,41 @@ public class RangeTest {
     @Test
     public void testMaxSizeRange() throws Exception {
         new Range(0, Integer.MAX_VALUE - 1);
+    }
+
+
+    /**
+     * test that MACs arent returned in leftmost-available order. Instead, we're returning macs from left to right,
+     * noting last scan position. That means that if we obtain and return mac from/to pool, we'll obtain this MAC again
+     * only after all other free macs were used.
+     */
+    @Test
+    public void testOrderOrAcquiredMACs() {
+        Range range = new Range(0, 5);
+        List<Integer> usedMacs = Arrays.asList(0, 2, 4);
+        for(int i = 0; i < 5; i++) {
+            boolean usedMac = usedMacs.contains(i);
+            if (usedMac) {
+                boolean allowDuplicates = false;
+                range.use(i, allowDuplicates);
+            }
+        }
+
+        for (Integer expectedUnallocatedMac : Arrays.asList(1, 3, 5, 1, 3, 5, 1)) {
+            allocateAndFreeMacAndExpectGivenMac(range, expectedUnallocatedMac);
+        }
+    }
+
+    /***
+     *
+     * method obtains mac from pool, assert expectation, and return it back.
+     *
+     * @param range range of macs
+     * @param expectedMac mac, which we expect to be returned from {@code range.allocateMacs(1)}
+     */
+    private void allocateAndFreeMacAndExpectGivenMac(Range range, long expectedMac) {
+        Long mac = range.allocateMacs(1).get(0);
+        assertThat(mac, is(expectedMac));
+        range.freeMac(mac);
     }
 }

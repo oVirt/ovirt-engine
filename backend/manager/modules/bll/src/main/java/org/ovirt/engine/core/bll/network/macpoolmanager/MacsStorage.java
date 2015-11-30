@@ -12,14 +12,20 @@ class MacsStorage {
     private final boolean allowDuplicates;
     private List<Range> ranges = new LinkedList<>();
     private ObjectCounter<Long> customMacs;
+    private int startIndexForEmptyRangeSearch = 0;
 
     public MacsStorage(boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
         customMacs = new ObjectCounter<>(this.allowDuplicates);
     }
 
-    public void addRange(long rangeStart, long rangeEnd) {
-        ranges.add(new Range(rangeStart, rangeEnd));
+    public Range addRange(long rangeStart, long rangeEnd) {
+        return addRange(new Range(rangeStart, rangeEnd));
+    }
+
+    Range addRange(Range range) {
+        ranges.add(range);
+        return range;
     }
 
     public boolean useMac(long mac) {
@@ -77,9 +83,23 @@ class MacsStorage {
         return result;
     }
 
-    private Range getRangeWithAvailableMac() {
-        for (Range range : ranges) {
-            if (range.getAvailableCount() > 0) {
+    Range getRangeWithAvailableMac() {
+        int numberOfRanges = ranges.size();
+        Range range = findRangeWithAvailableMac(startIndexForEmptyRangeSearch, numberOfRanges, numberOfRanges);
+        if (range != null) {
+            return range;
+        }
+
+        return findRangeWithAvailableMac(0, startIndexForEmptyRangeSearch, numberOfRanges);
+    }
+
+    private Range findRangeWithAvailableMac(int startIndex,
+            int endIndex, int numberOfRanges) {
+        for(int i = startIndex; i < endIndex; i++) {
+            Range range = ranges.get(i);
+            boolean hasAvailableMacs = range.getAvailableCount() > 0;
+            if (hasAvailableMacs) {
+                startIndexForEmptyRangeSearch = (i + 1) % numberOfRanges;
                 return range;
             }
         }
