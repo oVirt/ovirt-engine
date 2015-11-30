@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.slf4j.Logger;
@@ -85,5 +89,28 @@ public class SlaValidator {
         } else {
             return vds.getCpuCores();
         }
+    }
+
+    /**
+     * Find out which cpus are currently online at the provided host.
+     * <p>
+     * When no cpus are reported to be online or no information is provided (a running host without a CPU does not make
+     * sense and is therefore equivalent to no information available), an empty collection is returned.
+     *
+     * @param host to check for online cpus
+     * @return online cpus or empty collection if no information is available
+     */
+    public static Collection<Integer> getOnlineCpus(final VDS host) {
+        final Collection<Integer> cpus = new ArrayList<>();
+        if (StringUtils.isEmpty(host.getOnlineCpus())) {
+            return cpus;
+        }
+
+        for (String cpu : StringUtils.split(host.getOnlineCpus(), ",")) {
+            cpu = StringUtils.trim(cpu);
+            if (!StringUtils.isEmpty(cpu))
+                cpus.add(Integer.parseInt(cpu));
+        }
+        return cpus;
     }
 }

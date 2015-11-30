@@ -8,6 +8,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
@@ -118,6 +119,8 @@ public class PolicyUnitImpl {
             return new EmulatedMachineFilterPolicyUnit(policyUnit, pendingResourceManager);
         case "HostDevice":
             return new HostDeviceFilterPolicyUnit(policyUnit, pendingResourceManager);
+        case "CpuPinning":
+            return new CpuPinningPolicyUnit(policyUnit, pendingResourceManager);
         default:
             break;
         }
