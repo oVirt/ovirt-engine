@@ -178,6 +178,7 @@ public final class VdsProperties {
     public static final String librbdPackageName = "librbd1";
     public static final String glusterfsCliPackageName = "glusterfs-cli";
     public static final String GLUSTER_PACKAGE_NAME = "glusterfs";
+    public static final String VM_INTERFACE_DEVICE_TYPE = "interface";
 
     // Addressing related strings
     public static final String Controller = "controller";
