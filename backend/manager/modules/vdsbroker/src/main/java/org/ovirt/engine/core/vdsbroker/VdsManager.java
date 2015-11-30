@@ -516,6 +516,12 @@ public class VdsManager {
 
     public void setStatus(VDSStatus status, VDS vds) {
         synchronized (getLockObj()) {
+
+            // non-responsive event during moving host to maintenance should be ignored
+            if (isNetworkExceptionDuringMaintenance(status)) {
+                return;
+            }
+
             if (vds == null) {
                 vds = dbFacade.getVdsDao().get(getVdsId());
             }
@@ -565,6 +571,12 @@ public class VdsManager {
                 break;
             }
         }
+    }
+
+    private boolean isNetworkExceptionDuringMaintenance(VDSStatus status) {
+        return status == VDSStatus.NonResponsive
+                    && this.cachedVds != null
+                    && this.cachedVds.getStatus() == VDSStatus.Maintenance;
     }
 
     /**
