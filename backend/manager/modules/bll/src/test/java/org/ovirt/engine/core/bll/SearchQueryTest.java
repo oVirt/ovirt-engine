@@ -82,7 +82,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
         when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
         // mock Daos
-        mockDiskSao(diskDao);
+        mockDiskDao(diskDao);
         mockQuotaDao(quotaDao);
         mockVMDao(vmDao);
         mockVdsDao(vdsDao);
@@ -100,7 +100,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      * @param diskDao
      *            - The dao to be used
      */
-    private void mockDiskSao(final DiskDao diskDao) {
+    private void mockDiskDao(final DiskDao diskDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(diskDao.getAllWithQuery(matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
