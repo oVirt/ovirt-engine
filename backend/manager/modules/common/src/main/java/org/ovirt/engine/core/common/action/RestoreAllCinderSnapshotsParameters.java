@@ -14,23 +14,46 @@ public class RestoreAllCinderSnapshotsParameters extends VmOperationParameterBas
     private Snapshot snapshot;
     private Guid removedSnapshotId;
     private boolean privateForceDelete;
-    private List<CinderDisk> cinderDisks;
+    private List<CinderDisk> cinderDisksToRestore;
+    private List<CinderDisk> cinderDisksToRemove;
+    private List<CinderDisk> cinderVolumesToRemove;
 
     public RestoreAllCinderSnapshotsParameters() {
     }
 
-    public RestoreAllCinderSnapshotsParameters(Guid vmId, List<CinderDisk> cinderDisks) {
+    public RestoreAllCinderSnapshotsParameters(Guid vmId,
+            List<CinderDisk> cinderDisksToRestore,
+            List<CinderDisk> cinderDisksToRemove,
+            List<CinderDisk> cinderVolumesToRemove) {
         super(vmId);
-        this.cinderDisks = cinderDisks;
+        this.cinderDisksToRestore = cinderDisksToRestore;
+        this.cinderDisksToRemove = cinderDisksToRemove;
+        this.cinderVolumesToRemove = cinderVolumesToRemove;
         setForceDelete(false);
     }
 
-    public List<CinderDisk> getCinderDisks() {
-        return cinderDisks;
+    public List<CinderDisk> getCinderDisksToRestore() {
+        return cinderDisksToRestore;
     }
 
-    public void setCinderDisks(List<CinderDisk> cinderDisks) {
-        this.cinderDisks = cinderDisks;
+    public void setCinderDisksToRestore(List<CinderDisk> cinderDisksToRestore) {
+        this.cinderDisksToRestore = cinderDisksToRestore;
+    }
+
+    public List<CinderDisk> getCinderDisksToRemove() {
+        return cinderDisksToRemove;
+    }
+
+    public void setCinderDisksToRemove(List<CinderDisk> cinderDisksToRemove) {
+        this.cinderDisksToRemove = cinderDisksToRemove;
+    }
+
+    public List<CinderDisk> getCinderVolumesToRemove() {
+        return cinderVolumesToRemove;
+    }
+
+    public void setCinderVolumesToRemove(List<CinderDisk> cinderVolumesToRemove) {
+        this.cinderVolumesToRemove = cinderVolumesToRemove;
     }
 
     public boolean getForceDelete() {

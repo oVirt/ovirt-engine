@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -12,13 +13,15 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
-import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -30,25 +33,66 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
 
     @Override
     protected void executeVmCommand() {
-        for (CinderDisk cinderDisk : getParameters().getCinderDisks()) {
+        for (CinderDisk cinderDisk : getParameters().getCinderDisksToRestore()) {
             ImagesContainterParametersBase params = getRestoreFromSnapshotParams(cinderDisk);
             restoreCinderDisk(cinderDisk, params);
 
             // In case we want to undo the previewed snapshot.
             if (getParameters().getSnapshot().getType() != Snapshot.SnapshotType.REGULAR) {
-                cinderDisk.setActive(true);
-                getImageDao().update(cinderDisk.getImage());
+                DiskImage cinderDiskFromLastActiveSnap =
+                        getDiskImageDao().getDiskSnapshotForVmSnapshot(cinderDisk.getId(),
+                                getParameters().getSnapshot().getId());
+                cinderDiskFromLastActiveSnap.setActive(true);
+                getImageDao().update(cinderDiskFromLastActiveSnap.getImage());
+            }
+        }
+        List<CinderDisk> cinderDisksToRemove = getParameters().getCinderDisksToRemove();
+        for (CinderDisk cinderDisk : cinderDisksToRemove) {
+            RemoveCinderDiskParameters removeDiskParam =
+                    new RemoveCinderDiskParameters(cinderDisk.getImageId());
+            removeDiskParam.setRemovedVolume(cinderDisk);
+            removeDiskParam.setParentCommand(getActionType());
+            removeDiskParam.setStorageDomainId(cinderDisk.getStorageIds().get(0));
+            removeDiskParam.setParentParameters(getParameters());
+
+            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                    VdcActionType.RemoveCinderDisk,
+                    removeDiskParam,
+                    cloneContextAndDetachFromParent(),
+                    new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                log.error("Error removing Cinder disk");
+            }
+        }
+        List<CinderDisk> cinderVolumesToRemove = getParameters().getCinderVolumesToRemove();
+        for (CinderDisk cinderVolume : cinderVolumesToRemove) {
+            RemoveCinderDiskVolumeParameters removeDiskVolumeParam =
+                    new RemoveCinderDiskVolumeParameters(cinderVolume);
+            removeDiskVolumeParam.setParentCommand(getActionType());
+            removeDiskVolumeParam.setParentParameters(getParameters());
+
+            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                    VdcActionType.RemoveCinderDiskVolume,
+                    removeDiskVolumeParam,
+                    cloneContextAndDetachFromParent(),
+                    new SubjectEntity(VdcObjectType.Storage, cinderVolume.getStorageIds().get(0)));
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                log.error("Error removing Cinder disk");
             }
         }
         setSucceeded(true);
     }
 
     private ImagesContainterParametersBase getRestoreFromSnapshotParams(CinderDisk cinderDisk) {
-        ImagesContainterParametersBase params =
-                new RestoreFromSnapshotParameters(cinderDisk.getImageId(),
-                        getParameters().getVmId(),
-                        getParameters().getSnapshot(),
-                        getParameters().getRemovedSnapshotId());
+        RemoveCinderDiskParameters params =
+                new RemoveCinderDiskParameters(cinderDisk.getImageId());
+        params.setRemovedVolume(cinderDisk);
         params.setParentCommand(getActionType());
         params.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         params.setParentParameters(getParameters());
