@@ -47,7 +47,7 @@ public class NlsCheck extends Check {
                 }
             }
 
-            List<QuotedString> stringList = new LinkedList<QuotedString>();
+            List<QuotedString> stringList = new LinkedList<>();
             matcher = patternString.matcher(lineText);
             int j = 0;
             while (matcher.find()) {
@@ -68,7 +68,7 @@ public class NlsCheck extends Check {
                     startAnnotation = false;
 
                     // maybe the rest of the line has quoted string
-                    List<QuotedString> tmpStringList = new LinkedList<QuotedString>();
+                    List<QuotedString> tmpStringList = new LinkedList<>();
                     for (QuotedString quotedString : stringList) {
                         if (quotedString.startIndex > endAnno) {
                             tmpStringList.add(quotedString);
