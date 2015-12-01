@@ -789,12 +789,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (getParameters().getVmStaticData() != null
                 && getParameters().getVmStaticData().getSmallIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getVmStaticData().getSmallIconId(), "Small"))) {
             return false;
         }
 
         if (getParameters().getVmStaticData() != null
                 && getParameters().getVmStaticData().getLargeIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getVmStaticData().getLargeIconId(), "Large"))) {
             return false;
         }

@@ -517,11 +517,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (getParameters().getMasterVm().getSmallIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getMasterVm().getSmallIconId(), "Small"))) {
             return false;
         }
 
         if (getParameters().getMasterVm().getLargeIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getMasterVm().getLargeIconId(), "Large"))) {
             return false;
         }
