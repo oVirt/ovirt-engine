@@ -22,6 +22,7 @@
     <module name="EqualsHashCode"/>
     <module name="UncommentedMain"/>
     <module name="LeftCurly"/>
+    <module name="checks.DiamondOperator"/>
     <module name="checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
