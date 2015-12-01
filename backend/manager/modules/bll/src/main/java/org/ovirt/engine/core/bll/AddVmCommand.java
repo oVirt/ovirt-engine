@@ -703,11 +703,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (getSmallIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getSmallIconId(), "Small"))) {
             return false;
         }
 
         if (getLargeIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getLargeIconId(), "Large"))) {
             return false;
         }

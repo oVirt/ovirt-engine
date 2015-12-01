@@ -145,12 +145,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (getParameters().getVmTemplateData() != null
                 && getParameters().getVmTemplateData().getSmallIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getVmTemplateData().getSmallIconId(), "Small"))) {
             return false;
         }
 
         if (getParameters().getVmTemplateData() != null
                 && getParameters().getVmTemplateData().getLargeIconId() != null
+                && getParameters().getVmLargeIcon() == null // icon id is ignored if large icon is sent
                 && !validate(IconValidator.validateIconId(getParameters().getVmTemplateData().getLargeIconId(), "Large"))) {
             return false;
         }
