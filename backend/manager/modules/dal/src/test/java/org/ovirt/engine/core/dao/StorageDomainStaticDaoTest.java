@@ -186,7 +186,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
     public void testRemove() {
         dynamicDao.remove(existingDomain.getId());
         List<DiskImage> imagesToRemove = diskImageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
-        Set<Guid> itGuids = new HashSet<Guid>();
+        Set<Guid> itGuids = new HashSet<>();
         for (DiskImage image : imagesToRemove) {
             itGuids.add(image.getImageTemplateId());
         }

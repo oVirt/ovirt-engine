@@ -28,7 +28,7 @@ public class GlusterVolumeSnapshotConfigReturnForXmlRpc extends StatusReturnForX
         Map<String, Object> configInfo = (Map<String, Object>) innerMap.get(SNAPSHOT_CONFIG);
 
         Map<String, Object> systemConfig = (Map<String, Object>) configInfo.get(SYSTEM_CONFIG);
-        Map<String, String> clusterConfigs = new HashMap<String, String>();
+        Map<String, String> clusterConfigs = new HashMap<>();
         for (Map.Entry<String, Object> entry : systemConfig.entrySet()) {
             String value = (String) entry.getValue();
             clusterConfigs.put(entry.getKey(), value == null ? "" : value);
@@ -39,12 +39,11 @@ public class GlusterVolumeSnapshotConfigReturnForXmlRpc extends StatusReturnForX
     }
 
     private Map<String, Map<String, String>> parseVolumeConfigDetails(Map<String, Object> configs) {
-        Map<String, Map<String, String>> volumeConfigs =
-                new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> volumeConfigs = new HashMap<>();
 
         for (Map.Entry<String, Object> entry : configs.entrySet()) {
             Map<String, Object> fetchedVolumeConfig = (Map<String, Object>) entry.getValue();
-            Map<String, String> volConfig = new HashMap<String, String>();
+            Map<String, String> volConfig = new HashMap<>();
 
             for (Map.Entry<String, Object> config : fetchedVolumeConfig.entrySet()) {
                 String value = (String) config.getValue();

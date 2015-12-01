@@ -234,7 +234,7 @@ public class VmMapper extends VmBaseMapper {
                     hostGuidsSet.add(hostGuid);
                 }
             }
-            staticVm.setDedicatedVmForVdsList(new LinkedList<Guid>(hostGuidsSet));
+            staticVm.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
         }
 
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
@@ -916,7 +916,7 @@ public class VmMapper extends VmBaseMapper {
 
     @Mapping(from = Boot.class, to = List.class)
     public static BootSequence map(Boot boot, BootSequence template) {
-        Set<BootDevice> devSet = new LinkedHashSet<BootDevice>();
+        Set<BootDevice> devSet = new LinkedHashSet<>();
         for (String device : boot.getDevices().getDevices()) {
             BootDevice dev = BootDevice.fromValue(device);
             if (dev != null) {
@@ -924,7 +924,7 @@ public class VmMapper extends VmBaseMapper {
             }
         }
 
-        List<BootDevice> devs = new ArrayList<BootDevice>(devSet);
+        List<BootDevice> devs = new ArrayList<>(devSet);
         if (devs.size() == 1) {
             switch (devs.get(0)) {
             case CDROM:
@@ -1064,7 +1064,7 @@ public class VmMapper extends VmBaseMapper {
 
         if (model.isSetNetworkConfiguration()) {
             if (model.getNetworkConfiguration().isSetNics()) {
-                List<VmInitNetwork> interfaces = new ArrayList<VmInitNetwork>();
+                List<VmInitNetwork> interfaces = new ArrayList<>();
                 for (Nic iface : model.getNetworkConfiguration().getNics().getNics()) {
                     VmInitNetwork vmInitInterface = new VmInitNetwork();
                     if (iface.isSetName()) {

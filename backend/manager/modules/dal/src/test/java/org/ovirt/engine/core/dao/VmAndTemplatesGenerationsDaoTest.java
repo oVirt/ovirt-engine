@@ -32,12 +32,12 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testUpdateOvfGenerations() {
-        List<Guid> vmsGuids = new LinkedList<Guid>();
+        List<Guid> vmsGuids = new LinkedList<>();
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_50);
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_51);
         long updatedOvfForVm50 = 1000;
         long updatedOvfForVm51 = 1001;
-        List<Long> ovfVersions = new LinkedList<Long>();
+        List<Long> ovfVersions = new LinkedList<>();
         ovfVersions.add(updatedOvfForVm50);
         ovfVersions.add(updatedOvfForVm51);
         List<String> ovfData = Arrays.asList("a", "b");
@@ -52,7 +52,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testDeleteOvfGenerations() {
-        List<Guid> vmsGuids = new LinkedList<Guid>();
+        List<Guid> vmsGuids = new LinkedList<>();
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_50);
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_51);
 
@@ -83,11 +83,11 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateTwoTemplatesSamePool() {
-        List<Guid> templates = new LinkedList<Guid>();
+        List<Guid> templates = new LinkedList<>();
         templates.add(FixturesTool.VM_TEMPLATE_RHEL5);
         templates.add(FixturesTool.VM_TEMPLATE_RHEL5_2);
 
-        List<Long> values = new LinkedList<Long>();
+        List<Long> values = new LinkedList<>();
         values.add(0L);
         values.add(0L);
 
@@ -105,7 +105,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateTemplatesDifferentPools() {
-        List<Guid> templates = new LinkedList<Guid>();
+        List<Guid> templates = new LinkedList<>();
         // POOL : STORAGE_POOL_NFS
         templates.add(FixturesTool.VM_TEMPLATE_RHEL6_1);
         templates.add(FixturesTool.VM_TEMPLATE_RHEL6_2);
@@ -113,7 +113,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         templates.add(FixturesTool.VM_TEMPLATE_RHEL5);
         templates.add(FixturesTool.VM_TEMPLATE_RHEL5_2);
 
-        List<Long> values = new LinkedList<Long>();
+        List<Long> values = new LinkedList<>();
         values.add(0L);
         values.add(0L);
         values.add(0L);
@@ -156,11 +156,11 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateTwoVmsSamePool() {
-        List<Guid> vms = new LinkedList<Guid>();
+        List<Guid> vms = new LinkedList<>();
         vms.add(FixturesTool.VM_RHEL5_POOL_50);
         vms.add(FixturesTool.VM_RHEL5_POOL_51);
 
-        List<Long> values = new LinkedList<Long>();
+        List<Long> values = new LinkedList<>();
         values.add(0L);
         values.add(0L);
 
@@ -178,7 +178,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmsIdsForOvfUpdateDifferentPools() {
-        List<Guid> vms = new LinkedList<Guid>();
+        List<Guid> vms = new LinkedList<>();
         // POOL : STORAGE_POOL_RHEL6_ISCSI_OTHER
         vms.add(FixturesTool.VM_RHEL5_POOL_50);
         vms.add(FixturesTool.VM_RHEL5_POOL_51);
@@ -186,7 +186,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         vms.add(FixturesTool.VM_RHEL5_POOL_59);
         vms.add(FixturesTool.VM_RHEL5_POOL_60);
 
-        List<Long> values = new LinkedList<Long>();
+        List<Long> values = new LinkedList<>();
         values.add(0L);
         values.add(0L);
         values.add(0L);
@@ -214,7 +214,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmsAndTemplatesIdsForOvfUpdateMixedInPool() {
-        List<Guid> toUpdate = new LinkedList<Guid>();
+        List<Guid> toUpdate = new LinkedList<>();
         // POOL : STORAGE_POOL_RHEL6_ISCSI_OTHER
         toUpdate.add(FixturesTool.VM_TEMPLATE_RHEL5);
         toUpdate.add(FixturesTool.VM_RHEL5_POOL_50);
@@ -223,7 +223,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         toUpdate.add(FixturesTool.VM_TEMPLATE_RHEL6_1);
         toUpdate.add(FixturesTool.VM_RHEL5_POOL_60);
 
-        List<Long> values = new LinkedList<Long>();
+        List<Long> values = new LinkedList<>();
         values.add(0L);
         values.add(0L);
         values.add(0L);

@@ -81,7 +81,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     }
 
     private List<GlusterVolumeTaskStatusForHost> getHostwiseStatusDetails() {
-        List<GlusterVolumeTaskStatusForHost> statusList = new ArrayList<GlusterVolumeTaskStatusForHost>();
+        List<GlusterVolumeTaskStatusForHost> statusList = new ArrayList<>();
 
         GlusterVolumeTaskStatusForHost status1 = new GlusterVolumeTaskStatusForHost();
         status1.setHostName(SERVER_1);
@@ -138,7 +138,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         brick2.setServerId(SERVER_ID);
         brick2.setVolumeId(VOLUME_ID);
 
-        List<GlusterBrickEntity> bricksList = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksList = new ArrayList<>();
         bricksList.add(brick1);
         bricksList.add(brick2);
 
@@ -172,7 +172,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     }
 
     private List<Step> getStepsList() {
-        List<Step> stepsList = new ArrayList<Step>();
+        List<Step> stepsList = new ArrayList<>();
         Step stp = new Step();
         stp.setId(STEP_ID);
         stp.setStartTime(new Date());

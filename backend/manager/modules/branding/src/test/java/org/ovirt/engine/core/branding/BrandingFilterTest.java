@@ -47,7 +47,7 @@ public class BrandingFilterTest {
     public void setUp() throws Exception {
         testFilter = new BrandingFilter();
         testFilter.init(mockFilterConfig, mockBrandingManager);
-        mockBrandingThemes = new ArrayList<BrandingTheme>();
+        mockBrandingThemes = new ArrayList<>();
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.US);
         when(mockRequest.getServletContext()).thenReturn(mockServletContext);
         when(mockServletContext.getInitParameter("obrandApplicationName")).thenReturn("test");

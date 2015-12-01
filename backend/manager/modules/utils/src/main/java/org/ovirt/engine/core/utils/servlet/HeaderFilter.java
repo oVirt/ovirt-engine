@@ -82,7 +82,7 @@ public class HeaderFilter implements Filter {
     /**
      * The map that contains the header name and value pairs to be added to each response.
      */
-    private final Map<String, String> headerValueMap = new HashMap<String, String>();
+    private final Map<String, String> headerValueMap = new HashMap<>();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,

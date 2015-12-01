@@ -126,7 +126,7 @@ public class LocaleFilterTest {
      * Helper methods.
      */
     private Cookie[] createCookies(Locale... locales) {
-        List<Cookie> cookieList = new ArrayList<Cookie>();
+        List<Cookie> cookieList = new ArrayList<>();
         for(Locale locale: locales) {
             cookieList.add(new Cookie(LocaleFilter.LOCALE, locale.toString()));
         }

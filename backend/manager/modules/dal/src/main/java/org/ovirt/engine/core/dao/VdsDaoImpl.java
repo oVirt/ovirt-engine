@@ -92,7 +92,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     @Override
     public List<VDS> getAllOfTypes(VDSType[] types) {
-        List<VDS> list = new ArrayList<VDS>();
+        List<VDS> list = new ArrayList<>();
         for (VDSType type : types) {
             list.addAll(getAllOfType(type));
         }

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -46,7 +45,7 @@ public class VmHandlerTest {
     public void testUpdateFieldsNameInStatusUp() {
         VmStatic src = new VmStatic();
         src.setName(RandomUtils.instance().nextString(10));
-        src.setInterfaces(new ArrayList<VmNetworkInterface>(2));
+        src.setInterfaces(new ArrayList<>(2));
 
         VmStatic dest = new VmStatic();
         dest.setName(RandomUtils.instance().nextString(10));

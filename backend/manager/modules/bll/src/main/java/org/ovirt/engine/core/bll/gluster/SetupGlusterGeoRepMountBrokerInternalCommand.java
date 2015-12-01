@@ -109,7 +109,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
             });
         }
         List<VDSReturnValue> returnValues = ThreadPoolUtil.invokeAll(mountBrokerSetupReturnStatuses);
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         for (VDSReturnValue currentReturnValue : returnValues) {
             if (!currentReturnValue.getSucceeded()) {
                 succeeded = false;

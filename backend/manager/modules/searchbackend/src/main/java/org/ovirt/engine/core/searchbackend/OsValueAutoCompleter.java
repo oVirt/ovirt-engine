@@ -27,7 +27,7 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
         if (wordPart == null || wordPart.isEmpty()) {
             return map.values().toArray(new String[]{});
         }
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String osName : map.values()) {
             if (osName.contains(wordPart)) {
                 list.add(osName);

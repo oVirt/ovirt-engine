@@ -9,8 +9,8 @@ import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAu
 import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoCompleter;
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
-    private final Map<String, String[]> joinDictionary = new HashMap<String, String[]>();
-    private final Map<String, Boolean> requiresFullTable = new HashMap<String, Boolean>();
+    private final Map<String, String[]> joinDictionary = new HashMap<>();
+    private final Map<String, Boolean> requiresFullTable = new HashMap<>();
 
     public SearchObjectAutoCompleter() {
 

@@ -168,7 +168,7 @@ public class CustomPropertiesUtils {
         for (ValidationError error : errorsList) {
             List<ValidationError> errorsForReason = resultMap.get(error.getReason());
             if (errorsForReason == null) {
-                errorsForReason = new ArrayList<ValidationError>();
+                errorsForReason = new ArrayList<>();
                 resultMap.put(error.getReason(), errorsForReason);
             }
             errorsForReason.add(error);
@@ -195,8 +195,8 @@ public class CustomPropertiesUtils {
             return invalidSyntaxValidationError;
         }
 
-        Set<ValidationError> errorsSet = new HashSet<ValidationError>();
-        Set<String> foundKeys = new HashSet<String>();
+        Set<ValidationError> errorsSet = new HashSet<>();
+        Set<String> foundKeys = new HashSet<>();
         for (Entry<String, String> e : properties.entrySet()) {
             String key = e.getKey();
             if (foundKeys.contains(key)) {
@@ -216,7 +216,7 @@ public class CustomPropertiesUtils {
                 continue;
             }
         }
-        List<ValidationError> results = new ArrayList<ValidationError>();
+        List<ValidationError> results = new ArrayList<>();
         results.addAll(errorsSet);
         return results;
     }
@@ -242,7 +242,7 @@ public class CustomPropertiesUtils {
 
         // Check all the errors and for each error add it ands its arguments to the returned list
         Map<ValidationFailureReason, List<ValidationError>> resultMap =
-                new HashMap<ValidationFailureReason, List<ValidationError>>();
+                new HashMap<>();
         separateValidationErrorsList(validationErrors, resultMap);
 
         for (ValidationFailureReason reason : ValidationFailureReason.values()) {
@@ -282,7 +282,7 @@ public class CustomPropertiesUtils {
     }
 
     protected Map<String, String> convertProperties(String properties, Map<String, String> regExMap) {
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         if (!StringHelper.isNullOrEmpty(properties)) {
             String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
             for (String keyValuePairStr : keyValuePairs) {

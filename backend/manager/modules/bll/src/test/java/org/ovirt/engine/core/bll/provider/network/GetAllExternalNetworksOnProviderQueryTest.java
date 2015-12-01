@@ -64,7 +64,7 @@ public class GetAllExternalNetworksOnProviderQueryTest
         when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(dcDao);
         when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Arrays.asList(id));
 
-        Map<Network, Set<Guid>> expected = new HashMap<Network, Set<Guid>>();
+        Map<Network, Set<Guid>> expected = new HashMap<>();
         expected.put(network, Collections.singleton(id));
 
         GetAllExternalNetworksOnProviderQuery<IdQueryParameters> query = getQuery();

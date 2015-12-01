@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 public class ArchStrategyFactory {
 
     private static final EnumMap<ArchitectureType, ArchStrategy> architectureArchStrategyMap =
-            new EnumMap<ArchitectureType, ArchStrategy>(ArchitectureType.class);
+            new EnumMap<>(ArchitectureType.class);
 
     static {
         architectureArchStrategyMap.put(ArchitectureType.x86_64, new X86_64Strategy());

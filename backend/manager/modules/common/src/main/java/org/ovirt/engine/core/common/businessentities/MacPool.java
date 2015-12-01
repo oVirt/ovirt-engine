@@ -28,7 +28,7 @@ public class MacPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     @Valid
     @NotEmpty(message = "ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE")
     @NotNull(message = "ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE")
-    private List<MacRange> ranges = new ArrayList<MacRange>();
+    private List<MacRange> ranges = new ArrayList<>();
 
     private boolean defaultPool;
 

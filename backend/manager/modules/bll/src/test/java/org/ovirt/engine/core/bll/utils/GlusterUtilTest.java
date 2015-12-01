@@ -31,7 +31,7 @@ public class GlusterUtilTest {
     private static final String WRONG_PASSWORD = "wrong_password";
     private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
-    private static final Map<String, String> EXPECTED_MAP = new HashMap<String, String>();
+    private static final Map<String, String> EXPECTED_MAP = new HashMap<>();
     private static final String OUTPUT_XML =
             "<cliOutput><peerStatus><peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver1</hostname><connected>1</connected><state>3</state></peer>"
                     +

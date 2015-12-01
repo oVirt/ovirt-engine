@@ -1661,7 +1661,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 null,
                 // The reason Collections.emptyMap is not used here as
                 // the map should be mutable
-                new HashMap<Guid, VdcObjectType>());
+                new HashMap<>());
     }
 
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,

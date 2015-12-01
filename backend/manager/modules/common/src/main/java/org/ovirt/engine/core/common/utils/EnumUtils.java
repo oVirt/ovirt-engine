@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class EnumUtils {
 
-    private final static ConcurrentMap<Class<?>, Map> cacheEnumValuesInCapitalLetters = new ConcurrentHashMap<Class<?>, Map>();
+    private final static ConcurrentMap<Class<?>, Map> cacheEnumValuesInCapitalLetters = new ConcurrentHashMap<>();
 
     public static <E extends Enum<E>> E valueOf(Class<E> c, String name, boolean ignorecase) {
         // trim any leading or trailing spaces from the name
@@ -26,7 +26,7 @@ public class EnumUtils {
 
         if (map == null) {
             // populate the map with enum values and add it to cache
-            map = new HashMap<String, E>(2 * universe.length);
+            map = new HashMap<>(2 * universe.length);
 
             for (E e : universe) {
                 map.put(e.name().toUpperCase(), e);

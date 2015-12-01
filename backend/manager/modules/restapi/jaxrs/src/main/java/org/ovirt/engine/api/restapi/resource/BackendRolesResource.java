@@ -57,7 +57,7 @@ public class BackendRolesResource
     }
 
     protected ArrayList<ActionGroup> mapPermits(List<Permit> permits) {
-        ArrayList<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        ArrayList<ActionGroup> actionGroups = new ArrayList<>();
         Mapper<Permit, ActionGroup> mapper = getMapper(Permit.class, ActionGroup.class);
         for (Permit permit : permits) {
             actionGroups.add(mapper.map(permit, (ActionGroup)null));

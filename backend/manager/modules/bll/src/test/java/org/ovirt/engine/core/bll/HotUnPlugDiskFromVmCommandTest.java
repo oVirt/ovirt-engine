@@ -32,7 +32,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     @Override
     protected HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters> createCommand() {
-        return new HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters>(createParameters());
+        return new HotUnPlugDiskFromVmCommand<>(createParameters());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<String>(DISK_HOTPLUGGABLE_INTERFACES));
+                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
         mockVmDevice(true);
     }
 }

@@ -28,7 +28,7 @@ public class SimpleDependencyInjector {
     }
 
     private SimpleDependencyInjector() {
-        map = new ConcurrentHashMap<String, Object>();
+        map = new ConcurrentHashMap<>();
     }
 
     /**

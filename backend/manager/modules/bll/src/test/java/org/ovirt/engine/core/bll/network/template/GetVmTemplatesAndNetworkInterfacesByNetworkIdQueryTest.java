@@ -43,7 +43,7 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQueryTest
         setupVmNetworkInterfaceDao();
 
         PairQueryable<VmNetworkInterface, VmTemplate> vmInterfaceVmTemplatePair =
-                new PairQueryable<VmNetworkInterface, VmTemplate>(vmNetworkInterface, vmTemplate);
+                new PairQueryable<>(vmNetworkInterface, vmTemplate);
         List<PairQueryable<VmNetworkInterface, VmTemplate>> expected =
                 Collections.singletonList(vmInterfaceVmTemplatePair);
 

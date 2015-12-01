@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCpuProfileResource extends AbstractBackendCpuProfileResource implements CpuProfileResource {
 
@@ -26,7 +25,7 @@ public class BackendCpuProfileResource extends AbstractBackendCpuProfileResource
     @Override
     public CpuProfile update(CpuProfile resource) {
         return performUpdate(resource,
-                new QueryIdResolver<Guid>(VdcQueryType.GetCpuProfileById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetCpuProfileById, IdQueryParameters.class),
                 VdcActionType.UpdateCpuProfile,
                 new UpdateParametersProvider());
     }

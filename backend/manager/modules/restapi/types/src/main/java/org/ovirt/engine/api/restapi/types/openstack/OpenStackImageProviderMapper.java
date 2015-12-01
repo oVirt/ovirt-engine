@@ -33,7 +33,7 @@ public class OpenStackImageProviderMapper {
     public static Provider<OpenStackImageProviderProperties> map(OpenStackImageProvider model,
                 Provider<OpenStackImageProviderProperties> template) {
         Provider<OpenStackImageProviderProperties> entity =
-                template != null? template: new Provider<OpenStackImageProviderProperties>();
+                template != null? template: new Provider<>();
         entity.setType(ProviderType.OPENSTACK_IMAGE);
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));

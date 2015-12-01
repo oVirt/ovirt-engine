@@ -11,7 +11,7 @@ public enum VdsProtocol {
     XML(0),
     STOMP(1);
 
-    private static final Map<Integer, VdsProtocol> MAPPING = new HashMap<Integer, VdsProtocol>();
+    private static final Map<Integer, VdsProtocol> MAPPING = new HashMap<>();
     static {
         for (VdsProtocol protocol : VdsProtocol.values()) {
             MAPPING.put(protocol.value, protocol);

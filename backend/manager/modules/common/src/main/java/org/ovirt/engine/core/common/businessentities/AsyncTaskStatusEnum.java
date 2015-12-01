@@ -22,7 +22,7 @@ public enum AsyncTaskStatusEnum {
     private static Map<Integer, AsyncTaskStatusEnum> mappings;
 
     static {
-        mappings = new HashMap<Integer, AsyncTaskStatusEnum>();
+        mappings = new HashMap<>();
         for (AsyncTaskStatusEnum error : values()) {
             mappings.put(error.getValue(), error);
         }

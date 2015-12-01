@@ -25,7 +25,7 @@ public class ListUtilsTest {
                     }
                 }).isEmpty());
 
-        List<String> testList = new ArrayList<String>();
+        List<String> testList = new ArrayList<>();
         testList.add("bla");
         testList.add("bli");
         testList.add("blu");
@@ -33,7 +33,7 @@ public class ListUtilsTest {
         testList.add("foo");
         testList.add("bar");
         List<String> filtered =
-                ListUtils.filter(testList, new ListUtils.PredicateFilter<String>(new ListUtils.Predicate<String>() {
+                ListUtils.filter(testList, new ListUtils.PredicateFilter<>(new ListUtils.Predicate<String>() {
                     @Override
                     public boolean evaluate(String obj) {
                         return obj.endsWith("a");
@@ -56,8 +56,8 @@ public class ListUtilsTest {
 
     @Test
     public void testGetAddedElements() {
-        List<String> list1 = new ArrayList<String>();
-        List<String> list2 = new ArrayList<String>();
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
 
         list1.add("string1");
         list2.add("string1");

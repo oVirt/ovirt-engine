@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -403,7 +402,7 @@ public final class ImagesHandler {
     }
 
     public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
-        return isImagesExists(images, storagePoolId, new ArrayList<DiskImage>());
+        return isImagesExists(images, storagePoolId, new ArrayList<>());
     }
 
     private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, ArrayList<DiskImage> irsImages) {
@@ -833,10 +832,7 @@ public final class ImagesHandler {
                 VM vmSnapshot = new VM();
                 ArrayList<DiskImage> snapshotImages = new ArrayList<>();
 
-                ovfManager.importVm(snapConfig,
-                        vmSnapshot,
-                        snapshotImages,
-                        new ArrayList<VmNetworkInterface>());
+                ovfManager.importVm(snapConfig, vmSnapshot, snapshotImages, new ArrayList<>());
 
                 // Remove the image from the disk list
                 Iterator<DiskImage> diskIter = snapshotImages.iterator();
@@ -919,7 +915,7 @@ public final class ImagesHandler {
         clonedDiskImage.setLastModifiedDate(new Date());
         clonedDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
         clonedDiskImage.setVolumeType(srcDiskImage.getVolumeType());
-        ArrayList<Guid> storageIds = new ArrayList<Guid>();
+        ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(storageDomainId);
         clonedDiskImage.setStorageIds(storageIds);
         clonedDiskImage.setDiskProfileId(diskProfileId);

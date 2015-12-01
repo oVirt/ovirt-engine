@@ -171,7 +171,7 @@ public class BackendVmResource
 
         Vm vm = performUpdate(
             incoming,
-            new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
+            new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
             VdcActionType.UpdateVm,
             new UpdateParametersProvider()
         );
@@ -275,9 +275,9 @@ public class BackendVmResource
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override

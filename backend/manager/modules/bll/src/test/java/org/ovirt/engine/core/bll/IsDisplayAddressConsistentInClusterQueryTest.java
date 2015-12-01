@@ -56,7 +56,7 @@ public class IsDisplayAddressConsistentInClusterQueryTest {
 
     @Test
     public void emptyHostsAreNotMismatched() {
-        assertThat(command.isDisplayAddressPartiallyOverridden(new ArrayList<VDS>()), is(false));
+        assertThat(command.isDisplayAddressPartiallyOverridden(new ArrayList<>()), is(false));
     }
 
     @Theory
@@ -71,7 +71,7 @@ public class IsDisplayAddressConsistentInClusterQueryTest {
 
     @Theory
     public void anyCombinationOfDefaulfAndOverriddenHostsAreMismatched(DefaultConsoleAddress defaultAddress, OverriddenConsoleAddress overriddenAddress) {
-        List<VDS> mergedAddresses = new ArrayList<VDS>();
+        List<VDS> mergedAddresses = new ArrayList<>();
         mergedAddresses.addAll(defaultAddress.getAllVds());
         mergedAddresses.addAll(overriddenAddress.getAllVds());
         assertThat(command.isDisplayAddressPartiallyOverridden(mergedAddresses), is(true));
@@ -93,7 +93,7 @@ abstract class BaseVdsContainer {
 
     public void addVds(String returnValue) {
         if (content == null) {
-            content = new ArrayList<VDS>();
+            content = new ArrayList<>();
         }
 
         VDS vds = mock(VDS.class);

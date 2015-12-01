@@ -30,7 +30,7 @@ public class SSOExtensionsManager extends ExtensionsManager {
 
     private void initialize() {
         String path = localConfig.getExtensionsPath();
-        List<File> extensionsDirectories = new ArrayList<File>();
+        List<File> extensionsDirectories = new ArrayList<>();
         if (path != null) {
             for (String currentPath : path.split(":")) {
                 if (StringUtils.isNotBlank(currentPath)) {

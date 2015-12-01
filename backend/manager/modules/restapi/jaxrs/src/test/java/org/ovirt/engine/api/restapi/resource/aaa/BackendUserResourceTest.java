@@ -153,7 +153,7 @@ public class BackendUserResourceTest
         entity.setId(GUIDS[index]);
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setFirstName(NAMES[index]);
-        entity.setGroupNames(new LinkedList<String>(Arrays.asList(GROUPS.split(","))));
+        entity.setGroupNames(new LinkedList<>(Arrays.asList(GROUPS.split(","))));
         entity.setDomain(DOMAIN);
         return entity;
     }
@@ -168,7 +168,7 @@ public class BackendUserResourceTest
         for (Group group : model.getGroups().getGroups()) {
             groupNames.add(group.getName());
         }
-        assertEquals(new HashSet<String>(Arrays.asList(PARSED_GROUPS)), groupNames);
+        assertEquals(new HashSet<>(Arrays.asList(PARSED_GROUPS)), groupNames);
         verifyLinks(model);
     }
 }

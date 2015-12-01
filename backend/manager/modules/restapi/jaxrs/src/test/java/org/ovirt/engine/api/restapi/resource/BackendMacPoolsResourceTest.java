@@ -219,8 +219,7 @@ public class BackendMacPoolsResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.MacPool> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.MacPool> entities =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.MacPool>();
+        List<org.ovirt.engine.core.common.businessentities.MacPool> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

@@ -27,7 +27,7 @@ public class GetDomainListQueryTest
 
     private static class MockEngineExtensionsManager extends EngineExtensionsManager {
 
-        private List<ExtensionProxy> extensions = new ArrayList<ExtensionProxy>();
+        private List<ExtensionProxy> extensions = new ArrayList<>();
 
         public void addExtension(ExtensionProxy extension) {
             extensions.add(extension);

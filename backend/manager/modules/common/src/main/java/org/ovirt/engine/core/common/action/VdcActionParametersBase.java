@@ -81,7 +81,7 @@ public class VdcActionParametersBase implements Serializable {
         compensationEnabled = false;
         parentCommand = VdcActionType.Unknown;
         commandType = VdcActionType.Unknown;
-        imagesParameters = new ArrayList<VdcActionParametersBase>();
+        imagesParameters = new ArrayList<>();
     }
 
     public VdcActionParametersBase(String engineSessionId) {

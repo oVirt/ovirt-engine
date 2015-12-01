@@ -7,7 +7,7 @@ public enum VDSNiceType implements Identifiable {
     RHEVH(2);
 
     private int intValue;
-    private static final HashMap<Integer, VDSNiceType> mappings = new HashMap<Integer, VDSNiceType>();
+    private static final HashMap<Integer, VDSNiceType> mappings = new HashMap<>();
 
     static {
         for (VDSNiceType type : values()) {

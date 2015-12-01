@@ -104,7 +104,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Test
     public void getFCStorageTypeForLun() throws Exception {
         LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         lun.setLunConnections(connections);
         StorageType storageType = command.getLUNStorageType(lun);
         assertEquals("Lun disk should be of FC storage type since it does not had connections",
@@ -115,7 +115,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Test
     public void getISCSIStorageTypeForLun() throws Exception {
         LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         connections.add(new StorageServerConnections("Some LUN connection",
                 "id",
                 "iqn",
@@ -242,7 +242,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
-        return new HotPlugDiskToVmCommand<HotPlugDiskToVmParameters>(createParameters());
+        return new HotPlugDiskToVmCommand<>(createParameters());
     }
 
     protected VdcActionType getCommandActionType() {
@@ -272,7 +272,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     private void mockVMDao(VM vm) {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        List<VM> vmList = new ArrayList<VM>();
+        List<VM> vmList = new ArrayList<>();
         VM vm1 = new VM();
         vm1.setId(command.getParameters().getVmId());
         VM vm2 = new VM();
@@ -293,8 +293,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     protected void mockInterfaceList() {
-        ArrayList<String> diskInterfaces = new ArrayList<String>(
-                Arrays.asList(new String[] {
+        ArrayList<String> diskInterfaces = new ArrayList<>(
+                Arrays.asList(new String[]{
                         "IDE",
                         "VirtIO",
                         "VirtIO_SCSI"
@@ -321,7 +321,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<String>(DISK_HOTPLUGGABLE_INTERFACES));
+                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
         return disk;
     }
 
@@ -336,7 +336,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
-                any(Version.class))).thenReturn(new HashSet<String>(DISK_HOTPLUGGABLE_INTERFACES));
+                any(Version.class))).thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
         mockVmDevice(false);
     }
 

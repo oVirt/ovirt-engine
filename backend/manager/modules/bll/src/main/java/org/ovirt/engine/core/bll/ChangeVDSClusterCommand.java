@@ -658,7 +658,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             for (Network network : clusterNetworks) {
                 if (NetworkUtils.isLabeled(network)) {
                     if (!networksByLabel.containsKey(network.getLabel())) {
-                        networksByLabel.put(network.getLabel(), new ArrayList<Network>());
+                        networksByLabel.put(network.getLabel(), new ArrayList<>());
                     }
 
                     networksByLabel.get(network.getLabel()).add(network);

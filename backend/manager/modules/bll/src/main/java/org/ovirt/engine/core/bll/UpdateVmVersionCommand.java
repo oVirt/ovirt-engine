@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -193,13 +192,13 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             addVmParams = new AddVmAndAttachToPoolParameters(getParameters().getVmStaticData(),
                     getParameters().getVmPoolId(),
                     getParameters().getVmStaticData().getName(),
-                    new HashMap<Guid, DiskImage>());
+                    new HashMap<>());
         }
         else {
             addVmParams = new AddVmParameters(getParameters().getVmStaticData());
         }
 
-        addVmParams.setDiskInfoDestinationMap(new HashMap<Guid, DiskImage>());
+        addVmParams.setDiskInfoDestinationMap(new HashMap<>());
         addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE, VmDeviceType.CONSOLE));
         addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.BALLOON));
         addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND, VmDeviceType.SOUND));

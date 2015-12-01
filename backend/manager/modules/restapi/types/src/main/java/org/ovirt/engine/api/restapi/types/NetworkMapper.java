@@ -56,7 +56,7 @@ public class NetworkMapper {
             entity.getCluster().setDisplay(model.isDisplay());
         }
         if (model.isSetUsages()) {
-            List<NetworkUsage> networkUsages = new ArrayList<NetworkUsage>();
+            List<NetworkUsage> networkUsages = new ArrayList<>();
             for (String usage : model.getUsages().getUsages()) {
                 networkUsages.add(NetworkUsage.fromValue(usage));
             }

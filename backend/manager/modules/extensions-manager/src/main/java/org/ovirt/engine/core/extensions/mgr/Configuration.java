@@ -53,8 +53,8 @@ public abstract class Configuration {
      * should do is call this one.
      */
     protected Configuration() {
-        prefixViews = new HashMap<String, Configuration>();
-        typedViews = new HashMap<Class<?>, Object>();
+        prefixViews = new HashMap<>();
+        typedViews = new HashMap<>();
     }
 
     /**
@@ -330,7 +330,7 @@ public abstract class Configuration {
          */
         @Override
         public List<String> getKeys() {
-            List<String> keys = new LinkedList<String>();
+            List<String> keys = new LinkedList<>();
             Enumeration<?> elements = properties.propertyNames();
             while (elements.hasMoreElements()) {
                 String next = (String) elements.nextElement();
@@ -405,7 +405,7 @@ public abstract class Configuration {
          */
         @Override
         public List<String> getKeys() {
-            List<String> keys = new LinkedList<String>();
+            List<String> keys = new LinkedList<>();
             for (String key : parent.getKeys()) {
                 if (key.startsWith(prefix + ".")) {
                     key = key.substring(prefix.length() + 1);

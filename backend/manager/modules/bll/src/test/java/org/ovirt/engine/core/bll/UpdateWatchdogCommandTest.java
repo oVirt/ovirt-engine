@@ -31,7 +31,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
 
     private VmWatchdogType vmWatchdogType = VmWatchdogType.i6300esb;
 
-    private static final Set<VmWatchdogType> WATCHDOG_MODELS = new HashSet<VmWatchdogType>(
+    private static final Set<VmWatchdogType> WATCHDOG_MODELS = new HashSet<>(
             Arrays.asList(VmWatchdogType.i6300esb));
 
     @Test

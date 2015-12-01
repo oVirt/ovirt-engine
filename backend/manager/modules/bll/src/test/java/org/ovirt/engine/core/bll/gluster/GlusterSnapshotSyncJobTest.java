@@ -239,7 +239,7 @@ public class GlusterSnapshotSyncJobTest {
     }
 
     private List<GlusterVolumeSnapshotEntity> getExistingSnapshots() {
-        List<GlusterVolumeSnapshotEntity> snapsList = new ArrayList<GlusterVolumeSnapshotEntity>();
+        List<GlusterVolumeSnapshotEntity> snapsList = new ArrayList<>();
 
         GlusterVolumeSnapshotEntity snap1 = new GlusterVolumeSnapshotEntity();
         snap1.setId(existingSnapshotIds[0]);
@@ -273,19 +273,19 @@ public class GlusterSnapshotSyncJobTest {
 
     private GlusterSnapshotConfigInfo getSnapshotConfigInfo() {
         GlusterSnapshotConfigInfo config = new GlusterSnapshotConfigInfo();
-        Map<String, String> clusterConfigs = new HashMap<String, String>();
+        Map<String, String> clusterConfigs = new HashMap<>();
         clusterConfigs.put("snap-max-hard-limit", "200");
         clusterConfigs.put("snap-max-soft-limit", "90%");
         clusterConfigs.put("auto-delete", "enable");
         config.setClusterConfigOptions(clusterConfigs);
 
-        Map<String, Map<String, String>> volumeConfigs = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> volumeConfigs = new HashMap<>();
 
-        Map<String, String> volConf1 = new HashMap<String, String>();
+        Map<String, String> volConf1 = new HashMap<>();
         volConf1.put("snap-max-hard-limit", "30");
         volumeConfigs.put(VOLUME_NAME_1, volConf1);
 
-        Map<String, String> volConf2 = new HashMap<String, String>();
+        Map<String, String> volConf2 = new HashMap<>();
         volConf2.put("snap-max-hard-limit", "50");
         volumeConfigs.put(VOLUME_NAME_2, volConf2);
 
@@ -306,7 +306,7 @@ public class GlusterSnapshotSyncJobTest {
     }
 
     private List<GlusterVolumeSnapshotEntity> getSnapshotDetails() {
-        List<GlusterVolumeSnapshotEntity> snapshots = new ArrayList<GlusterVolumeSnapshotEntity>();
+        List<GlusterVolumeSnapshotEntity> snapshots = new ArrayList<>();
 
         GlusterVolumeSnapshotEntity snap1 = new GlusterVolumeSnapshotEntity();
         snap1.setClusterId(CLUSTER_ID_1);
@@ -371,7 +371,7 @@ public class GlusterSnapshotSyncJobTest {
     }
 
     private List<GlusterVolumeEntity> getVolumes() {
-        List<GlusterVolumeEntity> volList = new ArrayList<GlusterVolumeEntity>();
+        List<GlusterVolumeEntity> volList = new ArrayList<>();
         volList.add(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         return volList;
     }

@@ -73,7 +73,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     }
 
     static List<ActionGroup> setUpActionGroups() {
-        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        List<ActionGroup> actionGroups = new ArrayList<>();
         for (int i = 1; i <= NAMES.length; i++) {
             actionGroups.add(ActionGroup.forValue(i));
         }

@@ -121,7 +121,7 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
 
     private void mockCommand() {
         ForceSelectSPMParameters params = new ForceSelectSPMParameters(vdsId);
-        command = spy(new ForceSelectSPMCommand<ForceSelectSPMParameters>(params));
+        command = spy(new ForceSelectSPMCommand<>(params));
         doReturn(vdsDaoMock).when(command).getVdsDao();
         doReturn(storagePoolDaoMock).when(command).getStoragePoolDao();
         doReturn(asyncTaskDaoMock).when(command).getAsyncTaskDao();

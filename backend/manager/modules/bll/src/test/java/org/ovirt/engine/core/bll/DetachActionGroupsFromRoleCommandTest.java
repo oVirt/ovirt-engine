@@ -20,13 +20,13 @@ public class DetachActionGroupsFromRoleCommandTest extends AbstractRolesCommandT
     protected ActionGroupsToRoleParameter generateParameters() {
         Guid roleId = Guid.newGuid();
         ArrayList<ActionGroup> groups =
-                new ArrayList<ActionGroup>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
+                new ArrayList<>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
         return new ActionGroupsToRoleParameter(roleId, groups);
     }
 
     @Override
     protected DetachActionGroupsFromRoleCommand<? extends ActionGroupsToRoleParameter> generateCommand() {
-        return new DetachActionGroupsFromRoleCommand<ActionGroupsToRoleParameter>(getParams());
+        return new DetachActionGroupsFromRoleCommand<>(getParams());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DetachActionGroupsFromRoleCommandTest extends AbstractRolesCommandT
 
     /** Mock the action groups remaining on the role AFTER some were detached */
     private void mockRoleGroups(ActionGroup... groups) {
-        List<RoleGroupMap> maps = new ArrayList<RoleGroupMap>();
+        List<RoleGroupMap> maps = new ArrayList<>();
         for (ActionGroup group : groups) {
             maps.add(new RoleGroupMap(group, getParams().getRoleId()));
         }

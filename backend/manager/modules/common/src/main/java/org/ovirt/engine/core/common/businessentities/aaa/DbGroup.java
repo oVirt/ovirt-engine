@@ -27,7 +27,7 @@ public class DbGroup implements IVdcQueryable {
     private Set<String> memberOf;
 
     public DbGroup() {
-        memberOf = new HashSet<String>();
+        memberOf = new HashSet<>();
     }
 
     public DbGroup(DirectoryGroup directoryGroup) {

@@ -154,9 +154,9 @@ public class BackendGlusterVolumeResource
     public StatisticsResource getStatisticsResource() {
 
         EntityIdResolver<Guid> resolver =
-                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class);
+                new QueryIdResolver<>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class);
         VolumeStatisticalQuery query = new VolumeStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<GlusterVolume, GlusterVolumeEntity>(entityType,
+        return inject(new BackendStatisticsResource<>(entityType,
                 guid,
                 query));
     }

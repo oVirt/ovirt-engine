@@ -57,7 +57,7 @@ public final class Config {
         List<String> systemPackages = Config.getValue(ConfigValues.PackageNamesForCheckUpdate);
         List<String> userPackages = Config.getValue(ConfigValues.UserPackageNamesForCheckUpdate);
 
-        userPackages = ListUtils.filter(userPackages, new PredicateFilter<String>(new Predicate<String>() {
+        userPackages = ListUtils.filter(userPackages, new PredicateFilter<>(new Predicate<String>() {
             @Override
             public boolean evaluate(String obj) {
                 return obj != null && !obj.isEmpty();

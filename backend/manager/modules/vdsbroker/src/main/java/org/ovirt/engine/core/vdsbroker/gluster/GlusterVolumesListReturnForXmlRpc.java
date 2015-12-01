@@ -47,7 +47,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
 
     private Guid clusterId;
-    private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
+    private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     public GlusterVolumesListReturnForXmlRpc(Guid clusterId, Map<String, Object> innerMap) {
@@ -117,7 +117,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     }
 
     private Map<String, String> getOptions(Map<String, Object> map) {
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, String> options = new HashMap<>();
         for(Entry<String, Object> entry : map.entrySet()) {
             options.put(entry.getKey(), (String)entry.getValue());
         }
@@ -135,7 +135,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      * @throws Exception
      */
     private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) throws Exception {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity fetchedBrick;
         int brickOrder = 0;
 

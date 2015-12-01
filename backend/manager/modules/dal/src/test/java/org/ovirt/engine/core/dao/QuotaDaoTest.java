@@ -585,7 +585,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     private static List<QuotaVdsGroup> getQuotaVdsGroup(QuotaVdsGroup quotaVdsGroup) {
-        List<QuotaVdsGroup> quotaVdsGroupList = new ArrayList<QuotaVdsGroup>();
+        List<QuotaVdsGroup> quotaVdsGroupList = new ArrayList<>();
         if (quotaVdsGroup != null) {
             quotaVdsGroupList.add(quotaVdsGroup);
         }
@@ -593,7 +593,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     private static List<QuotaStorage> getQuotaStorage(QuotaStorage quotaStorage) {
-        List<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
+        List<QuotaStorage> quotaStorageList = new ArrayList<>();
         if (quotaStorage != null) {
             quotaStorageList.add(quotaStorage);
         }

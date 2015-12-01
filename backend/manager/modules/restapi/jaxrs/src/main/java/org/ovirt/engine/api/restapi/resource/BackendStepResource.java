@@ -64,7 +64,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
     @Override
     public StatisticsResource getStatisticsResource() {
         StepStatisticalQuery query = new StepStatisticalQuery(new TaskQueryResolver<Guid>(), newModel(id));
-        return inject(new BackendStatisticsResource<Step, GlusterVolumeTaskStatusEntity>(GlusterVolumeTaskStatusEntity.class, guid, query));
+        return inject(new BackendStatisticsResource<>(GlusterVolumeTaskStatusEntity.class, guid, query));
     }
 
     public class TaskQueryResolver<T> implements IResolver<Guid, GlusterVolumeTaskStatusEntity> {

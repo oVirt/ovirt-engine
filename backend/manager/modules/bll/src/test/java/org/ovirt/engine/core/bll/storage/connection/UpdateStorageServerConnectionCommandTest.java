@@ -103,7 +103,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
+        command = spy(new UpdateStorageServerConnectionCommand<>(parameters));
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
         doReturn(storagePoolIsoMapDao).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
@@ -204,7 +204,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        List<StorageServerConnections> connections = new ArrayList<>();
         StorageServerConnections conn1 = new StorageServerConnections();
         conn1.setconnection(newNFSConnection.getconnection());
         conn1.setid(newNFSConnection.getid());
@@ -472,7 +472,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+        List<StorageDomain> domains = new ArrayList<>();
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);

@@ -33,7 +33,7 @@ public class ClusterUtilsTest {
     }
 
     private List<VDS> mockGetAllVdsForwithStatus(VDSStatus status) {
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(getVds(status));
         return vdsList;
     }

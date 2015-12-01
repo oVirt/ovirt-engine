@@ -95,7 +95,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupServersList() {
-        serversList = new ArrayList<VDS>();
+        serversList = new ArrayList<>();
         VDS server = new VDS();
         server.setVdsGroupId(CLUSTER_ID);
         server.setVdsGroupName(CLUSTER_NAME);
@@ -114,7 +114,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupExpectedGlusterServersInfo() {
-        expectedServers = new ArrayList<GlusterServerInfo>();
+        expectedServers = new ArrayList<>();
         GlusterServerInfo server = new GlusterServerInfo();
         server.setUuid(server_id3);
         server.setHostnameOrIp(TEST_SERVER3);
@@ -165,7 +165,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private Map<String, String> getAddedServers() {
-        Map<String, String> servers = new HashMap<String, String>();
+        Map<String, String> servers = new HashMap<>();
         servers.put(TEST_SERVER3, serverKeyFingerprint);
         return servers;
     }

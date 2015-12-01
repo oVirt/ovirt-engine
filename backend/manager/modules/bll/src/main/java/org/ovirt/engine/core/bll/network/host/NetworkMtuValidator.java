@@ -51,7 +51,7 @@ public class NetworkMtuValidator {
         for (NetworkAttachment attachment : attachmentsToConfigure) {
             String nicName = attachment.getNicName();
             if (!nicsToNetworks.containsKey(nicName)) {
-                nicsToNetworks.put(nicName, new ArrayList<Network>());
+                nicsToNetworks.put(nicName, new ArrayList<>());
             }
 
             Network networkToConfigure = networkBusinessEntityMap.get(attachment.getNetworkId());

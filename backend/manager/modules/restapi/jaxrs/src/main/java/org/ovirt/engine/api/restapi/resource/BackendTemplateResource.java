@@ -69,7 +69,7 @@ public class BackendTemplateResource
         validateIconParams(incoming);
         Template result = performUpdate(
             incoming,
-            new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+            new QueryIdResolver<>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
             VdcActionType.UpdateVmTemplate,
             new UpdateParametersProvider()
         );

@@ -19,7 +19,7 @@ public class OsTypeMockUtils {
         osNames.put(0, "Unassigned");
         expect(osRepositoryMock.getUniqueOsNames()).andReturn(osNames).anyTimes();
 
-        HashMap<ArchitectureType, Integer> defaultOSes = new HashMap<ArchitectureType, Integer>();
+        HashMap<ArchitectureType, Integer> defaultOSes = new HashMap<>();
         defaultOSes.put(ArchitectureType.x86_64, 0);
         expect(osRepositoryMock.getDefaultOSes()).andReturn(defaultOSes);
 

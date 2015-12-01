@@ -103,7 +103,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         status = JobExecutionStatus.STARTED;
         autoCleared = true;
         isVisible = true;
-        steps = new ArrayList<Step>();
+        steps = new ArrayList<>();
     }
 
     public List<Step> getSteps() {

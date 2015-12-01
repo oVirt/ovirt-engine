@@ -12,7 +12,7 @@ public class MessageBundle {
     private String path;
 
     public MessageBundle() {
-        messages = new HashMap<String, String>();
+        messages = new HashMap<>();
     }
 
     public void populate() {

@@ -33,8 +33,7 @@ public enum NonOperationalReason {
 
     private final int value;
 
-    private static final Map<Integer, NonOperationalReason> valueMap = new HashMap<Integer, NonOperationalReason>(
-            values().length);
+    private static final Map<Integer, NonOperationalReason> valueMap = new HashMap<>(values().length);
 
     static {
         for (NonOperationalReason reason : values()) {

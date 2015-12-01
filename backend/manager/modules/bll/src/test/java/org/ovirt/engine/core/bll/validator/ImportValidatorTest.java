@@ -105,7 +105,7 @@ public class ImportValidatorTest {
         activeImage.setParentId(baseImage.getImageId());
 
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
-        v.setImages(new ArrayList<DiskImage>(Arrays.asList(baseImage, activeImage)));
+        v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
         v.setVdsGroupId(Guid.Empty);
 
         return v;
@@ -115,7 +115,7 @@ public class ImportValidatorTest {
         ImportValidator validator = spy(new ImportValidator(parameters));
         parameters.setCopyCollapse(true);
 
-        ArrayList<Guid> sdIds = new ArrayList<Guid>(Collections.singletonList(Guid.newGuid()));
+        ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : parameters.getVm().getImages()) {
             image.setStorageIds(sdIds);
         }

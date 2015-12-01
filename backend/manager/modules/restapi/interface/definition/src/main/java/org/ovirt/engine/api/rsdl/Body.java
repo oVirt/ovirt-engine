@@ -7,7 +7,7 @@ import java.util.List;
 public class Body {
     private String parameterType;
     private Boolean required;
-    private List<Signature> signatures = new LinkedList<Signature>();
+    private List<Signature> signatures = new LinkedList<>();
     public List<Signature> getSignatures() {
         return signatures;
     }

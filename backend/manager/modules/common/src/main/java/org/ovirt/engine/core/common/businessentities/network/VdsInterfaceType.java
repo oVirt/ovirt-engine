@@ -11,7 +11,7 @@ public enum VdsInterfaceType {
     GUESTS(8); // 01000
 
     private int intValue;
-    private static final HashMap<Integer, VdsInterfaceType> mappings = new HashMap<Integer, VdsInterfaceType>();
+    private static final HashMap<Integer, VdsInterfaceType> mappings = new HashMap<>();
 
     static {
         for (VdsInterfaceType vdsInterfaceType : values()) {

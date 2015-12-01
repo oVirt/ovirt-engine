@@ -22,7 +22,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
                         getParameters().getStoragePoolId().toString(),
                         getParameters().getImageGroupId().toString());
         proceedProxyReturnValue();
-        ArrayList<Guid> tempRetValue = new ArrayList<Guid>(_result.getUUIDList().length);
+        ArrayList<Guid> tempRetValue = new ArrayList<>(_result.getUUIDList().length);
         for (String id : _result.getUUIDList()) {
             tempRetValue.add(new Guid(id));
         }

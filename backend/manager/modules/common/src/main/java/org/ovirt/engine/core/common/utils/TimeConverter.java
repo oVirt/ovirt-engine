@@ -11,7 +11,7 @@ public class TimeConverter {
     private static List<TimeUnit> orderedTimeUnits;
 
     static {
-        orderedTimeUnits = new ArrayList<TimeUnit>();
+        orderedTimeUnits = new ArrayList<>();
         for (TimeUnit timeUnit : TimeUnit.values()) {
             orderedTimeUnits.add(timeUnit);
         }
@@ -44,7 +44,7 @@ public class TimeConverter {
      */
 
     public static Pair<Long, TimeUnit> autoConvert(long interval, TimeUnit fromUnit) {
-        Pair<Long, TimeUnit> result = new Pair<Long, TimeUnit>();
+        Pair<Long, TimeUnit> result = new Pair<>();
         for (TimeUnit timeUnit : orderedTimeUnits) {
             long tInterval = interval;
             interval = convert(interval, fromUnit, timeUnit);

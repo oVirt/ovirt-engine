@@ -42,7 +42,7 @@ public class ErrorMessageHelper {
     }
 
     private static List<Status> getStatuses(List<String> errors) {
-        List<Status> statuses = new LinkedList<Status>();
+        List<Status> statuses = new LinkedList<>();
         for (String error : errors) {
             Status status = getErrorStatus(error);
             if (status != null) {

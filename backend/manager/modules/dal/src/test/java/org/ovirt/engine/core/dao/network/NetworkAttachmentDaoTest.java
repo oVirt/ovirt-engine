@@ -32,7 +32,7 @@ public class NetworkAttachmentDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getNetworkAttachmentDao();
         networkAttachment = new NetworkAttachment();
         networkAttachment.setNicId(FixturesTool.VDS_NETWORK_INTERFACE);
-        networkAttachment.setProperties(new HashMap<String, String>());
+        networkAttachment.setProperties(new HashMap<>());
         networkAttachment.setId(Guid.newGuid());
         networkAttachment.setNetworkId(FixturesTool.NETWORK_ENGINE);
         IpConfiguration ipConfiguration = new IpConfiguration();

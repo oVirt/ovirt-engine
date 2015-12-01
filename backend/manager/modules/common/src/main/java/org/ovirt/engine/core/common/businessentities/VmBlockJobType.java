@@ -9,7 +9,7 @@ public enum VmBlockJobType implements Identifiable {
     COMMIT(3);
 
     private final int blockJobType;
-    private static final HashMap<Integer, VmBlockJobType> mappings = new HashMap<Integer, VmBlockJobType>();
+    private static final HashMap<Integer, VmBlockJobType> mappings = new HashMap<>();
 
     static {
         for (VmBlockJobType component : values()) {

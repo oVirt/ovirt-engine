@@ -46,7 +46,7 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         for (Integer i = 0; i < max; i++) {
             GlusterBrickEntity brick1 = new GlusterBrickEntity();
             brick1.setVolumeId(volumeId);

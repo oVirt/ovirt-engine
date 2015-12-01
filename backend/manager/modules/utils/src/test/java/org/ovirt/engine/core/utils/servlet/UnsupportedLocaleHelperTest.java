@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UnsupportedLocaleHelperTest {
-    static final List<String> unvalidatedUnsupportedLocales = new ArrayList<String>();
+    static final List<String> unvalidatedUnsupportedLocales = new ArrayList<>();
 
     @ClassRule
     public static MockConfigRule mcr =
@@ -35,17 +35,16 @@ public class UnsupportedLocaleHelperTest {
 
     @Test
     public void testGetDisplayLocales() {
-        List<String> displayLocales = new ArrayList<String>();
-        List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, displayLocales,
-                new ArrayList<String>());
+        List<String> displayLocales = new ArrayList<>();
+        List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, displayLocales, new ArrayList<>());
         assertNotNull("Result should not be null", locales);
         assertEquals("There should be 8 locales", 8, locales.size());
     }
 
     @Test
     public void testGetDisplayLocalesUnsupported() {
-        List<String> displayLocales = new ArrayList<String>();
-        List<String> unSupportedLocales = new ArrayList<String>();
+        List<String> displayLocales = new ArrayList<>();
+        List<String> unSupportedLocales = new ArrayList<>();
         unSupportedLocales.add("pt_BR");
         List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, displayLocales, unSupportedLocales);
         assertNotNull("Result should not be null", locales);
@@ -55,9 +54,9 @@ public class UnsupportedLocaleHelperTest {
 
     @Test
     public void testGetDisplayLocalesWithUnsupportedHiding2() {
-        List<String> unSupportedLocales = new ArrayList<String>();
+        List<String> unSupportedLocales = new ArrayList<>();
         unSupportedLocales.add("de_DE");
-        List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, new ArrayList<String>(), unSupportedLocales);
+        List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, new ArrayList<>(), unSupportedLocales);
         assertNotNull("Result should not be null", locales);
         assertEquals("There should be 7 locales", 7, locales.size());
         assertFalse("Locales should not contain 'de_DE'", locales.contains("de_DE"));
@@ -65,9 +64,9 @@ public class UnsupportedLocaleHelperTest {
 
     @Test
     public void testGetDisplayLocalesWithUnsupportedShowing() {
-        List<String> unSupportedLocales = new ArrayList<String>();
+        List<String> unSupportedLocales = new ArrayList<>();
         unSupportedLocales.add("de_DE");
-        List<String> displayUnsupported = new ArrayList<String>();
+        List<String> displayUnsupported = new ArrayList<>();
         displayUnsupported.add("de_DE");
         List<String> locales = UnsupportedLocaleHelper.getDisplayedLocales(allLocales, displayUnsupported,
                 unSupportedLocales);
@@ -103,7 +102,7 @@ public class UnsupportedLocaleHelperTest {
     }
 
     private List<String> getAllLocales() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         result.add("de_DE");
         result.add("en_US");
         result.add("fr_FR");

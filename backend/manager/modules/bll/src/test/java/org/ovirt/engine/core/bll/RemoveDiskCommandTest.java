@@ -79,7 +79,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
 
         RemoveDiskParameters params = new RemoveDiskParameters(disk.getId());
 
-        cmd = spy(new RemoveDiskCommand<RemoveDiskParameters>(params));
+        cmd = spy(new RemoveDiskCommand<>(params));
         doReturn(disk).when(cmd).getDisk();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(vmDao).when(cmd).getVmDao();

@@ -852,7 +852,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getRunVdssList(),
                         getVdsWhiteList(),
                         getPredefinedVdsIdListToRunOn(),
-                        new ArrayList<String>(),
+                        new ArrayList<>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
         setVdsId(vdsToRunOn);

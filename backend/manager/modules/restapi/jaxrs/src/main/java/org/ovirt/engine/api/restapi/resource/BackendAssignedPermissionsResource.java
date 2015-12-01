@@ -147,7 +147,7 @@ public class BackendAssignedPermissionsResource
     }
 
     public Map<Guid, DbUser> getUsers() {
-        HashMap<Guid, DbUser> users = new HashMap<Guid, DbUser>();
+        HashMap<Guid, DbUser> users = new HashMap<>();
         for (DbUser user : lookupUsers()) {
             users.put(user.getId(), user);
         }

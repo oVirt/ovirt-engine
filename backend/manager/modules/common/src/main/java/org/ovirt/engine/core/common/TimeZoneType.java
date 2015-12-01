@@ -18,7 +18,7 @@ public enum TimeZoneType {
     GENERAL_TIMEZONE(ConfigValues.DefaultGeneralTimeZone, ConfigurationValues.DefaultGeneralTimeZone, "Etc/GMT") {
         @Override
         protected Map<String, String> initializeTimeZoneList() {
-            Map<String, String> generalTimeZones = new HashMap<String, String>();
+            Map<String, String> generalTimeZones = new HashMap<>();
             generalTimeZones.put("Etc/GMT", "(GMT+00:00) GMT Standard Time");
             generalTimeZones.put("Asia/Kabul", "(GMT+04:30) Afghanistan Standard Time");
             generalTimeZones.put("America/Anchorage", "(GMT-09:00) Alaskan Standard Time");
@@ -106,7 +106,7 @@ public enum TimeZoneType {
     WINDOWS_TIMEZONE(ConfigValues.DefaultWindowsTimeZone, ConfigurationValues.DefaultWindowsTimeZone, "GMT Standard Time") {
         @Override
         protected Map<String, String> initializeTimeZoneList() {
-            Map<String, String> windowsTimeZones = new HashMap<String, String>();
+            Map<String, String> windowsTimeZones = new HashMap<>();
             windowsTimeZones.put("Arabian Standard Time", "(GMT+04:00) Arabian Standard Time");
             windowsTimeZones.put("W. Australia Standard Time", "(GMT+08:00) W. Australia Standard Time");
             windowsTimeZones.put("Caucasus Standard Time", "(GMT+04:00) Caucasus Standard Time");
@@ -272,10 +272,10 @@ public enum TimeZoneType {
     }
 
     private static Map<String, String> sortMapByValue(Map<String, String> map) {
-        List<Map.Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(map.entrySet());
+        List<Map.Entry<String, String>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, TimeZoneTimeExtractComperator.instance);
 
-        Map<String, String> result = new LinkedHashMap<String, String>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (Iterator<Map.Entry<String, String>> it = list.iterator(); it.hasNext();) {
             Map.Entry<String, String> entry = it.next();
             result.put(entry.getKey(), entry.getValue());

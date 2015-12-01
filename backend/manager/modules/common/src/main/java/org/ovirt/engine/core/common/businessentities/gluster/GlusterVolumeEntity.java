@@ -94,12 +94,11 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
     private String geoRepMasterVolAndClusterName;
 
     public GlusterVolumeEntity() {
-        options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
-        bricks = new ArrayList<GlusterBrickEntity>();
+        options = new LinkedHashMap<>();
+        bricks = new ArrayList<>();
         status = GlusterStatus.DOWN;
-        accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[]{
-                AccessProtocol.GLUSTER, AccessProtocol.NFS}));
-        transportTypes = new LinkedHashSet<TransportType>();
+        accessProtocols = new LinkedHashSet<>(Arrays.asList(AccessProtocol.GLUSTER, AccessProtocol.NFS));
+        transportTypes = new LinkedHashSet<>();
         volumeType = GlusterVolumeType.DISTRIBUTE;
         asyncTask = new GlusterAsyncTask();
         advancedDetails = new GlusterVolumeAdvancedDetails();
@@ -434,7 +433,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
     }
 
     public List<String> getBrickDirectories() {
-        List<String> brickDirectories = new ArrayList<String>();
+        List<String> brickDirectories = new ArrayList<>();
         for (GlusterBrickEntity brick : getBricks()) {
             brickDirectories.add(brick.getQualifiedName());
         }

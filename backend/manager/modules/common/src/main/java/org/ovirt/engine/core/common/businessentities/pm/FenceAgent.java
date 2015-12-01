@@ -205,7 +205,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
      * @return A parsed map
      */
     public static HashMap<String, String> pmOptionsStringToMap(String pmOptions) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         if (pmOptions == null || pmOptions.equals("")) {
             return map;
         }

@@ -85,7 +85,7 @@ public class RsdlBuilder {
     }
 
     public Map<String, Action> addParametersMetaData() {
-        parametersMetaData = new HashMap<String, Action>();
+        parametersMetaData = new HashMap<>();
         for (Action action : metadata.getActions()) {
             parametersMetaData.put(action.getName(), action);
         }
@@ -219,10 +219,10 @@ public class RsdlBuilder {
 
     public Collection<DetailedLink> getLinks() throws ClassNotFoundException, IOException {
         //SortedSet<Link> results = new TreeSet<Link>();
-        List<DetailedLink> results = new ArrayList<DetailedLink>();
+        List<DetailedLink> results = new ArrayList<>();
         for (String path : rels) {
             Class<?> resource = findResource(path);
-            results.addAll(describe(resource, path, new HashMap<String, Type>()));
+            results.addAll(describe(resource, path, new HashMap<>()));
         }
         return results;
     }
@@ -243,7 +243,7 @@ public class RsdlBuilder {
 
     public List<DetailedLink> describe(Class<?> resource, String prefix, Map<String, Type> parametersMap) throws ClassNotFoundException {
         //SortedSet<Link> results = new TreeSet<Link>();
-        List<DetailedLink> results = new ArrayList<DetailedLink>();
+        List<DetailedLink> results = new ArrayList<>();
         if (resource!=null) {
             for (Method m : resource.getMethods()) {
                 if (isConcreteReturnType(m, resource)) {
@@ -327,7 +327,7 @@ public class RsdlBuilder {
                         ParameterizedType parameterizedType = (ParameterizedType)m.getGenericReturnType();
                         addToGenericParamsMap(resource, parameterizedType.getActualTypeArguments(), m.getReturnType().getTypeParameters(), parametersMap);
                     }
-                    results.addAll(describe(concreteReturnType, prefix + "/" + path, new HashMap<String, Type>(parametersMap)));
+                    results.addAll(describe(concreteReturnType, prefix + "/" + path, new HashMap<>(parametersMap)));
                 }
             } else {
                 if (m.getName().equals(ADD)) {
@@ -807,8 +807,8 @@ public class RsdlBuilder {
      * @param rsdl
      */
     private void uniteDuplicateLinks(Rsdl rsdl) {
-        Map<String, DetailedLink> linksMap = new HashMap<String, DetailedLink>();
-        Collection<DetailedLink> linksToDelete = new LinkedList<DetailedLink>();
+        Map<String, DetailedLink> linksMap = new HashMap<>();
+        Collection<DetailedLink> linksToDelete = new LinkedList<>();
         for (DetailedLink link : rsdl.getLinks().getLinks()) {
             String linkId = link.getHref() + link.getRel();
             if (linksMap.containsKey(linkId)) {

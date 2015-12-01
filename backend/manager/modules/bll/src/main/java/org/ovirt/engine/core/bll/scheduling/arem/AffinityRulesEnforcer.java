@@ -103,8 +103,7 @@ public class AffinityRulesEnforcer {
                 // Test whether any migration is possible, this uses current AffinityGroup settings
                 // and so won't allow more breakage
                 boolean canMove = schedulingManager.canSchedule(vdsGroup, candidateVm,
-                        new ArrayList<Guid>(), new ArrayList<Guid>(),
-                        null, new ArrayList<String>());
+                        new ArrayList<>(), new ArrayList<>(), null, new ArrayList<>());
 
                 if (canMove) {
                     log.debug("VM {} is a viable candidate for solving affinity group violation situation.",
@@ -194,7 +193,7 @@ public class AffinityRulesEnforcer {
             if (hostCount.containsKey(host)) {
                 hostCount.get(host).add(vm);
             } else {
-                hostCount.put(host, new ArrayList<Guid>());
+                hostCount.put(host, new ArrayList<>());
                 hostCount.get(host).add(vm);
             }
         }

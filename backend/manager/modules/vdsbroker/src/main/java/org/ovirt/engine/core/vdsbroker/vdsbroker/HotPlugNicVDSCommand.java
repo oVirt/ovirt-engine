@@ -15,7 +15,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
 
-    protected Map<String, Object> struct = new HashMap<String, Object>();
+    protected Map<String, Object> struct = new HashMap<>();
 
     public HotPlugNicVDSCommand(P parameters) {
         super(parameters);
@@ -34,7 +34,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
     }
 
     private Map<String, Object> initNicStructure() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
         Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();

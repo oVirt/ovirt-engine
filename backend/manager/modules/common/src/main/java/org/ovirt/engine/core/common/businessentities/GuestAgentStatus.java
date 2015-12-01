@@ -8,7 +8,7 @@ public enum GuestAgentStatus {
     Exists(1),
     UpdateNeeded(2);
 
-    private static final Map<Integer, GuestAgentStatus> mappings = new HashMap<Integer, GuestAgentStatus>();
+    private static final Map<Integer, GuestAgentStatus> mappings = new HashMap<>();
     private int value;
 
     static {

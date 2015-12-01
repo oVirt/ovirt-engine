@@ -10,8 +10,7 @@ public enum VdsTransparentHugePagesState {
     Always(2);
 
     private int intValue;
-    private static final HashMap<Integer, VdsTransparentHugePagesState> mappings =
-            new HashMap<Integer, VdsTransparentHugePagesState>();
+    private static final HashMap<Integer, VdsTransparentHugePagesState> mappings = new HashMap<>();
 
     static {
         for (VdsTransparentHugePagesState status : EnumSet.allOf(VdsTransparentHugePagesState.class)) {

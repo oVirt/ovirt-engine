@@ -407,7 +407,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         image.setImageId(newImageId);
 
         image.setDiskAlias(getDiskAlias());
-        image.setStorageIds(new ArrayList<Guid>());
+        image.setStorageIds(new ArrayList<>());
         image.getStorageIds().add(getParameters().getStorageDomainId());
         image.setQuotaId(getParameters().getQuotaId());
         image.setDiskProfileId(getParameters().getDiskProfileId());

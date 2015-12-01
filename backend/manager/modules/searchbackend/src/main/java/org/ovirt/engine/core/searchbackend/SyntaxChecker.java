@@ -58,12 +58,12 @@ public class SyntaxChecker implements ISyntaxChecker {
         andAC = new BaseAutoCompleter("AND");
         orAC = new BaseAutoCompleter("OR");
         dotAC = new BaseAutoCompleter(".");
-        disAllowedChars = new ArrayList<Character>(Arrays.asList(new Character[] { '\'', ';' }));
+        disAllowedChars = new ArrayList<>(Arrays.asList(new Character[]{'\'', ';'}));
 
         firstDQRegexp = new Regex("^\\s*\"$");
         nonSpaceRegexp = new Regex("^\\S+$");
 
-        stateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        stateMap = new HashMap<>();
         stateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
         stateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
         SyntaxObjectType[] afterColon =
@@ -197,7 +197,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         final SyntaxContainer syntaxContainer = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter curConditionFieldAC = null;
         IAutoCompleter curConditionRelationAC = null;
-        final List<String> freeTextObjSearched = new ArrayList<String>();
+        final List<String> freeTextObjSearched = new ArrayList<>();
         char[] searchCharArr = searchText.toCharArray();
         int curStartPos = 0;
 
@@ -326,7 +326,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else {
-                    RefObject<Integer> tempRefObject = new RefObject<Integer>(curStartPos);
+                    RefObject<Integer> tempRefObject = new RefObject<>(curStartPos);
                     ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject, syntaxContainer);
                     curStartPos = tempRefObject.argvalue;
                     if (ans != ValueParseResult.Err) {
@@ -378,7 +378,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else {
-                    RefObject<Integer> tempRefObject2 = new RefObject<Integer>(curStartPos);
+                    RefObject<Integer> tempRefObject2 = new RefObject<>(curStartPos);
                     ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject2, syntaxContainer);
                     curStartPos = tempRefObject2.argvalue;
                     if (ans != ValueParseResult.Err) {
@@ -446,7 +446,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                             && (!sortbyAC.validateCompletion(nextObject))
                             && (!searchObjectAC.validateCompletion(nextObject))
                             && (!andAC.validateCompletion(nextObject)) && (!orAC.validateCompletion(nextObject))) {
-                        RefObject<Integer> tempRefObject3 = new RefObject<Integer>(curStartPos);
+                        RefObject<Integer> tempRefObject3 = new RefObject<>(curStartPos);
                         ValueParseResult ans =
                                 handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
                         curStartPos = tempRefObject3.argvalue;
@@ -506,7 +506,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
                 break;
             case CONDITION_RELATION: {
-                RefObject<Integer> tempRefObject4 = new RefObject<Integer>(curStartPos);
+                RefObject<Integer> tempRefObject4 = new RefObject<>(curStartPos);
                 ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject4, syntaxContainer);
                 curStartPos = tempRefObject4.argvalue;
                 if (ans == ValueParseResult.Err) {
@@ -699,7 +699,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String generateFromStatement(SyntaxContainer syntax, boolean useTags) {
-        LinkedList<String> innerJoins = new LinkedList<String>();
+        LinkedList<String> innerJoins = new LinkedList<>();
         ArrayList<String> refObjList = syntax.getCrossRefObjList();
         String searchObjStr = syntax.getSearchObjectStr();
         if (refObjList.size() > 0) {
@@ -804,7 +804,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (syntax.getvalid()) {
             ListIterator<SyntaxObject> objIter = syntax.listIterator(0);
             IConditionFieldAutoCompleter conditionFieldAC;
-            LinkedList<String> whereBuilder = new LinkedList<String>();
+            LinkedList<String> whereBuilder = new LinkedList<>();
             String searchObjStr = syntax.getSearchObjectStr();
             String sortByPhrase = "";
             String fromStatement = "";

@@ -40,7 +40,7 @@ public class VdsBrokerObjectBuilderTest {
     @Test
     public void testDisksUsagesWithEmptyEntry() {
         Object[] disksUsages = initDisksUsageData();
-        disksUsages[1] = new HashMap<String, String>();
+        disksUsages[1] = new HashMap<>();
         Map<String, Object> xml = setDisksUsageInXmlRpc(disksUsages);
         validateDisksUsagesList(getVmStatistics(), disksUsages, xml);
     }
@@ -183,7 +183,7 @@ public class VdsBrokerObjectBuilderTest {
     @Test
     public void testNoDiskStats() {
         VDS vds = getVds();
-        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, new HashMap<String, Object>());
+        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, new HashMap<>());
 
         assertNull(vds.getLocalDisksUsage());
     }

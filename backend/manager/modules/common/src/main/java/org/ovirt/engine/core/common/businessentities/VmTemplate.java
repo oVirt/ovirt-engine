@@ -62,9 +62,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
-        diskTemplateMap = new HashMap<Guid, DiskImage>();
+        diskTemplateMap = new HashMap<>();
         status = VmTemplateStatus.OK;
-        diskImageMap = new HashMap<Guid, DiskImage>();
+        diskImageMap = new HashMap<>();
         templateType = VmEntityType.TEMPLATE;
         baseTemplateId = Guid.Empty;
         setTemplateVersionNumber(BASE_VERSION_NUMBER);
@@ -156,8 +156,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 numOfIoThreads,
                 consoleDisconnectAction);
 
-        diskTemplateMap = new HashMap<Guid, DiskImage>();
-        diskImageMap = new HashMap<Guid, DiskImage>();
+        diskTemplateMap = new HashMap<>();
+        diskImageMap = new HashMap<>();
 
         this.childCount = childCount;
         this.setStatus(VmTemplateStatus.forValue(status));
@@ -170,8 +170,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     public VmTemplate(VmTemplate template) {
         super((VmBase)template);
 
-        diskTemplateMap = new HashMap<Guid, DiskImage>();
-        diskImageMap = new HashMap<Guid, DiskImage>();
+        diskTemplateMap = new HashMap<>();
+        diskImageMap = new HashMap<>();
 
         setChildCount(template.getChildCount());
         setStatus(template.getStatus());

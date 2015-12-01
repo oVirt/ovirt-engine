@@ -24,7 +24,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
 
     public static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";
 
-    private final QueryIdResolver<Guid> ID_RESOLVER = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId,
+    private final QueryIdResolver<Guid> ID_RESOLVER = new QueryIdResolver<>(VdcQueryType.GetDiskByDiskId,
             IdQueryParameters.class);
 
     Guid storageDomainId;

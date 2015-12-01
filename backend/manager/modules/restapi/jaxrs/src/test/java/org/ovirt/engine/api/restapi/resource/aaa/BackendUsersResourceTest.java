@@ -143,7 +143,7 @@ public class BackendUsersResourceTest
     @Override
     protected DbUser getEntity(int index) {
         DbUser entity = new DbUser(getDirectoryUser(index));
-        entity.setGroupNames(new LinkedList<String>(Arrays.asList(GROUPS.split(","))));
+        entity.setGroupNames(new LinkedList<>(Arrays.asList(GROUPS.split(","))));
         entity.setId(GUIDS[index]);
         return entity;
     }
@@ -164,7 +164,7 @@ public class BackendUsersResourceTest
         for (Group group : model.getGroups().getGroups()) {
             groupNames.add(group.getName());
         }
-        assertEquals(new HashSet<String>(Arrays.asList(PARSED_GROUPS)), groupNames);
+        assertEquals(new HashSet<>(Arrays.asList(PARSED_GROUPS)), groupNames);
         verifyLinks(model);
     }
 

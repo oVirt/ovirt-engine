@@ -29,8 +29,8 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
     private Map<Integer, Integer> numaNodeDistances;
 
     public VdsNumaNode() {
-        cpuIds = new ArrayList<Integer>();
-        numaNodeDistances = new HashMap<Integer, Integer>();
+        cpuIds = new ArrayList<>();
+        numaNodeDistances = new HashMap<>();
     }
 
     public Guid getId() {

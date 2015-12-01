@@ -370,7 +370,7 @@ public class UpdateVdsGroupCommandTest {
         createCommandWithNoCpuName();
         when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDao.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
-        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<GlusterVolumeEntity>());
+        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<>());
         allQueriesForVms();
         assertTrue(cmd.canDoAction());
     }
@@ -681,7 +681,7 @@ public class UpdateVdsGroupCommandTest {
 
     private void storagePoolAlreadyHasCluster() {
         VDSGroup group = new VDSGroup();
-        List<VDSGroup> groupList = new ArrayList<VDSGroup>();
+        List<VDSGroup> groupList = new ArrayList<>();
         groupList.add(group);
         when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(groupList);
     }
@@ -689,7 +689,7 @@ public class UpdateVdsGroupCommandTest {
     private void VdsExist() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.Up);
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
         when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
@@ -698,7 +698,7 @@ public class UpdateVdsGroupCommandTest {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.Up);
         vds.setVdsGroupCompatibilityVersion(VERSION_1_2);
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
         when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
@@ -711,13 +711,13 @@ public class UpdateVdsGroupCommandTest {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.Up);
         vds.setSupportedClusterLevels(VERSION_1_1.toString());
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(vds);
         when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void clusterHasGlusterVolumes() {
-        List<GlusterVolumeEntity> volumes = new ArrayList<GlusterVolumeEntity>();
+        List<GlusterVolumeEntity> volumes = new ArrayList<>();
         volumes.add(new GlusterVolumeEntity());
         when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(volumes);
     }
@@ -725,14 +725,14 @@ public class UpdateVdsGroupCommandTest {
     private void clusterHasVMs() {
         VM vm = new VM();
         vm.setVdsGroupId(DEFAULT_VDS_GROUP_ID);
-        List<VM> vmList = new ArrayList<VM>();
+        List<VM> vmList = new ArrayList<>();
         vmList.add(vm);
 
         when(vmDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vmList);
     }
 
     private void cpuFlagsMissing() {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         strings.add("foo");
         doReturn(strings).when(cmd).missingServerCpuFlags(any(VDS.class));
     }

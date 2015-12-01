@@ -157,7 +157,7 @@ public enum ActionGroup {
     private RoleType roleType;
     private boolean allowsViewingChildren;
     private int applicationMode;
-    private static final HashMap<Integer, ActionGroup> map = new HashMap<Integer, ActionGroup>(ActionGroup.values().length);
+    private static final HashMap<Integer, ActionGroup> map = new HashMap<>(ActionGroup.values().length);
 
     static {
         for (ActionGroup t : ActionGroup.values()) {

@@ -330,7 +330,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     private List<Guid> getBrickIds() {
-        List<Guid> brickIds = new ArrayList<Guid>();
+        List<Guid> brickIds = new ArrayList<>();
         brickIds.add(GUIDS[0]);
         return brickIds;
     }
@@ -353,7 +353,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     private List<GlusterBrickEntity> getBricks() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setId(GUIDS[0]);
         brick.setServerId(serverId);
@@ -434,7 +434,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     private void setUpBricksQueryExpectations(Object failure) {
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
         expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
-        List<GlusterBrickEntity> entities = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
@@ -456,7 +456,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     private void setUpGetEntityExpectationsAllContent(boolean notFound) throws Exception {
-        List<String> populateValue = new ArrayList<String>();
+        List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
         expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();
 

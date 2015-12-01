@@ -108,8 +108,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        command = spy(new LiveMigrateVmDisksCommand<LiveMigrateVmDisksParameters>(
-                new LiveMigrateVmDisksParameters(new ArrayList<LiveMigrateDiskParameters>(), vmId), null));
+        command = spy(new LiveMigrateVmDisksCommand<>(new LiveMigrateVmDisksParameters(new ArrayList<>(), vmId), null));
 
         doReturn(true).when(command).validateSpaceRequirements();
         doReturn(true).when(command).checkImagesStatus();
@@ -364,7 +363,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         diskImage.setId(diskImageGroupId);
         diskImage.getImage().setId(diskImageId);
         diskImage.setStoragePoolId(storagePoolId);
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(srcStorageId)));
+        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(srcStorageId)));
 
         when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);

@@ -79,7 +79,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     }
 
     private List<GlusterVolumeTaskStatusForHost> getHostwiseStatusDetails() {
-        List<GlusterVolumeTaskStatusForHost> statusList = new ArrayList<GlusterVolumeTaskStatusForHost>();
+        List<GlusterVolumeTaskStatusForHost> statusList = new ArrayList<>();
 
         GlusterVolumeTaskStatusForHost status1 = new GlusterVolumeTaskStatusForHost();
         status1.setHostName(SERVER_1);
@@ -140,7 +140,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     }
 
     private List<Step> getStepsList() {
-        List<Step> stepsList = new ArrayList<Step>();
+        List<Step> stepsList = new ArrayList<>();
         Step stp = new Step();
         stp.setId(STEP_ID);
         stp.setStartTime(new Date());

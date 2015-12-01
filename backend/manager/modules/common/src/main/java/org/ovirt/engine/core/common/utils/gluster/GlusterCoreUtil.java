@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterCoreUtil {
     public static final List<String> getQualifiedBrickList(Collection<GlusterBrickEntity> bricks) {
-        List<String> qualifiedBricks = new ArrayList<String>();
+        List<String> qualifiedBricks = new ArrayList<>();
         for (GlusterBrickEntity GlusterBrick : bricks) {
             qualifiedBricks.add(GlusterBrick.getQualifiedName());
         }

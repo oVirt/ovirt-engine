@@ -12,7 +12,7 @@ public enum InterfaceStatus {
     private static Map<Integer, InterfaceStatus> mappings;
 
     static {
-        mappings = new HashMap<Integer, InterfaceStatus>();
+        mappings = new HashMap<>();
         for (InterfaceStatus error : values()) {
             mappings.put(error.getValue(), error);
         }

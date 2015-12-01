@@ -529,7 +529,7 @@ public enum EngineError {
     HOST_DEVICES_TAKEN_BY_OTHER_VM(6000);
 
     private int intValue;
-    private static final HashMap<Integer, EngineError> mappings = new HashMap<Integer, EngineError>();
+    private static final HashMap<Integer, EngineError> mappings = new HashMap<>();
 
     static {
         for (EngineError error : values()) {

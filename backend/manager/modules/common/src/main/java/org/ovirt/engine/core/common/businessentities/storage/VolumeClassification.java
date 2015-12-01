@@ -12,7 +12,7 @@ public enum VolumeClassification {
     private static Map<Integer, VolumeClassification> mappings;
 
     static {
-        mappings = new HashMap<Integer, VolumeClassification>();
+        mappings = new HashMap<>();
         for (VolumeClassification error : values()) {
             mappings.put(error.getValue(), error);
         }

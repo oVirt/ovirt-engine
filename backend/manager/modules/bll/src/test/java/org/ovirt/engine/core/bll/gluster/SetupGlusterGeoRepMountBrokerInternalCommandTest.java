@@ -39,7 +39,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
     public void commandSucceeds() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
+                        new HashSet<>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();
@@ -52,7 +52,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
     public void commandFailsSlaveNotOvirtMonitored() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
+                        new HashSet<>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();
@@ -64,7 +64,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
     public void commandFailsSlaveVolumeNotUp() {
         command =
                 spy(new SetupGlusterGeoRepMountBrokerInternalCommand(new SetUpMountBrokerParameters(Guid.newGuid(),
-                        new HashSet<Guid>(Collections.singletonList(Guid.newGuid())),
+                        new HashSet<>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null)));
         doReturn(vds).when(command).getUpServer();

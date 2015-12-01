@@ -531,7 +531,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
      * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
      */
     protected void assertGetTreeForEntityResult(Guid entityID, List<Permission> result, Guid... alternativeObjectIds) {
-        Set<Guid> expectedObjectIds = new HashSet<Guid>();
+        Set<Guid> expectedObjectIds = new HashSet<>();
         expectedObjectIds.add(entityID);
         expectedObjectIds.addAll(Arrays.asList(alternativeObjectIds));
 

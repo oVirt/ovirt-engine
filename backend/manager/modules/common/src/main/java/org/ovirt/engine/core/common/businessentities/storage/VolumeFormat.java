@@ -10,7 +10,7 @@ public enum VolumeFormat {
     RAW(5);
 
     private int intValue;
-    private static final HashMap<Integer, VolumeFormat> mappings = new HashMap<Integer, VolumeFormat>();
+    private static final HashMap<Integer, VolumeFormat> mappings = new HashMap<>();
 
     static {
         for (VolumeFormat volumeFormat : values()) {

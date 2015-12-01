@@ -35,7 +35,7 @@ public class OpenStackVolumeProviderMapper {
     public static Provider<OpenStackVolumeProviderProperties> map(OpenStackVolumeProvider model,
                 Provider<OpenStackVolumeProviderProperties> template) {
         Provider<OpenStackVolumeProviderProperties> entity =
-                template != null? template: new Provider<OpenStackVolumeProviderProperties>();
+                template != null? template: new Provider<>();
         entity.setType(ProviderType.OPENSTACK_VOLUME);
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));

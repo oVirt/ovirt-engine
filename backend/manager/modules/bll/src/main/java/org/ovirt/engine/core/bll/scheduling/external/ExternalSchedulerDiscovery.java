@@ -107,7 +107,7 @@ public class ExternalSchedulerDiscovery {
             }
 
             Map<String, String> discoveryPropMap =
-                    StringUtils.isEmpty(discoveryUnit.getRegex()) ? new LinkedHashMap<String, String>() :
+                    StringUtils.isEmpty(discoveryUnit.getRegex()) ? new LinkedHashMap<>() :
                     SimpleCustomPropertiesUtil.getInstance().convertProperties(discoveryUnit.getRegex());
             if (!discoveryPropMap.equals(policyUnit.getParameterRegExMap()) ||
                     !discoveryUnit.getDescription().equals(policyUnit.getDescription()) ||
@@ -143,7 +143,7 @@ public class ExternalSchedulerDiscovery {
             policy.setParameterRegExMap(SimpleCustomPropertiesUtil.getInstance()
                     .convertProperties(discoveryUnit.getRegex()));
         } else {
-            policy.setParameterRegExMap(new LinkedHashMap<String, String>());
+            policy.setParameterRegExMap(new LinkedHashMap<>());
         }
         return policy;
     }

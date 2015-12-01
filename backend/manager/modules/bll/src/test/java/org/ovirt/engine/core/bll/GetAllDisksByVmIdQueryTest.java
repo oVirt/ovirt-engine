@@ -85,7 +85,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
         // Disk Image Dao
-        List<Disk> returnArray = new ArrayList<Disk>();
+        List<Disk> returnArray = new ArrayList<>();
         returnArray.add(pluggedDisk);
         returnArray.add(unpluggedDisk);
         returnArray.add(pluggedDiskSnapshot);
@@ -105,11 +105,11 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 thenReturn(Arrays.asList(pluggedDevice, unpluggedDevice, pluggedSnapshotDevice, unpluggedSnapshotDevice));
 
         // Snapshots
-        doReturn(new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
+        doReturn(new ArrayList<>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
                 createDiskSnapshot(pluggedDisk.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDisk);
         doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDisk.getId()))).when(getQuery())
                 .getAllImageSnapshots(unpluggedDisk);
-        doReturn(new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
+        doReturn(new ArrayList<>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
                 createDiskSnapshot(pluggedDiskSnapshot.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDiskSnapshot);
         doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDiskSnapshot.getId()))).when(getQuery())
                 .getAllImageSnapshots(unpluggedDiskSnapshot);

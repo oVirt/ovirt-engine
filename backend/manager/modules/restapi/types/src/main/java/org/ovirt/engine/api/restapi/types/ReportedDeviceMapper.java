@@ -49,8 +49,8 @@ public class ReportedDeviceMapper {
             entity.setMacAddress(model.getMac().getAddress());
         }
         if (model.isSetIps() && model.getIps().isSetIps()) {
-            List<String> ipv4 = new ArrayList<String>();
-            List<String> ipv6 = new ArrayList<String>();
+            List<String> ipv4 = new ArrayList<>();
+            List<String> ipv6 = new ArrayList<>();
             for (Ip ip : model.getIps().getIps()) {
                 if (ip.isSetVersion() && ip.isSetAddress()) {
                     IpVersion ipVersion = IpVersion.fromValue(ip.getVersion());

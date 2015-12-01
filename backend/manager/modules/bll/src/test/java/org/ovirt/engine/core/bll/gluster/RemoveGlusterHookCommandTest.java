@@ -62,7 +62,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
     }
 
     private List<VDS> getServers(VDSStatus status) {
-        List<VDS> servers = new ArrayList<VDS>();
+        List<VDS> servers = new ArrayList<>();
         servers.add(getServer(GUIDS[0], "gfs1", CLUSTER_ID, status));
         servers.add(getServer(GUIDS[1], "gfs2", CLUSTER_ID, status));
         servers.add(getServer(GUIDS[2], "gfs3", CLUSTER_ID, status));

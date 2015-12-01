@@ -39,7 +39,7 @@ public class LinkHeader {
         link.setHref(matcher.group(1));
 
         String[] props = matcher.group(2).split(";");
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         for (String prop : props) {
             String[] split = prop.split("=");
             map.put(split[0].trim(), split[1].trim());

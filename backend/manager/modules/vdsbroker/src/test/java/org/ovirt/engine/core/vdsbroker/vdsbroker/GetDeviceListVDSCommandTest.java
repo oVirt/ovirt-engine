@@ -40,7 +40,7 @@ public class GetDeviceListVDSCommandTest {
      *            The value that the XML RPC will hold.
      */
     private static void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
-        Map<String, Object> xlun = new HashMap<String, Object>();
+        Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
         LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
@@ -50,7 +50,7 @@ public class GetDeviceListVDSCommandTest {
 
     @Test
     public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
-        Map<String, Object> xlun = new HashMap<String, Object>();
+        Map<String, Object> xlun = new HashMap<>();
         LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
@@ -64,9 +64,9 @@ public class GetDeviceListVDSCommandTest {
 
         // Randomize some devices
         String physicalDevicePrefix = "physical";
-        List<Map<String, Object>> paths = new ArrayList<Map<String, Object>>(numPaths);
+        List<Map<String, Object>> paths = new ArrayList<>(numPaths);
         for (int i = 0; i < numPaths; ++i) {
-            Map<String, Object> path = new HashMap<String, Object>();
+            Map<String, Object> path = new HashMap<>();
             path.put(GetDeviceListVDSCommand.LUN_FIELD, String.valueOf(i));
             path.put(GetDeviceListVDSCommand.PHYSICAL_DEVICE_FIELD, physicalDevicePrefix + i);
             path.put(GetDeviceListVDSCommand.DEVICE_STATE_FIELD,
@@ -75,7 +75,7 @@ public class GetDeviceListVDSCommandTest {
             paths.add(path);
         }
 
-        Map<String, Object> xlun = new HashMap<String, Object>();
+        Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
         // Parse the XmlRpc
@@ -83,7 +83,7 @@ public class GetDeviceListVDSCommandTest {
 
         // Go over the directory
         assertEquals("wrong number of paths", numPaths, lun.getPathCount());
-        Map<String, Boolean> pathDir = new HashMap<String, Boolean>(lun.getPathsDictionary());
+        Map<String, Boolean> pathDir = new HashMap<>(lun.getPathsDictionary());
         for (int i = 0; i < numPaths; ++i) {
             // Assert for each device
             String device = physicalDevicePrefix + i;

@@ -126,7 +126,7 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, String dirPrefix, int n) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick;
         for (Integer i = 0; i < n; i++) {
             brick = new GlusterBrickEntity();

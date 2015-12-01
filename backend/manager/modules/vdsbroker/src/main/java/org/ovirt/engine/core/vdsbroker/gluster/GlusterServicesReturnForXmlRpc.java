@@ -37,7 +37,7 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
             return;
         }
 
-        services = new ArrayList<GlusterServerService>();
+        services = new ArrayList<>();
         for (Object service : (Object[]) innerMap.get(SERVICES)) {
             services.add(getService((Map<String, Object>) service));
         }
@@ -62,7 +62,7 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private static Map<String, GlusterService> getServicesMap() {
-        Map<String, GlusterService> serviceNames = new HashMap<String, GlusterService>();
+        Map<String, GlusterService> serviceNames = new HashMap<>();
 
         List<GlusterService> services = DbFacade.getInstance().getGlusterServiceDao().getAll();
         for (GlusterService service : services) {

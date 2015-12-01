@@ -136,7 +136,7 @@ public class BackendStorageDomainDiskResourceTest
         entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
-        ArrayList<Guid> storages = new ArrayList<Guid>();
+        ArrayList<Guid> storages = new ArrayList<>();
         if (!noSD) {
             for (int i = 0; i < GUIDS.length; i++) {
                 storages.add(GUIDS[i]);

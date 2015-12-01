@@ -217,7 +217,7 @@ public class BackendTagsResourceTest
     }
 
     static List<Tags> setUpTags() {
-        List<Tags> tags = new ArrayList<Tags>();
+        List<Tags> tags = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             tags.add(new Tags(DESCRIPTIONS[i], PARENT_GUID, false, GUIDS[i], NAMES[i]));
         }
@@ -281,7 +281,7 @@ public class BackendTagsResourceTest
     protected UriInfo setUpUriExpectationsWithMax(boolean badFormat) {
         UriInfo uriInfo = control.createMock(UriInfo.class);
         expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE)).anyTimes();
-        List<PathSegment> psl = new ArrayList<PathSegment>();
+        List<PathSegment> psl = new ArrayList<>();
 
         PathSegment ps = control.createMock(PathSegment.class);
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);

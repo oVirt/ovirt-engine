@@ -25,7 +25,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         firstDQRegexp = new Regex("^\\s*\"$");
         nonSpaceRegexp = new Regex("^\\S+$");
 
-        stateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        stateMap = new HashMap<>();
         SyntaxObjectType[] beginArray = { SyntaxObjectType.SEARCH_OBJECT };
         stateMap.put(SyntaxObjectType.BEGIN, beginArray);
         SyntaxObjectType[] searchObjectArray = { SyntaxObjectType.COLON };
@@ -228,7 +228,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     break;
                 case CONDITION_FIELD:
                     String[] tmpCompletions = AdConditionFieldAC.getCompletion(curPartialWord);
-                    ArrayList<String> nonDuplicates = new ArrayList<String>();
+                    ArrayList<String> nonDuplicates = new ArrayList<>();
                     for (int itr = 0; itr < tmpCompletions.length; itr++) {
                         if (!retval.contains(SyntaxObjectType.CONDITION_FIELD, tmpCompletions[itr])) {
                             nonDuplicates.add(tmpCompletions[itr]);

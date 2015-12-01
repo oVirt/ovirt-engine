@@ -94,7 +94,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     public List<R> getCollection(StorageDomainType storageDomainType) {
-        Collection<Q> entities = new ArrayList<Q>();
+        Collection<Q> entities = new ArrayList<>();
 
         switch (storageDomainType) {
         case Data:
@@ -107,7 +107,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
         case Unknown:
         }
 
-        List<R> collection = new ArrayList<R>();
+        List<R> collection = new ArrayList<>();
         for (Q entity : entities) {
             collection.add(addLinks(populate(map(entity), entity)));
         }

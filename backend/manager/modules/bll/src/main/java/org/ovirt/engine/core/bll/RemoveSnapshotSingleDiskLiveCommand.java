@@ -63,7 +63,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         log.debug("Proceeding with execution of RemoveSnapshotSingleDiskLiveCommand");
         if (getParameters().getCommandStep() == null) {
             getParameters().setCommandStep(getInitialMergeStepForImage(getParameters().getImageId()));
-            getParameters().setChildCommands(new HashMap<RemoveSnapshotSingleDiskLiveStep, Guid>());
+            getParameters().setChildCommands(new HashMap<>());
         }
 
         // Upon recovery or after invoking a new child command, our map may be missing an entry

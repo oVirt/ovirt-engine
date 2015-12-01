@@ -93,7 +93,7 @@ public class ConfigDaoImpl implements ConfigDao {
 
     @Override
     public List<ConfigKey> getKeysForName(String name) throws SQLException {
-        List<ConfigKey> keys = new ArrayList<ConfigKey>();
+        List<ConfigKey> keys = new ArrayList<>();
         try (
                 Connection connection = ds.getConnection();
                 PreparedStatement prepareStatement = connection.prepareStatement(selectKeysForNameSql);

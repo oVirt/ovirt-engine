@@ -58,7 +58,7 @@ public class QuotaConsumptionParametersWrapper implements Cloneable {
                 canDoActionMessages);
 
         if (getParameters() != null) {
-            cloneWrapper.setParameters(new ArrayList<QuotaConsumptionParameter>());
+            cloneWrapper.setParameters(new ArrayList<>());
             for (QuotaConsumptionParameter parameter : getParameters()) {
                 cloneWrapper.getParameters().add(parameter.clone());
             }

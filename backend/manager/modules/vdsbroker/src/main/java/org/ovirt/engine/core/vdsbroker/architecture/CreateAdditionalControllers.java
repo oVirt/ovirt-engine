@@ -25,12 +25,12 @@ public class CreateAdditionalControllers implements ArchCommand {
     public void runForPPC64() {
         // This creates a SPAPR VSCSI controller, which is needed by the virtual
         // SCSI CD-ROM on POWER guests
-        Map<String, Object> struct = new HashMap<String, Object>();
+        Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.Type, VmDeviceType.CONTROLLER.getName());
         struct.put(VdsProperties.Device, VdsProperties.Scsi);
         struct.put(VdsProperties.Index, "0");
 
-        Map<String, String> spaprAddress = new HashMap<String, String>();
+        Map<String, String> spaprAddress = new HashMap<>();
 
         spaprAddress.put(VdsProperties.Type, VdsProperties.spapr_vio);
 

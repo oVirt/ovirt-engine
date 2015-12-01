@@ -147,7 +147,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     protected List<? extends Disk> getVmDisks() {
         if (_vmDisks == null) {
             _vmDisks = ((getParameters().getDiskInfoList()) != null) ? getParameters().getDiskInfoList()
-                    : new ArrayList<Disk>();
+                    : new ArrayList<>();
         }
         return _vmDisks;
     }

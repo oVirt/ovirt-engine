@@ -86,7 +86,7 @@ public class AttestationService {
 
     public List<AttestationValue> attestHosts(List<String> hosts) {
         String pollURI = Config.<String> getValue(ConfigValues.PollUri);
-        List<AttestationValue> values = new ArrayList<AttestationValue>();
+        List<AttestationValue> values = new ArrayList<>();
 
         PostMethod postMethod = new PostMethod("/" + pollURI);
         try {

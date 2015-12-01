@@ -58,8 +58,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     }
 
     private void initSpyCommand() {
-        command = spy(new MoveDisksCommand<MoveDisksParameters>(
-                new MoveDisksParameters(new ArrayList<MoveDiskParameters>())));
+        command = spy(new MoveDisksCommand<>(new MoveDisksParameters(new ArrayList<>())));
     }
 
     private List<MoveDiskParameters> createMoveDisksParameters() {

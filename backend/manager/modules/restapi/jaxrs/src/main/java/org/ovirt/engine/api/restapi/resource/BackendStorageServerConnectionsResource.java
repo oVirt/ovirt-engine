@@ -21,7 +21,7 @@ public class BackendStorageServerConnectionsResource
         implements StorageServerConnectionsResource {
 
     private final EntityIdResolver<String> ENTITY_RETRIEVER =
-            new QueryIdResolver<String>(VdcQueryType.GetStorageServerConnectionById,
+            new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class);
 
     public BackendStorageServerConnectionsResource() {

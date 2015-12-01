@@ -128,7 +128,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     private void init() {
         storageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
-        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
+        graphicsDevices = new HashMap<>();
     }
 
     public VmManagementParametersBase(VM vm) {

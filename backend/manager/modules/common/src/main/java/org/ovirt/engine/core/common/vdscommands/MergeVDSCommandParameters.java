@@ -94,7 +94,7 @@ public class MergeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     public Map<String, String> getDriveSpecs() {
-        Map<String, String> driveSpecs = new HashMap<String, String>();
+        Map<String, String> driveSpecs = new HashMap<>();
         driveSpecs.put("poolID", getStoragePoolId().toString());
         driveSpecs.put("domainID", getStorageDomainId().toString());
         driveSpecs.put("imageID", getImageGroupId().toString());

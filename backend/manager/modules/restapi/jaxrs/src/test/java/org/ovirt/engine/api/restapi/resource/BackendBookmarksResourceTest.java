@@ -117,8 +117,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     }
 
     static List<org.ovirt.engine.core.common.businessentities.Bookmark> setUpBookmarks() {
-        List<org.ovirt.engine.core.common.businessentities.Bookmark> bookmarks =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.Bookmark>();
+        List<org.ovirt.engine.core.common.businessentities.Bookmark> bookmarks = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
                     new org.ovirt.engine.core.common.businessentities.Bookmark();

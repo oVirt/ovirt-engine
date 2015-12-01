@@ -36,7 +36,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters
 
     public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount, int diskSize) {
         super(vmPool);
-        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
+        graphicsDevices = new HashMap<>();
         this.vm = vm;
         this.vmsCount = vmsCount;
         this.diskSize = diskSize;

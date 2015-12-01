@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeAuthenticationKeyResource
         extends AbstractBackendActionableResource<OpenstackVolumeAuthenticationKey, LibvirtSecret>
@@ -50,7 +49,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
         validateEnums(OpenstackVolumeAuthenticationKey.class, resource);
         return performUpdate(
                 resource,
-                new QueryIdResolver<Guid>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class),
                 VdcActionType.UpdateLibvirtSecret,
                 new UpdateParametersProvider());
     }

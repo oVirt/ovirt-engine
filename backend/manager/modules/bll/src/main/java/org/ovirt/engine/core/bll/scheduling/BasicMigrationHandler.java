@@ -19,7 +19,7 @@ public class BasicMigrationHandler implements MigrationHandler {
     @Override
     public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
-        parameters.setInitialHosts(new ArrayList<Guid>(initialHosts));
+        parameters.setInitialHosts(new ArrayList<>(initialHosts));
         backendInternal.runInternalAction(VdcActionType.MigrateVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());

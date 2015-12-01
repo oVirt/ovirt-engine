@@ -113,7 +113,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     private AffinityGroup createAffinityGroup() {
         affinityGroup = new AffinityGroup();
-        affinityGroup.setEntityIds(new ArrayList<Guid>());
+        affinityGroup.setEntityIds(new ArrayList<>());
         affinityGroup.getEntityIds().add(vmId);
         return affinityGroup;
     }

@@ -33,7 +33,7 @@ public class Tags implements Serializable {
     private List<Tags> _children;
 
     public Tags() {
-        _children = new ArrayList<Tags>();
+        _children = new ArrayList<>();
         type = TagsType.GeneralTag;
     }
 

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -112,7 +111,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 clusterCompatibilityVersion,
                 getVmTemplate().getNumOfMonitors(),
                 interfaces,
-                new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
+                new ArrayList<>(getVmTemplate().getDiskList()),
                 VmDeviceUtils.hasVirtioScsiController(getVmTemplate().getId()),
                 VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
                 VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.ovirt.engine.core.common.businessentities.Quota> implements QuotaResource {
 
@@ -50,7 +49,7 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
     @Override
     public Quota update(Quota incoming) {
         return performUpdate(incoming,
-                new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetQuotaByQuotaId, IdQueryParameters.class),
                 VdcActionType.UpdateQuota,
                 new UpdateParametersProvider());
     }

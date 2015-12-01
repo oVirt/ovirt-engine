@@ -117,7 +117,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
-        return new Pair<Boolean, AuditLogType>(true, null);
+        return new Pair<>(true, null);
     }
 
     public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {

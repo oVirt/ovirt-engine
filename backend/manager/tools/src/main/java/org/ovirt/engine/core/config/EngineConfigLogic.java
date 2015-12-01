@@ -65,7 +65,7 @@ public class EngineConfigLogic {
     private void init() throws Exception {
         log.debug("init: beginning initiation of EngineConfigLogic");
         appConfig = new AppConfig(parser.getAlternateConfigFile()).getFile();
-        keysConfig = new KeysConfig<HierarchicalConfiguration>(parser.getAlternatePropertiesFile()).getFile();
+        keysConfig = new KeysConfig<>(parser.getAlternatePropertiesFile()).getFile();
         populateAlternateKeyMap(keysConfig);
         ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
         configKeyFactory = ConfigKeyFactory.getInstance();
@@ -79,7 +79,7 @@ public class EngineConfigLogic {
 
     private void populateAlternateKeyMap(HierarchicalConfiguration config) {
         List<SubnodeConfiguration> configurationsAt = config.configurationsAt("/*/" + ALTERNATE_KEY);
-        alternateKeysMap = new HashMap<String, String>(configurationsAt.size());
+        alternateKeysMap = new HashMap<>(configurationsAt.size());
         for (SubnodeConfiguration node : configurationsAt) {
             String rootKey = node.getRootNode()
                     .getParentNode().getName();

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -64,10 +63,9 @@ public class OvfManagerTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         manager = new OvfManager();
-        final HashMap<Integer, String> osIdsToNames = new HashMap<Integer, String>(){{
-            put(DEFAULT_OS_ID, "os_name_a");
-            put(EXISTING_OS_ID, "os_name_b");
-        }};
+        final HashMap<Integer, String> osIdsToNames = new HashMap<>();
+        osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
+        osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
 
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
@@ -104,54 +102,54 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfCreation() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<DiskImage>(), Version.v3_1);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_1);
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
         assertVm(vm, newVm, vm.getDbGeneration());
     }
 
     @Test
     public void testVmOvfCreationBackwardCompatilibily() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<DiskImage>(), Version.v3_0);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_0);
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
         assertVm(vm, newVm, vm.getDbGeneration());
     }
 
     @Test
     public void testVmOvfImportWithoutDbGeneration() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<DiskImage>(), Version.v3_1);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_1);
         assertNotNull(xml);
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, newVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importVm(replacedXml, newVm, new ArrayList<>(), new ArrayList<>());
         assertVm(vm, newVm, 1);
     }
 
     @Test
     public void testVmOvfImportWithoutDbGenerationBackwardCompatilibily() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<DiskImage>(), Version.v3_0);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_0);
         assertNotNull(xml);
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, newVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importVm(replacedXml, newVm, new ArrayList<>(), new ArrayList<>());
         assertVm(vm, newVm, 1);
     }
 
     @Test
     public void testTemplateOvfCreation() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(template, new ArrayList<DiskImage>(), Version.v3_1);
+        String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_1);
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
-        manager.importTemplate(xml, newtemplate, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importTemplate(xml, newtemplate, new ArrayList<>(), new ArrayList<>());
         assertEquals("imported template is different than expected", template, newtemplate);
         assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
@@ -159,10 +157,10 @@ public class OvfManagerTest {
     @Test
     public void testTemplateOvfCreationBackwardCompatiliblity() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(template, new ArrayList<DiskImage>(), Version.v3_0);
+        String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_0);
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
-        manager.importTemplate(xml, newtemplate, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importTemplate(xml, newtemplate, new ArrayList<>(), new ArrayList<>());
         assertEquals("imported template is different than expected", template, newtemplate);
         assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
@@ -170,14 +168,11 @@ public class OvfManagerTest {
     @Test
     public void testTemplateOvfImportWithoutDbGeneration() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(template, new ArrayList<DiskImage>(), Version.v3_1);
+        String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_1);
         assertNotNull(xml);
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
         final VmTemplate newtemplate = new VmTemplate();
-        manager.importTemplate(replacedXml,
-                newtemplate,
-                new ArrayList<DiskImage>(),
-                new ArrayList<VmNetworkInterface>());
+        manager.importTemplate(replacedXml, newtemplate, new ArrayList<>(), new ArrayList<>());
         assertEquals("imported template is different than expected", template, newtemplate);
         assertTrue("imported db generation is different than expected", newtemplate.getDbGeneration() == 1);
     }
@@ -185,14 +180,11 @@ public class OvfManagerTest {
     @Test
     public void testTemplateOvfImportWithoutDbGenerationBackwardCompatiliblity() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(template, new ArrayList<DiskImage>(), Version.v3_0);
+        String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_0);
         assertNotNull(xml);
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
         final VmTemplate newtemplate = new VmTemplate();
-        manager.importTemplate(replacedXml,
-                newtemplate,
-                new ArrayList<DiskImage>(),
-                new ArrayList<VmNetworkInterface>());
+        manager.importTemplate(replacedXml, newtemplate, new ArrayList<>(), new ArrayList<>());
         assertEquals("imported template is different than expected", template, newtemplate);
         assertTrue("imported db generation is different than expected", newtemplate.getDbGeneration() == 1);
     }
@@ -216,12 +208,12 @@ public class OvfManagerTest {
     }
 
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
-        String xml = manager.exportVm(inputVm, new ArrayList<DiskImage>(), Version.v3_1);
+        String xml = manager.exportVm(inputVm, new ArrayList<>(), Version.v3_1);
         assertNotNull(xml);
         final VM resultVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, resultVm, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
+        manager.importVm(replacedXml, resultVm, new ArrayList<>(), new ArrayList<>());
         return resultVm;
     }
 

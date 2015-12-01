@@ -86,7 +86,7 @@ public class DbUser implements IVdcQueryable {
         department = directoryUser.getDepartment();
         email = directoryUser.getEmail();
         note = "";
-        groupNames = new HashSet<String>();
+        groupNames = new HashSet<>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
@@ -165,11 +165,11 @@ public class DbUser implements IVdcQueryable {
     }
 
     public Collection<String> getGroupNames() {
-        return new ArrayList<String>(groupNames);
+        return new ArrayList<>(groupNames);
     }
 
     public void setGroupNames(Collection<String> value) {
-        groupNames = new HashSet<String>(value);
+        groupNames = new HashSet<>(value);
     }
 
     public String getNote() {
@@ -198,14 +198,14 @@ public class DbUser implements IVdcQueryable {
     }
 
     public void setGroupIds(Collection<Guid> groupIds) {
-        this.groupIds = new HashSet<Guid>(groupIds);
+        this.groupIds = new HashSet<>(groupIds);
     }
 
     public Collection<Guid> getGroupIds() {
         if (groupIds == null) {
             groupIds = Collections.emptyList();
         }
-        return new ArrayList<Guid>(groupIds);
+        return new ArrayList<>(groupIds);
     }
 
     @Override

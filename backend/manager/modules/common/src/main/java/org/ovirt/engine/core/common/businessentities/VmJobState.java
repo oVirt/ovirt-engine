@@ -7,7 +7,7 @@ public enum VmJobState implements Identifiable {
     NORMAL(1);
 
     private final int jobState;
-    private static final HashMap<Integer, VmJobState> mappings = new HashMap<Integer, VmJobState>();
+    private static final HashMap<Integer, VmJobState> mappings = new HashMap<>();
 
     static {
         for (VmJobState component : values()) {

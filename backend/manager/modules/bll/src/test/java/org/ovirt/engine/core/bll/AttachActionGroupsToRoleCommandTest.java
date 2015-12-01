@@ -26,13 +26,13 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
     protected ActionGroupsToRoleParameter generateParameters() {
         Guid roleId = Guid.newGuid();
         ArrayList<ActionGroup> groups =
-                new ArrayList<ActionGroup>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
+                new ArrayList<>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
         return new ActionGroupsToRoleParameter(roleId, groups);
     }
 
     @Override
     protected AttachActionGroupsToRoleCommand<? extends ActionGroupsToRoleParameter> generateCommand() {
-        return new AttachActionGroupsToRoleCommand<ActionGroupsToRoleParameter>(getParams());
+        return new AttachActionGroupsToRoleCommand<>(getParams());
     }
 
     @SuppressWarnings("unchecked")
@@ -53,7 +53,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         RoleGroupMap map = new RoleGroupMap(getParams().getActionGroups().get(0), getParams().getRoleId());
         mockGetAllForRole(Collections.singletonList(map));
 
-        List<String> messages = new ArrayList<String>(1);
+        List<String> messages = new ArrayList<>(1);
         assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
                 EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(),
@@ -66,7 +66,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         RoleGroupMap map = new RoleGroupMap(ActionGroup.DELETE_STORAGE_POOL, getParams().getRoleId());
         mockGetAllForRole(Collections.singletonList(map));
 
-        List<String> messages = new ArrayList<String>(1);
+        List<String> messages = new ArrayList<>(1);
         assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
                 EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(),
@@ -79,7 +79,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         RoleGroupMap map = new RoleGroupMap(ActionGroup.DELETE_STORAGE_POOL, getParams().getRoleId());
         mockGetAllForRole(Collections.singletonList(map));
 
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         assertFalse("canDoAction should succeed", getCommand().checkIfGroupsCanBeAttached(messages));
         assertTrue("no messages sould have been added", messages.isEmpty());
     }
@@ -110,7 +110,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
     @Test
     public void testExecuteCommandNoUpdateNonInheritableRole() {
         getRole().setAllowsViewingChildren(false);
-        getParams().setActionGroups(new ArrayList<ActionGroup>(Collections.singletonList(ActionGroup.CREATE_VM)));
+        getParams().setActionGroups(new ArrayList<>(Collections.singletonList(ActionGroup.CREATE_VM)));
         getCommand().executeCommand();
         verifyRoleSaving(false);
     }

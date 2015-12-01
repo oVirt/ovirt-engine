@@ -156,7 +156,7 @@ public class BackendInstanceTypeNicsResourceTest
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
             network.setId(GUIDS[0]);
             network.setName("orcus");

@@ -30,7 +30,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         private static Map<Integer, AuthenticationMethod> mappings;
 
         static {
-            mappings = new HashMap<Integer, AuthenticationMethod>();
+            mappings = new HashMap<>();
             for (AuthenticationMethod error : values()) {
                 mappings.put(error.getValue(), error);
             }

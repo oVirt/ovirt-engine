@@ -84,7 +84,7 @@ public class DiskValidatorTest {
         ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
         supportedDiskInterfaces.add(diskInterface.name());
         when(osRepository.getDiskInterfaces(1, null)).thenReturn(supportedDiskInterfaces);
-        when(osRepository.getDiskInterfaces(2, null)).thenReturn(new ArrayList<String>());
+        when(osRepository.getDiskInterfaces(2, null)).thenReturn(new ArrayList<>());
         // init the injector with the osRepository instance
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }

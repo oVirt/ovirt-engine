@@ -68,8 +68,8 @@ public class BackendAffinityGroupVmsResourceTest
 
     private org.ovirt.engine.core.common.scheduling.AffinityGroup getAffinityGroup(boolean withVms) {
         org.ovirt.engine.core.common.scheduling.AffinityGroup affinityGroup = new org.ovirt.engine.core.common.scheduling.AffinityGroup();
-        affinityGroup.setEntityIds(new ArrayList<Guid>());
-        affinityGroup.setEntityNames(new ArrayList<String>());
+        affinityGroup.setEntityIds(new ArrayList<>());
+        affinityGroup.setEntityNames(new ArrayList<>());
         if (withVms) {
             for (int i = 0; i < NAMES.length; i++) {
                 org.ovirt.engine.core.common.businessentities.VM entity = getEntity(i);

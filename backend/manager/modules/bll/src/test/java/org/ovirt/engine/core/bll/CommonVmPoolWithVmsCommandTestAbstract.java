@@ -279,7 +279,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
 
     protected List<StorageDomain> getStorageDomainList(int availableDiskSizeFirstDomain,
             int availableDiskSizeSecondDomain) {
-        List<StorageDomain> storageDomainList = new ArrayList<StorageDomain>();
+        List<StorageDomain> storageDomainList = new ArrayList<>();
         storageDomainList.add(mockFirstStorageDomain(availableDiskSizeFirstDomain));
         storageDomainList.add(mockSecondStorageDomain(availableDiskSizeSecondDomain));
         return storageDomainList;
@@ -330,29 +330,29 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     }
 
     private static List<DiskImage> getDiskImageList() {
-        List<DiskImage> diskList = new ArrayList<DiskImage>();
+        List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<>());
         diskList.add(diskImage);
         diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<>());
         diskList.add(diskImage);
         return diskList;
     }
 
     private static Map<Guid, DiskImage> getDiskImageTempalteList() {
-        Map<Guid, DiskImage> diskTemplateList = new HashMap<Guid, DiskImage>();
+        Map<Guid, DiskImage> diskTemplateList = new HashMap<>();
         DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.newGuid());
         diskImageTemplate.setImageId(Guid.newGuid());
-        diskImageTemplate.setStorageIds(new ArrayList<Guid>());
+        diskImageTemplate.setStorageIds(new ArrayList<>());
         diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.newGuid());
         diskImageTemplate.setImageId(Guid.newGuid());
-        diskImageTemplate.setStorageIds(new ArrayList<Guid>());
+        diskImageTemplate.setStorageIds(new ArrayList<>());
         diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         return diskTemplateList;
     }

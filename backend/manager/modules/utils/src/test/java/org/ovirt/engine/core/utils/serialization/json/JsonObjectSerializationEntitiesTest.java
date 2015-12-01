@@ -70,10 +70,10 @@ public class JsonObjectSerializationEntitiesTest {
                                 Guid.newGuid(),
                                 random.nextEnum(StorageDomainStatus.class)) },
                         { randomRole() },
-                        { new IdContainerClass<VdsSpmIdMap>(new VdsSpmIdMap(Guid.newGuid(),
+                        { new IdContainerClass<>(new VdsSpmIdMap(Guid.newGuid(),
                                 Guid.newGuid(),
                                 random.nextInt())) },
-                        { new IdContainerClass<Guid>(Guid.newGuid()) }
+                        { new IdContainerClass<>(Guid.newGuid()) }
                 };
         return Arrays.asList(data);
     }

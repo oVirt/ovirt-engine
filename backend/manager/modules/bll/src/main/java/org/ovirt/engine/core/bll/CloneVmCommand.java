@@ -109,7 +109,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
 
-        List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<Disk>();
+        List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
 
         if (diskImagesFromConfiguration == null) {
             diskImagesFromConfiguration =
@@ -204,7 +204,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
 
-        List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<Disk>();
+        List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
 
         for (Disk disk : loadedImages) {
             if (disk.getDiskStorageType() == DiskStorageType.LUN || disk.isShareable()) {

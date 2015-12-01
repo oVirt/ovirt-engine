@@ -9,7 +9,7 @@ public enum RoleType {
     USER(2);
 
     private int id;
-    private static final Map<Integer, RoleType> map = new HashMap<Integer, RoleType>(RoleType.values().length);
+    private static final Map<Integer, RoleType> map = new HashMap<>(RoleType.values().length);
 
     static {
         for (RoleType t : RoleType.values()) {

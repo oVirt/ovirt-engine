@@ -68,7 +68,7 @@ public class BackendHostStorageResourceTest
     }
 
     private List<LUNs> setUpLuns() {
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             luns.add(getEntity(i));
         }

@@ -32,9 +32,9 @@ public class UnsupportedLocaleHelper {
     static List<String> getDisplayedLocales(List<String> allLocales,
             List<String> unsupportedLocalesFilterOverrides,
             List<String> unsupportedLocalesFilter) {
-        List<String> result = new ArrayList<String>(allLocales);
+        List<String> result = new ArrayList<>(allLocales);
         //Override unsupported locales that we do want to display.
-        List<String> unsupportedLocalesTemp = new ArrayList<String>(unsupportedLocalesFilter);
+        List<String> unsupportedLocalesTemp = new ArrayList<>(unsupportedLocalesFilter);
         unsupportedLocalesTemp.removeAll(unsupportedLocalesFilterOverrides);
         //Remove remaining unsupported locales from the result.
         result.removeAll(unsupportedLocalesTemp);
@@ -55,7 +55,7 @@ public class UnsupportedLocaleHelper {
             throw new IllegalArgumentException("Passed in config value not related to locales"); //$NON-NLS-1$
         }
         List<String> locales = Config.<List<String>> getValue(configValues);
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (locales != null && !locales.isEmpty()) {
             for (String localeKey: locales) {
                 if (!StringUtils.isBlank(localeKey)) {

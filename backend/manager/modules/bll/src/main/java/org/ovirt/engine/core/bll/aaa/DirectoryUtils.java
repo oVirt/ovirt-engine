@@ -193,7 +193,7 @@ public class DirectoryUtils {
     }
 
     public static void flatGroups(ExtMap principal) {
-        principal.put(PrincipalRecord.GROUPS, flatGroups(principal, PrincipalRecord.GROUPS, new ArrayList<ExtMap>()));
+        principal.put(PrincipalRecord.GROUPS, flatGroups(principal, PrincipalRecord.GROUPS, new ArrayList<>()));
     }
 
     private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {

@@ -155,7 +155,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
     @Override
     public Map<Boolean, VmTemplate> getAllForImage(Guid imageId) {
         VMTemplateWithPlugInfo plugInfo = getVMTemplatesWithPlugInfo(imageId);
-        Map<Boolean, VmTemplate> result = new HashMap<Boolean, VmTemplate>();
+        Map<Boolean, VmTemplate> result = new HashMap<>();
         if (plugInfo != null) {
             result.put(plugInfo.isPlugged(), plugInfo.getVmTemplate());
         }

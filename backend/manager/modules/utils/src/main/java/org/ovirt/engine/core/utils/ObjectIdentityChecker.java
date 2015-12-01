@@ -19,14 +19,11 @@ public class ObjectIdentityChecker {
     private static final Logger log = LoggerFactory.getLogger(ObjectIdentityChecker.class);
 
     private IObjectDescriptorContainer container;
-    private static Map<String, Class<?>> aliases =
-            new HashMap<String, Class<?>>();
-    private static Map<Class<?>, ObjectIdentityChecker> identities =
-            new HashMap<Class<?>, ObjectIdentityChecker>();
-    private Map<Enum<?>, Set<String>> dictionary =
-            new HashMap<Enum<?>, Set<String>>();
-    private Set<String> permitted = new HashSet<String>();
-    private Set<String> hotsetAllowedFields = new HashSet<String>();
+    private static Map<String, Class<?>> aliases = new HashMap<>();
+    private static Map<Class<?>, ObjectIdentityChecker> identities = new HashMap<>();
+    private Map<Enum<?>, Set<String>> dictionary = new HashMap<>();
+    private Set<String> permitted = new HashSet<>();
+    private Set<String> hotsetAllowedFields = new HashSet<>();
 
     public ObjectIdentityChecker(Class<?> type) {
         identities.put(type, this);
@@ -68,7 +65,7 @@ public class ObjectIdentityChecker {
     public final <T extends Enum<T>> void AddField(T status, String fieldName) {
         Set<String> values = dictionary.get(status);
         if (values == null) {
-            values = new HashSet<String>();
+            values = new HashSet<>();
             dictionary.put(status, values);
         }
         values.add(fieldName);
@@ -214,7 +211,7 @@ public class ObjectIdentityChecker {
     }
 
     public static List<String> GetChangedFields(Object source, Object destination) {
-        final List<String> returnValue = new ArrayList<String>();
+        final List<String> returnValue = new ArrayList<>();
         if (source.getClass().isInstance(destination)) {
             Class<?> objectType = source.getClass();
             List<PropertyInfo> properties = TypeCompat.getProperties(objectType);

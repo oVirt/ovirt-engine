@@ -86,7 +86,7 @@ public class VmAnalyzer {
     private static final Logger log = LoggerFactory.getLogger(VmAnalyzer.class);
 
     static {
-        List<String> tmpList = new ArrayList<String>();
+        List<String> tmpList = new ArrayList<>();
         for (Field field : VmDynamic.class.getDeclaredFields()) {
             if (field.isAnnotationPresent(UnchangeableByVdsm.class)) {
                 tmpList.add(field.getName());
@@ -782,7 +782,7 @@ public class VmAnalyzer {
         if (dbVm.getInterfaces() == null || dbVm.getInterfaces().isEmpty()) {
             dbVm.setInterfaces(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(dbVm.getId()));
         }
-        List<String> macs = new ArrayList<String>();
+        List<String> macs = new ArrayList<>();
 
         dbVm.setUsageNetworkPercent(0);
 
@@ -1012,7 +1012,7 @@ public class VmAnalyzer {
             return null;
         }
 
-        List<String> ips = new ArrayList<String>();
+        List<String> ips = new ArrayList<>();
         for (VmGuestAgentInterface nic : nics) {
             if (nic.getIpv4Addresses() != null) {
                 ips.addAll(nic.getIpv4Addresses());

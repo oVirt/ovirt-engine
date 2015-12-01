@@ -23,7 +23,7 @@ public class RemoveAdGroupCommandTest extends BaseCommandTest {
     @Before
     public void initializeCommand() {
         IdParameters parameters = createParameters();
-        command = spy(new RemoveGroupCommand<IdParameters>(parameters));
+        command = spy(new RemoveGroupCommand<>(parameters));
     }
 
     /**

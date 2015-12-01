@@ -46,14 +46,14 @@ public class AutoRecoveryManagerTest {
 
     @ClassRule
     public static MockConfigRule mcr =
-    new MockConfigRule(mockConfig(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<String, String>()));
+    new MockConfigRule(mockConfig(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<>()));
 
     @Mock
     private BackendInternal backendMock;
 
     // Entities needing recovery
-    private List<VDS> vdss = new ArrayList<VDS>();
-    private List<StorageDomain> storageDomains = new ArrayList<StorageDomain>();
+    private List<VDS> vdss = new ArrayList<>();
+    private List<StorageDomain> storageDomains = new ArrayList<>();
 
     @Before
     public void setup() {

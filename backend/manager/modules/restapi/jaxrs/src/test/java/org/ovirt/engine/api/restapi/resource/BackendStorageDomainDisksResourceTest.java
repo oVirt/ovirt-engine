@@ -182,7 +182,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     public void testList() throws Exception {
         collection.setUriInfo(setUpBasicUriExpectations());
 
-        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.storage.Disk>();
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
@@ -207,7 +207,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new Object[] {GUIDS[3]},
                 Arrays.asList(storagePool));
 
-        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.storage.Disk>();
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

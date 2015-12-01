@@ -25,7 +25,7 @@ public enum SyntaxObjectType {
 
     private synchronized static HashMap<Integer, SyntaxObjectType> getMappings() {
         if (mappings == null) {
-            mappings = new HashMap<Integer, SyntaxObjectType>();
+            mappings = new HashMap<>();
         }
         return mappings;
     }

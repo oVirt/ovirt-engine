@@ -43,7 +43,7 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQ
     private void mockDaoForQuery() {
         when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDao);
 
-        returnedVmTemplates = new ArrayList<VmTemplate>();
+        returnedVmTemplates = new ArrayList<>();
         when(getQueryParameters().getId()).thenReturn(quotaId);
         Mockito.when(vmTemplateDao.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
     }

@@ -311,7 +311,7 @@ public class BackendHostNicResourceTest
     }
 
     private void setUpVlanQueryExpectations(VdsNetworkInterface hostNicModel) {
-        List<VdsNetworkInterface> vlans = new LinkedList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> vlans = new LinkedList<>();
         VdsNetworkInterface vlan = new VdsNetworkInterface();
         vlan.setNetworkName("some network name");
         vlans.add(vlan);
@@ -343,7 +343,7 @@ public class BackendHostNicResourceTest
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworksModel() {
-        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
         for(int i=0; i < 3; i++){
             org.ovirt.engine.core.common.businessentities.network.Network net = new org.ovirt.engine.core.common.businessentities.network.Network();
             net.setId(GUIDS[i]);
@@ -542,7 +542,7 @@ public class BackendHostNicResourceTest
         expect(stats.getTransmitDropRate()).andReturn(TRANSMIT_DROP_RATE);
         expect(stats.getReceivedBytes()).andReturn(RECEIVED_BYTES);
         expect(stats.getTransmittedBytes()).andReturn(TRANSMITTED_BYTES);
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
@@ -599,7 +599,7 @@ public class BackendHostNicResourceTest
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
             network.setId(GUIDS[0]);
             network.setName("orcus");

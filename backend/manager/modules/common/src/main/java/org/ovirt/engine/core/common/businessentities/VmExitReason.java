@@ -15,7 +15,7 @@ public enum VmExitReason {
     MigrationFailed(8);
 
     private final int reason;
-    private static final HashMap<Integer, VmExitReason> valueToReason = new HashMap<Integer, VmExitReason>();
+    private static final HashMap<Integer, VmExitReason> valueToReason = new HashMap<>();
 
     static {
         for (VmExitReason reason : values()) {

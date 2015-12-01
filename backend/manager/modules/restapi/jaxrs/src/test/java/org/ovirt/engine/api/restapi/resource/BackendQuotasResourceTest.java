@@ -34,7 +34,7 @@ public class BackendQuotasResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.Quota> getQuotas() {
-        List<org.ovirt.engine.core.common.businessentities.Quota> quotas = new LinkedList<org.ovirt.engine.core.common.businessentities.Quota>();
+        List<org.ovirt.engine.core.common.businessentities.Quota> quotas = new LinkedList<>();
         for (int index=0; index<NAMES.length; index++) {
             quotas.add(getEntity(index));
         }

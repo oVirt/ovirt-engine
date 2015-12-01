@@ -75,8 +75,8 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
 
             for (VdsNetworkInterface nic : nics) {
                 if (!attachNetworksByHost.containsKey(nic.getVdsId())) {
-                    attachNetworksByHost.put(nic.getVdsId(), new ArrayList<Network>());
-                    labelsToNicsByHost.put(nic.getVdsId(), new HashMap<String, VdsNetworkInterface>());
+                    attachNetworksByHost.put(nic.getVdsId(), new ArrayList<>());
+                    labelsToNicsByHost.put(nic.getVdsId(), new HashMap<>());
                 }
 
                 labelsToNicsByHost.get(nic.getVdsId()).put(network.getLabel(), nic);
@@ -94,7 +94,7 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
 
             for (VdsNetworkInterface nic : nics) {
                 if (!detachNetworksByHost.containsKey(nic.getVdsId())) {
-                    detachNetworksByHost.put(nic.getVdsId(), new ArrayList<Network>());
+                    detachNetworksByHost.put(nic.getVdsId(), new ArrayList<>());
                 }
 
                 detachNetworksByHost.get(nic.getVdsId()).add(network);

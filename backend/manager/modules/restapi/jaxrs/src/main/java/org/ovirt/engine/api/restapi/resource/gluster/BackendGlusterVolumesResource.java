@@ -105,7 +105,7 @@ public class BackendGlusterVolumesResource
     }
 
     public static List<String> convertToUppercase(List<String> list) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (String string : list) {
             result.add(string.toUpperCase());
         }
@@ -113,7 +113,7 @@ public class BackendGlusterVolumesResource
     }
 
     private void mapBricks(GlusterVolume volume, GlusterVolumeEntity volumeEntity) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         for(GlusterBrick brick : volume.getBricks().getGlusterBricks()) {
             bricks.add(getMapper(GlusterBrick.class, GlusterBrickEntity.class).map(brick, null));
         }

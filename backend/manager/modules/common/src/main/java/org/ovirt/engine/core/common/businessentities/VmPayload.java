@@ -25,7 +25,7 @@ public class VmPayload extends VmDevice implements Serializable {
         this.setId(new VmDeviceId(Guid.newGuid(), Guid.newGuid()));
         setDeviceType(VmDeviceType.CDROM);
         this.volumeId = null;
-        this.files = new HashMap<String, String>();
+        this.files = new HashMap<>();
     }
 
     public VmPayload(Guid vmid) {
@@ -86,8 +86,8 @@ public class VmPayload extends VmDevice implements Serializable {
     public Map<String, Object> getSpecParams() {
         // function produce something like that:
         // vmPayload={volumeId:volume-id,file:{filename:content,filename2:content2,...}}
-        Map<String, Object> specParams = new HashMap<String, Object>();
-        Map<String, Object> payload = new HashMap<String, Object>();
+        Map<String, Object> specParams = new HashMap<>();
+        Map<String, Object> payload = new HashMap<>();
 
         specParams.put(SpecParamsPayload, payload);
         if (volumeId != null) {

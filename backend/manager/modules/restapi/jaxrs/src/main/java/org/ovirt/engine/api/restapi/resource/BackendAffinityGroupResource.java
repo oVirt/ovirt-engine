@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupResource
         extends AbstractBackendSubResource<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>
@@ -30,7 +29,7 @@ public class BackendAffinityGroupResource
     @Override
     public AffinityGroup update(final AffinityGroup incoming) {
         return performUpdate(incoming,
-                new QueryIdResolver<Guid>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
                 VdcActionType.EditAffinityGroup,
                 new ParametersProvider<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>() {
                     @Override

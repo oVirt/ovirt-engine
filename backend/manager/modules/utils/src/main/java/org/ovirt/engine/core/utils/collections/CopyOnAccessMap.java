@@ -145,7 +145,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        Set<K> newSet = new HashSet<K>(innerMap.size() * REALLOCATION_FACTOR);
+        Set<K> newSet = new HashSet<>(innerMap.size() * REALLOCATION_FACTOR);
         for (K key : innerMap.keySet()) {
             newSet.add(clone(key));
         }
@@ -154,7 +154,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-        List<V> newValues = new ArrayList<V>(innerMap.size() * REALLOCATION_FACTOR);
+        List<V> newValues = new ArrayList<>(innerMap.size() * REALLOCATION_FACTOR);
         for (V value : innerMap.values()) {
             newValues.add(clone(value));
         }
@@ -163,7 +163,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Map<K, V> newHashMap = new HashMap<K, V>(innerMap.size() * REALLOCATION_FACTOR);
+        Map<K, V> newHashMap = new HashMap<>(innerMap.size() * REALLOCATION_FACTOR);
         for (Entry<K, V> entry : innerMap.entrySet()) {
             newHashMap.put(clone(entry.getKey()), clone(entry.getValue()));
         }

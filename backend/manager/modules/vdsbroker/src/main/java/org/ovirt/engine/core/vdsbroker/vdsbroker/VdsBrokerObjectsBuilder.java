@@ -728,7 +728,7 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm network statistics -----------------------
         if (xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
             Map networkStruct = (Map) xmlRpcStruct.get(VdsProperties.VM_NETWORK);
-            vm.setInterfaceStatistics(new ArrayList<VmNetworkInterface>());
+            vm.setInterfaceStatistics(new ArrayList<>());
             for (Object tempNic : networkStruct.values()) {
                 Map nic = (Map) tempNic;
                 VmNetworkInterface stats = new VmNetworkInterface();
@@ -790,7 +790,7 @@ public class VdsBrokerObjectsBuilder {
         if (!xmlRpcStruct.containsKey(VdsProperties.vmJobs)) {
             return null;
         }
-        List<VmJob> vmJobs = new ArrayList<VmJob>();
+        List<VmJob> vmJobs = new ArrayList<>();
         for (Object jobMap : ((Map<String, Object>) xmlRpcStruct.get(VdsProperties.vmJobs)).values()) {
             VmJob job = buildVmJobData(vmId, (Map<String, Object>) jobMap);
             vmJobs.add(job);
@@ -867,7 +867,7 @@ public class VdsBrokerObjectsBuilder {
         // parse out the HBAs available in this host
         Map<String, List<Map<String, String>>> hbas = new HashMap<>();
         for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>)xmlRpcStruct.get(VdsProperties.HBAInventory)).entrySet()) {
-            List<Map<String, String>> devicesList = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> devicesList = new ArrayList<>();
 
             for (Object device: el.getValue()) {
                 devicesList.add((Map<String, String>)device);
@@ -942,7 +942,7 @@ public class VdsBrokerObjectsBuilder {
     private static void initDisksUsage(Map<String, Object> vmStruct, VmStatistics vm) {
         Object[] vmDisksUsage = (Object[]) vmStruct.get(VdsProperties.VM_DISKS_USAGE);
         if (vmDisksUsage != null) {
-            ArrayList<Object> disksUsageList = new ArrayList<Object>(Arrays.asList(vmDisksUsage));
+            ArrayList<Object> disksUsageList = new ArrayList<>(Arrays.asList(vmDisksUsage));
             vm.setDisksUsage(SerializationFactory.getSerializer().serializeUnformattedJson(disksUsageList));
         }
     }
@@ -1275,7 +1275,7 @@ public class VdsBrokerObjectsBuilder {
                 cpuStatsData.add(data);
                 int numaNodeIndex = assignIntValue(item.getValue(), VdsProperties.NUMA_NODE_INDEX);
                 if (!numaNodeCpuStats.containsKey(numaNodeIndex)) {
-                    numaNodeCpuStats.put(numaNodeIndex, new ArrayList<CpuStatistics>());
+                    numaNodeCpuStats.put(numaNodeIndex, new ArrayList<>());
                 }
                 numaNodeCpuStats.get(numaNodeIndex).add(data);
             }
@@ -1363,7 +1363,7 @@ public class VdsBrokerObjectsBuilder {
     protected static void updateLocalDisksUsage(VDS vds, Map<String, Object> xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.DISK_STATS)) {
             Map<String, Object> diskStatsStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.DISK_STATS);
-            Map<String, Long> diskStats = new HashMap<String, Long>();
+            Map<String, Long> diskStats = new HashMap<>();
 
             vds.setLocalDisksUsage(diskStats);
 
@@ -1379,7 +1379,7 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.domains)) {
             Map<String, Object> domains = (Map<String, Object>)
                     xmlRpcStruct.get(VdsProperties.domains);
-            ArrayList<VDSDomainsData> domainsData = new ArrayList<VDSDomainsData>();
+            ArrayList<VDSDomainsData> domainsData = new ArrayList<>();
             for (Map.Entry<String, ?> value : domains.entrySet()) {
                 try {
                     VDSDomainsData data = new VDSDomainsData();
@@ -1565,7 +1565,7 @@ public class VdsBrokerObjectsBuilder {
 
     private static void initDisks(Map<String, Object> vmStruct, VmDynamic vm) {
         Map<String, Object> disks = (Map<String, Object>) vmStruct.get(VdsProperties.vm_disks);
-        ArrayList<DiskImageDynamic> disksData = new ArrayList<DiskImageDynamic>();
+        ArrayList<DiskImageDynamic> disksData = new ArrayList<>();
         for (Object diskAsObj : disks.values()) {
             Map<String, Object> disk = (Map<String, Object>) diskAsObj;
             DiskImageDynamic diskData = new DiskImageDynamic();
@@ -1837,7 +1837,7 @@ public class VdsBrokerObjectsBuilder {
             String interfaceName,
             Map<String, Object> bridgeProperties) {
 
-        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> interfaces = new ArrayList<>();
         VdsNetworkInterface iface = vdsInterfaces.get(interfaceName);
         if (iface == null) {
             if (bridgeProperties != null) {
@@ -1852,7 +1852,7 @@ public class VdsBrokerObjectsBuilder {
 
     private static List<VdsNetworkInterface> findBridgedNetworkInterfaces(Map<String, Object> bridge,
             Map<String, VdsNetworkInterface> vdsInterfaces) {
-        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> interfaces = new ArrayList<>();
         Object[] ports = (Object[]) bridge.get("ports");
         if (ports != null) {
             for (Object port : ports) {
@@ -2130,7 +2130,7 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
 
-        List<VmGuestAgentInterface> interfaces = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> interfaces = new ArrayList<>();
         for (Object ifaceStruct : (Object[]) xmlRpcStruct.get(VdsProperties.VM_NETWORK_INTERFACES)) {
             VmGuestAgentInterface nic = new VmGuestAgentInterface();
             Map ifaceMap = (Map) ifaceStruct;
@@ -2246,7 +2246,7 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Object item : items) {
             list.add((String) item);
         }
@@ -2263,7 +2263,7 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
 
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         for (Object item : items) {
             list.add((Integer) item);
         }

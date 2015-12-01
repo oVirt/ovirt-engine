@@ -64,7 +64,7 @@ public class BackendOpenStackNetworksResourceTest
     private Map<Network, Set<Guid>> getNetworks() {
         Map<Network, Set<Guid>> networks = new HashMap<>();
         for (int i = 0; i < NAMES.length; i++) {
-            networks.put(getEntity(i), new HashSet<Guid>());
+            networks.put(getEntity(i), new HashSet<>());
         }
         return networks;
     }

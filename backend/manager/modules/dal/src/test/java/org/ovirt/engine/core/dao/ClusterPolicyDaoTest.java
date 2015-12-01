@@ -85,12 +85,12 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase {
         dummyPolicy.setName("Dummy policy");
         dummyPolicy.setDescription("Dummy policy description");
         dummyPolicy.setLocked(false);
-        ArrayList<Guid> filters = new ArrayList<Guid>();
+        ArrayList<Guid> filters = new ArrayList<>();
         filters.add(FixturesTool.POLICY_UNIT_MIGRATION);
         dummyPolicy.setFilters(filters);
-        HashMap<Guid, Integer> filterPositionMap = new HashMap<Guid, Integer>();
+        HashMap<Guid, Integer> filterPositionMap = new HashMap<>();
         filterPositionMap.put(FixturesTool.POLICY_UNIT_MIGRATION, 1);
         dummyPolicy.setFilterPositionMap(filterPositionMap);
-        dummyPolicy.setParameterMap(new LinkedHashMap<String, String>());
+        dummyPolicy.setParameterMap(new LinkedHashMap<>());
     }
 }

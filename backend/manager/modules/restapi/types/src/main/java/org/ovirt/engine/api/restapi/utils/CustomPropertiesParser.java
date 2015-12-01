@@ -19,7 +19,7 @@ public class CustomPropertiesParser {
      * @return
     */
     public static List<CustomProperty> parse(String str, boolean isRegex) {
-        List<CustomProperty> ret = new ArrayList<CustomProperty>();
+        List<CustomProperty> ret = new ArrayList<>();
         if (str != null) {
             for (String envStr : str.split(";", -1)) {
                 String[] parts = getKeyValue(envStr);
@@ -39,7 +39,7 @@ public class CustomPropertiesParser {
     }
 
     private static String[] getKeyValue(String str) {
-        List<String> keyValue = new ArrayList<String>();
+        List<String> keyValue = new ArrayList<>();
         int index = str.indexOf("=");
         if (index != -1) {
             String key = str.substring(0, index);

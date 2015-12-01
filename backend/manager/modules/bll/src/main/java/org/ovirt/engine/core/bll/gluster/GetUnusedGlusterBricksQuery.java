@@ -26,7 +26,7 @@ public class GetUnusedGlusterBricksQuery<P extends IdQueryParameters> extends Qu
     private List<StorageDevice> getUnUsedBricks(List<StorageDevice> storageDevicesInHost) {
         List<GlusterBrickEntity> usedBricks =
                 getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getId());
-        List<StorageDevice> freeBricks = new ArrayList<StorageDevice>();
+        List<StorageDevice> freeBricks = new ArrayList<>();
         for (StorageDevice storageDevice : storageDevicesInHost) {
             if (storageDevice.getMountPoint() != null
                     && !storageDevice.getMountPoint().isEmpty()

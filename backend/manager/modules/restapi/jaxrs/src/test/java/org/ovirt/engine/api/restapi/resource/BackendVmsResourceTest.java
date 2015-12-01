@@ -398,7 +398,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
-        Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk>();
+        Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> diskImageMap = new HashMap<>();
         diskImageMap.put(Guid.newGuid(), new DiskImage());
         vmConfiguration.setDiskMap(diskImageMap);
         setUriInfo(setUpBasicUriExpectations());
@@ -1159,7 +1159,7 @@ public class BackendVmsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpGetGraphicsExpectations(3);
         if (allContent) {
-            List<String> populates = new ArrayList<String>();
+            List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetPayloadExpectations(3);
@@ -1180,7 +1180,7 @@ public class BackendVmsResourceTest
     @Test
     public void testListAllContent() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        List<String> populates = new ArrayList<String>();
+        List<String> populates = new ArrayList<>();
         populates.add("true");
         expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
         setUpGetPayloadExpectations(3);
@@ -1570,7 +1570,7 @@ public class BackendVmsResourceTest
     private ArrayList<DiskImageBase> mapDisks(Disks disks) {
         ArrayList<DiskImageBase> diskImages = null;
         if (disks!=null && disks.isSetDisks()) {
-            diskImages = new ArrayList<DiskImageBase>();
+            diskImages = new ArrayList<>();
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImage = (DiskImage)DiskMapper.map(disk, null);
                 diskImages.add(diskImage);

@@ -90,7 +90,7 @@ public class BackendSnapshotsResourceTest
 
     @Test
     public void testGetWithPopulate() throws Exception {
-        List<String> populates = new ArrayList<String>();
+        List<String> populates = new ArrayList<>();
         populates.add("true");
         String ovfData = "data";
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
@@ -206,7 +206,7 @@ public class BackendSnapshotsResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.Snapshot> getEntities() {
-        List<org.ovirt.engine.core.common.businessentities.Snapshot> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Snapshot>();
+        List<org.ovirt.engine.core.common.businessentities.Snapshot> entities = new ArrayList<>();
         for (int i = 0; i<2; i++) {
             entities.add(getEntity(i));
         }
@@ -243,7 +243,7 @@ public class BackendSnapshotsResourceTest
 
     private void mockOsRepository() {
         OsRepository mockOsRepository = control.createMock(OsRepository.class);
-        expect(mockOsRepository.getUniqueOsNames()).andReturn(new HashMap<Integer, String>()).anyTimes();
+        expect(mockOsRepository.getUniqueOsNames()).andReturn(new HashMap<>()).anyTimes();
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, mockOsRepository);
     }
 }

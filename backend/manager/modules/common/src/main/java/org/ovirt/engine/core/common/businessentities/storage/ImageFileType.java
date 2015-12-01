@@ -14,7 +14,7 @@ public enum ImageFileType {
     private static Map<Integer, ImageFileType> mappings;
 
     static {
-        mappings = new HashMap<Integer, ImageFileType>();
+        mappings = new HashMap<>();
         for (ImageFileType error : values()) {
             mappings.put(error.getValue(), error);
         }

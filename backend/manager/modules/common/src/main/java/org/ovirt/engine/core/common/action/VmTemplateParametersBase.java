@@ -52,7 +52,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public VmTemplateParametersBase(Guid vmTemplateId) {
         this.vmTemplateId = vmTemplateId;
-        graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
+        graphicsDevices = new HashMap<>();
     }
 
     public Guid getVmTemplateId() {

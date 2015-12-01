@@ -114,9 +114,9 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.setCdPath("");
         this.setFloppyPath("");
         this.setDiskSize(0);
-        snapshots = new ArrayList<Snapshot>();
+        snapshots = new ArrayList<>();
         initializationType = InitializationType.None;
-        runtimeDeviceCustomProperties = new HashMap<VmDeviceId, Map<String, String>>();
+        runtimeDeviceCustomProperties = new HashMap<>();
         passthroughVnicToVfMap = new HashMap<>();
         vmtCreationDate = new Date(0);
         storagePoolId = Guid.Empty;

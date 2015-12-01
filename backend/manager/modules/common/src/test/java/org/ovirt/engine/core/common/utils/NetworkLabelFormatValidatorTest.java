@@ -40,13 +40,13 @@ public class NetworkLabelFormatValidatorTest {
         return Arrays.asList(new Object[][] {
                 { new HashSet<String>(), true },
                 { null, true },
-                { new HashSet<String>(Arrays.asList("abc")), true },
-                { new HashSet<String>(Arrays.asList("abc", "xyz")), true },
-                { new HashSet<String>(Arrays.asList("abc-_sc")), true },
-                { new HashSet<String>(Arrays.asList("")), false },
-                { new HashSet<String>(Arrays.asList(" ")), false },
-                { new HashSet<String>(Arrays.asList("abc*")), false },
-                { new HashSet<String>(Arrays.asList("aaa", "abc*")), false }
+                { new HashSet<>(Arrays.asList("abc")), true },
+                { new HashSet<>(Arrays.asList("abc", "xyz")), true },
+                { new HashSet<>(Arrays.asList("abc-_sc")), true },
+                { new HashSet<>(Arrays.asList("")), false },
+                { new HashSet<>(Arrays.asList(" ")), false },
+                { new HashSet<>(Arrays.asList("abc*")), false },
+                { new HashSet<>(Arrays.asList("aaa", "abc*")), false }
         });
     }
 

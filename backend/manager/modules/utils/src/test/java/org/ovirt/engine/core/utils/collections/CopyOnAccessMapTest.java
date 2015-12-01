@@ -134,8 +134,8 @@ public class CopyOnAccessMapTest {
 
     @Before
     public void setup() {
-        innerMap = new HashMap<MyKey, MyValue>();
-        testedMap = new CopyOnAccessMap<MyKey, MyValue>(innerMap);
+        innerMap = new HashMap<>();
+        testedMap = new CopyOnAccessMap<>(innerMap);
         key1 = new MyKey("RHEL", 0);
         value1 = new MyValue(VALUE1_WIDTH, VALUE1_LENGTH);
         key2 = new MyKey("Fedora", 0);
@@ -178,7 +178,7 @@ public class CopyOnAccessMapTest {
 
     @Test
     public void testPutAll() {
-        Map<MyKey, MyValue> map = new HashMap<MyKey, MyValue>();
+        Map<MyKey, MyValue> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         testedMap.putAll(map);

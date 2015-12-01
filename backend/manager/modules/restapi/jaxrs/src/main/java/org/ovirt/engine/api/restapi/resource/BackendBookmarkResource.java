@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark,
     org.ovirt.engine.core.common.businessentities.Bookmark> implements BookmarkResource {
@@ -26,7 +25,7 @@ public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark
 
     @Override
     public Bookmark update(Bookmark incoming) {
-        return performUpdate(incoming, new QueryIdResolver<Guid>(VdcQueryType.GetBookmarkByBookmarkId,
+        return performUpdate(incoming, new QueryIdResolver<>(VdcQueryType.GetBookmarkByBookmarkId,
                 IdQueryParameters.class), VdcActionType.UpdateBookmark, new UpdateParametersProvider());
     }
 

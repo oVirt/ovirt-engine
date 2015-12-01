@@ -77,7 +77,7 @@ public class NetworkValidatorTest {
     @Mock
     private VmDao vmDao;
 
-    private List<Network> networks = new ArrayList<Network>();
+    private List<Network> networks = new ArrayList<>();
     private NetworkValidator validator;
 
     @Before

@@ -71,8 +71,8 @@ public class EnvelopeEncryptDecrypt {
     ) throws GeneralSecurityException, IOException {
         final String wrapAlgo = cert.getPublicKey().getAlgorithm() + "/" + PKEY_MODE_PADDING;
         final Base64 base64 = new Base64(0);
-        final Map<String, String> map = new HashMap<String, String>();
-        final Map<String, String> env = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
+        final Map<String, String> env = new HashMap<>();
 
         env.put(CONTENT_KEY, base64.encodeToString(content));
         byte[] r = new byte[((content.length / blockSize) + 1) * blockSize - content.length];

@@ -265,14 +265,14 @@ public class BaseBackendResource {
         if (o instanceof List) {
             collection = (List<T>)o;
         } else if (clz.isInstance(o)) {
-            collection = new ArrayList<T>();
+            collection = new ArrayList<>();
             collection.add(clz.cast(o));
         }
         return collection;
     }
 
     static <T> ArrayList<T> asList(T t) {
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
         list.add(t);
         return list;
     }
@@ -356,7 +356,7 @@ public class BaseBackendResource {
     }
 
     public <E extends Enum<E>> List<E> validateEnumValues(Class<E> clz, List<String> names) {
-        ArrayList<E> enumList = new ArrayList<E>();
+        ArrayList<E> enumList = new ArrayList<>();
 
         for (String name : names) {
             enumList.add(validateEnum(clz, name));

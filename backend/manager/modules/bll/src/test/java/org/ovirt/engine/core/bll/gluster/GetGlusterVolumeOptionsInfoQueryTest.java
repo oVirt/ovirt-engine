@@ -35,7 +35,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     ClusterUtils clusterUtils;
 
     private List<VDS> mockGetAllVdsForwithStatus(VDSStatus status) {
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(getVds(status));
         return vdsList;
     }
@@ -71,7 +71,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
 
     private void setupExpectedGlusterVolumeOptionInfo() {
         parameters = new GlusterParameters(CLUSTER_ID);
-        expected = new ArrayList<GlusterVolumeOptionInfo>();
+        expected = new ArrayList<>();
         GlusterVolumeOptionInfo option = new GlusterVolumeOptionInfo();
         option.setKey("cluster.self-heal-window-size");
         option.setDefaultValue("1");

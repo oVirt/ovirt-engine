@@ -43,7 +43,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Inject
     private EventQueue eventQueue;
-    private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
+    private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
 

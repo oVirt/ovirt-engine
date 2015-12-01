@@ -28,7 +28,7 @@ public enum NumaTuneMode {
     private static Map<String, NumaTuneMode> mappings;
 
     static {
-        mappings = new HashMap<String, NumaTuneMode>();
+        mappings = new HashMap<>();
         for (NumaTuneMode mode : values()) {
             mappings.put(mode.getValue(), mode);
         }

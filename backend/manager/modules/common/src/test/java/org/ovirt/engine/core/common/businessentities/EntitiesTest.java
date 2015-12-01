@@ -24,7 +24,7 @@ public class EntitiesTest {
 
     @Test
     public void businessEntitiesById() {
-        List<VmDevice> list = new ArrayList<VmDevice>();
+        List<VmDevice> list = new ArrayList<>();
 
         VmDeviceId id1 = new VmDeviceId(GUIDs[0], GUIDs[1]);
         VmDeviceId id2 = new VmDeviceId(GUIDs[2], GUIDs[3]);
@@ -47,7 +47,7 @@ public class EntitiesTest {
 
     @Test
     public void objectNames() {
-        List<Network> list = new ArrayList<Network>();
+        List<Network> list = new ArrayList<>();
         Network n1 = new Network();
         n1.setName("network1");
         Network n2 = new Network();

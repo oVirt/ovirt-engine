@@ -18,7 +18,7 @@ public class LocationInfoHelper {
             ExternalLocationInfo info = (ExternalLocationInfo)locationInfo;
             if (ConnectionMethod.HTTP.equals(info.getConnectionMethod())) {
                 HttpLocationInfo httpInfo = (HttpLocationInfo) info;
-                Map<String, Object> infoMap = new HashMap<String, Object>();
+                Map<String, Object> infoMap = new HashMap<>();
                 infoMap.put("method", "http");
                 infoMap.put("url", httpInfo.getUrl());
                 infoMap.put("headers", httpInfo.getHeaders());
@@ -28,7 +28,7 @@ public class LocationInfoHelper {
 
         if (locationInfo instanceof VdsmImageLocationInfo) {
             VdsmImageLocationInfo info = (VdsmImageLocationInfo)locationInfo;
-            Map<String, Object> infoMap = new HashMap<String, Object>();
+            Map<String, Object> infoMap = new HashMap<>();
             infoMap.put("type", "image");
             infoMap.put("sdUUID", info.getStorageDomainId().toString());
             infoMap.put("imgUUID", info.getImageGroupId().toString());

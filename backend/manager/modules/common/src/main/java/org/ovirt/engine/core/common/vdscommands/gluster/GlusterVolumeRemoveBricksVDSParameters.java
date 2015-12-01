@@ -52,7 +52,7 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
     }
 
     public List<String> getBrickDirectories() {
-        List<String> brickDirectories = new ArrayList<String>();
+        List<String> brickDirectories = new ArrayList<>();
         for (GlusterBrickEntity brick : getBricks()) {
             brickDirectories.add(brick.getQualifiedName());
         }

@@ -152,7 +152,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
 
     private List<GlusterServerService> getGlusterServerServicesByServerIdAndServiceType(Guid serverId,
             ServiceType serviceType, GlusterServiceStatus status) {
-        List<GlusterServerService> serviceList = new ArrayList<GlusterServerService>();
+        List<GlusterServerService> serviceList = new ArrayList<>();
         GlusterServerService srvc1 = new GlusterServerService();
 
         srvc1.setMessage("test-msg1");
@@ -180,7 +180,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     private List<GlusterService> getGlusterServiceListByServiceType(ServiceType serviceType, GlusterServiceStatus status) {
-        List<GlusterService> serviceList = new ArrayList<GlusterService>();
+        List<GlusterService> serviceList = new ArrayList<>();
         GlusterService srvc1 = new GlusterService();
 
         srvc1.setId((status == GlusterServiceStatus.RUNNING) ? startedServiceId1 : stoppedServiceId1);

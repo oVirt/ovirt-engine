@@ -88,9 +88,9 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
         ag.setClusterId(FixturesTool.VDS_GROUP_RHEL6_NFS);
         ag.setEnforcing(false);
         ag.setPositive(false);
-        ag.setEntityIds(new ArrayList<Guid>());
+        ag.setEntityIds(new ArrayList<>());
         ag.getEntityIds().add(FixturesTool.VM_RHEL5_POOL_50);
-        ag.setEntityNames(new ArrayList<String>());
+        ag.setEntityNames(new ArrayList<>());
         ag.getEntityNames().add(FixturesTool.VM_RHEL5_POOL_50_NAME);
         dao.save(ag);
         AffinityGroup fetched = dao.get(ag.getId());

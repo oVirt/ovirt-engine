@@ -215,6 +215,6 @@ public abstract class BaseDao {
             return null;
         }
 
-        return new ArrayList<String>(Arrays.asList(str.split(SEPARATOR)));
+        return new ArrayList<>(Arrays.asList(str.split(SEPARATOR)));
     }
 }

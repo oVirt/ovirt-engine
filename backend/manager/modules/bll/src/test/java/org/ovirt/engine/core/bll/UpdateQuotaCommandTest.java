@@ -52,7 +52,7 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         quota.setId(Guid.newGuid());
 
         int numQutoaVdsGroups = RandomUtils.instance().nextInt(10);
-        List<QuotaVdsGroup> quotaVdsGroups = new ArrayList<QuotaVdsGroup>(numQutoaVdsGroups);
+        List<QuotaVdsGroup> quotaVdsGroups = new ArrayList<>(numQutoaVdsGroups);
         for (int i = 0; i < numQutoaVdsGroups; ++i) {
             quotaVdsGroups.add(new QuotaVdsGroup());
         }
@@ -60,7 +60,7 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         quota.setQuotaVdsGroups(quotaVdsGroups);
 
         int numQutoaStorages = RandomUtils.instance().nextInt(10);
-        List<QuotaStorage> quotaStorages = new ArrayList<QuotaStorage>(numQutoaStorages);
+        List<QuotaStorage> quotaStorages = new ArrayList<>(numQutoaStorages);
         for (int i = 0; i < numQutoaVdsGroups; ++i) {
             quotaStorages.add(new QuotaStorage());
         }

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -213,9 +212,9 @@ public enum VmTestPairs {
         vmDynamic.setId(id);
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setVmBalloonInfo(new VmBalloonInfo());
-        vmStatistics.setInterfaceStatistics(new ArrayList<VmNetworkInterface>());
-        ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = new ArrayList<VmGuestAgentInterface>();
-        HashMap<String, LUNs> lunsMap = new HashMap<String, LUNs>();
+        vmStatistics.setInterfaceStatistics(new ArrayList<>());
+        ArrayList<VmGuestAgentInterface> vmGuestAgentInterfaces = new ArrayList<>();
+        HashMap<String, LUNs> lunsMap = new HashMap<>();
         VmInternalData vmInternalData =
                 new VmInternalData(vmDynamic, vmStatistics,
                         vmGuestAgentInterfaces, lunsMap, -1d);

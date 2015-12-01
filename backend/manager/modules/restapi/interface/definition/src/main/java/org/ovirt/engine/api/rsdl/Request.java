@@ -6,8 +6,8 @@ import java.util.Map;
 public class Request {
 
     private Body body;
-    private Map<String, ParamData> urlparams = new HashMap<String, ParamData>();
-    private Map<String, ParamData> headers = new HashMap<String, ParamData>();
+    private Map<String, ParamData> urlparams = new HashMap<>();
+    private Map<String, ParamData> headers = new HashMap<>();
 
     public Map<String, ParamData> getUrlparams() {
         return urlparams;

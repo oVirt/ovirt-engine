@@ -42,7 +42,7 @@ public enum VdcObjectType {
 
     private int value;
     private String vdcObjectTranslationVal;
-    private static final Map<Integer, VdcObjectType> map = new HashMap<Integer, VdcObjectType>(values().length);
+    private static final Map<Integer, VdcObjectType> map = new HashMap<>(values().length);
 
     static {
         for (VdcObjectType type : values()) {

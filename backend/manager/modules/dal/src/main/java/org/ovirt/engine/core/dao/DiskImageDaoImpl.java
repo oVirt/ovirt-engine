@@ -259,7 +259,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                 return null;
             }
 
-            return new ArrayList<String>(Arrays.asList(StringUtils.splitPreserveAllTokens(str, SEPARATOR)));
+            return new ArrayList<>(Arrays.asList(StringUtils.splitPreserveAllTokens(str, SEPARATOR)));
         }
 
         /**
@@ -269,9 +269,9 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
          * @return
          */
         private ArrayList<Guid> getGuidListFromStringPreserveAllTokens(String str) {
-            ArrayList<Guid> guidList = new ArrayList<Guid>();
+            ArrayList<Guid> guidList = new ArrayList<>();
             if (StringUtils.isEmpty(str)) {
-                return new ArrayList<Guid>();
+                return new ArrayList<>();
             }
             for (String guidString : splitPreserveAllTokens(str)) {
                 Guid guidToAdd = null;

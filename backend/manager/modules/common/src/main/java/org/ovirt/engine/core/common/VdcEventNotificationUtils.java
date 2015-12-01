@@ -6,8 +6,7 @@ import java.util.Map;
 
 
 public final class VdcEventNotificationUtils {
-    private static final Map<EventNotificationEntity, HashSet<AuditLogType>> eventNotificationTypeMap =
-            new HashMap<EventNotificationEntity, HashSet<AuditLogType>>();
+    private static final Map<EventNotificationEntity, HashSet<AuditLogType>> eventNotificationTypeMap = new HashMap<>();
 
     /**
      * Initializes the <see cref="VdcEventNotificationUtils"/> class.
@@ -192,8 +191,7 @@ public final class VdcEventNotificationUtils {
      */
     public static Map<EventNotificationEntity, HashSet<AuditLogType>> getNotificationEventsByType(
             EventNotificationEntity type) {
-        Map<EventNotificationEntity, HashSet<AuditLogType>> map =
-                new HashMap<EventNotificationEntity, HashSet<AuditLogType>>();
+        Map<EventNotificationEntity, HashSet<AuditLogType>> map = new HashMap<>();
         if (eventNotificationTypeMap.containsKey(type)) {
             map.put(type, eventNotificationTypeMap.get(type));
         }
@@ -211,7 +209,7 @@ public final class VdcEventNotificationUtils {
     private static void AddEventNotificationEntry(EventNotificationEntity entity, AuditLogType auditLogType) {
         HashSet<AuditLogType> entry = eventNotificationTypeMap.get(entity);
         if (entry == null) {
-            entry = new HashSet<AuditLogType>();
+            entry = new HashSet<>();
             eventNotificationTypeMap.put(entity, entry);
         }
         entry.add(auditLogType);

@@ -138,7 +138,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     private List getStorageDomains() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
         org.ovirt.engine.core.common.businessentities.StorageDomain sd = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setStorageName("Storage_Domain_1");
         sd.setId(GUIDS[2]);

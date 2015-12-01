@@ -89,7 +89,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         brickProperties2.setTotalSize(Long.valueOf("275000"));
         brick2.getBrickDetails().setBrickProperties(brickProperties2);
 
-        List<GlusterBrickEntity> bricksToAdd = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToAdd = new ArrayList<>();
         bricksToAdd.add(brick1);
         bricksToAdd.add(brick2);
         dao.addBrickProperties(bricksToAdd);
@@ -144,7 +144,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         List<GlusterBrickEntity> bricks = dao.getBricksOfVolume(FixturesTool.GLUSTER_VOLUME_UUID1);
         assertEquals(2, bricks.size());
 
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         idsToRemove.add(bricks.get(0).getId());
         idsToRemove.add(bricks.get(1).getId());
         dao.removeAll(idsToRemove);
@@ -254,7 +254,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         brickProperties2.setFreeSize(1000);
         brickProperties2.setTotalSize(3000);
 
-        List<GlusterBrickEntity> bricksList = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksList = new ArrayList<>();
         bricksList.add(existingBrick1);
         bricksList.add(existingBrick2);
 
@@ -282,7 +282,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         assertEquals(GlusterStatus.UP, existingBrick.getStatus());
         assertEquals(GlusterStatus.UP, existingBrick1.getStatus());
 
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(existingBrick);
         bricks.add(existingBrick1);
         dao.updateBrickStatuses(bricks);

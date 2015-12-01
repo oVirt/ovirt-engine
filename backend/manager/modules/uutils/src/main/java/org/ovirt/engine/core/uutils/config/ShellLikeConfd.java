@@ -53,7 +53,7 @@ public class ShellLikeConfd {
     private static final Pattern KEY_VALUE_EXPRESSION = Pattern.compile("^\\s*(\\w+)=(.*)$");
 
     // The properties object storing the current values of the parameters:
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values = new HashMap<>();
 
     /**
      * Use configuration from map.
@@ -73,7 +73,7 @@ public class ShellLikeConfd {
         // This is the list of configuration files that will be loaded and
         // merged (the initial size is 2 because usually we will have only two
         // configuration files to merge, the defaults and the variables):
-        List<File> configFiles = new ArrayList<File>(2);
+        List<File> configFiles = new ArrayList<>(2);
 
         if (!StringUtils.isEmpty(defaultsPath)) {
             File defaultsFile = new File(defaultsPath);
@@ -135,7 +135,7 @@ public class ShellLikeConfd {
     private void dumpConfig() {
         if (log.isInfoEnabled()) {
             Set<String> keys = values.keySet();
-            List<String> list = new ArrayList<String>(keys.size());
+            List<String> list = new ArrayList<>(keys.size());
             List<String> sensitiveKeys = Arrays.asList(getSensitiveKeys());
             list.addAll(keys);
             Collections.sort(list);

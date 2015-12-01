@@ -82,7 +82,7 @@ public class BackendStorageDomainResource
     public StorageDomain update(StorageDomain incoming) {
         validateEnums(StorageDomain.class, incoming);
         QueryIdResolver<Guid> storageDomainResolver =
-                new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
+                new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getStorageType();
@@ -295,7 +295,7 @@ public class BackendStorageDomainResource
                 return storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
             }
             else {
-                return new ArrayList<LogicalUnit>();
+                return new ArrayList<>();
             }
         }
         else {
@@ -308,7 +308,7 @@ public class BackendStorageDomainResource
             boolean force) {
         ExtendSANStorageDomainParameters params = new ExtendSANStorageDomainParameters();
         params.setStorageDomainId(storageDomainId);
-        ArrayList<String> lunIds = new ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<>();
         for (LogicalUnit newLun : newLuns) {
             lunIds.add(newLun.getId());
         }
@@ -318,7 +318,7 @@ public class BackendStorageDomainResource
     }
 
     private List<LogicalUnit> findNewLuns(List<LogicalUnit> existingLuns, List<LogicalUnit> incomingLuns) {
-        List<LogicalUnit> newLuns = new LinkedList<LogicalUnit>();
+        List<LogicalUnit> newLuns = new LinkedList<>();
         for (LogicalUnit incomingLun : incomingLuns) {
             boolean found = false;
             for (LogicalUnit existingLun : existingLuns) {

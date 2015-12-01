@@ -54,7 +54,7 @@ public class BackendAssignedRolesResourceTest
     }
 
     protected List<Permission> setUpPermissions() {
-        List<Permission> perms = new ArrayList<Permission>();
+        List<Permission> perms = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
         }

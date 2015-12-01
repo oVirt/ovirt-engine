@@ -110,7 +110,7 @@ public class InitializationMapper {
         }
 
         if (model.isSetNicConfigurations()) {
-            List<VmInitNetwork> networks = new ArrayList<VmInitNetwork>();
+            List<VmInitNetwork> networks = new ArrayList<>();
             for (NicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
                 networks.add(map(nic, null));
             }

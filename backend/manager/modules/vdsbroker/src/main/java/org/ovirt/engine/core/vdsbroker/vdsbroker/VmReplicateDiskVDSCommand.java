@@ -12,7 +12,7 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
     }
 
     protected Map<String, Object> getDstDiskXmlRpc() {
-        Map<String, Object> dstDisk = new HashMap<String, Object>();
+        Map<String, Object> dstDisk = new HashMap<>();
         dstDisk.put(VdsProperties.Device, "disk");
         dstDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
         dstDisk.put(VdsProperties.DomainId, getParameters().getTargetStorageDomainId().toString());
@@ -22,7 +22,7 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
     }
 
     protected Map<String, Object> getSrcDiskXmlRpc() {
-        Map<String, Object> srcDisk = new HashMap<String, Object>();
+        Map<String, Object> srcDisk = new HashMap<>();
         srcDisk.put(VdsProperties.Device, "disk");
         srcDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
         srcDisk.put(VdsProperties.DomainId, getParameters().getSrcStorageDomainId().toString());

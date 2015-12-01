@@ -16,7 +16,7 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
     private GlusterVolumeTaskStatusDetail statusSummary;
 
     public GlusterVolumeTaskStatusEntity() {
-        hostwiseStatusDetails = new ArrayList<GlusterVolumeTaskStatusForHost>();
+        hostwiseStatusDetails = new ArrayList<>();
         statusSummary = new GlusterVolumeTaskStatusDetail();
     }
 

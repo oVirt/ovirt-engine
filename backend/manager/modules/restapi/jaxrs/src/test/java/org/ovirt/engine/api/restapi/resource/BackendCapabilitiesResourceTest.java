@@ -57,8 +57,7 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
     @Ignore
     @Test
     public void testList() throws Exception {
-        HashSet<org.ovirt.engine.core.compat.Version> supportedVersions =
-                new HashSet<org.ovirt.engine.core.compat.Version>();
+        HashSet<org.ovirt.engine.core.compat.Version> supportedVersions = new HashSet<>();
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(1, 5));
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(10, 3));
 

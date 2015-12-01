@@ -37,7 +37,7 @@ public class BackendStorageServerConnectionResource extends
     public StorageConnection update(StorageConnection connection) {
         validateEnums(StorageConnection.class, connection);
         return performUpdate(connection,
-                new QueryIdResolver<String>(VdcQueryType.GetStorageServerConnectionById,
+                new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionById,
                         StorageServerConnectionQueryParametersBase.class),
                 VdcActionType.UpdateStorageServerConnection,
                 new UpdateParametersProvider());

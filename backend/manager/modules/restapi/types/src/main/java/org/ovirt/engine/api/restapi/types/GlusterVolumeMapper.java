@@ -92,7 +92,7 @@ public class GlusterVolumeMapper {
         }
 
         if (fromVolume.getTransportTypes() != null) {
-            ArrayList<String> transportTypeList = new ArrayList<String>();
+            ArrayList<String> transportTypeList = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType : fromVolume.getTransportTypes()) {
                 transportTypeList.add(map(transportType, null));
             }

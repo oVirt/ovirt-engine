@@ -90,7 +90,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         disk.setId(diskId);
         disk.setVmEntityType(VmEntityType.VM);
         disk.setImageStatus(ImageStatus.OK);
-        disk.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+        disk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
 
         vm = new VM();
         vm.setId(vmId);
@@ -121,7 +121,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
         when(storageDomainStaticDao.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
 
-        cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(new GetDiskAlignmentParameters(diskId)));
+        cmd = spy(new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId)));
 
         doReturn(disk).when(cmd).getDisk();
         doReturn(vdsDao).when(cmd).getVdsDao();

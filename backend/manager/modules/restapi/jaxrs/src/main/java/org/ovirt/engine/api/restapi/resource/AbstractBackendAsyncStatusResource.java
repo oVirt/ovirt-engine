@@ -21,7 +21,7 @@ public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
 
     public AbstractBackendAsyncStatusResource(Class<R> entityType, String ids) {
         super(Guid.Empty.toString(), entityType, List/*<AsyncTaskStatus>*/.class);
-        this.ids = new ArrayList<Guid>();
+        this.ids = new ArrayList<>();
         for (String id : ids.split(ID_SEPARATOR)) {
             this.ids.add(asGuidOr404(id));
         }

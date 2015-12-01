@@ -290,7 +290,7 @@ public class AuditLogDirector {
     }
 
     private Set<String> resolvePlaceHolders(String message) {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         Matcher matcher = pattern.matcher(message);
 
         String token;
@@ -305,7 +305,7 @@ public class AuditLogDirector {
     }
 
     private Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
-        Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
+        Map<String, String> returnValue = new HashMap<>(logable.getCustomValues());
         Set<String> attributes = resolvePlaceHolders(message);
         if (attributes != null && attributes.size() > 0) {
             TypeCompat.getPropertyValues(logable, attributes, returnValue);

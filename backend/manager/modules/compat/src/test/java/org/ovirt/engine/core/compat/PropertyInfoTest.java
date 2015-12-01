@@ -18,8 +18,8 @@ public class PropertyInfoTest {
     @Test
     public void testGetAvailableValues() {
         setSomeValue("Anakin");
-        Map<String, String> values = new HashMap<String, String>();
-        Set<String> properties = new HashSet<String>(Arrays.asList("somevalue"));
+        Map<String, String> values = new HashMap<>();
+        Set<String> properties = new HashSet<>(Arrays.asList("somevalue"));
         TypeCompat.getPropertyValues(this, properties, values);
         assertFalse(properties.isEmpty());
         assertEquals("Standard", "Anakin", values.get("somevalue"));

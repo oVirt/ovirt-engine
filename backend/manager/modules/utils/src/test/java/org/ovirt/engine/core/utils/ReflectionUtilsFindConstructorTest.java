@@ -128,7 +128,7 @@ public class ReflectionUtilsFindConstructorTest {
 
     @Parameters
     public static Collection<Object[]> parameters() {
-        Collection<Object[]> ret = new ArrayList<Object[]>(5);
+        Collection<Object[]> ret = new ArrayList<>(5);
 
         ret.add(new Object[] { ClassWithEmptyPublicCtor.class, new Class<?>[0], new Class<?>[] { Exception.class },
                 new Class<?>[] { Throwable.class }, new Class<?>[] { RuntimeException.class } });

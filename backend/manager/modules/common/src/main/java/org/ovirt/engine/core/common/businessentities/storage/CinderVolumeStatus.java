@@ -23,7 +23,7 @@ public enum CinderVolumeStatus implements Nameable {
     private static Map<String, CinderVolumeStatus> mappings;
 
     static {
-        mappings = new HashMap<String, CinderVolumeStatus>();
+        mappings = new HashMap<>();
         for (CinderVolumeStatus status : values()) {
             mappings.put(status.getName(), status);
         }

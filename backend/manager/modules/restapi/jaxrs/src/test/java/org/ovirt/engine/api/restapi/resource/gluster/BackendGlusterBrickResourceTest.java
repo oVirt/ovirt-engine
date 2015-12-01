@@ -197,7 +197,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
     private void setUpGetEntityExpectationsAllContent(int times, boolean notFound) throws Exception {
         setUpGetEntityExpectations(times, notFound);
-        List<String> populateValue = new ArrayList<String>();
+        List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
         expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();
         setupParentPopulateExpectations(notFound);

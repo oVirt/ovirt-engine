@@ -45,7 +45,7 @@ public class EngineEncryptionUtilsTest {
 
     @Test
     public void testEncryptThreads() throws Exception {
-        List<Thread> l = new LinkedList<Thread>();
+        List<Thread> l = new LinkedList<>();
         final String plain = "Test123!32@";
         final AtomicBoolean failed = new AtomicBoolean();
 

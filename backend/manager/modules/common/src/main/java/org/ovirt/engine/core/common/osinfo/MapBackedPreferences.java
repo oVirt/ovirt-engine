@@ -19,8 +19,8 @@ public class MapBackedPreferences extends AbstractPreferences implements Seriali
      */
     public MapBackedPreferences(AbstractPreferences parent, String name) {
         super(parent, name);
-        preferencesStore = new HashMap<String, String>();
-        childNodes = new ArrayList<String>();
+        preferencesStore = new HashMap<>();
+        childNodes = new ArrayList<>();
     }
 
     @Override

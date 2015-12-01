@@ -9,7 +9,7 @@ public enum MigrateOnErrorOptions {
 
     private int intValue;
 
-    private static final HashMap<Integer, MigrateOnErrorOptions> mappings = new HashMap<Integer, MigrateOnErrorOptions>();
+    private static final HashMap<Integer, MigrateOnErrorOptions> mappings = new HashMap<>();
 
     static {
         for (MigrateOnErrorOptions option : values()) {

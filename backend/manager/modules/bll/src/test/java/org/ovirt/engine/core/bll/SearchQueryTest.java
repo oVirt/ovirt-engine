@@ -53,14 +53,14 @@ public class SearchQueryTest extends DbDependentTestBase {
             mockConfig(ConfigValues.MinimumPercentageToUpdateQuotaCache, 60)
             );
 
-    List<Disk> diskImageResultList = new ArrayList<Disk>();
-    List<Quota> quotaResultList = new ArrayList<Quota>();
-    List<VM> vmResultList = new ArrayList<VM>();
-    List<VDS> vdsResultList = new ArrayList<VDS>();
-    List<VDSGroup> vdsGroupResultList = new ArrayList<VDSGroup>();
-    List<StoragePool> storagePoolResultList = new ArrayList<StoragePool>();
-    List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
-    List<NetworkView> networkResultList = new ArrayList<NetworkView>();
+    List<Disk> diskImageResultList = new ArrayList<>();
+    List<Quota> quotaResultList = new ArrayList<>();
+    List<VM> vmResultList = new ArrayList<>();
+    List<VDS> vdsResultList = new ArrayList<>();
+    List<VDSGroup> vdsGroupResultList = new ArrayList<>();
+    List<StoragePool> storagePoolResultList = new ArrayList<>();
+    List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<>();
+    List<NetworkView> networkResultList = new ArrayList<>();
     private DbFacade facadeMock;
 
     @Before
@@ -312,7 +312,7 @@ public class SearchQueryTest extends DbDependentTestBase {
     }
 
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<>(searchParam));
         mockInjections(searchQuery);
         return searchQuery;
     }

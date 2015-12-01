@@ -86,7 +86,7 @@ public class QuotaManagerTest {
     private QuotaManagerAuditLogger quotaManagerAuditLogger = quotaManager.getQuotaManagerAuditLogger();
 
     private StoragePool storage_pool = new StoragePool();
-    private ArrayList<String> canDoActionMessages = new ArrayList<String>();
+    private ArrayList<String> canDoActionMessages = new ArrayList<>();
     private QuotaConsumptionParametersWrapper parametersWrapper;
     private boolean hardEnforcement = true;
     private boolean auditLogWritten = false;
@@ -113,7 +113,7 @@ public class QuotaManagerTest {
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setStoragePool(storage_pool);
         parametersWrapper = new QuotaConsumptionParametersWrapper(auditLogable, canDoActionMessages);
-        parametersWrapper.setParameters(new ArrayList<QuotaConsumptionParameter>());
+        parametersWrapper.setParameters(new ArrayList<>());
     }
 
     private void mockQuotaDao() {
@@ -510,7 +510,7 @@ public class QuotaManagerTest {
     }
 
     private List<QuotaStorage> getQuotaStorages(long storageSize, double storageSizeUsed) {
-        ArrayList<QuotaStorage> quotaStorages = new ArrayList<QuotaStorage>();
+        ArrayList<QuotaStorage> quotaStorages = new ArrayList<>();
         quotaStorages.add(getQuotaStorage(UNLIMITED_STORAGE, 0));
         quotaStorages.add(getQuotaStorage(50, 5));
         quotaStorages.get(0).setStorageId(Guid.newGuid());
@@ -530,7 +530,7 @@ public class QuotaManagerTest {
     }
 
     private List<QuotaVdsGroup> getQuotaVdsGroups(int vCpu, int vCpuUsed, long mem, long memUsed) {
-        ArrayList<QuotaVdsGroup> quotaVdsGroups = new ArrayList<QuotaVdsGroup>();
+        ArrayList<QuotaVdsGroup> quotaVdsGroups = new ArrayList<>();
         quotaVdsGroups.add(getQuotaVdsGroup(UNLIMITED_VCPU, 0, UNLIMITED_MEM, 0));
         quotaVdsGroups.add(getQuotaVdsGroup(10, 2, 1000, 100));
         quotaVdsGroups.get(0).setVdsGroupId(Guid.newGuid());

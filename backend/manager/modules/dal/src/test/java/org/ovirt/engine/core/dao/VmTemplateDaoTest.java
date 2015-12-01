@@ -291,7 +291,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         existingTemplate.setDescription("This is an updated description");
 
         List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
-        hostGuidsList = new LinkedList<Guid>();
+        hostGuidsList = new LinkedList<>();
         hostGuidsList.add(HOST_GUIDS[0]);
         existingTemplate.setDedicatedVmForVdsList(hostGuidsList);
         dao.update(existingTemplate);

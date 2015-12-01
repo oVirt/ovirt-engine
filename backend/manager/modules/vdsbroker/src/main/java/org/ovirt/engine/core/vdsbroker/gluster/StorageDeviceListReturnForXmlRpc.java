@@ -20,7 +20,7 @@ public class StorageDeviceListReturnForXmlRpc extends StorageDeviceReturnForXmlR
         }
 
         Object[] deviceArray = (Object[]) innerMap.get(DEVICE_INFO);
-        storageDevices = new ArrayList<StorageDevice>();
+        storageDevices = new ArrayList<>();
 
         if (deviceArray != null) {
             for (Object deviceInfoMap : deviceArray) {

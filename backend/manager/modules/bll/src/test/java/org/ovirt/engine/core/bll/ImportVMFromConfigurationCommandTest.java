@@ -113,7 +113,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         Integer osId = 0;
         Version clusterVersion = null;
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.put(osId, new HashMap<>());
         displayTypeMap.get(osId).put(clusterVersion, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }

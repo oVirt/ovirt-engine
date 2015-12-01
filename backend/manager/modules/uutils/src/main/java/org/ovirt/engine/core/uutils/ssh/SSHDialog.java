@@ -295,10 +295,10 @@ public class SSHDialog implements Closeable {
             try {
                 List<InputStream> stdinList;
                 if (initial == null) {
-                    stdinList = new LinkedList<InputStream>();
+                    stdinList = new LinkedList<>();
                 }
                 else {
-                    stdinList = new LinkedList<InputStream>(Arrays.asList(initial));
+                    stdinList = new LinkedList<>(Arrays.asList(initial));
                 }
                 stdinList.add(pinStdin);
 

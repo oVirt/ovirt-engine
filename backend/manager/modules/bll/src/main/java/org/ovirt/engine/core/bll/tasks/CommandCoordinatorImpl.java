@@ -269,7 +269,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     private void buildCmdHierarchy(CommandEntity cmdEntity) {
         if (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) && !cmdEntity.getId().equals(cmdEntity.getParentCommandId())) {
-            childHierarchy.putIfAbsent(cmdEntity.getParentCommandId(), new ArrayList<Guid>());
+            childHierarchy.putIfAbsent(cmdEntity.getParentCommandId(), new ArrayList<>());
             if (!childHierarchy.get(cmdEntity.getParentCommandId()).contains(cmdEntity.getId())) {
                 childHierarchy.get(cmdEntity.getParentCommandId()).add(cmdEntity.getId());
             }

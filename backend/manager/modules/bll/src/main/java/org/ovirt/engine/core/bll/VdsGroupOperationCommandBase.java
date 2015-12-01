@@ -142,7 +142,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     private void updateClusterPolicyProperties(VDSGroup cluster,
             ClusterPolicy clusterPolicy, Map<String, String> customPropertiesRegexMap) {
         if (cluster.getClusterPolicyProperties() == null) {
-            cluster.setClusterPolicyProperties(new LinkedHashMap<String, String>());
+            cluster.setClusterPolicyProperties(new LinkedHashMap<>());
         }
         Map<String, String> clusterPolicyProperties = cluster.getClusterPolicyProperties();
         List<String> toRemoveKeysList = new ArrayList<>();

@@ -17,7 +17,7 @@ public class VdcActionTypeTest {
     @Test
     public void testAuditLogTypeValueUniqueness() {
         BitSet bitset = new BitSet(bitSetSize);
-        Set<Integer> nonUniqueValues = new TreeSet<Integer>();
+        Set<Integer> nonUniqueValues = new TreeSet<>();
 
         for (VdcActionType vat : VdcActionType.values()) {
             if (bitset.get(vat.getValue())) {

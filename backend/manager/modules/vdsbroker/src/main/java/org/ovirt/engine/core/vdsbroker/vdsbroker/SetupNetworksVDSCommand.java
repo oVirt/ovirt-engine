@@ -65,7 +65,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     private Map<String, Object> generateNetworks() {
-        Map<String, Object> networks = new HashMap<String, Object>();
+        Map<String, Object> networks = new HashMap<>();
         VDS host = getParameters().getVds();
 
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion());
@@ -84,7 +84,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
         CustomPropertiesForVdsNetworkInterface customProperties = getParameters().getCustomProperties();
         for (Network network : getParameters().getNetworks()) {
-            Map<String, Object> opts = new HashMap<String, Object>();
+            Map<String, Object> opts = new HashMap<>();
             VdsNetworkInterface iface =
                     findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
             String ifaceNameWithoutVlan = NetworkUtils.stripVlan(iface);
@@ -165,10 +165,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     private Map<String, Object> generateBonds() {
-        Map<String, Object> bonds = new HashMap<String, Object>();
+        Map<String, Object> bonds = new HashMap<>();
 
         for (VdsNetworkInterface bond : getParameters().getBonds()) {
-            Map<String, Object> opts = new HashMap<String, Object>();
+            Map<String, Object> opts = new HashMap<>();
             opts.put(SLAVES, getBondNics(bond, getParameters().getInterfaces()));
 
             if (!StringUtils.isEmpty(bond.getBondOptions())) {
@@ -185,7 +185,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     private Map<String, Object> generateOptions() {
-        Map<String, Object> options = new HashMap<String, Object>();
+        Map<String, Object> options = new HashMap<>();
 
         options.put(VdsProperties.CONNECTIVITY_CHECK, Boolean.toString(getParameters().isCheckConnectivity()));
 
@@ -203,7 +203,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     private static List<String> getBondNics(VdsNetworkInterface bond, List<VdsNetworkInterface> interfaces) {
-        List<String> nics = new ArrayList<String>();
+        List<String> nics = new ArrayList<>();
 
         for (VdsNetworkInterface i : interfaces) {
             if (bond.getName().equals(i.getBondName())) {

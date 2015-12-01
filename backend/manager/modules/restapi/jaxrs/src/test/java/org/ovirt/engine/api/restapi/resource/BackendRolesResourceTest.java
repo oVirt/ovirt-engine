@@ -147,7 +147,7 @@ public class BackendRolesResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.Role> setUpRoles() {
-        List<org.ovirt.engine.core.common.businessentities.Role> roles = new ArrayList<org.ovirt.engine.core.common.businessentities.Role>();
+        List<org.ovirt.engine.core.common.businessentities.Role> roles = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             roles.add(getEntity(i));
         }

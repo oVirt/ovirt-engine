@@ -43,7 +43,7 @@ public class EnforceAuthFilter implements Filter {
             if (schemes == null) {
                 schemes = Collections.emptyList();
             }
-            Set<String> allSchemes = new HashSet<String>(schemes);
+            Set<String> allSchemes = new HashSet<>(schemes);
             if (additionalSchemes != null) {
                 allSchemes.addAll(additionalSchemes);
             }

@@ -8,8 +8,7 @@ public enum QuotaEnforcementTypeEnum implements Identifiable {
     HARD_ENFORCEMENT(2);
 
     private final int enforcementType;
-    private static final HashMap<Integer, QuotaEnforcementTypeEnum> mappings =
-            new HashMap<Integer, QuotaEnforcementTypeEnum>();
+    private static final HashMap<Integer, QuotaEnforcementTypeEnum> mappings = new HashMap<>();
 
     static {
         for (QuotaEnforcementTypeEnum component : values()) {

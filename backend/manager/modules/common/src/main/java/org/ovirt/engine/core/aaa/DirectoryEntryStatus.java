@@ -17,7 +17,7 @@ public enum DirectoryEntryStatus implements Identifiable {
     private static Map<Integer, DirectoryEntryStatus> mappings;
 
     static {
-        mappings = new HashMap<Integer, DirectoryEntryStatus>();
+        mappings = new HashMap<>();
         for (DirectoryEntryStatus status : values()) {
             mappings.put(status.getValue(), status);
         }

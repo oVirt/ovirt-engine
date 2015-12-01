@@ -25,7 +25,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         parameters = new StorageDomainParametersBase(Guid.newGuid());
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase>(parameters, null));
+        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null));
     }
 
     @Test

@@ -62,7 +62,7 @@ public class NetworkAttachmentMapper {
         if (model.isSetIpAddressAssignments()) {
             entity.setIpConfiguration(new org.ovirt.engine.core.common.businessentities.network.IpConfiguration());
             IpAddressAssignments ipAddressAssignments = model.getIpAddressAssignments();
-            entity.getIpConfiguration().setIPv4Addresses(new ArrayList<IPv4Address>());
+            entity.getIpConfiguration().setIPv4Addresses(new ArrayList<>());
 
             for (IpAddressAssignment ipAddressAssignment : ipAddressAssignments.getIpAddressAssignments()) {
                 entity.getIpConfiguration().getIPv4Addresses().add(mapIpAddressAssignment(ipAddressAssignment));

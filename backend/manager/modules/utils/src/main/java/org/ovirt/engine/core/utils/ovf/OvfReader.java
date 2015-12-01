@@ -759,7 +759,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void readDedicatedHostsList() {
-        vmBase.setDedicatedVmForVdsList(new LinkedList<Guid>()); // initialize to empty list
+        vmBase.setDedicatedVmForVdsList(new LinkedList<>()); // initialize to empty list
         // search all dedicated hosts with xPath
         XmlNodeList hostsList = selectNodes(_document, "//*/Content/" + OvfProperties.DEDICATED_VM_FOR_VDS);
         for (XmlNode hostNode : hostsList) {
@@ -961,7 +961,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private static Map<String, Object> getMapNode(XmlNode node) {
-        Map<String, Object> returnValue = new HashMap<String, Object>();
+        Map<String, Object> returnValue = new HashMap<>();
 
         NodeList list = node.getChildNodes();
         for (int index = 0; index < list.getLength(); ++index) {

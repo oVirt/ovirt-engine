@@ -9,7 +9,7 @@ public enum RaidType {
     RAID10("10");
 
     private String value;
-    private static final HashMap<String, RaidType> mappings = new HashMap<String, RaidType>();
+    private static final HashMap<String, RaidType> mappings = new HashMap<>();
 
     static {
         for (RaidType raidType : values()) {

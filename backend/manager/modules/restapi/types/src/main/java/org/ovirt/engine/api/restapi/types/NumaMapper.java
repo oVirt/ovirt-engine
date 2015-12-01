@@ -110,15 +110,15 @@ public class NumaMapper {
             entity.setMemTotal(model.getMemory());
         }
         if (model.isSetNumaNodePins()) {
-            List<Pair<Guid, Pair<Boolean, Integer>>> pairs = new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>();
+            List<Pair<Guid, Pair<Boolean, Integer>>> pairs = new ArrayList<>();
             for (NumaNodePin pin : model.getNumaNodePins().getNumaNodePins()) {
-                Pair<Boolean, Integer> first = new Pair<Boolean, Integer>(pin.isPinned(), pin.getIndex());
+                Pair<Boolean, Integer> first = new Pair<>(pin.isPinned(), pin.getIndex());
                 Guid guid = null;
                 NumaNode node = pin.getHostNumaNode();
                 if (node != null && node.getId() != null) {
                     guid = GuidUtils.asGuid(pin.getHostNumaNode().getId());
                 }
-                Pair<Guid, Pair<Boolean, Integer>> second = new Pair<Guid, Pair<Boolean, Integer>>(guid, first);
+                Pair<Guid, Pair<Boolean, Integer>> second = new Pair<>(guid, first);
                 pairs.add(second);
             }
             entity.setVdsNumaNodeList(pairs);

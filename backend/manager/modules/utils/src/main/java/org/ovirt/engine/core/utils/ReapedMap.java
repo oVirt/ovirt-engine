@@ -62,7 +62,7 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
      *            reset reapAfter timeout on each access
      */
     public ReapedMap(long reapAfter, boolean accessBasedAging) {
-        this(reapAfter, accessBasedAging, new ReferenceQueue<V>());
+        this(reapAfter, accessBasedAging, new ReferenceQueue<>());
     }
 
     /**
@@ -79,7 +79,7 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
         this.reapAfter = reapAfter;
         this.accessBasedAging = accessBasedAging;
         this.queue = queue;
-        reapableMap = new LinkedHashMap<K, IdAwareReference<K, V>>();
+        reapableMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
     public synchronized void reapable(K k) {
         V v = super.remove(k);
         if (v != null) {
-            reapableMap.put(k, new IdAwareReference<K, V>(k, v, queue));
+            reapableMap.put(k, new IdAwareReference<>(k, v, queue));
         }
         reap();
     }

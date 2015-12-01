@@ -166,7 +166,7 @@ public class BackendVmsResource extends
 
                 if (!isFiltered() && vm.isSetPlacementPolicy()) {
                     Set<Guid> hostGuidsSet = validateAndUpdateHostsInPlacementPolicy(vm.getPlacementPolicy());
-                    staticVm.setDedicatedVmForVdsList(new LinkedList<Guid>(hostGuidsSet));
+                    staticVm.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
                 } else {
                     vm.setPlacementPolicy(null);
                 }
@@ -307,7 +307,7 @@ public class BackendVmsResource extends
     }
 
     private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.storage.Disk> values) {
-        HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
+        HashMap<Guid, DiskImage> result = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.storage.Disk diskImage : values) {
             result.put(((DiskImage) diskImage).getId(), (DiskImage) diskImage);
         }
@@ -433,7 +433,7 @@ public class BackendVmsResource extends
     }
 
     private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
-        HashMap<Guid, DiskImage> disksMap = new HashMap<Guid, DiskImage>();
+        HashMap<Guid, DiskImage> disksMap = new HashMap<>();
 
         if (disks != null && disks.isSetDisks() && disks.getDisks().size() > 0){
             HashMap<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
@@ -462,7 +462,7 @@ public class BackendVmsResource extends
 
     @SuppressWarnings("unchecked")
     private HashMap<Guid, DiskImage> getTemplateDisks(Guid templateId) {
-        HashMap<Guid, DiskImage> templatesDisksMap = new HashMap<Guid, DiskImage>();
+        HashMap<Guid, DiskImage> templatesDisksMap = new HashMap<>();
         for (DiskImage di : (List<DiskImage>) getEntity(List.class,
                                                       VdcQueryType.GetVmTemplatesDisks,
                                                       new IdQueryParameters(templateId),
@@ -515,7 +515,7 @@ public class BackendVmsResource extends
     public ArrayList<DiskImage> mapDisks(Disks disks) {
         ArrayList<DiskImage> diskImages = null;
         if (disks!=null && disks.isSetDisks()) {
-            diskImages = new ArrayList<DiskImage>();
+            diskImages = new ArrayList<>();
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImage = (DiskImage)DiskMapper.map(disk, null);
                 diskImages.add(diskImage);
@@ -538,9 +538,9 @@ public class BackendVmsResource extends
     }
 
     private void addInlineStatistics(Vm vm) {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
-        BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromStringDefaultEmpty(vm.getId()), query));
+        BackendStatisticsResource<Vm, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<>(entityType, Guid.createGuidFromStringDefaultEmpty(vm.getId()), query));
         Statistics statistics = statisticsResource.list();
         vm.setStatistics(statistics);
     }
@@ -784,7 +784,7 @@ public class BackendVmsResource extends
      * Returns Set of dedicated hosts' Guids found by name or id in PlacementPolicy
      */
     protected Set<Guid> validateAndUpdateHostsInPlacementPolicy(VmPlacementPolicy placementPolicy) {
-        Set<Guid> hostsGuidsSet = new HashSet<Guid>();
+        Set<Guid> hostsGuidsSet = new HashSet<>();
         if (placementPolicy.isSetHosts()
                 && placementPolicy.getHosts().getHosts().size() > 0) {
             for (Host host : placementPolicy.getHosts().getHosts()) {

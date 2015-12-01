@@ -43,7 +43,6 @@ import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -148,7 +147,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(Guid.newGuid())));
+        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(Guid.newGuid())));
         return diskImage;
     }
 
@@ -379,7 +378,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testCanDoAction() {
-        final ArrayList<Disk> disks = new ArrayList<Disk>();
+        final ArrayList<Disk> disks = new ArrayList<>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         initDaoMocks(disks);
@@ -514,8 +513,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(diskDao).when(command).getDiskDao();
 
         final StorageDomainDao storageDomainDao = mock(StorageDomainDao.class);
-        when(storageDomainDao.getAllForStoragePool(Guid.Empty))
-                .thenReturn(new ArrayList<StorageDomain>());
+        when(storageDomainDao.getAllForStoragePool(Guid.Empty)).thenReturn(new ArrayList<>());
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 

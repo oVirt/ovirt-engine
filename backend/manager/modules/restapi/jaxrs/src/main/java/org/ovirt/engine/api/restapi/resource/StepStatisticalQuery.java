@@ -40,7 +40,7 @@ public class StepStatisticalQuery extends AbstractStatisticalQuery<Step, Gluster
 
     @Override
     public List<Statistic> getStatistics(GlusterVolumeTaskStatusEntity entity) {
-        List<Statistic> list = new ArrayList<Statistic>();
+        List<Statistic> list = new ArrayList<>();
         if (entity == null) {
             return list;
         }

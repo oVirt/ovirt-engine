@@ -292,7 +292,7 @@ public class ArgumentsParser {
         }
         fillDefaults(parsedArgs);
 
-        List<String> mandatoryCopy = new ArrayList<String>(mandatory);
+        List<String> mandatoryCopy = new ArrayList<>(mandatory);
         mandatoryCopy.removeAll(parsedArgs.keySet());
         if(!mandatoryCopy.isEmpty()) {
             errors.add(

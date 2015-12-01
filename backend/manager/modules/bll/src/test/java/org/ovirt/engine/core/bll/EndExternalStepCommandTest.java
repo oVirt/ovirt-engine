@@ -79,7 +79,7 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
     }
 
     private void setupMock() throws Exception {
-        commandMock = spy(new EndExternalStepCommand<EndExternalStepParameters>(parameters));
+        commandMock = spy(new EndExternalStepCommand<>(parameters));
         when(commandMock.getParameters()).thenReturn(parameters);
         doReturn(jobDaoMock).when(commandMock).getJobDao();
         doReturn(stepDaoMock).when(commandMock).getStepDao();

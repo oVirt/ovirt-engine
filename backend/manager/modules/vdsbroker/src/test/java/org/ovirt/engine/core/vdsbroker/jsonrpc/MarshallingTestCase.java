@@ -449,7 +449,7 @@ public class MarshallingTestCase {
 
     // copied from DiscoverSendTargetsVDSCommand
     private List<StorageServerConnections> parseFullTargets(List<String> iqnList) {
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>(iqnList.size());
+        ArrayList<StorageServerConnections> connections = new ArrayList<>(iqnList.size());
         for (String fullTarget : iqnList) {
             StorageServerConnections con = new StorageServerConnections();
             String[] tokens = fullTarget.split(",");

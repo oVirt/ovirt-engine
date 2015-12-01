@@ -113,7 +113,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
     protected void addConnection(LUNs lun, StorageServerConnections cnx) {
         if (lun.getLunConnections() == null) {
-            lun.setLunConnections(new ArrayList<StorageServerConnections>());
+            lun.setLunConnections(new ArrayList<>());
         }
         lun.getLunConnections().add(cnx);
     }

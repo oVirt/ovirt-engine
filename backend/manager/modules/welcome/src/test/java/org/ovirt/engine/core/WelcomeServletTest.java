@@ -29,7 +29,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.branding.BrandingManager;
-import org.ovirt.engine.core.branding.BrandingTheme;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -42,7 +41,7 @@ import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 public class WelcomeServletTest {
     @ClassRule
     public static MockConfigRule mcr =
-            new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<String>()));
+            new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, new ArrayList<>()));
 
     WelcomeServlet testServlet;
 
@@ -99,14 +98,14 @@ public class WelcomeServletTest {
         testServlet.setBackend(mockBackend);
         testServlet.init(mockBrandingManager, "/ovirt-engine");
         mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
-        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());
+        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<>());
         when(mockBrandingManager.getWelcomeSections(any(Locale.class))).thenReturn("Welcome Section HTML");
     }
 
     @Test
     public void testDoGetHttpServletRequestHttpServletResponseNoDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
-        when(mockRequest.getParameterMap()).thenReturn(new HashMap<String, String[]>());
+        when(mockRequest.getParameterMap()).thenReturn(new HashMap<>());
         when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/ovirt-engine/"));
         when(mockRequest.getServletContext()).thenReturn(mockContext);
         when(mockRequest.getSession(true)).thenReturn(mockSession);
@@ -128,7 +127,7 @@ public class WelcomeServletTest {
     public void testDoGetHttpServletRequestHttpServletResponseWithDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
         when(mockRequest.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp")).thenReturn(mockDispatcher);
-        when(mockRequest.getParameterMap()).thenReturn(new HashMap<String, String[]>());
+        when(mockRequest.getParameterMap()).thenReturn(new HashMap<>());
         when(mockRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/ovirt-engine/"));
         when(mockRequest.getServletContext()).thenReturn(mockContext);
         when(mockRequest.getSession(true)).thenReturn(mockSession);
@@ -149,7 +148,7 @@ public class WelcomeServletTest {
     }
 
     private List<String> createLocaleKeys() {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         keys.add("de_DE");
         keys.add("en_US");
         keys.add("es_ES");

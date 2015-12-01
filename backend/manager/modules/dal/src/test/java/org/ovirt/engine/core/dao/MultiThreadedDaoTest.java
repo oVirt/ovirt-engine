@@ -89,7 +89,7 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
 
     private Tags createTag(String name, String desc) {
         Tags tag = new Tags();
-        tag.setChildren(new ArrayList<Tags>());
+        tag.setChildren(new ArrayList<>());
         tag.setdescription(desc);
         tag.settag_name(name);
         tag.setIsReadonly(true);

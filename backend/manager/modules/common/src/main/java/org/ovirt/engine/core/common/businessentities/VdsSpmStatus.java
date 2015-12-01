@@ -8,7 +8,7 @@ public enum VdsSpmStatus {
     SPM(2);
 
     private int intValue;
-    private static final HashMap<Integer, VdsSpmStatus> mappings = new HashMap<Integer, VdsSpmStatus>();
+    private static final HashMap<Integer, VdsSpmStatus> mappings = new HashMap<>();
 
     static {
         for (VdsSpmStatus vdsSpmStatus : values()) {

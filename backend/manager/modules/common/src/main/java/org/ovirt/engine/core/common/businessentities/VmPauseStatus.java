@@ -11,7 +11,7 @@ public enum VmPauseStatus {
     EPERM(4, true),
     NOERR(5, false);
 
-    private static final Map<Integer, VmPauseStatus> mappings = new HashMap<Integer, VmPauseStatus>();
+    private static final Map<Integer, VmPauseStatus> mappings = new HashMap<>();
     private final boolean isError;
     private int value;
 

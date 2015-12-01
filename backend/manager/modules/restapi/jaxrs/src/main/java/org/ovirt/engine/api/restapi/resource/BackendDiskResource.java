@@ -48,9 +48,9 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        QueryIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override

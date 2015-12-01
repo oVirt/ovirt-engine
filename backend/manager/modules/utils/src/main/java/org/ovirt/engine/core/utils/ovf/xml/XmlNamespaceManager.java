@@ -13,7 +13,7 @@ public class XmlNamespaceManager implements NamespaceContext {
     private Map<String, String> prefixToUri;
 
     public XmlNamespaceManager() {
-        prefixToUri = new HashMap<String, String>();
+        prefixToUri = new HashMap<>();
     }
 
     public void addNamespace(String prefix, String uri) {
@@ -38,7 +38,7 @@ public class XmlNamespaceManager implements NamespaceContext {
 
     @Override
     public Iterator<String> getPrefixes(String namespaceURI) {
-        List<String> prefixes = new LinkedList<String>();
+        List<String> prefixes = new LinkedList<>();
 
         for (Map.Entry<String, String> prefixToUriEntry : prefixToUri.entrySet()) {
             if (prefixToUriEntry.getValue().equals(namespaceURI)) {

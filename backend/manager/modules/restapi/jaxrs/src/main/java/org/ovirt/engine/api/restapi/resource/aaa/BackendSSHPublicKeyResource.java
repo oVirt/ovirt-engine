@@ -40,7 +40,7 @@ public class BackendSSHPublicKeyResource
     @Override
     public SshPublicKey update(SshPublicKey pubkey) {
         return performUpdate(pubkey,
-                new QueryIdResolver<Guid>(VdcQueryType.GetUserProfile, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetUserProfile, IdQueryParameters.class),
                 VdcActionType.UpdateUserProfile,
                 new UpdateParametersProvider());
     }

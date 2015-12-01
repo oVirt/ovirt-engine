@@ -50,7 +50,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         setupNetworkClusterDao();
 
         PairQueryable<VDSGroup, NetworkCluster> networkClusterPair =
-                new PairQueryable<VDSGroup, NetworkCluster>(cluster, networkCluster);
+                new PairQueryable<>(cluster, networkCluster);
         List<PairQueryable<VDSGroup, NetworkCluster>> expected = Collections.singletonList(networkClusterPair);
 
         // Run the query

@@ -13,7 +13,7 @@ public enum QosType implements Identifiable {
     HOSTNETWORK(4);
 
     private int value;
-    private static final Map<Integer, QosType> valueToStatus = new HashMap<Integer, QosType>();
+    private static final Map<Integer, QosType> valueToStatus = new HashMap<>();
 
     static {
         for (QosType status : values()) {

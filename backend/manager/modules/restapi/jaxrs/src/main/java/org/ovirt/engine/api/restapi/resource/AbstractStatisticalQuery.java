@@ -93,7 +93,7 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
 
 
     public List<Statistic> asList(Statistic...statistics) {
-        List<Statistic> list = new ArrayList<Statistic>();
+        List<Statistic> list = new ArrayList<>();
         for (Statistic statistic : statistics) {
             list.add(adopt(statistic));
         }

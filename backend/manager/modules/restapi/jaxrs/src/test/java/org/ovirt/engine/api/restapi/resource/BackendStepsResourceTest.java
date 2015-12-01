@@ -70,7 +70,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
      }
 
     protected List<org.ovirt.engine.core.common.job.Step> setUpSteps() {
-        List<org.ovirt.engine.core.common.job.Step> steps = new ArrayList<org.ovirt.engine.core.common.job.Step>();
+        List<org.ovirt.engine.core.common.job.Step> steps = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             steps.add(getEntity(i));
         }

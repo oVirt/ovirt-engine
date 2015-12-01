@@ -72,7 +72,7 @@ public class DevicePropertiesUtilsTest {
         doReturn("").
                 when(mockedUtils)
                 .getCustomDeviceProperties(eq(Version.v3_2));
-        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_2, Version.v3_3))).
+        doReturn(new HashSet<>(Arrays.asList(Version.v3_2, Version.v3_3))).
                 when(mockedUtils)
                 .getSupportedClusterLevels();
         try {
@@ -115,7 +115,7 @@ public class DevicePropertiesUtilsTest {
     @Test
     public void invalidPropertyValue1() {
         DevicePropertiesUtils utils = mockDevicePropertiesUtils();
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("bootable", null);
 
         List<ValidationError> errors = utils.validateProperties(Version.v3_3, VmDeviceGeneralType.DISK, map);

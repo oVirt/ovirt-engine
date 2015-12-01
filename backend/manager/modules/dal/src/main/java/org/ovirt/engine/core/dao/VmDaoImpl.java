@@ -50,7 +50,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
-        Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
+        Map<Boolean, List<VM>> result = new HashMap<>();
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
         for (Pair<VM, VmDevice> pair : vms) {
             VmDevice device = pair.getSecond();
@@ -144,7 +144,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public Map<Guid, VM> getAllRunningByVds(Guid id) {
-        HashMap<Guid, VM> map = new HashMap<Guid, VM>();
+        HashMap<Guid, VM> map = new HashMap<>();
 
         for (VM vm : getAllRunningForVds(id)) {
             map.put(vm.getId(), vm);

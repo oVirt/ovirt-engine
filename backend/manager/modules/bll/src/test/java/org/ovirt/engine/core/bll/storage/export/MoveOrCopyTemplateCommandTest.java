@@ -209,7 +209,7 @@ public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
     }
 
     private MoveOrCopyTemplateCommand<MoveOrCopyParameters> setupSpaceTests(MoveOrCopyParameters parameters) {
-        MoveOrCopyTemplateCommand<MoveOrCopyParameters> cmd = spy(new MoveOrCopyTemplateCommand<MoveOrCopyParameters>(parameters));
+        MoveOrCopyTemplateCommand<MoveOrCopyParameters> cmd = spy(new MoveOrCopyTemplateCommand<>(parameters));
         doReturn(multipleSdValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());

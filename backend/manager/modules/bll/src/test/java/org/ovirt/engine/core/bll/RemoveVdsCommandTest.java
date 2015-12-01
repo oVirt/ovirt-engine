@@ -139,7 +139,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionSucceeds() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -152,7 +152,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -167,7 +167,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), true)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockHasMultipleClusters(true);
@@ -180,7 +180,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionSucceedsWithForceOption() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), true)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -193,7 +193,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -217,7 +217,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeWhenMultipleHosts() {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
 
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -235,7 +235,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeLastHost() {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
 
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -307,7 +307,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
      *              The volume count on the VDS
      */
     private void mockHasVolumeOnServer(boolean isBricksRequired) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         if (isBricksRequired) {
             GlusterBrickEntity brick = new GlusterBrickEntity();
             brick.setVolumeId(Guid.newGuid());

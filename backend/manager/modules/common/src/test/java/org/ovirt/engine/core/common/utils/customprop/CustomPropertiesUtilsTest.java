@@ -34,7 +34,7 @@ public class CustomPropertiesUtilsTest {
     @Test
     public void mapPropertiesSyntaxNullValue() {
         CustomPropertiesUtils utils = new CustomPropertiesUtils();
-        Map<String, String> propMap = new LinkedHashMap<String, String>();
+        Map<String, String> propMap = new LinkedHashMap<>();
         propMap.put("speed", "1024");
         propMap.put("duplex", null);
         propMap.put("debug", "");
@@ -63,7 +63,7 @@ public class CustomPropertiesUtilsTest {
     @Test
     public void convertValidPropertiesToString() {
         CustomPropertiesUtils utils = new CustomPropertiesUtils();
-        Map<String, String> propMap = new LinkedHashMap<String, String>();
+        Map<String, String> propMap = new LinkedHashMap<>();
         propMap.put("speed", "1024");
         propMap.put("duplex", "half");
         propMap.put("debug", null);

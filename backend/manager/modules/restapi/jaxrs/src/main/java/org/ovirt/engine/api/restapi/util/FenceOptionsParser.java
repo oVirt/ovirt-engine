@@ -35,7 +35,7 @@ public class FenceOptionsParser {
     /* Format is <name>=<bool|int>,<name=bool|int>,...
      */
     private static Map<String, String> parseTypes(String str) {
-        Map<String, String> ret = new HashMap<String, String>();
+        Map<String, String> ret = new HashMap<>();
 
         for (String option : str.split(",", -1)) {
             if (!option.isEmpty()) {

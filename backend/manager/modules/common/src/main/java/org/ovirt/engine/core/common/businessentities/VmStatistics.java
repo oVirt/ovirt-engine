@@ -30,7 +30,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         elapsed_timeField = 0.0;
         roundedElapsedTimeField = 0.0;
         vm_guidField = Guid.Empty;
-        vNumaNodeStatisticsList = new ArrayList<VmNumaNode>();
+        vNumaNodeStatisticsList = new ArrayList<>();
     }
 
     @Override
@@ -286,7 +286,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
             return Collections.emptyList();
         }
 
-        List<Integer> res = new ArrayList<Integer>(current);
+        List<Integer> res = new ArrayList<>(current);
         res.add(newValue);
         if (limit >= res.size()) {
             return res;

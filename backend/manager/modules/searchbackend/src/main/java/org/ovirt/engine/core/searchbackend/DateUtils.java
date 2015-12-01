@@ -22,7 +22,7 @@ class DateUtils {
     }
 
     private static List<DateFormat> formats(int... styles) {
-        List<DateFormat> formats = new ArrayList<DateFormat>();
+        List<DateFormat> formats = new ArrayList<>();
         for (int style : styles) {
             addFormat(formats, style);
         }

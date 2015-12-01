@@ -22,7 +22,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
     protected void executeIrsBrokerCommand() {
         String storagePoolId = getParameters().getStoragePoolId().toString();
         String storageDomainId = getParameters().getStorageDomainId().toString();
-        ArrayList<String> ids = new ArrayList<String>();
+        ArrayList<String> ids = new ArrayList<>();
 
         if (getParameters().getVmIdList() != null) {
             for (Guid id : getParameters().getVmIdList()) {
@@ -34,7 +34,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
         proceedProxyReturnValue();
 
         Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
-        ArrayList<String> retVal = new ArrayList<String>();
+        ArrayList<String> retVal = new ArrayList<>();
         for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
             retVal.add(entry.getValue().toString());
         }

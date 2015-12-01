@@ -18,7 +18,7 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -87,21 +87,17 @@ public class SizeConverterTest {
 
     @Test
     public void testGetMathOperationSafeOperands() {
-        List<Pair<SizeUnit, Double>> expected = new ArrayList<Pair<SizeUnit, Double>>() {
-            private static final long serialVersionUID = 1L;
+        List<Pair<SizeUnit, Double>> expected = Arrays.asList(
+                new Pair<>(SizeUnit.KiB, 1D),
+                new Pair<>(SizeUnit.KiB, 1D),
+                new Pair<>(SizeUnit.KiB, 1024D),
+                new Pair<>(SizeUnit.KiB, 1024D * 1024D));
 
-            {
-                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1024D));
-                add(new Pair<SizeUnit, Double>(SizeUnit.KiB, 1024D * 1024D));
-            }
-        };
         List<Pair<SizeUnit, Double>> actual = SizeConverter.getMathOperationSafeOperands(
-                new Pair<SizeUnit, Double>(SizeUnit.BYTES, 1024D),
-                new Pair<SizeUnit, Double>(SizeUnit.KiB, 1D),
-                new Pair<SizeUnit, Double>(SizeUnit.MiB, 1D),
-                new Pair<SizeUnit, Double>(SizeUnit.GiB, 1D)
+                new Pair<>(SizeUnit.BYTES, 1024D),
+                new Pair<>(SizeUnit.KiB, 1D),
+                new Pair<>(SizeUnit.MiB, 1D),
+                new Pair<>(SizeUnit.GiB, 1D)
                 );
         assertEquals(expected, actual);
     }

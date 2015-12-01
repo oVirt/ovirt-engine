@@ -67,7 +67,7 @@ public class BackendCreationResourceTest
     }
 
     protected List<AsyncTaskStatus> getTaskStatuses() {
-        List<AsyncTaskStatus> ret = new ArrayList<AsyncTaskStatus>();
+        List<AsyncTaskStatus> ret = new ArrayList<>();
         ret.add(getTaskStatus(0));
         ret.add(getTaskStatus(1));
         return ret;

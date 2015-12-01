@@ -60,7 +60,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     }
 
     public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList) {
-        ArrayList<LUNs> result = new ArrayList<LUNs>(lunList.length);
+        ArrayList<LUNs> result = new ArrayList<>(lunList.length);
         for (Map<String, Object> xlun : lunList) {
             result.add(parseLunFromXmlRpc(xlun));
         }
@@ -90,8 +90,8 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             Object[] temp = (Object[]) xlun.get(PATHSTATUS);
             Map<String, Object>[] pathStatus = null;
             if (temp != null) {
-                lun.setPathsDictionary(new HashMap<String, Boolean>());
-                lun.setPathsCapacity(new HashMap<String, Integer>());
+                lun.setPathsDictionary(new HashMap<>());
+                lun.setPathsCapacity(new HashMap<>());
                 pathStatus = new Map[temp.length];
                 for (int i = 0; i < temp.length; i++) {
                     pathStatus[i] = (Map<String, Object>) temp[i];
@@ -125,7 +125,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (xlun.containsKey("productID")) {
             lun.setProductId(xlun.get("productID").toString());
         }
-        lun.setLunConnections(new ArrayList<StorageServerConnections>());
+        lun.setLunConnections(new ArrayList<>());
         if (xlun.containsKey("pathlist")) {
             Object[] temp = (Object[]) xlun.get("pathlist");
             Map[] pathList = null;

@@ -16,6 +16,6 @@ public class BusinessEntityComparator<T extends BusinessEntity<ID>, ID extends S
     }
 
     public static <T extends BusinessEntity<ID>, ID extends Serializable & Comparable<? super ID>> BusinessEntityComparator<T, ID> newInstance() {
-        return new BusinessEntityComparator<T, ID>();
+        return new BusinessEntityComparator<>();
     }
 }

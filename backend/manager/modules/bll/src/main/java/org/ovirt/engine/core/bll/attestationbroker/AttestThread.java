@@ -26,7 +26,7 @@ public class AttestThread extends Thread {
     private List<String> trustedHostsNames;
     private final int FIRST_STAGE_QUERY_SIZE = Config.<Integer> getValue(ConfigValues.AttestationFirstStageSize);
     private final int SECOND_STAGE_QUERY_SIZE = Config.<Integer> getValue(ConfigValues.AttestationSecondStageSize);
-    private final static Set<Guid> trustedVdses = Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
+    private final static Set<Guid> trustedVdses = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public AttestThread(List<String> trustedHostsNames) {
         this.trustedHostsNames = trustedHostsNames;

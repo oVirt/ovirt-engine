@@ -37,8 +37,8 @@ public class MultiValueMapUtilsTest {
     public void setUp() {
         key = RandomUtils.instance().nextInt();
         value = RandomUtils.instance().nextInt();
-        map = new HashMap<Integer, List<Integer>>();
-        mapOfSets = new HashMap<Integer, Set<Integer>>();
+        map = new HashMap<>();
+        mapOfSets = new HashMap<>();
     }
 
     /** Tests adding a value to map that does not contain the testing key */
@@ -57,14 +57,14 @@ public class MultiValueMapUtilsTest {
     /** Tests adding a value to map that contains the testing key with an empty list value */
     @Test
     public void testAddToMapEmptyListValue() {
-        map.put(key, new LinkedList<Integer>());
+        map.put(key, new LinkedList<>());
         assertAddToMap(1);
     }
 
     /** Tests adding a value to map that contains the testing key with an non-empty list value */
     @Test
     public void testAddToMapNonEmptyListValue() {
-        List<Integer> list = new LinkedList<Integer>();
+        List<Integer> list = new LinkedList<>();
         list.add(value);
         map.put(key, list);
         assertAddToMap(2);

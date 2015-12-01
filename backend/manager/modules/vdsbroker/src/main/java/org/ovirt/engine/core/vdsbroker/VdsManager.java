@@ -726,7 +726,7 @@ public class VdsManager {
     private void processHostFeaturesReported(VDS host) {
         SupportedHostFeatureDao hostFeatureDao = DbFacade.getInstance().getSupportedHostFeatureDao();
         Set<String> supportedHostFeatures = hostFeatureDao.getSupportedHostFeaturesByHostId(host.getId());
-        Set<String> featuresReturendByVdsCaps = new HashSet<String>(host.getAdditionalFeatures());
+        Set<String> featuresReturendByVdsCaps = new HashSet<>(host.getAdditionalFeatures());
         host.getAdditionalFeatures().removeAll(supportedHostFeatures);
         if (!host.getAdditionalFeatures().isEmpty()) {
             hostFeatureDao.addAllSupportedHostFeature(host.getId(), host.getAdditionalFeatures());

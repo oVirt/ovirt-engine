@@ -12,7 +12,7 @@ public enum AuditLogSeverity implements Identifiable {
     ALERT(10);
 
     private int intValue;
-    private static final HashMap<Integer, AuditLogSeverity> mappings = new HashMap<Integer, AuditLogSeverity>();
+    private static final HashMap<Integer, AuditLogSeverity> mappings = new HashMap<>();
 
     static {
         for (AuditLogSeverity logSeverity : values()) {

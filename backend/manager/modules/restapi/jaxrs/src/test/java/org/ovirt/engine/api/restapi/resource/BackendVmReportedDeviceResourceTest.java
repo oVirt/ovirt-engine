@@ -55,7 +55,7 @@ public class BackendVmReportedDeviceResourceTest
     }
 
     protected List<VmGuestAgentInterface> getEntityList() {
-        List<VmGuestAgentInterface> entities = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

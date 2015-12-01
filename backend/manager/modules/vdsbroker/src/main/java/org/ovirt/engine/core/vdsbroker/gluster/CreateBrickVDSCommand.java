@@ -21,7 +21,7 @@ public class CreateBrickVDSCommand<P extends CreateBrickVDSParameters> extends A
     @Override
     protected void executeVdsBrokerCommand() {
         CreateBrickVDSParameters parameters = getParameters();
-        Set<String> diskNames = new HashSet<String>();
+        Set<String> diskNames = new HashSet<>();
 
         for (StorageDevice storageDevice : parameters.getStorageDevices()) {
             diskNames.add(storageDevice.getName());

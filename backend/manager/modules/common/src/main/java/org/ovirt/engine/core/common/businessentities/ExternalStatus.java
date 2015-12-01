@@ -10,7 +10,7 @@ public enum ExternalStatus implements Identifiable {
     Error(3),
     Failure(4);
 
-    private static final Map<Integer, ExternalStatus> mappings = new HashMap<Integer, ExternalStatus>();
+    private static final Map<Integer, ExternalStatus> mappings = new HashMap<>();
     private int id;
 
     static {

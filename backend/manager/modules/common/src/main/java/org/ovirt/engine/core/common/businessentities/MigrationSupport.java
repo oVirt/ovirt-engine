@@ -24,7 +24,7 @@ public enum MigrationSupport {
     }
 
     static {
-        mappings = new HashMap<Integer, MigrationSupport>();
+        mappings = new HashMap<>();
 
         for (MigrationSupport enumValue : MigrationSupport.values()) {
             mappings.put(enumValue.getValue(), enumValue);

@@ -35,7 +35,7 @@ public class BackendStorageDomainTemplatesResource
             List<org.ovirt.engine.core.common.businessentities.VmTemplate> unregisteredTemplates =
                     getBackendCollection(VdcQueryType.GetUnregisteredVmTemplates,
                             new IdQueryParameters(storageDomainId));
-            List<Template> collection = new ArrayList<Template>();
+            List<Template> collection = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.VmTemplate entity : unregisteredTemplates) {
                 Template vmTemplate = map(entity);
                 collection.add(addLinks(populate(vmTemplate, entity)));

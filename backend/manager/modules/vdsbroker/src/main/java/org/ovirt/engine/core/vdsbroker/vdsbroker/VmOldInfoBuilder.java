@@ -59,7 +59,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
-        List<Map<String, String>> drives = new ArrayList<Map<String, String>>(vm.getDiskMap().size());
+        List<Map<String, String>> drives = new ArrayList<>(vm.getDiskMap().size());
         int ideCount = 0, pciCount = 0;
         List<Disk> disks = getSortedDisks();
         List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
@@ -70,7 +70,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             // Get the VM device for this disk
             VmDevice vmDevice = findVmDeviceForDisk(disk.getId(), vmDiskDevices);
             if (vmDevice == null || vmDevice.getIsPlugged()) {
-                Map<String, String> drive = new HashMap<String, String>();
+                Map<String, String> drive = new HashMap<>();
                 drive.put("domainID", disk.getStorageIds().get(0).toString());
                 drive.put("poolID", disk.getStoragePoolId().toString());
                 drive.put("volumeID", disk.getImageId().toString());

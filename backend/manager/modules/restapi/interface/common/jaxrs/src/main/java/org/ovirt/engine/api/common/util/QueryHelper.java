@@ -175,7 +175,7 @@ public class QueryHelper {
     }
 
     public static HashMap<String, String> getQueryConstraints(UriInfo uriInfo, String... constraints) {
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<>();
         if (constraints != null && constraints.length > 0) {
             for (String key : constraints) {
                 String value = getConstraint(uriInfo.getQueryParameters(), key);
@@ -188,7 +188,7 @@ public class QueryHelper {
     }
 
     public static HashMap<String, String> getMatrixConstraints(UriInfo uriInfo, String... constraints) {
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<>();
         if (uriInfo.getPathSegments() != null && constraints != null && constraints.length > 0) {
             for (String key : constraints) {
                 for (PathSegment segement : uriInfo.getPathSegments()) {

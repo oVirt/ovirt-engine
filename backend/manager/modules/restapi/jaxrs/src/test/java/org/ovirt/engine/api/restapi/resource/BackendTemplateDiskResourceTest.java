@@ -80,7 +80,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.storage.Disk>();
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
@@ -342,7 +342,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     protected void setUpFilteredQueryExpectations() {
-        List<String> filterValue = new ArrayList<String>();
+        List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
         EasyMock.reset(httpHeaders);
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);

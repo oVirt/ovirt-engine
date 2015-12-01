@@ -85,8 +85,8 @@ public class SchedulingPolicyMapper {
         if(model.isSetSchedulingPolicyUnit() && model.getSchedulingPolicyUnit().isSetId()){
             Guid guid = GuidUtils.asGuid(model.getSchedulingPolicyUnit().getId());
             if (entity.getFilters() == null) {
-                entity.setFilters(new ArrayList<Guid>());
-                entity.setFilterPositionMap(new HashMap<Guid, Integer>());
+                entity.setFilters(new ArrayList<>());
+                entity.setFilterPositionMap(new HashMap<>());
             }
             entity.getFilters().add(guid);
             entity.getFilterPositionMap().put(guid, model.isSetPosition() ? model.getPosition() : 0);
@@ -118,7 +118,7 @@ public class SchedulingPolicyMapper {
         if (model.isSetSchedulingPolicyUnit() && model.getSchedulingPolicyUnit().isSetId()) {
             Guid guid = GuidUtils.asGuid(model.getSchedulingPolicyUnit().getId());
             if (entity.getFunctions() == null) {
-                entity.setFunctions(new ArrayList<Pair<Guid, Integer>>());
+                entity.setFunctions(new ArrayList<>());
             }
             entity.getFunctions().add(new Pair<>(guid, model.isSetFactor() ? model.getFactor() : 1));
         }

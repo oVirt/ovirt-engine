@@ -14,7 +14,7 @@ public class Match {
     private ArrayList<Match> groups;
 
     public Match(MatchResult mr, boolean success) {
-        groups = new ArrayList<Match>();
+        groups = new ArrayList<>();
         if (success) {
             this.success = success;
             for (int x = 1; x <= mr.groupCount(); x++) {

@@ -73,7 +73,7 @@ public class EngineFault implements IVdcQueryable {
     }
 
     private static ArrayList<String> getInnerException(Throwable ex) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         while (ex.getCause() != null) {
             result.add(ex.getCause().getMessage());
             ex = ex.getCause();

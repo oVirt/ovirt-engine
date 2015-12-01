@@ -1120,7 +1120,7 @@ public class VmHandler {
         for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
             DisplayType display = graphicsAndDisplay.getSecond();
             if (!displayGraphicsSupport.containsKey(display)) {
-                displayGraphicsSupport.put(display, new HashSet<GraphicsType>());
+                displayGraphicsSupport.put(display, new HashSet<>());
             }
 
             displayGraphicsSupport.get(display).add(graphicsAndDisplay.getFirst());

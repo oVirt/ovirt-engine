@@ -18,7 +18,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -126,7 +125,7 @@ public final class AsyncTaskManager {
             }
             for (AsyncTask task : entry.getValue()) {
                 if (!isPartiallyExecutedTask(task)) {
-                    tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTask>());
+                    tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<>());
                     tasksInDbAfterRestart.get(task.getStoragePoolId()).add(task);
                 }
             }
@@ -658,7 +657,7 @@ public final class AsyncTaskManager {
                                 AsyncTask asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
                                 task = coco.construct(creationInfo, asyncTaskInDb);
                                 if (task.getEntitiesMap() == null) {
-                                    task.setEntitiesMap(new HashMap<Guid, VdcObjectType>());
+                                    task.setEntitiesMap(new HashMap<>());
                                 }
                                 partiallyCompletedCommandTasks.remove(task.getVdsmTaskId());
                                 // mark it as a task of a partially completed command

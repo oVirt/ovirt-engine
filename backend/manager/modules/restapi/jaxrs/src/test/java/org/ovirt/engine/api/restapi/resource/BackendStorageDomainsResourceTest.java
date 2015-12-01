@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -94,7 +93,7 @@ public class BackendStorageDomainsResourceTest
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
-                new ArrayList<StorageDomainStatic>());
+                new ArrayList<>());
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
@@ -280,7 +279,7 @@ public class BackendStorageDomainsResourceTest
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
-                new ArrayList<StorageDomainStatic>());
+                new ArrayList<>());
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
@@ -441,7 +440,7 @@ public class BackendStorageDomainsResourceTest
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
-                new ArrayList<StorageDomainStatic>());
+                new ArrayList<>());
 
         setUpActionExpectations(VdcActionType.AddNFSStorageDomain,
                 StorageDomainManagementParameter.class,
@@ -618,10 +617,10 @@ public class BackendStorageDomainsResourceTest
 
         LUNs lun = new LUNs();
         lun.setLUN_id(LUN);
-        lun.setLunConnections(new ArrayList<StorageServerConnections>());
+        lun.setLunConnections(new ArrayList<>());
         lun.getLunConnections().add(cnx);
 
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         luns.add(lun);
         return luns;
     }
@@ -654,7 +653,7 @@ public class BackendStorageDomainsResourceTest
 
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getExistingStorageDomains(boolean existing) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> ret =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+                new ArrayList<>();
         if (existing) {
             ret.add(new org.ovirt.engine.core.common.businessentities.StorageDomain());
         }

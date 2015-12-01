@@ -110,7 +110,7 @@ public class DetailHelperTest extends Assert {
     private void doTestIncludes(String spec, String[] rels, boolean[] expected) throws Exception {
 
         HttpHeaders httpheaders = createMock(HttpHeaders.class);
-        List<String> requestHeaders = new ArrayList<String>();
+        List<String> requestHeaders = new ArrayList<>();
         expect(httpheaders.getRequestHeader("Accept")).andReturn(requestHeaders).anyTimes();
         requestHeaders.add(ACCEPTABLE + spec);
 

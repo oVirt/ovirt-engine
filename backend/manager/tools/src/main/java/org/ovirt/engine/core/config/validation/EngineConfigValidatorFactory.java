@@ -15,7 +15,7 @@ public class EngineConfigValidatorFactory {
     }
 
     private EngineConfigValidatorFactory() {
-        validationMap = new HashMap<ValidatorType, EngineConfigValidator>();
+        validationMap = new HashMap<>();
         validationMap.put(ValidatorType.get, new GetValidator());
         validationMap.put(ValidatorType.set, new SetValidator());
     }

@@ -15,7 +15,7 @@ public class XmlRpcStringUtils {
      */
     public static Map<String, String> string2Map(String str) {
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         if (str != null) {
             // remove map markers
             str = str.trim();

@@ -1119,7 +1119,7 @@ public class AuditLogableBaseTest {
         }
 
         private List<StorageDomain> getStorageDomainList() {
-            final List<StorageDomain> l = new ArrayList<StorageDomain>();
+            final List<StorageDomain> l = new ArrayList<>();
             final StorageDomain s = new StorageDomain();
             s.setStatus(StorageDomainStatus.Inactive);
             l.add(s);

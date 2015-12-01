@@ -8,7 +8,7 @@ public class VdsMonitor {
     private final BlockingQueue<Boolean> queue;
 
     public VdsMonitor() {
-        queue = new SynchronousQueue<Boolean>();
+        queue = new SynchronousQueue<>();
     }
 
     /**

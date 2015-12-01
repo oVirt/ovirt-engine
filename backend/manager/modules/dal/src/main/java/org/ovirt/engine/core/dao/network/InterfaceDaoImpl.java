@@ -186,7 +186,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
         Map<Guid, List<String>> neworksByHost = new HashMap<>();
         for (Pair<Guid, String> pair : hostNetworks) {
             if (!neworksByHost.containsKey(pair.getFirst())) {
-                neworksByHost.put(pair.getFirst(), new ArrayList<String>());
+                neworksByHost.put(pair.getFirst(), new ArrayList<>());
             }
 
             neworksByHost.get(pair.getFirst()).add(pair.getSecond());

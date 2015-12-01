@@ -15,7 +15,7 @@ public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator
 
     @Override
     public boolean isValid(List<VdsNetworkInterface> value, ConstraintValidatorContext context) {
-        Collection<String> staticIps = new HashSet<String>();
+        Collection<String> staticIps = new HashSet<>();
         for (VdsNetworkInterface networkInterface : value) {
             String address = networkInterface.getAddress();
             if (networkInterface.getBootProtocol() == NetworkBootProtocol.STATIC_IP

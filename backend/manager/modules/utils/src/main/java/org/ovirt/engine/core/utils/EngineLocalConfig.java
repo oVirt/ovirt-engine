@@ -256,7 +256,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
         if (path == null) {
             return Collections.emptyList();
         }
-        List<File> results = new ArrayList<File>();
+        List<File> results = new ArrayList<>();
         for (String currentPath : path.split(":")) {
             if (StringUtils.isNotBlank(currentPath)) {
                 results.add(new File(currentPath));

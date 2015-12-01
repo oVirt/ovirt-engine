@@ -105,7 +105,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
             mockConfig(ConfigValues.MaxVmNameLengthNonWindows, 64),
             mockConfig(ConfigValues.SupportedClusterLevels,
-                    new HashSet<Version>(Arrays.asList(Version.v3_0, Version.v3_1))),
+                    new HashSet<>(Arrays.asList(Version.v3_0, Version.v3_1))),
             mockConfig(ConfigValues.VMMinMemorySizeInMB, 256),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.1", ""),
@@ -147,7 +147,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.put(osId, new HashMap<>());
         displayTypeMap.get(osId).put(version, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
@@ -393,12 +393,12 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 "device",
                 "address",
                 1,
-                new HashMap<String, Object>(),
+                new HashMap<>(),
                 true,
                 true,
                 true,
                 "alias",
-                new HashMap<String, String>(),
+                new HashMap<>(),
                 Guid.newGuid(),
                 "logical",
                 true);

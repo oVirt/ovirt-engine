@@ -44,8 +44,8 @@ public class VmDeviceCommonUtilsTest {
 
     @Test
     public void testUpdateVmDevicesBootOrder() {
-        Map<Guid, Disk> idToDisk = new HashMap<Guid, Disk>();
-        List<VmNetworkInterface> interfaces = new LinkedList<VmNetworkInterface>();
+        Map<Guid, Disk> idToDisk = new HashMap<>();
+        List<VmNetworkInterface> interfaces = new LinkedList<>();
 
         VmDevice nic1 = createNetworkInterface(true, NIC_1_NAME, interfaces);
         VmDevice unmanagedNic = createUnmanagedNetworkInterface(true);

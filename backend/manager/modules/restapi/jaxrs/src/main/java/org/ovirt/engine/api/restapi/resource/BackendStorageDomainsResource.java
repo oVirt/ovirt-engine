@@ -55,7 +55,7 @@ public class BackendStorageDomainsResource
             "storageconnections", "images", "disksnapshots", "diskprofiles" };
 
     private final EntityIdResolver<Guid> ID_RESOLVER =
-            new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
+            new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
 
     public BackendStorageDomainsResource() {
         super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, SUB_COLLECTIONS);
@@ -198,7 +198,7 @@ public class BackendStorageDomainsResource
     }
 
     private ArrayList<String> getLunIds(HostStorage storage, StorageType storageType, Guid hostId) {
-        List<LogicalUnit> logicalUnits = new ArrayList<LogicalUnit>();
+        List<LogicalUnit> logicalUnits = new ArrayList<>();
 
         if (storage.isSetLogicalUnits() && storage.getLogicalUnits().isSetLogicalUnits()) {
             logicalUnits = storage.getLogicalUnits().getLogicalUnits();
@@ -207,7 +207,7 @@ public class BackendStorageDomainsResource
             logicalUnits = storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
         }
 
-        ArrayList<String> lunIds = new ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<>();
         for (LogicalUnit unit : logicalUnits) {
             validateParameters(unit, 4, "id");
             // if the address and target were not supplied, we understand from this that

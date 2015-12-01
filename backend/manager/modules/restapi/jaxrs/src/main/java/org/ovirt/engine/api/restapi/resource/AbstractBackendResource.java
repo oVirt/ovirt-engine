@@ -290,7 +290,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     }
 
     protected <B extends BaseResource >void removeIfExist(B model, String relation) {
-        List<Link> linksCopy = new ArrayList<Link>(model.getLinks());
+        List<Link> linksCopy = new ArrayList<>(model.getLinks());
 
         for (Link link : model.getLinks()) {
             if (link.getRel().equals(relation)) {

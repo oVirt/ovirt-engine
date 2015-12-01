@@ -66,7 +66,7 @@ public class VfSchedulerImplTest {
 
     @Test
     public void hostNotHaveSriovNics() {
-        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(new ArrayList<HostNicVfsConfig>());
+        when(networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId)).thenReturn(new ArrayList<>());
         VmNetworkInterface vnic = mockVnic(true);
         assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
     }
@@ -271,13 +271,13 @@ public class VfSchedulerImplTest {
     }
 
     private void assertHostValid(List<VmNetworkInterface> vnics) {
-        validateVnics(vnics, new ArrayList<String>());
+        validateVnics(vnics, new ArrayList<>());
         validateVnicToVfMap();
     }
 
     private void validateVnicToVfMap() {
         Map<Guid, String> vnicToVfMap = vfScheduler.getVnicToVfMap(vmId, hostId);
-        vnicToVfMap = vnicToVfMap == null ? new HashMap<Guid, String>() : vnicToVfMap;
+        vnicToVfMap = vnicToVfMap == null ? new HashMap<>() : vnicToVfMap;
         assertEquals(expectedVnicToVfMap, vnicToVfMap);
     }
 
@@ -345,7 +345,7 @@ public class VfSchedulerImplTest {
             VmNetworkInterface vnic,
             boolean vnicLabelInSriovConfig) {
         if (hostNicVfsConfig.getNetworkLabels() == null) {
-            hostNicVfsConfig.setNetworkLabels(new HashSet<String>());
+            hostNicVfsConfig.setNetworkLabels(new HashSet<>());
         }
 
         if (vnicLabelInSriovConfig) {
@@ -357,7 +357,7 @@ public class VfSchedulerImplTest {
             VmNetworkInterface vnic,
             boolean vnicNetworkInSriovConfig) {
         if (hostNicVfsConfig.getNetworks() == null) {
-            hostNicVfsConfig.setNetworks(new HashSet<Guid>());
+            hostNicVfsConfig.setNetworks(new HashSet<>());
         }
 
         if (vnicNetworkInSriovConfig) {

@@ -233,8 +233,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.network.VnicProfile>();
+        List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

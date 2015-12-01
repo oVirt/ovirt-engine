@@ -102,7 +102,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max, boolean withDuplicates) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick = null;
         for (Integer i = 0; i < max; i++) {
             brick = new GlusterBrickEntity();

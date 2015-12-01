@@ -29,7 +29,7 @@ public class GlusterHooksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         }
 
         Object[] hooksArr = (Object[]) innerMap.get(HOOKS_LIST);
-        hooks = new ArrayList<GlusterHookEntity>();
+        hooks = new ArrayList<>();
 
         if (hooksArr != null) {
             for (Object hookMap : hooksArr) {

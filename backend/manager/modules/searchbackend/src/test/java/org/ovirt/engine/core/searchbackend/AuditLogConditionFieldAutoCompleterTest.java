@@ -38,7 +38,7 @@ public class AuditLogConditionFieldAutoCompleterTest {
 
     @Test
     public void testformatValueWithTime() {
-        Pair<String, String> pair = new Pair<String, String>();
+        Pair<String, String> pair = new Pair<>();
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
         Date date = new Date(72, 0, 12);
         String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);

@@ -74,7 +74,7 @@ public class OvfVmReader extends OvfReader {
         XmlNode storageNode = selectSingleNode(node, "rasd:StorageId", _xmlNS);
         if (storageNode != null &&
                 StringUtils.isNotEmpty(storageNode.innerText)) {
-            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.innerText))));
+            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(storageNode.innerText))));
         }
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
             image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
@@ -252,7 +252,7 @@ public class OvfVmReader extends OvfReader {
     @Override
     protected void readSnapshotsSection(XmlNode section) {
         XmlNodeList list = selectNodes(section, "Snapshot");
-        ArrayList<Snapshot> snapshots = new ArrayList<Snapshot>();
+        ArrayList<Snapshot> snapshots = new ArrayList<>();
         _vm.setSnapshots(snapshots);
 
         for (XmlNode node : list) {

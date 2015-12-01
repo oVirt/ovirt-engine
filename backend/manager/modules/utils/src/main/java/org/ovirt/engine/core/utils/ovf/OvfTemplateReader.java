@@ -64,7 +64,7 @@ public class OvfTemplateReader extends OvfReader {
         }
         image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StorageId", _xmlNS).innerText)) {
-            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(selectSingleNode(node, "rasd:StorageId",
+            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(selectSingleNode(node, "rasd:StorageId",
                     _xmlNS).innerText))));
         }
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {

@@ -191,7 +191,7 @@ public class BackendFilesResourceTest
     }
 
     private List<RepoImage> setUpFiles() {
-        List<RepoImage> isos = new ArrayList<RepoImage>();
+        List<RepoImage> isos = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             RepoImage file = new RepoImage();
             file.setRepoImageId(NAMES[i]);

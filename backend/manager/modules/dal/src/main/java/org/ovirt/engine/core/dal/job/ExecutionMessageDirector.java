@@ -42,12 +42,12 @@ public class ExecutionMessageDirector {
     /**
      * Stores the job messages
      */
-    private Map<VdcActionType, String> jobMessages = new EnumMap<VdcActionType, String>(VdcActionType.class);
+    private Map<VdcActionType, String> jobMessages = new EnumMap<>(VdcActionType.class);
 
     /**
      * Stores the step messages
      */
-    private Map<StepEnum, String> stepMessages = new EnumMap<StepEnum, String>(StepEnum.class);
+    private Map<StepEnum, String> stepMessages = new EnumMap<>(StepEnum.class);
 
     private ExecutionMessageDirector() {
     }

@@ -25,7 +25,7 @@ public class FenceConfigHelper {
 
    private static void init() {
        if (!initialized) {
-           keyValidatorMap = new HashMap<String, String>();
+           keyValidatorMap = new HashMap<>();
            keyValidatorMap.put("FenceAgentMapping", FenceAgentMappingExpr);
            keyValidatorMap.put("FenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
            keyValidatorMap.put("FenceAgentDefaultParamsForPPC", FenceAgentDefaultParamsExpr);
@@ -38,7 +38,7 @@ public class FenceConfigHelper {
            keyValidatorMap.put("CustomVdsFenceOptionMapping", VdsFenceOptionMappingExpr);
            keyValidatorMap.put("CustomVdsFenceType", CustomVdsFenceTypeExpr);
            keyValidatorMap.put("CustomFencePowerWaitParam", FencePowerWaitParamExpr);
-           keyValidatorExampleMap = new HashMap<String, String>();
+           keyValidatorExampleMap = new HashMap<>();
            keyValidatorExampleMap.put("CustomFenceAgentMapping", "agent1=agent2,agent3=agent4");
            keyValidatorExampleMap.put("CustomFenceAgentDefaultParams", "agent1=key1=val1,flag;key2=val2");
            keyValidatorExampleMap.put("CustomFenceAgentDefaultParamsForPPC", "agent1=key1=val1,flag;key2=val2");
@@ -46,7 +46,7 @@ public class FenceConfigHelper {
            keyValidatorExampleMap.put("CustomVdsFenceType", "agent1,agent2");
            keyValidatorExampleMap.put("CustomFencePowerWaitParam", "agent1=power_wait,agent2=delay");
 
-           keySeparatorMap = new HashMap<String, String>();
+           keySeparatorMap = new HashMap<>();
            keySeparatorMap.put("FenceAgentMapping", COMMA);
            keySeparatorMap.put("FenceAgentDefaultParams", SEMICOLON);
            keySeparatorMap.put("FenceAgentDefaultParamsForPPC", SEMICOLON);

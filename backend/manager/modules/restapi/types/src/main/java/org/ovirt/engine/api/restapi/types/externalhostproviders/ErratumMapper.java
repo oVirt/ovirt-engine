@@ -81,7 +81,7 @@ public class ErratumMapper {
         }
 
         if (model.isSetPackages() && !model.getPackages().getPackages().isEmpty()) {
-            entity.setPackages(new ArrayList<String>(model.getPackages().getPackages().size()));
+            entity.setPackages(new ArrayList<>(model.getPackages().getPackages().size()));
             for (Package p : model.getPackages().getPackages()) {
                 entity.getPackages().add(p.getName());
             }

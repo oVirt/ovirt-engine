@@ -242,7 +242,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public VMListReturnForXmlRpc list() {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getVMList").withOptionalParameterAsList("vmList",
-                        new ArrayList<String>(Arrays.asList(new String[] {}))).withParameter("onlyUUID", false).build();
+                        new ArrayList<>(Arrays.asList(new String[]{}))).withParameter("onlyUUID", false).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
@@ -253,7 +253,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public VMListReturnForXmlRpc list(String isFull, String[] vmIds) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getVMFullList").withOptionalParameterAsList("vmList",
-                        new ArrayList<String>(Arrays.asList(vmIds))).build();
+                        new ArrayList<>(Arrays.asList(vmIds))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
@@ -399,7 +399,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec) {
         // TODO check default value for connectionAction
-        return setVmTicket(vmId, otp64, sec, "", new HashMap<String, String>());
+        return setVmTicket(vmId, otp64, sec, "", new HashMap<>());
     }
 
     @Override
@@ -429,7 +429,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new RequestBuilder("Host.addNetwork").withParameter("bridge", bridge)
                         .withOptionalParameter("vlan", vlan)
                         .withOptionalParameter("bond", bond)
-                        .withOptionalParameterAsList("nics", new ArrayList<String>(Arrays.asList(nics)))
+                        .withOptionalParameterAsList("nics", new ArrayList<>(Arrays.asList(nics)))
                         .withOptionalParameterAsMap("options", options)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -442,7 +442,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         JsonRpcRequest request = new RequestBuilder("Host.delNetwork").withParameter("bridge", bridge)
                 .withOptionalParameter("vlan", vlan)
                 .withOptionalParameter("bond", bond)
-                .withOptionalParameterAsList("nics", new ArrayList<String>(Arrays.asList(nics)))
+                .withOptionalParameterAsList("nics", new ArrayList<>(Arrays.asList(nics)))
                 .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
@@ -460,7 +460,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("newBridge", newBridge)
                         .withOptionalParameter("vlan", vlan)
                         .withOptionalParameter("bond", bond)
-                        .withOptionalParameterAsList("nics", new ArrayList<String>(Arrays.asList(nics)))
+                        .withOptionalParameterAsList("nics", new ArrayList<>(Arrays.asList(nics)))
                         .withOptionalParameterAsMap("options", options)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -672,7 +672,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("name", poolName)
                         .withParameter("masterSdUUID", msdUUID)
                         .withParameter("masterVersion", masterVersion)
-                        .withParameter("domainList", new ArrayList<String>(Arrays.asList(domList)))
+                        .withParameter("domainList", new ArrayList<>(Arrays.asList(domList)))
                         .withParameter("lockRenewalIntervalSec", lockRenewalIntervalSec)
                         .withParameter("leaseTimeSec", leaseTimeSec)
                         .withParameter("ioOpTimeoutSec", ioOpTimeoutSec)
@@ -761,7 +761,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList) {
         JsonRpcRequest request =
                 new RequestBuilder("LVMVolumeGroup.create").withParameter("name", sdUUID)
-                        .withParameter("devlist", new ArrayList<String>(Arrays.asList(deviceList)))
+                        .withParameter("devlist", new ArrayList<>(Arrays.asList(deviceList)))
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
@@ -772,7 +772,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("LVMVolumeGroup.create").withParameter("name", sdUUID)
-                        .withParameter("devlist", new ArrayList<String>(Arrays.asList(deviceList)))
+                        .withParameter("devlist", new ArrayList<>(Arrays.asList(deviceList)))
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -792,7 +792,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList, boolean checkStatus) {
         ArrayList<String> devicesListArray =
-                devicesList != null ? new ArrayList<String>(Arrays.asList(devicesList)) : null;
+                devicesList != null ? new ArrayList<>(Arrays.asList(devicesList)) : null;
         JsonRpcRequest request =
                 new RequestBuilder("Host.getDeviceList").withParameter("storageType",
                         storageType)
@@ -821,7 +821,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getDevicesVisibility").withParameter("guidList",
-                        new ArrayList<String>(Arrays.asList(devicesList))).build();
+                        new ArrayList<>(Arrays.asList(devicesList))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("visible");
         return new DevicesVisibilityMapReturnForXmlRpc(response);
@@ -1032,7 +1032,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
-                        .withParameter("snapDrives", new ArrayList<Map<String, String>>(Arrays.asList(disks)))
+                        .withParameter("snapDrives", new ArrayList<>(Arrays.asList(disks)))
                         .withOptionalParameter("snapMemory", memory)
                         .withParameter("frozen", frozen)
                         .build();
@@ -1086,10 +1086,10 @@ public class JsonRpcVdsServer implements IVdsServer {
             String[] transportList) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.create").withParameter("volumeName", volumeName)
-                        .withParameter("bricklist", new ArrayList<String>(Arrays.asList(brickList)))
+                        .withParameter("bricklist", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .withParameter("stripeCount", stripeCount)
-                        .withParameter("transportList", new ArrayList<String>(Arrays.asList(transportList)))
+                        .withParameter("transportList", new ArrayList<>(Arrays.asList(transportList)))
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
@@ -1105,10 +1105,10 @@ public class JsonRpcVdsServer implements IVdsServer {
             boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.create").withParameter("volumeName", volumeName)
-                        .withParameter("bricklist", new ArrayList<String>(Arrays.asList(brickList)))
+                        .withParameter("bricklist", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .withParameter("stripeCount", stripeCount)
-                        .withParameter("transportList", new ArrayList<String>(Arrays.asList(transportList)))
+                        .withParameter("transportList", new ArrayList<>(Arrays.asList(transportList)))
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -1184,7 +1184,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             command = "GlusterVolume.removeBrickForce";
         }
         JsonRpcRequest request = new RequestBuilder(command).withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(brickList)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response =
@@ -1198,7 +1198,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             int replicaCount) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.removeBrickStop").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(brickList)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -1211,7 +1211,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             int replicaCount) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.removeBrickCommit").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(brickList)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(brickList)))
                         .withParameter("replicaCount", replicaCount)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -1225,7 +1225,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             int stripeCount) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.addBrick").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(bricks)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(bricks)))
                         .withParameter("replicaCount", replicaCount)
                         .withParameter("stripeCount", stripeCount)
                         .build();
@@ -1241,7 +1241,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.addBrick").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(bricks)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(bricks)))
                         .withParameter("replicaCount", replicaCount)
                         .withParameter("stripeCount", stripeCount)
                         .withParameter("force", force)
@@ -1612,7 +1612,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public GlusterServicesReturnForXmlRpc glusterServicesList(Guid serverId, String[] serviceNames) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterService.get").withParameter("serviceNames",
-                        new ArrayList<String>(Arrays.asList(serviceNames))).build();
+                        new ArrayList<>(Arrays.asList(serviceNames))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterServicesReturnForXmlRpc(serverId, response);
@@ -1681,7 +1681,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public GlusterServicesReturnForXmlRpc glusterServicesAction(Guid serverId, String[] serviceList, String actionType) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterService.action").withParameter("serviceNames",
-                        new ArrayList<String>(Arrays.asList(serviceList)))
+                        new ArrayList<>(Arrays.asList(serviceList)))
                         .withParameter("action", actionType)
                         .build();
         Map<String, Object> response =
@@ -1763,7 +1763,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.removeBrickStatus").withParameter("volumeName", volumeName)
-                        .withParameter("brickList", new ArrayList<String>(Arrays.asList(bricksList)))
+                        .withParameter("brickList", new ArrayList<>(Arrays.asList(bricksList)))
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Signature implements Cloneable {
-    private Map<Object, Object> mandatoryArguments = new HashMap<Object, Object>();
-    private Map<Object, Object> optionalArguments = new HashMap<Object, Object>();
+    private Map<Object, Object> mandatoryArguments = new HashMap<>();
+    private Map<Object, Object> optionalArguments = new HashMap<>();
     private Boolean deprecated;
     private String description;
 
@@ -40,9 +40,9 @@ public class Signature implements Cloneable {
     public Signature clone()  throws CloneNotSupportedException {
         super.clone();
         Signature clonedSignature = new Signature();
-        Map<Object, Object> mandatoryArguments = new HashMap<Object, Object>();
+        Map<Object, Object> mandatoryArguments = new HashMap<>();
         mandatoryArguments.putAll(getMandatoryArguments());
-        Map<Object, Object> optionalArguments = new HashMap<Object, Object>();
+        Map<Object, Object> optionalArguments = new HashMap<>();
         optionalArguments.putAll(getOptionalArguments());
         clonedSignature.setMandatoryArguments(mandatoryArguments);
         clonedSignature.setOptionalArguments(optionalArguments);

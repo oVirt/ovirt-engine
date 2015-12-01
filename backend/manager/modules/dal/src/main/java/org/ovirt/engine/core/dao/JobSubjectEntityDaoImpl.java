@@ -46,7 +46,7 @@ public class JobSubjectEntityDaoImpl extends BaseDao implements JobSubjectEntity
                         jobSubjectEntityRowMapper,
                         parameterSource);
 
-        Map<Guid, VdcObjectType> entityMap = new HashMap<Guid, VdcObjectType>();
+        Map<Guid, VdcObjectType> entityMap = new HashMap<>();
         for (SubjectEntity jobSubjectEntity : list) {
             entityMap.put(jobSubjectEntity.getEntityId(), jobSubjectEntity.getEntityType());
         }

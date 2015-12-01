@@ -68,7 +68,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         setupHostNetworkQosDao();
 
         PairQueryable<VdsNetworkInterface, VDS> vdsInterfaceVdsPair =
-                new PairQueryable<VdsNetworkInterface, VDS>(vdsNetworkInterface, vds);
+                new PairQueryable<>(vdsNetworkInterface, vds);
         List<PairQueryable<VdsNetworkInterface, VDS>> expected = Collections.singletonList(vdsInterfaceVdsPair);
 
         // Run the query

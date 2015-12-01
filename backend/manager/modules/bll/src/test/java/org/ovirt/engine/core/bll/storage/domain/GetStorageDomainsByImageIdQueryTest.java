@@ -49,7 +49,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
         StorageDomain secondStorageDomain = new StorageDomain();
         secondStorageDomain.setId(Guid.newGuid());
 
-        List<StorageDomain> expected = new ArrayList<StorageDomain>();
+        List<StorageDomain> expected = new ArrayList<>();
         expected.add(firstStorageDomain);
         expected.add(secondStorageDomain);
 

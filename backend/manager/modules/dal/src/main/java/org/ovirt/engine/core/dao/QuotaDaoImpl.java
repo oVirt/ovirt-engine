@@ -216,7 +216,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         List<Quota> allThinQuota = getCallsHandler().executeReadList("getAllThinQuota", getQuotaMetaDataFromResultSet(), parameterSource);
 
         if (allThinQuota != null && !allThinQuota.isEmpty()){
-            Map<Guid, Quota> allQuotaMap = new HashMap<Guid, Quota>();
+            Map<Guid, Quota> allQuotaMap = new HashMap<>();
             for (Quota quota : allThinQuota) {
                 allQuotaMap.put(quota.getId(), quota);
             }
@@ -232,7 +232,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                             quota.setGlobalQuotaStorage(quotaStorage);
                         } else {
                             if (quota.getQuotaStorages() == null) {
-                                quota.setQuotaStorages(new ArrayList<QuotaStorage>());
+                                quota.setQuotaStorages(new ArrayList<>());
                             }
                             quota.getQuotaStorages().add(quotaStorage);
                         }
@@ -248,7 +248,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                             quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
                         } else {
                             if (quota.getQuotaVdsGroups() == null) {
-                                quota.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
+                                quota.setQuotaVdsGroups(new ArrayList<>());
                             }
                             quota.getQuotaVdsGroups().add(quotaVdsGroup);
                         }

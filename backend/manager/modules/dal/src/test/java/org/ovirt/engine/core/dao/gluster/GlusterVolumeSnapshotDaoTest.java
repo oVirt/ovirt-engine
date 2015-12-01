@@ -104,7 +104,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveMultiple() {
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         idsToRemove.add(EXISTING_SNAPSHOT_ID);
         idsToRemove.add(EXISTING_SNAPSHOT_ID_1);
 

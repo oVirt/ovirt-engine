@@ -16,12 +16,11 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
 
-    protected Map<String, Object> sendInfo = new HashMap<String, Object>();
+    protected Map<String, Object> sendInfo = new HashMap<>();
 
     public HotPlugDiskVDSCommand(P parameters) {
         super(parameters);
@@ -40,7 +39,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
     }
 
     private Map<String, Object> initDriveData() {
-        Map<String, Object> drive = new HashMap<String, Object>();
+        Map<String, Object> drive = new HashMap<>();
         Disk disk = getParameters().getDisk();
         VmDevice vmDevice = getParameters().getVmDevice();
 
@@ -52,7 +51,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
         if (numOfIoThreads != 0 && disk.getDiskInterface() == DiskInterface.VirtIO) {
             if (vmDevice.getSpecParams() == null) {
-                vmDevice.setSpecParams(new HashMap<String, Object>());
+                vmDevice.setSpecParams(new HashMap<>());
             }
 
             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId(), false);
@@ -86,7 +85,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
 
                 VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
-                        new HashMap<Guid, Guid>(), new HashMap<Guid, Map<String, Long>>());
+                        new HashMap<>(), new HashMap<>());
                 if (vmDevice.getSpecParams() != null) {
                     drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 }

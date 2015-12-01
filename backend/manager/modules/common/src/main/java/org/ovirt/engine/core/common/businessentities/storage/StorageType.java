@@ -21,7 +21,7 @@ public enum StorageType implements Identifiable {
     private int value;
     private Subtype subtype;
 
-    private static final HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
+    private static final HashMap<Integer, StorageType> mappings = new HashMap<>();
 
     static {
         for (StorageType storageType : values()) {

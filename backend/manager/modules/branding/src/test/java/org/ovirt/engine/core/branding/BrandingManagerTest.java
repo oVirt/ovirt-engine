@@ -65,7 +65,7 @@ public class BrandingManagerTest {
 
     @Test
     public void testGetMessagesFromMap() {
-        Map<String, String> input = new HashMap<String, String>();
+        Map<String, String> input = new HashMap<>();
         String result = testManager.getMessagesFromMap(input);
         assertNull("There should be no result", result); //$NON-NLS-1$
         input.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$

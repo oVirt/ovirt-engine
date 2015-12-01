@@ -109,7 +109,7 @@ public class BackendTemplateResourceTest
         setUpGetBallooningExpectations();
 
         if (allContent) {
-            List<String> populates = new ArrayList<String>();
+            List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});

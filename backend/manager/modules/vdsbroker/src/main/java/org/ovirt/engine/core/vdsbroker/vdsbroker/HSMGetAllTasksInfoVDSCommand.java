@@ -25,8 +25,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
 
     protected ArrayList<AsyncTaskCreationInfo> parseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
         try {
-            ArrayList<AsyncTaskCreationInfo> result = new ArrayList<AsyncTaskCreationInfo>(
-                    taskInfoList.size());
+            ArrayList<AsyncTaskCreationInfo> result = new ArrayList<>(taskInfoList.size());
             for (Map.Entry<String, Map<String, String>> entry : taskInfoList.entrySet()) {
                 Guid taskID = new Guid(entry.getKey());
                 Map<String, String> taskInfo = entry.getValue();

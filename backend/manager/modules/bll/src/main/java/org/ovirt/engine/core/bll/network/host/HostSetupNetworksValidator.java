@@ -408,7 +408,7 @@ public class HostSetupNetworksValidator {
             MultiValueMapUtils.addToMap(attachment.getNicName(),
                 attachment.getId(),
                 map,
-                new ListCreator<Guid>());
+                new ListCreator<>());
 
         }
 

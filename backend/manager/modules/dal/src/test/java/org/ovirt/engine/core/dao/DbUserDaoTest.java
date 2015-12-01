@@ -43,7 +43,7 @@ public class DbUserDaoTest extends BaseDaoTestCase {
         newUser.setLoginName("newuser");
         newUser.setEmail("newuser@redhat.com");
         newUser.setDomain("domain");
-        newUser.setGroupNames(new LinkedList<String>(Arrays.asList("groups")));
+        newUser.setGroupNames(new LinkedList<>(Arrays.asList("groups")));
         newUser.setNamespace("*");
     }
 

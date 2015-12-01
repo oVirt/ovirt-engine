@@ -115,7 +115,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private List<GlusterServerService> prepareServiceInfo(Map<String, Object> statusInfo) {
-        List<GlusterServerService> serviceInfoList = new ArrayList<GlusterServerService>();
+        List<GlusterServerService> serviceInfoList = new ArrayList<>();
         prepareServiceInfo(statusInfo, serviceInfoList, NFS_KEY);
         prepareServiceInfo(statusInfo, serviceInfoList, SHD_KEY);
         return serviceInfoList;
@@ -168,7 +168,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private List<BrickDetails> prepareBrickDetails(GlusterVolumeEntity volume, Object[] bricksList) {
-        List<BrickDetails> brickDetailsList = new ArrayList<BrickDetails>();
+        List<BrickDetails> brickDetailsList = new ArrayList<>();
         for (Object brickObj : bricksList) {
             BrickDetails brickDetails = new BrickDetails();
             Map<String, Object> brick = (Map<String, Object>) brickObj;
@@ -278,7 +278,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private List<Mempool> prepareMemPool(Object[] memoryPool) {
-        List<Mempool> memPoolList = new ArrayList<Mempool>();
+        List<Mempool> memPoolList = new ArrayList<>();
         for (Object memPoolObj : memoryPool) {
             Mempool glusterMemoryPool = new Mempool();
             Map<String, Object> memPool = (Map<String, Object>) memPoolObj;
@@ -311,7 +311,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private List<GlusterClientInfo> prepareClientInfo(Object[] clientsStatus) {
-        List<GlusterClientInfo> clientInfoList = new ArrayList<GlusterClientInfo>();
+        List<GlusterClientInfo> clientInfoList = new ArrayList<>();
         for (Object clientStatusObj : clientsStatus) {
             GlusterClientInfo clientInfo = new GlusterClientInfo();
             Map<String, Object> client = (Map<String, Object>) clientStatusObj;

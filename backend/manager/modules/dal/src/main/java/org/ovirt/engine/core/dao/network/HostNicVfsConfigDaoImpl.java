@@ -106,7 +106,7 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     // VfsConfigNetworks
 
     Set<Guid> getNetworksByVfsConfigId(Guid vfsConfigId) {
-        return new HashSet<Guid>(getCallsHandler().executeReadList("GetNetworksByVfsConfigId", createGuidMapper(),
+        return new HashSet<>(getCallsHandler().executeReadList("GetNetworksByVfsConfigId", createGuidMapper(),
                 createVfsConfigIdParameter(vfsConfigId)));
     }
 
@@ -153,8 +153,8 @@ public class HostNicVfsConfigDaoImpl extends MassOperationsGenericDao<HostNicVfs
     // VfsConfigLabels
 
     Set<String> getLabelsByVfsConfigId(Guid vfsConfigId) {
-        return new HashSet<String>(getCallsHandler().executeReadList("GetLabelsByVfsConfigId",
-                new SingleColumnRowMapper<String>(),
+        return new HashSet<>(getCallsHandler().executeReadList("GetLabelsByVfsConfigId",
+                new SingleColumnRowMapper<>(),
                 createVfsConfigIdParameter(vfsConfigId)));
     }
 

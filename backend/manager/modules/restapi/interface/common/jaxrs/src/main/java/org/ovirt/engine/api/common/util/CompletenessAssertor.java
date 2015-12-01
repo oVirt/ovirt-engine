@@ -159,7 +159,7 @@ public class CompletenessAssertor {
      * @return               error Response if appropriate
      */
     private static List<String> doAssertRequired(String reason, String detail, Object model, int frameOffset, String... required) {
-        List<String> missing = new ArrayList<String>();
+        List<String> missing = new ArrayList<>();
 
         for (String r : required) {
             if (topLevel(r)) {

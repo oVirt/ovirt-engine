@@ -29,7 +29,7 @@ public class GetGlusterVolumeGeoRepSessionsQueryTest extends AbstractQueryTest<I
     private GlusterGeoRepDao geoRepDao;
 
     private List<GlusterGeoRepSession> getMockGeoRepSessions() {
-        List<GlusterGeoRepSession> sessions = new ArrayList<GlusterGeoRepSession>();
+        List<GlusterGeoRepSession> sessions = new ArrayList<>();
 
         GlusterGeoRepSession session = new GlusterGeoRepSession();
         session.setId(sessionId);

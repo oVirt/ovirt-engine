@@ -252,7 +252,7 @@ public class BrandingTheme {
      * @return A {@code ResourceBundle} containing the resources.
      */
     private List<ResourceBundle> getBundle(String name, Locale locale) {
-        List<ResourceBundle> result = new ArrayList<ResourceBundle>();
+        List<ResourceBundle> result = new ArrayList<>();
         String lastProcessedBundle = null;
         try {
             File themeDirectory = new File(filePath);

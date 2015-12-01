@@ -112,8 +112,7 @@ public class BackendStorageDomainVmsResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.VM> setUpVms() {
-        List<org.ovirt.engine.core.common.businessentities.VM> ret =
-            new ArrayList<org.ovirt.engine.core.common.businessentities.VM>();
+        List<org.ovirt.engine.core.common.businessentities.VM> ret = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             ret.add(getEntity(i));
         }

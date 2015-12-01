@@ -46,7 +46,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
         Guid clusterPolicyId = new Guid("e754440b-76a6-4099-8235-4565ab4b5521");
         ClusterPolicy clusterPolicy = new ClusterPolicy();
         clusterPolicy.setId(clusterPolicyId);
-        HashMap<String, String> parameterMap = new HashMap<String, String>();
+        HashMap<String, String> parameterMap = new HashMap<>();
         parameterMap.put("fail?", "sure, fail!");
         clusterPolicy.setParameterMap(parameterMap);
         ClusterPolicyCRUDCommand command =

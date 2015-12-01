@@ -34,7 +34,7 @@ public class SchedulerUtilQuartsImplTest {
         // scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler = new SchedulerUtilQuartzImpl();
         scheduler.setup();
-        messages = new ArrayList<String>();
+        messages = new ArrayList<>();
     }
 
     @AfterClass

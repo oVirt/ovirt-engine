@@ -11,8 +11,7 @@ public enum NfsVersion {
     V4("4");
 
     private final String version;
-    private static final Map<String, NfsVersion> mappings =
-            new HashMap<String, NfsVersion>();
+    private static final Map<String, NfsVersion> mappings = new HashMap<>();
 
     static {
         for (NfsVersion nfsVersion : values()) {

@@ -129,7 +129,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     @Override
     public Set<String> getAllNetworkLabelsForDataCenter(Guid id) {
         return new HashSet<>(getCallsHandler().executeReadList("GetAllNetworkLabelsByDataCenterId",
-                new SingleColumnRowMapper<String>(),
+                new SingleColumnRowMapper<>(),
                 createIdParameterMapper(id)));
     }
 

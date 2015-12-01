@@ -7,7 +7,7 @@ public enum VDSType {
     oVirtNode(2);
 
     private int intValue;
-    private static final HashMap<Integer, VDSType> mappings = new HashMap<Integer, VDSType>();
+    private static final HashMap<Integer, VDSType> mappings = new HashMap<>();
 
     static {
         for (VDSType type : values()) {

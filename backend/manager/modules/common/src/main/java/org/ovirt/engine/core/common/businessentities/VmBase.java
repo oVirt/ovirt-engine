@@ -293,11 +293,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public VmBase() {
         name = "";
-        interfaces = new ArrayList<VmNetworkInterface>();
-        images = new ArrayList<DiskImage>();
-        diskList = new ArrayList<DiskImage>();
-        managedDeviceMap = new HashMap<Guid, VmDevice>();
-        unmanagedDeviceList = new ArrayList<VmDevice>();
+        interfaces = new ArrayList<>();
+        images = new ArrayList<>();
+        diskList = new ArrayList<>();
+        managedDeviceMap = new HashMap<>();
+        unmanagedDeviceList = new ArrayList<>();
         id = Guid.Empty;
         creationDate = new Date(0);
         numOfSockets = 1;
@@ -313,7 +313,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         spiceFileTransferEnabled = true;
         spiceCopyPasteEnabled = true;
         setNumaTuneMode(NumaTuneMode.INTERLEAVE);
-        vNumaNodeList = new ArrayList<VmNumaNode>();
+        vNumaNodeList = new ArrayList<>();
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
     }
@@ -1098,7 +1098,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
     public List<Guid> getDedicatedVmForVdsList() {
         if (dedicatedVmForVdsList == null){
-            dedicatedVmForVdsList = new LinkedList<Guid>();
+            dedicatedVmForVdsList = new LinkedList<>();
         }
         return dedicatedVmForVdsList;
     }
@@ -1109,7 +1109,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public void setDedicatedVmForVdsList(Guid value) {
-        dedicatedVmForVdsList = new LinkedList<Guid>();
+        dedicatedVmForVdsList = new LinkedList<>();
         dedicatedVmForVdsList.add(value);
     }
 

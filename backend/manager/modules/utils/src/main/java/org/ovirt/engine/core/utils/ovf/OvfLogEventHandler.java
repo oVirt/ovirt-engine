@@ -32,11 +32,11 @@ public abstract class OvfLogEventHandler<T> {
 
     // list containing the names of the entity's fields that are annotated with
     // OvfExportOnlyField
-    private List<String> fieldNames = new ArrayList<String>();
+    private List<String> fieldNames = new ArrayList<>();
 
     // list containing the aliases of the entity's fields that are annotated with
     // OvfExportOnlyField
-    private List<String> aliases = new ArrayList<String>();
+    private List<String> aliases = new ArrayList<>();
 
     // default converter for basic types
     private static TypeConverter defaultConverter = new DefaultConverter();
@@ -61,8 +61,8 @@ public abstract class OvfLogEventHandler<T> {
             // that contain the annotation OvfExportOnlyField
             Field[] fields = entity.getClass().getDeclaredFields();
 
-            fieldsToAliasesMap = new HashMap<String, String>();
-            aliasesToFieldsMap = new HashMap<String, String>();
+            fieldsToAliasesMap = new HashMap<>();
+            aliasesToFieldsMap = new HashMap<>();
 
             for (Field f : fields) {
                 String fieldName = f.getName();
@@ -97,7 +97,7 @@ public abstract class OvfLogEventHandler<T> {
      * @return
      */
     public Map<String, String> getAliasesValuesMap() {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         try {
 
             Map<String, String> fieldsMap = fieldsToAliasesMap;

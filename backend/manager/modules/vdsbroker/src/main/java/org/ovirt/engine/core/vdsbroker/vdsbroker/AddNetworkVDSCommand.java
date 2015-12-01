@@ -27,7 +27,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
                 : "";
         String bond = (getParameters().getBondName() == null) ? "" : getParameters().getBondName();
         String[] nics = (getParameters().getNics() == null) ? new String[] {} : getParameters().getNics();
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, String> options = new HashMap<>();
 
         switch (getParameters().getBootProtocol()) {
         case DHCP:

@@ -65,7 +65,7 @@ public class GlusterOptionDaoTest extends BaseDaoTestCase {
         List<GlusterVolumeOptionEntity> options = dao.getOptionsOfVolume(EXISTING_VOL_ID);
         assertEquals(2, options.size());
 
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         idsToRemove.add(options.get(0).getId());
         idsToRemove.add(options.get(1).getId());
         dao.removeAll(idsToRemove);

@@ -174,10 +174,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
                     new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
             if (!returnValue.getSucceeded()) {
                 log.error("Failed to unregister libvirt secret on vds {}.", parameters.getVds().getName());
-                return new Pair<Boolean, AuditLogType>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
+                return new Pair<>(false, AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET_ON_VDS);
             }
         }
-        return new Pair<Boolean, AuditLogType>(true, null);
+        return new Pair<>(true, null);
     }
 
     public boolean isActiveCinderDomainAvailable(Guid poolId) {

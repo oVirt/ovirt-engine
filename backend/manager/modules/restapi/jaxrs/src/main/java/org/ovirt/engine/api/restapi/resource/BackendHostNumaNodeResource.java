@@ -34,7 +34,7 @@ public class BackendHostNumaNodeResource
             }
         };
         NumaStatisticalQuery query = new NumaStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<NumaNode, VdsNumaNode>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override

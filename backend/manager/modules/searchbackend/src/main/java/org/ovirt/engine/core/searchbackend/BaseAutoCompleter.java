@@ -11,11 +11,10 @@ import java.util.Set;
 import org.ovirt.engine.core.compat.DayOfWeek;
 
 public class BaseAutoCompleter implements IAutoCompleter {
-    protected final Set<String> verbs = new HashSet<String>();
-    protected final Map<String, List<String>> verbCompletion =
-            new HashMap<String, List<String>>();
+    protected final Set<String> verbs = new HashSet<>();
+    protected final Map<String, List<String>> verbCompletion = new HashMap<>();
 
-    private static final List<String> daysOfWeek = new ArrayList<String>();
+    private static final List<String> daysOfWeek = new ArrayList<>();
 
     static {
         for(DayOfWeek day: DayOfWeek.values()) {
@@ -47,7 +46,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
     }
 
     protected final void buildCompletions() {
-        final List<String> emptyKeyList = new ArrayList<String>();
+        final List<String> emptyKeyList = new ArrayList<>();
         for (String title : verbs) {
             emptyKeyList.add(changeCaseDisplay(title));
             for (int idx = 1; idx <= title.length(); idx++) {

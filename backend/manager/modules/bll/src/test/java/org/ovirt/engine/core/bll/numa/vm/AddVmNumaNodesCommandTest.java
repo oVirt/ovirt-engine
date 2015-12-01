@@ -162,7 +162,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
 
-        vm.setDedicatedVmForVdsList(new ArrayList<Guid>());
+        vm.setDedicatedVmForVdsList(new ArrayList<>());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
     }

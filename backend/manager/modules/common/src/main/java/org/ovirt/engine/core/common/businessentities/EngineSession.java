@@ -77,7 +77,7 @@ public class EngineSession implements IVdcQueryable {
         if (roleIds == null) {
             roleIds = Collections.emptySet();
         }
-        return new HashSet<Guid>(roleIds);
+        return new HashSet<>(roleIds);
     }
 
     public void setRoleIds(Collection<Guid> roleIds) {
@@ -91,7 +91,7 @@ public class EngineSession implements IVdcQueryable {
         if (groupIds == null) {
             groupIds = Collections.emptyList();
         }
-        return new HashSet<Guid>(groupIds);
+        return new HashSet<>(groupIds);
     }
 
     public void setGroupIds(Collection<Guid> groupIds) {

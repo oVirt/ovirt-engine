@@ -75,7 +75,7 @@ public class VmPoolMonitor implements BackendService {
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
         Guid vmPoolId = vmPool.getVmPoolId();
-        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId, new ArrayList<String>());
+        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId, new ArrayList<>());
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {
             // We do not want to start too many vms at once
@@ -146,7 +146,7 @@ public class VmPoolMonitor implements BackendService {
      * @return whether or not succeeded to prestart the Vm
      */
     private boolean prestartVm(Guid vmGuid) {
-        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, new ArrayList<String>())) {
+        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid, new ArrayList<>())) {
             VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
             return runVmAsStateless(vmToPrestart);
         }

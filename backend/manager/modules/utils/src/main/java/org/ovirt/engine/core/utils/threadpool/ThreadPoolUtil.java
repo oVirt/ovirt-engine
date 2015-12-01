@@ -38,7 +38,7 @@ public class ThreadPoolUtil {
                     Config.<Integer> getValue(ConfigValues.DefaultMaxThreadPoolSize),
                     60L,
                     TimeUnit.SECONDS,
-                    new ArrayBlockingQueue<Runnable>(Config.<Integer> getValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
+                    new ArrayBlockingQueue<>(Config.<Integer>getValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
 
         }
 
@@ -121,13 +121,13 @@ public class ThreadPoolUtil {
      * @return
      */
     public static <V> ExecutorCompletionService<V> createCompletionService() {
-        return new ExecutorCompletionService<V>(es);
+        return new ExecutorCompletionService<>(es);
     }
 
     private static <T> List<Callable<T>> buildSessionTasks(Collection<? extends Callable<T>> tasks) {
-        List<Callable<T>> sessionedTask = new ArrayList<Callable<T>>();
+        List<Callable<T>> sessionedTask = new ArrayList<>();
         for (Callable<T> task : tasks) {
-            sessionedTask.add(new InternalCallable<T>(task));
+            sessionedTask.add(new InternalCallable<>(task));
         }
         return sessionedTask;
     }
@@ -145,7 +145,7 @@ public class ThreadPoolUtil {
     }
 
     public static <V> List<Future<V>> submitTasks(ExecutorCompletionService<V> ecs, Iterable<Callable<V>> tasks) {
-        List<Future<V>> futures = new LinkedList<Future<V>>();
+        List<Future<V>> futures = new LinkedList<>();
         if (tasks != null) {
             for (Callable<V> callable : tasks) {
                 futures.add(ecs.submit(callable));
@@ -185,7 +185,7 @@ public class ThreadPoolUtil {
             try {
                 List<Callable<T>> sessionedTask = buildSessionTasks(tasks);
                 List<Future<T>> resultFutureList = es.invokeAll(sessionedTask);
-                List<T> resultList = new ArrayList<T>();
+                List<T> resultList = new ArrayList<>();
                 for (Future<T> future : resultFutureList) {
                     resultList.add(future.get());
                 }

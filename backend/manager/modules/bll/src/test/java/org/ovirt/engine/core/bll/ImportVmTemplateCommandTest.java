@@ -199,7 +199,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             VolumeType volumeType,
             ImportVmTemplateCommand command) {
         final VdcQueryReturnValue result = new VdcQueryReturnValue();
-        Map<VmTemplate, List<DiskImage>> resultMap = new HashMap<VmTemplate, List<DiskImage>>();
+        Map<VmTemplate, List<DiskImage>> resultMap = new HashMap<>();
 
         DiskImage image = new DiskImage();
         image.setActualSizeInBytes(2);
@@ -330,7 +330,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
                     }
                 });
         DiskImage disk = new DiskImage();
-        disk.setStorageIds(new ArrayList<Guid>());
+        disk.setStorageIds(new ArrayList<>());
         Map<Guid, VmDevice> managedDevices = new HashMap<>();
         managedDevices.put(disk.getId(), new VmDevice());
         Guid beforeOldDiskId = disk.getId();

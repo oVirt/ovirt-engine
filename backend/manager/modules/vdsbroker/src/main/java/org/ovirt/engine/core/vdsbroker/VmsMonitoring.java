@@ -344,7 +344,7 @@ public class VmsMonitoring {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave);
 
-        final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<VmNetworkStatistics>();
+        final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<>();
         for (List<VmNetworkInterface> list : vmInterfaceStatisticsToSave) {
             for (VmNetworkInterface iface : list) {
                 allVmInterfaceStatistics.add(iface.getStatistics());
@@ -541,7 +541,7 @@ public class VmsMonitoring {
         }
 
         Guid vmId = new Guid((String) vm.get(VdsProperties.vm_guid));
-        Set<Guid> processedDevices = new HashSet<Guid>();
+        Set<Guid> processedDevices = new HashSet<>();
         List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmId(vmId);
         Map<VmDeviceId, VmDevice> deviceMap = Entities.businessEntitiesById(devices);
 
@@ -655,7 +655,7 @@ public class VmsMonitoring {
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
                     0,
-                    o == null ? new HashMap<String, Object>() : (Map<String, Object>) o,
+                    o == null ? new HashMap<>() : (Map<String, Object>) o,
                     false,
                     true,
                     Boolean.getBoolean((String) device.get(VdsProperties.ReadOnly)),

@@ -44,7 +44,7 @@ public enum OsRepositoryImpl implements OsRepository {
      */
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
-    private static HashMap<ArchitectureType, Integer> defaultOsMap = new HashMap<ArchitectureType, Integer>(2);
+    private static HashMap<ArchitectureType, Integer> defaultOsMap = new HashMap<>(2);
 
     static {
         defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
@@ -87,7 +87,7 @@ public enum OsRepositoryImpl implements OsRepository {
     private void buildIdToUnameLookup() {
         try {
             String[] uniqueNames = preferences.node("/os").childrenNames();
-            idToUnameLookup = new HashMap<Integer, String>(uniqueNames.length);
+            idToUnameLookup = new HashMap<>(uniqueNames.length);
             for (String uniqueName : uniqueNames) {
                 Preferences idNode = getKeyNode(uniqueName, "id", null);
                 if (idNode != null) {
@@ -107,7 +107,7 @@ public enum OsRepositoryImpl implements OsRepository {
     private void buildBackCompatMapping() {
         try {
             String[] entries = preferences.node(BACKWARD_COMPATIBILITY_ROOT_NODE).keys();
-            backwardCompatibleNamesToIds = new HashMap<String, Integer>(entries.length);
+            backwardCompatibleNamesToIds = new HashMap<>(entries.length);
             for (String oldOsName : entries) {
                 backwardCompatibleNamesToIds.put(oldOsName, preferences.node(BACKWARD_COMPATIBILITY_ROOT_NODE).getInt(oldOsName, 0));
             }
@@ -118,18 +118,18 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public ArrayList<Integer> getOsIds() {
-        return new ArrayList<Integer>(idToUnameLookup.keySet());
+        return new ArrayList<>(idToUnameLookup.keySet());
     }
 
     @Override
     public HashMap<Integer, String> getUniqueOsNames() {
         // return a defensive copy to avoid modification of this map.
-        return new HashMap<Integer, String>(idToUnameLookup);
+        return new HashMap<>(idToUnameLookup);
     }
 
     @Override
     public HashMap<Integer, String> getOsNames() {
-        HashMap<Integer, String> osNames = new HashMap<Integer, String>();
+        HashMap<Integer, String> osNames = new HashMap<>();
         for (int osId : getOsIds()) {
             String name = getValueByVersion(idToUnameLookup.get(osId), "name", null);
             if (name != null) {
@@ -142,15 +142,13 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
 
-        List<Version> versions =
-                new ArrayList<Version>(Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels));
-        Map<Pair<Integer, Version>, Boolean> hotplugSupportOsIdVersionMap =
-                new HashMap<Pair<Integer, Version>, Boolean>();
+        List<Version> versions = new ArrayList<>(Config.<HashSet<Version>>getValue(ConfigValues.SupportedClusterLevels));
+        Map<Pair<Integer, Version>, Boolean> hotplugSupportOsIdVersionMap = new HashMap<>();
 
         for (Integer osId : getOsIds()) {
             for (Version version : versions) {
                 hotplugSupportOsIdVersionMap.put(
-                        new Pair<Integer, Version>(osId, version), hasNicHotplugSupport(osId, version));
+                        new Pair<>(osId, version), hasNicHotplugSupport(osId, version));
             }
         }
 
@@ -159,16 +157,15 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap() {
-        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
         versionsWithNull.add(null);
 
-        Map<Pair<Integer, Version>, Set<String>> diskHotpluggableInterfacesMap =
-                new HashMap<Pair<Integer, Version>, Set<String>>();
+        Map<Pair<Integer, Version>, Set<String>> diskHotpluggableInterfacesMap = new HashMap<>();
 
         for (Integer osId : getOsIds()) {
             for (Version version : versionsWithNull) {
                 diskHotpluggableInterfacesMap.put(
-                        new Pair<Integer, Version>(osId, version), getDiskHotpluggableInterfaces(osId, version));
+                        new Pair<>(osId, version), getDiskHotpluggableInterfaces(osId, version));
             }
         }
 
@@ -187,7 +184,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public ArrayList<Integer> getLinuxOss() {
-        ArrayList<Integer> oss = new ArrayList<Integer>();
+        ArrayList<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             if (getOsFamily(osId).equalsIgnoreCase("linux")) {
                 oss.add(osId);
@@ -198,7 +195,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public ArrayList<Integer> get64bitOss() {
-        ArrayList<Integer> oss = new ArrayList<Integer>();
+        ArrayList<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             String bus = getValueByVersion(idToUnameLookup.get(osId), "bus", null);
             if ("64".equalsIgnoreCase(bus)) {
@@ -210,7 +207,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public ArrayList<Integer> getWindowsOss() {
-        ArrayList<Integer> oss = new ArrayList<Integer>();
+        ArrayList<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
             if (isWindows(osId)) {
                 oss.add(osId);
@@ -221,7 +218,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public HashMap<Integer, ArchitectureType> getOsArchitectures() {
-        HashMap<Integer, ArchitectureType> osArchitectures = new HashMap<Integer, ArchitectureType>();
+        HashMap<Integer, ArchitectureType> osArchitectures = new HashMap<>();
         for (int osId : getOsIds()) {
             String architecture = getValueByVersion(idToUnameLookup.get(osId), "cpuArchitecture", null);
 
@@ -262,7 +259,7 @@ public enum OsRepositoryImpl implements OsRepository {
         String devices = getValueByVersion(idToUnameLookup.get(osId),
                 "devices.disk.hotpluggableInterfaces",
                 version);
-        return new HashSet<String>(trimElements(devices.split(",")));
+        return new HashSet<>(trimElements(devices.split(",")));
     }
 
     @Override
@@ -275,7 +272,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public Set<VmWatchdogType> getVmWatchdogTypes(int osId, Version version) {
-        Set<VmWatchdogType> vmWatchdogTypes = new HashSet<VmWatchdogType>();
+        Set<VmWatchdogType> vmWatchdogTypes = new HashSet<>();
 
         for (String watchDogModel : getWatchDogModels(osId, version)) {
             vmWatchdogTypes.add(VmWatchdogType.getByName(watchDogModel));
@@ -303,11 +300,11 @@ public enum OsRepositoryImpl implements OsRepository {
     public Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays() {
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> supportedGraphicsAndDisplaysMap = new HashMap<>();
 
-        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
         versionsWithNull.add(null);
 
         for (Integer osId : getOsIds()) {
-            supportedGraphicsAndDisplaysMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+            supportedGraphicsAndDisplaysMap.put(osId, new HashMap<>());
 
             for (Version ver : versionsWithNull) {
                 List<Pair<GraphicsType, DisplayType>> displayTypeList = getGraphicsAndDisplays(osId, ver);
@@ -349,13 +346,13 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public Map<Integer, Map<Version, Boolean>> getBalloonSupportMap() {
-        Map<Integer, Map<Version, Boolean>> balloonSupportMap = new HashMap<Integer, Map<Version, Boolean>>();
-        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        Map<Integer, Map<Version, Boolean>> balloonSupportMap = new HashMap<>();
+        Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
         versionsWithNull.add(null);
 
-        Set<Integer> osIds = new HashSet<Integer>(getOsIds());
+        Set<Integer> osIds = new HashSet<>(getOsIds());
         for (Integer osId : osIds) {
-            balloonSupportMap.put(osId, new HashMap<Version, Boolean>());
+            balloonSupportMap.put(osId, new HashMap<>());
 
             for (Version ver : versionsWithNull) {
                 balloonSupportMap.get(osId).put(ver, isBalloonEnabled(osId, ver));
@@ -422,7 +419,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus() {
-        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
         versionsWithNull.add(null);
 
         HashMap<Pair<Integer, Version>, Set<String>> unsupportedCpus = new HashMap<>();
@@ -450,7 +447,7 @@ public enum OsRepositoryImpl implements OsRepository {
         versionsWithNull.add(null);
 
         for (Integer osId : getOsIds()) {
-            soundDeviceSupportMap.put(osId, new HashMap<Version, Boolean>());
+            soundDeviceSupportMap.put(osId, new HashMap<>());
 
             for (Version ver : versionsWithNull) {
                 soundDeviceSupportMap.get(osId).put(ver, isSoundDeviceEnabled(osId, ver));
@@ -581,7 +578,7 @@ public enum OsRepositoryImpl implements OsRepository {
      */
 
     private ArrayList<String> trimElements(String... elements) {
-        ArrayList<String> list = new ArrayList<String>(elements.length);
+        ArrayList<String> list = new ArrayList<>(elements.length);
         for (String e : elements) {
             e = e.trim();
             if (e.length() > 0) {

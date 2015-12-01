@@ -137,7 +137,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private List<VDS> createServers() {
-        List<VDS> serverList = new ArrayList<VDS>();
+        List<VDS> serverList = new ArrayList<>();
         VDS server1 = createUpServer(SERVER1_ID); server1.setStatus(VDSStatus.Up);serverList.add(server1);
         VDS server2 = createUpServer(SERVER2_ID); server2.setStatus(VDSStatus.Up);serverList.add(server2);
         VDS server3 = createUpServer(SERVER3_ID); server3.setStatus(VDSStatus.Up);serverList.add(server3);
@@ -146,7 +146,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private Map<String, GlusterService> createServiceNameMap() {
-        Map<String, GlusterService> map = new HashMap<String, GlusterService>();
+        Map<String, GlusterService> map = new HashMap<>();
         map.put(SERVICE1_NAME, createGlusterService(SERVICE1_ID, SERVICE1_NAME, ServiceType.GLUSTER));
         map.put(SERVICE2_NAME, createGlusterService(SERVICE2_ID, SERVICE2_NAME, ServiceType.GLUSTER_SWIFT));
         map.put(SERVICE3_NAME, createGlusterService(SERVICE3_ID, SERVICE3_NAME, ServiceType.GLUSTER_SWIFT));
@@ -170,7 +170,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private List<GlusterClusterService> createClusterServices() {
-        List<GlusterClusterService> services = new ArrayList<GlusterClusterService>();
+        List<GlusterClusterService> services = new ArrayList<>();
 
         services.add(createClusterService(CLUSTER_ID, ServiceType.GLUSTER_SWIFT, GlusterServiceStatus.RUNNING));
         services.add(createClusterService(CLUSTER_ID, ServiceType.GLUSTER, GlusterServiceStatus.RUNNING));
@@ -189,7 +189,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private List<GlusterServerService> createServerServices(Guid serverId, GlusterServiceStatus status) {
-        List<GlusterServerService> services = new ArrayList<GlusterServerService>();
+        List<GlusterServerService> services = new ArrayList<>();
 
         services.add(createServerService(serverId, SERVICE1_ID, SERVICE1_NAME, status));
         services.add(createServerService(serverId, SERVICE2_ID, SERVICE2_NAME, status));
@@ -199,7 +199,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private List<GlusterServerService> createServerServicesWithMixedStatus(Guid serverId) {
-        List<GlusterServerService> services = new ArrayList<GlusterServerService>();
+        List<GlusterServerService> services = new ArrayList<>();
 
         services.add(createServerService(serverId, SERVICE1_ID, SERVICE1_NAME, GlusterServiceStatus.RUNNING));
         services.add(createServerService(serverId, SERVICE2_ID, SERVICE2_NAME, GlusterServiceStatus.STOPPED));
@@ -222,7 +222,7 @@ public class GlusterServiceSyncJobTest {
     }
 
     private List<VDS> createUpServers() {
-        List<VDS> servers = new ArrayList<VDS>();
+        List<VDS> servers = new ArrayList<>();
         servers.add(createUpServer(SERVER1_ID));
         servers.add(createUpServer(SERVER2_ID));
         servers.add(createUpServer(SERVER3_ID));

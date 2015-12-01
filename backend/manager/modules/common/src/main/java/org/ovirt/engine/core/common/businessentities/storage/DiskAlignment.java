@@ -14,7 +14,7 @@ public enum DiskAlignment {
     private static final Map<Integer, DiskAlignment> mappings;
 
     static {
-        mappings = new HashMap<Integer, DiskAlignment>();
+        mappings = new HashMap<>();
 
         for (DiskAlignment enumValue : values()) {
             mappings.put(enumValue.getValue(), enumValue);

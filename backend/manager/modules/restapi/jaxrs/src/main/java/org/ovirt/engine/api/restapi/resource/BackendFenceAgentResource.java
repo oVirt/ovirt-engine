@@ -26,7 +26,7 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
     @Override
     public Agent update(Agent agent) {
         QueryIdResolver<Guid> agentResolver =
-                new QueryIdResolver<Guid>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class);
+                new QueryIdResolver<>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class);
         FenceAgent entity = getEntity(agentResolver, true);
         return performUpdate(agent,
                 entity,

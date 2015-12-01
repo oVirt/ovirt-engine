@@ -104,7 +104,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                 newImage.setLastModifiedDate(MakeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.containsKey("domain")) {
-                newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.get("domain").toString()))));
+                newImage.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(xmlRpcStruct.get("domain").toString()))));
             }
             if (xmlRpcStruct.containsKey("image")) {
                 newImage.setimage_group_id(new Guid(xmlRpcStruct.get("image").toString()));

@@ -36,13 +36,13 @@ public class VdcReturnValueBase implements Serializable {
     private Guid jobId;
 
     public VdcReturnValueBase() {
-        canDoActionMessages = new ArrayList<String>();
+        canDoActionMessages = new ArrayList<>();
         description = "";
-        taskPlaceHolderIdList = new ArrayList<Guid>();
-        vdsmTaskIdList = new ArrayList<Guid>();
-        internalVdsmTaskIdList = new ArrayList<Guid>();
+        taskPlaceHolderIdList = new ArrayList<>();
+        vdsmTaskIdList = new ArrayList<>();
+        internalVdsmTaskIdList = new ArrayList<>();
         endActionTryAgain = true;
-        executeFailedMessages = new ArrayList<String>();
+        executeFailedMessages = new ArrayList<>();
     }
 
     public EngineFault getFault() {

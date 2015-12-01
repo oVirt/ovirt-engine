@@ -33,7 +33,7 @@ public class HeaderFilterTest {
 
     @Before
     public void setUp() throws Exception {
-        when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(new ArrayList<String>()));
+        when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(new ArrayList<>()));
         testFilter = new HeaderFilter();
     }
 
@@ -48,7 +48,7 @@ public class HeaderFilterTest {
 
     @Test
     public void testFilterOverride() throws Exception {
-        List<String> initParams = new ArrayList<String>();
+        List<String> initParams = new ArrayList<>();
         initParams.add("X-FRAME-OPTIONS");
         when(mockConfig.getInitParameter("X-FRAME-OPTIONS")).thenReturn("DENY");
         when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(initParams));
@@ -61,7 +61,7 @@ public class HeaderFilterTest {
 
     @Test
     public void testFilterOverrideDifferentCase() throws Exception {
-        List<String> initParams = new ArrayList<String>();
+        List<String> initParams = new ArrayList<>();
         initParams.add("X-FRAME-options");
         when(mockConfig.getInitParameter("X-FRAME-options")).thenReturn("DENY");
         when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(initParams));
@@ -74,7 +74,7 @@ public class HeaderFilterTest {
 
     @Test
     public void testFilterAddNew() throws Exception {
-        List<String> initParams = new ArrayList<String>();
+        List<String> initParams = new ArrayList<>();
         initParams.add("X-FRAME-TEST");
         when(mockConfig.getInitParameter("X-FRAME-TEST")).thenReturn("TEST");
         when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(initParams));

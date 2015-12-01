@@ -9,8 +9,8 @@ import java.util.ListIterator;
 public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     private final String origText;
-    private final LinkedList<SyntaxObject> objList = new LinkedList<SyntaxObject>();
-    private final List<String> currentCompletions = new ArrayList<String>();
+    private final LinkedList<SyntaxObject> objList = new LinkedList<>();
+    private final List<String> currentCompletions = new ArrayList<>();
 
     private static final String LINE_SEPARATOR = "\n";
     private boolean valid = false;
@@ -153,7 +153,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     }
 
     public ArrayList<String> getCrossRefObjList() {
-        ArrayList<String> retval = new ArrayList<String>();
+        ArrayList<String> retval = new ArrayList<>();
         String searchObj = getObjSingularName(getSearchObjectStr());
         for (SyntaxObject obj : objList) {
             if (obj.getType() == SyntaxObjectType.CROSS_REF_OBJ) {

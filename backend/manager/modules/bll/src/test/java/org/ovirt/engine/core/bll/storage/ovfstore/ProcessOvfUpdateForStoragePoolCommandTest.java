@@ -154,8 +154,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         executedRemovedIds = new HashSet<>();
         executedUpdatedOvfGenerationIdsInDb = new HashMap<>();
         poolDomainsOvfInfo = new HashMap<>();
-        vms = new HashMap<Guid, VM>();
-        templates = new HashMap<Guid, VmTemplate>();
+        vms = new HashMap<>();
+        templates = new HashMap<>();
         pool1 = new StoragePool();
         pool1.setId(Guid.newGuid());
         pool1.setStatus(StoragePoolStatus.Maintenance);
@@ -201,7 +201,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             @Override
             public List<VM> answer(InvocationOnMock invocation) throws Throwable {
                 List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-                List<VM> toReturn = new LinkedList<VM>();
+                List<VM> toReturn = new LinkedList<>();
                 for (Guid id : neededIds) {
                     toReturn.add(vms.get(id));
                 }
@@ -214,7 +214,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             @Override
             public List<VmTemplate> answer(InvocationOnMock invocation) throws Throwable {
                 List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
-                List<VmTemplate> toReturn = new LinkedList<VmTemplate>();
+                List<VmTemplate> toReturn = new LinkedList<>();
                 for (Guid id : neededIds) {
                     toReturn.add(templates.get(id));
                 }
@@ -337,7 +337,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private List<Guid> generateGuidList(int size) {
-        List<Guid> toReturn = new LinkedList<Guid>();
+        List<Guid> toReturn = new LinkedList<>();
         for (int i = 0; i < size; i++) {
             toReturn.add(Guid.newGuid());
         }
@@ -349,7 +349,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             VMStatus vmStatus,
             ImageStatus diskStatus,
             Guid poolId) {
-        Map<Guid, VM> toReturn = new HashMap<Guid, VM>();
+        Map<Guid, VM> toReturn = new HashMap<>();
         for (Guid id : ids) {
             VM vm = createVm(id, vmStatus);
             for (int i = 0; i < diskCount; i++) {
@@ -366,7 +366,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             int diskCount,
             VmTemplateStatus templateStatus,
             ImageStatus diskStatus, Guid poolId) {
-        Map<Guid, VmTemplate> toReturn = new HashMap<Guid, VmTemplate>();
+        Map<Guid, VmTemplate> toReturn = new HashMap<>();
         for (Guid id : ids) {
             VmTemplate template = createVmTemplate(id, templateStatus);
             for (int i = 0; i < diskCount; i++) {
@@ -493,7 +493,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
         }
 
-        List<Guid> idsThatNeededToBeUpdated = new LinkedList<Guid>(vmGuids);
+        List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
         verifyCorrectOvfDataUpdaterRun(pool1, idsThatNeededToBeUpdated, removedGuids);
@@ -532,7 +532,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         if (!ovfOnAnyDomainSupported) {
             verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
         }
-        List<Guid> needToBeUpdated = new LinkedList<Guid>(vmGuids);
+        List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
         verifyCorrectOvfDataUpdaterRun(pool1, needToBeUpdated, removedGuids);
     }
@@ -604,7 +604,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             verify(ovfUpdateProcessHelper, times(size)).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
         }
         // list of ids that should have been updated.
-        List<Guid> needToBeUpdated = new LinkedList<Guid>(vmGuids);
+        List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
         verifyCorrectOvfDataUpdaterRun(pool1, needToBeUpdated, removedGuids);
     }
@@ -682,7 +682,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         executeCommand();
 
-        List<Guid> neededToBeUpdated = new LinkedList<Guid>(vmGuidsUnlocked);
+        List<Guid> neededToBeUpdated = new LinkedList<>(vmGuidsUnlocked);
         neededToBeUpdated.addAll(templatesGuidsUnlocked);
         verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any(StoragePool.class), anyMap());
         if (!ovfOnAnyDomainSupported) {
@@ -721,7 +721,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             verify(ovfUpdateProcessHelper, never()).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
         }
 
-        List<Guid> idsThatNeededToBeUpdated = new LinkedList<Guid>(vmGuids);
+        List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
         verifyCorrectOvfDataUpdaterRun(pool1, Collections.<Guid> emptyList(), removedGuids);

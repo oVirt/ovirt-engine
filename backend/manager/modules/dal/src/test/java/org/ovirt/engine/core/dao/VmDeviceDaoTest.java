@@ -261,7 +261,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
-                new HashMap<String, Object>(),
+                new HashMap<>(),
                 true, false, false, "alias", Collections.singletonMap("prop1", "value1"), null, null);
     }
 

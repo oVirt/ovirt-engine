@@ -21,12 +21,11 @@ public abstract class EJBUtilsStrategy {
 
     // Map from resource types (for example ResourceTypeEnum.DATA_SOURCE ) to
     // their JNDI names
-    protected HashMap<ContainerManagedResourceType, String> resourceTypeToJNDINameMap =
-            new HashMap<ContainerManagedResourceType, String>();
+    protected HashMap<ContainerManagedResourceType, String> resourceTypeToJNDINameMap = new HashMap<>();
 
     // Map from bean types (for example BeanTypeEnum.BACKEND) to their JNDI
     // names
-    protected HashMap<BeanType, String> beanTypeToJNDINameMap = new HashMap<BeanType, String>();
+    protected HashMap<BeanType, String> beanTypeToJNDINameMap = new HashMap<>();
 
     private static final Map<String, Object> cachedJNDIReferences = new HashMap<>();
 

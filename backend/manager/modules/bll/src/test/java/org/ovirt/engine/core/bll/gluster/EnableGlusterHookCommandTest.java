@@ -22,7 +22,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
 
     @Test
     public void executeCommand() {
-        cmd = spy(new EnableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
         mockBackendStatusChange(cmd, true);
         cmd.executeCommand();
@@ -31,7 +31,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new EnableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
         mockBackendStatusChange(cmd, false);
         cmd.executeCommand();
@@ -40,14 +40,14 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = spy(new EnableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNullHookId() {
-        cmd = spy(new EnableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(null)));
+        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(null)));
         setupMocks(cmd);
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
@@ -55,7 +55,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
 
     @Test
     public void canDoActionFailsOnNoHook() {
-        cmd = spy(new EnableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd, false);
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));

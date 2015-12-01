@@ -178,7 +178,7 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskId);
         Collections.singletonList(storageId);
-        disk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(storageId)));
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageId)));
         return disk;
     }
 }

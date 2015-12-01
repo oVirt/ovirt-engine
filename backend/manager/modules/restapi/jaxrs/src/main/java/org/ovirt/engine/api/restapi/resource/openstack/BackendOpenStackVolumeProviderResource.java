@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackVolumeProvider>
@@ -54,7 +53,7 @@ public class BackendOpenStackVolumeProviderResource
     public OpenStackVolumeProvider update(OpenStackVolumeProvider incoming) {
         return performUpdate(
             incoming,
-            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class),
+            new QueryIdResolver<>(VdcQueryType.GetProviderById, IdQueryParameters.class),
             VdcActionType.UpdateProvider,
             new UpdateParametersProvider()
         );

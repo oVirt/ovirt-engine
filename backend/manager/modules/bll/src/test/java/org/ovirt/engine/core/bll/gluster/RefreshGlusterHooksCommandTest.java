@@ -63,7 +63,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommand() {
-        cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
         doNothing().when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
         cmd.executeCommand();
@@ -72,7 +72,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
         doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
         try {
@@ -86,7 +86,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
         doReturn(getServer()).when(cmd).getUpServer();
         assertTrue(cmd.canDoAction());
@@ -94,7 +94,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void canDoActionFailsOnNullCluster() {
-        cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(null)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(null)));
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString()));
     }

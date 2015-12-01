@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 
 public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
 
-    List<MonitoringStrategy> strategies = new ArrayList<MonitoringStrategy>();
+    List<MonitoringStrategy> strategies = new ArrayList<>();
 
     public MultipleServicesMonitoringStrategy() {
     }

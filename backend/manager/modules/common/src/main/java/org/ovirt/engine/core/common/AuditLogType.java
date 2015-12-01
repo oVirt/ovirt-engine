@@ -1313,7 +1313,7 @@ public enum AuditLogType {
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
     private int eventFloodRate;
-    private static final Map<Integer, AuditLogType> mappings = new HashMap<Integer, AuditLogType>();
+    private static final Map<Integer, AuditLogType> mappings = new HashMap<>();
     private AuditLogSeverity severity;
 
     static {

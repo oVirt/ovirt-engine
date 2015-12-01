@@ -14,7 +14,7 @@ public enum GlusterTaskType {
     private static Map<StepEnum, GlusterTaskType> mappings;
 
     static {
-        mappings = new HashMap<StepEnum, GlusterTaskType>();
+        mappings = new HashMap<>();
         for (GlusterTaskType value : values()) {
             mappings.put(value.getStep(), value);
         }

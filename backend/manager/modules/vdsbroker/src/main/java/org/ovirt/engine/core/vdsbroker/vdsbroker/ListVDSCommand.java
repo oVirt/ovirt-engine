@@ -22,7 +22,7 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     protected void executeVdsBrokerCommand() {
         vmListReturn = getBroker().list();
         proceedProxyReturnValue();
-        Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
+        Map<Guid, VmInternalData> returnVMs = new HashMap<>();
         for (int idx = 0; idx < vmListReturn.vmList.length; ++idx) {
             Map<String, Object> vm = vmListReturn.vmList[idx];
             VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(vm);

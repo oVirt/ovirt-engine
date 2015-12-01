@@ -27,7 +27,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
     protected abstract void setUpEntityQueryExpectations(int times, Object failure) throws Exception;
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+        List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

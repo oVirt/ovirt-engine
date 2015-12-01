@@ -63,7 +63,7 @@ public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollect
     }
 
     protected List<VmGuestAgentInterface> getEntities() {
-        List<VmGuestAgentInterface> entities = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

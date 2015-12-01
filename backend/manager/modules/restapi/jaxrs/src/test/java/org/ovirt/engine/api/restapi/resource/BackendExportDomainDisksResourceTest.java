@@ -102,8 +102,7 @@ public class BackendExportDomainDisksResourceTest
     }
 
     private Object getStorageDomains() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds =
-                new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
         org.ovirt.engine.core.common.businessentities.StorageDomain sd =
                 new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setStorageName("Storage_Domain_1");
@@ -201,7 +200,7 @@ public class BackendExportDomainDisksResourceTest
     }
 
     private HashMap<Guid, DiskImage> getDiskMap() {
-        HashMap<Guid, DiskImage> map = new HashMap<Guid, DiskImage>();
+        HashMap<Guid, DiskImage> map = new HashMap<>();
         for (int i = 0; i < NAMES.length; i++) {
             DiskImage disk = (DiskImage) getEntity(i);
             map.put(disk.getId(), disk);
@@ -234,12 +233,12 @@ public class BackendExportDomainDisksResourceTest
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
-        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<VmTemplate, List<DiskImage>>();
+        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<>();
         if (notFound) {
             return ret;
         }
         for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getVmTemplateEntity(i), new ArrayList<DiskImage>());
+            ret.put(getVmTemplateEntity(i), new ArrayList<>());
         }
         return ret;
     }

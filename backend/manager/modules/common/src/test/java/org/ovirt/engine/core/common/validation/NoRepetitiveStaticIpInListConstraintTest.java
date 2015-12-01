@@ -29,7 +29,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     @Test
     public void twoNetworkInterfacesWithSameIp() {
-        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(IP_1));
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(IP_1));
         validateAndAssertResult(listOfInterfaces, false);
@@ -37,7 +37,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     @Test
     public void twoNetworkInterfacesWithDifferentIp() {
-        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(IP_1));
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(IP_2));
         validateAndAssertResult(listOfInterfaces, true);
@@ -45,7 +45,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     @Test
     public void twoNetworkInterfacesWithEmptyIp() {
-        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(""));
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(""));
         validateAndAssertResult(listOfInterfaces, true);
@@ -53,7 +53,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     @Test
     public void twoNetworkInterfacesWithNullIp() {
-        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(null));
         listOfInterfaces.add(createVdsNetworkInterfaceWithStaticIp(null));
         validateAndAssertResult(listOfInterfaces, true);

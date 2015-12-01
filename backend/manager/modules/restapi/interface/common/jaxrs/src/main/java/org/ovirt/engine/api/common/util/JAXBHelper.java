@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
 public class JAXBHelper {
-    private final static Map<Class<?>, JAXBContextHolder> contexts = new HashMap<Class<?>, JAXBContextHolder>();
+    private final static Map<Class<?>, JAXBContextHolder> contexts = new HashMap<>();
 
     private JAXBHelper() {}
 
@@ -58,7 +58,7 @@ public class JAXBHelper {
     }
 
     public static <S> S clone(String localName, Class<S> clz, S s) {
-        return clone(new JAXBElement<S>(new QName("", localName), clz, null, s));
+        return clone(new JAXBElement<>(new QName("", localName), clz, null, s));
     }
 
     private static <S> void marshall(OutputStream os, JAXBElement<S> element) throws Exception {

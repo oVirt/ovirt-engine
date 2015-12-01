@@ -122,7 +122,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveMultiple() {
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         idsToRemove.add(EXISTING_VOL_DIST_ID);
         idsToRemove.add(EXISTING_VOL_REPL_ID);
 
@@ -342,7 +342,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
         transportTypes = dao.getById(EXISTING_VOL_DIST_ID).getTransportTypes();
         assertEquals(0, transportTypes.size());
 
-        List<TransportType> types = new ArrayList<TransportType>();
+        List<TransportType> types = new ArrayList<>();
         types.add(TransportType.TCP);
         types.add(TransportType.RDMA);
         dao.addTransportTypes(EXISTING_VOL_DIST_ID, types);
@@ -427,7 +427,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
         assertTrue(transportTypes.contains(TransportType.TCP));
         assertTrue(transportTypes.contains(TransportType.RDMA));
 
-        List<TransportType> types = new ArrayList<TransportType>();
+        List<TransportType> types = new ArrayList<>();
         types.add(TransportType.TCP);
         types.add(TransportType.RDMA);
 

@@ -42,7 +42,7 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
     private void mockDaoForQuery() {
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDao);
 
-        returnedPermissions = new ArrayList<Permission>();
+        returnedPermissions = new ArrayList<>();
         Permission permissions = new Permission();
         returnedPermissions.add(permissions);
         when(getQueryParameters().getId()).thenReturn(quotaId);

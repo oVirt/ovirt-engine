@@ -39,7 +39,7 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
 
         for (Pair<Guid, Integer> pair : numaNodesCpus) {
             if (!numaNodesCpusMap.containsKey(pair.getFirst())) {
-                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<Integer>());
+                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<>());
             }
             numaNodesCpusMap.get(pair.getFirst()).add(pair.getSecond());
         }
@@ -80,7 +80,7 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoImpl<VdsNumaNode> implements 
                 @Override
                 public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
-                    return new Pair<Guid, Integer>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
+                    return new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
                 }
             };
 

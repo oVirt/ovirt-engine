@@ -54,7 +54,7 @@ public class OAuthRevokeServlet extends HttpServlet {
                     TokenCleanupUtility.cleanupSsoSession(ssoContext, ssoSession, associatedClientIds);
                 }
             }
-            SSOUtils.sendJsonData(response, new HashMap<String, Object>());
+            SSOUtils.sendJsonData(response, new HashMap<>());
         } catch (OAuthException ex) {
             SSOUtils.sendJsonDataWithMessage(response, ex);
         } catch (Exception ex) {

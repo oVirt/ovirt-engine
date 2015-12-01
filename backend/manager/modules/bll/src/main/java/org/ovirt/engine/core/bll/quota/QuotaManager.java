@@ -146,7 +146,7 @@ public class QuotaManager implements BackendService {
             Guid quotaId,
             Quota quota,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        newUsedSpecificStorageSize.put(quotaId, new HashMap<Guid, Double>());
+        newUsedSpecificStorageSize.put(quotaId, new HashMap<>());
         for (Guid storageId : desiredStorageSizeQuotaMap.get(quotaId).keySet()) {
             boolean hasStorageId = false;
             for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
@@ -261,7 +261,7 @@ public class QuotaManager implements BackendService {
                 storageConsumptionParameter = (QuotaStorageConsumptionParameter)param;
             }
             if (!desiredStorageSizeQuotaMap.containsKey(param.getQuotaGuid())) {
-                desiredStorageSizeQuotaMap.put(param.getQuotaGuid(), new HashMap<Guid, Double>());
+                desiredStorageSizeQuotaMap.put(param.getQuotaGuid(), new HashMap<>());
             }
             Map<Guid, Double> quotaStorageMap = desiredStorageSizeQuotaMap.get(param.getQuotaGuid());
             if (!quotaStorageMap.containsKey(storageConsumptionParameter.getStorageDomainId())) {
@@ -586,7 +586,7 @@ public class QuotaManager implements BackendService {
         lock.writeLock().lock();
         try {
             if (!storagePoolQuotaMap.containsKey(storagePool.getId())) {
-                storagePoolQuotaMap.put(storagePool.getId(), new HashMap<Guid, Quota>());
+                storagePoolQuotaMap.put(storagePool.getId(), new HashMap<>());
             }
         } finally {
             lock.writeLock().unlock();
@@ -889,7 +889,7 @@ public class QuotaManager implements BackendService {
             try {
                 for (Quota quotaExternal : needToCache) {
                     if (!storagePoolQuotaMap.containsKey(quotaExternal.getStoragePoolId())) {
-                        storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<Guid, Quota>());
+                        storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<>());
                     }
                     Quota quota = fetchQuotaFromCache(quotaExternal.getId(), quotaExternal.getStoragePoolId());
                     if (quota != null) {
@@ -911,14 +911,14 @@ public class QuotaManager implements BackendService {
         }
 
         if (quota.getQuotaStorages() != null) {
-            quotaExternal.setQuotaStorages(new ArrayList<QuotaStorage>());
+            quotaExternal.setQuotaStorages(new ArrayList<>());
             for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
                 quotaExternal.getQuotaStorages().add(copyQuotaStorageUsage(quotaStorage));
             }
         }
 
         if (quota.getQuotaVdsGroups() != null) {
-            quotaExternal.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
+            quotaExternal.setQuotaVdsGroups(new ArrayList<>());
             for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
                 quotaExternal.getQuotaVdsGroups().add(copyQuotaVdsGroupUsage(quotaVdsGroup));
             }
@@ -982,7 +982,7 @@ public class QuotaManager implements BackendService {
                     for (Quota quotaExternal : needToCache) {
                         // look for the quota in the cache again (it may have been added by now)
                         if (!storagePoolQuotaMap.containsKey(quotaExternal.getStoragePoolId())) {
-                            storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<Guid, Quota>());
+                            storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<>());
                         }
                         Quota quota = fetchQuotaFromCache(quotaExternal.getId(), quotaExternal.getStoragePoolId());
 
@@ -1089,7 +1089,7 @@ public class QuotaManager implements BackendService {
         HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<>();
         for (Quota quota : allQuotaIncludingConsumption) {
             if (!newStoragePoolQuotaMap.containsKey(quota.getStoragePoolId())) {
-                newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<Guid, Quota>());
+                newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<>());
             }
             newStoragePoolQuotaMap.get(quota.getStoragePoolId()).put(quota.getId(), quota);
         }

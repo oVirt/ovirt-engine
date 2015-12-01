@@ -48,7 +48,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
         assertNotNull(result.getSecond());
         assertEquals(result.getFirst().size(), 1);
@@ -70,7 +70,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
         assertNotNull(result.getSecond());
         assertEquals(result.getFirst().size(), 1);
@@ -95,7 +95,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
     }
 
@@ -118,7 +118,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
         assertNotNull(result.getSecond());
         assertEquals(result.getFirst().size(), 1);
@@ -144,7 +144,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         EvenDistributionBalancePolicyUnit unit = mockUnit(EvenDistributionBalancePolicyUnit.class, cluster, hosts, vms);
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
     }
 }

@@ -49,7 +49,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void canDoActionFailsOnNonExistingEvent() {
         command =
-                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_1)));
+                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_1)));
         prepareMocks(command);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
@@ -58,7 +58,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void canDoActionSucceeds() {
         command =
-                spy(new RemoveAuditLogByIdCommand<RemoveAuditLogByIdParameters>(new RemoveAuditLogByIdParameters(EVENT_ID_3)));
+                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_3)));
         prepareMocks(command);
         assertTrue(command.canDoAction());
     }

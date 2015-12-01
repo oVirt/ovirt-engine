@@ -24,15 +24,14 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
 
     @Override
     protected HashMap<String, HashMap<String, HashMap<String, String>>> getEntity(int index) {
-        HashMap<String, HashMap<String, HashMap<String, String>>> events =
-                new HashMap<String, HashMap<String, HashMap<String, String>>>();
+        HashMap<String, HashMap<String, HashMap<String, String>>> events = new HashMap<>();
 
-        events.put(ON_VM_START_EVENT, new HashMap<String, HashMap<String, String>>());
-        events.put(ON_VM_STOP_EVENT, new HashMap<String, HashMap<String, String>>());
-        events.get(ON_VM_START_EVENT).put(NOTIFY_ADMIN_HOOK, new HashMap<String, String>());
-        events.get(ON_VM_START_EVENT).put(SPECIAL_LOG_HOOK, new HashMap<String, String>());
-        events.get(ON_VM_STOP_EVENT).put(SPECIAL_LOG_HOOK, new HashMap<String, String>());
-        events.get(ON_VM_STOP_EVENT).put(RELEASE_RESOURCES_HOOK, new HashMap<String, String>());
+        events.put(ON_VM_START_EVENT, new HashMap<>());
+        events.put(ON_VM_STOP_EVENT, new HashMap<>());
+        events.get(ON_VM_START_EVENT).put(NOTIFY_ADMIN_HOOK, new HashMap<>());
+        events.get(ON_VM_START_EVENT).put(SPECIAL_LOG_HOOK, new HashMap<>());
+        events.get(ON_VM_STOP_EVENT).put(SPECIAL_LOG_HOOK, new HashMap<>());
+        events.get(ON_VM_STOP_EVENT).put(RELEASE_RESOURCES_HOOK, new HashMap<>());
         events.get(ON_VM_START_EVENT).get(NOTIFY_ADMIN_HOOK).put(MD5, MD5_1);
         events.get(ON_VM_START_EVENT).get(SPECIAL_LOG_HOOK).put(MD5, MD5_2);
         events.get(ON_VM_STOP_EVENT).get(SPECIAL_LOG_HOOK).put(MD5, MD5_2);

@@ -57,7 +57,7 @@ public class GetUnregisteredDisksQueryTest
         storagePoolId = Guid.newGuid();
         // Wrapping the list in a new ArrayList as this will eventually be modified by the GetUnregisteredDisksQuery command and
         // Arrays returned by Arrays.asList are immutable. The wrapping allows for mutability.
-        importDiskIds = new ArrayList<Guid>(Arrays.asList(importDiskId, existingDiskId));
+        importDiskIds = new ArrayList<>(Arrays.asList(importDiskId, existingDiskId));
         prepareMocks();
     }
 

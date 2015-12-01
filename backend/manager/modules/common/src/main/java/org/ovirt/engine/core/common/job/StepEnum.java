@@ -44,7 +44,7 @@ public enum StepEnum {
     /**
      * Holds the map between the VDSM task to the Step name which represents it.
      */
-    private static final Map<AsyncTaskType, StepEnum> asyncTaskToStepEnumMap = new HashMap<AsyncTaskType, StepEnum>();
+    private static final Map<AsyncTaskType, StepEnum> asyncTaskToStepEnumMap = new HashMap<>();
 
     /**
      * Store the correlated VDSM task type with the step name or {@code null} if none.

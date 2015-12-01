@@ -292,7 +292,7 @@ public class TagsDirectorTest {
         tag.getChildren().add(tag2);
         tag2.setparent_id(tag.getparent_id());
         tagsDirector.addTag(tag);
-        Set<Guid> idsToCheck = new HashSet<Guid>();
+        Set<Guid> idsToCheck = new HashSet<>();
         idsToCheck.add(tag.gettag_id());
         idsToCheck.add(tag2.gettag_id());
         HashSet<Guid> idsFromTagsDirector = tagsDirector.GetTagIdAndChildrenIdsAsSet(tag.gettag_id());

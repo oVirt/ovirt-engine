@@ -20,7 +20,7 @@ public enum VDSStatus implements Identifiable {
     InstallingOS(14),
     Kdumping(15);
 
-    private static final HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
+    private static final HashMap<Integer, VDSStatus> mappings = new HashMap<>();
     private int intValue;
 
     static {

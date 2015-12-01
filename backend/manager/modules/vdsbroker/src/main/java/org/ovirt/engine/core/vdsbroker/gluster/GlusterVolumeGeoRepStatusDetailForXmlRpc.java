@@ -22,7 +22,7 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
     private static final String CHECK_POINT_COMPLETED = "checkpointCompleted";
     private static final String CHECK_POINT_TIME = "checkpointTime";
 
-    private final ArrayList<GlusterGeoRepSessionDetails> geoRepDetails = new ArrayList<GlusterGeoRepSessionDetails>();
+    private final ArrayList<GlusterGeoRepSessionDetails> geoRepDetails = new ArrayList<>();
 
     private Long parseSafeLong(Map<String, Object> innerMap, String key) {
         return innerMap.containsKey(key) && StringUtils.isNumeric(innerMap.get(key).toString()) ? Long.parseLong(innerMap.get(key).toString())

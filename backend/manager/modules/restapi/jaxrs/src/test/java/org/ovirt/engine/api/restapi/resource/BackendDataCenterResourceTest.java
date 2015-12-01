@@ -271,7 +271,7 @@ public class BackendDataCenterResourceTest
         Version version = control.createMock(Version.class);
         expect(version.getMajor()).andReturn(2);
         expect(version.getMinor()).andReturn(3);
-        List<Version> versions = new ArrayList<Version>();
+        List<Version> versions = new ArrayList<>();
         versions.add(version);
         return versions;
     }

@@ -33,7 +33,7 @@ public class ShellLikeConfdTest {
     @Test
     public void testValid() throws Exception {
 
-        List<String> res = new LinkedList<String>();
+        List<String> res = new LinkedList<>();
         for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
             res.add(String.format("%s=%s", e.getKey(), e.getValue()));
         }

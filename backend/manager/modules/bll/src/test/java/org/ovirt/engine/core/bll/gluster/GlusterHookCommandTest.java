@@ -114,7 +114,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     }
 
     private List<VDS> getGlusterServers() {
-        List<VDS> servers = new ArrayList<VDS>();
+        List<VDS> servers = new ArrayList<>();
         servers.add(getServer(GUIDS[0], "gfs1", CLUSTER_ID));
         servers.add(getServer(GUIDS[1], "gfs2", CLUSTER_ID));
         servers.add(getServer(GUIDS[2], "gfs3", CLUSTER_ID));
@@ -123,7 +123,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     }
 
     private List<GlusterServerHook> getGlusterServerHooks() {
-        List<GlusterServerHook> serverHooks = new ArrayList<GlusterServerHook>();
+        List<GlusterServerHook> serverHooks = new ArrayList<>();
         serverHooks.add(getGlusterServerHook(0, GlusterHookStatus.ENABLED));
         serverHooks.add(getGlusterServerHook(1, GlusterHookStatus.ENABLED));
         serverHooks.add(getGlusterServerHook(2, GlusterHookStatus.ENABLED));

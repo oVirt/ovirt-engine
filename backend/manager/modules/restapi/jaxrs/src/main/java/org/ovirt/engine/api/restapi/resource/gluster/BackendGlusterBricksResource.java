@@ -80,7 +80,7 @@ public class BackendGlusterBricksResource
     }
 
     private List<GlusterBrickEntity> mapBricks(Guid volumeId, GlusterBricks glusterBricks) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         if (glusterBricks.getGlusterBricks().size() > 0) {
             for (GlusterBrick brick : glusterBricks.getGlusterBricks()) {
                 GlusterBrickEntity brickEntity =
@@ -108,7 +108,7 @@ public class BackendGlusterBricksResource
                         replicaCount,
                         stripeCount,
                         isForce()),
-                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
+                new QueryIdResolver<>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
     }
 
     private String getVolumeId() {
@@ -224,7 +224,7 @@ public class BackendGlusterBricksResource
     private GlusterVolumeRemoveBricksParameters toParameters(GlusterBricks bricks) {
         GlusterVolumeRemoveBricksParameters params = new GlusterVolumeRemoveBricksParameters();
 
-        List<GlusterBrickEntity> entityBricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> entityBricks = new ArrayList<>();
         for (GlusterBrick brick : bricks.getGlusterBricks()) {
             GlusterBrickEntity entity = new GlusterBrickEntity();
             entity.setBrickDirectory(brick.getBrickDir());

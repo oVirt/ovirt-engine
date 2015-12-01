@@ -20,7 +20,7 @@ public class SchedulerResult {
         }
 
         if (pluginErrors.get(pluginName) == null) {
-            pluginErrors.put(pluginName, new ArrayList<String>());
+            pluginErrors.put(pluginName, new ArrayList<>());
         }
 
         pluginErrors.get(pluginName).add(errorMessage);

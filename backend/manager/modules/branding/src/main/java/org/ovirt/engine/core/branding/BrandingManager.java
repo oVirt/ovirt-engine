@@ -141,7 +141,7 @@ public class BrandingManager {
                 }
             }
         }
-        return themes != null ? themes : new ArrayList<BrandingTheme>();
+        return themes != null ? themes : new ArrayList<>();
     }
 
     /**
@@ -181,7 +181,7 @@ public class BrandingManager {
     Map<String, String> getMessageMap(final String prefix, final Locale locale) {
         List<BrandingTheme> messageThemes = getBrandingThemes();
         // We need this map to remove potential duplicate strings from the resource bundles.
-        Map<String, String> keyValues = new HashMap<String, String>();
+        Map<String, String> keyValues = new HashMap<>();
         if (messageThemes != null) {
             for (BrandingTheme theme : messageThemes) {
                 List<ResourceBundle> bundles = theme.getMessagesBundle(locale);

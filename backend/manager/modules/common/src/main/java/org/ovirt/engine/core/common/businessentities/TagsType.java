@@ -7,7 +7,7 @@ public enum TagsType {
     AdElementTag(1);
 
     private int intValue;
-    private static final HashMap<Integer, TagsType> mappings = new HashMap<Integer, TagsType>();
+    private static final HashMap<Integer, TagsType> mappings = new HashMap<>();
 
     static {
         for (TagsType tagsType : values()) {

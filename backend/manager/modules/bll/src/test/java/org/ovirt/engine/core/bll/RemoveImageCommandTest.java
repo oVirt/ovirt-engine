@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -111,7 +110,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
 
         OvfManager ovfManager = new OvfManager();
-        ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
+        ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
         String ovf = ovfManager.exportVm(vm, disks, Version.v3_1);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
@@ -124,8 +123,8 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId());
         String actualOvf = actual.getVmConfiguration();
 
-        ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
-        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
+        ArrayList<DiskImage> actualImages = new ArrayList<>();
+        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<>());
         assertEquals("Wrong number of disks", 1, actualImages.size());
         assertEquals("Wrong disk", disk1, actualImages.get(0));
     }
@@ -145,7 +144,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
 
         OvfManager ovfManager = new OvfManager();
-        ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
+        ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
         String ovf = ovfManager.exportVm(vm, disks, Version.v3_0);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
@@ -158,8 +157,8 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId());
         String actualOvf = actual.getVmConfiguration();
 
-        ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
-        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
+        ArrayList<DiskImage> actualImages = new ArrayList<>();
+        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<>());
         assertEquals("Wrong number of disks", 1, actualImages.size());
         assertEquals("Wrong disk", disk1, actualImages.get(0));
     }

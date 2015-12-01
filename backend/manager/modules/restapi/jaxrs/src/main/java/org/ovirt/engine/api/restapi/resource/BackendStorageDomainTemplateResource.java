@@ -107,7 +107,7 @@ public class BackendStorageDomainTemplateResource
 
     @Override
     public java.util.Map<Guid, Disk> getDiskMap() {
-        java.util.Map<Guid, Disk> diskMap = new java.util.HashMap<Guid, Disk>();
+        java.util.Map<Guid, Disk> diskMap = new java.util.HashMap<>();
         for (java.util.Map.Entry<Guid, DiskImage> entry : getEntity().getDiskTemplateMap().entrySet()) {
             diskMap.put(entry.getKey(), entry.getValue());
         }

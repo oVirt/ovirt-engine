@@ -33,7 +33,7 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
 
     private StatusForXmlRpc status;
     private static final Logger log = LoggerFactory.getLogger(GlusterVolumesListReturnForXmlRpc.class);
-    private List<GlusterVolumeSnapshotEntity> glusterVolumeSnapshots = new ArrayList<GlusterVolumeSnapshotEntity>();
+    private List<GlusterVolumeSnapshotEntity> glusterVolumeSnapshots = new ArrayList<>();
 
     public List<GlusterVolumeSnapshotEntity> getSnapshots() {
         return glusterVolumeSnapshots;
@@ -50,7 +50,7 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
 
     private List<GlusterVolumeSnapshotEntity> prepareVolumeSnapshotsList(Guid clusterId, Map<String, Object> snapshots) {
 
-        List<GlusterVolumeSnapshotEntity> newSnapshotsList = new ArrayList<GlusterVolumeSnapshotEntity>();
+        List<GlusterVolumeSnapshotEntity> newSnapshotsList = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : snapshots.entrySet()) {
             String volumeName = entry.getKey();

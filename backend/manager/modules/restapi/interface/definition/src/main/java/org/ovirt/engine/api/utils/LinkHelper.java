@@ -726,7 +726,7 @@ public class LinkHelper {
      * @return    a list of any inline BaseResource objects
      */
     private static List<BaseResource> getInlineResources(Object obj) {
-        ArrayList<BaseResource> ret = new ArrayList<BaseResource>();
+        ArrayList<BaseResource> ret = new ArrayList<>();
 
         for (Method method : getRelevantMethods(obj.getClass())) {
             // We need to recursively scan everything that is in the model package, as there may be references
@@ -759,7 +759,7 @@ public class LinkHelper {
     private static List<Method> getRelevantMethods(Class<?> clz) {
         List<Method> methods = methodCache.get(clz);
         if (methods == null) {
-            methods = new ArrayList<Method>();
+            methods = new ArrayList<>();
             for (Method method : clz.getMethods()) {
                 if (method.getName().startsWith("get")) {
                     if (method.getReturnType().getPackage() == BaseResource.class.getPackage()) {

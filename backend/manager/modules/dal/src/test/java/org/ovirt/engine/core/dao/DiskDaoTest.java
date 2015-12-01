@@ -218,9 +218,9 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
         assertEquals("There should be only four attachable disks", 4, disks.size());
         Set<Guid> expectedFloatingDiskIds =
-                new HashSet<Guid>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
+                new HashSet<>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
                         FixturesTool.FLOATING_CINDER_DISK_ID));
-        Set<Guid> actualFloatingDiskIds = new HashSet<Guid>();
+        Set<Guid> actualFloatingDiskIds = new HashSet<>();
         for (Disk disk : disks) {
             actualFloatingDiskIds.add(disk.getId());
         }

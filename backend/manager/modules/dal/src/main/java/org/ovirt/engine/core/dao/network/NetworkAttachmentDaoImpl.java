@@ -183,7 +183,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
             IpConfiguration ipConfiguration = new IpConfiguration();
             String bootProtocol = rs.getString("boot_protocol");
             if (bootProtocol != null) {
-                ipConfiguration.setIPv4Addresses(new ArrayList<IPv4Address>());
+                ipConfiguration.setIPv4Addresses(new ArrayList<>());
                 IPv4Address iPv4Address = new IPv4Address();
                 iPv4Address.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
                 iPv4Address.setAddress(rs.getString("address"));

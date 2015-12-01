@@ -196,8 +196,8 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
         before.setAllNetworksAllowed(allNetworksAllowed);
 
         if (allNetworksAllowed) {
-            before.setNetworks(new HashSet<Guid>());
-            before.setNetworkLabels(new HashSet<String>());
+            before.setNetworks(new HashSet<>());
+            before.setNetworkLabels(new HashSet<>());
         } else {
             addNetworks(before);
             addLabels(before);

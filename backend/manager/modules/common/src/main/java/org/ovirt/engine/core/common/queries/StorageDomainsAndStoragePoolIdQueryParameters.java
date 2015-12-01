@@ -30,7 +30,7 @@ public class StorageDomainsAndStoragePoolIdQueryParameters extends IdQueryParame
 
     public StorageDomainsAndStoragePoolIdQueryParameters(StorageDomain storageDomain, Guid storagePoolId, Guid vdsId) {
         super(storagePoolId);
-        List<StorageDomain> storageDomainList = new ArrayList<StorageDomain>();
+        List<StorageDomain> storageDomainList = new ArrayList<>();
         storageDomainList.add(storageDomain);
         this.storageDomainList = storageDomainList;
         this.vdsId = vdsId;

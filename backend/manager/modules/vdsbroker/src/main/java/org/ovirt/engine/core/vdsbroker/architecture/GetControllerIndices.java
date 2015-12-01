@@ -12,7 +12,7 @@ public class GetControllerIndices implements ArchCommand {
 
     @Override
     public void runForX86_64() {
-        controllerIndexMap = new HashMap<DiskInterface, Integer>();
+        controllerIndexMap = new HashMap<>();
 
         controllerIndexMap.put(DiskInterface.VirtIO_SCSI, 0);
 
@@ -22,7 +22,7 @@ public class GetControllerIndices implements ArchCommand {
 
     @Override
     public void runForPPC64() {
-        controllerIndexMap = new HashMap<DiskInterface, Integer>();
+        controllerIndexMap = new HashMap<>();
 
         // The sPAPR VSCSI controller is the first one in ppc64 VMs
         controllerIndexMap.put(DiskInterface.SPAPR_VSCSI, 0);

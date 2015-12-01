@@ -59,7 +59,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
         assertNotNull(result.getSecond());
         assertEquals(result.getFirst().size(), 1);
@@ -84,7 +84,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
         assertNotNull(result.getSecond());
         assertEquals(result.getFirst().size(), 1);
@@ -109,7 +109,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
     }
 
@@ -131,7 +131,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
     }
 
@@ -153,7 +153,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         // disable power management evaluation
         doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
 
-        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<VDS>(hosts.values()), parameters, messages);
+        Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
     }
 }

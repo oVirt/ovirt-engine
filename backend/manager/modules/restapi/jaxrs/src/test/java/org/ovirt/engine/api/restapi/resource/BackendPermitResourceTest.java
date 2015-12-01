@@ -81,7 +81,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     @Test
     public void testRemove() throws Exception {
         initResource(resource.parent);
-        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
         setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
                 ActionGroupsToRoleParameter.class,
@@ -104,7 +104,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         initResource(resource.parent);
-        List<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
         setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
                 ActionGroupsToRoleParameter.class,

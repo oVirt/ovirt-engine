@@ -90,7 +90,7 @@ public class Snapshot implements IVdcQueryable, BusinessEntityWithStatus<Guid, S
     public Snapshot(boolean vmConfigurationAvailable) {
         this.vmConfigurationAvailable = vmConfigurationAvailable;
         this.memoryVolume = "";
-        this.diskImages = new ArrayList<DiskImage>();
+        this.diskImages = new ArrayList<>();
     }
 
     public Snapshot(Guid id,

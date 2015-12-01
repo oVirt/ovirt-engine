@@ -141,7 +141,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveNFSConnectionDomainsExist() {
         parameters.setStorageServerConnection(NFSConnection);
         when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+        List<StorageDomain> domains = new ArrayList<>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(NFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
@@ -161,7 +161,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveNFSConnectionNoDomain() {
         parameters.setStorageServerConnection(NFSConnection);
         when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+        List<StorageDomain> domains = new ArrayList<>();
         doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -170,7 +170,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveIscsiConnectionDomainsExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
         when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain1");
@@ -185,7 +185,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveIscsiConnectionDomainsAndDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
         when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain1");
@@ -206,7 +206,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveIscsiConnectionDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
         when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain1");

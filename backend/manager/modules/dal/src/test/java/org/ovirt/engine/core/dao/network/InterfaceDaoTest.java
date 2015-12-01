@@ -209,7 +209,7 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
     @Test
     public void testMasshUpdateStatisticsForVds() throws Exception {
         List<VdsNetworkInterface> interfaces = dao.getAllInterfacesForVds(VDS_ID);
-        List<VdsNetworkStatistics> statistics = new ArrayList<VdsNetworkStatistics>(interfaces.size());
+        List<VdsNetworkStatistics> statistics = new ArrayList<>(interfaces.size());
         for (VdsNetworkInterface iface : interfaces) {
             VdsNetworkStatistics stats = iface.getStatistics();
             stats.setReceiveDropRate(RandomUtils.instance().nextInt() * 1.0);

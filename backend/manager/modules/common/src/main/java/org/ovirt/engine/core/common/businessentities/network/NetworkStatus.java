@@ -11,7 +11,7 @@ public enum NetworkStatus {
     private static Map<Integer, NetworkStatus> mappings;
 
     static {
-        mappings = new HashMap<Integer, NetworkStatus>();
+        mappings = new HashMap<>();
         for (NetworkStatus error : values()) {
             mappings.put(error.getValue(), error);
         }

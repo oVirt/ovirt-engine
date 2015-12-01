@@ -28,7 +28,7 @@ public class OsValueAutoCompleterTest {
 
     @Before
     public void setup() {
-        completionMap = new HashMap<Integer, String>();
+        completionMap = new HashMap<>();
         completionMap.put(0, "other");
         completionMap.put(1, "rhel_x");
         completionMap.put(2, "rhel_x_y");

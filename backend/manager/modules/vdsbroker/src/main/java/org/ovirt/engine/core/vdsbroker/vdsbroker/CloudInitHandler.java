@@ -39,9 +39,9 @@ public class CloudInitHandler {
 
     public CloudInitHandler(VmInit vmInit) {
         this.vmInit = vmInit;
-        metaData = new HashMap<String, Object>();
-        userData = new HashMap<String, Object>();
-        files = new HashMap<String, byte[]>();
+        metaData = new HashMap<>();
+        userData = new HashMap<>();
+        files = new HashMap<>();
         nextFileIndex = 0;
     }
 
@@ -107,7 +107,7 @@ public class CloudInitHandler {
     }
 
     private List<String> normalizeAuthorizedKeys(String authorizedKeys) {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         for (String key : vmInit.getAuthorizedKeys().split("(\\r?\\n|\\r)+")) {
             if (!StringUtils.isEmpty(key)) {
                 keys.add(key);
@@ -199,7 +199,7 @@ public class CloudInitHandler {
         // New instance id required for cloud-init to process data on startup
         metaData.put("uuid", UUID.randomUUID().toString());
 
-        Map<String, String> meta = new HashMap<String, String>();
+        Map<String, String> meta = new HashMap<>();
         // Local allows us to set up networking
         meta.put("dsmode", "local");
         meta.put("essential", "false");
@@ -212,16 +212,16 @@ public class CloudInitHandler {
         userData.put("disable_root", 0);
 
         // Redirect log output from cloud-init execution from terminal
-        Map<String, String> output = new HashMap<String, String>();
+        Map<String, String> output = new HashMap<>();
         output.put("all", ">> /var/log/cloud-init-output.log");
         userData.put("output", output);
 
         // Disable metadata-server-based datasources to prevent long boot times
-        List<String> runcmd = new ArrayList<String>();
+        List<String> runcmd = new ArrayList<>();
         runcmd.add("sed -i '/^datasource_list: /d' /etc/cloud/cloud.cfg; echo 'datasource_list: [\"NoCloud\", \"ConfigDrive\"]' >> /etc/cloud/cloud.cfg");
         userData.put("runcmd", runcmd);
 
-        Map<String, Object> opts = new HashMap<String, Object>();
+        Map<String, Object> opts = new HashMap<>();
         opts.put("expire", false);
         userData.put("chpasswd", opts);
         userData.put("ssh_pwauth", true);
@@ -230,7 +230,7 @@ public class CloudInitHandler {
 
     private void storeNextFile(CloudInitFileMode fileMode, String destinationPath, byte[] data) {
         String contentPath = String.format("/content/%04d", nextFileIndex++);
-        Map<String, String> mdEntry = new HashMap<String, String>();
+        Map<String, String> mdEntry = new HashMap<>();
 
         mdEntry.put("content_path", contentPath);
         mdEntry.put("path", destinationPath);

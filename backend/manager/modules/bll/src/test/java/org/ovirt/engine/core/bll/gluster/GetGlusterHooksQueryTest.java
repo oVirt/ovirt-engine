@@ -37,7 +37,7 @@ public class GetGlusterHooksQueryTest extends
 
     private void setupMock() {
         expected = getExpectedHooksList();
-        emptyList = new ArrayList<GlusterHookEntity>();
+        emptyList = new ArrayList<>();
 
         // Mock the query's parameters
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
@@ -48,7 +48,7 @@ public class GetGlusterHooksQueryTest extends
     }
 
     private List<GlusterHookEntity> getExpectedHooksList() {
-        List<GlusterHookEntity> glusterHooks = new ArrayList<GlusterHookEntity>();
+        List<GlusterHookEntity> glusterHooks = new ArrayList<>();
         GlusterHookEntity hook = new GlusterHookEntity();
         hook.setClusterId(CLUSTER_ID);
         hook.setGlusterCommand("start");

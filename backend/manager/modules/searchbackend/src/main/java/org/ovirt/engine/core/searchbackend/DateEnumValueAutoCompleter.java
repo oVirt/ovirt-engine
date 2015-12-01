@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
 
 public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
-    private HashMap<String, Integer> enumValues = new HashMap<String, Integer>();
+    private HashMap<String, Integer> enumValues = new HashMap<>();
 
     public <E extends Enum<? extends E> & Identifiable> DateEnumValueAutoCompleter(Class<E> enumerationType) {
         super();

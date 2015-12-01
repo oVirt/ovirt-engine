@@ -21,7 +21,7 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public AddVmParameters(VmStatic vmStatic) {
         super(vmStatic);
-        diskInfoList = new ArrayList<DiskImage>();
+        diskInfoList = new ArrayList<>();
     }
 
     public AddVmParameters(VM vm) {

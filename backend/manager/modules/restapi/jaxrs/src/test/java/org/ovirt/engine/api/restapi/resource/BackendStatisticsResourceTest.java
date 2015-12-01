@@ -30,7 +30,7 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     private AbstractStatisticalQuery<Host, VDS> query;
 
     public BackendStatisticsResourceTest() {
-        super(new BackendStatisticsResource<Host, VDS>(VDS.class, GUIDS[1], null), null, "");
+        super(new BackendStatisticsResource<>(VDS.class, GUIDS[1], null), null, "");
     }
 
     @Override
@@ -82,7 +82,7 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
         VDS entity = getEntity(0);
         if (failure == null) {
             expect(query.resolve(eq(GUIDS[1]))).andReturn(entity);
-            List<Statistic> statistics = new ArrayList<Statistic>();
+            List<Statistic> statistics = new ArrayList<>();
             for (String name : STATISTICS) {
                 statistics.add(getPrototype(name));
             }

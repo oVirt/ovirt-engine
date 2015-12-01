@@ -12,7 +12,7 @@ public enum AutoNumaBalanceStatus {
     private static Map<Integer, AutoNumaBalanceStatus> mappings;
 
     static {
-        mappings = new HashMap<Integer, AutoNumaBalanceStatus>();
+        mappings = new HashMap<>();
         for (AutoNumaBalanceStatus status : values()) {
             mappings.put(status.getValue(), status);
         }

@@ -12,7 +12,7 @@ public class PerHostMessages {
     Map<Guid, List<String>> messages;
 
     public PerHostMessages() {
-        messages = new HashMap<Guid, List<String>>();
+        messages = new HashMap<>();
     }
 
     public void addMessage(Guid hostId, String message) {

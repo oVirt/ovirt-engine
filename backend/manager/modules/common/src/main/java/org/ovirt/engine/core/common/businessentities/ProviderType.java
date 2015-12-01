@@ -20,7 +20,7 @@ public enum ProviderType implements Identifiable {
 
     private ProviderType(int value, VdcObjectType... providedTypes) {
         this.value = value;
-        this.providedTypes = new HashSet<VdcObjectType>();
+        this.providedTypes = new HashSet<>();
         for (VdcObjectType providedType : providedTypes) {
             this.providedTypes.add(providedType);
         }

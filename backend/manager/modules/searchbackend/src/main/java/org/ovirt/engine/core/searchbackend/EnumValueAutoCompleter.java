@@ -10,7 +10,7 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
 
     private static final Logger log = LoggerFactory.getLogger(EnumValueAutoCompleter.class);
 
-    private final HashMap<String, Integer> enumValues = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> enumValues = new HashMap<>();
 
     public <E extends Enum<E> & Identifiable> EnumValueAutoCompleter(Class<E> enumerationType) {
 

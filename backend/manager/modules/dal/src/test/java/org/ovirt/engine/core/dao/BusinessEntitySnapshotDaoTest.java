@@ -69,10 +69,10 @@ public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase {
         List<KeyValue> snapshots = dao.getAllCommands();
         assertNotNull(snapshots);
         assertEquals(2, snapshots.size());
-        Set<Guid> expectedSet = new HashSet<Guid>();
+        Set<Guid> expectedSet = new HashSet<>();
         expectedSet.add(commandWithOneSnapshotId);
         expectedSet.add(commandWithTwoSnapshotsId);
-        Set<Guid> resultSet = new HashSet<Guid>();
+        Set<Guid> resultSet = new HashSet<>();
         for (KeyValue snapshot : snapshots) {
             resultSet.add((Guid)snapshot.getKey());
         }

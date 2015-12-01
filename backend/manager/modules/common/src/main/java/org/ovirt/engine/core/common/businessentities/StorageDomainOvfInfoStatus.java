@@ -7,7 +7,7 @@ public enum StorageDomainOvfInfoStatus implements Identifiable{
     UPDATED(0), OUTDATED(1), DISABLED(2);
 
     private int value;
-    private static final Map<Integer, StorageDomainOvfInfoStatus> map = new HashMap<Integer, StorageDomainOvfInfoStatus>();
+    private static final Map<Integer, StorageDomainOvfInfoStatus> map = new HashMap<>();
 
     static {
         for (StorageDomainOvfInfoStatus status : values()) {

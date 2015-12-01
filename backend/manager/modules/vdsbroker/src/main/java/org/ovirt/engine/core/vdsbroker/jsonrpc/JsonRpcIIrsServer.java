@@ -188,7 +188,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                 new RequestBuilder("Image.deleteVolumes").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
                         .withParameter("storagedomainID", sdUUID)
-                        .withParameter("volumeList", new ArrayList<String>(Arrays.asList(volUUID)))
+                        .withParameter("volumeList", new ArrayList<>(Arrays.asList(volUUID)))
                         .withOptionalParameter("postZero", postZero)
                         .withOptionalParameter("force", force)
                         .build();
@@ -338,7 +338,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.extend").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
-                        .withParameter("devlist", new ArrayList<String>(Arrays.asList(devlist)))
+                        .withParameter("devlist", new ArrayList<>(Arrays.asList(devlist)))
                         // TODO: Change to withOptionalParameter when the API will allow to send primitives as
                         // optional parameters.
                         .withParameter("force", force)
@@ -473,7 +473,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     public StatusOnlyReturnForXmlRpc updateVMInImportExport(String spUUID, Map[] vms, String StorageDomainId) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.updateVMs").withParameter("storagepoolID", spUUID)
-                        .withParameter("vmList", new ArrayList<Map>(Arrays.asList(vms)))
+                        .withParameter("vmList", new ArrayList<>(Arrays.asList(vms)))
                         .withOptionalParameter("storagedomainID", StorageDomainId)
                         .build();
         Map<String, Object> response =
@@ -497,7 +497,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.getBackedUpVmsInfo").withParameter("storagepoolID", storagePoolId)
                         .withParameter("storagedomainID", storageDomainId)
-                        .withParameter("vmList", new ArrayList<String>(Arrays.asList(VMIDList)))
+                        .withParameter("vmList", new ArrayList<>(Arrays.asList(VMIDList)))
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmlist");

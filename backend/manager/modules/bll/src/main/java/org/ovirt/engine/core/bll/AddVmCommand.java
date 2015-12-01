@@ -156,7 +156,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     // if not using original template, need to override storage mappings
                     // as it may have different set of disks
                     if (!templateIdToUse.equals(latest.getId())) {
-                        getParameters().setDiskInfoDestinationMap(new HashMap<Guid, DiskImage>());
+                        getParameters().setDiskInfoDestinationMap(new HashMap<>());
                     }
 
                     setVmTemplate(latest);
@@ -291,7 +291,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected List<VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
             List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(vmInterfacesSourceId);
-            _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<VmNic>() : vmNetworkInterfaces;
+            _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<>() : vmNetworkInterfaces;
         }
         return _vmInterfaces;
     }
@@ -787,7 +787,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private boolean validateProvidedDestinations() {
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             if (diskImage.getStorageIds() == null || diskImage.getStorageIds().isEmpty()) {
-                diskImage.setStorageIds(new ArrayList<Guid>());
+                diskImage.setStorageIds(new ArrayList<>());
                 diskImage.getStorageIds().add(getParameters().getStorageDomainId());
             }
             Guid storageDomainId = diskImage.getStorageIds().get(0);

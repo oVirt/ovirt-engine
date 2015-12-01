@@ -39,7 +39,7 @@ public class ReapedMapTest extends Assert {
 
     @Test
     public void testReapingWithoutGC() throws Exception {
-        map = new ReapedMap<String, Integer>(1000);
+        map = new ReapedMap<>(1000);
         populate(1, 2, 3);
         assertSizes(3, 0);
         assertExpected(1, 2, 3);
@@ -130,7 +130,7 @@ public class ReapedMapTest extends Assert {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setUpGCExpectations(final int gcAfter) {
         ReferenceQueue<Integer> queue = mock(ReferenceQueue.class);
-        map = new ReapedMap<String, Integer>(10000, false, queue);
+        map = new ReapedMap<>(10000, false, queue);
 
         final IdAwareReference ref = mock(IdAwareReference.class);
         when(ref.getKey()).thenReturn("three").thenReturn(null);
@@ -150,7 +150,7 @@ public class ReapedMapTest extends Assert {
     @SuppressWarnings("unchecked")
     private void setUpAccessBaseAgingExpectations() {
         ReferenceQueue<Integer> queue = mock(ReferenceQueue.class);
-        map = new ReapedMap<String, Integer>(1000, true, queue);
+        map = new ReapedMap<>(1000, true, queue);
     }
 
     private void populate(Integer ... values) {

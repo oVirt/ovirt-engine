@@ -59,7 +59,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                     (int) (size / SizeConverter.BYTES_IN_GB) - domain.getAvailableDiskSize());
             if (xmlRpcStruct.containsKey("alerts")) {
                 Object[] rawAlerts = (Object[]) xmlRpcStruct.get("alerts");
-                Set<EngineError> alerts = new HashSet<EngineError>(rawAlerts.length);
+                Set<EngineError> alerts = new HashSet<>(rawAlerts.length);
 
                 for (Object rawAlert : rawAlerts) {
                     Map<String, Object> alert = (Map<String, Object>) rawAlert;

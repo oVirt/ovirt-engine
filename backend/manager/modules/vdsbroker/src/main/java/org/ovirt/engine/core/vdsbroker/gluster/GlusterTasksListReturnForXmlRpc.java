@@ -29,7 +29,7 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String FILES_SCANNED = "filesScanned";
     private static final String FILES_FAILED = "filesFailed";
 
-    private List<GlusterAsyncTask> tasks = new ArrayList<GlusterAsyncTask>();
+    private List<GlusterAsyncTask> tasks = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     public GlusterTasksListReturnForXmlRpc(Map<String, Object> innerMap) {

@@ -167,7 +167,7 @@ public class BackendTemplatesResource
     protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
         HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDisks() && vm.getDisks().isSetDisks()) {
-            destinationTemplateDiskMap = new HashMap<Guid, DiskImage>();
+            destinationTemplateDiskMap = new HashMap<>();
             Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> vmSourceDisks = queryVmDisksMap(vm);
 
             for (Disk disk : vm.getDisks().getDisks()) {

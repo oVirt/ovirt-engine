@@ -39,7 +39,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
     }
 
     public Map<String, String> convertToStatusList() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         for (Map<String, Object> st : this.statusList) {
             String status = st.get("status").toString();
             String id = st.get("id").toString();

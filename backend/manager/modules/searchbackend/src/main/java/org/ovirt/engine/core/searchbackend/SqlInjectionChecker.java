@@ -20,7 +20,7 @@ public abstract class SqlInjectionChecker {
     private static final String BACKSLASH_DOUBLE_QUOTE = "\\\\\"";
     private static final String QUOTE_QUOTE = "''";
     private static final String DELIMITERS = "'\"";
-    private HashSet<String> sqlInjectionExpressions = new HashSet<String>();
+    private HashSet<String> sqlInjectionExpressions = new HashSet<>();
     private static final String[] ANSI_SQL_KEYWORDS = { " insert ", " delete ", " update ", " create ", " drop  ", " union ", " alter ",
                                                  " if ", " else ", "sum(", "min(", "max(", "count(", "avg(", " having "};
     SqlInjectionChecker() {

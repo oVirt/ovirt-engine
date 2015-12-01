@@ -85,7 +85,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         Guid snapGuid = Guid.newGuid();
 
         RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
-        cmd = spy(new RemoveSnapshotCommand<RemoveSnapshotParameters>(params));
+        cmd = spy(new RemoveSnapshotCommand<>(params));
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
         doReturn(diskImageDao).when(cmd).getDiskImageDao();

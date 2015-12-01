@@ -20,7 +20,7 @@ public class GuidUtils {
      */
     public static ArrayList<Guid> getGuidListFromString(String str) {
         if (StringUtils.isEmpty(str)) {
-            return new ArrayList<Guid>();
+            return new ArrayList<>();
         }
         return getGuidListFromStringArray(Arrays.asList(str.split(SEPARATOR)));
     }
@@ -34,7 +34,7 @@ public class GuidUtils {
      * @return - Array of <code>Guid</code> type.
      */
     public static ArrayList<Guid> getGuidListFromStringArray(List<String> strings) {
-        ArrayList<Guid> guidList = new ArrayList<Guid>();
+        ArrayList<Guid> guidList = new ArrayList<>();
         if (strings != null && !strings.isEmpty()) {
             for (String guidString : strings) {
                 guidList.add(Guid.createGuidFromStringDefaultEmpty(guidString));

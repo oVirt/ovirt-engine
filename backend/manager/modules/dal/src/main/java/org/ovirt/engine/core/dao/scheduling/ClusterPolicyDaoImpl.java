@@ -82,14 +82,14 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
                 getCallsHandler().executeReadList("GetClusterPolicyUnitsByClusterPolicyId",
                 createClusterPolicyUnitRowMapper(),
                         createIdParameterMapper(id));
-        Map<Guid, ClusterPolicy> map = new HashMap<Guid, ClusterPolicy>();
+        Map<Guid, ClusterPolicy> map = new HashMap<>();
         map.put(clusterPolicy.getId(), clusterPolicy);
         fillClusterPolicy(map, clusterPolicyUnits);
         return clusterPolicy;
     }
 
     private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits) {
-        Map<Guid, PolicyUnit> policyUnitMap = new HashMap<Guid, PolicyUnit>();
+        Map<Guid, PolicyUnit> policyUnitMap = new HashMap<>();
         for (PolicyUnit policyUnit : policyUnitDao.getAll()) {
             policyUnitMap.put(policyUnit.getId(), policyUnit);
         }
@@ -97,12 +97,12 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
             ClusterPolicy clusterPolicy = map.get(clusterPolicyUnit.getClusterPolicyId());
             if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.FILTER) {
                 if (clusterPolicy.getFilters() == null) {
-                    clusterPolicy.setFilters(new ArrayList<Guid>());
+                    clusterPolicy.setFilters(new ArrayList<>());
                 }
                 clusterPolicy.getFilters().add(clusterPolicyUnit.getPolicyUnitId());
                 if (clusterPolicyUnit.getFilterSequence() != 0) {
                     if (clusterPolicy.getFilterPositionMap() == null) {
-                        clusterPolicy.setFilterPositionMap(new HashMap<Guid, Integer>());
+                        clusterPolicy.setFilterPositionMap(new HashMap<>());
                     }
                     clusterPolicy.getFilterPositionMap().put(clusterPolicyUnit.getPolicyUnitId(),
                             clusterPolicyUnit.getFilterSequence());
@@ -110,9 +110,9 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
             }
             if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 if(clusterPolicy.getFunctions() == null){
-                    clusterPolicy.setFunctions(new ArrayList<Pair<Guid, Integer>>());
+                    clusterPolicy.setFunctions(new ArrayList<>());
                 }
-                clusterPolicy.getFunctions().add(new Pair<Guid, Integer>(clusterPolicyUnit.getPolicyUnitId(),
+                clusterPolicy.getFunctions().add(new Pair<>(clusterPolicyUnit.getPolicyUnitId(),
                         clusterPolicyUnit.getFactor()));
             }
             if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
@@ -122,7 +122,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
     }
 
     private List<ClusterPolicyUnit> getclusterPolicyUnit(ClusterPolicy entity) {
-        Map<Guid, ClusterPolicyUnit> map = new HashMap<Guid, ClusterPolicyUnit>();
+        Map<Guid, ClusterPolicyUnit> map = new HashMap<>();
         ClusterPolicyUnit unit;
         if (entity.getFilters() != null) {
             for (Guid policyUnitId : entity.getFilters()) {
@@ -142,7 +142,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDao<ClusterPolicy, Guid>
         if (entity.getBalance() != null) {
             getClusterPolicyUnit(entity, entity.getBalance(), map);
         }
-        return new ArrayList<ClusterPolicyUnit>(map.values());
+        return new ArrayList<>(map.values());
     }
 
     private void saveClusterPolicyUnit(ClusterPolicyUnit clusterPolicyUnit) {

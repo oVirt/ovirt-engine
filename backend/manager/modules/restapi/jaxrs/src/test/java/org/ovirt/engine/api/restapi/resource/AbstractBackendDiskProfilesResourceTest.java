@@ -233,8 +233,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile>();
+        List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

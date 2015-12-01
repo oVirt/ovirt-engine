@@ -135,7 +135,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         Guid snapshotGuid = Guid.newGuid();
         DiskImage expectedSnapshot = new DiskImage();
         expectedSnapshot.setImageId(snapshotGuid);
-        ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>(1);
+        ArrayList<DiskImage> snapshots = new ArrayList<>(1);
         snapshots.add(expectedSnapshot);
 
         return snapshots;

@@ -39,7 +39,7 @@ public class RunVmOnceParams extends RunVmParams {
     }
 
     private void initRunOnceGraphics() {
-        runOnceGraphics = new HashSet<GraphicsType>();
+        runOnceGraphics = new HashSet<>();
     }
 
     @Override

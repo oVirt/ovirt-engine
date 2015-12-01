@@ -63,7 +63,7 @@ public class VdsGroupDaoTest extends BaseDaoTestCase {
         clusterPolicyDao = dbFacade.getClusterPolicyDao();
         // set cluster policy name to allow equals method to succeed
         newGroup.setClusterPolicyName(clusterPolicyDao.get(existingVdsGroup.getClusterPolicyId()).getName());
-        newGroup.setClusterPolicyProperties(new LinkedHashMap<String, String>());
+        newGroup.setClusterPolicyProperties(new LinkedHashMap<>());
         newGroup.setDetectEmulatedMachine(true);
         newGroup.setEmulatedMachine("rhel6.4.0");
         newGroup.setArchitecture(ArchitectureType.x86_64);
@@ -422,7 +422,7 @@ public class VdsGroupDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetClusterByClusterPolicyId() {
         List<VDSGroup> result = dao.getClustersByClusterPolicyId(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION);
-        List<Guid> vdsGroupIdList = new ArrayList<Guid>();
+        List<Guid> vdsGroupIdList = new ArrayList<>();
         for (VDSGroup group : result) {
             vdsGroupIdList.add(group.getId());
         }

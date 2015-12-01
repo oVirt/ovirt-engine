@@ -58,7 +58,7 @@ public class HostMonitoring {
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
     private boolean vdsMaintenanceTimeoutOccurred;
-    private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
+    private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<>();
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
     private final AuditLogDirector auditLogDirector;
@@ -167,7 +167,7 @@ public class HostMonitoring {
             checkVdsNetworkThreshold(stat);
             checkVdsSwapThreshold(stat);
 
-            final List<VdsNetworkStatistics> statistics = new LinkedList<VdsNetworkStatistics>();
+            final List<VdsNetworkStatistics> statistics = new LinkedList<>();
             for (VdsNetworkInterface iface : vds.getInterfaces()) {
                 statistics.add(iface.getStatistics());
             }
@@ -523,8 +523,8 @@ public class HostMonitoring {
             return;
         }
 
-        List<String> disksWithLowSpace = new ArrayList<String>();
-        List<String> disksWithCriticallyLowSpace = new ArrayList<String>();
+        List<String> disksWithLowSpace = new ArrayList<>();
+        List<String> disksWithCriticallyLowSpace = new ArrayList<>();
         final int lowSpaceCriticalThreshold =
                 Config.<Integer> getValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
         final int lowSpaceThreshold =
@@ -574,7 +574,7 @@ public class HostMonitoring {
             return;
         }
 
-        Map<String, Set<String>> problematicNicsWithNetworks = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> problematicNicsWithNetworks = new HashMap<>();
         try {
             reportNicStatusChanges();
             problematicNicsWithNetworks = NetworkMonitoringHelper.determineProblematicNics(vds.getInterfaces(),
@@ -640,7 +640,7 @@ public class HostMonitoring {
     private void reportNicStatusChanges() {
         List<VdsNetworkInterface> interfaces = vds.getInterfaces();
         Set<VdsNetworkInterface> slaves = new HashSet<>();
-        Map<String, VdsNetworkInterface> monitoredInterfaces = new HashMap<String, VdsNetworkInterface>();
+        Map<String, VdsNetworkInterface> monitoredInterfaces = new HashMap<>();
         Map<String, VdsNetworkInterface> interfaceByName = Entities.entitiesByName(interfaces);
 
         for (VdsNetworkInterface iface : interfaces) {

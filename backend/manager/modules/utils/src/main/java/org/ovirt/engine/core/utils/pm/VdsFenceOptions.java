@@ -82,7 +82,7 @@ public class VdsFenceOptions implements Serializable {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
                 String agent = parts[0];
-                HashMap<String, String> agentOptions = new HashMap<String, String>();
+                HashMap<String, String> agentOptions = new HashMap<>();
                 // check for empty options
                 if (StringUtils.isNotEmpty(parts[1])) {
                     String[] options = parts[1].split(Pattern.quote(COMMA), -1);
@@ -235,10 +235,10 @@ public class VdsFenceOptions implements Serializable {
      */
     private void InitCache() {
         if (fenceOptionMapping == null) {
-            fenceAgentInstanceOptions = new HashMap<String, String>();
-            fenceOptionMapping = new HashMap<String, HashMap<String, String>>();
-            fenceOptionTypes = new HashMap<String, String>();
-            fenceSpecialParams = new HashSet<String>();
+            fenceAgentInstanceOptions = new HashMap<>();
+            fenceOptionMapping = new HashMap<>();
+            fenceOptionTypes = new HashMap<>();
+            fenceSpecialParams = new HashSet<>();
             cacheFenceAgentsOptionMapping();
             cacheFenceAgentsOptionTypes();
         }
@@ -473,7 +473,7 @@ public class VdsFenceOptions implements Serializable {
      */
 
     public ArrayList<String> GetSupportedOptions(String agent) {
-        ArrayList<String> agentOptions = new ArrayList<String>();
+        ArrayList<String> agentOptions = new ArrayList<>();
         if (fenceOptionMapping.containsKey(agent)) {
             HashMap<String, String> options = fenceOptionMapping.get(agent);
             for (Map.Entry<String, String> pair : options.entrySet()) {

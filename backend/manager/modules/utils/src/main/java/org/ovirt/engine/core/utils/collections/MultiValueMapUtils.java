@@ -47,11 +47,11 @@ public class MultiValueMapUtils {
      * Same as {@link #addToMap(Object, Object, Map, CollectionCreator)}, with the default {@link ArrayList} to hold the values.
      */
     public static <K, V> void addToMap(K key, V value, Map<K, List<V>> map) {
-        addToMap(key, value, map, new ListCreator<V>());
+        addToMap(key, value, map, new ListCreator<>());
     }
 
     public static <K, V> void addToMapOfSets(K key, V value, Map<K, Set<V>> map) {
-        addToMap(key, value, map, new SetCreator<V>());
+        addToMap(key, value, map, new SetCreator<>());
     }
 
     public static interface CollectionCreator<V, C extends Collection<V>> {
@@ -61,35 +61,35 @@ public class MultiValueMapUtils {
     public static class ListCreator<V> implements CollectionCreator<V, List<V>> {
         @Override
         public List<V> create() {
-            return new ArrayList<V>();
+            return new ArrayList<>();
         }
     }
 
     public static class ArrayListCreator<V> implements CollectionCreator<V, ArrayList<V>> {
         @Override
         public ArrayList<V> create() {
-            return new ArrayList<V>();
+            return new ArrayList<>();
         }
     }
 
     public static class LinkedListCreator<V> implements CollectionCreator<V, LinkedList<V>> {
         @Override
         public LinkedList<V> create() {
-            return new LinkedList<V>();
+            return new LinkedList<>();
         }
     }
 
     public static class SetCreator<V> implements CollectionCreator<V, Set<V>> {
         @Override
         public Set<V> create() {
-            return new HashSet<V>();
+            return new HashSet<>();
         }
     }
 
     public static class HashSetCreator<V> implements CollectionCreator<V, HashSet<V>> {
         @Override
         public HashSet<V> create() {
-            return new HashSet<V>();
+            return new HashSet<>();
         }
     }
 

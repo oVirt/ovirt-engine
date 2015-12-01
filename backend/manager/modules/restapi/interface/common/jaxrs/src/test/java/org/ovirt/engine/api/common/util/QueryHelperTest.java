@@ -95,7 +95,7 @@ public class QueryHelperTest extends Assert {
 
         UriInfo uriInfo = createMock(UriInfo.class);
         MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<String>();
+        List<String> queryParam = new ArrayList<>();
         queryParam.add(QUERY);
         expect(queries.get("search")).andReturn(queryParam).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
@@ -179,7 +179,7 @@ public class QueryHelperTest extends Assert {
     private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {
         UriInfo uriInfo = createMock(UriInfo.class);
         MultivaluedMap<String, String> queries = createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<String>();
+        List<String> queryParam = new ArrayList<>();
         expect(queries.get("search")).andReturn(queryParam).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
 
@@ -200,7 +200,7 @@ public class QueryHelperTest extends Assert {
 
         UriInfo uriInfo = control.createMock(UriInfo.class);
 
-        List<PathSegment> psl = new ArrayList<PathSegment>();
+        List<PathSegment> psl = new ArrayList<>();
 
         PathSegment ps = control.createMock(PathSegment.class);
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
@@ -228,7 +228,7 @@ public class QueryHelperTest extends Assert {
 
     private UriInfo setUpGetMatrixConstraintsExpectations() {
         UriInfo uriInfo = control.createMock(UriInfo.class);
-        List<PathSegment> psl = new ArrayList<PathSegment>();
+        List<PathSegment> psl = new ArrayList<>();
 
         PathSegment ps = control.createMock(PathSegment.class);
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);

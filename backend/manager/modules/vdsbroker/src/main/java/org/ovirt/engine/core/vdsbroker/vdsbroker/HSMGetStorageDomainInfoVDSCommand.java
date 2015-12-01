@@ -33,7 +33,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     }
 
     private static Pair<StorageDomainStatic, Guid> BuildStorageStaticFromXmlRpcStruct(Map<String, Object>  xmlRpcStruct) {
-        Pair<StorageDomainStatic, Guid> returnValue = new Pair<StorageDomainStatic, Guid>();
+        Pair<StorageDomainStatic, Guid> returnValue = new Pair<>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (xmlRpcStruct.containsKey("name")) {
             sdStatic.setStorageName(xmlRpcStruct.get("name").toString());

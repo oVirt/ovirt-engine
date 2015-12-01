@@ -11,7 +11,7 @@ public enum ScsiGenericIO {
     private static Map<Integer, ScsiGenericIO> mappings;
 
     static {
-        mappings = new HashMap<Integer, ScsiGenericIO>();
+        mappings = new HashMap<>();
         for (ScsiGenericIO error : values()) {
             mappings.put(error.getValue(), error);
         }

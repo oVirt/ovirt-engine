@@ -54,7 +54,7 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
         parameters.setStorageConnectionId(connectionId.toString());
         parameters.setStorageDomainId(domainId);
         validator = mock(StorageConnectionValidator.class);
-        command = spy(new DetachStorageConnectionFromStorageDomainCommand<AttachDetachStorageConnectionParameters>(parameters));
+        command = spy(new DetachStorageConnectionFromStorageDomainCommand<>(parameters));
         doReturn(validator).when(command).createStorageConnectionValidator();
         domain = new StorageDomain();
         domain.setId(domainId);

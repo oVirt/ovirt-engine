@@ -19,7 +19,7 @@ public enum OriginType {
     private static Map<Integer, OriginType> mappings;
 
     static {
-        mappings = new HashMap<Integer, OriginType>();
+        mappings = new HashMap<>();
         for (OriginType error : values()) {
             mappings.put(error.getValue(), error);
         }

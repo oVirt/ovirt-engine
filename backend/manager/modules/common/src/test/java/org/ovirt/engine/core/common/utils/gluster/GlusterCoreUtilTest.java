@@ -29,7 +29,7 @@ public class GlusterCoreUtilTest {
 
     @Test
     public void testGetQualifiedBrickList() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(brick1);
         bricks.add(brick2);
         bricks.add(brick3);
@@ -44,7 +44,7 @@ public class GlusterCoreUtilTest {
 
     @Test
     public void testGetBrickByQualifiedName() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(brick1);
         bricks.add(brick2);
         bricks.add(brick3);
@@ -56,7 +56,7 @@ public class GlusterCoreUtilTest {
 
     @Test
     public void testContainsBrick() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(brick1);
         bricks.add(brick2);
 
@@ -67,7 +67,7 @@ public class GlusterCoreUtilTest {
 
     @Test
     public void testFindBrick() {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         bricks.add(brick1);
         bricks.add(brick2);
 

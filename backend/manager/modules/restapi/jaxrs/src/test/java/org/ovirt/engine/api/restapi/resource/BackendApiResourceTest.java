@@ -249,9 +249,9 @@ public class BackendApiResourceTest extends EasyMockSupport {
         resource.setMessageBundle(messageBundle);
 
         httpHeaders = createMock(HttpHeaders.class);
-        List<Locale> locales = new ArrayList<Locale>();
+        List<Locale> locales = new ArrayList<>();
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
-        List<String> filterValue = new ArrayList<String>();
+        List<String> filterValue = new ArrayList<>();
         filterValue.add("false");
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         resource.setHttpHeaders(httpHeaders);
@@ -306,7 +306,7 @@ public class BackendApiResourceTest extends EasyMockSupport {
     }
 
     protected HashMap<String, Integer> setUpStats() {
-        HashMap<String, Integer> stats = new HashMap<String, Integer>();
+        HashMap<String, Integer> stats = new HashMap<>();
 
         stats.put("total_vms", TOTAL_VMS);
         stats.put("active_vms", ACTIVE_VMS);

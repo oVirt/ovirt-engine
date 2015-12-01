@@ -226,7 +226,7 @@ public class BackendVmNicResourceTest
     }
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
-        ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+        ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
         org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
         network.setId(GUIDS[0]);
         network.setName("orcus");
@@ -256,7 +256,7 @@ public class BackendVmNicResourceTest
         expect(stats.getTransmitDropRate()).andReturn(40D);
         expect(stats.getReceivedBytes()).andReturn(50L);
         expect(stats.getTransmittedBytes()).andReturn(60L);
-        List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
+        List<VmNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(
             VdcQueryType.GetVmInterfacesByVmId,
@@ -328,7 +328,7 @@ public class BackendVmNicResourceTest
     }
 
     protected List<VmNetworkInterface> getEntityList() {
-        List<VmNetworkInterface> entities = new ArrayList<VmNetworkInterface>();
+        List<VmNetworkInterface> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
@@ -382,7 +382,7 @@ public class BackendVmNicResourceTest
     }
 
     private void setAllContentHeaderExpectation() {
-        List<String> allContentHeaders = new ArrayList<String>();
+        List<String> allContentHeaders = new ArrayList<>();
         allContentHeaders.add("true");
         expect(httpHeaders.getRequestHeader("All-Content")).andReturn(allContentHeaders).anyTimes();
     }
@@ -431,7 +431,7 @@ public class BackendVmNicResourceTest
     private Object getListOfVmGuestAgentInterfaces() {
         VmGuestAgentInterface iface = new VmGuestAgentInterface();
         iface.setMacAddress(ADDRESS);
-        List<VmGuestAgentInterface> list = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> list = new ArrayList<>();
         list.add(iface);
         return list;
     }

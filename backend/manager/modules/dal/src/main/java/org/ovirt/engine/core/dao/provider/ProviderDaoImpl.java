@@ -116,7 +116,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         @Override
         @SuppressWarnings("unchecked")
         public Provider<?> mapRow(ResultSet rs, int index) throws SQLException {
-            Provider<AdditionalProperties> entity = new Provider<AdditionalProperties>();
+            Provider<AdditionalProperties> entity = new Provider<>();
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
             entity.setDescription(rs.getString("description"));

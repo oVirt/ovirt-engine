@@ -59,7 +59,7 @@ public class StorageDomainOvfInfoImpl extends DefaultGenericDao<StorageDomainOvf
             if (storedOvfs != null && !storedOvfs.isEmpty()) {
                 toReturn.setStoredOvfIds(GuidUtils.getGuidListFromString(resultSet.getString("stored_ovfs_ids")));
             } else {
-                toReturn.setStoredOvfIds(new LinkedList<Guid>());
+                toReturn.setStoredOvfIds(new LinkedList<>());
             }
             return toReturn;
         }

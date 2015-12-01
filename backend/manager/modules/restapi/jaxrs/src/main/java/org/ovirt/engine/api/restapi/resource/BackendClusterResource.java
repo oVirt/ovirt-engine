@@ -49,7 +49,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public Cluster update(Cluster incoming) {
         validateEnums(Cluster.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class),
+                             new QueryIdResolver<>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class),
                              VdcActionType.UpdateVdsGroup,
                              new UpdateParametersProvider());
     }

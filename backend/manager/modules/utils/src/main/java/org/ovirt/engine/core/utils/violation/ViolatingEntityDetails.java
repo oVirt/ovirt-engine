@@ -22,7 +22,7 @@ final class ViolatingEntityDetails implements ViolationRenderer {
         MultiValueMapUtils.addToMap(detailName,
                 detailValue,
                 details,
-                new LinkedHashSetCreator<String>());
+                new LinkedHashSetCreator<>());
     }
 
     @Override

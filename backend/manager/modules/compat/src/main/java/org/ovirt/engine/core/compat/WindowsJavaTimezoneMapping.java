@@ -57,8 +57,8 @@ public class WindowsJavaTimezoneMapping {
             { "W. Europe Standard Time", "Europe/Berlin" }, { "West Asia Standard Time", "Asia/Tashkent" },
             { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" }, };
 
-    private final static Map<String, String> windowsToJava = new HashMap<String, String>();
-    private final static Map<String, String> javaToWindows = new HashMap<String, String>();
+    private final static Map<String, String> windowsToJava = new HashMap<>();
+    private final static Map<String, String> javaToWindows = new HashMap<>();
 
     static {
         for (String[] zone : zones) {

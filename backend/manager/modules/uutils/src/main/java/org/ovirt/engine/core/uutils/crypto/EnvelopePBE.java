@@ -56,7 +56,7 @@ public class EnvelopePBE {
 
     public static String encode(String algorithm, int keySize, int iterations, String randomProvider, String password) throws IOException, GeneralSecurityException {
         final Base64 base64 = new Base64(0);
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
 
         byte[] salt = new byte[keySize/8];
         SecureRandom.getInstance(randomProvider == null ? "SHA1PRNG" : randomProvider).nextBytes(salt);

@@ -44,7 +44,7 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
     private void mockDaoForQuery() {
         when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDao);
 
-        returnedQuotas = new ArrayList<Quota>();
+        returnedQuotas = new ArrayList<>();
         when(getQueryParameters().getAdElementId()).thenReturn(adElementId);
         when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
         Mockito.when(quotaDao.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);

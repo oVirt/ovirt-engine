@@ -57,7 +57,7 @@ public class XmlRpcUtils {
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
     private static final Logger log = LoggerFactory.getLogger(XmlRpcUtils.class);
-    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<String>(Arrays.asList("create", "hotplugDisk"));
+    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<>(Arrays.asList("create", "hotplugDisk"));
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             try {
@@ -152,8 +152,7 @@ public class XmlRpcUtils {
         T connector = (T) clientFactory.newInstance(Thread.currentThread().getContextClassLoader(), type, null);
         T asyncConnector = (T) AsyncProxy.newInstance(connector, clientTimeOut);
 
-        Pair<T, HttpClient> returnValue =
-                new Pair<T, HttpClient>(asyncConnector, httpclient);
+        Pair<T, HttpClient> returnValue = new Pair<>(asyncConnector, httpclient);
 
         return returnValue;
     }
@@ -204,7 +203,7 @@ public class XmlRpcUtils {
             FutureCall annotation = m.getAnnotation(FutureCall.class);
             if (annotation != null) {
                 future =
-                        new FutureTask<Object>(createCallable(obj,
+                        new FutureTask<>(createCallable(obj,
                                 getMethod(m, annotation, proxy),
                                 args,
                                 CorrelationIdTracker.getCorrelationId()));
@@ -212,7 +211,7 @@ public class XmlRpcUtils {
                 return future;
             } else {
                 future =
-                        new FutureTask<Object>(createCallable(obj,
+                        new FutureTask<>(createCallable(obj,
                                 m,
                                 args,
                                 CorrelationIdTracker.getCorrelationId()));

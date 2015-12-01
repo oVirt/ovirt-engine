@@ -315,7 +315,7 @@ public class BackendDataCenterClusterResourceTest
     }
 
     protected List<VDSGroup> setUpVDSGroups() {
-        List<VDSGroup> entities = new ArrayList<VDSGroup>();
+        List<VDSGroup> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

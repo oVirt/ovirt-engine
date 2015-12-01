@@ -35,7 +35,7 @@ public class NetworkQosValidatorTest {
     public void setup() {
         qos = new NetworkQoS();
         oldQos = new NetworkQoS();
-        allQos = new ArrayList<NetworkQoS>();
+        allQos = new ArrayList<>();
 
         validator = spy(new NetworkQosValidator(qos));
         doReturn(oldQos).when(validator).getOldQos();

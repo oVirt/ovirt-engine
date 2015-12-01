@@ -73,7 +73,7 @@ public class BackendFilesResource
 
         List<RepoImage> files = getBackendCollection(RepoImage.class, VdcQueryType.GetImagesList,
                                     queryParams);
-        List<String> fileNames = new LinkedList<String>();
+        List<String> fileNames = new LinkedList<>();
         for (RepoImage file : files) {
             fileNames.add(file.getRepoImageId());
         }

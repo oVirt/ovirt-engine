@@ -38,7 +38,7 @@ public class OpenStackNetworkProviderMapper {
     public static Provider<OpenstackNetworkProviderProperties> map(OpenStackNetworkProvider model,
             Provider<OpenstackNetworkProviderProperties> template) {
         Provider<OpenstackNetworkProviderProperties> entity =
-             template != null? template: new Provider<OpenstackNetworkProviderProperties>();
+             template != null? template: new Provider<>();
         entity.setType(ProviderType.OPENSTACK_NETWORK);
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));

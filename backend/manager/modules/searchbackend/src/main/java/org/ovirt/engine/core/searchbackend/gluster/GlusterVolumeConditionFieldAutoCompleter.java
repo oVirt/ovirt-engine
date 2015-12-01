@@ -38,7 +38,7 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
     private static List<AutoCompletionField> fields;
 
     private static void populateAutoCompletionFields() {
-        fields = new ArrayList<AutoCompletionField>();
+        fields = new ArrayList<>();
 
         addField(FIELDS.NAME.toString(), String.class, "vol_name");
         addField(FIELDS.TYPE.toString(), GlusterVolumeType.class, "vol_type");

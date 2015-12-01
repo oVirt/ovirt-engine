@@ -10,7 +10,7 @@ public enum StorageFormatType {
     V3("3");
 
     private final String value;
-    private final static Map<String, StorageFormatType> mappings = new HashMap<String, StorageFormatType>();
+    private final static Map<String, StorageFormatType> mappings = new HashMap<>();
     static {
         for (StorageFormatType storageDomainFormat : values()) {
             mappings.put(storageDomainFormat.getValue(), storageDomainFormat);

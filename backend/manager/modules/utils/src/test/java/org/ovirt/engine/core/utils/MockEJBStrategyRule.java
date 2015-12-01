@@ -39,23 +39,23 @@ public class MockEJBStrategyRule extends TestWatcher {
 
     /** Create the rule with no mocking */
     public MockEJBStrategyRule() {
-        this(new EnumMap<BeanType, Object>(BeanType.class));
+        this(new EnumMap<>(BeanType.class));
     }
 
     /** Create the rule with with a mock of a single bean */
     public MockEJBStrategyRule(BeanType type, Object bean) {
-        this(new EnumMap<BeanType, Object>(Collections.singletonMap(type, bean)));
+        this(new EnumMap<>(Collections.singletonMap(type, bean)));
     }
 
     /** Creates the rule with a mock of a single resource */
     public MockEJBStrategyRule(ContainerManagedResourceType type, Object resource) {
-        this(new EnumMap<BeanType, Object>(BeanType.class), new EnumMap<ContainerManagedResourceType, Object>(Collections.singletonMap(type, resource)));
+        this(new EnumMap<>(BeanType.class), new EnumMap<>(Collections.singletonMap(type, resource)));
 
     }
 
     /** Create the rule with with a mock of a several beans */
     public MockEJBStrategyRule(Map<BeanType, Object> beans) {
-        this(beans, new EnumMap<ContainerManagedResourceType, Object>(ContainerManagedResourceType.class));
+        this(beans, new EnumMap<>(ContainerManagedResourceType.class));
     }
 
     /** Create the rule with with a mock of a several beans and several resources */

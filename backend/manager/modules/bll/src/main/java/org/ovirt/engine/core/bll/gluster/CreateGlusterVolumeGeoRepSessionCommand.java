@@ -125,7 +125,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             VdcReturnValueBase completeMountBrokerSetupOnSlaveInternalAction =
                     getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
                             new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getVdsGroupId(),
-                                    new HashSet<Guid>(Collections.singletonList(getParameters().getSlaveHostId())),
+                                    new HashSet<>(Collections.singletonList(getParameters().getSlaveHostId())),
                                     getParameters().getSlaveVolumeName(),
                                     getParameters().getUserName(),
                                     getParameters().getUserGroup()));
@@ -176,7 +176,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     private Set<Guid> getServerIds(Set<VDS> remoteServersSet) {
-        Set<Guid> remoteServerIds = new HashSet<Guid>();
+        Set<Guid> remoteServerIds = new HashSet<>();
         for (VDS currentVds : remoteServersSet) {
             remoteServerIds.add(currentVds.getId());
         }

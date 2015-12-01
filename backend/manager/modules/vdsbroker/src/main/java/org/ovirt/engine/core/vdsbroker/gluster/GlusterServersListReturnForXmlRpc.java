@@ -19,7 +19,7 @@ public final class GlusterServersListReturnForXmlRpc extends StatusReturnForXmlR
 
     private static final String PEER_STATUS = "status";
 
-    private List<GlusterServerInfo> servers = new ArrayList<GlusterServerInfo>();
+    private List<GlusterServerInfo> servers = new ArrayList<>();
 
     public List<GlusterServerInfo> getServers() {
         return servers;

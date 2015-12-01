@@ -639,7 +639,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<StorageType> getStorageTypes(Version version) {
-        List<StorageType> ret = new ArrayList<StorageType>();
+        List<StorageType> ret = new ArrayList<>();
         ret.add(StorageType.ISCSI);
         ret.add(StorageType.FCP);
         ret.add(StorageType.NFS);
@@ -659,7 +659,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<CustomProperty> getVmHooksEnvs(Version version) {
-        List<CustomProperty> ret = new ArrayList<CustomProperty>();
+        List<CustomProperty> ret = new ArrayList<>();
         ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class,
                         ConfigurationValues.PredefinedVMProperties,
                         version),
@@ -678,7 +678,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     public List<Version> getSupportedClusterLevels() {
-        List<Version> versions = new ArrayList<Version>();
+        List<Version> versions = new ArrayList<>();
         for (org.ovirt.engine.core.compat.Version v : (Set<org.ovirt.engine.core.compat.Version>) getConfigurationValueDefault(Set.class,
                 ConfigurationValues.SupportedClusterLevels)) {
             Version version = new Version();

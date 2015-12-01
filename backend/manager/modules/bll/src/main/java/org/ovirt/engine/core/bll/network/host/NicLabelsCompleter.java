@@ -70,7 +70,7 @@ public class NicLabelsCompleter {
             MultiValueMapUtils.addToMap(network.getLabel(),
                     network,
                     labelToNetworks,
-                    new MultiValueMapUtils.ListCreator<Network>());
+                    new MultiValueMapUtils.ListCreator<>());
         }
     }
 

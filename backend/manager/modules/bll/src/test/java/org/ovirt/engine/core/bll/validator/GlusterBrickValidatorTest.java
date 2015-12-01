@@ -48,7 +48,7 @@ public class GlusterBrickValidatorTest {
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         for (Integer i = 0; i < max; i++) {
             GlusterBrickEntity brick = new GlusterBrickEntity();
             brick.setVolumeId(volumeId);
@@ -160,7 +160,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveAllBricksFromSubVolume() {
         GlusterVolumeEntity volumeEntity = getDistributedReplicatedVolume(volumeId1, 9, 3);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.add(volumeEntity.getBricks().get(6));
         bricksToRemove.add(volumeEntity.getBricks().get(7));
         bricksToRemove.add(volumeEntity.getBricks().get(8));
@@ -174,7 +174,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveBrickIfSomeBricksAreDown() {
         GlusterVolumeEntity volumeEntity = getDistributedVolume(volumeId1, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.add(volumeEntity.getBricks().get(1));
         volumeEntity.getBricks().get(0).setStatus(GlusterStatus.DOWN);
         ValidationResult validationResult =
@@ -187,7 +187,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveWithOutforceAndReduceReplicaCount() {
         GlusterVolumeEntity volumeEntity = getDistributedReplicatedVolume(volumeId1, 12, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.add(volumeEntity.getBricks().get(0));
         bricksToRemove.add(volumeEntity.getBricks().get(4));
         bricksToRemove.add(volumeEntity.getBricks().get(8));
@@ -202,7 +202,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveBrickReduceReplicaMoreThanOne() {
         GlusterVolumeEntity volumeEntity = getDistributedReplicatedVolume(volumeId1, 12, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.add(volumeEntity.getBricks().get(0));
         bricksToRemove.add(volumeEntity.getBricks().get(4));
         bricksToRemove.add(volumeEntity.getBricks().get(8));
@@ -219,7 +219,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveIncreaseReplica() {
         GlusterVolumeEntity volumeEntity = getDistributedReplicatedVolume(volumeId1, 12, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.add(volumeEntity.getBricks().get(0));
 
         ValidationResult validationResult =
@@ -231,7 +231,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveNonExistentBrick() {
         GlusterVolumeEntity volumeEntity = getDistributedVolume(volumeId1, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.addAll(getBricks(volumeEntity.getId(), 1));
         bricksToRemove.get(0).setBrickDirectory("NewServer:/NewExport");
         ValidationResult validationResult =
@@ -243,7 +243,7 @@ public class GlusterBrickValidatorTest {
     @Test
     public void canRemoveBrickUpdatesBrickDetalis() {
         GlusterVolumeEntity volumeEntity = getDistributedVolume(volumeId1, 4);
-        List<GlusterBrickEntity> bricksToRemove = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToRemove = new ArrayList<>();
         bricksToRemove.addAll(getBricks(volumeEntity.getId(), 1));
         bricksToRemove.get(0).setId(volumeEntity.getBricks().get(2).getId());
         bricksToRemove.get(0).setServerName(null);

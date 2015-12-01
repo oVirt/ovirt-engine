@@ -248,7 +248,7 @@ public class EngineMonitorService implements Runnable {
      */
     private void monitorEngineServerStatus() {
         boolean isResponsive = false;
-        Set<String> errors = new HashSet<String>();
+        Set<String> errors = new HashSet<>();
         int retries = serverMonitorRetries;
 
         while (retries > 0) {

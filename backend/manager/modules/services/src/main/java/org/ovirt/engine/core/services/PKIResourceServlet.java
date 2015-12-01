@@ -22,10 +22,10 @@ public class PKIResourceServlet extends HttpServlet {
     private static Map<String, PKIResources.Format> formats;
 
     static {
-        resources = new HashMap<String, PKIResources.Resource>();
+        resources = new HashMap<>();
         resources.put("ca-certificate", PKIResources.Resource.CACertificate);
         resources.put("engine-certificate", PKIResources.Resource.EngineCertificate);
-        formats = new HashMap<String, PKIResources.Format>();
+        formats = new HashMap<>();
         formats.put("X509-PEM", PKIResources.Format.X509_PEM);
         formats.put("X509-PEM-CA", PKIResources.Format.X509_PEM_CA);
         formats.put("OPENSSH-PUBKEY", PKIResources.Format.OPENSSH_PUBKEY);

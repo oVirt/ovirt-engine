@@ -141,11 +141,11 @@ public abstract class AbstractBackendBaseTest extends Assert {
         CurrentManager.put(current);
 
         httpHeaders = control.createMock(HttpHeaders.class);
-        locales = new ArrayList<Locale>();
+        locales = new ArrayList<>();
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
-        accepts = new ArrayList<String>();
+        accepts = new ArrayList<>();
         expect(httpHeaders.getRequestHeader("Accept")).andReturn(accepts).anyTimes();
-        List<String> filterValue = new ArrayList<String>();
+        List<String> filterValue = new ArrayList<>();
         filterValue.add("false");
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         mapperLocator = new MappingLocator();
@@ -226,7 +226,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(backend.runQuery(eq(VdcQueryType.Search),
                 eqSearchParams(params))).andReturn(queryResult);
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
-        List<E> entities = new ArrayList<E>();
+        List<E> entities = new ArrayList<>();
         entities.add(entity);
         expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
     }
@@ -489,7 +489,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected List<String> mockl10n(List<String> errors) {
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
         for (String error : errors) {
             ret.add(mockl10n(error));
         }
@@ -565,7 +565,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected <T> ArrayList<T> asList(T element) {
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
         list.add(element);
         return list;
     }
@@ -623,7 +623,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
             boolean matrixConstraintExist,
             String matrixConstraintValue, UriInfo uriInfo, boolean replay) {
-        List<PathSegment> psl = new ArrayList<PathSegment>();
+        List<PathSegment> psl = new ArrayList<>();
 
         PathSegment ps = control.createMock(PathSegment.class);
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);

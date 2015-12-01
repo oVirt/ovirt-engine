@@ -41,14 +41,14 @@ public class InMemoryLockManagerTest {
     public void setup() {
         updateGuid = Guid.newGuid().toString();
         lockGuid = Guid.newGuid().toString();
-        Map<String, Pair<String, String>> updateRegionsMap = new HashMap<String, Pair<String, String>>();
-        updateRegionsMap.put(updateGuid, new Pair<String, String>("1", ERROR1));
+        Map<String, Pair<String, String>> updateRegionsMap = new HashMap<>();
+        updateRegionsMap.put(updateGuid, new Pair<>("1", ERROR1));
         updateLock1 = new EngineLock();
         updateLock1.setSharedLocks(updateRegionsMap);
         lockLock1 = new EngineLock();
         lockLock1.setExclusiveLocks(updateRegionsMap);
-        Map<String, Pair<String, String>> lockedRegionsMap = new HashMap<String, Pair<String, String>>();
-        lockedRegionsMap.put(lockGuid, new Pair<String, String>("2", ERROR2));
+        Map<String, Pair<String, String>> lockedRegionsMap = new HashMap<>();
+        lockedRegionsMap.put(lockGuid, new Pair<>("2", ERROR2));
         lockLock2 = new EngineLock();
         lockLock2.setExclusiveLocks(lockedRegionsMap);
         updateLock2 = new EngineLock();
@@ -58,8 +58,8 @@ public class InMemoryLockManagerTest {
         updateAndLockLock.setExclusiveLocks(lockedRegionsMap);
         failLockLock = new EngineLock();
         failLockLock.setExclusiveLocks(updateRegionsMap);
-        Map<String, Pair<String, String>> updateRegionsMap2 = new HashMap<String, Pair<String, String>>();
-        updateRegionsMap2.put(updateGuid, new Pair<String, String>("1", ERROR3));
+        Map<String, Pair<String, String>> updateRegionsMap2 = new HashMap<>();
+        updateRegionsMap2.put(updateGuid, new Pair<>("1", ERROR3));
         updateLock3 = new EngineLock();
         updateLock3.setSharedLocks(updateRegionsMap2);
     }

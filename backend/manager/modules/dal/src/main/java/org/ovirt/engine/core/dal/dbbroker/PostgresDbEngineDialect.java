@@ -49,7 +49,7 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
         @Override
         protected Map extractOutputParameters(CallableStatement cs, List parameters) throws SQLException {
             Map<String, Object> outputParameters = super.extractOutputParameters(cs, parameters);
-            Map<String, Object> returnMap = new HashMap<String, Object>(outputParameters.size());
+            Map<String, Object> returnMap = new HashMap<>(outputParameters.size());
 
             for (Map.Entry<String, Object> outputEntry : outputParameters.entrySet()) {
                 // Get the value before we change the key (otherwise we won't be able to get it later when we need it).
@@ -102,7 +102,7 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
         protected void compileInternal() {
             // Put a dummy parameter name as an input parameters, otherwise the CallMetaDataContext thinks that the
             // returned column names are parameters.
-            Set<String> inParams = new HashSet<String>(getInParameterNames());
+            Set<String> inParams = new HashSet<>(getInParameterNames());
             inParams.add("dummyParamNeverUsed");
             setInParameterNames(inParams);
             super.compileInternal();
@@ -150,7 +150,7 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
          * parameter using the correct {@link Types} constant indicating the actual call type.
          */
         private Map<String, Object> executeCallInternal(final Map<String, Object> params) {
-            Map<String, Object> result = new HashMap<String, Object>(1);
+            Map<String, Object> result = new HashMap<>(1);
             result.put(returnedMapKey, getJdbcTemplate().query(
                     generateSql(),
                             new PreparedStatementSetter() {

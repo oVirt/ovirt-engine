@@ -7,7 +7,7 @@ public enum VmJobType implements Identifiable {
     BLOCK(1);
 
     private final int jobType;
-    private static final HashMap<Integer, VmJobType> mappings = new HashMap<Integer, VmJobType>();
+    private static final HashMap<Integer, VmJobType> mappings = new HashMap<>();
 
     static {
         for (VmJobType component : values()) {

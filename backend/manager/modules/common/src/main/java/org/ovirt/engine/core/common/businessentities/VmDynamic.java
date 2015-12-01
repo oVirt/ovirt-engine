@@ -268,7 +268,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         session = SessionState.Unknown;
         bootSequence = BootSequence.C;
         exitReason = VmExitReason.Unknown;
-        graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
+        graphicsInfos = new HashMap<>();
         guestAgentStatus = GuestAgentStatus.DoesntExist;
         guestOsTimezoneName = "";
         guestOsTimezoneOffset = 0;

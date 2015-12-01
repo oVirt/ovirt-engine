@@ -46,7 +46,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
         TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, snapshotId);
 
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters>(params));
+        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(vmDao).when(cmd).getVmDao();
@@ -61,7 +61,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     @Test
     public void testCanDoActionWithEmptySnapshotGuid() {
         TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, Guid.Empty);
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters>(params));
+        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,

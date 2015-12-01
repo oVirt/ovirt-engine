@@ -192,7 +192,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         assertEquals(existingVmStatic, result);
         assertNull(result.getProviderId());
 
-        hostGuidsList = new LinkedList<Guid>();
+        hostGuidsList = new LinkedList<>();
         hostGuidsList.add(HOST_GUIDS[0]);
         hostGuidsList.add(HOST_GUIDS[1]);
         existingVmStatic.setDedicatedVmForVdsList(hostGuidsList);
@@ -491,7 +491,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      * Converts a list of vmStatics to a list if Guids
      */
     private static List<Guid> getListOfGuidFromListOfVmStatics(List<VmStatic> vmStatics) {
-        List<Guid> listOfGuidToReturn = new ArrayList<Guid>();
+        List<Guid> listOfGuidToReturn = new ArrayList<>();
         for (VmStatic vmStatic : vmStatics) {
             listOfGuidToReturn.add(vmStatic.getId());
         }

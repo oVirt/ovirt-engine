@@ -49,7 +49,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
         vmNetworkInterface.setVmId(vmId);
 
         PairQueryable<VmNetworkInterface, VM> vmInterfaceVmPair =
-                new PairQueryable<VmNetworkInterface, VM>(vmNetworkInterface, vm);
+                new PairQueryable<>(vmNetworkInterface, vm);
         List<PairQueryable<VmNetworkInterface, VM>> expected = Collections.singletonList(vmInterfaceVmPair);
 
         // Run the query

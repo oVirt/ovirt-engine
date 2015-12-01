@@ -14,7 +14,7 @@ import org.ovirt.engine.api.utils.LinkHelper.LinkFlags;
 public class ApiRootLinksCreator {
 
     public static List<String> getAllRels(String baseUri) {
-        List<String> rels = new ArrayList<String>();
+        List<String> rels = new ArrayList<>();
         for (Link link : getLinks(baseUri)) {
             rels.add(link.getRel());
         }
@@ -22,7 +22,7 @@ public class ApiRootLinksCreator {
     }
 
     public static List<String> getGlusterRels(String baseUri) {
-        List<String> rels = new ArrayList<String>();
+        List<String> rels = new ArrayList<>();
         for (Link link : getGlusterLinks(baseUri)) {
             rels.add(link.getRel());
         }
@@ -30,7 +30,7 @@ public class ApiRootLinksCreator {
     }
 
     public static Collection<DetailedLink> getLinks(String baseUri) {
-        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
+        Collection<DetailedLink> links = new LinkedList<>();
         links.add(createLink("capabilities", baseUri));
         links.add(createLink("clusters", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("datacenters", LinkFlags.SEARCHABLE, baseUri));
@@ -69,7 +69,7 @@ public class ApiRootLinksCreator {
     }
 
     public static Collection<DetailedLink> getGlusterLinks(String baseUri) {
-        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
+        Collection<DetailedLink> links = new LinkedList<>();
         links.add(createLink("capabilities", baseUri));
         links.add(createLink("clusters", LinkFlags.SEARCHABLE, baseUri));
         links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams(), baseUri));

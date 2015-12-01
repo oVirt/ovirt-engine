@@ -16,7 +16,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> imp
     }
 
     public PairQueryable(T first, K second) {
-        pair = new Pair<T, K>(first, second);
+        pair = new Pair<>(first, second);
     }
 
     private Pair<T, K> getPair() {

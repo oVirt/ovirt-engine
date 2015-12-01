@@ -22,7 +22,7 @@ public enum VMStatus implements Identifiable {
     PoweringDown(16);
 
     private int value;
-    private static final HashMap<Integer, VMStatus> valueToStatus = new HashMap<Integer, VMStatus>();
+    private static final HashMap<Integer, VMStatus> valueToStatus = new HashMap<>();
 
     static {
         for (VMStatus status : values()) {

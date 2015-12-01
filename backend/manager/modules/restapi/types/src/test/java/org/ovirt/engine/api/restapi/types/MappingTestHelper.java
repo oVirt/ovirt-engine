@@ -33,7 +33,7 @@ public class MappingTestHelper {
     }
 
     private static List<Class<?>> getSetMethodTypes(Class<?> clz) {
-        List<Class<?>> types = new ArrayList<Class<?>>();
+        List<Class<?>> types = new ArrayList<>();
         for (Method method : clz.getMethods()) {
             if (isSetter(method)) {
                 Class<?> type = method.getParameterTypes()[0];
@@ -212,7 +212,7 @@ public class MappingTestHelper {
     }
 
     private static List<Class<?>> scope(List<Class<?>> seen) {
-        return new ArrayList<Class<?>>(seen);
+        return new ArrayList<>(seen);
     }
 
     public static int rand(int ceiling) {

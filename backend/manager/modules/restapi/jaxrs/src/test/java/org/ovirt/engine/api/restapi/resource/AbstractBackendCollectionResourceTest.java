@@ -161,7 +161,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     protected UriInfo setUpUriExpectations(String query) {
         UriInfo uriInfo = setUpBasicUriExpectations();
         MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
-        List<String> queryParam = new ArrayList<String>();
+        List<String> queryParam = new ArrayList<>();
         if (!(query == null || "".equals(query))) {
             queryParam.add(QUERY);
         }
@@ -179,7 +179,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         SearchParameters params = new SearchParameters(prefix + query, searchType);
         expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
         if (failure == null) {
-            List<Q> entities = new ArrayList<Q>();
+            List<Q> entities = new ArrayList<>();
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }

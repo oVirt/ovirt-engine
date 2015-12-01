@@ -50,7 +50,7 @@ public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetwork
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getEntities(boolean isDisplay,
             boolean isMigration,
             boolean isRequired) {
-        List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+        List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             if (isDisplay) {
                 entities.add(getEntity(i, isDisplay, isMigration, isRequired));

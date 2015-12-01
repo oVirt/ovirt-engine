@@ -229,7 +229,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsWhenCalledWithNewUserAttachments() throws Exception {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<NetworkAttachment>());
+        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
         Guid userNetworkAttachmentNicId = interfaceWithAttachedClusterNetworkA.getId();
         NetworkAttachment userNetworkAttachment = createNetworkAttachment(clusterNetworkA);
@@ -312,7 +312,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsForInterfaceWithoutNetworkNothingIsPersisted() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<NetworkAttachment>());
+        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
         HostNetworkAttachmentsPersister persister = createPersister(
             Collections.<NetworkAttachment> emptyList(),
             interfaceWithoutAttachedNetwork);
@@ -327,7 +327,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsForNotReportedNetworkAttachmentIsNotPersisted() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<NetworkAttachment>());
+        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
         VdsNetworkInterface interfaceWithUnreportedNetwork = createVdsNetworkInterface("interfaceWithUnreportedNetwork");
         interfaceWithUnreportedNetwork.setNetworkName("unreportedNetwork");
@@ -346,7 +346,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
     @Test
     public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
-        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<NetworkAttachment>());
+        when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
         createPersister(Collections.<NetworkAttachment>emptyList(), interfaceWithAttachedClusterNetworkA)
                 .persistNetworkAttachments();

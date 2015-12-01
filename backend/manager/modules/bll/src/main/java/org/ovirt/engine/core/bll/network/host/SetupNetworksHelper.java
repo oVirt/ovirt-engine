@@ -817,7 +817,7 @@ public class SetupNetworksHelper {
      */
     private void extractBondIfModified(VdsNetworkInterface iface, String bondName) {
         if (!bonds.containsKey(bondName)) {
-            bonds.put(bondName, new ArrayList<VdsNetworkInterface>());
+            bonds.put(bondName, new ArrayList<>());
         }
 
         if (bondWasModified(iface)) {

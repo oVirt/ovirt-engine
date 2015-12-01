@@ -80,7 +80,7 @@ public class StorageLogicalUnitMapper {
         if (model.isSetLogicalUnits() && model.getLogicalUnits().isSetLogicalUnits()) {
             LogicalUnit logicalUnit = model.getLogicalUnits().getLogicalUnits().get(0);
             entity.setLUN_id(logicalUnit.getId());
-            ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+            ArrayList<StorageServerConnections> connections = new ArrayList<>();
             connections.add(map(logicalUnit, null));
             entity.setLunConnections(connections);
         }

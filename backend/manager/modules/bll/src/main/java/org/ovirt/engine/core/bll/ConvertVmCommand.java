@@ -24,8 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -262,8 +260,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     private void addImportedDevices(VM vm) {
         VmStatic vmStatic = vm.getStaticData();
         // Disk and network interface devices were already added
-        vmStatic.setImages(new ArrayList<DiskImage>());
-        vmStatic.setInterfaces(new ArrayList<VmNetworkInterface>());
+        vmStatic.setImages(new ArrayList<>());
+        vmStatic.setInterfaces(new ArrayList<>());
         ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         VmDeviceUtils.addImportedDevices(vmStatic, false);
     }

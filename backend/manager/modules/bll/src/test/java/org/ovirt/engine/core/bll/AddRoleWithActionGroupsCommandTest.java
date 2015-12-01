@@ -41,7 +41,7 @@ public class AddRoleWithActionGroupsCommandTest {
     public AddRoleWithActionGroupsCommandTest(boolean shouldBeInheritable, List<ActionGroup> groups) {
         this.shouldBeInheritable = shouldBeInheritable;
 
-        params = new RoleWithActionGroupsParameters(new Role(), new ArrayList<ActionGroup>(groups));
+        params = new RoleWithActionGroupsParameters(new Role(), new ArrayList<>(groups));
         command = new AddRoleWithActionGroupsCommand<RoleWithActionGroupsParameters>(params) {
             @Override
             protected void initUser() {

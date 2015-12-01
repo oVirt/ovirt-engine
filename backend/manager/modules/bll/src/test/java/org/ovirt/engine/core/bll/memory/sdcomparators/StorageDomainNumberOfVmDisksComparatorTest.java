@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainComparatorAbstractTest {
 
@@ -54,7 +53,7 @@ public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainCom
 
     private void attachVmDisksToStorageDomain(StorageDomain storageDomain, DiskImage... vmDisks) {
         for (DiskImage diskImage : vmDisks) {
-            diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
+            diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
         }
     }
 

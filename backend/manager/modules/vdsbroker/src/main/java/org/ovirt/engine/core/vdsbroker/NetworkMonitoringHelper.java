@@ -36,7 +36,7 @@ public class NetworkMonitoringHelper {
                 Set<String> networks = brokenNicsToNetworks.get(baseNicName);
 
                 if (networks == null) {
-                    networks = new HashSet<String>();
+                    networks = new HashSet<>();
                     brokenNicsToNetworks.put(baseNicName, networks);
                 }
 

@@ -169,7 +169,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     private void setUpHooksQueryExpectations(Object failure) {
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
         expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
-        List<GlusterHookEntity> entities = new ArrayList<GlusterHookEntity>();
+        List<GlusterHookEntity> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {

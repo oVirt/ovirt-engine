@@ -12,7 +12,7 @@ public final class GlusterVolumeOptionsInfoReturnForXmlRpc extends StatusReturnF
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("volumeOptionsDefaults")]
-    public Set<GlusterVolumeOptionInfo> optionsHelpSet = new TreeSet<GlusterVolumeOptionInfo>();
+    public Set<GlusterVolumeOptionInfo> optionsHelpSet = new TreeSet<>();
 
     @SuppressWarnings("unchecked")
     public GlusterVolumeOptionsInfoReturnForXmlRpc(Map<String, Object> innerMap) {

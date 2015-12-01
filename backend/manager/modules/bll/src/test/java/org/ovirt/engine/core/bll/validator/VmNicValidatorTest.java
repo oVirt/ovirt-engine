@@ -46,7 +46,7 @@ public class VmNicValidatorTest {
 
     private static final Guid VNIC_PROFILE_ID = Guid.newGuid();
     private static final String CLUSTER_VERSION = "7";
-    private static final ArrayList<String> NETWORK_DEVICES = new ArrayList<String>(
+    private static final ArrayList<String> NETWORK_DEVICES = new ArrayList<>(
             Arrays.asList("rtl8139", "pv"));
 
     private static final String CLUSTER_VERSION_REPLACEMENT =

@@ -118,7 +118,7 @@ public class NicLabelValidatorTest {
         HostSetupNetworksParameters params =
                 setLabelsOnParams(createSet(createNicLabel("lbl1"), createNicLabel("lbl1")), createSet("lbl2"));
 
-        asserThatLabelAppearsOnlyOnceInParamsFailed(createNicLabelValidator(params), new HashSet<String>(
+        asserThatLabelAppearsOnlyOnceInParamsFailed(createNicLabelValidator(params), new HashSet<>(
                 Arrays.asList("lbl1")));
     }
 
@@ -127,13 +127,13 @@ public class NicLabelValidatorTest {
         HostSetupNetworksParameters params =
                 setLabelsOnParams(createSet(createNicLabel("lbl1")), createSet("lbl1"));
 
-        asserThatLabelAppearsOnlyOnceInParamsFailed(createNicLabelValidator(params), new HashSet<String>(
+        asserThatLabelAppearsOnlyOnceInParamsFailed(createNicLabelValidator(params), new HashSet<>(
                 Arrays.asList("lbl1")));
     }
 
     @SuppressWarnings("unchecked")
     private <T> Set<T> createSet(T... values) {
-        return new HashSet<T>(Arrays.asList(values));
+        return new HashSet<>(Arrays.asList(values));
     }
 
     private HostSetupNetworksParameters setLabelsOnParams(Set<NicLabel> labels, Set<String> removedLabels) {
@@ -216,7 +216,7 @@ public class NicLabelValidatorTest {
         bondWithSlave.setSlaves(Arrays.asList(slave.getName()));
 
         Bond updatedBond = new Bond(bondWithSlave.getName());
-        updatedBond.setSlaves(new ArrayList<String>());
+        updatedBond.setSlaves(new ArrayList<>());
         params.setBonds(Arrays.asList((updatedBond)));
 
         NicLabel nicLabel = new NicLabel();
@@ -278,7 +278,7 @@ public class NicLabelValidatorTest {
     public void labelBeingAttachedToValidBondExistingBondValid() {
         Bond bond = new Bond("bond");
         bond.setSlaves(Arrays.asList("slave1", "slave2"));
-        List<VdsNetworkInterface> nics = new ArrayList<VdsNetworkInterface>(Arrays.asList(bond));
+        List<VdsNetworkInterface> nics = new ArrayList<>(Arrays.asList(bond));
 
         NicLabel nicLabel = new NicLabel(bond.getId(), bond.getName(), "lbl1");
         assertThat(createNicLabelValidator(nics).labelBeingAttachedToValidBond(nicLabel), isValid());
@@ -292,7 +292,7 @@ public class NicLabelValidatorTest {
         HostSetupNetworksParameters params = createHostSetupNetworksParams();
         params.getBonds().add(bond);
         NicLabel nicLabel = new NicLabel(bond.getId(), bond.getName(), "lbl1");
-        assertThat(createNicLabelValidator(params, new ArrayList<VdsNetworkInterface>()).labelBeingAttachedToValidBond(nicLabel),
+        assertThat(createNicLabelValidator(params, new ArrayList<>()).labelBeingAttachedToValidBond(nicLabel),
                 isValid());
     }
 
@@ -311,7 +311,7 @@ public class NicLabelValidatorTest {
 
         HostSetupNetworksParameters params = createHostSetupNetworksParams();
         Bond updatedBond = new Bond(existingBond.getName());
-        updatedBond.setSlaves(new ArrayList<String>());
+        updatedBond.setSlaves(new ArrayList<>());
         params.getBonds().add(updatedBond);
 
         assertLabelBeingAttachedToValidBondFailed(params, existingBond);

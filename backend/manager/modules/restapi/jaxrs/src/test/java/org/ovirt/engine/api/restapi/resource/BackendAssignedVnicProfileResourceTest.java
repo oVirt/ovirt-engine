@@ -78,7 +78,7 @@ public class BackendAssignedVnicProfileResourceTest
     }
 
     protected List<VnicProfileView> getEntityList() {
-        List<VnicProfileView> entities = new ArrayList<VnicProfileView>();
+        List<VnicProfileView> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

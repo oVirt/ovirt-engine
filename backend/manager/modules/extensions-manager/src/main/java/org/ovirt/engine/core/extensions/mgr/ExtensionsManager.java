@@ -127,10 +127,9 @@ public class ExtensionsManager extends Observable {
         }
     }
 
-    private static final Map<String, BindingsLoader> bindingsLoaders = new HashMap<String, BindingsLoader>() {
-        {
-            put(Base.ConfigBindingsMethods.JBOSSMODULE, new JBossBindingsLoader());
-        }
+    private static final Map<String, BindingsLoader> bindingsLoaders = new HashMap<>();
+    static {
+        bindingsLoaders.put(Base.ConfigBindingsMethods.JBOSSMODULE, new JBossBindingsLoader());
     };
 
     private ConcurrentMap<String, ExtensionEntry> loadedEntries = new ConcurrentHashMap<>();
@@ -175,7 +174,7 @@ public class ExtensionsManager extends Observable {
     }
 
     private Collection<String> splitString(String s) {
-        return new ArrayList<String>(Arrays.asList(s.trim().split("\\s*,\\s*", 0)));
+        return new ArrayList<>(Arrays.asList(s.trim().split("\\s*,\\s*", 0)));
     }
 
     private synchronized String loadImpl(Properties props, File confFile) {

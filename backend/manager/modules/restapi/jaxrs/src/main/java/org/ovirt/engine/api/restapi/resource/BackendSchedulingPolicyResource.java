@@ -30,13 +30,13 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
     }
 
     protected ClusterPolicy getSchedulingPolicy() {
-        return getEntity(new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class), false);
+        return getEntity(new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class), false);
     }
 
     @Override
     public SchedulingPolicy update(SchedulingPolicy incoming) {
         return performUpdate(incoming,
-                new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class),
                 VdcActionType.EditClusterPolicy,
                 new UpdateParametersProvider());
     }

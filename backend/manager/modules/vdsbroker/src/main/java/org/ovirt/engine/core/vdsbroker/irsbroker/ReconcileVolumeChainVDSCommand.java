@@ -21,7 +21,7 @@ public class ReconcileVolumeChainVDSCommand<P extends ReconcileVolumeChainVDSCom
                 getParameters().getImageGroupId().toString(),
                 getParameters().getImageId().toString());
         proceedProxyReturnValue();
-        ArrayList<Guid> tempRetValue = new ArrayList<Guid>(volumeListReturn.getVolumeList().length);
+        ArrayList<Guid> tempRetValue = new ArrayList<>(volumeListReturn.getVolumeList().length);
         for (String id : volumeListReturn.getVolumeList()) {
             tempRetValue.add(new Guid(id));
         }

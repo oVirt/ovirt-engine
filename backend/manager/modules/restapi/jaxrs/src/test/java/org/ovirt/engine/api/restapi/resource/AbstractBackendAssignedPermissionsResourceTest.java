@@ -110,7 +110,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     }
 
     protected ArrayList<DbUser> getUsers() {
-        ArrayList<DbUser> users = new ArrayList<DbUser>();
+        ArrayList<DbUser> users = new ArrayList<>();
         for (int i=0; i < NAMES.length; i++) {
             users.add(getUserByIdx(i));
         }

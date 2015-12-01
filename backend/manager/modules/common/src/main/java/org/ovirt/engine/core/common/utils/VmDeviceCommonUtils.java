@@ -209,7 +209,7 @@ public class VmDeviceCommonUtils {
     }
 
     private static List<VmDevice> getPluggedManagedInterfaces(List<VmDevice> devices) {
-        List<VmDevice> result = new ArrayList<VmDevice>();
+        List<VmDevice> result = new ArrayList<>();
         for (VmDevice device : devices) {
             if ((isHostDevInterface(device) || isBridge(device)) && device.getIsPlugged() && device.getIsManaged()) {
                 result.add(device);
@@ -224,7 +224,7 @@ public class VmDeviceCommonUtils {
             return pluggedInterfaces;
         }
 
-        final Map<Guid, String> deviceIdToIfaceName = new HashMap<Guid, String>();
+        final Map<Guid, String> deviceIdToIfaceName = new HashMap<>();
         for (VmNetworkInterface iface : vm.getInterfaces()) {
             deviceIdToIfaceName.put(iface.getId(), iface.getName());
         }
@@ -273,7 +273,7 @@ public class VmDeviceCommonUtils {
             List<VmDevice> devices,
             int bootOrder,
             boolean isOldCluster) {
-        LinkedList<VmDevice> diskDevices = new LinkedList<VmDevice>();
+        LinkedList<VmDevice> diskDevices = new LinkedList<>();
         for (VmDevice device : devices) {
             if (isDisk(device)) {
                 Guid id = device.getDeviceId();

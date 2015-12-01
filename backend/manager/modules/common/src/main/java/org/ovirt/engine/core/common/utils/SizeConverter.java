@@ -32,7 +32,7 @@ public class SizeConverter {
         private long unitWeight;
         private String unitInString;
 
-        private static List<Pair<Long, SizeUnit>> weightToUnit = new ArrayList<Pair<Long, SizeUnit>>();
+        private static List<Pair<Long, SizeUnit>> weightToUnit = new ArrayList<>();
 
         private SizeUnit(long unitWeight, String unitString) {
             this.unitWeight = unitWeight;
@@ -41,7 +41,7 @@ public class SizeConverter {
 
         static {
             for (SizeUnit unit : SizeUnit.values()) {
-                weightToUnit.add(new Pair<Long, SizeConverter.SizeUnit>(unit.getUnitWeight(), unit));
+                weightToUnit.add(new Pair<>(unit.getUnitWeight(), unit));
             }
             Collections.sort(weightToUnit, Collections.reverseOrder(new Comparator<Pair <Long, SizeUnit>>() {
 
@@ -83,11 +83,11 @@ public class SizeConverter {
     public static Pair<SizeUnit, Double> autoConvert(long size, SizeUnit inUnit) {
         for (Pair<Long, SizeUnit> currentUnitPair : SizeUnit.weightToUnit) {
             if (size / Math.pow(CONVERT_FACTOR, currentUnitPair.getFirst() - inUnit.getUnitWeight()) >= 1) {
-                return new Pair<SizeConverter.SizeUnit, Double>(currentUnitPair.getSecond(),
+                return new Pair<>(currentUnitPair.getSecond(),
                         SizeConverter.convert(size, inUnit, currentUnitPair.getSecond()).doubleValue());
             }
         }
-        return new Pair<SizeConverter.SizeUnit, Double>(SizeUnit.BYTES, (double)size);
+        return new Pair<>(SizeUnit.BYTES, (double) size);
     }
 
     public static SizeUnit leastUnitInList(List<Pair<SizeUnit, Double>> operands) {
@@ -122,7 +122,7 @@ public class SizeConverter {
 
         for (Pair<SizeUnit, Double> operand : convertedOperands) {
             if(operand.getFirst() != finalUnit) {
-                operationReadyOperands.add(new Pair<SizeConverter.SizeUnit, Double>(finalUnit,
+                operationReadyOperands.add(new Pair<>(finalUnit,
                         convert(operand.getSecond().longValue(), operand.getFirst(), finalUnit).doubleValue()));
             } else {
                 operationReadyOperands.add(operand);

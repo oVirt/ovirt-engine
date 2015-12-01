@@ -514,7 +514,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         Collection<DiskImage> disksDummies = new LinkedList<>();
         for (Guid storageDomainId : getParameters().getImageToDestinationDomainMap().values()) {
             DiskImage diskImage = new DiskImage();
-            diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+            diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
             disksDummies.add(diskImage);
         }
         return disksDummies;

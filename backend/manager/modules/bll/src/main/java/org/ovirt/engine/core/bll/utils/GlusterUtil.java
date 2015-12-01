@@ -289,7 +289,7 @@ public class GlusterUtil {
 
     private List<VdsNetworkInterface> getVdsInterfaces(Guid vdsId) {
         List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vdsId);
-        return (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
+        return (interfaces == null) ? new ArrayList<>() : interfaces;
     }
 
     public boolean isVolumeThinlyProvisioned(GlusterVolumeEntity volume) {

@@ -31,7 +31,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String PASSWORD = "password";
     private static final String USER = "root";
     private static final String WRONG_PASSWORD = "wrong_password";
-    private static final Map<String, String> EXPECTED_MAP = new HashMap<String, String>();
+    private static final Map<String, String> EXPECTED_MAP = new HashMap<>();
     private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
 

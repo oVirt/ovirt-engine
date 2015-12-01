@@ -96,7 +96,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     }
 
     protected HashMap<Guid, Guid> getDiskToDestinationMap(Action action) {
-        HashMap<Guid, Guid> diskToDestinationMap = new HashMap<Guid, Guid>();
+        HashMap<Guid, Guid> diskToDestinationMap = new HashMap<>();
         if (action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDisks()) {
             for (Disk disk : action.getVm().getDisks().getDisks()) {
                 if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()

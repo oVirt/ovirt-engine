@@ -7,7 +7,7 @@ public enum DateEnumForSearch implements Identifiable {
     Yesterday(2);
 
     private int intValue;
-    private static final HashMap<Integer, DateEnumForSearch> mappings = new HashMap<Integer, DateEnumForSearch>();
+    private static final HashMap<Integer, DateEnumForSearch> mappings = new HashMap<>();
 
     static {
         for (DateEnumForSearch dateEnumForSearch : values()) {

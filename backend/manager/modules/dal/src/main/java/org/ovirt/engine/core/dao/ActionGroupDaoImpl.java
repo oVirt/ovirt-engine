@@ -25,8 +25,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
 
-    private static final ConcurrentMap<VdcActionType, ActionVersionMap> cache =
-            new ConcurrentHashMap<VdcActionType, ActionVersionMap>();
+    private static final ConcurrentMap<VdcActionType, ActionVersionMap> cache = new ConcurrentHashMap<>();
     private static final ActionVersionMap nullActionVersionMap = new ActionVersionMap(true);
 
     @Override

@@ -36,8 +36,8 @@ public class IscsiBond implements IVdcQueryable, BusinessEntity<Guid>, Nameable 
     private List<String> storageConnectionIds;
 
     public IscsiBond() {
-        networkIds = new LinkedList<Guid>();
-        storageConnectionIds = new LinkedList<String>();
+        networkIds = new LinkedList<>();
+        storageConnectionIds = new LinkedList<>();
     }
 
     public IscsiBond(Guid id, Guid storagePoolId, String name, String description) {

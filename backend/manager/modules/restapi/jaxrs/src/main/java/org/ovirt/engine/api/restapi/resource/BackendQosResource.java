@@ -37,9 +37,9 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
     @Override
     public Qos update(final Qos incoming) {
         QueryIdResolver<Guid> entityResolver =
-                new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class);
+                new QueryIdResolver<>(VdcQueryType.GetQosById, IdQueryParameters.class);
         final QosBase qosBase =
-                getEntity(new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class), true);
+                getEntity(new QueryIdResolver<>(VdcQueryType.GetQosById, IdQueryParameters.class), true);
         return performUpdate(incoming,
                 entityResolver,
                 updateActionTypeForQosType(qosBase.getQosType()),
@@ -47,7 +47,7 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
                     @Override
                     public VdcActionParametersBase getParameters(Qos model,
                             QosBase entity) {
-                        QosParametersBase<QosBase> parameters = new QosParametersBase<QosBase>();
+                        QosParametersBase<QosBase> parameters = new QosParametersBase<>();
                         parameters.setQosId(guid);
                         parameters.setQos(map(incoming, entity));
                         return parameters;
@@ -74,7 +74,7 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
         @Override
         public VdcActionParametersBase getParameters(Qos incoming,
                 QosBase entity) {
-            QosParametersBase<QosBase> parameters = new QosParametersBase<QosBase>();
+            QosParametersBase<QosBase> parameters = new QosParametersBase<>();
             parameters.setQosId(guid);
             parameters.setQos(map(incoming, entity));
             return parameters;

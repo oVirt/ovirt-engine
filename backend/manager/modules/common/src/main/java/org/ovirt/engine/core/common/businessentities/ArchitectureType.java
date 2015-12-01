@@ -19,8 +19,7 @@ public enum ArchitectureType implements Identifiable {
     ppcle(6);
 
     private int value;
-    private static final HashMap<Integer, ArchitectureType> valueToArchitecture =
-            new HashMap<Integer, ArchitectureType>();
+    private static final HashMap<Integer, ArchitectureType> valueToArchitecture = new HashMap<>();
 
     static {
         for (ArchitectureType architecture : values()) {

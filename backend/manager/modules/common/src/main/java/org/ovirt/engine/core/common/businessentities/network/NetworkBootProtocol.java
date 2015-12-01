@@ -13,7 +13,7 @@ public enum NetworkBootProtocol {
     private String displayName;
 
     static {
-        mappings = new HashMap<Integer, NetworkBootProtocol>();
+        mappings = new HashMap<>();
         for (NetworkBootProtocol error : values()) {
             mappings.put(error.getValue(), error);
         }

@@ -45,7 +45,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         setParentId(Guid.Empty);
         setCreationDate(new Date());
         setLastModifiedDate(getCreationDate());
-        snapshots = new ArrayList<DiskImage>();
+        snapshots = new ArrayList<>();
     }
 
     public Guid getImageId() {
@@ -377,7 +377,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     public void setQuotaId(Guid quotaId) {
-        quotaIds = new ArrayList<Guid>();
+        quotaIds = new ArrayList<>();
         quotaIds.add(quotaId);
     }
 
@@ -420,7 +420,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     public void setDiskProfileId(Guid diskProfileId) {
-        diskProfileIds = new ArrayList<Guid>();
+        diskProfileIds = new ArrayList<>();
         diskProfileIds.add(diskProfileId);
     }
 
@@ -440,16 +440,16 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setSize(diskImage.getSize());
         di.setBoot(diskImage.isBoot());
         if (diskImage.getQuotaIds() != null) {
-            di.setQuotaIds(new ArrayList<Guid>(diskImage.getQuotaIds()));
+            di.setQuotaIds(new ArrayList<>(diskImage.getQuotaIds()));
         }
         if (diskImage.getQuotaNames() != null) {
-            di.setQuotaNames(new ArrayList<String>(diskImage.getQuotaNames()));
+            di.setQuotaNames(new ArrayList<>(diskImage.getQuotaNames()));
         }
         if (diskImage.getDiskProfileIds() != null) {
-            di.setDiskProfileIds(new ArrayList<Guid>(diskImage.getDiskProfileIds()));
+            di.setDiskProfileIds(new ArrayList<>(diskImage.getDiskProfileIds()));
         }
         if (diskImage.getDiskProfileNames() != null) {
-            di.setDiskProfileNames(new ArrayList<String>(diskImage.getDiskProfileNames()));
+            di.setDiskProfileNames(new ArrayList<>(diskImage.getDiskProfileNames()));
         }
         di.setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
         di.setActive(diskImage.getActive());
@@ -469,7 +469,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setParentId(diskImage.getParentId());
         di.setImageStatus(diskImage.getImageStatus());
         di.setLastModified(new Date(diskImage.getLastModified().getTime()));
-        di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
+        di.storageIds = new ArrayList<>(diskImage.storageIds);
         di.setVmSnapshotId(diskImage.getVmSnapshotId());
         di.storagePath = diskImage.storagePath;
         di.setId(diskImage.getId());
@@ -486,7 +486,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.writeRateKbPerSec = diskImage.writeRateKbPerSec;
 
         // TODO: is it ok to use shallow copy here?!
-        di.snapshots = new ArrayList<DiskImage>(diskImage.snapshots);
+        di.snapshots = new ArrayList<>(diskImage.snapshots);
         di.actualDiskWithSnapthotsSize = diskImage.actualDiskWithSnapthotsSize;
         di.setCreationDate(new Date());
         di.setLastModified(new Date());

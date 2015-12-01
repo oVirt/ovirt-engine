@@ -46,7 +46,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         this.vmBase = vmBase;
         this.version = version;
         if (version.compareTo(Version.v3_1) < 0) {
-            diskAliasesMap = new HashMap<String, String>();
+            diskAliasesMap = new HashMap<>();
         }
         writeHeader();
     }

@@ -121,7 +121,7 @@ public class BackendStorageDomainTemplatesResourceTest
     }
 
     protected List<VmTemplate> setUpTemplates() {
-        List<VmTemplate> ret = new ArrayList<VmTemplate>();
+        List<VmTemplate> ret = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             ret.add(getEntity(i));
         }
@@ -129,9 +129,9 @@ public class BackendStorageDomainTemplatesResourceTest
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
-        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<VmTemplate, List<DiskImage>>();
+        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<>();
         for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new ArrayList<DiskImage>());
+            ret.put(getEntity(i), new ArrayList<>());
         }
         return ret;
     }

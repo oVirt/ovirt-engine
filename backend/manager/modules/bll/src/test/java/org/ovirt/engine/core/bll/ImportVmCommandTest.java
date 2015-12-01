@@ -88,7 +88,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         final int osId = 0;
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.put(osId, new HashMap<>());
         displayTypeMap.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
@@ -115,7 +115,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     void addBalloonToVm(VM vm) {
         Guid deviceId = Guid.newGuid();
-        Map<String, Object> specParams = new HashMap<String, Object>();
+        Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         VmDevice balloon = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
                 VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON.toString(), null, 0, specParams,
@@ -237,7 +237,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
-        ArrayList<Guid> sdIds = new ArrayList<Guid>(Collections.singletonList(Guid.newGuid()));
+        ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : parameters.getVm().getImages()) {
             image.setStorageIds(sdIds);
         }
@@ -271,8 +271,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         activeSnapshot.setDiskImages(Collections.singletonList(activeImage));
 
         v.setDiskMap(Collections.<Guid, Disk>singletonMap(activeImage.getId(), activeImage));
-        v.setImages(new ArrayList<DiskImage>(Arrays.asList(baseImage, activeImage)));
-        v.setSnapshots(new ArrayList<Snapshot>(Arrays.asList(baseSnapshot, activeSnapshot)));
+        v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
+        v.setSnapshots(new ArrayList<>(Arrays.asList(baseSnapshot, activeSnapshot)));
         v.setVdsGroupId(Guid.Empty);
 
         return v;
@@ -287,8 +287,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         DiskImage activeImage = createDiskImage(Guid.newGuid(), Guid.newGuid(), activeSnapshot.getId(), true);
         activeSnapshot.setDiskImages(Collections.singletonList(activeImage));
 
-        v.setImages(new ArrayList<DiskImage>(Collections.singletonList(activeImage)));
-        v.setSnapshots(new ArrayList<Snapshot>(Collections.singletonList(activeSnapshot)));
+        v.setImages(new ArrayList<>(Collections.singletonList(activeImage)));
+        v.setSnapshots(new ArrayList<>(Collections.singletonList(activeSnapshot)));
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
         v.setVdsGroupId(Guid.Empty);
 
@@ -431,9 +431,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         command.postConstruct();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setStorageIds(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<>());
         DiskImage diskImage2 = new DiskImage();
-        diskImage2.setStorageIds(new ArrayList<Guid>());
+        diskImage2.setStorageIds(new ArrayList<>());
         diskList.add(diskImage);
         diskList.add(diskImage2);
         DiskImage disk = command.getActiveVolumeDisk(diskList);

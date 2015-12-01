@@ -29,7 +29,7 @@ public final class IQNListReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private List<String> toList(Object[] objects) {
-        List<String> iqns = new ArrayList<String>(objects.length);
+        List<String> iqns = new ArrayList<>(objects.length);
         for (Object o : objects) {
             iqns.add((String) o);
         }

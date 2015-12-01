@@ -282,7 +282,7 @@ public class BackendHostNicsResourceTest
     }
 
     public static List<VdsNetworkInterface> setUpInterfaces() {
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
+        List<VdsNetworkInterface> ifaces = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             ifaces.add(getEntitySpecific(i));
         }
@@ -450,7 +450,7 @@ public class BackendHostNicsResourceTest
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
             network.setId(GUIDS[0]);
             network.setName("orcus");

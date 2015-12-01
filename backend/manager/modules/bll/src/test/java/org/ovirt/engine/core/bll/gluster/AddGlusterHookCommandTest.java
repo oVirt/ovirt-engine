@@ -68,7 +68,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     private GlusterHookEntity getHookEntityWithMissing() {
         GlusterHookEntity hook = getHookEntity();
-        List<GlusterServerHook> serverHooks = new ArrayList<GlusterServerHook>();
+        List<GlusterServerHook> serverHooks = new ArrayList<>();
         serverHooks.add(getGlusterServerHook(0, GlusterHookStatus.MISSING));
         serverHooks.add(getGlusterServerHook(1, GlusterHookStatus.MISSING));
         serverHooks.add(getGlusterServerHook(2, GlusterHookStatus.MISSING));

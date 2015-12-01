@@ -146,11 +146,11 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         LUNs lunExistsInDB = new LUNs();
         lunExistsInDB.setLUN_id(Guid.newGuid().toString());
 
-        lunsInput = new ArrayList<LUNs>();
+        lunsInput = new ArrayList<>();
         lunsInput.add(lunWithVG);
         lunsInput.add(lunExistsInDB);
 
-        lunsFromDb = new ArrayList<LUNs>();
+        lunsFromDb = new ArrayList<>();
         lunsFromDb.add(lunExistsInDB);
     }
 

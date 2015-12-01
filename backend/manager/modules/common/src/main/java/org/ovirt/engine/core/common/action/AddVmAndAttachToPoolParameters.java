@@ -22,7 +22,7 @@ public class AddVmAndAttachToPoolParameters extends AddVmParameters {
             String currentVmName,
             HashMap<Guid, DiskImage> diskInfoDestinationMap) {
         super(currVm);
-        setDiskInfoList(new ArrayList<DiskImage>(Arrays.asList(new DiskImage())));
+        setDiskInfoList(new ArrayList<>(Arrays.asList(new DiskImage())));
         this.poolId = poolId;
         this.currentVmName = currentVmName;
         setDiskInfoDestinationMap(diskInfoDestinationMap);

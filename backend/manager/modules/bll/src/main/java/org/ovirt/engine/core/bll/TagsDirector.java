@@ -43,11 +43,11 @@ public class TagsDirector {
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
-    private final Map<Guid, Tags> tagsMapByID = new CopyOnAccessMap<>(new HashMap<Guid, Tags>());
+    private final Map<Guid, Tags> tagsMapByID = new CopyOnAccessMap<>(new HashMap<>());
     /**
      * In memory nodes cache for quicker access to each node by name
      */
-    private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new HashMap<String, Tags>());
+    private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new HashMap<>());
 
     private static TagsDirector instance = new TagsDirector();
 

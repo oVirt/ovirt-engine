@@ -117,7 +117,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getDestinationHostList(),
-                        new ArrayList<String>(),
+                        new ArrayList<>(),
                         new VdsFreeMemoryChecker(this),
                         getCorrelationId());
         setDestinationVdsId(vdsToRunOn);

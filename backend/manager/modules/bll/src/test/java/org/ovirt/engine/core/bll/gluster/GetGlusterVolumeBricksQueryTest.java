@@ -24,7 +24,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
     GlusterVolumeEntity expected;
     GlusterBrickDao glusterBrickDaoMock;
     GlusterBrickEntity brickEntity;
-    List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+    List<GlusterBrickEntity> bricks = new ArrayList<>();
 
     @Before
     @Override

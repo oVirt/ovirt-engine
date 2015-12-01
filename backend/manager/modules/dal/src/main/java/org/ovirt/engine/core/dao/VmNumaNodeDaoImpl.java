@@ -37,7 +37,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         for (Pair<Guid, Integer> pair : numaNodesCpus) {
             if (!numaNodesCpusMap.containsKey(pair.getFirst())) {
-                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<Integer>());
+                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<>());
             }
 
             numaNodesCpusMap.get(pair.getFirst()).add(pair.getSecond());
@@ -92,7 +92,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         for (Pair<Guid, Integer> pair : numaNodesCpus) {
             if (!numaNodesCpusMap.containsKey(pair.getFirst())) {
-                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<Integer>());
+                numaNodesCpusMap.put(pair.getFirst(), new ArrayList<>());
             }
 
             numaNodesCpusMap.get(pair.getFirst()).add(pair.getSecond());
@@ -109,7 +109,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
 
         for (Pair<Guid, Pair<Guid, Pair<Boolean, Integer>>> pair : numaNodesAssign) {
             if (!vmNumaNodesPinMap.containsKey(pair.getFirst())) {
-                vmNumaNodesPinMap.put(pair.getFirst(), new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
+                vmNumaNodesPinMap.put(pair.getFirst(), new ArrayList<>());
             }
 
             vmNumaNodesPinMap.get(pair.getFirst()).add(pair.getSecond());
@@ -150,7 +150,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
                 @Override
                 public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
-                    return new Pair<Guid, Integer>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
+                    return new Pair<>(getGuid(rs, "numa_node_id"), rs.getInt("cpu_core_id"));
                 }
             };
 
@@ -160,7 +160,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
                 @Override
                 public Pair<Guid, Integer> mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
-                    return new Pair<Guid, Integer>(getGuid(rs, "assigned_vm_numa_node_id"),
+                    return new Pair<>(getGuid(rs, "assigned_vm_numa_node_id"),
                             rs.getInt("last_run_in_vds_numa_node_index"));
                 }
             };

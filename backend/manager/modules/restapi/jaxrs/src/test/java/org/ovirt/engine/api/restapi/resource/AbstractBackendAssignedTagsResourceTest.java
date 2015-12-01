@@ -165,7 +165,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     static List<Tags> setUpTags() {
-        List<Tags> tags = new ArrayList<Tags>();
+        List<Tags> tags = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             tags.add(new Tags(DESCRIPTIONS[i], null, false, GUIDS[i], NAMES[i]));
         }

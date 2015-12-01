@@ -99,7 +99,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
         affinityGroup = new AffinityGroup();
         affinityGroup.setName(AFFINITY_GROUP_NAME);
         affinityGroup.setClusterId(clusterId);
-        affinityGroup.setEntityIds(new ArrayList<Guid>());
+        affinityGroup.setEntityIds(new ArrayList<>());
         return affinityGroup;
     }
 }

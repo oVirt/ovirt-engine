@@ -16,7 +16,7 @@ public enum SerialNumberPolicy {
 
     private int value;
 
-    private static Map<Integer, SerialNumberPolicy> mappings = new HashMap<Integer, SerialNumberPolicy>();
+    private static Map<Integer, SerialNumberPolicy> mappings = new HashMap<>();
     static {
         for (SerialNumberPolicy enumValue : values()) {
             mappings.put(enumValue.value, enumValue);

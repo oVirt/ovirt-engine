@@ -47,7 +47,7 @@ public class Entities {
      */
     public static <E extends Nameable> Map<String, E> entitiesByName(Collection<E> entities) {
         if (entities != null) {
-            Map<String, E> map = new HashMap<String, E>();
+            Map<String, E> map = new HashMap<>();
             for (E e : entities) {
                 map.put(e.getName(), e);
             }
@@ -59,7 +59,7 @@ public class Entities {
 
     public static <E extends StorageServerConnections> Map<String, E> connectionsByIQN(List<E> entityList) {
         if (entityList != null) {
-            Map<String, E> map = new HashMap<String, E>();
+            Map<String, E> map = new HashMap<>();
             for (E e : entityList) {
                 map.put(e.getiqn(), e);
             }
@@ -71,7 +71,7 @@ public class Entities {
 
     public static <E extends VmNetworkInterface> Map<String, E> vmInterfacesByNetworkName(List<E> entityList) {
         if (entityList != null) {
-            Map<String, E> map = new HashMap<String, E>();
+            Map<String, E> map = new HashMap<>();
             for (E e : entityList) {
                 map.put(e.getNetworkName(), e);
             }
@@ -86,7 +86,7 @@ public class Entities {
             return Collections.emptyMap();
         }
 
-        Map<Guid, List<E>> map = new HashMap<Guid, List<E>>();
+        Map<Guid, List<E>> map = new HashMap<>();
         for (E vnic : vnics) {
             if (!map.containsKey(vnic.getVmId())) {
                 map.put(vnic.getVmId(), new ArrayList<E>());
@@ -100,7 +100,7 @@ public class Entities {
 
     public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> entityList) {
         if (entityList != null) {
-            Map<String, E> map = new HashMap<String, E>();
+            Map<String, E> map = new HashMap<>();
             for (E e : entityList) {
                 if (e.getNetworkName() != null) {
                     map.put(e.getNetworkName(), e);
@@ -128,7 +128,7 @@ public class Entities {
 
     public static <E extends Nameable> Set<String> objectNames(Collection<E> entities) {
         if (entities != null && !entities.isEmpty()) {
-            Set<String> names = new HashSet<String>();
+            Set<String> names = new HashSet<>();
             for (E e : entities) {
                 if (e != null) {
                     names.add(e.getName());
@@ -142,7 +142,7 @@ public class Entities {
 
     public static <F extends Serializable, B extends BusinessEntity<F>> Map<F, B> businessEntitiesById(Collection<B> entities) {
         if (entities != null) {
-            Map<F, B> map = new HashMap<F, B>();
+            Map<F, B> map = new HashMap<>();
             for (B b : entities) {
                 map.put(b.getId(), b);
             }
@@ -188,7 +188,7 @@ public class Entities {
     }
 
     public static <B, G extends B> List<B> upcast(List<G> entities) {
-        List<B> baseEntities = new ArrayList<B>(entities.size());
+        List<B> baseEntities = new ArrayList<>(entities.size());
         for (G entity : entities) {
             baseEntities.add(entity);
         }
@@ -197,7 +197,7 @@ public class Entities {
     }
 
     public static <E extends BusinessEntity<I>, I extends Serializable> List<I> getIds(List<E> entities) {
-        List<I> ids = new ArrayList<I>(entities.size());
+        List<I> ids = new ArrayList<>(entities.size());
         for (E entity : entities) {
             ids.add(entity.getId());
         }

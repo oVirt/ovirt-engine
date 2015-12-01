@@ -31,7 +31,7 @@ public class DirectoryEntry implements IVdcQueryable {
         this.id = id;
         this.name = name;
         this.status = DirectoryEntryStatus.UNAVAILABLE;
-        this.groups = new ArrayList<DirectoryGroup>(1);
+        this.groups = new ArrayList<>(1);
     }
 
     public String getNamespace() {
@@ -77,7 +77,7 @@ public class DirectoryEntry implements IVdcQueryable {
 
     public List<DirectoryGroup> getGroups() {
         if (groups == null) {
-            groups = new ArrayList<DirectoryGroup>();
+            groups = new ArrayList<>();
         }
         return groups;
     }

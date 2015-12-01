@@ -87,7 +87,7 @@ public class GlusterHookSyncJobTest {
         doReturn(clusterDao).when(hookSyncJob).getClusterDao();
         doReturn(hooksDao).when(hookSyncJob).getHooksDao();
 
-        List<VDSGroup> clusters = new ArrayList<VDSGroup>();
+        List<VDSGroup> clusters = new ArrayList<>();
         clusters.add(createCluster(0));
         clusters.add(createCluster(1)); //to check for empty cluster
 
@@ -132,7 +132,7 @@ public class GlusterHookSyncJobTest {
     }
 
     private List<GlusterHookEntity> getHooksList(int listCount, boolean setIds) {
-        List<GlusterHookEntity> hookList = new ArrayList<GlusterHookEntity>();
+        List<GlusterHookEntity> hookList = new ArrayList<>();
         for (int i=0; i< listCount; i++) {
             hookList.add(getHook( i , setIds));
         }
@@ -180,7 +180,7 @@ public class GlusterHookSyncJobTest {
         };
     }
     private List<VDS> getServers() {
-        List<VDS> vdsList = new ArrayList<VDS>();
+        List<VDS> vdsList = new ArrayList<>();
         vdsList.add(createServer(SERVER_GUIDS[0], "HOST-0"));
         vdsList.add(createServer(SERVER_GUIDS[1], "HOST-1"));
         return vdsList;

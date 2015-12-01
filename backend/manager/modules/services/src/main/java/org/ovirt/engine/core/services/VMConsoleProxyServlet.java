@@ -65,7 +65,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                 if (StringUtils.isNotEmpty(profile.getSshPublicKey())) {
                     for (String publicKey : StringUtils.split(profile.getSshPublicKey(), "\n")) {
                         if (StringUtils.isNotEmpty(publicKey)) {
-                            Map<String, String> jsonUser = new HashMap<String, String>();
+                            Map<String, String> jsonUser = new HashMap<>();
 
                             jsonUser.put("entityid", profile.getUserId().toString());
                             jsonUser.put("entity", profile.getLoginName());
@@ -109,7 +109,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                 if (retVms != null) {
                     List<VM> vmsList = retVms.getReturnValue();
                     for (VM vm : vmsList) {
-                        Map<String, String> jsonVm = new HashMap<String, String>();
+                        Map<String, String> jsonVm = new HashMap<>();
                         if (vm.getRunOnVds() != null) {
                             // TODO: avoid one query per loop. Bulk query?
                             VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId,
@@ -155,7 +155,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
     }
 
     private Map<String, Object> buildResult(String content_type, String content_id, Object content) {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         result.put("version", "1");
         result.put("content", content_type);
         result.put(content_id, content);

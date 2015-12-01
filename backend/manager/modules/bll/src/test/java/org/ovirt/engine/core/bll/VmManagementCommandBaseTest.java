@@ -25,7 +25,7 @@ public class VmManagementCommandBaseTest {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
-        vmStatic.setDedicatedVmForVdsList(new LinkedList<Guid>());
+        vmStatic.setDedicatedVmForVdsList(new LinkedList<>());
         Assert.assertFalse(test.isCpuPinningValid("0#0", vmStatic));
         Assert.assertFalse(test.getReturnValue()
                 .getCanDoActionMessages()

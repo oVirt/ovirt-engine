@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondResource
     extends AbstractBackendActionableResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
@@ -32,7 +31,7 @@ public class BackendIscsiBondResource
     @Override
     public IscsiBond update(IscsiBond iscsiBond) {
         return performUpdate(iscsiBond,
-                new QueryIdResolver<Guid>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class),
                 VdcActionType.EditIscsiBond,
                 new ParametersProvider<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>() {
                     @Override

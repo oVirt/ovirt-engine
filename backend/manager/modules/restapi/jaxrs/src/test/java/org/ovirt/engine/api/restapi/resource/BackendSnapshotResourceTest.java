@@ -56,7 +56,7 @@ public class BackendSnapshotResourceTest
 
     @Test
     public void testGetWithPopulate() throws Exception {
-        List<String> populates = new ArrayList<String>();
+        List<String> populates = new ArrayList<>();
         populates.add("true");
         String ovfData = "data";
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot();
@@ -83,7 +83,7 @@ public class BackendSnapshotResourceTest
     //empty list of snapshots returned from Backend.
     public void testGetNotFound_1() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(new ArrayList<org.ovirt.engine.core.common.businessentities.Snapshot>());
+        setUpGetEntityExpectations(new ArrayList<>());
         control.replay();
         try {
             resource.get();

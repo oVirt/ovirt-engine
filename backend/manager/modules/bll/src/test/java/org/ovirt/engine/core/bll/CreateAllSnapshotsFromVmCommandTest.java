@@ -66,7 +66,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
-        cmd = spy(new CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters>(params));
+        cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params));
         doReturn(true).when(vm).isManagedVm();
         doReturn(vm).when(cmd).getVm();
         doReturn(vmValidator).when(cmd).createVmValidator();
@@ -351,7 +351,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private static List<DiskImage> getNonEmptyDiskList() {
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage newDiskImage = new DiskImage();
-        newDiskImage.setStorageIds(new ArrayList<Guid>());
+        newDiskImage.setStorageIds(new ArrayList<>());
         diskList.add(newDiskImage);
         return diskList;
     }

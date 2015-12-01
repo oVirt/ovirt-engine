@@ -19,7 +19,7 @@ public class PostgresSqlInjectionChecker extends SqlInjectionChecker {
 
     @Override
     protected HashSet<String> getCommentExpressions() {
-        HashSet<String> commentExpressions = new HashSet<String>();
+        HashSet<String> commentExpressions = new HashSet<>();
         for (String s : POSTGRES_SQL_COMMENT_INDICATORS) {
             commentExpressions.add(s);
         }
@@ -28,7 +28,7 @@ public class PostgresSqlInjectionChecker extends SqlInjectionChecker {
 
     @Override
     protected HashSet<String> getInjectionFunctions() {
-        HashSet<String> functionExpressions = new HashSet<String>();
+        HashSet<String> functionExpressions = new HashSet<>();
         for (String s : POSTGRES_SQL_FUNCTIONS) {
             functionExpressions.add(s);
         }

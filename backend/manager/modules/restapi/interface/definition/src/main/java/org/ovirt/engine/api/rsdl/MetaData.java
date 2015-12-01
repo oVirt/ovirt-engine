@@ -7,7 +7,7 @@ public class MetaData {
 
     public MetaData() {
         super();
-        this.actions = new LinkedList<Action>();
+        this.actions = new LinkedList<>();
     }
 
     private List<Action> actions;

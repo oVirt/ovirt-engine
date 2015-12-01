@@ -233,8 +233,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities =
-                new ArrayList<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile>();
+        List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

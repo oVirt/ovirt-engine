@@ -52,7 +52,7 @@ public class VdsHooksParser {
         int endIndex = -1;
         StringBuilder keyBuilder = new StringBuilder();
         Object value = null;
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<>();
         ParsingState state = ParsingState.START_MAP;
         // Goes over all the characters starting at one position after the opening "{"
         for (int counter = startIndex + 1; counter < chars.length; counter++) {

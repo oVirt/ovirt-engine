@@ -33,13 +33,12 @@ import org.ovirt.engine.core.compat.TimeSpan;
  */
 public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implements IConditionFieldAutoCompleter {
 
-    protected final Map<String, List<ValueValidationFunction>> validationDict =
-            new HashMap<String, List<ValueValidationFunction>>();
-    private final Map<String, Class<?>> typeDict = new HashMap<String, Class<?>>();
-    protected final Map<String, String> columnNameDict = new HashMap<String, String>();
-    protected final Map<String, String> sortableFieldDict = new HashMap<String, String>();
-    protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<String>();
-    protected Set<String> verbsWithMultipleValues = new HashSet<String>();
+    protected final Map<String, List<ValueValidationFunction>> validationDict = new HashMap<>();
+    private final Map<String, Class<?>> typeDict = new HashMap<>();
+    protected final Map<String, String> columnNameDict = new HashMap<>();
+    protected final Map<String, String> sortableFieldDict = new HashMap<>();
+    protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<>();
+    protected Set<String> verbsWithMultipleValues = new HashSet<>();
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
@@ -84,7 +83,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     protected void buildBasicValidationTable() {
         for (String key : verbs) {
-            final List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>();
+            final List<ValueValidationFunction> curList = new ArrayList<>();
             final Class<?> curType = typeDict.get(key);
             if (curType == BigDecimal.class) {
                 curList.add(validDecimal);
@@ -379,7 +378,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     @Override
     public String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
-        Pair<String, String> pair = new Pair<String, String>();
+        Pair<String, String> pair = new Pair<>();
         pair.setFirst(customizedRelation);
         pair.setSecond(customizedValue);
         formatValue(fieldName, pair, caseSensitive);

@@ -27,7 +27,7 @@ public class VolumeStatisticalQuery extends AbstractStatisticalQuery<GlusterVolu
     public List<Statistic> getStatistics(GlusterVolumeEntity entity) {
         GlusterVolumeSizeInfo sizeInfo = entity.getAdvancedDetails().getCapacityInfo();
         if (sizeInfo == null) {
-            return new ArrayList<Statistic>();
+            return new ArrayList<>();
         }
         return asList(setDatum(clone(MEM_TOTAL_SIZE), sizeInfo.getTotalSize()),
                 setDatum(clone(MEM_FREE_SIZE), sizeInfo.getFreeSize()),

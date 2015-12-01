@@ -341,7 +341,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                     if (domainInfo == null || domainInfo.getStorageDomainType().isDataDomain()) {
                         returnValue.setFirst(false);
                         if (returnValue.getSecond() == null) {
-                            returnValue.setSecond(new ArrayList<StorageDomainStatic>());
+                            returnValue.setSecond(new ArrayList<>());
                         }
                         returnValue.getSecond().add(domainInfo);
                     }

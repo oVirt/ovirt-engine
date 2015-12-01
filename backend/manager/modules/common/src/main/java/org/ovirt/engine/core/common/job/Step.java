@@ -88,7 +88,7 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
     public Step() {
         status = JobExecutionStatus.STARTED;
         externalSystem = new ExternalSystem();
-        steps = new ArrayList<Step>();
+        steps = new ArrayList<>();
     }
 
     public Step(StepEnum stepType) {
@@ -98,7 +98,7 @@ public class Step implements IVdcQueryable, BusinessEntity<Guid> {
         this.startTime = new Date();
         status = JobExecutionStatus.STARTED;
         externalSystem = new ExternalSystem();
-        steps = new ArrayList<Step>();
+        steps = new ArrayList<>();
     }
 
     public Step(StepEnum stepType, String description) {

@@ -194,7 +194,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         assertEquals(vdsNumaNode2, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
         assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
 
-        List<Guid> vmNodeList = new ArrayList<Guid>();
+        List<Guid> vmNodeList = new ArrayList<>();
         vmNodeList.add(vmNumaNode1);
         vmNodeList.add(vmNumaNode2);
         vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(vmNodeList);
@@ -276,7 +276,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
         assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
 
-        List<Guid> vmNodeList = new ArrayList<Guid>();
+        List<Guid> vmNodeList = new ArrayList<>();
         vmNodeList.add(vmNumaNode1);
         vmNodeList.add(vmNumaNode2);
         vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(vmNodeList);
@@ -358,7 +358,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
         assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
         assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
 
-        List<Guid> vmNodeList = new ArrayList<Guid>();
+        List<Guid> vmNodeList = new ArrayList<>();
         vmNodeList.add(vmNumaNode1);
         vmNodeList.add(vmNumaNode2);
         vmNumaNodeDao.massRemoveNumaNodeByNumaNodeId(vmNodeList);

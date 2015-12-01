@@ -97,7 +97,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             ""));
 
             if (vdsReturnValue.getSucceeded()) {
-                getParameters().setVdsmTaskIds(new ArrayList<Guid>());
+                getParameters().setVdsmTaskIds(new ArrayList<>());
                 getParameters().getVdsmTaskIds().add(
                         createTask(taskId,
                         vdsReturnValue.getCreationInfo(),

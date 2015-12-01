@@ -20,7 +20,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     public CreateVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
-        createInfo = new HashMap<String, Object>();
+        createInfo = new HashMap<>();
         builder = createBuilder();
     }
 

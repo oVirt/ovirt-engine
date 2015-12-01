@@ -212,7 +212,7 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> setUpStorageDomains() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> entities = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

@@ -22,7 +22,7 @@ public class ConfigKey {
     private final boolean deprecated;
     private boolean reloadable;
     private List<String> validValues;
-    private static final List<String> EMPTY_LIST = new ArrayList<String>(0);
+    private static final List<String> EMPTY_LIST = new ArrayList<>(0);
     private String version;
     private ValueHelper valueHelper;
 

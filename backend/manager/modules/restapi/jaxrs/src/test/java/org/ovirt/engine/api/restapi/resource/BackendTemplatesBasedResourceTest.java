@@ -107,7 +107,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     protected void testListAllConsoleAware(boolean allContent) throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         if (allContent) {
-            List<String> populates = new ArrayList<String>();
+            List<String> populates = new ArrayList<>();
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0, 1, 2});

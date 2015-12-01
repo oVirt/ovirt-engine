@@ -83,7 +83,7 @@ public class ValidationUtils {
                 validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
 
         if (!violations.isEmpty()) {
-            messages = new ArrayList<String>(violations.size());
+            messages = new ArrayList<>(violations.size());
 
             for (ConstraintViolation<T> constraintViolation : violations) {
                 messages.add(constraintViolation.getMessage());

@@ -50,8 +50,7 @@ public class BackendVmPoolResource
     @Override
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
-                                                 IdQueryParameters.class),
+                             new QueryIdResolver<>(VdcQueryType.GetVmPoolById, IdQueryParameters.class),
                              VdcActionType.UpdateVmPoolWithVms,
                              new UpdateParametersProvider());
     }

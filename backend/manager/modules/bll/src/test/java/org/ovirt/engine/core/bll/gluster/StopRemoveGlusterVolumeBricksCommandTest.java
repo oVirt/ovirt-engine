@@ -196,7 +196,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void canDoActionFailsWithEmptyBricksList() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        new ArrayList<GlusterBrickEntity>())));
+                        new ArrayList<>())));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }

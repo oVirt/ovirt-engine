@@ -124,7 +124,7 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
      * @return List<JsonNode> containing each file read
      */
     protected List<JsonNode> readJsonFiles(File configPath) {
-        List<JsonNode> nodes = new ArrayList<JsonNode>();
+        List<JsonNode> nodes = new ArrayList<>();
         List<String> jsonFiles = getJsonFiles(configPath);
 
         for (String jsonFile : jsonFiles) {

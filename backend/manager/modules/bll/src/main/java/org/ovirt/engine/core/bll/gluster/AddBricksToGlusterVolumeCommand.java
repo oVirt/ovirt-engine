@@ -141,13 +141,13 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             return;
         }
 
-        List<Callable<Boolean>> perSessionCallables = new ArrayList<Callable<Boolean>>();
+        List<Callable<Boolean>> perSessionCallables = new ArrayList<>();
         for (final GlusterGeoRepSession currentSession : sessions) {
             perSessionCallables.add(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
                     // Ids of servers on which steps like mount broker setup and/or passwordless ssh need to be done.
-                    Set<Guid> serverIdsToPrep = new HashSet<Guid>(newServerIds);
+                    Set<Guid> serverIdsToPrep = new HashSet<>(newServerIds);
                     // Assume current volume as master volume of current session
                     GlusterVolumeEntity masterVolume = volume;
                     boolean succeeded = true;
@@ -228,7 +228,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
     }
 
     private Set<Guid> findNewServers(final List<GlusterBrickEntity> bricksList, GlusterVolumeEntity volumeBeforeBrickAdd) {
-        final Set<Guid> newServerIds = new HashSet<Guid>();
+        final Set<Guid> newServerIds = new HashSet<>();
         for (GlusterBrickEntity currentBrick : bricksList) {
             if (isNewServer(currentBrick.getServerId(), volumeBeforeBrickAdd)) {
                 newServerIds.add(currentBrick.getServerId());

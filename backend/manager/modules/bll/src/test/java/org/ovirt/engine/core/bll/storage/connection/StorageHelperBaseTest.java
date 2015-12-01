@@ -17,7 +17,7 @@ public class StorageHelperBaseTest {
     @Test
     public void getLunConnectionsForFC() {
         LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         lun.setLunConnections(connections);
         Map<StorageType, List<StorageServerConnections>> connectionsByType =
                 StorageHelperBase.filterConnectionsByStorageType(lun);
@@ -27,7 +27,7 @@ public class StorageHelperBaseTest {
     @Test
     public void getLunConnectionsForISCSI() {
         LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         connections.add(new StorageServerConnections("Some LUN connection",
                 "id",
                 "iqn",
@@ -60,7 +60,7 @@ public class StorageHelperBaseTest {
     @Test
     public void getMixedLunConnections() {
         LUNs lun = new LUNs();
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         connections.add(new StorageServerConnections("Some LUN connection",
                 "id",
                 "iqn",

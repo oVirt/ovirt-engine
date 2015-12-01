@@ -36,9 +36,9 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
 
     public void init() throws InitializationException {
         try {
-            predefinedProperties = new HashMap<Version, Map<String, String>>();
-            userdefinedProperties = new HashMap<Version, Map<String, String>>();
-            allVmProperties = new HashMap<Version, Map<String, String>>();
+            predefinedProperties = new HashMap<>();
+            userdefinedProperties = new HashMap<>();
+            allVmProperties = new HashMap<>();
             Set<Version> versions = getSupportedClusterLevels();
             for (Version version : versions) {
                 predefinedProperties.put(version, new HashMap<String, String>());
@@ -89,8 +89,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * @return
      */
     public VMCustomProperties parseProperties(Version version, String propertiesStr) {
-        HashMap<String, String> userDefinedPropertiesMap = new HashMap<String, String>();
-        HashMap<String, String> predefinedPropertiesMap = new HashMap<String, String>();
+        HashMap<String, String> userDefinedPropertiesMap = new HashMap<>();
+        HashMap<String, String> predefinedPropertiesMap = new HashMap<>();
 
         convertCustomPropertiesStrToMaps(version, propertiesStr, predefinedPropertiesMap, userDefinedPropertiesMap);
         return new VMCustomProperties(convertProperties(predefinedPropertiesMap),
@@ -117,7 +117,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      */
     public Map<String, String> getVMProperties(Version version, VmBase vmBase) {
         separateCustomPropertiesToUserAndPredefined(version, vmBase);
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         getPredefinedProperties(version, vmBase, map);
         getUserDefinedProperties(version, vmBase, map);
 

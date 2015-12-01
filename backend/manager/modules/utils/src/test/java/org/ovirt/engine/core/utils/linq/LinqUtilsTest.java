@@ -15,12 +15,12 @@ public class LinqUtilsTest {
     private List<String> cutlist;
 
     public LinqUtilsTest() {
-        list  = new LinkedList<String>();
+        list  = new LinkedList<>();
         list.add("one");
         list.add("two");
         list.add("three");
 
-        cutlist = new LinkedList<String>();
+        cutlist = new LinkedList<>();
         cutlist.add("o");
         cutlist.add("t");
         cutlist.add("t");
@@ -76,7 +76,7 @@ public class LinqUtilsTest {
             }
         });
 
-        Map<String, String> example = new HashMap<String, String>();
+        Map<String, String> example = new HashMap<>();
         example.put("t", "three");
         example.put("o", "one");
 
@@ -92,7 +92,7 @@ public class LinqUtilsTest {
             }
         });
 
-        Map<String, String> example = new HashMap<String, String>();
+        Map<String, String> example = new HashMap<>();
         example.put("t", "three");
         example.put("o", "one");
 

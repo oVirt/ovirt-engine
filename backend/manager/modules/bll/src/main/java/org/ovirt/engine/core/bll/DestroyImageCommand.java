@@ -40,7 +40,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
                 createVDSParameters());
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
-            getParameters().setVdsmTaskIds(new ArrayList<Guid>());
+            getParameters().setVdsmTaskIds(new ArrayList<>());
             Guid result = createTask(taskId, vdsReturnValue.getCreationInfo(), getParameters().getParentCommand(),
                             VdcObjectType.Storage, getParameters().getStorageDomainId());
             getReturnValue().getInternalVdsmTaskIdList().add(result);

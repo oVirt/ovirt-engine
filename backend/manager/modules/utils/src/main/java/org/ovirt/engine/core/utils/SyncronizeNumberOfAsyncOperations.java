@@ -19,7 +19,7 @@ public final class SyncronizeNumberOfAsyncOperations {
 
     public void execute() {
 
-        List<AsyncOpThread> operations = new ArrayList<AsyncOpThread>();
+        List<AsyncOpThread> operations = new ArrayList<>();
         for (int i = 0; i < _numberOfOperations; i++) {
             operations.add(new AsyncOpThread(i));
         }

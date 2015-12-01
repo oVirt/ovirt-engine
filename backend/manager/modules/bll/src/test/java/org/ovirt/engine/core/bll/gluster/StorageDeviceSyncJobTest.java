@@ -125,7 +125,7 @@ public class StorageDeviceSyncJobTest {
                     getStorageDevice("sdb", null),
                     getStorageDevice("sdc", null)));
         } else if (HOST_ID_WITH_DEVICES_CHANGED.equals(hostId)) {
-            List<StorageDevice> devices = new ArrayList<StorageDevice>();
+            List<StorageDevice> devices = new ArrayList<>();
             devices.add(getStorageDevice("device-without-anychange", DEVICE_WITHOUT_ANYCHANGE));
             devices.add(getStorageDevice("new-device-with-name-change", DEVICE_WITH_NAME_CHANGE));
             StorageDevice device = getStorageDevice("device-with-change", DEVICE_WITH_CHANGE);
@@ -223,7 +223,7 @@ public class StorageDeviceSyncJobTest {
                     getStorageDevice("sdb", null),
                     getStorageDevice("sdc", null));
         } else if (HOST_ID_WITH_DEVICES_CHANGED.equals(hostId)) {
-            List<StorageDevice> deviceList = new ArrayList<StorageDevice>();
+            List<StorageDevice> deviceList = new ArrayList<>();
             deviceList.add(getStorageDevice("device-without-anychange", DEVICE_WITHOUT_ANYCHANGE));
             deviceList.add(getStorageDevice("device-with-change", DEVICE_WITH_CHANGE));
             deviceList.add(getStorageDevice("device-with-name-change", DEVICE_WITH_NAME_CHANGE));

@@ -1029,7 +1029,7 @@ public class HostSetupNetworksValidatorTest {
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
         networkAttachmentA.setProperties(null);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);
-        networkAttachmentB.setProperties(new HashMap<String, String>());
+        networkAttachmentB.setProperties(new HashMap<>());
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachmentA, networkAttachmentB))
@@ -1389,7 +1389,7 @@ public class HostSetupNetworksValidatorTest {
         Bond bond = new Bond();
         bond.setNetworkName(null);
         bond.setName("bondName");
-        bond.setLabels(new HashSet<String>(Arrays.asList("label")));
+        bond.setLabels(new HashSet<>(Arrays.asList("label")));
         bond.setNetworkName("vmNetwork");
 
         Network vmNetwork = createNetworkWithName("vmNetwork");
@@ -1639,7 +1639,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getNetworkAttachments() == null) {
-                parameters.setNetworkAttachments(new ArrayList<NetworkAttachment>());
+                parameters.setNetworkAttachments(new ArrayList<>());
             }
 
             parameters.getNetworkAttachments().addAll(Arrays.asList(networkAttachments));
@@ -1652,7 +1652,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getRemovedBonds() == null) {
-                parameters.setRemovedBonds(new HashSet<Guid>());
+                parameters.setRemovedBonds(new HashSet<>());
             }
 
             parameters.getRemovedBonds().addAll(Arrays.asList(ids));
@@ -1665,7 +1665,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getRemovedNetworkAttachments() == null) {
-                parameters.setRemovedNetworkAttachments(new HashSet<Guid>());
+                parameters.setRemovedNetworkAttachments(new HashSet<>());
             }
 
             for (NetworkAttachment networkAttachment : networkAttachments) {
@@ -1680,7 +1680,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getBonds() == null) {
-                parameters.setBonds(new ArrayList<Bond>());
+                parameters.setBonds(new ArrayList<>());
             }
 
             parameters.getBonds().addAll(Arrays.asList(bonds));
@@ -1693,7 +1693,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getRemovedLabels() == null) {
-                parameters.setRemovedLabels(new HashSet<String>());
+                parameters.setRemovedLabels(new HashSet<>());
             }
 
             parameters.getRemovedLabels().addAll(Arrays.asList(removedLabels));
@@ -1706,7 +1706,7 @@ public class HostSetupNetworksValidatorTest {
             }
 
             if (parameters.getLabels() == null) {
-                parameters.setLabels(new HashSet<NicLabel>());
+                parameters.setLabels(new HashSet<>());
             }
 
             parameters.getLabels().addAll(Arrays.asList(nicLabels));

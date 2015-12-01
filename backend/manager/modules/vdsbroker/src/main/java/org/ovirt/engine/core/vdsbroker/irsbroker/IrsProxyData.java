@@ -101,7 +101,7 @@ public class IrsProxyData {
 
     private final String storagePoolRefreshJobId;
     private final String domainRecoverOnHostJobId;
-    private final HashSet<Guid> triedVdssList = new HashSet<Guid>();
+    private final HashSet<Guid> triedVdssList = new HashSet<>();
     private Guid currentVdsId;
 
     private static Set<VDSStatus> vdsConnectedToPoolStatuses;
@@ -340,7 +340,7 @@ public class IrsProxyData {
                     (KeyValuePairCompat<StoragePool, List<StorageDomain>>) storagePoolInfoResult
                             .getReturnValue();
             int masterVersion = data.getKey().getMasterDomainVersion();
-            HashSet<Guid> domainsInVds = new HashSet<Guid>();
+            HashSet<Guid> domainsInVds = new HashSet<>();
             for (StorageDomain domainData : data.getValue()) {
                 domainsInVds.add(domainData.getId());
                 proceedStorageDomain(domainData, masterVersion, storagePool);
@@ -800,7 +800,7 @@ public class IrsProxyData {
                                 storagePool.getName());
                     }
 
-                    RefObject<VDS> tempRefObject = new RefObject<VDS>(selectedVds);
+                    RefObject<VDS> tempRefObject = new RefObject<>(selectedVds);
                     spmStatus =
                             handleSpmStatusResult(curVdsId,
                                     prioritizedVdsInPool,
@@ -811,8 +811,8 @@ public class IrsProxyData {
                 }
 
                 if (selectedVds != null) {
-                    RefObject<VDS> tempRefObject2 = new RefObject<VDS>(selectedVds);
-                    RefObject<SpmStatusResult> tempRefObject3 = new RefObject<SpmStatusResult>(spmStatus);
+                    RefObject<VDS> tempRefObject2 = new RefObject<>(selectedVds);
+                    RefObject<SpmStatusResult> tempRefObject3 = new RefObject<>(spmStatus);
                     returnValue = handleSelectedVdsForSPM(storagePool, tempRefObject2, tempRefObject3, prevStatus);
                     selectedVds = tempRefObject2.argvalue;
                     spmStatus = tempRefObject3.argvalue;
@@ -846,7 +846,7 @@ public class IrsProxyData {
         // by vds_spm_priority (not including -1) and secondly ordered by RANDOM(), to
         // deal with the case that there are several hosts with the same priority.
         List<VDS> allVds = DbFacade.getInstance().getVdsDao().getListForSpmSelection(_storagePoolId);
-        List<VDS> vdsRelevantForSpmSelection = new ArrayList<VDS>();
+        List<VDS> vdsRelevantForSpmSelection = new ArrayList<>();
         Guid preferredHost = IrsBrokerCommand.getIrsProxyData(_storagePoolId).getPreferredHostId();
         IrsBrokerCommand.getIrsProxyData(_storagePoolId).setPreferredHostId(null);
 
@@ -1163,11 +1163,11 @@ public class IrsProxyData {
         currentVdsId = null;
     }
 
-    private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();
-    private final Map<Guid, HashSet<Guid>> _domainsInMaintenance = new ConcurrentHashMap<Guid, HashSet<Guid>>();
+    private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<>();
+    private final Map<Guid, HashSet<Guid>> _domainsInMaintenance = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsReportsOnUnseenDomain = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsHandeledReportsOnUnseenDomains = new ConcurrentHashMap<>();
-    private final Map<Guid, String> _timers = new HashMap<Guid, String>();
+    private final Map<Guid, String> _timers = new HashMap<>();
 
     public void updateVdsDomainsData(VDS vds,
                                      final ArrayList<VDSDomainsData> data) {
@@ -1184,7 +1184,7 @@ public class IrsProxyData {
             Guid vdsId = vds.getId();
             String vdsName = vds.getName();
             try {
-                Set<Guid> monitoredDomains = new HashSet<Guid>();
+                Set<Guid> monitoredDomains = new HashSet<>();
                 for (VDSDomainsData tempData : data) {
                     monitoredDomains.add(tempData.getDomainId());
                 }
@@ -1230,8 +1230,8 @@ public class IrsProxyData {
      * @link StorageDomainStatus#Maintenance or @link StorageDomainStatus#PreparingForMaintenance.
      */
     private Set<Guid> handleDomainsInMaintenanceForHost(Collection<Guid> monitoredDomains) {
-        Set<Guid>  domainsInMaintenance = new HashSet<Guid>();
-        Set<Guid> maintInPool = new HashSet<Guid>(
+        Set<Guid>  domainsInMaintenance = new HashSet<>();
+        Set<Guid> maintInPool = new HashSet<>(
                 DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                         _storagePoolId, StorageDomainStatus.Maintenance));
         maintInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
@@ -1256,13 +1256,13 @@ public class IrsProxyData {
         Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = new HashMap<>();
         // build a list of all domains in pool
         // which are in status Active or Unknown
-        Set<Guid> activeDomainsInPool = new HashSet<Guid>(
+        Set<Guid> activeDomainsInPool = new HashSet<>(
                 DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                         _storagePoolId, StorageDomainStatus.Active));
         Set<Guid> unknownDomainsInPool = new HashSet<>(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                 _storagePoolId, StorageDomainStatus.Unknown));
         Set<Guid> inActiveDomainsInPool =
-                new HashSet<Guid>(DbFacade.getInstance()
+                new HashSet<>(DbFacade.getInstance()
                         .getStorageDomainStaticDao()
                         .getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
 
@@ -1351,12 +1351,12 @@ public class IrsProxyData {
 
     protected List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
         List<Guid> domainsInProblem = new LinkedList<>();
-        Set<Guid> domainsInPool = new HashSet<Guid>(
+        Set<Guid> domainsInPool = new HashSet<>(
                 DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                         _storagePoolId, StorageDomainStatus.Active));
         domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                 _storagePoolId, StorageDomainStatus.Unknown));
-        List<Guid> domainWhichWereSeen = new ArrayList<Guid>();
+        List<Guid> domainWhichWereSeen = new ArrayList<>();
         for (VDSDomainsData vdsDomainData : vdsDomainsData) {
             if (domainsInPool.contains(vdsDomainData.getDomainId())) {
                 if (analyzeDomainReport(vdsDomainData, storagePool, true).invalidAndActual()) {
@@ -1507,7 +1507,7 @@ public class IrsProxyData {
             vdsReportsOnUnseenDomain.put(vdsId, newReportId);
         }
 
-        Set<Guid> notReportedDomainsByHost = new HashSet<Guid>(_domainsInProblem.keySet());
+        Set<Guid> notReportedDomainsByHost = new HashSet<>(_domainsInProblem.keySet());
         notReportedDomainsByHost.removeAll(problematicDomains.keySet());
         for (Guid domainId : notReportedDomainsByHost) {
             Set<Guid> vdsForDomain = _domainsInProblem.get(domainId);
@@ -1530,7 +1530,7 @@ public class IrsProxyData {
     }
 
     private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
-        _domainsInProblem.put(domainId, new HashSet<Guid>(Arrays.asList(vdsId)));
+        _domainsInProblem.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
         log.warn("domain '{}' in problem. vds: '{}'", getDomainIdTuple(domainId), vdsName);
         Class[] inputType = new Class[] { Guid.class };
         Object[] inputParams = new Object[] { domainId };
@@ -1693,12 +1693,12 @@ public class IrsProxyData {
         EventResult result = null;
         // build a list of all the hosts in status UP in
         // Pool.
-        List<Guid> vdssInPool = new ArrayList<Guid>();
+        List<Guid> vdssInPool = new ArrayList<>();
         // Note - this method is used as it returns only hosts from VIRT supported clusters
         // (we use the domain monitoring results only from those clusters hosts).
         // every change to it should be inspected carefully.
         List<VDS> allVds = DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(_storagePoolId, null);
-        Map<Guid, VDS> vdsMap = new HashMap<Guid, VDS>();
+        Map<Guid, VDS> vdsMap = new HashMap<>();
         for (VDS tempVDS : allVds) {
             vdsMap.put(tempVDS.getId(), tempVDS);
             if (tempVDS.getStatus() == VDSStatus.Up) {
@@ -1711,7 +1711,7 @@ public class IrsProxyData {
         // Mark the above list as hosts we suspect are in
         // problem.
         Set<Guid> hostsThatReportedDomainAsInProblem = _domainsInProblem.get(domainId);
-        List<Guid> vdssInProblem = new ArrayList<Guid>();
+        List<Guid> vdssInProblem = new ArrayList<>();
         for (Guid tempVDSId : vdssInPool) {
             if (!hostsThatReportedDomainAsInProblem.contains(tempVDSId)) {
                 vdssInProblem.add(tempVDSId);
@@ -1725,7 +1725,7 @@ public class IrsProxyData {
         // (and not a problem with the domain itself).
         StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
         String domainIdTuple = getDomainIdTuple(domainId);
-        List<Guid> nonOpVdss = new ArrayList<Guid>();
+        List<Guid> nonOpVdss = new ArrayList<>();
         if (vdssInProblem.size() > 0) {
             if (storageDomain.getStorageDomainType() != StorageDomainType.ImportExport
                     && storageDomain.getStorageDomainType() != StorageDomainType.ISO) {

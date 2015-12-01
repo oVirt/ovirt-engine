@@ -105,7 +105,7 @@ public class BackendGlusterBrickResource
 
         };
         BrickStatisticalQuery query = new BrickStatisticalQuery(resolver , newModel(id));
-        return inject(new BackendStatisticsResource<GlusterBrick, GlusterBrickEntity>(GlusterBrickEntity.class, guid, query));
+        return inject(new BackendStatisticsResource<>(GlusterBrickEntity.class, guid, query));
     }
 
     @Override

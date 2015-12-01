@@ -35,7 +35,7 @@ public class FutureMap implements Map<String, Object> {
     private static Logger log = LoggerFactory.getLogger(FutureMap.class);
     private final Lock lock = new ReentrantLock();
     private Future<JsonRpcResponse> response;
-    private Map<String, Object> responseMap = new HashMap<String, Object>();
+    private Map<String, Object> responseMap = new HashMap<>();
     private String responseKey;
     private String subtypeKey;
     private static final Map<String, Object> STATUS_DONE = new HashMap<String, Object>() {

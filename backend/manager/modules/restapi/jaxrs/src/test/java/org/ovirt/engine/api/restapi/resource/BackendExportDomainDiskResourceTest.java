@@ -126,7 +126,7 @@ public class BackendExportDomainDiskResourceTest
     }
 
     private HashMap<Guid, DiskImage> getDiskMap() {
-        HashMap<Guid, DiskImage> map = new HashMap<Guid, DiskImage>();
+        HashMap<Guid, DiskImage> map = new HashMap<>();
         DiskImage disk = new DiskImage();
         disk.setId(DISK_ID);
         map.put(DISK_ID, disk);
@@ -158,12 +158,12 @@ public class BackendExportDomainDiskResourceTest
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
-        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<VmTemplate, List<DiskImage>>();
+        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<>();
         if (notFound) {
             return ret;
         }
         for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getVmTemplateEntity(i), new ArrayList<DiskImage>());
+            ret.put(getVmTemplateEntity(i), new ArrayList<>());
         }
         return ret;
     }

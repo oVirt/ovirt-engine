@@ -350,7 +350,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private void initializeCommand(Guid storageId, AddDiskParameters params) {
         params.setStorageDomainId(storageId);
-        command = spy(new AddDiskCommand<AddDiskParameters>(params));
+        command = spy(new AddDiskCommand<>(params));
         doReturn(true).when(command).acquireLockInternal();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
@@ -377,7 +377,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
-        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageId)));
+        image.setStorageIds(new ArrayList<>(Arrays.asList(storageId)));
         mockVm().getDiskMap().put(image.getId(), image);
     }
 
@@ -392,8 +392,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
     protected void mockInterfaceList() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
-        ArrayList<String> diskInterfaces = new ArrayList<String>(
-                Arrays.asList(new String[] {
+        ArrayList<String> diskInterfaces = new ArrayList<>(
+                Arrays.asList(new String[]{
                         "IDE",
                         "VirtIO",
                         "VirtIO_SCSI"
@@ -580,7 +580,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         connection.setiqn("a");
         connection.setconnection("0.0.0.0");
         connection.setport("1234");
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<>();
         connections.add(connection);
         lun.setLunConnections(connections);
         disk.setLun(lun);
@@ -988,7 +988,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
-        Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
+        Map<Guid, Disk> diskMap = new HashMap<>();
         for (int i = 0; i < expectedMapSize; i++) {
             diskMap.put(Guid.newGuid(), disk);
         }

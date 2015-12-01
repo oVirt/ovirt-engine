@@ -27,7 +27,7 @@ public enum Jedi implements Identifiable {
 
     private synchronized static HashMap<Integer, Jedi> getMappings() {
         if (mappings == null) {
-            mappings = new HashMap<Integer, Jedi>();
+            mappings = new HashMap<>();
         }
         return mappings;
     }

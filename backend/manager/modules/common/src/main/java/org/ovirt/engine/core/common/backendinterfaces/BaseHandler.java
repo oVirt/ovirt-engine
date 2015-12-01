@@ -40,12 +40,12 @@ public class BaseHandler implements IObjectDescriptorContainer {
      * @return array of pairs of a the annotation instance -> field name
      */
     public static <A extends Annotation> List<Pair<A , Field>> extractAnnotatedFields(Class<A> annotation, Class<?>... clz) {
-        List<Pair<A, Field>> pairList = new ArrayList<Pair<A, Field>>();
+        List<Pair<A, Field>> pairList = new ArrayList<>();
         for (Class<?> clazz : clz) {
             for (Field field : clazz.getDeclaredFields()) {
                 A fieldAnnotation = field.getAnnotation(annotation);
                 if (fieldAnnotation != null) {
-                    pairList.add(new Pair<A, Field>(fieldAnnotation, field));
+                    pairList.add(new Pair<>(fieldAnnotation, field));
                 }
             }
         }

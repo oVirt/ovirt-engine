@@ -15,7 +15,7 @@ public class AuditLogTypeTest {
     @Test
     public void testAuditLogTypeValueUniqueness() {
         BitSet bitset = new BitSet(bitsetSize);
-        Set<Integer> nonUniqueValues = new TreeSet<Integer>();
+        Set<Integer> nonUniqueValues = new TreeSet<>();
 
         for (AuditLogType alt : AuditLogType.values()) {
             if (bitset.get(alt.getValue())) {

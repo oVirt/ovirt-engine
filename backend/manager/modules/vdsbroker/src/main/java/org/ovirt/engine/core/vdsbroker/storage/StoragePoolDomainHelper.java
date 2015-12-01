@@ -39,7 +39,7 @@ public class StoragePoolDomainHelper {
                     VDSStatus.NonOperational));
 
     public static Map<String, String> buildStoragePoolDomainsMap(List<StoragePoolIsoMap> storagePoolIsoMaps) {
-        Map<String, String> storageDomains = new HashMap<String, String>();
+        Map<String, String> storageDomains = new HashMap<>();
 
         for (StoragePoolIsoMap domain : storagePoolIsoMaps) {
             if (domain.getStatus() == StorageDomainStatus.Detaching) {

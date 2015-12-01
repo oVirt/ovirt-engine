@@ -57,7 +57,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
         dummyPolicyUnit.setName("Dummy policy unit");
         dummyPolicyUnit.setDescription("Description");
         dummyPolicyUnit.setPolicyUnitType(PolicyUnitType.FILTER);
-        dummyPolicyUnit.setParameterRegExMap(new LinkedHashMap<String, String>());
+        dummyPolicyUnit.setParameterRegExMap(new LinkedHashMap<>());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdate() {
         PolicyUnit policyUnitToUpdate = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         map.put("A", "B");
         policyUnitToUpdate.setParameterRegExMap(map);
         policyUnitToUpdate.setDescription("dummy description");

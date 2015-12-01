@@ -92,7 +92,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     }
 
     protected List<org.ovirt.engine.core.common.job.Job> setUpJobs() {
-        List<org.ovirt.engine.core.common.job.Job> jobs = new ArrayList<org.ovirt.engine.core.common.job.Job>();
+        List<org.ovirt.engine.core.common.job.Job> jobs = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             jobs.add(getEntity(i));
         }

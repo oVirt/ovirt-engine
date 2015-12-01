@@ -54,8 +54,8 @@ public class SSHDialogTest {
         private Thread _thread;
 
         public Sink(String expect[], String send[]) {
-            _expect = new LinkedList<String>(Arrays.asList(expect));
-            _send = new LinkedList<String>(Arrays.asList(send));
+            _expect = new LinkedList<>(Arrays.asList(expect));
+            _send = new LinkedList<>(Arrays.asList(send));
             _thread = new Thread(this);
         }
 
@@ -391,13 +391,13 @@ public class SSHDialogTest {
             longText.append(LINE).append("\n");
         }
 
-        List<String> expect = new LinkedList<String>();
+        List<String> expect = new LinkedList<>();
         expect.add("start");
         for (int i=0;i<NUM;i++) {
             expect.add(LINE);
         }
 
-        List<String> send = new LinkedList<String>();
+        List<String> send = new LinkedList<>();
         for (int i=0;i<NUM;i++) {
             if (i % (NUM/FACTOR) == 0) {
                 send.add(longText.toString());

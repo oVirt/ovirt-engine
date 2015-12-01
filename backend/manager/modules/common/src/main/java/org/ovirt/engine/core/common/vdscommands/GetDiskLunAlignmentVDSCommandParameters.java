@@ -26,7 +26,7 @@ public class GetDiskLunAlignmentVDSCommandParameters extends GetDiskAlignmentVDS
 
     @Override
     public Map<String, String> getDriveSpecs() {
-        Map<String, String> drive = new HashMap<String, String>();
+        Map<String, String> drive = new HashMap<>();
         drive.put("device", "disk");
         drive.put("GUID", getLunId());
         return drive;

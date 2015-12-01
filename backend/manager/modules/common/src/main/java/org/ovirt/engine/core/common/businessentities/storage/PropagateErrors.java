@@ -11,7 +11,7 @@ public enum PropagateErrors {
     private static Map<Integer, PropagateErrors> mappings;
 
     static {
-        mappings = new HashMap<Integer, PropagateErrors>();
+        mappings = new HashMap<>();
         for (PropagateErrors error : values()) {
             mappings.put(error.getValue(), error);
         }

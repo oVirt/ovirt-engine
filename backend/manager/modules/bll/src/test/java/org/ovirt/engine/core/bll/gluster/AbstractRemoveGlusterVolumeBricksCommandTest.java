@@ -57,7 +57,7 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     protected static final Guid BRICK_UUID2 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a754");
 
     protected List<GlusterBrickEntity> getInvalidNoOfBricks(Guid volumeId) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setVolumeId(volumeId);
         brick.setBrickDirectory("/tmp/test-vol1");
@@ -68,7 +68,7 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     }
 
     protected List<GlusterBrickEntity> getInvalidBricks(Guid volumeId) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity brick1 = new GlusterBrickEntity();
         brick1.setVolumeId(volumeId);
         brick1.setBrickDirectory("/tmp/test-vol1");
@@ -113,7 +113,7 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     }
 
     protected List<GlusterBrickEntity> getBricks(Guid volumeId) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
 
         GlusterBrickEntity brick1 = new GlusterBrickEntity();
         brick1.setVolumeId(volumeId);

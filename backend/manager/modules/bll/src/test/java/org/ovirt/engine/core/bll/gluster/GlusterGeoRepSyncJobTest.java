@@ -207,7 +207,7 @@ public class GlusterGeoRepSyncJobTest {
     }
 
     private List<GlusterGeoRepSession> getSessions(int count, boolean populateVoId) {
-        List<GlusterGeoRepSession> sessions = new ArrayList<GlusterGeoRepSession>();
+        List<GlusterGeoRepSession> sessions = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             sessions.add(getSession(populateVoId));
         }

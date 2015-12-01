@@ -20,7 +20,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     static final String[] SUB_COLLECTIONS = { "filters", "weights", "balances", "clusters" };
 
     private final QueryIdResolver<Guid> queryIdResolver =
-            new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
+            new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById,
                     IdQueryParameters.class);
 
     public BackendSchedulingPoliciesResource() {

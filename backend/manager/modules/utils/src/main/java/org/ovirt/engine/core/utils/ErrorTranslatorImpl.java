@@ -30,7 +30,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         messageSources = asList(errorFileNames);
         standardLocale = Locale.getDefault();
         standardMessages = retrieveByLocale(standardLocale);
-        messagesByLocale = new ReapedMap<Locale, Map<String, String>>(ONE_HOUR, true);
+        messagesByLocale = new ReapedMap<>(ONE_HOUR, true);
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
@@ -49,7 +49,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     }
 
     private Map<String, String> retrieveByLocale(Locale locale) {
-        Map<String, String> messages = new HashMap<String, String>();
+        Map<String, String> messages = new HashMap<>();
         for (String messageSource : messageSources) {
             retrieveByLocale(locale, messageSource, messages);
         }
@@ -97,7 +97,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     }
 
     public final List<String> doTranslation(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
-        ArrayList<String> translatedMessages = new ArrayList<String>();
+        ArrayList<String> translatedMessages = new ArrayList<>();
         if (errorMsg != null && errorMsg.size() > 0) {
             for (String curError : errorMsg) {
                 translatedMessages.add(translate(curError, changeIfNotFound, locale));
@@ -167,8 +167,8 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      * @see org.ovirt.engine.core.utils.ErrorTranslator#ResolveMessages(java.util.List)
      */
     public final List<String> ResolveMessages(List<String> translatedMessages) {
-        ArrayList<String> translatedErrors = new ArrayList<String>();
-        HashMap<String, String> variables = new HashMap<String, String>();
+        ArrayList<String> translatedErrors = new ArrayList<>();
+        HashMap<String, String> variables = new HashMap<>();
         for (String currentMessage : translatedMessages) {
             if (IsDynamicVariable(currentMessage)) {
                 AddVariable(currentMessage, variables);
@@ -179,7 +179,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         /**
          * Place to global variable adding
          */
-        ArrayList<String> returnValue = new ArrayList<String>();
+        ArrayList<String> returnValue = new ArrayList<>();
         for (String error : translatedErrors) {
             returnValue.add(resolveMessage(error, variables));
         }
@@ -203,7 +203,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     }
 
     private static List<String> asList(String[] names) {
-        List<String> ret = new ArrayList<String>();
+        List<String> ret = new ArrayList<>();
         for (int i = 0; i < names.length; i++) {
             ret.add(trim(names[i]));
         }

@@ -10,7 +10,7 @@ public enum ProfileType implements Identifiable {
     CPU(2);
 
     private final int value;
-    private static final Map<Integer, ProfileType> valueToStatus = new HashMap<Integer, ProfileType>();
+    private static final Map<Integer, ProfileType> valueToStatus = new HashMap<>();
 
     static {
         for (ProfileType status : values()) {

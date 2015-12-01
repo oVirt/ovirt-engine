@@ -68,7 +68,7 @@ public class RunVmValidatorTest {
     public void testValidEmptyCustomProerties() {
         VM vm = new VM();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         assertTrue(runVmValidator.validateVmProperties(vm, "", messages));
         assertTrue(messages.isEmpty());
     }
@@ -77,7 +77,7 @@ public class RunVmValidatorTest {
     public void testWrongFormatCustomProerties() {
         VM vm = new VM();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         assertFalse(runVmValidator.validateVmProperties(vm, "sap_agent;", messages)); // missing '= true'
         assertFalse(messages.isEmpty());
     }
@@ -86,7 +86,7 @@ public class RunVmValidatorTest {
     public void testNotValidCustomProerties() {
         VM vm = new VM();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         assertFalse(runVmValidator.validateVmProperties(vm, "property=value;", messages));
         assertFalse(messages.isEmpty());
     }
@@ -95,21 +95,21 @@ public class RunVmValidatorTest {
     public void testValidCustomProerties() {
         VM vm = new VM();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
-        List<String> messages = new ArrayList<String>();
+        List<String> messages = new ArrayList<>();
         assertTrue(runVmValidator.validateVmProperties(vm, "sap_agent=true;", messages));
         assertTrue(messages.isEmpty());
     }
 
     @Test
     public void testVmFailNoDisks() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<Disk>(), null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<>(), null),
                        false,
                        EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
 
     @Test
     public void testVmWithDisks() {
-        List<Disk> disks = new ArrayList<Disk>();
+        List<Disk> disks = new ArrayList<>();
         disks.add(new DiskImage());
         validateResult(runVmValidator.validateBootSequence(new VM(), null, disks, null),
                 true,
@@ -118,14 +118,14 @@ public class RunVmValidatorTest {
 
     @Test
     public void testNoIsoDomain() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>(), null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<>(), null),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
     }
 
     @Test
     public void testNoDiskBootFromIsoDomain() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>(), Guid.newGuid()),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<>(), Guid.newGuid()),
                 true,
                 null);
     }
@@ -135,7 +135,7 @@ public class RunVmValidatorTest {
         VmNicDao dao = mock(VmNicDao.class);
         doReturn(new ArrayList<VmNic>()).when(dao).getAllForVm(any(Guid.class));
         doReturn(dao).when(runVmValidator).getVmNicDao();
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>(), null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<>(), null),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
     }
@@ -299,7 +299,7 @@ public class RunVmValidatorTest {
         doReturn("").
                 when(utils)
                 .getUserdefinedVMProperties(any(Version.class));
-        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_2, Version.v3_3))).
+        doReturn(new HashSet<>(Arrays.asList(Version.v3_2, Version.v3_3))).
                 when(utils)
                 .getSupportedClusterLevels();
         doReturn(utils).when(runVmValidator).getVmPropertiesUtils();

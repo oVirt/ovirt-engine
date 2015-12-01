@@ -86,7 +86,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public void setup() {
         map = new StoragePoolIsoMap();
 
-        cmd = spy(new DeactivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
+        cmd = spy(new DeactivateStorageDomainCommand<>(params));
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(eventQueue).when(cmd).getEventQueue();

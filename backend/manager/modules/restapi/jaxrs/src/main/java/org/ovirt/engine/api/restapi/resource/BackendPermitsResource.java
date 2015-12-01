@@ -39,7 +39,7 @@ public class BackendPermitsResource
     public Response add(Permit permit) {
         validateParameters(permit, "name|id");
         validateEnums(Permit.class, permit);
-        ArrayList<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
+        ArrayList<ActionGroup> actionGroups = new ArrayList<>();
         // VM_BASIC_OPERATIONS is deprecated, its now more detailed with the following:
         // REBOOT_VM, STOP_VM, SHUT_DOWN_VM, HIBERNATE_VM and RUN_VM
         // We use addIfNotExists since user may send VM_BASIC_OPERATIONS with RUN_VM etc.

@@ -31,7 +31,7 @@ public class BackendStorageDomainVmsResource
             List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
                     getBackendCollection(VdcQueryType.GetUnregisteredVms,
                             new IdQueryParameters(storageDomainId));
-            List<Vm> collection = new ArrayList<Vm>();
+            List<Vm> collection = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.VM entity : unregisteredVms) {
                 Vm vm = map(entity);
                 collection.add(addLinks(populate(vm, entity)));

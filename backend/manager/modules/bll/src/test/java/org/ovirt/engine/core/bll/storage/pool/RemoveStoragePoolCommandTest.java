@@ -14,14 +14,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 public class RemoveStoragePoolCommandTest extends BaseCommandTest {
 
     private static RemoveStoragePoolCommand<StoragePoolParametersBase> createCommand(StoragePoolParametersBase param) {
-        return new RemoveStoragePoolCommand<StoragePoolParametersBase>(param);
+        return new RemoveStoragePoolCommand<>(param);
     }
 
     @Test
     public void testEmptyDomainList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
+        List<StorageDomain> domainsList = new ArrayList<>();
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(listReturned.isEmpty());
     }
@@ -33,7 +33,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     public void testActiveDomainInList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
+        List<StorageDomain> domainsList = new ArrayList<>();
         StorageDomain tempStorageDomains = new StorageDomain();
         tempStorageDomains.setStatus(StorageDomainStatus.Active);
         domainsList.add(tempStorageDomains);
@@ -44,7 +44,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     private void testBusyDomainInList(StorageDomainStatus status) {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
+        List<StorageDomain> domainsList = new ArrayList<>();
         StorageDomain tempStorageDomains = new StorageDomain();
         tempStorageDomains.setStatus(status);
         domainsList.add(tempStorageDomains);
@@ -71,7 +71,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     private void testBusyAndActiveDomainInList(StorageDomainStatus status) {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
+        List<StorageDomain> domainsList = new ArrayList<>();
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();
@@ -109,7 +109,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     public void testInactiveDomainInList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
+        List<StorageDomain> domainsList = new ArrayList<>();
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();

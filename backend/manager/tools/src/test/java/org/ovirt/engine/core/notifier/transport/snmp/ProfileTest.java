@@ -13,15 +13,15 @@ public class ProfileTest {
     // this has to be defined as paris since Snmp.Hosts doesn't distinguish between Host(x, null) to Host(x, 162)
     private static final List<Pair<String, String>> hosts = new ArrayList<>(
         Arrays.asList(
-            new Pair<String, String>("[::1]", null),
+            new Pair<>("[::1]", null),
             new Pair<>("[::1]", "1"),
-            new Pair<String, String>("localhost", null),
+            new Pair<>("localhost", null),
             new Pair<>("localhost", "162"),
-            new Pair<String, String>("192.168.0.1", null),
+            new Pair<>("192.168.0.1", null),
             new Pair<>("192.168.0.1", "163"),
-            new Pair<String, String>("manager1.example.com", null),
+            new Pair<>("manager1.example.com", null),
             new Pair<>("manager1.example.com", "164"),
-            new Pair<String, String>("[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]", null),
+            new Pair<>("[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]", null),
             new Pair<>("[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]", "165")
         )
     );

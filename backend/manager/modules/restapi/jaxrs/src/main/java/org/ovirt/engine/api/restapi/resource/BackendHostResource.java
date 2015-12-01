@@ -105,7 +105,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Host update(Host incoming) {
         validateEnums(Host.class, incoming);
-        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
+        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
@@ -315,13 +315,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public BusinessEntityMap<Bond> getBackendHostBonds() {
         List<Bond> backendBonds =
                 getBackendCollection(Bond.class, VdcQueryType.GetHostBondsByHostId, new IdQueryParameters(guid));
-        return new BusinessEntityMap<Bond>(backendBonds);
+        return new BusinessEntityMap<>(backendBonds);
     }
 
     public BusinessEntityMap<VdsNetworkInterface> getBackendNics() {
         List<VdsNetworkInterface> backendNics =
                 getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(guid));
-        return new BusinessEntityMap<VdsNetworkInterface>(backendNics);
+        return new BusinessEntityMap<>(backendNics);
     }
 
     public NetworkAttachment mapNetworkAttachment(Map<Guid, NetworkAttachment> attachmentsById,
@@ -644,9 +644,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
         HostStatisticalQuery query = new HostStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Host, VDS>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
 
     @Override

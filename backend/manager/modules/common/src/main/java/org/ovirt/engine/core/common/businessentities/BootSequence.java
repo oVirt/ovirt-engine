@@ -30,7 +30,7 @@ public enum BootSequence {
     private final List<BootSequence> components;
 
     static {
-        mappings = new HashMap<Integer, BootSequence>();
+        mappings = new HashMap<>();
         for (BootSequence error : values()) {
             mappings.put(error.getValue(), error);
         }

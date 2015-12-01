@@ -69,7 +69,7 @@ public class ResourceManager implements BackendService {
     private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
     private final Set<Guid> asyncRunningVms =
-            Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
+            Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final ConcurrentHashMap<Guid, VmManager> vmManagers = new ConcurrentHashMap<>();
 
     private static final String VDSCommandPrefix = "VDSCommand";
@@ -151,7 +151,7 @@ public class ResourceManager implements BackendService {
                 MultiValueMapUtils.addToMap(vm.getRunOnVds(),
                         vm.getId(),
                         vdsAndVmsList,
-                        new MultiValueMapUtils.HashSetCreator<Guid>());
+                        new MultiValueMapUtils.HashSetCreator<>());
             }
         }
     }

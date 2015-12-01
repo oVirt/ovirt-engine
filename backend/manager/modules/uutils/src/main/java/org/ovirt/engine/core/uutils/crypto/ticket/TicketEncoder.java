@@ -40,7 +40,7 @@ public class TicketEncoder {
     throws GeneralSecurityException, IOException {
 
         Base64 base64 = new Base64(0);
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         byte[] random = new byte[8];
         SecureRandom.getInstance("SHA1PRNG").nextBytes(random);

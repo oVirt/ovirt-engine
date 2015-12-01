@@ -106,7 +106,7 @@ public class BackendStorageDomainResourceTest
     protected List<LUNs> setUpLuns() {
         LUNs lun = new LUNs();
         lun.setLUN_id(GUIDS[2].toString());
-        List<LUNs> luns = new ArrayList<LUNs>();
+        List<LUNs> luns = new ArrayList<>();
         luns.add(lun);
         return luns;
     }

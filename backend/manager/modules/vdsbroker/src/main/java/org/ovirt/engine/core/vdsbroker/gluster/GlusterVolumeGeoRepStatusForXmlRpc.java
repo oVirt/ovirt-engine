@@ -33,7 +33,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     private static final String CRAWL_STATUS = "crawlStatus";
     private static final String REMOTE_VOL_NAME = "remoteVolumeName";
 
-    protected final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
+    protected final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<>();
 
     protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();
@@ -110,7 +110,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     private GlusterGeoRepSession populateSession(String volumeName, Map<String, Object> innerMap) {
         GlusterGeoRepSession geoRepSession = getSession(volumeName, innerMap);
-        ArrayList<GlusterGeoRepSessionDetails> geoRepSessionDetails = new ArrayList<GlusterGeoRepSessionDetails>();
+        ArrayList<GlusterGeoRepSessionDetails> geoRepSessionDetails = new ArrayList<>();
         if (innerMap.containsKey(BRICKS)) {
             for (Object brickSession : (Object[]) innerMap.get(BRICKS)) {
                 geoRepSessionDetails.add(getSessionDetails((Map<String, Object>) brickSession));

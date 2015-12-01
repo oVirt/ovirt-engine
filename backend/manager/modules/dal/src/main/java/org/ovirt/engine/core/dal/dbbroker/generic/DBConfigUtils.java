@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class DBConfigUtils extends ConfigUtilsBase {
     private static final Logger log = LoggerFactory.getLogger(DBConfigUtils.class);
 
-    private static final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<String, Map<String, Object>>();
+    private static final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<>();
 
     /**
      * Refreshes the VDC option cache.
@@ -133,7 +133,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     }
                     break;
                 case CommaSeparatedVersionArray:
-                    HashSet<Version> versions = new HashSet<Version>();
+                    HashSet<Version> versions = new HashSet<>();
                     for (String ver : result.toString().split("[,]", -1)) {
                         try {
                             versions.add(new Version(ver));
@@ -222,7 +222,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 values.put(version, returnValue);
             } else {
                 // Couldn't find this value at all, adding to cache.
-                Map<String, Object> defaultValues = new HashMap<String, Object>();
+                Map<String, Object> defaultValues = new HashMap<>();
                 defaultValues.put(version, returnValue);
                 _vdcOptionCache.put(option.getoption_name(), defaultValues);
                 log.debug("Adding new value to configuration cache.");
@@ -258,7 +258,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     private static void updateOption(VdcOption option) {
         Map<String, Object> values = _vdcOptionCache.get(option.getoption_name());
         if (values == null) {
-            values = new HashMap<String, Object>();
+            values = new HashMap<>();
             _vdcOptionCache.put(option.getoption_name(), values);
         }
         values.put(option.getversion(), getValue(option));

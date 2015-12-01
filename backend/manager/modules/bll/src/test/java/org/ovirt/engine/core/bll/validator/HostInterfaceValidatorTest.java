@@ -42,7 +42,7 @@ public class HostInterfaceValidatorTest {
     @Test
     public void testInterfaceAlreadyLabeledWithWhenInterfaceIsNotLabeled() throws Exception {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setLabels(new HashSet<String>());
+        vdsNetworkInterface.setLabels(new HashSet<>());
         assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceAlreadyLabeledWith("labelA"), isValid());
     }
 

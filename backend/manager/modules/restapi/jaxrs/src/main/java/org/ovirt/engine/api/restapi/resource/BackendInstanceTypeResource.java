@@ -62,7 +62,7 @@ public class BackendInstanceTypeResource
     @Override
     public InstanceType update(InstanceType incoming) {
         InstanceType instanceType = performUpdate(incoming,
-                new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType, GetVmTemplateParameters.class),
+                new QueryIdResolver<>(VdcQueryType.GetInstanceType, GetVmTemplateParameters.class),
                 VdcActionType.UpdateVmTemplate,
                 new UpdateParametersProvider());
 

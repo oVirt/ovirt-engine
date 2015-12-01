@@ -16,7 +16,7 @@ public class XmlNodeList implements Iterable<XmlNode> {
 
     @Override
     public Iterator<XmlNode> iterator() {
-        List<XmlNode> list = new LinkedList<XmlNode>();
+        List<XmlNode> list = new LinkedList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             list.add(new XmlNode(nodeList.item(i)));
         }

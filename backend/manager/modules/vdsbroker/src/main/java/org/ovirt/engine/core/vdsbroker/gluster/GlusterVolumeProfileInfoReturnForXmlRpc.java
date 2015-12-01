@@ -77,13 +77,13 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
     }
 
     private List<GlusterVolumeProfileStats> prepareNfsProfileDetails(Object[] nfsServerProfileDetails) {
-        List<GlusterVolumeProfileStats> nfsProfileDetails = new ArrayList<GlusterVolumeProfileStats>();
+        List<GlusterVolumeProfileStats> nfsProfileDetails = new ArrayList<>();
         for(Object nfsObject : nfsServerProfileDetails) {
             GlusterVolumeProfileStats nfsDetails = new GlusterVolumeProfileStats();
             Map<String, Object> nfsProfile = (Map<String, Object>) nfsObject;
             nfsDetails.setIdentity((String) nfsProfile.get(NFS));
 
-            List<StatsInfo> statsInfo = new ArrayList<StatsInfo>();
+            List<StatsInfo> statsInfo = new ArrayList<>();
             statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(CUMULATIVE_STATS), CUMULATIVE_STATS));
             statsInfo.add(getStatInfo((Map<String, Object>) nfsProfile.get(INTERVAL_STATS), INTERVAL_STATS));
             nfsDetails.setProfileStats(statsInfo);
@@ -94,7 +94,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
 
     private List<BrickProfileDetails> prepareBrickProfileDetails(GlusterVolumeEntity volume,
             Object[] brickProfileDetails) {
-        List<BrickProfileDetails> brickProfileDetailsList = new ArrayList<BrickProfileDetails>();
+        List<BrickProfileDetails> brickProfileDetailsList = new ArrayList<>();
         for (Object brickProfileObj : brickProfileDetails) {
             BrickProfileDetails brickProfileDetail = new BrickProfileDetails();
             Map<String, Object> brickProfile = (Map<String, Object>) brickProfileObj;
@@ -104,7 +104,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
                 brickProfileDetail.setBrickId(brick.getId());
             }
 
-            List<StatsInfo> statsInfo = new ArrayList<StatsInfo>();
+            List<StatsInfo> statsInfo = new ArrayList<>();
             statsInfo.add(getStatInfo((Map<String, Object>) brickProfile.get(CUMULATIVE_STATS), CUMULATIVE_STATS));
             statsInfo.add(getStatInfo((Map<String, Object>) brickProfile.get(INTERVAL_STATS), INTERVAL_STATS));
             brickProfileDetail.setProfileStats(statsInfo);
@@ -118,7 +118,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
         int statsDuration = Integer.parseInt((String) statsInfoMap.get(DURATION));
         statsInfo.setDuration(statsDuration);
         Pair<Long, TimeUnit> statsDurationFormatted = TimeConverter.autoConvert(statsDuration, TimeUnit.SECONDS);
-        statsInfo.setDurationFormatted(new Pair<Integer, String>(statsDurationFormatted.getFirst().intValue(), statsDurationFormatted.getSecond().toString()));
+        statsInfo.setDurationFormatted(new Pair<>(statsDurationFormatted.getFirst().intValue(), statsDurationFormatted.getSecond().toString()));
         statsInfo.setTotalWrite(Long.parseLong((String) statsInfoMap.get(TOTAL_WRITE)));
         statsInfo.setTotalRead(Long.parseLong((String) statsInfoMap.get(TOTAL_READ)));
         statsInfo.setBlockStats(getBlockStats((Object[]) statsInfoMap.get(BLOCK_STATS)));
@@ -129,7 +129,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
     }
 
     private List<FopStats> getFopStats(Object[] fopStatsObjects) {
-        List<FopStats> fopStatsList = new ArrayList<FopStats>();
+        List<FopStats> fopStatsList = new ArrayList<>();
         for (Object fopStatsObj : fopStatsObjects) {
             FopStats fopStats = new FopStats();
             Map<String, Object> fopStatsMap = (Map<String, Object>) fopStatsObj;
@@ -139,17 +139,17 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
             Double minLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_MIN));
             fopStats.setMinLatency(minLatency);
             Pair<Long, TimeUnit> minLatencyConverted = TimeConverter.autoConvert(minLatency.longValue(), TimeUnit.MICROSECONDS);
-            fopStats.setMinLatencyFormatted(new Pair<Double, String>(minLatencyConverted.getFirst().doubleValue(), minLatencyConverted.getSecond().toString()));
+            fopStats.setMinLatencyFormatted(new Pair<>(minLatencyConverted.getFirst().doubleValue(), minLatencyConverted.getSecond().toString()));
 
             Double maxLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_MAX));
             fopStats.setMaxLatency(maxLatency);
             Pair<Long, TimeUnit> maxLatencyConverted = TimeConverter.autoConvert(maxLatency.longValue(), TimeUnit.MICROSECONDS);
-            fopStats.setMaxLatencyFormatted(new Pair<Double, String>(maxLatencyConverted.getFirst().doubleValue(), maxLatencyConverted.getSecond().toString()));
+            fopStats.setMaxLatencyFormatted(new Pair<>(maxLatencyConverted.getFirst().doubleValue(), maxLatencyConverted.getSecond().toString()));
 
             Double avgLatency = Double.valueOf((String) fopStatsMap.get(LATENCY_AVG));
             fopStats.setAvgLatency(avgLatency);
             Pair<Long, TimeUnit> avgLatencyConverted = TimeConverter.autoConvert(avgLatency.longValue(), TimeUnit.MICROSECONDS);
-            fopStats.setAvgLatencyFormatted(new Pair<Double, String>(avgLatencyConverted.getFirst().doubleValue(), avgLatencyConverted.getSecond().toString()));
+            fopStats.setAvgLatencyFormatted(new Pair<>(avgLatencyConverted.getFirst().doubleValue(), avgLatencyConverted.getSecond().toString()));
 
             fopStatsList.add(fopStats);
         }
@@ -157,7 +157,7 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
     }
 
     private List<BlockStats> getBlockStats(Object[] blockStatsObjects) {
-        List<BlockStats> blockStatsList = new ArrayList<BlockStats>();
+        List<BlockStats> blockStatsList = new ArrayList<>();
         for (Object blockStatsObj : blockStatsObjects) {
             BlockStats blockStats = new BlockStats();
             Map<String, Object> blockStatsMap = (Map<String, Object>) blockStatsObj;

@@ -133,7 +133,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveAll() {
-        List<Guid> hookIds = new ArrayList<Guid>();
+        List<Guid> hookIds = new ArrayList<>();
         hookIds.add(FixturesTool.HOOK_ID);
         hookIds.add(FixturesTool.HOOK_ID2);
         dao.removeAll(hookIds);
@@ -157,7 +157,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
         newHook.setId(FixturesTool.NEW_HOOK_ID);
         dao.save(newHook);
 
-        List<Guid> hookIds = new ArrayList<Guid>();
+        List<Guid> hookIds = new ArrayList<>();
         hookIds.add(FixturesTool.HOOK_ID);
         hookIds.add(FixturesTool.HOOK_ID2);
         dao.removeAll(hookIds);

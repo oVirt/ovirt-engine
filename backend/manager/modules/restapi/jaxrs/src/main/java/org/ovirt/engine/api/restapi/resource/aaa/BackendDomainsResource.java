@@ -45,7 +45,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     }
 
     private List<Directory> getCollection() {
-        List<Directory> dsl = new ArrayList<Directory>();
+        List<Directory> dsl = new ArrayList<>();
         for(String domain : getDomainList()){
             Directory ds = new Directory();
             ds.setDomain(domain);

@@ -190,8 +190,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
                 // load device properties
                 devicePropertiesStr = getCustomDeviceProperties(version);
                 if (FeatureSupported.deviceCustomProperties(version)) {
-                    deviceProperties.put(version,
-                            new EnumMap<VmDeviceGeneralType, Map<String, String>>(VmDeviceGeneralType.class));
+                    deviceProperties.put(version, new EnumMap<>(VmDeviceGeneralType.class));
                     Matcher typeMatcher = devicePropSplitPattern.matcher(devicePropertiesStr);
                     while (typeMatcher.find()) {
                         String dcpStr = typeMatcher.group();
@@ -207,7 +206,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
                         VmDeviceGeneralType type = VmDeviceGeneralType.forValue(dcpStr.substring(0, idx));
                         // properties definition for device starts with ";prop={"
                         String propStr = dcpStr.substring(idx + PROP_PREFIX_LEN, dcpStr.length() - 1);
-                        Map<String, String> props = new HashMap<String, String>();
+                        Map<String, String> props = new HashMap<>();
                         parsePropertiesRegex(propStr, props);
                         deviceProperties.get(version).put(type, props);
                     }
@@ -251,16 +250,16 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      */
     public Map<String, String> getDeviceProperties(Version version, VmDeviceGeneralType type) {
         if (!FeatureSupported.deviceCustomProperties(version)) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
 
         Map<String, String> map = deviceProperties.get(version).get(type);
         if (map == null) {
             // no defined properties for specified type
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
         } else {
             // prevent client to modify map of properties
-            map = new HashMap<String, String>(map);
+            map = new HashMap<>(map);
         }
         return map;
     }
@@ -303,8 +302,8 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
             return invalidSyntaxValidationError;
         }
 
-        List<ValidationError> results = new ArrayList<ValidationError>();
-        Set<ValidationError> errorsSet = new HashSet<ValidationError>();
+        List<ValidationError> results = new ArrayList<>();
+        Set<ValidationError> errorsSet = new HashSet<>();
 
         for (Map.Entry<String, String> e : properties.entrySet()) {
             String key = e.getKey();

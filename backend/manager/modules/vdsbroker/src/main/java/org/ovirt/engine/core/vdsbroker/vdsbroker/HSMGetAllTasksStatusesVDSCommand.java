@@ -61,8 +61,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     }
 
     protected HashMap<Guid, AsyncTaskStatus> parseTaskStatusList(Map<String, ?> taskStatusList) {
-        HashMap<Guid, AsyncTaskStatus> result = new HashMap<Guid, AsyncTaskStatus>(
-                taskStatusList.size());
+        HashMap<Guid, AsyncTaskStatus> result = new HashMap<>(taskStatusList.size());
         for (Map.Entry<String, ?> entry : taskStatusList.entrySet()) {
             try {
                 Guid taskGuid = new Guid(entry.getKey().toString());

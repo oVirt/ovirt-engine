@@ -35,7 +35,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     }
 
     private List<StorageServerConnections> parseFullTargets(List<String> iqnList) {
-        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>(iqnList.size());
+        ArrayList<StorageServerConnections> connections = new ArrayList<>(iqnList.size());
         for (String fullTarget : iqnList) {
             StorageServerConnections con = StorageServerConnections.copyOf(getParameters().getConnection());
             // fullTarget format: <ip>:<port>, <portal> <targetName>
@@ -55,7 +55,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     }
 
     private List<StorageServerConnections> parseTargets(List<String> iqnList) {
-        List<StorageServerConnections> connections = new ArrayList<StorageServerConnections>(iqnList.size());
+        List<StorageServerConnections> connections = new ArrayList<>(iqnList.size());
         for (String iqn : iqnList) {
             StorageServerConnections con = StorageServerConnections.copyOf(getParameters().getConnection());
             con.setiqn(iqn);

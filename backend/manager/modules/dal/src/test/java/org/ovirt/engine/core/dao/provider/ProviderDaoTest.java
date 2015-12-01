@@ -18,7 +18,7 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
 
     @Override
     protected Provider<?> generateNewEntity() {
-        Provider<AdditionalProperties> provider = new Provider<AdditionalProperties>();
+        Provider<AdditionalProperties> provider = new Provider<>();
         provider.setId(generateNonExistingId());
         provider.setName("brovider");
         provider.setUrl("http://brovider.com/");

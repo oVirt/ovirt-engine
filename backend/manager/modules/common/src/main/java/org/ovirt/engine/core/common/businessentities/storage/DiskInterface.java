@@ -14,7 +14,7 @@ public enum DiskInterface {
     private static Map<String, DiskInterface> mappings;
 
     static {
-        mappings = new HashMap<String, DiskInterface>();
+        mappings = new HashMap<>();
         for (DiskInterface error : values()) {
             mappings.put(error.getName(), error);
         }

@@ -16,7 +16,7 @@ public class ConfigValuesTest {
     private static final Set<String> configValuesEnumNames = getConfigValuesEnumNames();
 
     private static Set<String> getConfigValuesEnumNames() {
-        Set<String> configValuesEnumNames = new HashSet<String>();
+        Set<String> configValuesEnumNames = new HashSet<>();
         for (ConfigValues configValue : ConfigValues.values()) {
             configValuesEnumNames.add(configValue.toString());
         }
@@ -26,7 +26,7 @@ public class ConfigValuesTest {
     @Test
     public void findMissingEnumNames() {
         // Find missing ConfigurationValues enum names in ConfigValues enum
-        Set<ConfigurationValues> missingKeys = new TreeSet<ConfigurationValues>();
+        Set<ConfigurationValues> missingKeys = new TreeSet<>();
         for (ConfigurationValues configValue : ConfigurationValues.values()) {
             if (!configValuesEnumNames.contains(configValue.toString())) {
                 log.error("Found missing key: {}", configValue);

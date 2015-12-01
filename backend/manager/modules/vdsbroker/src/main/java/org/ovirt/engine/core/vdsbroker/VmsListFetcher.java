@@ -132,7 +132,7 @@ public class VmsListFetcher {
         for (VM dbVm : dbVms.values()) {
             if (!vdsmVms.containsKey(dbVm.getId())) {
                 // non running vms are also treated as changed VMs
-                changedVms.add(new Pair<VM, VmInternalData>(dbVm, null));
+                changedVms.add(new Pair<>(dbVm, null));
             }
         }
     }

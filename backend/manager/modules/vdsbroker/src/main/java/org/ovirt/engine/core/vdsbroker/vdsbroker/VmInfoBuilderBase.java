@@ -196,7 +196,7 @@ public abstract class VmInfoBuilderBase {
         if (StringUtils.isNotEmpty(cpuPinning)
                 && Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
                         compatibilityVersion))) {
-            final Map<String, Object> pinDict = new HashMap<String, Object>();
+            final Map<String, Object> pinDict = new HashMap<>();
             for (String pin : cpuPinning.split("_")) {
                 final String[] split = pin.split("#");
                 pinDict.put(split[0], split[1]);
@@ -283,7 +283,7 @@ public abstract class VmInfoBuilderBase {
     protected List<Disk> getSortedDisks() {
         // order first by drive numbers and then order by boot for the bootable
         // drive to be first (important for IDE to be index 0) !
-        List<Disk> diskImages = new ArrayList<Disk>(vm.getDiskMap()
+        List<Disk> diskImages = new ArrayList<>(vm.getDiskMap()
                 .values());
         Collections.sort(diskImages, new DiskImageByDiskAliasComparator());
         Collections.sort(diskImages,

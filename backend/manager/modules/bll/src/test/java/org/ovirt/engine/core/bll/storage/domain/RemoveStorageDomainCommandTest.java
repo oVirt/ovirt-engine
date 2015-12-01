@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -161,7 +160,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
 
     private void setUpStorageHelper() {
         IStorageHelper helper = mock(IStorageHelper.class);
-        when(helper.connectStorageToDomainByVdsIdDetails(storageDomain, command.getParameters().getVdsId())).thenReturn(new Pair<Boolean, EngineFault>(true, null));
+        when(helper.connectStorageToDomainByVdsIdDetails(storageDomain, command.getParameters().getVdsId())).thenReturn(new Pair<>(true, null));
         when(helper.disconnectStorageFromDomainByVdsId(storageDomain, command.getParameters().getVdsId())).thenReturn(true);
         doReturn(helper).when(command).getStorageHelper(storageDomain);
     }

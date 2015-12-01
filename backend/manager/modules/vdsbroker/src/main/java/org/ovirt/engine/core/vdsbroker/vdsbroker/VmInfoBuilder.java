@@ -64,7 +64,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
-    private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
+    private final List<Map<String, Object>> devices = new ArrayList<>();
     private List<VmDevice> managedDevices = null;
     private final boolean hasNonDefaultBootOrder;
     private Guid vdsId;
@@ -76,7 +76,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         this.createInfo = createInfo;
         hasNonDefaultBootOrder = (vm.getBootSequence() != vm.getDefaultBootSequence());
         if (hasNonDefaultBootOrder) {
-            managedDevices = new ArrayList<VmDevice>();
+            managedDevices = new ArrayList<>();
         }
     }
 
@@ -92,7 +92,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 continue;
             }
 
-            Map<String, Object> struct = new HashMap<String, Object>();
+            Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmVideoDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmVideoDevice.getDevice());
             addAddress(vmVideoDevice, struct);
@@ -196,7 +196,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM;
         // check if we have payload CD
         if (hasPayload) {
-            struct = new HashMap<String, Object>();
+            struct = new HashMap<>();
             addCdDetails(vm.getVmPayload(), struct, vm);
             addDevice(struct, vm.getVmPayload(), "");
         }
@@ -216,7 +216,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             null,
                             null,
                             null);
-            struct = new HashMap<String, Object>();
+            struct = new HashMap<>();
             addCdDetails(vmDevice, struct, vm);
             addDevice(struct, vmDevice, vm.getCdPath());
         } else {
@@ -238,7 +238,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
-                struct = new HashMap<String, Object>();
+                struct = new HashMap<>();
                 String cdPath = vm.getCdPath();
                 addCdDetails(vmDevice, struct, vm);
                 addAddress(vmDevice, struct);
@@ -253,7 +253,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // check if we have payload Floppy
         boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY;
         if (hasPayload) {
-            Map<String, Object> struct = new HashMap<String, Object>();
+            Map<String, Object> struct = new HashMap<>();
             addFloppyDetails(vm.getVmPayload(), struct);
             addDevice(struct, vm.getVmPayload(), "");
         }
@@ -273,7 +273,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             null,
                             null,
                             null);
-            Map<String, Object> struct = new HashMap<String, Object>();
+            Map<String, Object> struct = new HashMap<>();
             addFloppyDetails(vmDevice, struct);
             addDevice(struct, vmDevice, vm.getFloppyPath());
         } else {
@@ -300,7 +300,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
-                Map<String, Object> struct = new HashMap<String, Object>();
+                Map<String, Object> struct = new HashMap<>();
                 String file = vm.getFloppyPath();
                 addFloppyDetails(vmDevice, struct);
                 addDevice(struct, vmDevice, file);
@@ -328,7 +328,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         int pinnedDriveIndex = 0;
 
         for (Disk disk : disks) {
-            Map<String, Object> struct = new HashMap<String, Object>();
+            Map<String, Object> struct = new HashMap<>();
             // get vm device for this disk from DB
             VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
             // skip unamanged devices (handled separtely)
@@ -501,7 +501,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
             if (ioTune != null) {
                 if (vmDevice.getSpecParams() == null) {
-                    vmDevice.setSpecParams(new HashMap<String, Object>());
+                    vmDevice.setSpecParams(new HashMap<>());
                 }
                 vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
             }
@@ -654,7 +654,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildUnmanagedDevices() {
         Map<String, String> customMap = (createInfo.containsKey(VdsProperties.Custom)) ?
-                (Map<String, String>) createInfo.get(VdsProperties.Custom) : new HashMap<String, String>();
+                (Map<String, String>) createInfo.get(VdsProperties.Custom) : new HashMap<>();
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
@@ -732,7 +732,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         null,
                         null,
                         null);
-        Map<String, Object> struct = new HashMap<String, Object>();
+        Map<String, Object> struct = new HashMap<>();
         addFloppyDetails(vmDevice, struct);
         addDevice(struct, vmDevice, vm.getFloppyPath());
     }
@@ -760,7 +760,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         null,
                         null,
                         null);
-        Map<String, Object> struct = new HashMap<String, Object>();
+        Map<String, Object> struct = new HashMap<>();
         addCdDetails(vmDevice, struct, vm);
         addDevice(struct, vmDevice, "");
     }
@@ -915,7 +915,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             customProperties = vnicProfile.getCustomProperties();
         }
 
-        return customProperties == null ? new HashMap<String, String>() : customProperties;
+        return customProperties == null ? new HashMap<>() : customProperties;
     }
 
     public static boolean addCustomPropertiesForDevice(Map<String, Object> struct,
@@ -1017,7 +1017,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static HashMap<String, Object> getNewMonitorSpecParams(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
-        HashMap<String, Object> specParams = new HashMap<String, Object>();
+        HashMap<String, Object> specParams = new HashMap<>();
         specParams.put("vram", String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM));
         specParams.put("heads", String.valueOf(numOfMonitors));
         specParams.put("vram", VmDeviceCommonUtils.singlePciVRamByHeads(numOfMonitors));
@@ -1098,7 +1098,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmMemoryBalloon() {
         if (vm.isRunOnce() && vm.isBalloonEnabled()) {
-            Map<String, Object> specParams = new HashMap<String, Object>();
+            Map<String, Object> specParams = new HashMap<>();
             specParams.put(VdsProperties.Model, VdsProperties.Virtio);
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
@@ -1135,13 +1135,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void addMemBalloonDevice(VmDevice vmDevice) {
-        Map<String, Object> struct = new HashMap<String, Object>();
+        Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         Map<String, Object> specParams = vmDevice.getSpecParams();
         // validate & set spec params for balloon device
         if (specParams == null) {
-            specParams = new HashMap<String, Object>();
+            specParams = new HashMap<>();
             vmDevice.setSpecParams(specParams);
         }
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
@@ -1182,7 +1182,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             watchdogFromRpc.put(VdsProperties.Device, watchdog.getDevice());
             Map<String, Object> specParams = watchdog.getSpecParams();
             if (specParams == null) {
-                specParams = new HashMap<String, Object>();
+                specParams = new HashMap<>();
             }
             watchdogFromRpc.put(VdsProperties.SpecParams, specParams);
             addDevice(watchdogFromRpc, watchdog, null);
@@ -1253,7 +1253,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     public static Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns) {
-        List<Disk> disks = new ArrayList<Disk>(vm.getDiskMap().values());
+        List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
         Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
         Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
 

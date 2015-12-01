@@ -57,13 +57,13 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
 
     private void mockVmDao() {
         // Mock VM Dao getAllVmsRelatedToQuotaId.
-        List<VM> newList = new ArrayList<VM>();
+        List<VM> newList = new ArrayList<>();
         when(vmDao.getAllVmsRelatedToQuotaId(generalGuidQuota)).thenReturn(newList);
     }
 
     private void mockQuotaDao() {
         when(quotaDao.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
-        List<Quota> quotaList = new ArrayList<Quota>();
+        List<Quota> quotaList = new ArrayList<>();
         quotaList.add(new Quota());
         quotaList.add(new Quota());
         when(quotaDao.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(quotaList);

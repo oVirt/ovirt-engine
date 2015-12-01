@@ -32,7 +32,7 @@ public class VmRngDevice extends VmDevice implements Serializable {
     }
 
     public static Set<Source> csvToSourcesSet(String csvSources) {
-        Set<Source> result = new HashSet<Source>();
+        Set<Source> result = new HashSet<>();
         if (csvSources != null) {
             for (String chunk : csvSources.split(",")) {
                 if (!StringHelper.isNullOrEmpty(chunk)) {
@@ -88,7 +88,7 @@ public class VmRngDevice extends VmDevice implements Serializable {
     }
 
     private static Map<String, Object> createSpecPars(Integer bytes, Integer period, Source source) {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
 
         if (bytes != null) {
             result.put(BYTES_STRING, bytes.toString());

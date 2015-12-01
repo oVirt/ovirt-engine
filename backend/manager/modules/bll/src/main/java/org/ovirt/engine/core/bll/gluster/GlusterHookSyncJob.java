@@ -99,7 +99,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<>();
             Map<String, Integer> existingHookConflictMap = new HashMap<>();
             for (final GlusterHookEntity hook: existingHooks) {
-                existingHookServersMap.put(hook.getId(), new HashSet<VDS>());
+                existingHookServersMap.put(hook.getId(), new HashSet<>());
                 existingHookConflictMap.put(hook.getHookKey(), hook.getConflictStatus());
                 //initialize hook conflict status as this is to be computed again
                 hook.setConflictStatus(0);
@@ -170,7 +170,7 @@ public class GlusterHookSyncJob extends GlusterJob {
 
                             updateContentTasksList(contentTasksList, newHook, server);
 
-                            existingHookServersMap.put(newHook.getId(), new HashSet<VDS>());
+                            existingHookServersMap.put(newHook.getId(), new HashSet<>());
                         }
                         Integer conflictStatus = getConflictStatus(newHook, fetchedHook);
                         if (conflictStatus > 0) {

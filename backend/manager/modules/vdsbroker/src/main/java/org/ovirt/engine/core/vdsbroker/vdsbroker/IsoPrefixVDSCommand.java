@@ -10,8 +10,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extends VdsBrokerCommand<T> {
 
-    private static final ConcurrentHashMap<Guid, String> storagePoolIdToIsoPrefix = new ConcurrentHashMap<Guid, String>();
-    private static final ConcurrentHashMap<Guid, Object> storagePoolIdToLockObj = new ConcurrentHashMap<Guid, Object>();
+    private static final ConcurrentHashMap<Guid, String> storagePoolIdToIsoPrefix = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Guid, Object> storagePoolIdToLockObj = new ConcurrentHashMap<>();
 
     public IsoPrefixVDSCommand(T parameters) {
         super(parameters);

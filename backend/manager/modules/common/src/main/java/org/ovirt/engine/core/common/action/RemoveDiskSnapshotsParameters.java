@@ -19,7 +19,7 @@ public class RemoveDiskSnapshotsParameters extends ImagesContainterParametersBas
     private List<Guid> childImageIds;
 
     public RemoveDiskSnapshotsParameters(Guid imageId) {
-        this(new ArrayList<Guid>(Arrays.asList(imageId)));
+        this(new ArrayList<>(Arrays.asList(imageId)));
     }
 
     public RemoveDiskSnapshotsParameters(ArrayList<Guid> imageIds) {

@@ -80,8 +80,8 @@ public class NegotiationFilter implements Filter {
     }
 
     private synchronized void cacheNegotiatingProfiles() {
-        schemes = new ArrayList<String>();
-        profiles = new ArrayList<AuthenticationProfile>();
+        schemes = new ArrayList<>();
+        profiles = new ArrayList<>();
 
         for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
             ExtMap authnContext = profile.getAuthn().getContext();
@@ -119,7 +119,7 @@ public class NegotiationFilter implements Filter {
                 stack = (Deque<AuthenticationProfile>)session.getAttribute(STACK_ATTR);
             }
             if (stack == null) {
-                stack = new ArrayDeque<AuthenticationProfile>();
+                stack = new ArrayDeque<>();
                 stack.addAll(profiles);
             }
             doAuth(httpreq, (HttpServletResponse) rsp, stack);
