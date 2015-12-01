@@ -22,10 +22,10 @@ public class StorageHelperDirector {
     }
 
     private StorageHelperDirector() {
-        InitializeHelpers();
+        initializeHelpers();
     }
 
-    private void InitializeHelpers() {
+    private void initializeHelpers() {
         try {
             for (StorageType storageType : StorageType.values()) {
                 if (storageType.isConcreteStorageType()) {
@@ -50,7 +50,7 @@ public class StorageHelperDirector {
                 }
             }
         } catch (Exception ex) {
-            log.error("StorageHelperDirector Error:: exception was encountered during InitializeHelpers() execution: {}",
+            log.error("StorageHelperDirector Error:: exception was encountered during initializeHelpers() execution: {}",
                     ex.getMessage());
             log.debug("Exception");
             throw new RuntimeException(ex);
