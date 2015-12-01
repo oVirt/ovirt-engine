@@ -186,13 +186,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 .stream()
                 .min(Comparator.comparing(VmTemplate::getTemplateVersionNumber))
                 .get();
-        final Pair<Boolean, List<String>> isLockedAndFailMessages = acquireBaseTemplateSuccessorLock();
-        if (!isLockedAndFailMessages.getFirst()) {
-            getReturnValue().getCanDoActionMessages().addAll(isLockedAndFailMessages.getSecond());
+        if (!acquireBaseTemplateSuccessorLock()) {
             return false;
         }
-        final boolean baseTemplateSuccessorExists = getVmTemplateDao().get(baseTemplateSuccessor.getId()) != null;
-        if (!baseTemplateSuccessorExists) {
+        if (getVmTemplateDao().get(baseTemplateSuccessor.getId()) == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED,
                     String.format("$subVersionId %s", baseTemplateSuccessor.getId().toString()));
         }
@@ -204,7 +201,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      * @return first: true ~ successfully locked, false otherwise; second: fail reasons in form suitable for
      *         canDoActionMessages
      */
-    private Pair<Boolean, List<String>> acquireBaseTemplateSuccessorLock() {
+    private boolean acquireBaseTemplateSuccessorLock() {
         final Map<String, Pair<String, String>> lockSharedMap = Collections.singletonMap(
                 baseTemplateSuccessor.getId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
@@ -212,11 +209,11 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         baseTemplateSuccessorLock = new EngineLock(null, lockSharedMap);
         final Pair<Boolean, Set<String>> isLockedAndFailReason = getLockManager().acquireLock(baseTemplateSuccessorLock);
         if (isLockedAndFailReason.getFirst()) {
-            return new Pair<>(true, null);
+            return true;
         }
         baseTemplateSuccessorLock = null;
-        final List<String> lockFailReasons = extractVariableDeclarations(isLockedAndFailReason.getSecond());
-        return new Pair<>(false, lockFailReasons);
+        getReturnValue().getCanDoActionMessages().addAll(extractVariableDeclarations(isLockedAndFailReason.getSecond()));
+        return false;
     }
 
     private String createSubTemplateLockMessage(VmTemplate template) {
