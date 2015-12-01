@@ -10,7 +10,7 @@ import com.google.gwt.text.shared.Renderer;
 public class EntityModelPasswordBoxEditor<T> extends AbstractValueBoxWithLabelEditor<T, EntityModelPasswordBox<T>> {
 
     public EntityModelPasswordBoxEditor(Renderer<T> renderer, Parser<T> parser) {
-        super(new EntityModelPasswordBox<T>(renderer, parser));
+        super(new EntityModelPasswordBox<>(renderer, parser));
     }
 
 }

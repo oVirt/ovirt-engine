@@ -26,7 +26,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
 
     private static final NumberFormat decimalFormat = NumberFormat.getDecimalFormat();
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GiB);
+            new DiskSizeRenderer<>(SizeConverter.SizeUnit.GiB);
 
     interface ViewIdHandler extends ElementIdHandler<MainTabQuotaView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);

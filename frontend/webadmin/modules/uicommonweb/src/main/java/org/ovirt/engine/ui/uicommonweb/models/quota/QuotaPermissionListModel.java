@@ -43,7 +43,7 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                ArrayList<Permission> newList = new ArrayList<Permission>();
+                ArrayList<Permission> newList = new ArrayList<>();
                 for (Permission permission : list) {
                     if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);

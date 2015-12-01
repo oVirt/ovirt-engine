@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class VnicInstancesModel extends ListModel<VnicInstanceType> {
 
-    private final ListModel<VnicProfileView> vnicProfiles = new ListModel<VnicProfileView>();
+    private final ListModel<VnicProfileView> vnicProfiles = new ListModel<>();
 
     public ListModel<VnicProfileView> getVnicProfiles() {
         return vnicProfiles;

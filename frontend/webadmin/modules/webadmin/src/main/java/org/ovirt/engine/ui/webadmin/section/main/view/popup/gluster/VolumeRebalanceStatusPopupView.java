@@ -124,7 +124,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     }
 
     void initEditors() {
-        rebalanceHostsTable = new EntityModelCellTable<ListModel>(false, true);
+        rebalanceHostsTable = new EntityModelCellTable<>(false, true);
 
         statusTimeEditor = getInstanceOfDateEditor();
 
@@ -222,7 +222,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     }
 
     private EntityModelLabelEditor<Date> getInstanceOfDateEditor() {
-        return new EntityModelLabelEditor<Date>(new AbstractRenderer<Date>(){
+        return new EntityModelLabelEditor<>(new AbstractRenderer<Date>() {
             @Override
             public String render(Date entity) {
                 if(entity == null) {

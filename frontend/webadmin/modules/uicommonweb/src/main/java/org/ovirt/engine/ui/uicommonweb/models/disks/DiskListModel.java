@@ -296,7 +296,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private void scanAlignment() {
-        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<>();
 
         for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
@@ -356,7 +356,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void onChangeQuota() {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (ChangeQuotaItemModel item : model.getItems()) {
             ChangeQuotaItemModel itemModel = item;
@@ -413,7 +413,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             Disk disk = (Disk) item;

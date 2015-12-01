@@ -24,7 +24,7 @@ public class TemplateImportDiskListModel extends SearchableListModel {
         super.onEntityChanged();
 
         if (getEntity() != null) {
-            ArrayList<DiskImage> list = new ArrayList<DiskImage>();
+            ArrayList<DiskImage> list = new ArrayList<>();
             VmTemplate template = (VmTemplate) getEntity();
             for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
                 if (item.getKey().getQueryableId().equals(template.getQueryableId())) {

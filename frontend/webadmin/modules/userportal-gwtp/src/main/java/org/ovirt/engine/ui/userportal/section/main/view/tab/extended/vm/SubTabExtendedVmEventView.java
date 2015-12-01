@@ -25,7 +25,7 @@ public class SubTabExtendedVmEventView extends AbstractSubTabTableWidgetView<Use
     public SubTabExtendedVmEventView(
             UserPortalSearchableDetailModelProvider<AuditLog, UserPortalListModel, UserPortalVmEventListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new EventListModelTable<UserPortalVmEventListModel>(modelProvider, eventBus, clientStorage));
+        super(new EventListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

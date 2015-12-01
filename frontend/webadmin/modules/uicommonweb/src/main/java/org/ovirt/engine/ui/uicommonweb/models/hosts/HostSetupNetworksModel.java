@@ -676,9 +676,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void commitNetworkChanges(VdsNetworkInterface iface, List<LogicalNetworkModel> networks) {
         NetworkInterfaceModel bondModel = nicMap.get(iface.getName());
-        NetworkOperation.attachNetworks(bondModel,
-            new ArrayList<LogicalNetworkModel>(networks),
-            hostSetupNetworksParametersData);
+        NetworkOperation.attachNetworks(bondModel, new ArrayList<>(networks), hostSetupNetworksParametersData);
     }
 
     public void redraw() {

@@ -142,7 +142,7 @@ public class FenceAgentListModel extends SortedListModel<FenceAgentModel> {
      * @param items The list of {@code FenceAgentModel}s.
      */
     private void updateConcurrentList(FenceAgentModel compareModel, Collection<FenceAgentModel> items) {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         values.add(constants.concurrentFenceAgent());
         ListModel<String> concurrentList = compareModel.getConcurrentSelectList();
         if (concurrentList != null && concurrentList.getItems() != null && compareModel.hasAddress() && items != null) {
@@ -327,7 +327,7 @@ public class FenceAgentListModel extends SortedListModel<FenceAgentModel> {
      * @return A list of {@code FenceAgent}s
      */
     public List<FenceAgent> getFenceAgents() {
-        List<FenceAgent> agents = new LinkedList<FenceAgent>();
+        List<FenceAgent> agents = new LinkedList<>();
         for (FenceAgentModel agentModel: getItems()) {
             FenceAgent agent = createFenceAgentFromModel(agentModel);
             if (!agentModel.getConcurrentList().isEmpty()) {

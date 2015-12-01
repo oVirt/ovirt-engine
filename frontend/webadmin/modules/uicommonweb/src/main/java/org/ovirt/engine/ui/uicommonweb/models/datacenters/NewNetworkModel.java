@@ -68,7 +68,7 @@ public class NewNetworkModel extends NetworkModel {
 
     protected void onGetClusterList(ArrayList<VDSGroup> clusterList) {
         // Cluster list
-        List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
+        List<NetworkClusterModel> items = new ArrayList<>();
         for (VDSGroup cluster : clusterList) {
             items.add(createNetworkClusterModel(cluster));
         }

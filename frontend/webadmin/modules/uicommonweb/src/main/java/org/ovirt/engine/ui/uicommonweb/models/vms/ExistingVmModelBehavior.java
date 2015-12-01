@@ -111,7 +111,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                 if (returnValue != null) {
                                     StoragePool dataCenter = (StoragePool) returnValue;
                                     final List<StoragePool> dataCenters =
-                                            new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter}));
+                                            new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter}));
 
                                     initClusters(dataCenters);
                                 } else {
@@ -229,7 +229,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
                 List<VmDevice> graphicsVmDevs = retVal.getReturnValue();
 
-                List<GraphicsType> graphicsTypes = new ArrayList<GraphicsType>();
+                List<GraphicsType> graphicsTypes = new ArrayList<>();
                 for (VmDevice graphicsVmDev : graphicsVmDevs) {
                     graphicsTypes.add(GraphicsType.fromString(graphicsVmDev.getDevice()));
                 }
@@ -398,7 +398,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
      *  span a list of all possible sockets values
      */
     private List<Integer> createSocketsRange() {
-        List<Integer> res = new ArrayList<Integer>();
+        List<Integer> res = new ArrayList<>();
         int maxHostCpu = getHostCpu();
         int cpusPerSockets = vm.getCpuPerSocket();
 

@@ -115,7 +115,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
         model.setTitle(ConstantsManager.getInstance().getConstants().removeSecretTitle());
         model.setHelpTag(HelpTag.remove_secret);
         model.setHashName("remove_secret"); //$NON-NLS-1$
-        ArrayList<String> secretsToRemove = new ArrayList<String>();
+        ArrayList<String> secretsToRemove = new ArrayList<>();
         for (LibvirtSecret libvirtSecret : Linq.<LibvirtSecret> cast(getSelectedItems())) {
             secretsToRemove.add(libvirtSecret.getId().toString());
         }

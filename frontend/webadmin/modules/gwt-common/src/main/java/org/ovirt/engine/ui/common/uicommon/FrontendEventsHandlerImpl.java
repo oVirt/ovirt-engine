@@ -50,7 +50,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
-        List<VdcActionType> actions = new ArrayList<VdcActionType>();
+        List<VdcActionType> actions = new ArrayList<>();
         for (int i = 0; i < returnValues.size(); i++) {
             actions.add(action);
         }
@@ -88,7 +88,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
             List<VdcReturnValueBase> returnValues,
             MessageFormatter messageFormatter) {
 
-        List<Message> errors = new ArrayList<Message>();
+        List<Message> errors = new ArrayList<>();
 
         int actionNum = 0;
         for (VdcReturnValueBase v : returnValues) {

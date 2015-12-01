@@ -85,8 +85,8 @@ public class NewClusterPolicyModel extends Model {
         if (!customPropertiesInitialized) {
             return;
         }
-        Map<String, String> policyProperties = new HashMap<String, String>();
-        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
+        Map<String, String> policyProperties = new HashMap<>();
+        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<>();
         for (PolicyUnit policyUnit : getUsedFilters()) {
             allPolicyUnits.put(policyUnit.getId(), policyUnit);
         }
@@ -108,7 +108,7 @@ public class NewClusterPolicyModel extends Model {
                 policyProperties.putAll(policyUnit.getParameterRegExMap());
             }
         }
-        Map<String, String> defaultMap = new HashMap<String, String>(getCustomProperties());
+        Map<String, String> defaultMap = new HashMap<>(getCustomProperties());
         if(!reset) {
             defaultMap.putAll(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         }
@@ -130,7 +130,7 @@ public class NewClusterPolicyModel extends Model {
             getUsedFilters().add(policyUnitsMap.get(policyUnitId));
         }
         initFilterPositions();
-        getUnusedFilters().addAll(getFilterPolicyUnits(new ArrayList<PolicyUnit>(map.values())));
+        getUnusedFilters().addAll(getFilterPolicyUnits(new ArrayList<>(map.values())));
 
     }
 
@@ -153,9 +153,9 @@ public class NewClusterPolicyModel extends Model {
                 (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
         for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
             map.remove(pair.getFirst());
-            getUsedFunctions().add(new Pair<PolicyUnit, Integer>(policyUnitsMap.get(pair.getFirst()), pair.getSecond()));
+            getUsedFunctions().add(new Pair<>(policyUnitsMap.get(pair.getFirst()), pair.getSecond()));
         }
-        getUnusedFunctions().addAll(getFunctionPolicyUnits(new ArrayList<PolicyUnit>(map.values())));
+        getUnusedFunctions().addAll(getFunctionPolicyUnits(new ArrayList<>(map.values())));
     }
 
     private void initLoadBalance() {
@@ -181,9 +181,9 @@ public class NewClusterPolicyModel extends Model {
 
     private ArrayList<PolicyUnit> getBalancePolicyUnits(ArrayList<PolicyUnit> list) {
         if (list == null || list.size() == 0) {
-            return new ArrayList<PolicyUnit>();
+            return new ArrayList<>();
         }
-        ArrayList<PolicyUnit> balancePolicyUnits = new ArrayList<PolicyUnit>();
+        ArrayList<PolicyUnit> balancePolicyUnits = new ArrayList<>();
         for (PolicyUnit policyUnit : list) {
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 balancePolicyUnits.add(policyUnit);
@@ -194,9 +194,9 @@ public class NewClusterPolicyModel extends Model {
 
     private ArrayList<PolicyUnit> getFilterPolicyUnits(ArrayList<PolicyUnit> list) {
         if (list == null || list.size() == 0) {
-            return new ArrayList<PolicyUnit>();
+            return new ArrayList<>();
         }
-        ArrayList<PolicyUnit> filterPolicyUnits = new ArrayList<PolicyUnit>();
+        ArrayList<PolicyUnit> filterPolicyUnits = new ArrayList<>();
         for (PolicyUnit policyUnit : list) {
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 filterPolicyUnits.add(policyUnit);
@@ -207,9 +207,9 @@ public class NewClusterPolicyModel extends Model {
 
     private ArrayList<PolicyUnit> getFunctionPolicyUnits(ArrayList<PolicyUnit> list) {
         if (list == null || list.size() == 0) {
-            return new ArrayList<PolicyUnit>();
+            return new ArrayList<>();
         }
-        ArrayList<PolicyUnit> functionPolicyUnits = new ArrayList<PolicyUnit>();
+        ArrayList<PolicyUnit> functionPolicyUnits = new ArrayList<>();
         for (PolicyUnit policyUnit : list) {
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 functionPolicyUnits.add(policyUnit);
@@ -284,23 +284,23 @@ public class NewClusterPolicyModel extends Model {
         this.clusterPolicy = clusterPolicy;
         this.sourceModel = sourceModel;
         this.policyUnits = policyUnits;
-        policyUnitsMap = new HashMap<Guid, PolicyUnit>();
+        policyUnitsMap = new HashMap<>();
         for (PolicyUnit policyUnit : policyUnits) {
             policyUnitsMap.put(policyUnit.getId(), policyUnit);
         }
-        usedFilters = new ArrayList<PolicyUnit>();
-        unusedFilters = new ArrayList<PolicyUnit>();
-        usedFunctions = new ArrayList<Pair<PolicyUnit, Integer>>();
-        unusedFunctions = new ArrayList<PolicyUnit>();
-        filterPositionMap = new HashMap<Guid, Integer>();
-        customProperties = new LinkedHashMap<String, String>();
+        usedFilters = new ArrayList<>();
+        unusedFilters = new ArrayList<>();
+        usedFunctions = new ArrayList<>();
+        unusedFunctions = new ArrayList<>();
+        filterPositionMap = new HashMap<>();
+        customProperties = new LinkedHashMap<>();
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
         setFilterList(new ListModel());
         setFunctionList(new ListModel());
         setLoadBalanceList(new ListModel<PolicyUnit>());
-        setFiltersChangedEvent(new Event<EventArgs>(FILTERS_CHANGED_EVENT_DEFINITION));
-        setFunctionsChangedEvent(new Event<EventArgs>(FUNCTIONS_CHANGED_EVENT_DEFINITION));
+        setFiltersChangedEvent(new Event<>(FILTERS_CHANGED_EVENT_DEFINITION));
+        setFunctionsChangedEvent(new Event<>(FUNCTIONS_CHANGED_EVENT_DEFINITION));
     }
 
     public EntityModel<String> getName() {
@@ -460,7 +460,7 @@ public class NewClusterPolicyModel extends Model {
     }
 
     public void addFunction(PolicyUnit policyUnit) {
-        usedFunctions.add(new Pair<PolicyUnit, Integer>(policyUnit, 1));
+        usedFunctions.add(new Pair<>(policyUnit, 1));
         for (int i = 0; i < unusedFunctions.size(); i++) {
             if (unusedFunctions.get(i).getId().equals(policyUnit.getId())) {
                 unusedFunctions.remove(policyUnit);
@@ -508,15 +508,15 @@ public class NewClusterPolicyModel extends Model {
         policy.setId(clusterPolicy.getId());
         policy.setName(getName().getEntity());
         policy.setDescription(getDescription().getEntity());
-        ArrayList<Guid> keys = new ArrayList<Guid>();
+        ArrayList<Guid> keys = new ArrayList<>();
         for (PolicyUnit clusterPolicy : getUsedFilters()) {
             keys.add(clusterPolicy.getId());
         }
         policy.setFilters(keys);
         policy.setFilterPositionMap(getFilterPositionMap());
-        ArrayList<Pair<Guid, Integer>> pairs = new ArrayList<Pair<Guid, Integer>>();
+        ArrayList<Pair<Guid, Integer>> pairs = new ArrayList<>();
         for (Pair<PolicyUnit, Integer> pair : getUsedFunctions()) {
-            pairs.add(new Pair<Guid, Integer>(pair.getFirst().getId(), pair.getSecond()));
+            pairs.add(new Pair<>(pair.getFirst().getId(), pair.getSecond()));
         }
         policy.setFunctions(pairs);
         policy.setBalance(getLoadBalanceList().getSelectedItem().getId());

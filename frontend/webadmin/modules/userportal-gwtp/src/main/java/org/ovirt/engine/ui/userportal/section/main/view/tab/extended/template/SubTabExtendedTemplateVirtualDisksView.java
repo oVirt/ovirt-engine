@@ -26,9 +26,7 @@ public class SubTabExtendedTemplateVirtualDisksView extends AbstractSubTabTableW
             UserPortalSearchableDetailModelProvider<DiskImage, UserPortalTemplateListModel,
                 UserPortalTemplateDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new TemplateDiskListModelTable<UserPortalTemplateDiskListModel>(modelProvider,
-                eventBus,
-                clientStorage));
+        super(new TemplateDiskListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

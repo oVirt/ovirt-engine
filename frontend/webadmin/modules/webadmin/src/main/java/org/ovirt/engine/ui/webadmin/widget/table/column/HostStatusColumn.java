@@ -38,7 +38,7 @@ public class HostStatusColumn<S> extends AbstractColumn<S, VDS> {
     public void makeSortable() {
         makeSortable(new Comparator<S>() {
 
-            IdentifiableComparator<VDSStatus> valueComparator = new Linq.IdentifiableComparator<VDSStatus>();
+            IdentifiableComparator<VDSStatus> valueComparator = new Linq.IdentifiableComparator<>();
 
             @Override
             public int compare(S o1, S o2) {

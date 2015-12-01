@@ -22,7 +22,7 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
     private EntityModel<String> clusterName;
     private EntityModel<String> volumeName;
     private ListModel<EntityModel<VolumeSnapshotOptionModel>> configOptions;
-    private Map<String, String> existingVolumeConfigs = new HashMap<String, String>();
+    private Map<String, String> existingVolumeConfigs = new HashMap<>();
 
     public EntityModel<String> getDataCenter() {
         return this.dataCenter;
@@ -128,9 +128,9 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
                 for (GlusterVolumeSnapshotConfig config : configs.getSecond()) {
                     volumeConfigOptions.put(config.getParamName(), config.getParamValue());
                 }
-                List<EntityModel<VolumeSnapshotOptionModel>> coll = new ArrayList<EntityModel<VolumeSnapshotOptionModel>>();
+                List<EntityModel<VolumeSnapshotOptionModel>> coll = new ArrayList<>();
                 for (Map.Entry<String, String> entry : volumeConfigOptions.entrySet()) {
-                    EntityModel<VolumeSnapshotOptionModel> cfgModel = new EntityModel<VolumeSnapshotOptionModel>();
+                    EntityModel<VolumeSnapshotOptionModel> cfgModel = new EntityModel<>();
                     VolumeSnapshotOptionModel option = new VolumeSnapshotOptionModel();
                     option.setOptionName(entry.getKey());
                     option.setOptionValue(entry.getValue());

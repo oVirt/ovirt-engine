@@ -220,11 +220,9 @@ public class AsyncDataProvider {
     private static int DEFAULT_OS_ID = 0;
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
-            new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
+    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues = new HashMap<>();
 
-    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValuesPreConvert =
-            new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
+    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValuesPreConvert = new HashMap<>();
 
     private String _defaultConfigurationVersion = null;
 
@@ -515,7 +513,7 @@ public class AsyncDataProvider {
     }
 
     public Boolean getNicHotplugSupport(Integer osId, Version version) {
-        Pair<Integer, Version> pair = new Pair<Integer, Version>(osId, version);
+        Pair<Integer, Version> pair = new Pair<>(osId, version);
 
         if (getNicHotplugSupportMap().containsKey(pair)) {
             return getNicHotplugSupportMap().get(pair);
@@ -574,13 +572,12 @@ public class AsyncDataProvider {
 
     public Collection<DiskInterface> getDiskHotpluggableInterfaces(Integer osId, Version version) {
 
-        Set<String> diskHotpluggableInterfaces = getDiskHotpluggableInterfacesMap()
-                .get(new Pair<Integer, Version>(osId, version));
+        Set<String> diskHotpluggableInterfaces = getDiskHotpluggableInterfacesMap().get(new Pair<>(osId, version));
         if (diskHotpluggableInterfaces == null) {
             return Collections.emptySet();
         }
 
-        Collection<DiskInterface> diskInterfaces = new HashSet<DiskInterface>();
+        Collection<DiskInterface> diskInterfaces = new HashSet<>();
         for (String diskHotpluggableInterface : diskHotpluggableInterfaces) {
             diskInterfaces.add(DiskInterface.valueOf(diskHotpluggableInterface));
         }
@@ -897,7 +894,7 @@ public class AsyncDataProvider {
                     return new ArrayList<WanDisableEffects>();
                 }
 
-                List<WanDisableEffects> res = new ArrayList<WanDisableEffects>();
+                List<WanDisableEffects> res = new ArrayList<>();
                 String fromDb = (String) source;
                 for (String value : fromDb.split(",")) {//$NON-NLS-1$
                     if (value == null) {
@@ -991,7 +988,7 @@ public class AsyncDataProvider {
     }
 
     public List<VDSGroup> filterByArchitecture(List<VDSGroup> clusters, ArchitectureType targetArchitecture) {
-        List<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+        List<VDSGroup> filteredClusters = new ArrayList<>();
 
         for (VDSGroup cluster : clusters) {
             if (cluster.getArchitecture().equals(targetArchitecture)) {
@@ -1002,7 +999,7 @@ public class AsyncDataProvider {
     }
 
     public List<VDSGroup> filterClustersWithoutArchitecture(List<VDSGroup> clusters) {
-        List<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+        List<VDSGroup> filteredClusters = new ArrayList<>();
 
         for (VDSGroup cluster : clusters) {
             if (cluster.getArchitecture() != ArchitectureType.undefined) {
@@ -1154,7 +1151,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
+                ArrayList<VmTemplate> list = new ArrayList<>();
                 if (source != null) {
                     for (VmTemplate template : (ArrayList<VmTemplate>) source) {
                         if (template.getStatus() == VmTemplateStatus.OK) {
@@ -1175,7 +1172,7 @@ public class AsyncDataProvider {
 
     public ArrayList<VmTemplate> filterTemplatesByArchitecture(List<VmTemplate> list,
             ArchitectureType architecture) {
-        ArrayList<VmTemplate> filteredList = new ArrayList<VmTemplate>();
+        ArrayList<VmTemplate> filteredList = new ArrayList<>();
 
         for (VmTemplate template : list) {
             if (template.getId().equals(Guid.Empty) ||
@@ -1191,7 +1188,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<Integer> nums = new ArrayList<Integer>();
+                ArrayList<Integer> nums = new ArrayList<>();
                 if (source != null) {
                     Iterable numEnumerable = (Iterable) source;
                     Iterator numIterator = numEnumerable.iterator();
@@ -1461,7 +1458,7 @@ public class AsyncDataProvider {
         query.converterCallback = new IAsyncConverter<SortedSet<String>>() {
             @Override
             public SortedSet<String> Convert(Object returnValue, AsyncQuery asyncQuery) {
-                SortedSet<String> sortedSet = new TreeSet<String>(new LexoNumericComparator());
+                SortedSet<String> sortedSet = new TreeSet<>(new LexoNumericComparator());
                 sortedSet.addAll((Collection<String>) returnValue);
                 return sortedSet;
             }
@@ -2094,7 +2091,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<String> list = new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<>();
                 if (source != null) {
                     String[] array = ((String) source).split("[,]", -1); //$NON-NLS-1$
                     for (String item : array) {
@@ -2114,12 +2111,11 @@ public class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 String pmtype = (String) _asyncQuery.data[0];
-                HashMap<String, ArrayList<String>> cachedPmMap =
-                        new HashMap<String, ArrayList<String>>();
+                HashMap<String, ArrayList<String>> cachedPmMap = new HashMap<>();
                 HashMap<String, HashMap<String, Object>> dict =
                         (HashMap<String, HashMap<String, Object>>) source;
                 for (Map.Entry<String, HashMap<String, Object>> pair : dict.entrySet()) {
-                    ArrayList<String> list = new ArrayList<String>();
+                    ArrayList<String> list = new ArrayList<>();
                     for (Map.Entry<String, Object> p : pair.getValue().entrySet()) {
                         list.add(p.getKey());
                     }
@@ -2151,7 +2147,7 @@ public class AsyncDataProvider {
                 if (source != null) {
                     ArrayList<StorageDomain> allStorageDomains =
                             (ArrayList<StorageDomain>) source;
-                    ArrayList<StorageDomain> isoStorageDomains = new ArrayList<StorageDomain>();
+                    ArrayList<StorageDomain> isoStorageDomains = new ArrayList<>();
                     for (StorageDomain storageDomain : allStorageDomains) {
                         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
                             isoStorageDomains.add(storageDomain);
@@ -2347,7 +2343,7 @@ public class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<Tags> ret = new ArrayList<Tags>();
+                    ArrayList<Tags> ret = new ArrayList<>();
                     for (Tags tags : (ArrayList<Tags>) source) {
                         if (tags.gettype() == TagsType.GeneralTag) {
                             ret.add(tags);
@@ -2389,8 +2385,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<RpmVersion>((ArrayList<RpmVersion>) source)
-                        : new ArrayList<RpmVersion>();
+                return source != null ? new ArrayList<>((ArrayList<RpmVersion>) source) : new ArrayList<RpmVersion>();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetoVirtISOs, new IdQueryParameters(id), aQuery);
@@ -2442,7 +2437,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<VmNetworkInterface>((ArrayList<VmNetworkInterface>) source)
+                return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
                         : new ArrayList<VmNetworkInterface>();
             }
         };
@@ -2454,7 +2449,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                return source != null ? new ArrayList<VmNetworkInterface>((ArrayList<VmNetworkInterface>) source)
+                return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
                         : new ArrayList<VmNetworkInterface>();
             }
         };
@@ -2518,7 +2513,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                ArrayList<Disk> list = new ArrayList<Disk>();
+                ArrayList<Disk> list = new ArrayList<>();
                 if (source != null) {
                     Iterable listEnumerable = (Iterable) source;
                     Iterator listIterator = listEnumerable.iterator();
@@ -2772,8 +2767,7 @@ public class AsyncDataProvider {
      * @param version
      */
     public Object getConfigValuePreConverted(ConfigurationValues configValue, String version) {
-        KeyValuePairCompat<ConfigurationValues, String> key =
-                new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
+        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
 
         return cachedConfigValuesPreConvert.get(key);
     }
@@ -2793,7 +2787,7 @@ public class AsyncDataProvider {
      */
     public Object getConfigValuePreConverted(ConfigurationValues configValue) {
         KeyValuePairCompat<ConfigurationValues, String> key =
-                new KeyValuePairCompat<ConfigurationValues, String>(configValue, getDefaultConfigurationVersion());
+                new KeyValuePairCompat<>(configValue, getDefaultConfigurationVersion());
 
         return cachedConfigValuesPreConvert.get(key);
     }
@@ -2806,8 +2800,7 @@ public class AsyncDataProvider {
             return null;
         }
 
-        KeyValuePairCompat<ConfigurationValues, String> key =
-                new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
+        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
 
         return converter.Convert(cachedConfigValuesPreConvert.get(key), null);
     }
@@ -2823,8 +2816,7 @@ public class AsyncDataProvider {
     public void getConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery) {
         // cache key
         final KeyValuePairCompat<ConfigurationValues, String> config_key =
-                new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
-                        parameters.getVersion());
+                new KeyValuePairCompat<>(parameters.getConfigValue(), parameters.getVersion());
 
         Object returnValue = null;
 
@@ -2864,7 +2856,7 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<QuotaEnforcementTypeEnum> getQuotaEnforcmentTypes() {
-        return new ArrayList<QuotaEnforcementTypeEnum>(Arrays.asList(new QuotaEnforcementTypeEnum[] {
+        return new ArrayList<>(Arrays.asList(new QuotaEnforcementTypeEnum[]{
                 QuotaEnforcementTypeEnum.DISABLED,
                 QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT,
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
@@ -2878,7 +2870,7 @@ public class AsyncDataProvider {
 
         @Override
         public Object Convert(Object source, AsyncQuery asyncQuery) {
-            List<VmTemplate> list = new ArrayList<VmTemplate>();
+            List<VmTemplate> list = new ArrayList<>();
             if (source != null) {
                 VmTemplate blankTemplate = null;
                 for (VmTemplate template : (List<VmTemplate>) source) {
@@ -2905,7 +2897,7 @@ public class AsyncDataProvider {
             Network networkToEdit,
             final Guid vdsID,
             final StringBuilder defaultInterfaceName) {
-        final ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<VdsNetworkInterface>();
+        final ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<>();
         for (VdsNetworkInterface i : interfaceList) {
             if (StringHelper.isNullOrEmpty(i.getNetworkName()) && StringHelper.isNullOrEmpty(i.getBondName())) {
                 ifacesOptions.add(i);
@@ -2919,7 +2911,7 @@ public class AsyncDataProvider {
                 @Override
                 public void executed(FrontendMultipleQueryAsyncResult result) {
 
-                    ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<VdsNetworkInterface>();
+                    ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<>();
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
 
                     for (int i = 0; i < returnValueList.size(); i++) {
@@ -3146,7 +3138,7 @@ public class AsyncDataProvider {
             @Override
             public List<Provider> Convert(Object returnValue, AsyncQuery asyncQuery) {
                 if (returnValue == null) {
-                    return new ArrayList<Provider>();
+                    return new ArrayList<>();
                 }
                 List<Provider> providers =
                         Linq.toList(Linq.filterProvidersByProvidedType((Collection<Provider>) returnValue, providedEntity));
@@ -3192,8 +3184,8 @@ public class AsyncDataProvider {
     private void getAllChildVlanInterfaces(Guid vdsID,
             List<VdsNetworkInterface> ifaces,
             IFrontendMultipleQueryAsyncCallback callback) {
-        ArrayList<VdcQueryParametersBase> parametersList = new ArrayList<VdcQueryParametersBase>();
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> parametersList = new ArrayList<>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         for (final VdsNetworkInterface iface : ifaces) {
             queryTypeList.add(VdcQueryType.GetAllChildVlanInterfaces);
             parametersList.add(new InterfaceAndIdQueryParameters(vdsID, iface));
@@ -3215,7 +3207,7 @@ public class AsyncDataProvider {
     }
 
     public void fillTagsRecursive(Tags tagToFill, List<Tags> children) {
-        ArrayList<Tags> list = new ArrayList<Tags>();
+        ArrayList<Tags> list = new ArrayList<>();
 
         for (Tags tag : children) {
             // tags child = new tags(tag.description, tag.parent_id, tag.IsReadonly, tag.tag_id, tag.tag_name);
@@ -3232,7 +3224,7 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<EventNotificationEntity> getEventNotificationTypeList() {
-        ArrayList<EventNotificationEntity> ret = new ArrayList<EventNotificationEntity>();
+        ArrayList<EventNotificationEntity> ret = new ArrayList<>();
         // TODO: We can translate it here too
         for (EventNotificationEntity entity : EventNotificationEntity.values()) {
             if (entity != EventNotificationEntity.UNKNOWN) {
@@ -3252,7 +3244,7 @@ public class AsyncDataProvider {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ArrayList<String> nics = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                List<VmInterfaceType> interfaceTypes = new ArrayList<VmInterfaceType>();
+                List<VmInterfaceType> interfaceTypes = new ArrayList<>();
                 for (String nic : nics) {
                     try {
                         interfaceTypes.add(VmInterfaceType.valueOf(nic));
@@ -3304,24 +3296,15 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<VolumeType> getVolumeTypeList() {
-        return new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {
-                VolumeType.Preallocated,
-                VolumeType.Sparse
-        }));
+        return new ArrayList<>(Arrays.asList(VolumeType.Preallocated, VolumeType.Sparse));
     }
 
     public ArrayList<VolumeFormat> getVolumeFormats() {
-        return new ArrayList<VolumeFormat>(Arrays.asList(
-                VolumeFormat.COW,
-                VolumeFormat.RAW
-                ));
+        return new ArrayList<>(Arrays.asList(VolumeFormat.COW, VolumeFormat.RAW));
     }
 
     public ArrayList<StorageType> getStorageTypeList() {
-        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
-                StorageType.ISCSI,
-                StorageType.FCP
-        }));
+        return new ArrayList<>(Arrays.asList(StorageType.ISCSI, StorageType.FCP));
     }
 
     public void getDiskInterfaceList(int osId, Version clusterVersion, AsyncQuery asyncQuery) {
@@ -3330,7 +3313,7 @@ public class AsyncDataProvider {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ArrayList<String> interfaces = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                List<DiskInterface> interfaceTypes = new ArrayList<DiskInterface>();
+                List<DiskInterface> interfaceTypes = new ArrayList<>();
                 for (String diskIfs : interfaces) {
                     try {
                         interfaceTypes.add(DiskInterface.valueOf(diskIfs));
@@ -3347,8 +3330,8 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<DiskInterface> getDiskInterfaceList() {
-        ArrayList<DiskInterface> diskInterfaces = new ArrayList<DiskInterface>(
-                Arrays.asList(new DiskInterface[] {
+        ArrayList<DiskInterface> diskInterfaces = new ArrayList<>(
+                Arrays.asList(new DiskInterface[]{
                         DiskInterface.IDE,
                         DiskInterface.VirtIO,
                         DiskInterface.VirtIO_SCSI,
@@ -3386,7 +3369,7 @@ public class AsyncDataProvider {
         if (StringHelper.isNullOrEmpty(complexValue)) {
             return ""; //$NON-NLS-1$
         }
-        ArrayList<String> values = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<>();
 
         for (String s : complexValue.split("[+]", -1)) { //$NON-NLS-1$
             try {
@@ -3523,7 +3506,7 @@ public class AsyncDataProvider {
     }
 
     private void initOsIds() {
-        osIds = new ArrayList<Integer>(osNames.keySet());
+        osIds = new ArrayList<>(osNames.keySet());
         Collections.sort(osIds, new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
@@ -3610,7 +3593,7 @@ public class AsyncDataProvider {
 
     public List<Integer> getOsIds(ArchitectureType architectureType) {
 
-        List<Integer> osIds = new ArrayList<Integer>();
+        List<Integer> osIds = new ArrayList<>();
 
         for (Entry<Integer, ArchitectureType> entry : osArchitectures.entrySet()) {
             if (entry.getValue() == architectureType) {
@@ -3646,8 +3629,7 @@ public class AsyncDataProvider {
 
     public ArrayList<Map.Entry<String, EntityModel<String>>> getBondingOptionListDependingOnNetwork(
             RefObject<Map.Entry<String, EntityModel<String>>> defaultItem, boolean hasVmNetworkAttached) {
-        ArrayList<Map.Entry<String, EntityModel<String>>> list =
-                new ArrayList<Map.Entry<String, EntityModel<String>>>();
+        ArrayList<Map.Entry<String, EntityModel<String>>> list = new ArrayList<>();
 
         for(BondMode mode : BondMode.values()){
             if (!mode.isBondModeValidForVmNetwork() && hasVmNetworkAttached){
@@ -3660,16 +3642,16 @@ public class AsyncDataProvider {
             }
         }
 
-        EntityModel<String> entityModel = new EntityModel<String>();
+        EntityModel<String> entityModel = new EntityModel<>();
         entityModel.setEntity(""); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel<String>>(HostBondInterfaceModel.CUSTOM_BONDING_MODE, entityModel));
+        list.add(new KeyValuePairCompat<>(HostBondInterfaceModel.CUSTOM_BONDING_MODE, entityModel));
         return list;
     }
 
     private KeyValuePairCompat<String, EntityModel<String>> getBondOption(BondMode mode){
-        EntityModel<String> entityModel = new EntityModel<String>();
+        EntityModel<String> entityModel = new EntityModel<>();
         entityModel.setEntity(mode.getDescription());
-        return new KeyValuePairCompat<String, EntityModel<String>>(mode.getConfigurationValue(), entityModel);
+        return new KeyValuePairCompat<>(mode.getConfigurationValue(), entityModel);
     }
 
     public String getDefaultBondingOption() {
@@ -3781,7 +3763,7 @@ public class AsyncDataProvider {
     public ArrayList<VDSGroup> getClusterByServiceList(List<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
-        final ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
+        final ArrayList<VDSGroup> filteredList = new ArrayList<>();
         for (VDSGroup cluster : list) {
             if ((supportsVirtService && cluster.supportsVirtService())
                     || (supportsGlusterService && cluster.supportsGlusterService())) {
@@ -3908,14 +3890,14 @@ public class AsyncDataProvider {
     }
 
     public List<IStorageModel> getDataStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
         models.addAll(getFileDataStorageModels());
         models.addAll(getBlockDataStorageModels());
         return models;
     }
 
     public List<IStorageModel> getFileDataStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
 
         NfsStorageModel nfsDataModel = new NfsStorageModel();
         models.add(nfsDataModel);
@@ -3935,7 +3917,7 @@ public class AsyncDataProvider {
     }
 
     public List<IStorageModel> getBlockDataStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
 
         IscsiStorageModel iscsiDataModel = new IscsiStorageModel();
         iscsiDataModel.setIsGrouppedByTarget(true);
@@ -3950,7 +3932,7 @@ public class AsyncDataProvider {
     }
 
     public List<IStorageModel> getImportBlockDataStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
 
         ImportIscsiStorageModel iscsiDataModel = new ImportIscsiStorageModel();
         models.add(iscsiDataModel);
@@ -3964,7 +3946,7 @@ public class AsyncDataProvider {
     }
 
     public List<IStorageModel> getIsoStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
 
         NfsStorageModel nfsIsoModel = new NfsStorageModel();
         models.add(nfsIsoModel);
@@ -3982,7 +3964,7 @@ public class AsyncDataProvider {
     }
 
     public List<IStorageModel> getExportStorageModels() {
-        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> models = new ArrayList<>();
 
         NfsStorageModel nfsExportModel = new NfsStorageModel();
         models.add(nfsExportModel);
@@ -4011,7 +3993,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
-                List<String> results = new ArrayList<String>();
+                List<String> results = new ArrayList<>();
                 for (ProfileEntry profileEntry : (Collection<ProfileEntry>) source) {
                     if (!passwordBasedOnly || profileEntry.getSupportsPasswordAuthenication()) {
                         results.add(profileEntry.getProfile());
@@ -4055,7 +4037,7 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<NumaTuneMode> getNumaTuneModeList() {
-        return new ArrayList<NumaTuneMode>(Arrays.asList(new NumaTuneMode[] {
+        return new ArrayList<>(Arrays.asList(new NumaTuneMode[]{
                 NumaTuneMode.STRICT,
                 NumaTuneMode.PREFERRED,
                 NumaTuneMode.INTERLEAVE
@@ -4068,7 +4050,7 @@ public class AsyncDataProvider {
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDS> vdsList = Linq.<VDS> cast((List<IVdcQueryable>) source);
-                    Set<String> emulatedMachineList = new HashSet<String>();
+                    Set<String> emulatedMachineList = new HashSet<>();
                     for (VDS host : vdsList) {
                         String hostSupportedMachines = host.getSupportedEmulatedMachines();
                         if(!StringHelper.isNullOrEmpty(hostSupportedMachines)) {
@@ -4184,7 +4166,7 @@ public class AsyncDataProvider {
         public Object Convert(Object source, AsyncQuery _asyncQuery) {
             if (source != null) {
                 ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
-                ArrayList<String> fileNameList = new ArrayList<String>();
+                ArrayList<String> fileNameList = new ArrayList<>();
                 for (RepoImage repoImage : repoList) {
                     if (desiredImage(repoImage)) {
                         fileNameList.add(transform(fileNameList, repoImage));

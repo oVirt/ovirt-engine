@@ -10,7 +10,7 @@ public class Match {
 
     private final boolean success;
     private final String value;
-    private final ArrayList<Match> groups = new ArrayList<Match>();
+    private final ArrayList<Match> groups = new ArrayList<>();
 
     public Match(MatchResult matchResult) {
         if (matchResult != null) {

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.*;
 
 public class EnumUtils {
 
-    private static Map<Class, Map> cacheEnumValuesInCapitalLetters = new HashMap<Class, Map>();
+    private static Map<Class, Map> cacheEnumValuesInCapitalLetters = new HashMap<>();
 
     public static String ConvertToStringWithSpaces(String value) {
         /*TODO-GWT
@@ -42,7 +42,7 @@ public class EnumUtils {
 
         if (map == null) {
             // populate the map with enum values and add it to cache
-            map = new HashMap<String, E>(2 * universe.length);
+            map = new HashMap<>(2 * universe.length);
 
             for (E e : universe) {
                 map.put(e.name().toUpperCase(), e);

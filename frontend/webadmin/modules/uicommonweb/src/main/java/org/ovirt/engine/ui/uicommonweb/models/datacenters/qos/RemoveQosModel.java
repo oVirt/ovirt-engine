@@ -55,8 +55,8 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
     protected abstract VdcActionType getRemoveActionType();
 
     private void setMessage() {
-        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
-        ArrayList<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();
+        ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
         for (T qos : sourceListModel.getSelectedItems()) {
             VdcQueryParametersBase parameter = new IdQueryParameters(qos.getId());
             parameters.add(parameter);
@@ -66,7 +66,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<String, String> entitiesAndQos = new HashMap<String, String>();
+                Map<String, String> entitiesAndQos = new HashMap<>();
 
                 setHelpTag(getRemoveQosHelpTag());
                 setHashName(getRemoveQosHashName());
@@ -81,7 +81,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
                     index++;
                 }
                 if (entitiesAndQos.isEmpty()) {
-                    ArrayList<String> list = new ArrayList<String>();
+                    ArrayList<String> list = new ArrayList<>();
                     for (T item : sourceListModel.getSelectedItems()) {
                         list.add(item.getName());
                     }
@@ -89,7 +89,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
                 } else {
                     setMessage(getRemoveQosMessage(entitiesAndQos.size()));
 
-                    ArrayList<String> list = new ArrayList<String>();
+                    ArrayList<String> list = new ArrayList<>();
                     for (Entry<String, String> item : entitiesAndQos.entrySet()) {
                         list.add(item.getKey() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
@@ -100,10 +100,10 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
     }
 
     public void onRemove() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         for (T qos : sourceListModel.getSelectedItems()) {
-            QosParametersBase<T> parameter = new QosParametersBase<T>();
+            QosParametersBase<T> parameter = new QosParametersBase<>();
             parameter.setQosId(qos.getId());
             parameters.add(parameter);
         }

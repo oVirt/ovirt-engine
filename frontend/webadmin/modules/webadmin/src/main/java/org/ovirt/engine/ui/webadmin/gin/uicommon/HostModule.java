@@ -351,8 +351,7 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostErrataCountModel> countModelProvider) {
 
         SearchableDetailTabModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> result =
-                new SearchableDetailTabModelProvider<Erratum, HostListModel<Void>, HostErrataListModel>(
-                        eventBus, defaultConfirmPopupProvider);
+                new SearchableDetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
 

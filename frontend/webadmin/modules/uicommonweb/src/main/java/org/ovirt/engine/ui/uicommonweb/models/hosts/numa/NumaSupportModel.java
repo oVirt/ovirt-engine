@@ -43,7 +43,7 @@ public class NumaSupportModel extends Model {
     private List<Pair<Integer, Set<VdsNumaNode>>> firstLevelDistanceSetList;
     private final Event modelReady = new Event(new EventDefinition("ModelReady", NumaSupportModel.class)); //$NON-NLS-1$
     private Map<Integer, VdsNumaNode> indexNodeMap;
-    private final Map<Guid, VdcActionParametersBase> updateParametersMap = new HashMap<Guid, VdcActionParametersBase>();
+    private final Map<Guid, VdcActionParametersBase> updateParametersMap = new HashMap<>();
 
     public NumaSupportModel(List<VDS> hosts, VDS host, Model parentModel) {
         this.parentModel = parentModel;
@@ -107,8 +107,8 @@ public class NumaSupportModel extends Model {
     }
 
     protected void initVNumaNodes() {
-        unassignedVNodeModelList = new ArrayList<VNodeModel>();
-        p2vNumaNodesMap = new HashMap<Integer, List<VNodeModel>>();
+        unassignedVNodeModelList = new ArrayList<>();
+        p2vNumaNodesMap = new HashMap<>();
         final Set<Integer> hostIndices = new HashSet<>();
         for (VdsNumaNode numaNode : numaNodeList){
             hostIndices.add(numaNode.getIndex());
@@ -155,7 +155,7 @@ public class NumaSupportModel extends Model {
 
     private VdsNumaNode getNodeByIndex(Integer index) {
         if (indexNodeMap == null) {
-            indexNodeMap = new HashMap<Integer, VdsNumaNode>();
+            indexNodeMap = new HashMap<>();
             for (VdsNumaNode node : getNumaNodeList()) {
                 indexNodeMap.put(node.getIndex(), node);
             }
@@ -168,13 +168,13 @@ public class NumaSupportModel extends Model {
     }
 
     private void initFirstLevelDistanceSetList() {
-        firstLevelDistanceSetList = new ArrayList<Pair<Integer, Set<VdsNumaNode>>>();
+        firstLevelDistanceSetList = new ArrayList<>();
         for (VdsNumaNode node : getNumaNodeList()) {
-            Map<Integer, Set<VdsNumaNode>> distances = new HashMap<Integer, Set<VdsNumaNode>>();
+            Map<Integer, Set<VdsNumaNode>> distances = new HashMap<>();
             for (Entry<Integer, Integer> entry : node.getNumaNodeDistances().entrySet()) {
                 Set<VdsNumaNode> sameDistanceNodes = distances.get(entry.getValue());
                 if (sameDistanceNodes == null) {
-                    sameDistanceNodes = new HashSet<VdsNumaNode>();
+                    sameDistanceNodes = new HashSet<>();
                     sameDistanceNodes.add(getNodeByIndex(entry.getKey()));
                     distances.put(entry.getValue(), sameDistanceNodes);
                 }
@@ -199,7 +199,7 @@ public class NumaSupportModel extends Model {
                 }
             }
             if (!found && minDistance != null) {
-                firstLevelDistanceSetList.add(new Pair<Integer, Set<VdsNumaNode>>(minDistance.getKey(),
+                firstLevelDistanceSetList.add(new Pair<>(minDistance.getKey(),
                         minDistance.getValue()));
             }
         }
@@ -281,7 +281,7 @@ public class NumaSupportModel extends Model {
                     if (vmNumaNode.getIndex() == sourceVNumaIndex) {
                         vmNumaNode.setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
                         if (targetPNumaNodeIndex != -1) {
-                            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
+                            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<>();
                             pair.setFirst(getNodeByIndex(targetPNumaNodeIndex).getId());
                             pair.setSecond(new Pair<Boolean, Integer>());
                             pair.getSecond().setFirst(true);
@@ -299,6 +299,6 @@ public class NumaSupportModel extends Model {
     }
 
     public ArrayList<VdcActionParametersBase> getUpdateParameters() {
-        return new ArrayList<VdcActionParametersBase>(updateParametersMap.values());
+        return new ArrayList<>(updateParametersMap.values());
     }
 }

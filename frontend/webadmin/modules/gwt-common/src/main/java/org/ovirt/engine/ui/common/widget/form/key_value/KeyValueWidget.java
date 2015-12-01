@@ -16,7 +16,7 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
     }
 
     private T model;
-    private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<KeyValueLineWidget>();
+    private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<>();
     String rowWidth = null;
     String fieldWidth = null;
 

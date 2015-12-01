@@ -124,7 +124,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     @Test
     public void testGetPluginDefinitionsArray() {
         int mockDataCount = 10;
-        List<PluginData> pluginData = new ArrayList<PluginData>();
+        List<PluginData> pluginData = new ArrayList<>();
         for (int i = 0; i < mockDataCount; i++) {
             PluginData mockData = mock(PluginData.class);
             when(mockData.getName()).thenReturn("name" + i); //$NON-NLS-1$

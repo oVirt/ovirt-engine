@@ -750,8 +750,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public HostGeneralModel() {
-        setRequestEditEvent(new Event<EventArgs>(requestEditEventDefinition));
-        setRequestGOToEventsTabEvent(new Event<EventArgs>(requestGOToEventsTabEventDefinition));
+        setRequestEditEvent(new Event<>(requestEditEventDefinition));
+        setRequestGOToEventsTabEvent(new Event<>(requestGOToEventsTabEventDefinition));
         setTitle(constants.generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
@@ -764,7 +764,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
     public void saveNICsConfig() {
         Frontend.getInstance().runMultipleAction(VdcActionType.CommitNetworkChanges,
-                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
+                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VdsActionParameters(getEntity().getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -918,7 +918,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     private boolean canExecuteCommand(VdcActionType actionType) {
-        return VdcActionUtils.canExecute(new ArrayList<VDS>(Arrays.asList(new VDS[] { getEntity() })),
+        return VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VDS[]{getEntity()})),
                 VDS.class,
                 actionType);
     }

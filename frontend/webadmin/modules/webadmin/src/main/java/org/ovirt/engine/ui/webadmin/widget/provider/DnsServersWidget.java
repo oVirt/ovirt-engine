@@ -27,7 +27,7 @@ public class DnsServersWidget extends ScrollableAddRemoveRowWidget<ListModel<Ent
 
     @Override
     protected EntityModel<String> createGhostValue() {
-        EntityModel<String> value = new EntityModel<String>();
+        EntityModel<String> value = new EntityModel<>();
         value.setEntity(""); //$NON-NLS-1$
         return value;
     }

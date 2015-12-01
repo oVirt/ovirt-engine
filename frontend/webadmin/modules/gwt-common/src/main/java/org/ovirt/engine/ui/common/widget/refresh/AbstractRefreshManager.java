@@ -38,7 +38,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
 
     private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
     private static final Integer OUT_OF_FOCUS_REFRESH_RATE = Integer.valueOf(60000);
-    private static final Set<Integer> REFRESH_RATES = new LinkedHashSet<Integer>();
+    private static final Set<Integer> REFRESH_RATES = new LinkedHashSet<>();
 
     static {
         REFRESH_RATES.add(DEFAULT_REFRESH_RATE);

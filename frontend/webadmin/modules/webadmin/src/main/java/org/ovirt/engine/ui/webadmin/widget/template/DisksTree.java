@@ -81,7 +81,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
 
     @Override
     protected TreeItem getNodeHeader() {
-        EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
+        EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false, true);
         table.addColumn(new EmptyColumn(), constants.empty(), "20px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.domainNameDisksTree(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.domainTypeDisksTree(), "120px"); //$NON-NLS-1$

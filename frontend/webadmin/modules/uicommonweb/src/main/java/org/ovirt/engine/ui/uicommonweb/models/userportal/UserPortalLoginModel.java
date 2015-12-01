@@ -85,7 +85,7 @@ public class UserPortalLoginModel extends LoginModel {
     }
 
     public UserPortalLoginModel() {
-        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar = new EntityModel<>();
         tempVar.setEntity(true);
         setIsENGINEUser(tempVar);
     }
@@ -122,7 +122,7 @@ public class UserPortalLoginModel extends LoginModel {
                     public void onSuccess(Object target, Object returnValue) {
 
                         ArrayList<Permission> permissions = (ArrayList<Permission>) returnValue;
-                        ArrayList<Guid> roleIdList = new ArrayList<Guid>();
+                        ArrayList<Guid> roleIdList = new ArrayList<>();
                         for (Permission permission : permissions) {
 
                             // ignore:
@@ -164,9 +164,8 @@ public class UserPortalLoginModel extends LoginModel {
     // Step4).
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
     public void updateUserActionGroups(UserPortalLoginModel targetObject, ArrayList<Guid> roleIdList) {
-        ArrayList<VdcQueryParametersBase> queryParamsList =
-                new ArrayList<VdcQueryParametersBase>();
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         for (Guid roleId : roleIdList) {
             queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
             queryParamsList.add(new IdQueryParameters(roleId));

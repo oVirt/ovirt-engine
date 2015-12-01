@@ -433,8 +433,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmErrataListModel> modelProvider) {
 
         SearchableDetailTabModelProvider<Erratum, VmListModel<Void>, VmErrataListModel> result =
-                new SearchableDetailTabModelProvider<Erratum, VmListModel<Void>, VmErrataListModel>(
-                        eventBus, defaultConfirmPopupProvider);
+                new SearchableDetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
 

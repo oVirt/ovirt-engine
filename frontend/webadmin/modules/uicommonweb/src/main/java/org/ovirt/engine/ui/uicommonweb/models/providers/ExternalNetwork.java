@@ -13,7 +13,7 @@ public class ExternalNetwork extends EntityModel {
     private boolean publicUse;
 
     public ExternalNetwork() {
-        dcList = new ListModel<StoragePool>();
+        dcList = new ListModel<>();
     }
 
     public Network getNetwork() {

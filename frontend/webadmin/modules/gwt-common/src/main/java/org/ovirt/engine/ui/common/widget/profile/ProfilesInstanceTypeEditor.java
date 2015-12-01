@@ -28,7 +28,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     private final List<VmNetworkInterface> vnics;
 
     public ProfilesInstanceTypeEditor() {
-        vnics = new ArrayList<VmNetworkInterface>();
+        vnics = new ArrayList<>();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -41,7 +41,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     protected void init(VnicInstancesModel model) {
         vnicProfiles = model.getVnicProfiles().getItems();
         if (vnicProfiles == null) {
-            vnicProfiles = new ArrayList<VnicProfileView>();
+            vnicProfiles = new ArrayList<>();
         }
 
         Iterable<VnicInstanceType> values = model.getItems();

@@ -25,8 +25,7 @@ public class SubTabExtendedVmSnapshotView extends AbstractSubTabTableWidgetView<
     public SubTabExtendedVmSnapshotView(VmSnapshotListModelProvider modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
-        super(new VmSnapshotListModelTable<UserPortalVmSnapshotListModel>(
-                modelProvider, eventBus, clientStorage));
+        super(new VmSnapshotListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

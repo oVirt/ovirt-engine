@@ -76,7 +76,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     @Inject
     public RecoveryStorageConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
-        storageDomainItems = new EntityModelCellTable<ListModel>(false);
+        storageDomainItems = new EntityModelCellTable<>(false);
         storageDomainItems.setHeight("30%"); //$NON-NLS-1$
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());

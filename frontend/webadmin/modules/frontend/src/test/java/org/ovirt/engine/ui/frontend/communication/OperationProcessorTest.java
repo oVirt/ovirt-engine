@@ -65,8 +65,7 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableSingle() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddEventSubscription,
-                        testParameter, mockCallback1);
+                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -102,8 +101,7 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableSingle_success() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddEventSubscription,
-                        testParameter, mockCallback1);
+                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -117,8 +115,7 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableSingle_failure_action_noretry() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddEventSubscription,
-                        testParameter, mockCallback1);
+                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -132,8 +129,7 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableSingle_failure_with_retry() {
         VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase>testOperation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameter,
-                        mockCallback1);
+                new VdcOperation<>(VdcQueryType.Search, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -153,8 +149,7 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableSingle_failure_query_noretry() {
         VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
         // Setup 'previous' retries, so we have exhausted the retries.
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<VdcQueryType,
-                VdcQueryParametersBase>(VdcQueryType.Search, testParameter, mockCallback1);
+        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(VdcQueryType.Search, testParameter, mockCallback1);
         testOperation = new VdcOperation(testOperation, mockCallback2);
         testOperation = new VdcOperation(testOperation, mockCallback2);
         testOperation = new VdcOperation(testOperation, mockCallback2);
@@ -183,8 +178,8 @@ public class OperationProcessorTest {
                 .getCallback().equals(mockCallback1));
         assertFalse("The callbacks should not match", operationListCaptor.getValue().get(1)  //$NON-NLS-1$
                 .getCallback().equals(mockCallback2));
-        List<VdcReturnValueBase> resultList1 = new ArrayList<VdcReturnValueBase>();
-        List<VdcReturnValueBase> resultList2 = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> resultList1 = new ArrayList<>();
+        List<VdcReturnValueBase> resultList2 = new ArrayList<>();
         VdcReturnValueBase result1 = new VdcReturnValueBase();
         VdcReturnValueBase result2 = new VdcReturnValueBase();
         resultList1.add(result1);
@@ -235,7 +230,7 @@ public class OperationProcessorTest {
                 .get(0).getCallback().equals(mockCallback1));
         assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
                 .get(1).getCallback().equals(mockCallback2));
-        List<VdcReturnValueBase> resultList = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> resultList = new ArrayList<>();
         VdcReturnValueBase result1 = new VdcReturnValueBase();
         VdcReturnValueBase result2 = new VdcReturnValueBase();
         resultList.add(result1);
@@ -300,15 +295,12 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultiple_same_success() {
         VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
-        List<VdcOperation<?, ?>> testOperation1List =
-                new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testOperation1List = new ArrayList<>();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameter,
-                mockCallbackList1);
+                new VdcOperation<>(VdcQueryType.Search, testParameter, mockCallbackList1);
         testOperation1List.add(testOperation1);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.GetDirectoryGroupById, testParameter,
-                mockCallbackList2);
+                new VdcOperation<>(VdcQueryType.GetDirectoryGroupById, testParameter, mockCallbackList2);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation1).
             thenReturn((VdcOperation) testOperation1).thenReturn((VdcOperation) testOperation2).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
@@ -320,15 +312,15 @@ public class OperationProcessorTest {
                 operationListCaptor.getValue().get(1).getCallback().equals(mockCallbackList2));
         // There should be only be two items in the list.
         assertEquals("There should be two items", 2, operationListCaptor.getValue().size()); //$NON-NLS-1$
-        List<VdcReturnValueBase> resultList1 = new ArrayList<VdcReturnValueBase>();
-        List<VdcReturnValueBase> resultList2 = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> resultList1 = new ArrayList<>();
+        List<VdcReturnValueBase> resultList2 = new ArrayList<>();
         VdcReturnValueBase result1 = new VdcReturnValueBase();
         VdcReturnValueBase result2 = new VdcReturnValueBase();
         resultList1.add(result1);
         resultList2.add(result2);
-        List<VdcOperation> captured1List = new ArrayList<VdcOperation>();
+        List<VdcOperation> captured1List = new ArrayList<>();
         captured1List.add(operationListCaptor.getValue().get(0));
-        List<VdcOperation> captured2List = new ArrayList<VdcOperation>();
+        List<VdcOperation> captured2List = new ArrayList<>();
         captured2List.add(operationListCaptor.getValue().get(1));
         operationListCaptor.getValue().get(0).getCallback().onSuccess(captured1List, resultList1);
         verify(mockCallbackList1).onSuccess(testOperation1List, resultList1);

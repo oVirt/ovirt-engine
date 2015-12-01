@@ -69,7 +69,7 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
             @Override
             public void onSuccess(Object parentModel, Object returnValue) {
                 List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
+                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
                 List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
 
                 for (VmNetworkInterface nic : nics) {

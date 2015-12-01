@@ -477,7 +477,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.setHelpTag(HelpTag.reset_emulated_machine_cluster);
         model.setHashName("reset_cluster_emulated_machine"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (VDSGroup vdsGroup : Linq.<VDSGroup> cast(getSelectedItems())) {
             list.add(vdsGroup.getName());
         }
@@ -494,7 +494,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (VDSGroup vdsGroup : getSelectedItems()) {
             ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters((vdsGroup));
             currentParam.setForceResetEmulatedMachine(true);

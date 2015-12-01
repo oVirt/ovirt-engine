@@ -103,7 +103,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
 
                 stopProgress();
 
-                ArrayList<RepoImage> repoImageList = new ArrayList<RepoImage>();
+                ArrayList<RepoImage> repoImageList = new ArrayList<>();
                 if (returnValue != null && returnValue.getReturnValue() != null && returnValue.getSucceeded()) {
                     repoImageList = returnValue.getReturnValue();
 

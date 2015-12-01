@@ -18,7 +18,7 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
     private static final Logger logger = Logger.getLogger(RdpPluginImpl.class.getName());
 
     private static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", RdpConsoleModel.class); //$NON-NLS-1$
-    private final Event<ErrorCodeEventArgs> disconnectedEvent = new Event<ErrorCodeEventArgs>(RdpDisconnectedEventDefinition);
+    private final Event<ErrorCodeEventArgs> disconnectedEvent = new Event<>(RdpDisconnectedEventDefinition);
     private RdpConsoleModel parentModel;
 
     @Override

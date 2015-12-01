@@ -120,7 +120,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         nameColumn.makeSortable(VdsConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
+        CommentColumn<VDS> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
@@ -174,7 +174,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         list.add(statusColumn);
         list.add(reasonColumn);
 
-        Cell<VDS> compositeCell = new StatusCompositeCell<VDS>(list);
+        Cell<VDS> compositeCell = new StatusCompositeCell<>(list);
 
         AbstractColumn<VDS, VDS> statusTextColumn = new AbstractColumn<VDS, VDS>(compositeCell) {
             @Override
@@ -335,7 +335,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
 
-        List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<ActionButtonDefinition<VDS>>();
+        List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<>();
 
         pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
             @Override
@@ -359,7 +359,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.pmHost(),
+            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.pmHost(),
                     pmSubActions,
                     CommandLocation.OnlyFromToolBar));
         }
@@ -402,7 +402,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             List<ActionButtonDefinition<VDS>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportHost(), resourceSubActions));
             }
         }
     }

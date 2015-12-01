@@ -131,7 +131,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
 
         model.getLatch().setIsAvailable(false);
 
-        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> items = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
 
@@ -150,7 +150,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
 
     private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;

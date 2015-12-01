@@ -63,7 +63,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     }
 
     protected void initDisksTable() {
-        disksTable = new EntityModelCellTable<ListModel>(false, true);
+        disksTable = new EntityModelCellTable<>(false, true);
         disksTable.enableColumnResizing();
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -174,7 +174,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     }
 
     protected void initNicsTable() {
-        nicsTable = new EntityModelCellTable<ListModel>(false, true);
+        nicsTable = new EntityModelCellTable<>(false, true);
         nicsTable.enableColumnResizing();
 
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
@@ -279,7 +279,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     }
 
     protected void initAppsTable() {
-        appsTable = new EntityModelCellTable<ListModel>(false, true);
+        appsTable = new EntityModelCellTable<>(false, true);
 
         AbstractTextColumn<String> appNameColumn = new AbstractTextColumn<String>() {
             @Override

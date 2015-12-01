@@ -31,7 +31,7 @@ public abstract class ConsolesBase implements VmConsoles {
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     static {
-        modelTypeMapping = new HashMap<Class, ConsoleProtocol>();
+        modelTypeMapping = new HashMap<>();
         modelTypeMapping.put(SpiceConsoleModel.class, ConsoleProtocol.SPICE);
         modelTypeMapping.put(VncConsoleModel.class, ConsoleProtocol.VNC);
         modelTypeMapping.put(RdpConsoleModel.class, ConsoleProtocol.RDP);
@@ -41,7 +41,7 @@ public abstract class ConsolesBase implements VmConsoles {
         this.vm = vm;
         this.parentModel = parentModel;
         this.myContext = consoleContext;
-        this.consoleModels = new HashMap<ConsoleProtocol, ConsoleModel>();
+        this.consoleModels = new HashMap<>();
 
         fillModels();
         setDefaultSelectedProtocol();

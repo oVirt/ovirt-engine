@@ -290,7 +290,7 @@ public class ResourcesModel extends SearchableListModel {
                                         }
                                     }
                                 }
-                                getUsedQuotaPercentage().setEntity(new ArrayList<QuotaUsagePerUser>(quotaPerUserUsageEntityMap.values()));
+                                getUsedQuotaPercentage().setEntity(new ArrayList<>(quotaPerUserUsageEntityMap.values()));
                             }
                         }));
             }

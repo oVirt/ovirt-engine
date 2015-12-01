@@ -37,7 +37,7 @@ public class AddOnlyRingBufferTest {
 
     @Before
     public void setUp() {
-        tested = new AddOnlyRingBuffer<String>(CAPACITY, new StringArrayBuffer());
+        tested = new AddOnlyRingBuffer<>(CAPACITY, new StringArrayBuffer());
     }
 
     String[] testedListToArray() {
@@ -130,7 +130,7 @@ public class AddOnlyRingBufferTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorInvariants_capacityLowerBound() {
-        new AddOnlyRingBuffer<String>(0, new StringArrayBuffer());
+        new AddOnlyRingBuffer<>(0, new StringArrayBuffer());
     }
 
     @Test(expected = NullPointerException.class)

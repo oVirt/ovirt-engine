@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class TaskListModel extends SearchableListModel {
 
     public static final String WEBADMIN = "_WEBADMIN_"; //$NON-NLS-1$
-    private final Map<String, Job> detailedTaskMap = new HashMap<String, Job>();
+    private final Map<String, Job> detailedTaskMap = new HashMap<>();
 
     public TaskListModel() {
     }
@@ -41,10 +41,9 @@ public class TaskListModel extends SearchableListModel {
                 if (taskList.size() == 0) {
                     detailedTaskMap.clear();
                 }
-                ArrayList<Job> taskListWithCorrelationFilter = new ArrayList<Job>();
+                ArrayList<Job> taskListWithCorrelationFilter = new ArrayList<>();
 
-                Map<String, Map.Entry<Job, ArrayList<Job>>> correlationTaskMap =
-                        new HashMap<String, Map.Entry<Job, ArrayList<Job>>>();
+                Map<String, Map.Entry<Job, ArrayList<Job>>> correlationTaskMap = new HashMap<>();
                 for (Job task : taskList) {
                     if (task.getCorrelationId().startsWith(WEBADMIN)) {
                         if (!correlationTaskMap.containsKey(task.getCorrelationId())) {
@@ -127,7 +126,7 @@ public class TaskListModel extends SearchableListModel {
                     }
                 }
 
-                ArrayList<Job> newTaskList = new ArrayList<Job>();
+                ArrayList<Job> newTaskList = new ArrayList<>();
 
                 for (Job task : taskListWithCorrelationFilter) {
                     String id = ""; //$NON-NLS-1$
@@ -179,7 +178,7 @@ public class TaskListModel extends SearchableListModel {
                         ArrayList<Job> retTasks = (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                         ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
-                        ArrayList<Job> newTaskList = new ArrayList<Job>();
+                        ArrayList<Job> newTaskList = new ArrayList<>();
                         for (Job task : taskList) {
                             if (task.getCorrelationId().equals(guidOrCorrelationId)) {
                                 detailedTaskMap.put(guidOrCorrelationId, task);
@@ -239,7 +238,7 @@ public class TaskListModel extends SearchableListModel {
                         }
                         detailedTaskMap.put(retTask.getId().toString(), retTask);
                         ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
-                        ArrayList<Job> newTaskList = new ArrayList<Job>();
+                        ArrayList<Job> newTaskList = new ArrayList<>();
                         for (Job task : taskList) {
                             if (task.getId().equals(retTask.getId())) {
                                 newTaskList.add(retTask);

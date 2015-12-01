@@ -23,9 +23,9 @@ public class ManageGlusterSwiftModel extends EntityModel {
 
     public ManageGlusterSwiftModel() {
         setSwiftStatus(new EntityModel<GlusterServiceStatus>());
-        setStartSwift(new EntityModel<Boolean>(Boolean.FALSE));
-        setStopSwift(new EntityModel<Boolean>(Boolean.FALSE));
-        setRestartSwift(new EntityModel<Boolean>(Boolean.FALSE));
+        setStartSwift(new EntityModel<>(Boolean.FALSE));
+        setStopSwift(new EntityModel<>(Boolean.FALSE));
+        setRestartSwift(new EntityModel<>(Boolean.FALSE));
         setIsManageServerLevel(new EntityModel<Boolean>());
         setHostServicesList(new ListModel<GlusterSwiftServiceModel>());
 

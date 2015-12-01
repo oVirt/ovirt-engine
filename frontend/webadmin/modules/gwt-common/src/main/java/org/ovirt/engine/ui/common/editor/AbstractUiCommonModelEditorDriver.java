@@ -60,7 +60,7 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
     protected EditorVisitor getEditorVisitor() {
         // Visit editors
         if (visitor == null) {
-            visitor = new UiCommonEditorVisitor<T>(getEventMap(), getOwnerModels());
+            visitor = new UiCommonEditorVisitor<>(getEventMap(), getOwnerModels());
         }
         return visitor;
     }

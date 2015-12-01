@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConfirmationPopupView {
 
-    ArrayList<String> notes = new ArrayList<String>();
+    ArrayList<String> notes = new ArrayList<>();
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private final static CommonApplicationMessages messages = AssetProvider.getMessages();

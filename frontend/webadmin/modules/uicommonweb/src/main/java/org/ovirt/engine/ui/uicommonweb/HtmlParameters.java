@@ -11,7 +11,7 @@ import com.google.gwt.http.client.URL;
 
 public class HtmlParameters {
 
-    private final Map<String, List<String>> paramsMap = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> paramsMap = new HashMap<>();
 
     public void addParameter(String key, String value) {
         List<String> oldParams = paramsMap.get(key);
@@ -24,7 +24,7 @@ public class HtmlParameters {
     }
 
     public void setParameter(String key, String... value) {
-        paramsMap.put(key, new LinkedList<String>(Arrays.asList(encodeParameters(value))));
+        paramsMap.put(key, new LinkedList<>(Arrays.asList(encodeParameters(value))));
     }
 
     public Map<String, List<String>> getParameters() {

@@ -86,7 +86,7 @@ public class CustomPropertyValidation implements IValidation {
                                 .getMessages()
                                 .customPropertyOneOfTheParamsIsntSupported(parameters.toString());
 
-                ArrayList<String> reason = new ArrayList<String>();
+                ArrayList<String> reason = new ArrayList<>();
                 reason.add(reasonStr);
                 ValidationResult tempVar2 = new ValidationResult();
                 tempVar2.setSuccess(false);
@@ -112,7 +112,7 @@ public class CustomPropertyValidation implements IValidation {
             }
         }
         if (falseProperty != null) {
-            ArrayList<String> reason = new ArrayList<String>();
+            ArrayList<String> reason = new ArrayList<>();
             reason.add(ConstantsManager.getInstance()
                     .getMessages()
                     .customPropertyValueShouldBeInFormatReason(falseProperty.substring(0, falseProperty.indexOf('=')),

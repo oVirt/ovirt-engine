@@ -110,7 +110,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     @Inject
     public MainTabBasicDetailsView(final DynamicMessages dynamicMessages) {
-        operatingSystem = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
+        operatingSystem = new ValueLabel<>(new AbstractRenderer<Integer>() {
 
             @Override
             public String render(Integer object) {

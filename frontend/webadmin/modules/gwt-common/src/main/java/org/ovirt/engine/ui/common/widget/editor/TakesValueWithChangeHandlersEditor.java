@@ -17,7 +17,7 @@ public class TakesValueWithChangeHandlersEditor<T> extends TakesValueEditor<T> i
 
     public static <T> TakesValueWithChangeHandlersEditor<T> of(TakesValue<T> peer,
             HasValueChangeHandlers<T> peerWithValueChangeHandlers) {
-        return new TakesValueWithChangeHandlersEditor<T>(peer, peerWithValueChangeHandlers);
+        return new TakesValueWithChangeHandlersEditor<>(peer, peerWithValueChangeHandlers);
     }
 
     private final HasValueChangeHandlers<T> peerWithValueChangeHandlers;

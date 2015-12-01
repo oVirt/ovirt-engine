@@ -15,7 +15,7 @@ public class AnimatedVerticalPanel extends VerticalPanel {
 
     private static final int ANIM_DELAY = 500;
     private static final int ADD_DELAY = 100;
-    private final Queue<Widget> pendingWidgtes = new LinkedList<Widget>();
+    private final Queue<Widget> pendingWidgtes = new LinkedList<>();
 
     public void addAll(Collection<? extends Widget> list, boolean fadeIn) {
         for (Widget widget : list) {

@@ -65,7 +65,7 @@ public class AssignedVNumaNodesPanel extends Composite {
         String myImageHtml = AbstractImagePrototype.create(resources.vNumaTitleIcon()).getHTML();
         SafeHtml mySafeImageHtml = new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(myImageHtml);
         if (virtualNodes == null) {
-            virtualNodes = new ArrayList<VNodeModel>();
+            virtualNodes = new ArrayList<>();
         }
         SafeHtml title = titleTemplate.title(virtualNodes.size(), mySafeImageHtml, style.numaTitle());
         collapsiblePanel.setTitleWidget(new HTML(title));

@@ -37,7 +37,7 @@ public class ChangeCDModel extends Model {
     }
 
     public ChangeCDModel() {
-        setExecutedEvent(new Event<EventArgs>(executedEventDefinition));
+        setExecutedEvent(new Event<>(executedEventDefinition));
 
         setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }

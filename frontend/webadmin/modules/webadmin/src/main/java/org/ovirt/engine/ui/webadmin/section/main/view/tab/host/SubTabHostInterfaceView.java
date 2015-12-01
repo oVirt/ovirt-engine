@@ -58,11 +58,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider);
-        table =
-                new SimpleActionTable<HostInterfaceLineModel>(modelProvider,
-                        getTableResources(),
-                        eventBus,
-                        clientStorage);
+        table = new SimpleActionTable<>(modelProvider, getTableResources(), eventBus, clientStorage);
         initTable();
 
         contentPanel = new VerticalPanel();

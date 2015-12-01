@@ -104,7 +104,7 @@ public class EditHostModel extends HostModel {
             tempVar.setId(host.getVdsGroupId());
             tempVar.setCompatibilityVersion(host.getVdsGroupCompatibilityVersion());
             getCluster()
-                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
+                    .setItems(new ArrayList<>(Arrays.asList(new VDSGroup[]{tempVar})));
         }
         clusters = (ArrayList<VDSGroup>) getCluster().getItems();
         updateModelClusterFromVds(clusters, host);

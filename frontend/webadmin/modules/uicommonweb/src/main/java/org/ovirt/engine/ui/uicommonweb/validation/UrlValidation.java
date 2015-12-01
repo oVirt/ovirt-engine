@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class UrlValidation implements IValidation {
 
-    private final Set<String> allowedSchemes = new HashSet<String>();
+    private final Set<String> allowedSchemes = new HashSet<>();
 
     public UrlValidation(String... allowedSchemes) {
         if (allowedSchemes != null) {

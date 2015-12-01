@@ -207,7 +207,7 @@ public enum EntityType {
      */
     public String getSubTabHistoryToken(EntityType subTabEntityType) {
         if (subTabHistoryTokenMap == null) {
-            subTabHistoryTokenMap = new HashMap<EntityType, String>();
+            subTabHistoryTokenMap = new HashMap<>();
             initSubTabHistoryTokens(subTabHistoryTokenMap);
         }
         return subTabHistoryTokenMap.get(subTabEntityType);

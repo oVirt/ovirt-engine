@@ -45,7 +45,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     private ListModel<Pair<String, Guid>> slaveHosts;
     private EntityModel<Boolean> startSession;
     private String queryFailureMessage;
-    private Collection<GlusterVolumeEntity> volumeList = new ArrayList<GlusterVolumeEntity>();
+    private Collection<GlusterVolumeEntity> volumeList = new ArrayList<>();
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
     private GlusterVolumeEntity masterVolume;
@@ -75,7 +75,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 String selectedCluster = getSlaveClusters().getSelectedItem();
-                List<GlusterVolumeEntity> volumesInCurrentCluster = new ArrayList<GlusterVolumeEntity>();
+                List<GlusterVolumeEntity> volumesInCurrentCluster = new ArrayList<>();
                 if (selectedCluster != null) {
                     volumesInCurrentCluster = getVolumesInCluster(selectedCluster, getVolumeList());
                 }
@@ -92,7 +92,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 GlusterVolumeEntity selectedSlaveVolume = getSlaveVolumes().getSelectedItem();
-                Set<Pair<String, Guid>> hostsInCurrentVolume = new HashSet<Pair<String, Guid>>();
+                Set<Pair<String, Guid>> hostsInCurrentVolume = new HashSet<>();
                 if (!getShowEligibleVolumes().getEntity() && selectedSlaveVolume != null) {
                     updateRecommendatonViolations();
                 }
@@ -158,7 +158,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     }
 
     protected Set<String> getClusterForVolumes(Collection<GlusterVolumeEntity> eligibleVolumes) {
-        Set<String> clusters = new HashSet<String>();
+        Set<String> clusters = new HashSet<>();
         for(GlusterVolumeEntity currentVolume : eligibleVolumes) {
             clusters.add(currentVolume.getVdsGroupName());
         }
@@ -166,7 +166,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     }
 
     public List<GlusterVolumeEntity> getVolumesInCluster(String cluster, Collection<GlusterVolumeEntity> volumes) {
-        List<GlusterVolumeEntity> volumesInCurrentCluster= new ArrayList<GlusterVolumeEntity>();
+        List<GlusterVolumeEntity> volumesInCurrentCluster= new ArrayList<>();
         for(GlusterVolumeEntity currentVolume : volumes) {
             if(currentVolume.getVdsGroupName().equals(cluster)) {
                 volumesInCurrentCluster.add(currentVolume);
@@ -176,7 +176,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     }
 
     public Set<Pair<String, Guid>> getHostNamesForVolume(GlusterVolumeEntity volume) {
-        Set<Pair<String, Guid>> hosts = new HashSet<Pair<String, Guid>>();
+        Set<Pair<String, Guid>> hosts = new HashSet<>();
         for(GlusterBrickEntity currentBrick : volume.getBricks()) {
             hosts.add(new Pair<>(currentBrick.getServerName(), currentBrick.getServerId()));
         }
@@ -219,7 +219,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         setSlaveHosts(new ListModel<Pair<String, Guid>>());
 
         setStartSession(new EntityModel<Boolean>());
-        setSlaveUserName(new EntityModel<String>(constants.emptyString()));
+        setSlaveUserName(new EntityModel<>(constants.emptyString()));
         setSlaveUserGroupName(new EntityModel<String>());
     }
 

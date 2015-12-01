@@ -132,8 +132,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     }
 
     protected List<PluginData> getPluginData() {
-        List<PluginData> currentData = new ArrayList<PluginData>(
-                PluginDataManager.getInstance().reloadAndGetCurrentData());
+        List<PluginData> currentData = new ArrayList<>(PluginDataManager.getInstance().reloadAndGetCurrentData());
         Collections.sort(currentData);
         return currentData;
     }

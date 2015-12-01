@@ -41,7 +41,7 @@ public class PreviewSnapshotModel extends Model {
                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                 if (response != null && response.getSucceeded()) {
                     PreviewSnapshotModel previewSnapshotModel = (PreviewSnapshotModel) model;
-                    ArrayList<SnapshotModel> snapshotModels = new ArrayList<SnapshotModel>();
+                    ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();
                     ArrayList<Snapshot> snapshots = response.getReturnValue();
                     previewSnapshotModel.sortSnapshots(snapshots);
 
@@ -125,7 +125,7 @@ public class PreviewSnapshotModel extends Model {
     }
 
     public List<DiskImage> getAllDisks() {
-        Map<Guid, DiskImage> disksMap = new HashMap<Guid, DiskImage>();
+        Map<Guid, DiskImage> disksMap = new HashMap<>();
 
         for (SnapshotModel snapshotModel : (List<SnapshotModel>) snapshots.getItems()) {
             for (DiskImage disk : snapshotModel.getEntity().getDiskImages()) {
@@ -139,7 +139,7 @@ public class PreviewSnapshotModel extends Model {
     }
 
     public List<DiskImage> getSelectedDisks() {
-        List<DiskImage> disks = new ArrayList<DiskImage>();
+        List<DiskImage> disks = new ArrayList<>();
 
         for (ListModel diskListModel : diskSnapshotsMap.values()) {
             DiskImage selectedImage = (DiskImage) diskListModel.getSelectedItem();
@@ -165,7 +165,7 @@ public class PreviewSnapshotModel extends Model {
                 }
                 else {
                     disksListModel = new ListModel();
-                    disksListModel.setItems(new ArrayList<DiskImage>(Arrays.asList(diskImage)));
+                    disksListModel.setItems(new ArrayList<>(Arrays.asList(diskImage)));
                 }
                 diskSnapshotsMap.put(diskImage.getId(), disksListModel);
             }

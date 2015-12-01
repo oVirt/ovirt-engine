@@ -41,9 +41,9 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     /**
      * Set of invalid tabs, empty if the model doesn't support tabs.
      */
-    private final Set<TabName> invalidTabs = new HashSet<TabName>();
+    private final Set<TabName> invalidTabs = new HashSet<>();
 
-    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
     public static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
 

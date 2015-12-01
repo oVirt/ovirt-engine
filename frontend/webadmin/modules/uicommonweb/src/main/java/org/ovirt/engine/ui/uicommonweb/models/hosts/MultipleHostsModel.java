@@ -92,12 +92,12 @@ public class MultipleHostsModel extends Model {
 
     private void applyPassword() {
         String password = getCommonPassword().getEntity();
-        ArrayList<EntityModel<HostDetailModel>> items = new ArrayList<EntityModel<HostDetailModel>>();
+        ArrayList<EntityModel<HostDetailModel>> items = new ArrayList<>();
         for (Object object : getHosts().getItems()) {
             HostDetailModel host = (HostDetailModel) ((EntityModel) object).getEntity();
             host.setPassword(password);
 
-            EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>();
+            EntityModel<HostDetailModel> entityModel = new EntityModel<>();
             entityModel.setEntity(host);
             items.add(entityModel);
         }

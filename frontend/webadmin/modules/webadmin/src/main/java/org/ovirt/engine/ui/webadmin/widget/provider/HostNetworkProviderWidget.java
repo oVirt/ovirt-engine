@@ -81,7 +81,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         networkProviderLabel = new EnableableFormLabel();
         networkProviderEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
-        networkProviderTypeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer<ProviderType>());
+        networkProviderTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<ProviderType>());
         neutronAgentWidget = new NeutronAgentWidget();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

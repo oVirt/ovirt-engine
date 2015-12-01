@@ -71,7 +71,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     // Disks that cannot be moved/copied
-    protected List<String> problematicDisks = new ArrayList<String>();
+    protected List<String> problematicDisks = new ArrayList<>();
 
     public abstract void init(ArrayList<DiskImage> diskImages);
 
@@ -310,7 +310,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected ArrayList<VdcActionParametersBase> getParameters() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (DiskModel diskModel : getDisks()) {
             StorageDomain destStorageDomain = diskModel.getStorageDomain().getSelectedItem();
             StorageDomain sourceStorageDomain =

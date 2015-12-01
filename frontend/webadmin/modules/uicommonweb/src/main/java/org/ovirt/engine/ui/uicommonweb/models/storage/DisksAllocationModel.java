@@ -297,7 +297,7 @@ public class DisksAllocationModel extends EntityModel {
         for (DiskModel diskModel : disks) {
             StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
-            diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
+            diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
             diskImage.setDiskAlias(diskModel.getAlias().getEntity());
             DiskProfile diskProfile = diskModel.getDiskProfile().getSelectedItem();
             diskImage.setDiskProfileId(diskProfile != null ? diskProfile.getId() : null);

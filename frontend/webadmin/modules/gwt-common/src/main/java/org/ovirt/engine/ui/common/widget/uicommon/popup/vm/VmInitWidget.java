@@ -386,28 +386,27 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     void initListBoxEditors() {
-        timeZoneEditor = new ListModelListBoxEditor<Map.Entry<String, String>>(new NullSafeRenderer<Map.Entry<String, String>>() {
+        timeZoneEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Map.Entry<String, String>>() {
             @Override
             public String renderNullSafe(Map.Entry<String, String> object) {
                 return object.getValue();
             }
         });
 
-        windowsSysprepTimeZoneEditor = new ListModelListBoxEditor<Map.Entry<String, String>>(new NullSafeRenderer<Map.Entry<String, String>>() {
+        windowsSysprepTimeZoneEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Map.Entry<String, String>>() {
             @Override
             public String renderNullSafe(Map.Entry<String, String> object) {
                 return object.getValue();
             }
         });
 
-        networkBootProtocolEditor =
-                new ListModelListBoxEditor<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
+        networkBootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<NetworkBootProtocol>());
     }
 
     void initComboBoxEditors() {
-        networkListEditor = new ListModelListBoxEditor<String>();
+        networkListEditor = new ListModelListBoxEditor<>();
         networkNameEditor = new StringEntityModelTextBoxEditor();
-        networkComboBox = new ComboBox<String>(networkListEditor, networkNameEditor);
+        networkComboBox = new ComboBox<>(networkListEditor, networkNameEditor);
 
     }
 

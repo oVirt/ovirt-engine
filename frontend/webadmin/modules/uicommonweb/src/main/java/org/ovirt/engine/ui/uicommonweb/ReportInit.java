@@ -72,9 +72,9 @@ public class ReportInit {
         reportBaseUrl = ""; //$NON-NLS-1$
         reportRightClickUrl = ""; //$NON-NLS-1$
         isCommunityEdition = false;
-        resourceMap = new HashMap<String, Resource>();
-        dashboardMap = new HashMap<String, Dashboard>();
-        reportsInitEvent = new Event<EventArgs>("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
+        resourceMap = new HashMap<>();
+        dashboardMap = new HashMap<>();
+        reportsInitEvent = new Event<>("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
         retryCount = 0;
     }
 

@@ -86,7 +86,7 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     }
 
     void initComboBox() {
-        keyListBoxEditor = new ListModelListBoxEditor<GlusterVolumeOptionInfo>(new StringRenderer<GlusterVolumeOptionInfo>() {
+        keyListBoxEditor = new ListModelListBoxEditor<>(new StringRenderer<GlusterVolumeOptionInfo>() {
             @Override
             public String render(GlusterVolumeOptionInfo optionInfo) {
                 if (optionInfo != null) {
@@ -97,7 +97,7 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         });
         keyTextBoxEditor = new StringEntityModelTextBoxEditor();
 
-        keyComboBox = new ComboBox<GlusterVolumeOptionInfo>(keyListBoxEditor, keyTextBoxEditor);
+        keyComboBox = new ComboBox<>(keyListBoxEditor, keyTextBoxEditor);
     }
 
     @Override

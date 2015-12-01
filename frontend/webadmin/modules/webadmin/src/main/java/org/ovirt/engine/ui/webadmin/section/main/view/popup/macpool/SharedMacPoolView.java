@@ -95,7 +95,7 @@ public class SharedMacPoolView extends Composite {
     private SimpleActionTable<MacPool> createMacPoolTable() {
 
         final SimpleActionTable<MacPool> macPoolTable =
-                new SimpleActionTable<MacPool>(sharedMacPoolModelProvider,
+                new SimpleActionTable<>(sharedMacPoolModelProvider,
                         headerlessResources,
                         tableResources,
                         eventBus,

@@ -23,17 +23,17 @@ import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
 
     // Selected items mapped by their keys
-    private final Map<Object, T> selectedSet = new LinkedHashMap<Object, T>();
+    private final Map<Object, T> selectedSet = new LinkedHashMap<>();
 
     // Selection changes to be resolved
-    private final Map<T, Boolean> selectionChanges = new LinkedHashMap<T, Boolean>();
+    private final Map<T, Boolean> selectionChanges = new LinkedHashMap<>();
 
     private boolean multiSelectEnabled;
     private boolean multiRangeSelectEnabled;
     private AbstractHasData<T> dataDisplay;
     private int lastSelectedRow = -1;
     private int originSelectedRow = -1;
-    private final Set<Integer> disabledRows = new HashSet<Integer>();
+    private final Set<Integer> disabledRows = new HashSet<>();
 
     public OrderedMultiSelectionModel() {
         super(null);
@@ -78,7 +78,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
      */
     public List<T> getSelectedList() {
         resolveChanges();
-        return new ArrayList<T>(selectedSet.values());
+        return new ArrayList<>(selectedSet.values());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
 
     void resolveChanges() {
         Set<Object> selectedKeys = selectedSet.keySet();
-        List<Object> visibleKeys = new ArrayList<Object>();
+        List<Object> visibleKeys = new ArrayList<>();
         for (T visible : dataDisplay.getVisibleItems()) {
             visibleKeys.add(getKey(visible));
         }

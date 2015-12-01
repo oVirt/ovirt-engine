@@ -48,7 +48,7 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
             public void onSuccess(Object model, Object ReturnValue) {
                 diskVmMap = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
-                ArrayList<VM> vmList = new ArrayList<VM>();
+                ArrayList<VM> vmList = new ArrayList<>();
                 ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
                 ArrayList<VM> unPluggedList = (ArrayList<VM>) diskVmMap.get(false);
 

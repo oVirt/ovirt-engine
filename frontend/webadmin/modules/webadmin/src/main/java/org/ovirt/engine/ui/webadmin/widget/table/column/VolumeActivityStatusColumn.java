@@ -14,7 +14,7 @@ public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Ab
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public VolumeActivityStatusColumn() {
-        super(new VolumeActivityStatusCell<GlusterTaskSupport>());
+        super(new VolumeActivityStatusCell<>());
     }
 
     @Override

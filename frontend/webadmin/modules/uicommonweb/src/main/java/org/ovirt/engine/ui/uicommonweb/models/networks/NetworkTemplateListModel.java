@@ -122,7 +122,7 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
             return;
         }
 
-        List<VmNetworkInterface> vnics = new ArrayList<VmNetworkInterface>();
+        List<VmNetworkInterface> vnics = new ArrayList<>();
         for (PairQueryable<VmNetworkInterface, VmTemplate> pair : getSelectedItems()) {
             vnics.add(pair.getFirst());
         }

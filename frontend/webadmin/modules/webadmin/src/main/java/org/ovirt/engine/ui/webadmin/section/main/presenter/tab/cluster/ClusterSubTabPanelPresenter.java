@@ -27,13 +27,13 @@ public class ClusterSubTabPanelPresenter extends AbstractSubTabPanelPresenter<Cl
     }
 
     @RequestTabs
-    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<RequestTabsHandler>();
+    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<>();
 
     @ChangeTab
-    public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<ChangeTabHandler>();
+    public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<>();
 
     @Inject
     public ClusterSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,

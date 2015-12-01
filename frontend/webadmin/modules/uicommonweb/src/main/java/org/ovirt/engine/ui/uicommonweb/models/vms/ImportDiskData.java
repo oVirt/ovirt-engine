@@ -107,7 +107,7 @@ public class ImportDiskData {
 
     public ArrayList<Quota> getQuotaList() {
         if (storageQuotaList == null || allStorageDomains.isEmpty() || storageDomains.isEmpty()) {
-            return new ArrayList<Quota>();
+            return new ArrayList<>();
         }
         if (selectedStorageDomain == null) {
             selectedStorageDomain = storageDomains.get(0);

@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class PostableFrame extends Frame {
 
     private final FormPanel form;
-    private final Map<String, List<Hidden>> hiddens = new HashMap<String, List<Hidden>>();
+    private final Map<String, List<Hidden>> hiddens = new HashMap<>();
 
     /**
      * Create a new {@link PostableFrame} with the specified name.
@@ -81,7 +81,7 @@ public class PostableFrame extends Frame {
         List<Hidden> oldHiddenList = hiddens.get(name);
 
         if (oldHiddenList == null) {
-            hiddens.put(name, new LinkedList<Hidden>(Collections.singletonList(hidden)));
+            hiddens.put(name, new LinkedList<>(Collections.singletonList(hidden)));
         } else {
             oldHiddenList.add(hidden);
         }

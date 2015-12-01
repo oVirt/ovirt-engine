@@ -68,7 +68,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             ArrayList<VdcQueryParametersBase> queryParamsList) {
         int size = queryTypeList == null ? 0 : queryTypeList.size();
         log.debug("Server: RunMultipleQuery invoked! [amount of queries: {}]", size); //$NON-NLS-1$
-        ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
+        ArrayList<VdcQueryReturnValue> ret = new ArrayList<>();
 
         if (queryTypeList == null || queryParamsList == null) {
             // TODO: LOG: "queryTypeList and/or queryParamsList is null."

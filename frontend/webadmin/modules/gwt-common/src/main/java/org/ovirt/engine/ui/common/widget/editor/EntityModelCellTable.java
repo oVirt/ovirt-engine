@@ -194,7 +194,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         style = cellTableResources.cellTableValidation();
         style.ensureInjected();
 
-        this.editorAdapter = new HasDataListModelEditorAdapter<M, EntityModel>(this);
+        this.editorAdapter = new HasDataListModelEditorAdapter<>(this);
 
         // Configure table selection model
         switch (selectionMode) {
@@ -241,7 +241,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         getListModel().setSelectedItem(selectedObject);
                     }
                 } else if (selectionModel instanceof MultiSelectionModel) {
-                    List<EntityModel> selectedItems = new ArrayList<EntityModel>();
+                    List<EntityModel> selectedItems = new ArrayList<>();
                     for (EntityModel entity : ((MultiSelectionModel<EntityModel>) selectionModel).getSelectedSet()) {
                         entity.setIsSelected(true);
                         selectedItems.add(entity);

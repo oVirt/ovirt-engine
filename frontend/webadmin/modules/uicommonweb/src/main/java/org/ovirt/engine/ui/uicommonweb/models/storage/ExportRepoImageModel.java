@@ -25,7 +25,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     public void setDiskImages(List<DiskImage> diskImages) {
-        ArrayList<EntityModel> entities = new ArrayList<EntityModel>();
+        ArrayList<EntityModel> entities = new ArrayList<>();
         for (DiskImage i : diskImages) {
             entities.add(new EntityModel(i));
         }
@@ -34,7 +34,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
 
     @Override
     protected List<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains) {
-        List<StorageDomain> availableStorageDomains = new ArrayList<StorageDomain>();
+        List<StorageDomain> availableStorageDomains = new ArrayList<>();
 
         // Take only GLANCE domains
         for (StorageDomain storageDomainItem : storageDomains) {
@@ -59,7 +59,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
 
         startProgress();
 
-        ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<>();
 
         for (EntityModel entity : getEntities()) {
             actionParameters.add(new ExportRepoImageParameters(

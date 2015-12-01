@@ -147,7 +147,7 @@ public class NfsStorageModel extends FileStorageModel {
     }
 
     public NfsStorageModel() {
-        setPathChangedEvent(new Event<EventArgs>(pathChangedEventDefinition));
+        setPathChangedEvent(new Event<>(pathChangedEventDefinition));
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
@@ -159,11 +159,11 @@ public class NfsStorageModel extends FileStorageModel {
         // Initialize version list.
         setVersion(new ListModel<EntityModel<NfsVersion>>());
 
-        List<EntityModel<NfsVersion>> versionItems = new ArrayList<EntityModel<NfsVersion>>();
+        List<EntityModel<NfsVersion>> versionItems = new ArrayList<>();
         // Items are shown in the UI in the order added; v3 is the default
-        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersion3(), NfsVersion.V3));
-        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersion4(), NfsVersion.V4));
-        versionItems.add(new EntityModel<NfsVersion>(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
+        versionItems.add(new EntityModel<>(constants.nfsVersion3(), NfsVersion.V3));
+        versionItems.add(new EntityModel<>(constants.nfsVersion4(), NfsVersion.V4));
+        versionItems.add(new EntityModel<>(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
         getVersion().setItems(versionItems);
 
         setRetransmissions(new EntityModel<Short>());

@@ -92,10 +92,10 @@ public class IscsiBondModel extends Model {
         AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                ArrayList<StorageServerConnections> selected = new ArrayList<StorageServerConnections>();
+                ArrayList<StorageServerConnections> selected = new ArrayList<>();
                 ArrayList<StorageServerConnections> conns = (ArrayList<StorageServerConnections>) returnValue;
                 Set<String> iscsiBonded = isBondExist() ?
-                        new HashSet<String>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
+                        new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
 
                 for (StorageServerConnections conn : conns) {
                     if (iscsiBonded.contains(conn.getid())) {
@@ -172,7 +172,7 @@ public class IscsiBondModel extends Model {
     }
 
     private List<Guid> getSelectedNetworks() {
-        List<Guid> selectedNetworks = new LinkedList<Guid>();
+        List<Guid> selectedNetworks = new LinkedList<>();
 
         for (Network model : getNetworks().getSelectedItems()) {
             selectedNetworks.add(model.getId());
@@ -182,7 +182,7 @@ public class IscsiBondModel extends Model {
     }
 
     private List<String> getSelectedConnections() {
-        List<String> selectedConnections = new ArrayList<String>();
+        List<String> selectedConnections = new ArrayList<>();
 
         for (StorageServerConnections conn : getStorageTargets().getSelectedItems()) {
             selectedConnections.add(conn.getid());

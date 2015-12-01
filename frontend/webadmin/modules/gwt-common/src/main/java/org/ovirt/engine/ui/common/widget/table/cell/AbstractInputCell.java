@@ -29,7 +29,7 @@ public abstract class AbstractInputCell<C, V> extends com.google.gwt.cell.client
      */
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         TooltipMixin.addTooltipsEvents(set);
         return set;
     }

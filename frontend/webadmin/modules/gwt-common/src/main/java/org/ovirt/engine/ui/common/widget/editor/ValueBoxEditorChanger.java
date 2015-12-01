@@ -21,7 +21,7 @@ public class ValueBoxEditorChanger<T> extends ValueBoxEditor<T> implements HasVa
      * @return
      */
     public static <T> ValueBoxEditorChanger<T> of(ValueBoxBase<T> valueBox) {
-        return new ValueBoxEditorChanger<T>(valueBox);
+        return new ValueBoxEditorChanger<>(valueBox);
     }
 
     private final ValueBoxBase<T> peer;

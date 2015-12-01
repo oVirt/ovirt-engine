@@ -29,7 +29,7 @@ public class ListModelRadioGroupEditor<T> extends AbstractValidatedWidgetWithLab
     }
 
     public ListModelRadioGroupEditor(Renderer<T> renderer, VisibilityRenderer visibilityRenderer) {
-        super(new ListModelRadioGroup<T>(renderer), visibilityRenderer);
+        super(new ListModelRadioGroup<>(renderer), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

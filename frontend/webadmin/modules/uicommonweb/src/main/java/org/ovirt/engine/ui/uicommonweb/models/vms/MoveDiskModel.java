@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel {
-    protected List<String> problematicDisksForWarning = new ArrayList<String>();
+    protected List<String> problematicDisksForWarning = new ArrayList<>();
     private boolean isLsmBetweenMixedStorageDomainsSupportedInDC;
 
     public MoveDiskModel() {
@@ -66,9 +66,9 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected void onInitDisks() {
-        final ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
-        List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
-        List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
+        final ArrayList<DiskModel> disks = new ArrayList<>();
+        List<VdcQueryType> queries = new ArrayList<>();
+        List<VdcQueryParametersBase> params = new ArrayList<>();
 
         for (DiskImage disk : getDiskImages()) {
             disks.add(Linq.diskToModel(disk));

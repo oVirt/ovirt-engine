@@ -76,7 +76,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Map<Guid, Permission> map = new HashMap<Guid, Permission>();
+                Map<Guid, Permission> map = new HashMap<>();
                 for (Permission permission : list) {
                     //filter out sys-admin and dc admin from consumers sub-tab
                     if (permission.getRoleId().equals(ApplicationGuids.superUser.asGuid())
@@ -177,7 +177,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         model.setHelpTag(HelpTag.remove_quota_assignment_from_user);
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (Permission item : Linq.<Permission> cast(getSelectedItems())) {
             list.add(item.getOwnerName());
         }
@@ -204,7 +204,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             cancel();
             return;
         }
-        ArrayList<DbUser> items = new ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<>();
         if (model.getIsEveryoneSelected()) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
@@ -221,7 +221,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         model.startProgress();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         PermissionsOperationsParameters permissionParams;
         for (DbUser user : items) {
             Permission perm = new Permission(
@@ -268,7 +268,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

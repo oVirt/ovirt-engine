@@ -90,7 +90,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     private void initDisksTable() {
-        disksTable = new EntityModelCellTable<ListModel>(false, true);
+        disksTable = new EntityModelCellTable<>(false, true);
         disksTable.enableColumnResizing();
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -181,7 +181,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     private void initNicsTable() {
-        nicsTable = new EntityModelCellTable<ListModel>(false, true);
+        nicsTable = new EntityModelCellTable<>(false, true);
         nicsTable.enableColumnResizing();
 
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
@@ -286,7 +286,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     private void initAppsTable() {
-        appsTable = new EntityModelCellTable<ListModel>(false, true);
+        appsTable = new EntityModelCellTable<>(false, true);
 
         AbstractTextColumn<String> appNameColumn = new AbstractTextColumn<String>() {
             @Override

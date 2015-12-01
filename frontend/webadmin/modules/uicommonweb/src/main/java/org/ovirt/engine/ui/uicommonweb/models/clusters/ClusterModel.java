@@ -817,7 +817,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     public ClusterModel() {
         super();
-        ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection = new ListModel<KsmPolicyForNuma>();
+        ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection = new ListModel<>();
         ksmPolicyForNumaSelection.setItems(Arrays.asList(KsmPolicyForNuma.values()));
         setKsmPolicyForNumaSelection(ksmPolicyForNumaSelection);
     }
@@ -858,11 +858,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
         setComment(new EntityModel<String>());
-        setEnableTrustedService(new EntityModel<Boolean>(false));
-        setEnableHaReservation(new EntityModel<Boolean>(false));
-        setEnableOptionalReason(new EntityModel<Boolean>(false));
+        setEnableTrustedService(new EntityModel<>(false));
+        setEnableHaReservation(new EntityModel<>(false));
+        setEnableOptionalReason(new EntityModel<>(false));
         getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
-        setEnableHostMaintenanceReason(new EntityModel<Boolean>(false));
+        setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         setGlusterTunedProfile(new ListModel<String>());
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
@@ -875,7 +875,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setEnableOvirtService(new EntityModel<Boolean>());
         setEnableGlusterService(new EntityModel<Boolean>());
         setAdditionalClusterFeatures(new ListModel<List<AdditionalFeature>>());
-        List<List<AdditionalFeature>> additionalFeatures = new ArrayList<List<AdditionalFeature>>();
+        List<List<AdditionalFeature>> additionalFeatures = new ArrayList<>();
         additionalFeatures.add(Collections.<AdditionalFeature> emptyList());
         getAdditionalClusterFeatures().setItems(additionalFeatures, null);
         setSpiceProxyEnabled(new EntityModel<Boolean>());
@@ -1018,33 +1018,33 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setOptimizationForDesktop(new EntityModel<Integer>());
         setOptimizationCustom(new EntityModel<Integer>());
 
-        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar = new EntityModel<>();
         tempVar.setEntity(false);
         setOptimizationNone_IsSelected(tempVar);
         getOptimizationNone_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel<Boolean> tempVar2 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar2 = new EntityModel<>();
         tempVar2.setEntity(false);
         setOptimizationForServer_IsSelected(tempVar2);
         getOptimizationForServer_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel<Boolean> tempVar3 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar3 = new EntityModel<>();
         tempVar3.setEntity(false);
         setOptimizationForDesktop_IsSelected(tempVar3);
         getOptimizationForDesktop_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel<Boolean> tempVar4 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar4 = new EntityModel<>();
         tempVar4.setEntity(false);
         tempVar4.setIsAvailable(false);
         setOptimizationCustom_IsSelected(tempVar4);
         getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(this);
 
-        EntityModel<Boolean> tempVar5 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar5 = new EntityModel<>();
         tempVar5.setEntity(false);
         setMigrateOnErrorOption_YES(tempVar5);
         getMigrateOnErrorOption_YES().getEntityChangedEvent().addListener(this);
-        EntityModel<Boolean> tempVar6 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar6 = new EntityModel<>();
         tempVar6.setEntity(false);
         setMigrateOnErrorOption_NO(tempVar6);
         getMigrateOnErrorOption_NO().getEntityChangedEvent().addListener(this);
-        EntityModel<Boolean> tempVar7 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar7 = new EntityModel<>();
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
@@ -1073,9 +1073,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         // default value =100;
         setDefaultMemoryOvercommit(AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit());
 
-        setCountThreadsAsCores(new EntityModel<Boolean>(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
+        setCountThreadsAsCores(new EntityModel<>(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
 
-        setVersionSupportsCpuThreads(new EntityModel<Boolean>(true));
+        setVersionSupportsCpuThreads(new EntityModel<>(true));
 
         setOptimizeForUtilization(new EntityModel<Boolean>());
         setOptimizeForSpeed(new EntityModel<Boolean>());
@@ -1212,7 +1212,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<PolicyUnit> policyUnits =
                                 ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        policyUnitMap = new LinkedHashMap<Guid, PolicyUnit>();
+                        policyUnitMap = new LinkedHashMap<>();
                         for (PolicyUnit policyUnit : policyUnits) {
                             policyUnitMap.put(policyUnit.getId(), policyUnit);
                         }
@@ -1577,7 +1577,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                             if (isEmpty) {
                                 populateCPUList(clusterModel, cpus, true);
                             } else {
-                                ArrayList<ServerCpu> filteredCpus = new ArrayList<ServerCpu>();
+                                ArrayList<ServerCpu> filteredCpus = new ArrayList<>();
 
                                 for (ServerCpu cpu : cpus) {
                                     if (cpu.getArchitecture() == clusterModel.getEntity().getArchitecture()) {
@@ -1816,8 +1816,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         if (clusterModel.getIsEdit()) {
             if (!canChangeArchitecture) {
-                getArchitecture().setItems(new ArrayList<ArchitectureType>(
-                        Arrays.asList(clusterModel.getEntity().getArchitecture())));
+                getArchitecture().setItems(new ArrayList<>(Arrays.asList(clusterModel.getEntity().getArchitecture())));
             }
 
             if (oldSelectedArch != null) {
@@ -1843,7 +1842,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     private void initSupportedArchitectures(ClusterModel clusterModel) {
-        Collection<ArchitectureType> archsWithSupportingCpus = new HashSet<ArchitectureType>();
+        Collection<ArchitectureType> archsWithSupportingCpus = new HashSet<>();
         archsWithSupportingCpus.add(ArchitectureType.undefined);
         for (ServerCpu cpu: clusterModel.getCPU().getItems()) {
             archsWithSupportingCpus.add(cpu.getArchitecture());
@@ -1865,7 +1864,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     private void initHostsWithBrokenConnectivityThreshold() {
-        ArrayList<Integer> values = new ArrayList<Integer>();
+        ArrayList<Integer> values = new ArrayList<>();
         // populating threshold values with {25, 50, 75, 100}
         for (int i = 25; i <= 100; i += 25) {
             values.add(i);
@@ -1929,8 +1928,8 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     private void clusterPolicyChanged() {
         ClusterPolicy clusterPolicy = getClusterPolicy().getSelectedItem();
-        Map<String, String> policyProperties = new HashMap<String, String>();
-        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
+        Map<String, String> policyProperties = new HashMap<>();
+        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<>();
         if (clusterPolicy.getFilters() != null) {
             for (Guid policyUnitId : clusterPolicy.getFilters()) {
                 allPolicyUnits.put(policyUnitId, policyUnitMap.get(policyUnitId));

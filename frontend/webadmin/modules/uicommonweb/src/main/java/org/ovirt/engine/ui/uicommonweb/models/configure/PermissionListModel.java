@@ -157,7 +157,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);
@@ -193,7 +193,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             return;
         }
 
-        ArrayList<DbUser> items = new ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<>();
         if (model.getIsEveryoneSelected()) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
@@ -211,7 +211,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         Role role = model.getRole().getSelectedItem();
         // adGroup/user
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), getEntityGuid(), getObjectType());
             if (user.isGroup()) {

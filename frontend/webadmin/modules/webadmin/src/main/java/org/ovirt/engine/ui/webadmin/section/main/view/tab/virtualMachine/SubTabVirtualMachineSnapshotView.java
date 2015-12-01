@@ -26,9 +26,8 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
     public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
-        super(new VmSnapshotListModelTable<VmSnapshotListModel>(
-                (DataBoundTabModelProvider<Snapshot, VmSnapshotListModel>) modelProvider,
-                eventBus, clientStorage));
+        super(new VmSnapshotListModelTable<>(
+                (DataBoundTabModelProvider<Snapshot, VmSnapshotListModel>) modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

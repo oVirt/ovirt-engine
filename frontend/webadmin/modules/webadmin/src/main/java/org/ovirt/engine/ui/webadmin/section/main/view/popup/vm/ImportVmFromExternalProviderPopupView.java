@@ -182,7 +182,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     protected void initMainTable() {
-        this.table = new ListModelObjectCellTable<ImportVmData, ImportVmFromExternalProviderModel>();
+        this.table = new ListModelObjectCellTable<>();
 
         AbstractCheckboxColumn<ImportVmData> cloneVMColumn = new AbstractCheckboxColumn<ImportVmData>(new FieldUpdater<ImportVmData, Boolean>() {
             @Override
@@ -281,21 +281,21 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     private void initListBoxEditors() {
-        destClusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
+        destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VDSGroup>() {
             @Override
             public String renderNullSafe(VDSGroup object) {
                 return object.getName();
             }
         });
-        destClusterQuotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
+        destClusterQuotaEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Quota>() {
             @Override
             public String renderNullSafe(Quota object) {
                 return object.getQuotaName();
             }
         });
-        destStorageEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer());
+        destStorageEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
-        cpuProfileEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
+        cpuProfileEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<CpuProfile>() {
 
             @Override
             protected String renderNullSafe(CpuProfile object) {
@@ -303,7 +303,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
             }
         });
 
-        disksAllocationEditor = new ListModelListBoxEditor<VolumeType>(new NullSafeRenderer<VolumeType>() {
+        disksAllocationEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VolumeType>() {
             @Override
             protected String renderNullSafe(VolumeType object) {
                 return new EnumRenderer<VolumeType>().render(object);
@@ -481,7 +481,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     private void initNicsTable() {
-        nicTable = new ListModelObjectCellTable<VmNetworkInterface, SearchableListModel>();
+        nicTable = new ListModelObjectCellTable<>();
         nicTable.enableColumnResizing();
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
@@ -524,7 +524,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     private void initDiskTable() {
-        diskTable = new ListModelObjectCellTable<DiskImage, SearchableListModel>();
+        diskTable = new ListModelObjectCellTable<>();
         diskTable.enableColumnResizing();
         AbstractTextColumn<DiskImage> aliasColumn = new AbstractTextColumn<DiskImage>() {
             @Override

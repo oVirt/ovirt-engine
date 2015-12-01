@@ -39,7 +39,7 @@ public class StorageDomainModel extends EntityModel {
     }
 
     public ArrayList<DiskModel> getDisksModels() {
-        ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> diskModels = new ArrayList<>();
 
         for (DiskImage diskImage : getDisks()) {
             DiskModel diskModel = new DiskModel();

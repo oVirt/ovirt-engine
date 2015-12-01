@@ -251,7 +251,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private void updateNics(List<NetworkInterfaceModel> nics) {
         nicList.clear();
         Collections.sort(nics);
-        List<NetworkGroup> groups = new ArrayList<NetworkGroup>();
+        List<NetworkGroup> groups = new ArrayList<>();
         for (NetworkInterfaceModel nic : nics) {
             groups.add(new NetworkGroup(nic, style));
         }

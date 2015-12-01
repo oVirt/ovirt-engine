@@ -37,7 +37,7 @@ public class ErrataDetailModelForm extends AbstractModelBoundFormWidget<EntityMo
     @Path("entity.summary")
     StringValueLabel summary = new StringValueLabel();
     @Path("entity.packages")
-    ValueListLabel<String> packages = new ValueListLabel<String>(", "); //$NON-NLS-1$
+    ValueListLabel<String> packages = new ValueListLabel<>(", "); //$NON-NLS-1$
     private final Driver driver = GWT.create(Driver.class);
 
     private EntityModel<Erratum> currentModel;

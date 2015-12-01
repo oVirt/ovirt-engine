@@ -39,7 +39,7 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
 
     @Override
     public List<T> getSelectedItems() {
-        List<T> selectedItems = new ArrayList<T>();
+        List<T> selectedItems = new ArrayList<>();
         selectedItems.add(selectionModel.getSelectedObject());
         return selectedItems;
     }

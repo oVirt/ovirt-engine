@@ -27,7 +27,7 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
         this.sourceListModel = sourceListModel;
         this.subnets = subnets;
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (ExternalSubnet subnet : subnets) {
             items.add(subnet.getName());
         }
@@ -40,7 +40,7 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
     }
 
     private void onRemove() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (ExternalSubnet subnet : getSubnets()) {
             VdcActionParametersBase parameters = new ExternalSubnetParameters(subnet);
             list.add(parameters);

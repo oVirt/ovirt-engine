@@ -56,7 +56,7 @@ public class ConnectAutomaticallyManager {
 
         EventChangeListener listener = new EventChangeListener(model);
         if (listeners == null) {
-            listeners = new ArrayList<EventChangeListener>();
+            listeners = new ArrayList<>();
         }
         listeners.add(listener);
         listener.register();

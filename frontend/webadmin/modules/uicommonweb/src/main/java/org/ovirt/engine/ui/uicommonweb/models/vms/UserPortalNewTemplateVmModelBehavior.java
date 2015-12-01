@@ -39,7 +39,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
 
     @Override
     protected void updateTemplate() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
@@ -47,8 +47,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
         getEntitiesWithPermittedActionParameters.setActionGroup(CREATE_VM);
 
         ArrayList<VdcQueryParametersBase> parametersList =
-                new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        getEntitiesWithPermittedActionParameters }));
+                new ArrayList<>(Arrays.asList(new VdcQueryParametersBase[]{getEntitiesWithPermittedActionParameters}));
 
         Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel());
     }
@@ -56,8 +55,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
     @Override
     public void executed(FrontendMultipleQueryAsyncResult result) {
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-        ArrayList<VmTemplate> templates =
-                (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();
+        ArrayList<VmTemplate> templates = returnValueList.get(0).getReturnValue();
         initTemplates(templates);
     }
 

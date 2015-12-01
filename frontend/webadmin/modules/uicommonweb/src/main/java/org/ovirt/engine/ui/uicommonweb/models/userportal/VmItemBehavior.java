@@ -143,7 +143,7 @@ public class VmItemBehavior extends ItemBehavior {
 
         getItem().getTakeVmCommand().setIsAvailable(false);
 
-        ArrayList<VM> entities = new ArrayList<VM>();
+        ArrayList<VM> entities = new ArrayList<>();
         entities.add(entity);
 
         getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,

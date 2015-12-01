@@ -95,13 +95,13 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     }
 
     private void initEditors() {
-        swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>());
+        swiftStatusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterServiceStatus>());
         startSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         stopSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         restartSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         manageSwiftServerLevel = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        hostServicesTable = new EntityModelCellTable<ListModel>(false, true);
+        hostServicesTable = new EntityModelCellTable<>(false, true);
         hostServicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {

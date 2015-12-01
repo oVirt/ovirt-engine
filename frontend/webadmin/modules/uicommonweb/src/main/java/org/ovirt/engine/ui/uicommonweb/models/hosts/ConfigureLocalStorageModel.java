@@ -266,7 +266,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 // No clusters available - pick up new name.
                 if (clusters == null || clusters.isEmpty()) {
 
-                    names = new ArrayList<String>();
+                    names = new ArrayList<>();
 
                     ArrayList<VDSGroup> listClusters = context.clusterList;
                     for (VDSGroup cluster : listClusters) {
@@ -300,7 +300,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         } else {
 
             // Didn't found DC to re-use, so we select new names.
-            names = new ArrayList<String>();
+            names = new ArrayList<>();
 
             for (StoragePool dataCenter : dataCenters) {
                 names.add(dataCenter.getName());
@@ -333,7 +333,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 }
             }
 
-            names = new ArrayList<String>();
+            names = new ArrayList<>();
             if (clusters != null) {
                 for (VDSGroup cluster : clusters) {
                     names.add(cluster.getName());
@@ -354,7 +354,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Always choose a available storage name.
         ArrayList<StorageDomain> storages = context.storageList;
-        names = new ArrayList<String>();
+        names = new ArrayList<>();
 
         for (StorageDomain storageDomain : storages) {
             names.add(storageDomain.getStorageName());
@@ -380,9 +380,9 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Fill map of local storage host by data center.
 
-        context.clusterListByDataCenterMap = new HashMap<StoragePool, ArrayList<VDSGroup>>();
+        context.clusterListByDataCenterMap = new HashMap<>();
 
-        AsyncIterator<StoragePool> iterator = new AsyncIterator<StoragePool>(context.dataCenterList);
+        AsyncIterator<StoragePool> iterator = new AsyncIterator<>(context.dataCenterList);
 
         iterator.setComplete(
                 new AsyncIteratorComplete<StoragePool>() {
@@ -415,9 +415,9 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Fill map of local storage host by data center.
 
-        context.localStorageHostByDataCenterMap = new HashMap<StoragePool, VDS>();
+        context.localStorageHostByDataCenterMap = new HashMap<>();
 
-        AsyncIterator<StoragePool> iterator = new AsyncIterator<StoragePool>(context.dataCenterList);
+        AsyncIterator<StoragePool> iterator = new AsyncIterator<>(context.dataCenterList);
 
         iterator.setComplete(
                 new AsyncIteratorComplete<StoragePool>() {
@@ -538,7 +538,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     private String availableName(ArrayList<String> list) {
 
         String commonName = getCommonName();
-        ArrayList<Integer> notAvailableNumberList = new ArrayList<Integer>();
+        ArrayList<Integer> notAvailableNumberList = new ArrayList<>();
 
         String temp;
         for (String str : list) {

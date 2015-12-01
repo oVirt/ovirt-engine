@@ -73,10 +73,9 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationAction_success() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList =
-                new ArrayList<VdcOperation<VdcActionType, VdcActionParametersBase>>();
+        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddDisk, testParameters,
+                new VdcOperation<>(VdcActionType.AddDisk, testParameters,
                 new VdcOperationCallback<VdcOperation<VdcActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
 
             @Override
@@ -100,11 +99,10 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationAction_failure() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList =
-                new ArrayList<VdcOperation<VdcActionType, VdcActionParametersBase>>();
+        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
         final Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         final VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.AddDisk, testParameters,
+                new VdcOperation<>(VdcActionType.AddDisk, testParameters,
                 new VdcOperationCallback<VdcOperation<VdcActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
 
             @Override
@@ -129,10 +127,9 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationQuery_success() {
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         final VdcQueryReturnValue testResult = new VdcQueryReturnValue();
-        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList =
-                new ArrayList<VdcOperation<VdcQueryType, VdcQueryParametersBase>>();
+        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
+                new VdcOperation<>(VdcQueryType.Search, testParameters,
                 new VdcOperationCallback<VdcOperation<VdcQueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
 
             @Override
@@ -157,10 +154,9 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationQuery_failure() {
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         final Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
-        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList =
-                new ArrayList<VdcOperation<VdcQueryType, VdcQueryParametersBase>>();
+        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
+                new VdcOperation<>(VdcQueryType.Search, testParameters,
                 new VdcOperationCallback<VdcOperation<VdcQueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
 
             @Override
@@ -183,11 +179,9 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testGetOperationResult_Empty() {
-        List<VdcOperation<?, ?>> testOperationList =
-                new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> allOperationList =
-                new ArrayList<VdcOperation<?, ?>>();
-        List<?> allResults = new ArrayList<VdcReturnValueBase>();
+        List<VdcOperation<?, ?>> testOperationList = new ArrayList<>();
+        List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
+        List<?> allResults = new ArrayList<>();
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
         assertEquals("Result should have no results", 0, result.size()); //$NON-NLS-1$
     }
@@ -195,16 +189,13 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testGetOperationResult_One() {
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds,
-                        new VdcActionParametersBase(), null);
-        List<VdcOperation<?, ?>> testOperationList =
-                new ArrayList<VdcOperation<?, ?>>();
+                new VdcOperation<>(VdcActionType.ActivateVds, new VdcActionParametersBase(), null);
+        List<VdcOperation<?, ?>> testOperationList = new ArrayList<>();
         testOperationList.add(testOperation1);
-        List<VdcOperation<?, ?>> allOperationList =
-                new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
         allOperationList.add(testOperation1);
         VdcReturnValueBase testResult1 = new VdcReturnValueBase();
-        List<VdcReturnValueBase> allResults = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> allResults = new ArrayList<>();
         allResults.add(testResult1);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
         assertEquals("Result should have one results", 1, result.size()); //$NON-NLS-1$
@@ -212,18 +203,18 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testGetOperationResult_One_of_Two() {
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 = new VdcOperation<VdcActionType,
-                VdcActionParametersBase>(VdcActionType.ActivateVds, new VdcActionParametersBase(), null);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 = new VdcOperation<VdcActionType,
-                VdcActionParametersBase>(VdcActionType.AddBookmark, new VdcActionParametersBase(), null);
-        List<VdcOperation<?, ?>> testOperationList = new ArrayList<VdcOperation<?, ?>>();
+        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(VdcActionType.ActivateVds, new VdcActionParametersBase(), null);
+        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(VdcActionType.AddBookmark, new VdcActionParametersBase(), null);
+        List<VdcOperation<?, ?>> testOperationList = new ArrayList<>();
         testOperationList.add(testOperation2);
-        List<VdcOperation<?, ?>> allOperationList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
         allOperationList.add(testOperation1);
         allOperationList.add(testOperation2);
         VdcReturnValueBase testResult1 = new VdcReturnValueBase();
         VdcReturnValueBase testResult2 = new VdcReturnValueBase();
-        List<VdcReturnValueBase> allResults = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> allResults = new ArrayList<>();
         allResults.add(testResult1);
         allResults.add(testResult2);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
@@ -234,11 +225,10 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_oneAction_success() {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        List<VdcOperation<?, ?>> testList =
-                new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 = new VdcOperation<VdcActionType,
-                VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
+        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
         verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
@@ -248,10 +238,10 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_oneAction_failure() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 = new VdcOperation<VdcActionType,
-                VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
+        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
         verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
@@ -263,14 +253,12 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_twoItems_success() {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         List<VdcActionParametersBase> testParameterList = createActionParameterList(testParameters, 2);
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 2);
         testList.add(testOperation1);
@@ -285,14 +273,12 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_twoItems_failure() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         List<VdcActionParametersBase> testParameterList = createActionParameterList(testParameters, 2);
         testList.add(testOperation1);
         testList.add(testOperation2);
@@ -308,18 +294,15 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_threeItems_twoActionTypes_success() {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> activateVdsList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
+        List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation3 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateStorageDomain,
-                        testParameters, mockOperationCallbackSingle2);
+                new VdcOperation<>(VdcActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testList.add(testOperation3);
@@ -343,18 +326,15 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_threeItems_twoActionTypes_one_success_one_failure() {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> activateVdsList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
+        List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation3 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateStorageDomain, testParameters,
-                mockOperationCallbackSingle2);
+                new VdcOperation<>(VdcActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testList.add(testOperation3);
@@ -378,11 +358,10 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_oneQuery_success() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackSingle1);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
         verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
@@ -393,11 +372,10 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_oneQuery_failure() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackSingle1);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
         verify(mockService).runQuery(eq(VdcQueryType.Search), eq(testParameters), queryCallback.capture());
@@ -408,16 +386,14 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_multipleQuery_different_callback_success() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> operation1List = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> operation2List = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
+        List<VdcOperation<?, ?>> operation1List = new ArrayList<>();
+        List<VdcOperation<?, ?>> operation2List = new ArrayList<>();
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackList2);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackList2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         operation1List.add(testOperation1);
@@ -438,16 +414,14 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_multipleQuery_different_callback_failure() {
-        List<VdcOperation<?, ?>> testList = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> operation1List = new ArrayList<VdcOperation<?, ?>>();
-        List<VdcOperation<?, ?>> operation2List = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> testList = new ArrayList<>();
+        List<VdcOperation<?, ?>> operation1List = new ArrayList<>();
+        List<VdcOperation<?, ?>> operation2List = new ArrayList<>();
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackList1);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackList1);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters,
-                mockOperationCallbackList2);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, mockOperationCallbackList2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         operation1List.add(testOperation1);
@@ -468,12 +442,10 @@ public class GWTRPCCommunicationProviderTest {
         VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
         VdcActionParametersBase testActionParameters = new VdcActionParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testQueryParameters,
-                mockOperationCallbackSingle1);
+                new VdcOperation<>(VdcQueryType.Search, testQueryParameters, mockOperationCallbackSingle1);
         VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<VdcActionType, VdcActionParametersBase>(VdcActionType.ActivateVds, testActionParameters,
-                mockOperationCallbackSingle2);
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+                new VdcOperation<>(VdcActionType.ActivateVds, testActionParameters, mockOperationCallbackSingle2);
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
@@ -492,9 +464,8 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitPublicOperationList_success() {
         VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testQueryParameters, true,
-                false, mockOperationCallbackSingle1);
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+                new VdcOperation<>(VdcQueryType.Search, testQueryParameters, true, false, mockOperationCallbackSingle1);
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         testProvider.transmitOperationList(operationList);
         verify(mockService).runPublicQuery(eq(VdcQueryType.Search), eq(testQueryParameters), queryCallback.capture());
@@ -507,12 +478,10 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitPublicOperationList_two_public_success() {
         VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testQueryParameters, true,
-                false, mockOperationCallbackSingle1);
+                new VdcOperation<>(VdcQueryType.Search, testQueryParameters, true, false, mockOperationCallbackSingle1);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.GetConfigurationValues,
-                        testQueryParameters, true, false, mockOperationCallbackSingle2);
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+                new VdcOperation<>(VdcQueryType.GetConfigurationValues, testQueryParameters, true, false, mockOperationCallbackSingle2);
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
@@ -535,10 +504,9 @@ public class GWTRPCCommunicationProviderTest {
         //Remove token so there should be a request for it.
         mockXsrfRpcRequestBuilder.setXsrfToken(null);
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList =
-                new ArrayList<VdcOperation<VdcQueryType, VdcQueryParametersBase>>();
+        final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.Search, testParameters, null);
+                new VdcOperation<>(VdcQueryType.Search, testParameters, null);
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
         verify(mockXsrfService).getNewXsrfToken((AsyncCallback<XsrfToken>) any());
@@ -548,7 +516,7 @@ public class GWTRPCCommunicationProviderTest {
     // * Helper functions
     // ********************************************************************************************************
     private List<VdcQueryType> createQueryList(final VdcQueryType queryType, final int count) {
-        List<VdcQueryType> result = new ArrayList<VdcQueryType>();
+        List<VdcQueryType> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(queryType);
         }
@@ -557,7 +525,7 @@ public class GWTRPCCommunicationProviderTest {
 
     private List<VdcQueryParametersBase> createQueryParameterList(final VdcQueryParametersBase parameters,
             final int count) {
-        ArrayList<VdcQueryParametersBase> result = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(parameters);
         }
@@ -565,7 +533,7 @@ public class GWTRPCCommunicationProviderTest {
     }
 
     private List<VdcQueryReturnValue> createQueryResultList(final VdcQueryReturnValue resultValue, int count) {
-        List<VdcQueryReturnValue> result = new ArrayList<VdcQueryReturnValue>();
+        List<VdcQueryReturnValue> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(resultValue);
         }
@@ -574,7 +542,7 @@ public class GWTRPCCommunicationProviderTest {
 
     private List<VdcActionParametersBase> createActionParameterList(final VdcActionParametersBase parameters,
             final int count) {
-        List<VdcActionParametersBase> result = new ArrayList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(parameters);
         }
@@ -582,7 +550,7 @@ public class GWTRPCCommunicationProviderTest {
     }
 
     private List<VdcReturnValueBase> createActionResultList(final VdcReturnValueBase resultValue, final int count) {
-        List<VdcReturnValueBase> result = new ArrayList<VdcReturnValueBase>();
+        List<VdcReturnValueBase> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(resultValue);
         }

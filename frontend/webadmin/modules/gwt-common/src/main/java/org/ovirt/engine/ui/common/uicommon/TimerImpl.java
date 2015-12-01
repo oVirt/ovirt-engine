@@ -23,7 +23,7 @@ public class TimerImpl implements ITimer {
     });
 
     public TimerImpl() {
-        tickEvent = new Event<EventArgs>(ProvideTickEvent.definition);
+        tickEvent = new Event<>(ProvideTickEvent.definition);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 final List<VDS> hosts = (ArrayList<VDS>) returnValue;
-                final List<VDS> activeHosts = new ArrayList<VDS>();
+                final List<VDS> activeHosts = new ArrayList<>();
                 for (VDS host : hosts) {
                     if (VDSStatus.Up.equals(host.getStatus())) {
                         activeHosts.add(host);

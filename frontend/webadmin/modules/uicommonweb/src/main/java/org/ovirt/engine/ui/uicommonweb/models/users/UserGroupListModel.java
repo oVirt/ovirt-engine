@@ -26,7 +26,7 @@ public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup> {
         super.onEntityChanged();
 
         if (getEntity() != null) {
-            final ArrayList<UserGroup> items = new ArrayList<UserGroup>();
+            final ArrayList<UserGroup> items = new ArrayList<>();
             AsyncDataProvider.getInstance().getAuthzGroupsByUserId(new AsyncQuery(new INewAsyncCallback() {
 
                 @Override

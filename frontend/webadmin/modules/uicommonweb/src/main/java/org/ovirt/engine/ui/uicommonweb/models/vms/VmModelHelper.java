@@ -19,9 +19,9 @@ public class VmModelHelper {
     }
 
     public static void sendWarningForNonExportableDisks(Model model, ArrayList<Disk> vmDisks, WarningType warningType) {
-        final ArrayList<Disk> sharedImageDisks = new ArrayList<Disk>();
-        final ArrayList<Disk> directLunDisks = new ArrayList<Disk>();
-        final ArrayList<Disk> snapshotDisks = new ArrayList<Disk>();
+        final ArrayList<Disk> sharedImageDisks = new ArrayList<>();
+        final ArrayList<Disk> directLunDisks = new ArrayList<>();
+        final ArrayList<Disk> snapshotDisks = new ArrayList<>();
 
         for (Disk disk : vmDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -103,7 +103,7 @@ public class VmModelHelper {
             return null;
         }
 
-        final List<String> labels = new ArrayList<String>();
+        final List<String> labels = new ArrayList<>();
         for (Disk disk : disks) {
             labels.add(disk.getDiskAlias());
         }

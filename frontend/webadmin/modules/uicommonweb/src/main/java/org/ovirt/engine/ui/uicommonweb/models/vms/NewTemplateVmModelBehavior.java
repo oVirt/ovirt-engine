@@ -237,7 +237,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void onSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
-                        ArrayList<Disk> imageDisks = new ArrayList<Disk>();
+                        ArrayList<Disk> imageDisks = new ArrayList<>();
                         ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
                         for (Disk disk : vmDisks) {
@@ -264,7 +264,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     private void initDisks(ArrayList<Disk> disks) {
         Collections.sort(disks, new Linq.DiskByAliasComparer());
-        ArrayList<DiskModel> list = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> list = new ArrayList<>();
 
         for (Disk disk : disks) {
             DiskModel diskModel = new DiskModel();
@@ -363,8 +363,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void onSuccess(Object target, Object returnValue) {
                         NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
                         ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-                        ArrayList<StorageDomain> activeStorageDomainList =
-                                new ArrayList<StorageDomain>();
+                        ArrayList<StorageDomain> activeStorageDomainList = new ArrayList<>();
 
                         for (StorageDomain storageDomain : storageDomains) {
                             if (storageDomain.getStatus() == StorageDomainStatus.Active
@@ -399,7 +398,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         Linq.firstOrNull(activeStorageDomainList,
                                                 new Linq.IdPredicate<>(selectStorage.getId()));
                                 activeStorageDomainList =
-                                        new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));
+                                        new ArrayList<>(Arrays.asList(new StorageDomain[]{s}));
 
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangeable(false);

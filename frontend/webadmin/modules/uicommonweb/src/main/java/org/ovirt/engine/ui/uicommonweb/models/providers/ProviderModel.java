@@ -258,7 +258,7 @@ public class ProviderModel extends Model {
         getVmwarePropertiesModel().setIsAvailable(false);
         getTenantName().setIsAvailable(false);
 
-        List<ProviderType> providerTypes = new ArrayList<ProviderType>(Arrays.asList(ProviderType.values()));
+        List<ProviderType> providerTypes = new ArrayList<>(Arrays.asList(ProviderType.values()));
         Collections.sort(providerTypes, new Linq.ProviderTypeComparator());
         getType().setItems(providerTypes);
 

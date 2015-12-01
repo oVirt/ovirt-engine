@@ -33,8 +33,8 @@ public class ModelBoundPopupHandler<M extends IModel> {
     private final ModelBoundPopupResolver<M> popupResolver;
     private final EventBus eventBus;
 
-    private final Set<String> windowPropertyNames = new HashSet<String>();
-    private final Set<String> confirmWindowPropertyNames = new HashSet<String>();
+    private final Set<String> windowPropertyNames = new HashSet<>();
+    private final Set<String> confirmWindowPropertyNames = new HashSet<>();
 
     private AbstractModelBoundPopupPresenterWidget<?, ?> windowPopup;
     private AbstractModelBoundPopupPresenterWidget<?, ?> confirmWindowPopup;

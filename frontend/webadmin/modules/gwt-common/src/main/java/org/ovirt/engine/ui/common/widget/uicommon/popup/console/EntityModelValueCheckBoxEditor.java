@@ -11,7 +11,7 @@ public class EntityModelValueCheckBoxEditor<T> extends BaseEntityModelCheckboxEd
     }
 
     public EntityModelValueCheckBoxEditor(Align labelAlign, ValueCheckboxRenderer<T> renderer) {
-        super(labelAlign, new EntityModelValueCheckbox<T>(renderer));
+        super(labelAlign, new EntityModelValueCheckbox<>(renderer));
     }
 
 }

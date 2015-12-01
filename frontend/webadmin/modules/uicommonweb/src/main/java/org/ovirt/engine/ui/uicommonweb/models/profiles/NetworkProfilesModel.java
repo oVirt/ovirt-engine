@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class NetworkProfilesModel extends ListModel<VnicProfileModel> {
 
-    private EntityModel<Guid> dcId = new EntityModel<Guid>();
+    private EntityModel<Guid> dcId = new EntityModel<>();
 
     public EntityModel<Guid> getDcId() {
         return dcId;

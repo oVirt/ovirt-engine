@@ -51,7 +51,7 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<>();
 
     @Inject
     public SideTabExtendedTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,

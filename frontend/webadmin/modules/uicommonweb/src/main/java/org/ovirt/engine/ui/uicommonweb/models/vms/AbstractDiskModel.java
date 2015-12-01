@@ -401,7 +401,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
-                ArrayList<VDS> filteredHosts = new ArrayList<VDS>();
+                ArrayList<VDS> filteredHosts = new ArrayList<>();
 
                 for (VDS host : hosts) {
                     if (isHostAvailable(host)) {
@@ -425,7 +425,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
                     StoragePool dataCenter = (StoragePool) returnValue;
-                    ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                    ArrayList<StoragePool> dataCenters = new ArrayList<>();
 
                     if (isDatacenterAvailable(dataCenter)) {
                         dataCenters.add(dataCenter);
@@ -446,7 +446,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
                     ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
-                    ArrayList<StoragePool> filteredDataCenters = new ArrayList<StoragePool>();
+                    ArrayList<StoragePool> filteredDataCenters = new ArrayList<>();
 
                     for (StoragePool dataCenter : dataCenters) {
                         if (isDatacenterAvailable(dataCenter)) {

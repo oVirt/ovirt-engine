@@ -52,7 +52,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider) {
         super(modelProvider);
 
-        table = new EntityModelCellTable<ListModel>(false, true);
+        table = new EntityModelCellTable<>(false, true);
         tree = getTree();
 
         initHeader();

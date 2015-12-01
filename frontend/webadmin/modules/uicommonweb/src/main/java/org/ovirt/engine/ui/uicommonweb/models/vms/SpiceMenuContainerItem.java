@@ -19,7 +19,7 @@ public class SpiceMenuContainerItem extends SpiceMenuItem {
 
     public List<SpiceMenuItem> getItems() {
         if (items == null) {
-            items = new ArrayList<SpiceMenuItem>();
+            items = new ArrayList<>();
         }
 
         return items;

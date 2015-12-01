@@ -120,7 +120,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public AbstractPermissionsPopupView(EventBus eventBus) {
         super(eventBus);
         initListBoxEditors();
-        searchItems = new EntityModelCellTable<ListModel>(true);
+        searchItems = new EntityModelCellTable<>(true);
         searchItems.enableColumnResizing();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
@@ -140,7 +140,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     protected abstract T doFlush();
 
     private void initListBoxEditors() {
-        profileSelection = new ListModelListBoxEditor<ProfileEntry>(new NullSafeRenderer<ProfileEntry>() {
+        profileSelection = new ListModelListBoxEditor<>(new NullSafeRenderer<ProfileEntry>() {
             @Override
             public String renderNullSafe(ProfileEntry object) {
                 return object.toString();
@@ -148,7 +148,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         });
 
         roleSelection = new ListModelListBoxEditor<>(new NameRenderer<Role>());
-        namespaceSelection = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
+        namespaceSelection = new ListModelListBoxEditor<>(new NullSafeRenderer<String>() {
             @Override
             protected String renderNullSafe(String object) {
                 return object;

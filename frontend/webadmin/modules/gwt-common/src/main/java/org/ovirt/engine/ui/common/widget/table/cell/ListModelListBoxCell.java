@@ -59,10 +59,10 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     private void setOptions(ListModel model) {
         Iterable<T> items = model.getItems();
         if (items == null) {
-            items = new ArrayList<T>();
+            items = new ArrayList<>();
         }
-        entityByName = new HashMap<String, T>();
-        List<String> options = new ArrayList<String>();
+        entityByName = new HashMap<>();
+        List<String> options = new ArrayList<>();
 
         for (T entity : items) {
             String entityName = renderer.render(entity);

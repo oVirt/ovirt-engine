@@ -66,7 +66,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<VDSGroup> commentColumn = new CommentColumn<VDSGroup>();
+        CommentColumn<VDSGroup> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
@@ -185,7 +185,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>(constants.showReportCluster(),
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportCluster(),
                         resourceSubActions));
             }
         }

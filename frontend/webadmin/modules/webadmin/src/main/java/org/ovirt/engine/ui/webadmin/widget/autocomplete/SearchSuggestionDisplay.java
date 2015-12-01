@@ -47,8 +47,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
 
         // Create suggestions table
         final SuggestCellTable<SearchSuggestion> suggestionsTable =
-                new SuggestCellTable<SearchSuggestion>(suggestions.size(),
-                        (Resources) GWT.create(SuggestionsTableResources.class));
+                new SuggestCellTable<>(suggestions.size(), (Resources) GWT.create(SuggestionsTableResources.class));
 
         // Create table's column and add it to the table
         SearchSuggestionColumn<SearchSuggestion> suggestColumn = new SearchSuggestionColumn<SearchSuggestion>() {
@@ -61,7 +60,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
         suggestionsTable.addColumn(suggestColumn);
 
         // Create a data provider and bind it to the table
-        suggestionDataProvider = new ListDataProvider<SearchSuggestion>();
+        suggestionDataProvider = new ListDataProvider<>();
         suggestionDataProvider.addDataDisplay(suggestionsTable);
 
         // Add suggestions to data provider

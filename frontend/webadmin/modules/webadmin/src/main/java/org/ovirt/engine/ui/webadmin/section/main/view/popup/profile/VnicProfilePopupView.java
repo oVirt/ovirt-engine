@@ -94,7 +94,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     public VnicProfilePopupView(EventBus eventBus) {
         super(eventBus);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        customPropertiesSheetEditor = new KeyValueWidget<KeyValueModel>("380px"); //$NON-NLS-1$
+        customPropertiesSheetEditor = new KeyValueWidget<>("380px"); //$NON-NLS-1$
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

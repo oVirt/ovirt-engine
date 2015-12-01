@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 public class RoleTreeView {
     public static ArrayList<SelectionTreeNodeModel> getRoleTreeView(boolean isReadOnly, boolean isAdmin) {
         RoleNode tree = initTreeView();
-        ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<>();
         SelectionTreeNodeModel firstNode;
         SelectionTreeNodeModel secondNode;
         SelectionTreeNodeModel thirdNode;

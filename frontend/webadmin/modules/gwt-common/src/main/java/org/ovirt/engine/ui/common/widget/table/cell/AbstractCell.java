@@ -31,7 +31,7 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
      */
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         TooltipMixin.addTooltipsEvents(set);
         return set;
     }

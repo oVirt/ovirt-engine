@@ -66,7 +66,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         nameColumn.makeSortable(StoragePoolFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
+        CommentColumn<StoragePool> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
@@ -166,7 +166,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
             List<ActionButtonDefinition<StoragePool>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<StoragePool>(constants.showReportDC(),
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportDC(),
                         resourceSubActions));
             }
         }

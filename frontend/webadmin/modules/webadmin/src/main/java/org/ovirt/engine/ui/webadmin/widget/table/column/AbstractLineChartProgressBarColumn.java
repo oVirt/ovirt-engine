@@ -237,7 +237,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
                 return original;
             }
 
-            List<Integer> res = new ArrayList<Integer>();
+            List<Integer> res = new ArrayList<>();
             res.add(0);
             res.addAll(original);
 

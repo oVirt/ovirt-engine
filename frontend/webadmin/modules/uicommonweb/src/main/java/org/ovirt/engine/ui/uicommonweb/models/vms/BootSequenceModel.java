@@ -99,16 +99,16 @@ public class BootSequenceModel extends ListModel<EntityModel<BootSequence>> {
     }
 
     private void initializeItems() {
-        ObservableCollection<EntityModel<BootSequence>> items = new ObservableCollection<EntityModel<BootSequence>>();
-        EntityModel<BootSequence> tempVar = new EntityModel<BootSequence>();
+        ObservableCollection<EntityModel<BootSequence>> items = new ObservableCollection<>();
+        EntityModel<BootSequence> tempVar = new EntityModel<>();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
         tempVar.setEntity(BootSequence.C);
         items.add(tempVar);
-        EntityModel<BootSequence> tempVar2 = new EntityModel<BootSequence>();
+        EntityModel<BootSequence> tempVar2 = new EntityModel<>();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
         tempVar2.setEntity(BootSequence.D);
         items.add(tempVar2);
-        EntityModel<BootSequence> tempVar3 = new EntityModel<BootSequence>();
+        EntityModel<BootSequence> tempVar3 = new EntityModel<>();
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().networkPXETitle());
         tempVar3.setEntity(BootSequence.N);
         items.add(tempVar3);

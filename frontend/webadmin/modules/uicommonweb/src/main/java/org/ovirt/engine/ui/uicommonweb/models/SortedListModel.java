@@ -64,7 +64,7 @@ public class SortedListModel<T> extends ListModel<T> {
     }
 
     public void setComparator(Comparator<? super T> comparator, boolean sortAscending) {
-        this.comparator = (comparator != null) ? new SortSensitiveComparator<T>(comparator, sortAscending) : null;
+        this.comparator = (comparator != null) ? new SortSensitiveComparator<>(comparator, sortAscending) : null;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SortedListModel<T> extends ListModel<T> {
             return items;
         }
 
-        List<T> sortedList = new ArrayList<T>(items);
+        List<T> sortedList = new ArrayList<>(items);
         Collections.sort(sortedList, comparator);
 
         return sortedList;

@@ -26,7 +26,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
     private EntityModel<String> dataCenter;
     private ListModel<VDSGroup> clusters;
     private ListModel<EntityModel<GlusterVolumeSnapshotConfig>> clusterConfigOptions;
-    private Map<String, String> existingClusterConfigs = new HashMap<String, String>();
+    private Map<String, String> existingClusterConfigs = new HashMap<>();
 
     public EntityModel<String> getDataCenter() {
         return this.dataCenter;
@@ -114,10 +114,9 @@ public class GlusterClusterSnapshotConfigModel extends Model {
 
             private void setModelItems(ListModel<EntityModel<GlusterVolumeSnapshotConfig>> listModel,
                     List<GlusterVolumeSnapshotConfig> cfgs, Map<String, String> fetchedCfgsBackup) {
-                List<EntityModel<GlusterVolumeSnapshotConfig>> coll =
-                        new ArrayList<EntityModel<GlusterVolumeSnapshotConfig>>();
+                List<EntityModel<GlusterVolumeSnapshotConfig>> coll = new ArrayList<>();
                 for (GlusterVolumeSnapshotConfig cfg : cfgs) {
-                    EntityModel<GlusterVolumeSnapshotConfig> cfgModel = new EntityModel<GlusterVolumeSnapshotConfig>();
+                    EntityModel<GlusterVolumeSnapshotConfig> cfgModel = new EntityModel<>();
                     cfgModel.setEntity(cfg);
                     fetchedCfgsBackup.put(cfg.getParamName(), cfg.getParamValue());
                     coll.add(cfgModel);

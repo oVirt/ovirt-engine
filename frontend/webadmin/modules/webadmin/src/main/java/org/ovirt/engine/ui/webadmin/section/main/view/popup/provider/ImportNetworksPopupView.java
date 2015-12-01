@@ -82,8 +82,8 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         super(eventBus);
         // Initialize Editors
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<?>>());
-        providerNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
-        importedNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
+        providerNetworks = new EntityModelCellTable<>(true, false, true);
+        importedNetworks = new EntityModelCellTable<>(true, false, true);
         splitTable =
                 new HorizontalSplitTable<>(providerNetworks,
                         importedNetworks,

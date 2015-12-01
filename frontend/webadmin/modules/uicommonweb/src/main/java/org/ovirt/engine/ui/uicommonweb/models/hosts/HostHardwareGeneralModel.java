@@ -243,12 +243,12 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
 
         /* Go through the list of HBA devices and transfer the necessary info
            to the GWT host hardware model */
-        List<EnumMap<HbaDeviceKeys, String>> hbaDevices = new ArrayList<EnumMap<HbaDeviceKeys, String>>();
+        List<EnumMap<HbaDeviceKeys, String>> hbaDevices = new ArrayList<>();
         List<Map<String, String>> fcDevices = vds.getHBAs().get("FC"); //$NON-NLS-1$
 
         if (fcDevices != null) {
             for (Map<String, String> device: fcDevices) {
-                EnumMap<HbaDeviceKeys, String> deviceModel = new EnumMap<HbaDeviceKeys, String>(HbaDeviceKeys.class);
+                EnumMap<HbaDeviceKeys, String> deviceModel = new EnumMap<>(HbaDeviceKeys.class);
                 deviceModel.put(HbaDeviceKeys.MODEL_NAME, device.get("model")); //$NON-NLS-1$
                 deviceModel.put(HbaDeviceKeys.WWNN, device.get("wwnn")); //$NON-NLS-1$
                 deviceModel.put(HbaDeviceKeys.WWNPS, device.get("wwpn")); //$NON-NLS-1$

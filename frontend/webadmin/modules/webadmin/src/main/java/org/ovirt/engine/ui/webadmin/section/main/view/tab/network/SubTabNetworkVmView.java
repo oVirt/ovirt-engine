@@ -48,7 +48,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     @Inject
     public SubTabNetworkVmView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider) {
         super(modelProvider);
-        viewRadioGroup = new ViewRadioGroup<NetworkVmFilter>(Arrays.asList(NetworkVmFilter.values()));
+        viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(NetworkVmFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkVmFilter.running);
         viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$
         initTable();
@@ -158,7 +158,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             };
 
     private final NicActivateStatusColumn<PairQueryable<VmNetworkInterface, VM>> nicActivateStatusColumn =
-            new NicActivateStatusColumn<PairQueryable<VmNetworkInterface, VM>>();
+            new NicActivateStatusColumn<>();
 
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> vnicNameColumn =
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {

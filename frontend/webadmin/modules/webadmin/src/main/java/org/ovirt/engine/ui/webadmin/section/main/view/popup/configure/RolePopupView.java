@@ -147,7 +147,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
     }
 
     private void initTree() {
-        tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
+        tree = new EntityModelCellTree<>(res);
     }
 
     @Override

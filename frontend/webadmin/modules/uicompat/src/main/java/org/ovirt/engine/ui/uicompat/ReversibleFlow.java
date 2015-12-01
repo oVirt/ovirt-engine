@@ -27,8 +27,8 @@ public class ReversibleFlow {
 
     public ReversibleFlow() {
 
-        completeEvent = new Event<EventArgs>(completeEventDefinition);
-        notifications = new ArrayList<IEnlistmentNotification>();
+        completeEvent = new Event<>(completeEventDefinition);
+        notifications = new ArrayList<>();
     }
 
     public void enlist(IEnlistmentNotification notification) {

@@ -48,7 +48,7 @@ public class AsyncIteratorCallback<T> {
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        notifyEvent.raise(this, new ValueEventArgs<T>((T) returnValue));
+                        notifyEvent.raise(this, new ValueEventArgs<>((T) returnValue));
                     }
                 }));
     }

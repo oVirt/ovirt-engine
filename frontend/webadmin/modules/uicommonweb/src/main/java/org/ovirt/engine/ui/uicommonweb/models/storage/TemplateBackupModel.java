@@ -67,7 +67,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
 
     /** used to save the names that were assigned for VMs which are going
      *  to be created using import in case of choosing multiple VM imports */
-    protected Set<String> assignedVmNames = new HashSet<String>();
+    protected Set<String> assignedVmNames = new HashSet<>();
     protected Map<Guid, Object> cloneObjectMap;
     protected List<ImportTemplateData> objectsToClone;
 
@@ -93,7 +93,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         model.setTitle(constants.removeBackedUpTemplatesTitle());
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
             items.add(template.getName());
         }
@@ -181,7 +181,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             if (template != null) {
                 List<String> vms = problematicVmNames.get(template.getName());
                 if (vms == null) {
-                    vms = new ArrayList<String>();
+                    vms = new ArrayList<>();
                     problematicVmNames.put(template.getName(), vms);
                 }
                 vms.add(vm.getName());
@@ -191,7 +191,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void removeTemplateBackup() {
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
             prms.add(new VmTemplateImportExportParameters(template.getId(),
                     getEntity().getId(),
@@ -259,7 +259,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         if (!model.validate()) {
             return;
         }
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (Object object : importModel.getItems()) {
             ImportTemplateData importData = (ImportTemplateData) object;
             VmTemplate template = importData.getTemplate();
@@ -279,7 +279,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                 importVmTemplateParameters.setCpuProfileId(cpuProfile.getId());
             }
 
-            Map<Guid, Guid> map = new HashMap<Guid, Guid>();
+            Map<Guid, Guid> map = new HashMap<>();
             for (DiskImage disk : template.getDiskList()) {
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
 
@@ -376,8 +376,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object model1, Object ReturnValue1) {
-                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items =
-                                        new ArrayList<Map.Entry<VmTemplate, List<DiskImage>>>();
+                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items = new ArrayList<>();
                                 HashMap<VmTemplate, List<DiskImage>> dictionary = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 ArrayList<VmTemplate> list = new ArrayList<>();
                                 for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
@@ -531,7 +530,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         if (!importModel.validate()) {
             return;
         }
-        cloneObjectMap = new HashMap<Guid, Object>();
+        cloneObjectMap = new HashMap<>();
 
         objectsToClone = new ArrayList<>();
         for (Object object : importModel.getItems()) {

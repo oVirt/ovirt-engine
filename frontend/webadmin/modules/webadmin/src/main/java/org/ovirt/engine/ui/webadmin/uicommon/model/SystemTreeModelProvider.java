@@ -53,7 +53,7 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         this.cell = new SystemTreeItemCell();
 
         // Create selection model
-        selectionModel = new SingleSelectionModel<SystemTreeItemModel>();
+        selectionModel = new SingleSelectionModel<>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
@@ -119,11 +119,11 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
             // Not a root node
             SystemTreeItemModel parentModel = (SystemTreeItemModel) parent;
             List<SystemTreeItemModel> children = parentModel.getChildren();
-            return new DefaultNodeInfo<SystemTreeItemModel>(new ListDataProvider<SystemTreeItemModel>(children),
+            return new DefaultNodeInfo<>(new ListDataProvider<>(children),
                     cell, selectionModel, selectionManager, null);
         } else {
             // This is the root node
-            return new DefaultNodeInfo<SystemTreeItemModel>(getDataProvider(),
+            return new DefaultNodeInfo<>(getDataProvider(),
                     cell, selectionModel, selectionManager, null);
         }
     }

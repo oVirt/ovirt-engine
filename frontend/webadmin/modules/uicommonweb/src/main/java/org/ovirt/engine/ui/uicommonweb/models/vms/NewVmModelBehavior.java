@@ -53,7 +53,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        final ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                        final ArrayList<StoragePool> dataCenters = new ArrayList<>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                             if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);

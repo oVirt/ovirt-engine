@@ -101,7 +101,7 @@ public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<Event
     }
 
     private void initTree() {
-        tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
+        tree = new EntityModelCellTree<>(res);
     }
 
     @Override

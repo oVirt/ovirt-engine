@@ -253,9 +253,9 @@ public class VolumeProfileStatisticsModel extends Model {
     }
 
     private void populateCummulativeStatistics(List<FopStats> fopStats, ListModel profileStats) {
-        List<EntityModel<FopStats>> fopStatsEntities = new ArrayList<EntityModel<FopStats>>();
+        List<EntityModel<FopStats>> fopStatsEntities = new ArrayList<>();
         for(int i = 0;i < fopStats.size();i++) {
-            EntityModel<FopStats> fopStatEntity = new EntityModel<FopStats>(fopStats.get(i));
+            EntityModel<FopStats> fopStatEntity = new EntityModel<>(fopStats.get(i));
             fopStatsEntities.add(fopStatEntity);
         }
         profileStats.setItems(fopStatsEntities);

@@ -80,7 +80,7 @@ public class VmAppListModel<E> extends SearchableListModel<E, String> {
     private void updateAppListFromVm(VM vm) {
         setItems(null);
         if (vm != null && vm.getAppList() != null) {
-            ArrayList<String> list = new ArrayList<String>();
+            ArrayList<String> list = new ArrayList<>();
 
             String[] array = vm.getAppList().split("[,]", -1); //$NON-NLS-1$
             for (String item : array) {

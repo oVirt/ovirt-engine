@@ -115,7 +115,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
     }
 
     private void updateActionAvailability() {
-        ArrayList<VM> vms = new ArrayList<VM>();
+        ArrayList<VM> vms = new ArrayList<>();
         Iterable<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
         for (PairQueryable<VmNetworkInterface, VM> item : selectedItems) {
@@ -159,7 +159,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
             return;
         }
 
-        List<VmNetworkInterface> vnics = new ArrayList<VmNetworkInterface>();
+        List<VmNetworkInterface> vnics = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             PairQueryable<VmNetworkInterface, VM> pair = (PairQueryable<VmNetworkInterface, VM>) item;
             vnics.add(pair.getFirst());

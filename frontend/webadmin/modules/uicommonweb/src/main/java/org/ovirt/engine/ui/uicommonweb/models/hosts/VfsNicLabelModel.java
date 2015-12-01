@@ -26,9 +26,9 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
 
     protected void initLabelModels() {
         Collections.sort(originalLabels, new LexoNumericComparator());
-        LinkedList<ListModel<String>> items = new LinkedList<ListModel<String>>();
+        LinkedList<ListModel<String>> items = new LinkedList<>();
         for (String label : originalLabels) {
-            ListModel<String> labelModel = new ListModel<String>();
+            ListModel<String> labelModel = new ListModel<>();
             labelModel.setItems(suggestedLabels);
             labelModel.setSelectedItem(label);
             items.add(labelModel);
@@ -63,7 +63,7 @@ public class VfsNicLabelModel extends ListModel<ListModel<String>> {
 
     public void validate() {
         boolean res = true;
-        Set<String> editedLabels = new HashSet<String>();
+        Set<String> editedLabels = new HashSet<>();
         for (ListModel<String> labelModel : getItems()) {
             labelModel.validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
 

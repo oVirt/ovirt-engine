@@ -28,13 +28,12 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_VmListContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_VmListContent = new Type<>();
 
     private final Provider<MainTabBasicListItemPresenterWidget> itemPresenterWidgetProvider;
     private final UserPortalBasicListProvider modelProvider;
 
-    private final Map<Guid, MainTabBasicListItemPresenterWidget> currentItemPresenterWidgets =
-            new HashMap<Guid, MainTabBasicListItemPresenterWidget>();
+    private final Map<Guid, MainTabBasicListItemPresenterWidget> currentItemPresenterWidgets = new HashMap<>();
 
     @Inject
     public MainTabBasicListPresenterWidget(EventBus eventBus, ViewDef view,
@@ -49,7 +48,7 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     @Override
     public void onDataChange(List<UserPortalItemModel> items) {
         int itemIndex = 0;
-        Set<Guid> itemsToRemove = new HashSet<Guid>(currentItemPresenterWidgets.keySet());
+        Set<Guid> itemsToRemove = new HashSet<>(currentItemPresenterWidgets.keySet());
 
         // Clear the list view, detaching any existing item views
         clearSlot(TYPE_VmListContent);

@@ -170,7 +170,7 @@ public class ResizableHeader<T> extends SafeHtmlHeader {
         // register a column resize handler that listens to mouse move events
         if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
             if (mouseOverResizeBarArea) {
-                new ColumnResizeHandler<T>(headerElement, column, table);
+                new ColumnResizeHandler<>(headerElement, column, table);
             }
             event.preventDefault();
             event.stopPropagation();

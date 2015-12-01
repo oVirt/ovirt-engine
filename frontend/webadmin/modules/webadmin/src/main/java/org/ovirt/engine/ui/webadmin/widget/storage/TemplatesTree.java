@@ -64,7 +64,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
 
     @Override
     protected ArrayList<DiskImage> getNodeObjects(VmTemplate template) {
-        return new ArrayList<DiskImage>(template.getDiskImageMap().values());
+        return new ArrayList<>(template.getDiskImageMap().values());
     }
 
     @Override

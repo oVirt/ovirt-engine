@@ -21,7 +21,7 @@ public class SimpleDependencyInjector {
 
     private static final SimpleDependencyInjector instance = new SimpleDependencyInjector();
 
-    private Map<String, Object> map = new HashMap<String, Object>();
+    private Map<String, Object> map = new HashMap<>();
 
     public static SimpleDependencyInjector getInstance() {
         return instance;

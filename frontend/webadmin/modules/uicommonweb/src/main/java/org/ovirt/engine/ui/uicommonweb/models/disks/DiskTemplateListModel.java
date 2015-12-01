@@ -46,7 +46,7 @@ public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemp
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 HashMap<Boolean, VmTemplate> map = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                List<VmTemplate> templates = new ArrayList<VmTemplate>();
+                List<VmTemplate> templates = new ArrayList<>();
                 templates.add(map.get(true));
                 setItems(templates);
             }

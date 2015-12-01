@@ -241,7 +241,7 @@ public final class Cloner {
         if (agents == null || agents.isEmpty()) {
             return null;
         } else {
-            List<FenceAgent> clonedAgents = new LinkedList<FenceAgent>();
+            List<FenceAgent> clonedAgents = new LinkedList<>();
             for (FenceAgent agent : agents) {
                 clonedAgents.add(cloneAgent(agent));
             }
@@ -532,7 +532,7 @@ public final class Cloner {
         if (clusterPolicy.getFunctions() != null) {
             obj.setFunctions(new ArrayList<Pair<Guid, Integer>>());
             for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
-                obj.getFunctions().add(new Pair<Guid, Integer>(pair.getFirst(), pair.getSecond()));
+                obj.getFunctions().add(new Pair<>(pair.getFirst(), pair.getSecond()));
             }
         }
         if (clusterPolicy.getBalance() != null) {

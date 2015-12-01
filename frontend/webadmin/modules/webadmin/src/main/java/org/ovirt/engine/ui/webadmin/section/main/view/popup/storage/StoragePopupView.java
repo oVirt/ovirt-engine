@@ -169,7 +169,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     void initListBoxEditors() {
-        datacenterListEditor = new ListModelListBoxEditor<StoragePool>(new AbstractRenderer<StoragePool>() {
+        datacenterListEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
             @Override
             public String render(StoragePool storage) {
                 String formattedString = ""; //$NON-NLS-1$
@@ -177,7 +177,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 if (storage != null) {
 
                     // Get formatted storage type and format using Enum renders
-                    String storageType = storage.isLocal() ?  constants.storageTypeLocal() : ""; //$NON-NLS-1$
+                    String storageType = storage.isLocal() ? constants.storageTypeLocal() : ""; //$NON-NLS-1$
                     String storageFormatType = storage.getStoragePoolFormatType() == null ? "" : //$NON-NLS-1$
                             (new EnumRenderer<StorageFormatType>()).render(storage.getStoragePoolFormatType());
 
@@ -200,13 +200,13 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             }
         });
 
-        formatListEditor = new ListModelListBoxEditor<StorageFormatType>(new EnumRenderer());
+        formatListEditor = new ListModelListBoxEditor<>(new EnumRenderer());
 
         hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        domainFunctionListEditor = new ListModelListBoxEditor<StorageDomainType>(new EnumRenderer<StorageDomainType>());
+        domainFunctionListEditor = new ListModelListBoxEditor<>(new EnumRenderer<StorageDomainType>());
 
-        storageTypeListEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer<StorageType>());
+        storageTypeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<StorageType>());
 
         activateDomainEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }

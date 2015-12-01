@@ -163,7 +163,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         updateButtonResources();
 
         _tasksTable =
-                new SimpleActionTable<Job>(taskModelProvider, getTableResources(), eventBus, clientStorage);
+                new SimpleActionTable<>(taskModelProvider, getTableResources(), eventBus, clientStorage);
         makeSingleRowTable(_tasksTable);
         initTaskTable(_tasksTable);
 
@@ -205,7 +205,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     SimpleActionTable<AuditLog> createActionTable(SearchableTabModelProvider<AuditLog, ?> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        return new SimpleActionTable<AuditLog>(modelProvider, getTableResources(), eventBus, clientStorage);
+        return new SimpleActionTable<>(modelProvider, getTableResources(), eventBus, clientStorage);
     }
 
     AlertsEventsFooterResources getTableResources() {

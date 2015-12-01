@@ -482,9 +482,9 @@ public class FrontendTest {
      */
     @Test
     public void testrunMultipleQueries_ignored_failure() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -512,10 +512,10 @@ public class FrontendTest {
     public void testrunMultipleQueries_ignored_failure_multiple() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.Search);
         queryTypeList.add(VdcQueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -548,10 +548,10 @@ public class FrontendTest {
         fakeScheduler.setThreshold(2);
         when(mockConstants.requestToServerFailedWithCode()).
                 thenReturn("A Request to the Server failed with the following Status Code"); //$NON-NLS-1$
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.Search);
         queryTypeList.add(VdcQueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -587,10 +587,10 @@ public class FrontendTest {
     public void testrunMultipleQueries_multiple_success() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.Search);
         queryTypeList.add(VdcQueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -598,7 +598,7 @@ public class FrontendTest {
                 eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
-        List<VdcQueryReturnValue> result = new ArrayList<VdcQueryReturnValue>();
+        List<VdcQueryReturnValue> result = new ArrayList<>();
         result.add(new VdcQueryReturnValue());
         result.get(0).setSucceeded(true);
         result.add(new VdcQueryReturnValue());
@@ -625,17 +625,17 @@ public class FrontendTest {
     public void testrunMultipleQueries_multiple_success_and_failure() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.Search);
         queryTypeList.add(VdcQueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         verify(mockService).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
-        List<VdcQueryReturnValue> result = new ArrayList<VdcQueryReturnValue>();
+        List<VdcQueryReturnValue> result = new ArrayList<>();
         result.add(new VdcQueryReturnValue());
         result.get(0).setSucceeded(false);
         result.add(new VdcQueryReturnValue());

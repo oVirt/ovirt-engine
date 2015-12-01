@@ -37,8 +37,8 @@ public class GlusterHookContentModel extends Model {
     }
 
     public GlusterHookContentModel() {
-        setContent(new EntityModel<String>("")); //$NON-NLS-1$
-        setMd5Checksum(new EntityModel<String>("")); //$NON-NLS-1$
+        setContent(new EntityModel<>("")); //$NON-NLS-1$
+        setMd5Checksum(new EntityModel<>("")); //$NON-NLS-1$
         setStatus(new EntityModel<GlusterHookStatus>());
     }
 }

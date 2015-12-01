@@ -67,7 +67,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         versionNameColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.VERSION_NAME);
         getTable().addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
+        CommentColumn<VmTemplate> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$

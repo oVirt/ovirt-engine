@@ -35,7 +35,7 @@ public class CloneVmModel extends Model {
         this.vm = vm;
         this.uiConstants = uiConstants;
 
-        cloneName = new EntityModel<String>();
+        cloneName = new EntityModel<>();
     }
 
     @Override

@@ -115,12 +115,12 @@ public class Frontend implements HasHandlers {
     /**
      * The {@code frontendFailureEvent} event.
      */
-    Event<FrontendFailureEventArgs> frontendFailureEvent = new Event<FrontendFailureEventArgs>("FrontendFailure", Frontend.class); //$NON-NLS-1$
+    Event<FrontendFailureEventArgs> frontendFailureEvent = new Event<>("FrontendFailure", Frontend.class); //$NON-NLS-1$
 
     /**
      * The {@code frontendNotLoggedInEvent} event.
      */
-    Event<EventArgs> frontendNotLoggedInEvent = new Event<EventArgs>("NotLoggedIn", Frontend.class); //$NON-NLS-1$
+    Event<EventArgs> frontendNotLoggedInEvent = new Event<>("NotLoggedIn", Frontend.class); //$NON-NLS-1$
 
     /**
      * The currently logged in user.
@@ -237,7 +237,7 @@ public class Frontend implements HasHandlers {
         initQueryParamsFilter(parameters);
 
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryType, parameters, isPublic, false,
+                new VdcOperation<>(queryType, parameters, isPublic, false,
                 new VdcOperationCallback<VdcOperation<VdcQueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
             @Override
             public void onSuccess(final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation,
@@ -251,7 +251,7 @@ public class Frontend implements HasHandlers {
                         logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
                         if (getEventsHandler() != null) {
-                            ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
+                            ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<>();
 
                             failedResult.add(result);
                             handleNotLoggedInEvent(result.getExceptionString());
@@ -363,7 +363,7 @@ public class Frontend implements HasHandlers {
             }
         };
 
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         for (int i = 0; i < queryTypeList.size(); i++) {
             VdcQueryParametersBase parameters = queryParamsList.get(i);
             parameters.setRefresh(false); // Why do we do this?
@@ -449,9 +449,9 @@ public class Frontend implements HasHandlers {
             final IFrontendActionAsyncCallback callback,
             final Object state,
             final boolean showErrorDialog) {
-        VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
-                VdcActionParametersBase>(actionType, parameters, new VdcOperationCallback<VdcOperation<VdcActionType,
-                        VdcActionParametersBase>, VdcReturnValueBase>() {
+        VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<>(
+                actionType, parameters, new VdcOperationCallback<VdcOperation<VdcActionType,
+                VdcActionParametersBase>, VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcOperation<VdcActionType, VdcActionParametersBase> operation,
                     final VdcReturnValueBase result) {
@@ -573,7 +573,7 @@ public class Frontend implements HasHandlers {
                     final List<VdcReturnValueBase> resultObject) {
                 logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
 
-                ArrayList<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
+                ArrayList<VdcReturnValueBase> failed = new ArrayList<>();
 
                 for (VdcReturnValueBase v : resultObject) {
                     if (!v.getCanDoAction()) {
@@ -610,11 +610,11 @@ public class Frontend implements HasHandlers {
             }
         };
 
-        List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         for (VdcActionParametersBase parameter: parameters) {
-            VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
-                    VdcActionParametersBase>(actionType, parameter, !waitForResult, multiCallback);
-            operationList.add(operation);
+            VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<>(
+                actionType, parameter, !waitForResult, multiCallback);
+                operationList.add(operation);
         }
         fireAsyncOperationStartedEvent(state);
         if (operationList.isEmpty()) {
@@ -628,7 +628,7 @@ public class Frontend implements HasHandlers {
                 @Override
                 public void execute() {
                     if (callback != null) {
-                        List<VdcReturnValueBase> emptyResult = new ArrayList<VdcReturnValueBase>();
+                        List<VdcReturnValueBase> emptyResult = new ArrayList<>();
                         callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                                 parameters, emptyResult, state));
                     }
@@ -1114,7 +1114,7 @@ public class Frontend implements HasHandlers {
      * @param errorMessages A list of error messages.
      */
     private void failureEventHandler(final String description, final List<String> errorMessages) {
-        ArrayList<Message> messages = new ArrayList<Message>();
+        ArrayList<Message> messages = new ArrayList<>();
         for (String errorMessage : errorMessages) {
             handleNotLoggedInEvent(errorMessage);
             messages.add(new Message(description, errorMessage));

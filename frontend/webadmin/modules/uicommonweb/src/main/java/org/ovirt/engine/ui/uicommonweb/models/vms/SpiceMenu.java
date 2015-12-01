@@ -8,14 +8,14 @@ public class SpiceMenu {
 
     public List<SpiceMenuItem> getItems() {
         if (items == null) {
-            items = new ArrayList<SpiceMenuItem>();
+            items = new ArrayList<>();
         }
 
         return items;
     }
 
     public List<SpiceMenuItem> descendants() {
-        ArrayList<SpiceMenuItem> list = new ArrayList<SpiceMenuItem>();
+        ArrayList<SpiceMenuItem> list = new ArrayList<>();
         for (SpiceMenuItem item : items) {
             descendantsInternal(list, item);
         }

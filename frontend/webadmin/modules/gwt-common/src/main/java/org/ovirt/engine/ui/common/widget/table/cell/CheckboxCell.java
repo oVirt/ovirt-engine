@@ -91,7 +91,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
      */
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         TooltipMixin.addTooltipsEvents(set);
         set.addAll(super.getConsumedEvents());
         return set;

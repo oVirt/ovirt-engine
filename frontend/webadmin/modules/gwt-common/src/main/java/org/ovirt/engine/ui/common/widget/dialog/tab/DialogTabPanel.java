@@ -113,7 +113,7 @@ public class DialogTabPanel extends Composite {
     }
 
     public List<DialogTab> getTabs() {
-        List<DialogTab> tabs = new ArrayList<DialogTab>();
+        List<DialogTab> tabs = new ArrayList<>();
         for (int i = 0; i < tabContainer.getWidgetCount(); i++) {
             Widget tab = tabContainer.getWidget(i);
             if (tab instanceof DialogTab) {

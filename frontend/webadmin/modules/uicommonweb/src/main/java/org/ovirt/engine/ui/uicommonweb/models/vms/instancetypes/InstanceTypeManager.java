@@ -80,7 +80,7 @@ public abstract class InstanceTypeManager {
         priorityUtil = new PriorityUtil(model);
         virtioScsiUtil = new VirtioScsiUtil(model);
         instanceTypeAttachDetachManager = new InstanceTypeAttachDetachManager(this, model);
-        activatedListeners = new ArrayList<ActivatedListener>();
+        activatedListeners = new ArrayList<>();
 
         registerListeners(model);
     }
@@ -100,7 +100,7 @@ public abstract class InstanceTypeManager {
                     return;
                 }
 
-                List<InstanceType> instanceTypes = new ArrayList<InstanceType>();
+                List<InstanceType> instanceTypes = new ArrayList<>();
 
                 // add this only if the user is allowed to
                 if (!getModel().isCreateInstanceOnly()) {
@@ -191,7 +191,7 @@ public abstract class InstanceTypeManager {
 
         if (isActive() && activatedListeners.size() != 0) {
 //            copy done to avoid infinite recursion
-            List<ActivatedListener> copy = new ArrayList<ActivatedListener>(activatedListeners);
+            List<ActivatedListener> copy = new ArrayList<>(activatedListeners);
 
             activatedListeners.clear();
 
@@ -488,7 +488,7 @@ public abstract class InstanceTypeManager {
                 }
                 maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
 
-                Set<GraphicsType> graphicsTypes = new HashSet<GraphicsType>();
+                Set<GraphicsType> graphicsTypes = new HashSet<>();
                 List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (GraphicsDevice graphicsDevice : graphicsDevices) {
                     graphicsTypes.add(graphicsDevice.getGraphicsType());

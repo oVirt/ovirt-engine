@@ -26,10 +26,10 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetMainTabPanelContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetMainTabPanelContent = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<>();
 
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {

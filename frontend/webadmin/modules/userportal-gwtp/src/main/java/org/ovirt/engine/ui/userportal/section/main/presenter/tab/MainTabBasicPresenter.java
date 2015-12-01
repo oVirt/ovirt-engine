@@ -51,10 +51,10 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_VmListContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_VmListContent = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_VmDetailsContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_VmDetailsContent = new Type<>();
 
     private final MainTabBasicListPresenterWidget vmList;
     private final MainTabBasicDetailsPresenterWidget vmDetails;

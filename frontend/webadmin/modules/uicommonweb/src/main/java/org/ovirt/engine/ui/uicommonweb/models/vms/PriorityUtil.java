@@ -60,7 +60,7 @@ public class PriorityUtil {
 
     private void postUpdatePriority(PriorityUpdatingCallbacks callbacks) {
         before(callbacks);
-        List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
+        List<EntityModel<Integer>> items = new ArrayList<>();
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
         tempVar.setEntity(1);

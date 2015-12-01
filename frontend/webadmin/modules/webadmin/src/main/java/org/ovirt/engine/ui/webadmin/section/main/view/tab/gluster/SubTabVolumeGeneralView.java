@@ -68,7 +68,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     FormItem redundancyCountFormItem;
 
     @Ignore
-    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(), constants.used(), constants.free());
+    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<>(constants.total(), constants.used(), constants.free());
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -129,9 +129,9 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     }
 
     private void initCapacityLabel() {
-        this.volumeTotalCapacity = new VolumeCapacityLabel<Long>(constants);
-        this.volumeFreeCapacity = new VolumeCapacityLabel<Long>(constants);
-        this.volumeUsedCapacity = new VolumeCapacityLabel<Long>(constants);
+        this.volumeTotalCapacity = new VolumeCapacityLabel<>(constants);
+        this.volumeFreeCapacity = new VolumeCapacityLabel<>(constants);
+        this.volumeUsedCapacity = new VolumeCapacityLabel<>(constants);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         redundancyCountFormItem.setIsAvailable(selectedItem.getVolumeType().isDispersedType());
 
         ArrayList<ValueLabel<Long>> volumeCapacityDetails =
-                new ArrayList<ValueLabel<Long>>(Arrays.asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
+                new ArrayList<>(Arrays.<ValueLabel<Long>>asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
         volumeCapacityDetailsLabel.setValue(volumeCapacityDetails);
 
         formBuilder.update(getDetailModel());

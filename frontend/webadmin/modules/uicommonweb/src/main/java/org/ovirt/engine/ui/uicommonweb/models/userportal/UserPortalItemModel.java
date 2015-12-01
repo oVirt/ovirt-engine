@@ -274,7 +274,7 @@ public class UserPortalItemModel extends EntityModel {
 
         ChangeCDModel tempVar = new ChangeCDModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
-        setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] { tempVar })));
+        setCdImages(new ArrayList<>(Arrays.asList(new ChangeCDModel[]{tempVar})));
 
         this.poolRepresentative = poolRepresentative;
         this.consolesFactory = consolesFactory;

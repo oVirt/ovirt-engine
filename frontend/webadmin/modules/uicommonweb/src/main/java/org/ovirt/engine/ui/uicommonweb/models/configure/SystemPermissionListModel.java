@@ -127,7 +127,7 @@ public class SystemPermissionListModel extends SearchableListModel {
             return;
         }
 
-        ArrayList<DbUser> items = new ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<>();
         for (Object item : model.getItems()) {
             EntityModel entityModel = (EntityModel) item;
             if (entityModel.getIsSelected()) {
@@ -137,7 +137,7 @@ public class SystemPermissionListModel extends SearchableListModel {
 
         Role role = model.getRole().getSelectedItem();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), null, null);
 
@@ -209,7 +209,7 @@ public class SystemPermissionListModel extends SearchableListModel {
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

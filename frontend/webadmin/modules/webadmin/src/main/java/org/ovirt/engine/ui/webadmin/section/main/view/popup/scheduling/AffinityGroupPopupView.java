@@ -81,7 +81,7 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     }
 
     private void initAddRemoveWidget() {
-        addRemoveVmWidget = new KeyValueWidget<VmsSelectionModel>("120px"); //$NON-NLS-1$
+        addRemoveVmWidget = new KeyValueWidget<>("120px"); //$NON-NLS-1$
     }
 
     private void initCheckBoxEditors() {

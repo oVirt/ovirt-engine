@@ -81,7 +81,7 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
     @Inject
     public NeutronAgentWidget() {
-        brokerTypeEditor = new ListModelListBoxEditor<BrokerType>(new EnumRenderer<BrokerType>());
+        brokerTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<BrokerType>());
         mappingsLabel = new EnableableFormLabel();
         interfaceMappings = new StringEntityModelTextBoxOnlyEditor();
         mappings = new EntityModelWidgetWithInfo(mappingsLabel, interfaceMappings);

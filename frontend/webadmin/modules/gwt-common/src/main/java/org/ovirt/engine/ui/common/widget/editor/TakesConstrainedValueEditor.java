@@ -17,7 +17,7 @@ public class TakesConstrainedValueEditor<T> extends TakesValueWithChangeHandlers
     public static <T> TakesConstrainedValueEditor<T> of(TakesValue<T> peer,
             HasConstrainedValue<T> peerWithConstraints,
             HasValueChangeHandlers<T> peerWithValueChangeHandlers) {
-        return new TakesConstrainedValueEditor<T>(peer, peerWithConstraints, peerWithValueChangeHandlers);
+        return new TakesConstrainedValueEditor<>(peer, peerWithConstraints, peerWithValueChangeHandlers);
     }
 
     private final HasConstrainedValue<T> peerWithConstraints;

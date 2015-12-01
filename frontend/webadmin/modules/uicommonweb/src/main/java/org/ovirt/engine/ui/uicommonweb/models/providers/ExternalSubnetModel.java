@@ -105,7 +105,7 @@ public class ExternalSubnetModel extends Model {
         subnet.setIpVersion(getIpVersion().getSelectedItem());
         subnet.setGateway(getGateway().getEntity());
 
-        List<String> dnsServers = new ArrayList<String>();
+        List<String> dnsServers = new ArrayList<>();
         for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
             if (StringUtils.isNotEmpty(dnsServer.getEntity())) {
                 dnsServers.add(dnsServer.getEntity());

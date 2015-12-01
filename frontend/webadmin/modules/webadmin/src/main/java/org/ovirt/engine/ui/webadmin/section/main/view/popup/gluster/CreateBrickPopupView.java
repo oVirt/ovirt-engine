@@ -133,7 +133,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         super(eventBus);
         initListBoxEditors();
         initInfoIcon();
-        deviceTable = new ListModelObjectCellTable<StorageDevice, ListModel<StorageDevice>>(true, false);
+        deviceTable = new ListModelObjectCellTable<>(true, false);
         stripeSizeLabel = new EnableableFormLabel();
         stripeSizeEditor = new IntegerEntityModelTextBoxOnlyEditor();
         stripeSizeWithInfo = new EntityModelWidgetWithInfo(stripeSizeLabel, stripeSizeEditor);
@@ -145,7 +145,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     }
 
     private void initListBoxEditors() {
-        raidTypeEditor = new ListModelListBoxEditor<RaidType>(new EnumRenderer<RaidType>());
+        raidTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<RaidType>());
     }
 
     protected void initTableColumns() {

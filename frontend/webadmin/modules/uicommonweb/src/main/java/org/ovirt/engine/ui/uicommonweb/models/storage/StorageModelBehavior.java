@@ -33,7 +33,7 @@ public abstract class StorageModelBehavior extends Model {
 
     public void setStorageTypeItems() {
         ArrayList<IStorageModel> filteredItems = getSelectableModelsByRole();
-        Set<StorageType> storageTypeItems = new LinkedHashSet<StorageType>();
+        Set<StorageType> storageTypeItems = new LinkedHashSet<>();
 
         for (IStorageModel model : filteredItems) {
             storageTypeItems.add(model.getType());
@@ -44,7 +44,7 @@ public abstract class StorageModelBehavior extends Model {
 
     public void setStorageDomainTypeItems() {
         ArrayList<IStorageModel> filteredItems = getSelectableModels();
-        Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<StorageDomainType>();
+        Set<StorageDomainType> storageDomainTypeItems = new LinkedHashSet<>();
 
         for (IStorageModel model : filteredItems) {
             storageDomainTypeItems.add(model.getRole());
@@ -66,7 +66,7 @@ public abstract class StorageModelBehavior extends Model {
 
     public ArrayList<IStorageModel> getSelectableModels(ArrayList<IStorageModel> storageItems) {
         // Filter un-selectable models
-        ArrayList<IStorageModel> filteredItems = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> filteredItems = new ArrayList<>();
         for (IStorageModel model : storageItems) {
             if (((Model) model).getIsSelectable()) {
                 filteredItems.add(model);

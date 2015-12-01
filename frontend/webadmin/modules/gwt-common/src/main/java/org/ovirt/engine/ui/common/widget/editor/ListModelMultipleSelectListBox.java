@@ -71,7 +71,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
      * Update the current selected list based on the state of the actual {@code ListBox}
      */
     private void updateSelectedList() {
-        Set<Integer> indexes = new HashSet<Integer>();
+        Set<Integer> indexes = new HashSet<>();
         // Reset the current selected values, we will locate the right selected values below.
         selectedList.clear();
         ListBox listBox = asListBox();

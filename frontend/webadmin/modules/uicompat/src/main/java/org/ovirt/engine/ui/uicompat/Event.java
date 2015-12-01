@@ -68,8 +68,8 @@ public class Event<T extends EventArgs> {
         setName(name);
         setOwnerType(ownerType);
 
-        listeners = new ArrayList<IEventListener<? super T>>();
-        contexts = new HashMap<IEventListener<? super T>, Object>();
+        listeners = new ArrayList<>();
+        contexts = new HashMap<>();
     }
 
     public Event()
@@ -117,7 +117,7 @@ public class Event<T extends EventArgs> {
         // to enable listener unsubscribe from event
         // as a result on event firing.
 
-        ArrayList<IEventListener<? super T>> list = new ArrayList<IEventListener<? super T>>();
+        ArrayList<IEventListener<? super T>> list = new ArrayList<>();
 
         for (IEventListener<? super T> listener : listeners)
         {

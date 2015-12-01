@@ -139,7 +139,7 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
     }
 
     private void updateServiceTypeList() {
-        ArrayList<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+        ArrayList<ServiceType> serviceTypes = new ArrayList<>();
         serviceTypes.add(null);
         serviceTypes.add(ServiceType.NFS);
         serviceTypes.add(ServiceType.SHD);
@@ -168,8 +168,8 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
     private void filterServices() {
         VDS selectedVds = hostList.getSelectedItem();
         ServiceType serviceType = serviceTypeList.getSelectedItem();
-        ArrayList<EntityModel<GlusterServerService>> list = new ArrayList<EntityModel<GlusterServerService>>();
-        List<GlusterServerService> serviceList = new ArrayList<GlusterServerService>(getActualServiceList());
+        ArrayList<EntityModel<GlusterServerService>> list = new ArrayList<>();
+        List<GlusterServerService> serviceList = new ArrayList<>(getActualServiceList());
         Collections.sort(serviceList, new Comparator<GlusterServerService>() {
             @Override
             public int compare(GlusterServerService o1, GlusterServerService o2) {
@@ -183,7 +183,7 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
         for (GlusterServerService service : serviceList) {
             if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {
-                list.add(new EntityModel<GlusterServerService>(service));
+                list.add(new EntityModel<>(service));
             }
         }
         getServiceList().setItems(list);

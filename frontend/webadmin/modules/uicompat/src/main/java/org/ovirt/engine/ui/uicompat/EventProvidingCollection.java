@@ -15,7 +15,7 @@ public class EventProvidingCollection<T> extends ObservableCollection<T> impleme
 
     public EventProvidingCollection()
     {
-        setCollectionChangedEvent(new Event<EventArgs>(ProvideCollectionChangedEvent.Definition));
+        setCollectionChangedEvent(new Event<>(ProvideCollectionChangedEvent.Definition));
     }
 
     @Override

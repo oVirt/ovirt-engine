@@ -74,9 +74,9 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         currentStorageItem = storageModel;
     }
 
-    public ArrayList<IStorageModel> updatedStorageModels = new ArrayList<IStorageModel>();
+    public ArrayList<IStorageModel> updatedStorageModels = new ArrayList<>();
 
-    public List<IStorageModel> storageModels = new ArrayList<IStorageModel>();
+    public List<IStorageModel> storageModels = new ArrayList<>();
 
     public List<IStorageModel> getStorageModels() {
         return storageModels;
@@ -260,7 +260,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         getWarningLowSpaceSize().setIsAvailable(false);
         setCriticalSpaceActionBlocker(new EntityModel<Integer>());
         getCriticalSpaceActionBlocker().setEntity(getCriticalSpaceThresholdValue());
-        setActivateDomain(new EntityModel<Boolean>(true));
+        setActivateDomain(new EntityModel<>(true));
         getActivateDomain().setIsAvailable(false);
         setWipeAfterDelete(new EntityModel<>(false));
 
@@ -384,7 +384,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 StoragePool dc = (StoragePool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
+                getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
@@ -402,7 +402,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 StoragePool dc = (StoragePool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
+                getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
@@ -451,7 +451,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                             public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
-                                List<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                                List<StoragePool> dataCenters = new ArrayList<>();
                                 List<StoragePool> dataCentersWithStorage =
                                         (ArrayList<StoragePool>) returnValue;
                                 if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
@@ -459,7 +459,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                 }
                                 else {
                                     dataCenters =
-                                            new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCentersWithStorage.get(0) }));
+                                            new ArrayList<>(Arrays.asList(new StoragePool[]{dataCentersWithStorage.get(0)}));
                                 }
                                 storageModel.getDataCenter().setItems(dataCenters);
                                 storageModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
@@ -507,7 +507,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
 
         // Allow only hosts with version above 2.2 for export storage.
-        ArrayList<VDS> list = new ArrayList<VDS>();
+        ArrayList<VDS> list = new ArrayList<>();
         if (getCurrentStorageItem() != null && getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
             for (VDS host : hosts) {
                 if (host.getVdsGroupCompatibilityVersion().compareTo(new Version("2.2")) >= 0) { //$NON-NLS-1$
@@ -556,7 +556,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
         StorageFormatType selectItem = StorageFormatType.V1;
 
-        ArrayList<StorageFormatType> formats = new ArrayList<StorageFormatType>();
+        ArrayList<StorageFormatType> formats = new ArrayList<>();
 
         if (dataCenter != null && getCurrentStorageItem() != null) {
             if (!dataCenter.getId().equals(UnassignedDataCenterId)) {

@@ -153,7 +153,7 @@ public class TagModel extends Model implements TreeNodeInfo {
     }
 
     public TagModel() {
-        setSelectionChangedEvent(new Event<EventArgs>(selectionChangedEventDefinition));
+        setSelectionChangedEvent(new Event<>(selectionChangedEventDefinition));
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());

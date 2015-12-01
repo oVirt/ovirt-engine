@@ -142,7 +142,7 @@ public abstract class VnicProfileModel extends Model {
         setPortMirroring(new EntityModel<Boolean>());
         setPassthrough(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
-        EntityModel<Boolean> publicUse = new EntityModel<Boolean>();
+        EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
         setDescription(new EntityModel<String>());

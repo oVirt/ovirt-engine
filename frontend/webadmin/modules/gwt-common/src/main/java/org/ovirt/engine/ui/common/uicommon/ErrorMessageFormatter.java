@@ -93,7 +93,7 @@ public class ErrorMessageFormatter {
     }
 
     private static Map<String, Set<String>> getDescription2MsgMap(List<Message> msgList) {
-        Map<String, Set<String>> desc2Msgs = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> desc2Msgs = new HashMap<>();
 
         for (Message msg : msgList) {
             String desc = msg.getDescription();
@@ -105,7 +105,7 @@ public class ErrorMessageFormatter {
             Set<String> msgs = desc2Msgs.get(desc);
 
             if (msgs == null) {
-                msgs = new HashSet<String>();
+                msgs = new HashSet<>();
                 desc2Msgs.put(desc, msgs);
             }
 

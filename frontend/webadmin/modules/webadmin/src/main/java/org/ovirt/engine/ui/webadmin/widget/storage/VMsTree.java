@@ -56,7 +56,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     @Override
     protected TreeItem getNodeItem(Disk disk) {
         //return getDiskOrSnapshotNode(new ArrayList<Disk>(Arrays.asList(disk)), true);
-        return getDiskNode(new ArrayList<Disk>(Arrays.asList(disk)));
+        return getDiskNode(new ArrayList<>(Arrays.asList(disk)));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
 
     @Override
     protected ArrayList<Disk> getNodeObjects(VM vm) {
-        ArrayList<Disk> disks = new ArrayList<Disk>();
+        ArrayList<Disk> disks = new ArrayList<>();
         for (Disk disk : vm.getDiskMap().values()) {
             disks.add(disk);
         }

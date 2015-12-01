@@ -140,7 +140,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         model.getLatch().setIsAvailable(false);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
             items.add(ConstantsManager.getInstance().getMessages().diskSnapshotLabel(
@@ -156,11 +156,11 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         Map<Guid, List<Guid>> diskImageIdsMap = groupImageIdsByDiskId(getSelectedItems());
         for (List<Guid> imageIds : diskImageIdsMap.values()) {
-            RemoveDiskSnapshotsParameters parameters = new RemoveDiskSnapshotsParameters(new ArrayList<Guid>(imageIds));
+            RemoveDiskSnapshotsParameters parameters = new RemoveDiskSnapshotsParameters(new ArrayList<>(imageIds));
             paramerterList.add(parameters);
         }
 
@@ -179,7 +179,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
     }
 
     private Map<Guid, List<Guid>> groupImageIdsByDiskId(List<DiskImage> diskImages) {
-        Map<Guid, List<Guid>> diskImagesMap = new HashMap<Guid, List<Guid>>();
+        Map<Guid, List<Guid>> diskImagesMap = new HashMap<>();
         for (DiskImage diskImage: diskImages) {
             List<Guid> images = diskImagesMap.get(diskImage.getId());
             if (images != null) {

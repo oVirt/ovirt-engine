@@ -14,7 +14,7 @@ public class CompositeBuilder<S, D> implements Builder<S, D> {
     private BuilderList<S, D> builders;
 
     public CompositeBuilder(Builder<S, D>... builders) {
-        this.builders = new BuilderList<S, D>(builders);
+        this.builders = new BuilderList<>(builders);
     }
 
     @Override

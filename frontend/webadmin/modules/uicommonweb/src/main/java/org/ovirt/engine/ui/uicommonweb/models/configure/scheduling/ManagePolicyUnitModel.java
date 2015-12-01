@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ManagePolicyUnitModel extends Model {
-    private final Event<EventArgs> refreshPolicyUnitsEvent = new Event<EventArgs>("RefreshPolicyUnitsEvent", ManagePolicyUnitModel.class); //$NON-NLS-1$
+    private final Event<EventArgs> refreshPolicyUnitsEvent = new Event<>("RefreshPolicyUnitsEvent", ManagePolicyUnitModel.class); //$NON-NLS-1$
     private ListModel PolicyUnits;
 
     public ListModel getPolicyUnits() {

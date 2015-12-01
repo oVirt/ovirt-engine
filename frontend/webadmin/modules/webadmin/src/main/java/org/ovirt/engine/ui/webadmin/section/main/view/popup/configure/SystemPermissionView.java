@@ -66,7 +66,7 @@ public class SystemPermissionView extends Composite {
     }
 
     private void initTable() {
-        table = new SimpleActionTable<Permission>(modelProvider,
+        table = new SimpleActionTable<>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);

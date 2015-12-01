@@ -138,7 +138,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      * Create the Column Cells from a single delegate
      */
     private static <S> List<HasCell<S, ?>> createCells(ValueGetter<S> getter, ActionCellDelegate<S> delegate) {
-        List<ActionCellDelegate<S>> delegates = new ArrayList<ActionCellDelegate<S>>();
+        List<ActionCellDelegate<S>> delegates = new ArrayList<>();
         delegates.add(delegate);
         return createCells(getter, delegates);
     }
@@ -148,7 +148,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      */
     private static <S> List<HasCell<S, ?>> createCells(final ValueGetter<S> getter,
             List<ActionCellDelegate<S>> delegates) {
-        List<HasCell<S, ?>> cells = new ArrayList<HasCell<S, ?>>();
+        List<HasCell<S, ?>> cells = new ArrayList<>();
 
         // text cell
         AbstractSafeHtmlColumn<S> textColumn = new AbstractSafeHtmlColumn<S>() {
@@ -161,7 +161,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
 
         // action cells
         for (ActionCellDelegate<S> delegate : delegates) {
-            Column<S, S> actionColumn = new IdentityColumn<S>(new FloatingActionCell<S>(delegate));
+            Column<S, S> actionColumn = new IdentityColumn<>(new FloatingActionCell<>(delegate));
             cells.add(actionColumn);
         }
 
@@ -177,7 +177,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      *            The delegate for the Action Cell
      */
     public ActionColumn(ValueGetter<T> getter, ActionCellDelegate<T> delegate) {
-        super(new CompositeCell<T>((createCells(getter, delegate))));
+        super(new CompositeCell<>((createCells(getter, delegate))));
     }
 
     /**
@@ -189,6 +189,6 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      *            The list of delegates for the Action Cells
      */
     public ActionColumn(ValueGetter<T> getter, List<ActionCellDelegate<T>> delegates) {
-        super(new CompositeCell<T>((createCells(getter, delegates))));
+        super(new CompositeCell<>((createCells(getter, delegates))));
     }
 }

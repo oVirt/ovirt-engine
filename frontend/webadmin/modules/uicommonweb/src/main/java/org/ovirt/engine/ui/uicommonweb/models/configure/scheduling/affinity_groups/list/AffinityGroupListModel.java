@@ -136,7 +136,7 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
         model.setHelpTag(HelpTag.remove_affinity_groups);
         model.setHashName("remove_affinity_groups"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (AffinityGroup affinityGroup : getSelectedItems()) {
             list.add(affinityGroup.getName());
         }
@@ -154,7 +154,7 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
             return;
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (AffinityGroup affinityGroup : getSelectedItems()) {
             parameters.add(new AffinityGroupCRUDParameters(affinityGroup.getId(), affinityGroup));
         }

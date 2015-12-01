@@ -16,7 +16,7 @@ import com.google.gwt.user.cellview.client.Column;
 public abstract class AbstractListModelListBoxColumn<T, S> extends Column<T, ListModel> {
 
     public AbstractListModelListBoxColumn(Renderer<S> renderer) {
-        super(new ListModelListBoxCell<S>(renderer));
+        super(new ListModelListBoxCell<>(renderer));
     }
 
 }

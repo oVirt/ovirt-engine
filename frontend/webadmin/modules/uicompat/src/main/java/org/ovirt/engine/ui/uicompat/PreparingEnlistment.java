@@ -27,8 +27,8 @@ public class PreparingEnlistment extends Enlistment {
     public PreparingEnlistment(Object context) {
         super(context);
 
-        preparedEvent = new Event<EventArgs>(preparedEventDefinition);
-        rollbackEvent = new Event<EventArgs>(rollbackEventDefinition);
+        preparedEvent = new Event<>(preparedEventDefinition);
+        rollbackEvent = new Event<>(rollbackEventDefinition);
     }
 
     public void prepared() {

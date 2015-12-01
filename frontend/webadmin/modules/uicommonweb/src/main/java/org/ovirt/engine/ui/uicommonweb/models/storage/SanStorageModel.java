@@ -92,8 +92,8 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     private boolean isTargetModelList;
 
     protected SanStorageModel() {
-        includedLUNs = new ArrayList<LunModel>();
-        lastDiscoveredTargets = new ArrayList<SanTargetModel>();
+        includedLUNs = new ArrayList<>();
+        lastDiscoveredTargets = new ArrayList<>();
 
         initializeItems(null, null);
     }
@@ -203,7 +203,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
      * Creates model items from the provided list of business entities.
      */
     public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems) {
-        ArrayList<LunModel> newItems = new ArrayList<LunModel>();
+        ArrayList<LunModel> newItems = new ArrayList<>();
 
         for (LUNs a : source) {
             if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN) {
@@ -272,7 +272,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     private ArrayList<SanTargetModel> createTargetModelList(LUNs a) {
-        ArrayList<SanTargetModel> targetModelList = new ArrayList<SanTargetModel>();
+        ArrayList<SanTargetModel> targetModelList = new ArrayList<>();
         if (a.getLunConnections() != null) {
             for (StorageServerConnections b : a.getLunConnections()) {
                 SanTargetModel tempVar = new SanTargetModel();
@@ -338,7 +338,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
                 }
             }
 
-            ArrayList<SanTargetModel> items = new ArrayList<SanTargetModel>();
+            ArrayList<SanTargetModel> items = new ArrayList<>();
             items.addAll((List<SanTargetModel>) getItems());
 
             // Add new targets.
@@ -371,7 +371,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
                 }
             }
 
-            ArrayList<LunModel> items = new ArrayList<LunModel>();
+            ArrayList<LunModel> items = new ArrayList<>();
             items.addAll((List<LunModel>) getItems());
 
             // Add new LUNs.
@@ -480,13 +480,13 @@ public abstract class SanStorageModel extends SanStorageModelBase {
                         }
                     }
                 }
-                lunSelectionChangedEvent.raise(this, new ValueEventArgs<LunModel>(selectedLunModel));
+                lunSelectionChangedEvent.raise(this, new ValueEventArgs<>(selectedLunModel));
             }
         }
     };
 
     private List<SanTargetModel> toTargetModelList(List<LunModel> source) {
-        ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
+        ObservableCollection<SanTargetModel> list = new ObservableCollection<>();
 
         for (LunModel lun : source) {
             for (SanTargetModel target : lun.getTargets()) {
@@ -515,7 +515,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     private List<LunModel> toLunModelList(List<SanTargetModel> source) {
-        ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
+        ObservableCollection<LunModel> list = new ObservableCollection<>();
 
         for (SanTargetModel target : source) {
             for (LunModel lun : target.getLuns()) {
@@ -553,7 +553,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     public ArrayList<LunModel> getAddedLuns() {
-        ArrayList<LunModel> luns = new ArrayList<LunModel>();
+        ArrayList<LunModel> luns = new ArrayList<>();
         if (getIsGrouppedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
             for (SanTargetModel item : items) {
@@ -579,7 +579,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     public ArrayList<LunModel> getLunsToRefresh() {
-        ArrayList<LunModel> luns = new ArrayList<LunModel>();
+        ArrayList<LunModel> luns = new ArrayList<>();
         if (!getIsGrouppedByTarget()) {
             List<LunModel> items = (List<LunModel>) getItems();
             for (LunModel lun : items) {
@@ -595,7 +595,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     public ArrayList<String> getUsedLunsMessages(List<LUNs> luns) {
-        ArrayList<String> usedLunsMessages = new ArrayList<String>();
+        ArrayList<String> usedLunsMessages = new ArrayList<>();
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LUNs lun : luns) {
@@ -633,7 +633,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
     }
 
     public ArrayList<String> getPartOfSdLunsMessages() {
-        ArrayList<String> partOfSdLunsMessages = new ArrayList<String>();
+        ArrayList<String> partOfSdLunsMessages = new ArrayList<>();
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LunModel lunModel : getAddedLuns()) {

@@ -66,7 +66,7 @@ public class SearchSuggestModel extends SearchableListModel {
     }
 
     public SearchSuggestModel() {
-        setItems(new ObservableCollection<Object>());
+        setItems(new ObservableCollection<>());
         setIsTimerDisabled(true);
     }
 
@@ -110,7 +110,7 @@ public class SearchSuggestModel extends SearchableListModel {
         }
 
         if (syntax.getError() == SyntaxError.NO_ERROR) {
-            List<String> actualItems = new ArrayList<String>(Arrays.asList(suggestedItems));
+            List<String> actualItems = new ArrayList<>(Arrays.asList(suggestedItems));
 
             // Filter search object suggestions
             if (getSearchObjectFilter() != null && syntax.getState() == SyntaxObjectType.BEGIN) {
@@ -199,8 +199,7 @@ public class SearchSuggestModel extends SearchableListModel {
         tempVar2.setPartString(secondPart);
         tempVar2.setPartType(secondPartType);
         ArrayList<SuggestItemPartModel> parts =
-                new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
-                        tempVar, tempVar2 }));
+                new ArrayList<>(Arrays.asList(new SuggestItemPartModel[]{tempVar, tempVar2}));
         getItems().add(parts);
     }
 
@@ -210,7 +209,7 @@ public class SearchSuggestModel extends SearchableListModel {
 
         List selectedItem = (List) getSelectedItem();
         if (selectedItem != null) {
-            ArrayList<String> items = new ArrayList<String>();
+            ArrayList<String> items = new ArrayList<>();
             for (Object item : selectedItem) {
                 SuggestItemPartModel i = (SuggestItemPartModel) item;
                 items.add(i.getPartString());

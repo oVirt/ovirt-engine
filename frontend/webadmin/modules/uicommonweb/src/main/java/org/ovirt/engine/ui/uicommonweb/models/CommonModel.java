@@ -184,7 +184,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         setModelList();
 
-        setSignedOutEvent(new Event<EventArgs>(signedOutEventDefinition));
+        setSignedOutEvent(new Event<>(signedOutEventDefinition));
 
         UICommand tempVar = new UICommand("Search", this); //$NON-NLS-1$
         tempVar.setIsDefault(true);
@@ -293,8 +293,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
             // Update search string only when selecting or de-selecting tags
             String prefix = ""; //$NON-NLS-1$
             String search = ""; //$NON-NLS-1$
-            RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
-            RefObject<String> tempRef_search = new RefObject<String>(search);
+            RefObject<String> tempRef_prefix = new RefObject<>(prefix);
+            RefObject<String> tempRef_search = new RefObject<>(search);
             splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
@@ -366,8 +366,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
         if (performSearch && getSelectedItem() == oldSelectedItem) {
             String prefix = ""; //$NON-NLS-1$
             String search = ""; //$NON-NLS-1$
-            RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
-            RefObject<String> tempRef_search = new RefObject<String>(search);
+            RefObject<String> tempRef_prefix = new RefObject<>(prefix);
+            RefObject<String> tempRef_search = new RefObject<>(search);
             String searchString = getSelectedItem().getDefaultSearchString();
             if (model.getType().equals(SystemTreeItemType.System)
                     && listModelSearchStringHistory.get(getSelectedItem()) != null) {
@@ -657,8 +657,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
             // Split search string as necessary.
             String prefix = ""; //$NON-NLS-1$
             String search = ""; //$NON-NLS-1$
-            RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
-            RefObject<String> tempRef_search = new RefObject<String>(search);
+            RefObject<String> tempRef_prefix = new RefObject<>(prefix);
+            RefObject<String> tempRef_search = new RefObject<>(search);
             SystemTreeItemModel model = getSystemTree().getSelectedItem();
             String searchString = getSelectedItem().getSearchString();
             if (model != null && model.getType().equals(SystemTreeItemType.System) && listModelSearchStringHistory.get(getSelectedItem()) != null) {

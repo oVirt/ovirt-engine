@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class MacPoolModel extends EntityModel<MacPool> {
 
-    private final EntityModel<Boolean> allowDuplicates = new EntityModel<Boolean>();
-    private final ListModel<MacRangeModel> macRanges = new ListModel<MacRangeModel>();
+    private final EntityModel<Boolean> allowDuplicates = new EntityModel<>();
+    private final ListModel<MacRangeModel> macRanges = new ListModel<>();
 
     public EntityModel<Boolean> getAllowDuplicates() {
         return allowDuplicates;
@@ -54,7 +54,7 @@ public class MacPoolModel extends EntityModel<MacPool> {
         }
 
         allowDuplicates.setEntity(getEntity().isAllowDuplicateMacAddresses());
-        List<MacRangeModel> rangeModels = new ArrayList<MacRangeModel>();
+        List<MacRangeModel> rangeModels = new ArrayList<>();
         for (MacRange range : getEntity().getRanges()) {
             rangeModels.add(new MacRangeModel(range));
         }

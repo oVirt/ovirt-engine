@@ -110,7 +110,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
                 syncWithBackend();
             }
         });
-        setExport(new EntityModel<Boolean>(false));
+        setExport(new EntityModel<>(false));
         getExport().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
@@ -124,12 +124,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setExternalProviders(new ListModel<Provider>());
         initExternalProviderList();
 
-        EntityModel<Boolean> stpEnabled = new EntityModel<Boolean>();
+        EntityModel<Boolean> stpEnabled = new EntityModel<>();
         stpEnabled.setEntity(false);
         setIsStpEnabled(stpEnabled);
 
         setVLanTag(new EntityModel<Integer>());
-        EntityModel<Boolean> hasVlanTag = new EntityModel<Boolean>();
+        EntityModel<Boolean> hasVlanTag = new EntityModel<>();
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
         getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -139,7 +139,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             }
         });
 
-        ListModel<MtuSelector> mtuSelector = new ListModel<MtuSelector>();
+        ListModel<MtuSelector> mtuSelector = new ListModel<>();
         mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
         setMtuSelector(mtuSelector);
         mtuSelector.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -152,7 +152,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         setMtu(new EntityModel<Integer>());
 
-        EntityModel<Boolean> isVmNetwork = new EntityModel<Boolean>();
+        EntityModel<Boolean> isVmNetwork = new EntityModel<>();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
         isVmNetwork.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -162,17 +162,17 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             }
         });
 
-        EntityModel<Boolean> publicUse = new EntityModel<Boolean>();
+        EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
 
         setProfiles(new NetworkProfilesModel());
-        List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+        List<VnicProfileModel> profiles = new LinkedList<>();
         profiles.add(createDefaultProfile());
         getProfiles().setItems(profiles);
 
         setQos(new ListModel<HostNetworkQos>());
 
-        EntityModel<Boolean> createSubnet = new EntityModel<Boolean>(false);
+        EntityModel<Boolean> createSubnet = new EntityModel<>(false);
         setCreateSubnet(createSubnet);
         createSubnet.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -619,7 +619,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         }
 
         networkGuid = networkGuid == null ? getNetwork().getId() : networkGuid;
-        ArrayList<VdcActionParametersBase> paramlist = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramlist = new ArrayList<>();
         for (VnicProfileModel profileModel : profileModels) {
             if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
                 VnicProfile vnicProfile = profileModel.getProfile();
@@ -650,7 +650,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             protected void postSaveAction(boolean succeeded) {
                 if (succeeded) {
                     List<HostNetworkQos> qosItems =
-                            new ArrayList<HostNetworkQos>(NetworkModel.this.getQos().getItems());
+                            new ArrayList<>(NetworkModel.this.getQos().getItems());
                     qosItems.add(1, getQos());
                     NetworkModel.this.getQos().setItems(qosItems);
                     NetworkModel.this.getQos().setSelectedItem(getQos());

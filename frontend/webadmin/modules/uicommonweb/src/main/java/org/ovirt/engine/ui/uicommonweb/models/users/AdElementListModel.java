@@ -58,7 +58,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     private Iterable<DbUser> privateExcludeItems;
 
-    private HashMap<String, List<String>> namespacesMap = new HashMap<String, List<String>>();
+    private HashMap<String, List<String>> namespacesMap = new HashMap<>();
 
     public Iterable<DbUser> getExcludeItems() {
         return privateExcludeItems;
@@ -257,7 +257,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                     return;
                 }
 
-                HashSet<String> excludeUsers = new HashSet<String>();
+                HashSet<String> excludeUsers = new HashSet<>();
                 if (adElementListModel.getExcludeItems() != null) {
                     for (DbUser item : adElementListModel.getExcludeItems()) {
                         excludeUsers.add(item.getExternalId());
@@ -298,7 +298,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     protected void populateRoles(List<Role> roles){
         Role selectedRole = null;
-        List<Role> rolesToPopulate = new ArrayList<Role>();
+        List<Role> rolesToPopulate = new ArrayList<>();
 
         for (Role role : roles) {
 
@@ -370,7 +370,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                     return;
                 }
 
-                HashSet<String> excludeUsers = new HashSet<String>();
+                HashSet<String> excludeUsers = new HashSet<>();
                 if (adElementListModel.getExcludeItems() != null) {
                     for (DbUser item : adElementListModel.getExcludeItems()) {
                         excludeUsers.add(item.getExternalId());
@@ -390,7 +390,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryUser a = (DirectoryUser) item;
             if (!excludeUsers.contains(a.getId())) {
-                EntityModel<DbUser> tempVar2 = new EntityModel<DbUser>();
+                EntityModel<DbUser> tempVar2 = new EntityModel<>();
                 tempVar2.setEntity(new DbUser(a));
                 getusers().add(tempVar2);
             }
@@ -411,14 +411,14 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 tempVar3.setNamespace(a.getNamespace());
                 DbUser user = tempVar3;
 
-                EntityModel<DbUser> tempVar4 = new EntityModel<DbUser>();
+                EntityModel<DbUser> tempVar4 = new EntityModel<>();
                 tempVar4.setEntity(user);
                 getgroups().add(tempVar4);
             }
         }
     }
     protected Set<String> getExcludeUsers() {
-        Set<String> excludeUsers = new HashSet<String>();
+        Set<String> excludeUsers = new HashSet<>();
         if (getExcludeItems() != null) {
             for (DbUser item : getExcludeItems()) {
                 excludeUsers.add(item.getExternalId());
@@ -443,7 +443,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null) {
             getSearchInProgress().setEntity(false);
 
-            ArrayList<EntityModel<DbUser>> items = new ArrayList<EntityModel<DbUser>>();
+            ArrayList<EntityModel<DbUser>> items = new ArrayList<>();
             items.addAll(getusers());
             items.addAll(getgroups());
             adElementListModel.getSelectAll().setEntity(false);

@@ -136,7 +136,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     }
 
     public TagListModel() {
-        setResetRequestedEvent(new Event<EventArgs>(resetRequestedEventDefinition));
+        setResetRequestedEvent(new Event<>(resetRequestedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
                                                                           rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                                                                           rootTag.setType(TagModelType.Root);
                                                                           rootTag.setIsChangeable(false);
-                                                                          tagListModel.setItems(new ArrayList<TagModel>(Arrays.asList(new TagModel[] {rootTag})));
+                                                                          tagListModel.setItems(new ArrayList<>(Arrays.asList(new TagModel[]{rootTag})));
 
                                                                       }
                                                                   }));
@@ -196,7 +196,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
             }
 
             if (getSelectionNodeList().isEmpty()) {
-                setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>(Arrays.asList(new SelectionTreeNodeModel[] { createTree(root) })));
+                setSelectionNodeList(new ArrayList<>(Arrays.asList(new SelectionTreeNodeModel[]{createTree(root)})));
             }
         }
     }
@@ -239,7 +239,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     }
 
     public TagModel cloneTagModel(TagModel tag) {
-        ArrayList<TagModel> children = new ArrayList<TagModel>();
+        ArrayList<TagModel> children = new ArrayList<>();
         for (TagModel child : tag.getChildren()) {
             children.add(cloneTagModel(child));
         }
@@ -269,7 +269,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         tempVar2.setEntity(tag.getdescription());
         EntityModel<String> description = tempVar2;
 
-        ArrayList<TagModel> children = new ArrayList<TagModel>();
+        ArrayList<TagModel> children = new ArrayList<>();
         for (Tags a : tag.getChildren()) {
             children.add(tagToModel(a));
         }
@@ -317,7 +317,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     private void onTagSelectionChanged(Object sender, EventArgs e) {
         TagModel model = (TagModel) sender;
 
-        ArrayList<TagModel> list = new ArrayList<TagModel>();
+        ArrayList<TagModel> list = new ArrayList<>();
         if (getSelectedItems() != null) {
             for (Object item : getSelectedItems()) {
                 list.add((TagModel) item);
@@ -367,7 +367,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         model.setHelpTag(HelpTag.remove_tag);
         model.setHashName("remove_tag"); //$NON-NLS-1$
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         items.add(getSelectedItem().getName().getEntity());
         model.setItems(items);
 

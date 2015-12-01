@@ -63,7 +63,7 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
     }
 
     public List<String> getClusterNames() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         if (getCluster().getItems() != null) {
             for (VDSGroup vdsGroup : getCluster().getItems()) {
                 names.add(vdsGroup.getName());

@@ -148,7 +148,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
                     window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
                     window.setItems(Arrays.asList(getSelectedItem().getName()));
                 } else {
-                    List<String> attachedVmsNames = new ArrayList<String>();
+                    List<String> attachedVmsNames = new ArrayList<>();
                     for (VM vm : vmsAttachedToInstanceType) {
                         attachedVmsNames.add(vm.getName());
                     }

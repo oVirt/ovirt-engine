@@ -179,20 +179,20 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
         // Initialize Editors
         dataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
-        importSourcesEditor = new ListModelListBoxEditor<ImportSource>(new NullSafeRenderer<ImportSource>() {
+        importSourcesEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<ImportSource>() {
             @Override
             protected String renderNullSafe(ImportSource is) {
                 return new EnumRenderer<ImportSource>().render(is);
             }
         });
-        proxyHostsEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
+        proxyHostsEditor = new ListModelListBoxEditor<>(new AbstractRenderer<VDS>() {
             @Override
             public String render(VDS object) {
                 return object != null ? object.getName() :
-                    ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
+                        ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
             }
         });
-        hostsEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
+        hostsEditor = new ListModelListBoxEditor<>(new AbstractRenderer<VDS>() {
             @Override
             public String render(VDS object) {
                 return object.getName();

@@ -158,7 +158,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initManualWidgets() {
-        nicTypeEditor = new ListModelListBoxEditor<VmInterfaceType>(new EnumRenderer());
+        nicTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
 
         pluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$
         unpluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$

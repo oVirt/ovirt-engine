@@ -46,7 +46,7 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                    Set<GraphicsType> graphicsTypesCollection = new HashSet<GraphicsType>();
+                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
                     for (GraphicsDevice graphicsDevice : graphicsDevices) {
                         graphicsTypesCollection.add(graphicsDevice.getGraphicsType());

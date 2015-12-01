@@ -22,11 +22,11 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
-    public Event<FileFetchEventArgs> spiceVersionFileFetchedEvent = new Event<FileFetchEventArgs>(spiceVersionFileFetchedEvent_Definition);
+    public Event<FileFetchEventArgs> spiceVersionFileFetchedEvent = new Event<>(spiceVersionFileFetchedEvent_Definition);
 
     public EventDefinition documentationFileFetchedEvent_Definition =
         new EventDefinition("documentationFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
-    public Event<FileFetchEventArgs> documentationFileFetchedEvent = new Event<FileFetchEventArgs>(documentationFileFetchedEvent_Definition);
+    public Event<FileFetchEventArgs> documentationFileFetchedEvent = new Event<>(documentationFileFetchedEvent_Definition);
 
     private final ClientAgentType clientAgentType;
 

@@ -75,7 +75,7 @@ public class BaseDynamicMessages implements DynamicMessages {
     /**
      * The {@code Map} containing the fallback values in case the message is not found in the dictionary.
      */
-    private final Map<DynamicMessageKey, String> fallbackValues = new HashMap<DynamicMessageKey, String>();
+    private final Map<DynamicMessageKey, String> fallbackValues = new HashMap<>();
 
     public BaseDynamicMessages() {
         this(Dictionary.getDictionary(MESSAGES_DICTIONARY_NAME));
@@ -173,12 +173,12 @@ public class BaseDynamicMessages implements DynamicMessages {
      */
     protected List<Integer> getPlaceHolderList(final String message) {
         MatchResult matcher;
-        Set<Integer> matchedPlaceHolders = new HashSet<Integer>();
+        Set<Integer> matchedPlaceHolders = new HashSet<>();
         for (matcher = PLACE_HOLDER_PATTERN.exec(message); matcher != null;
                 matcher = PLACE_HOLDER_PATTERN.exec(message)) {
             matchedPlaceHolders.add(Integer.valueOf(matcher.getGroup(1)));
         }
-        List<Integer> result = new ArrayList<Integer>(matchedPlaceHolders);
+        List<Integer> result = new ArrayList<>(matchedPlaceHolders);
         Collections.sort(result);
         for (int i = 0; i < result.size(); i++) {
             if (i != result.get(i)) {

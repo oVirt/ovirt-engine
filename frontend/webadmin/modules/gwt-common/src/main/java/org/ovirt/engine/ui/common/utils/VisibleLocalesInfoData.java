@@ -16,7 +16,7 @@ public final class VisibleLocalesInfoData extends JsSingleValueStringObject {
     }
 
     private static List<String> getLocaleValues(String localeString) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (localeString != null && !localeString.isEmpty()) {
             String[] locales = localeString.trim().split(" *, *"); //$NON-NLS-1$
             for (String localeKey: locales) {
@@ -35,8 +35,8 @@ public final class VisibleLocalesInfoData extends JsSingleValueStringObject {
      * @return An array of locales that has been filtered.
      */
     public static String[] getFilteredLocaleNames(List<String> allLocaleNames) {
-        List<String> result = new ArrayList<String>(allLocaleNames);
-        List<String> hiddenList = new ArrayList<String>(allLocaleNames);
+        List<String> result = new ArrayList<>(allLocaleNames);
+        List<String> hiddenList = new ArrayList<>(allLocaleNames);
         hiddenList.removeAll(getVisibleList());
         result.removeAll(hiddenList);
         Collections.sort(result);

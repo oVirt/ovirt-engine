@@ -13,11 +13,11 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class FormBuilder {
 
     private final AbstractFormPanel formPanel;
-    private final List<FormItem> items = new ArrayList<FormItem>();
+    private final List<FormItem> items = new ArrayList<>();
 
     // Maps model property names to corresponding items, used to update
     // form items whenever the given model property changes its value
-    private final Map<String, List<FormItem>> propertyNameMap = new HashMap<String, List<FormItem>>();
+    private final Map<String, List<FormItem>> propertyNameMap = new HashMap<>();
 
     private EntityModel<?> model;
 

@@ -77,7 +77,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
-        this.popupHandler = new ModelBoundPopupHandler<T>(this, eventBus);
+        this.popupHandler = new ModelBoundPopupHandler<>(this, eventBus);
     }
 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view,

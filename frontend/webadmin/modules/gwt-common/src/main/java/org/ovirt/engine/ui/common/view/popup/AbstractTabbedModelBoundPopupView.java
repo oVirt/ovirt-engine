@@ -17,7 +17,7 @@ public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends
     /**
      * The map containing the mapping between the {@code TabName} and {@code TabDialog}s.
      */
-    private final Map<TabName, DialogTab> tabMap = new HashMap<TabName, DialogTab>();
+    private final Map<TabName, DialogTab> tabMap = new HashMap<>();
 
     /**
      * Constructor that calls populateTabMap.

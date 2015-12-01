@@ -296,7 +296,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
 
         // Filter datacenters list
-        ArrayList<EntityModel> datacenters = new ArrayList<EntityModel>();
+        ArrayList<EntityModel> datacenters = new ArrayList<>();
         for (EntityModel datacenter : getattachCandidateDatacenters()) {
             if (datacenter.getEntity() != null) {
                 datacenters.add(datacenter);
@@ -356,7 +356,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             return;
         }
 
-        ArrayList<StoragePool> items = new ArrayList<StoragePool>();
+        ArrayList<StoragePool> items = new ArrayList<>();
         for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
             if (a.getIsSelected()) {
                 items.add((StoragePool) a.getEntity());
@@ -373,7 +373,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
         if (getEntity().getStorageDomainType() == StorageDomainType.Data) {
             StoragePool dataCenter = items.get(0);
-            ArrayList<StorageDomain> storageDomains = new ArrayList<StorageDomain>();
+            ArrayList<StorageDomain> storageDomains = new ArrayList<>();
             storageDomains.add(getEntity());
 
             AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
@@ -387,7 +387,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                             storageDataCenterListModel.setWindow(null);
                             storageDataCenterListModel.setWindow(model);
 
-                            List<String> stoageDomainNames = new ArrayList<String>();
+                            List<String> stoageDomainNames = new ArrayList<>();
                             for (StorageDomainStatic domain : attachedStorageDomains) {
                                 stoageDomainNames.add(domain.getStorageName());
                             }
@@ -428,7 +428,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     public void executeAttachStorageDomains(Model model) {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (StoragePool dataCenter : getSelectedDataCentersForAttach()) {
             parameters.add(new AttachStorageDomainToPoolParameters(getEntity().getId(), dataCenter.getId()));
         }
@@ -455,7 +455,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.setHashName("detach_storage"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         boolean shouldAddressWarnning = false;
         for (Object item : getSelectedItems()) {
             StorageDomain a = (StorageDomain) item;
@@ -565,7 +565,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.setHashName("maintenance_storage_domain"); //$NON-NLS-1$
         setWindow(model);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (StorageDomain selected : getSelectedItems()) {
             items.add(selected.getName());
         }
@@ -579,7 +579,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void onMaintenance() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (StorageDomain item : getSelectedItems()) {
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
@@ -604,7 +604,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void activate() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             StorageDomain a = (StorageDomain) item;
 

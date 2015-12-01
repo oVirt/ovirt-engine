@@ -223,14 +223,14 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
     private void initialize() {
 
-        dataCenterVersionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
+        dataCenterVersionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override
             public String renderNullSafe(Version object) {
                 return object.getValue();
             }
         });
 
-        clusterCpuTypeEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
+        clusterCpuTypeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<ServerCpu>() {
             @Override
             public String renderNullSafe(ServerCpu object) {
                 return object.getCpuName();

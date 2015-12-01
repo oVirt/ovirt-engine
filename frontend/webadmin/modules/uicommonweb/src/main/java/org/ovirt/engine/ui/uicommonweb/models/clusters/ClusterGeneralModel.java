@@ -294,7 +294,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     private List<GlusterSwiftServiceModel> getGroupedGlusterSwiftServices(List<GlusterServerService> serviceList) {
-        Map<Guid, GlusterSwiftServiceModel> serverSwiftMap = new HashMap<Guid, GlusterSwiftServiceModel>();
+        Map<Guid, GlusterSwiftServiceModel> serverSwiftMap = new HashMap<>();
         for (GlusterServerService service : serviceList) {
             GlusterSwiftServiceModel serverSwiftModel = serverSwiftMap.get(service.getServerId());
             if (serverSwiftModel == null) {
@@ -308,7 +308,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             }
             serverSwiftModel.getInternalServiceList().add(service);
         }
-        return new ArrayList<GlusterSwiftServiceModel>(serverSwiftMap.values());
+        return new ArrayList<>(serverSwiftMap.values());
     }
 
     private void onManageGlusterSwiftServices() {
@@ -319,7 +319,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         ManageGlusterSwiftModel glusterSwiftModel = (ManageGlusterSwiftModel) getWindow();
         glusterSwiftModel.startProgress();
         if (glusterSwiftModel.getIsManageServerLevel().getEntity()) {
-            ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
             for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
                 GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) model;
                 GlusterSwiftAction action =
@@ -441,12 +441,12 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                     hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
                 }
                 else {
-                    ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<EntityModel<HostDetailModel>>();
+                    ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
                     for (Map.Entry<String, String> host : hostMap.entrySet()) {
                         HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                         hostModel.setName(host.getKey());
                         hostModel.setPassword("");//$NON-NLS-1$
-                        EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>(hostModel);
+                        EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
                         list.add(entityModel);
                     }
                     hostsModel.getHosts().setItems(list);
@@ -468,7 +468,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         }
 
         hostsModel.startProgress();
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
 
@@ -544,9 +544,9 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                     hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
                 }
                 else {
-                    ArrayList<EntityModel<String>> hostList = new ArrayList<EntityModel<String>>();
+                    ArrayList<EntityModel<String>> hostList = new ArrayList<>();
                     for (String host : hostMap.keySet()) {
-                        hostList.add(new EntityModel<String>(host));
+                        hostList.add(new EntityModel<>(host));
                     }
                     hostsModel.getHosts().setItems(hostList);
                 }
@@ -566,7 +566,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             return;
         }
         boolean force = hostsModel.getForce().getEntity();
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         for (Object model : hostsModel.getHosts().getSelectedItems()) {
             String host = (String) ((EntityModel) model).getEntity();
             parametersList.add(new RemoveGlusterServerParameters(getEntity().getId(), host, force));

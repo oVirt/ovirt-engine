@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class PoolItemBehavior extends ItemBehavior {
 
     // this has to be static because in every request a new instance of this class is created
-    private static Map<Guid, Integer> poolToOsType = new HashMap<Guid, Integer>();
+    private static Map<Guid, Integer> poolToOsType = new HashMap<>();
 
     private VM poolRepresentant;
 

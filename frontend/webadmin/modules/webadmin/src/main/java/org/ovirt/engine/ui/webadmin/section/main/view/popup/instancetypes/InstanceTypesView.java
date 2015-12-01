@@ -81,7 +81,7 @@ public class InstanceTypesView extends Composite {
     }
 
     private void initMainTable() {
-        table = new SimpleActionTable<InstanceType>(instanceTypeModelProvider,
+        table = new SimpleActionTable<>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         AbstractTextColumn<InstanceType> nameColumn = new AbstractTextColumn<InstanceType>() {

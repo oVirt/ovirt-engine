@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 
 public class MainTabBasicListItemMessagesTranslator {
 
-    private Map<String, String> dictionary = new HashMap<String, String>();
+    private Map<String, String> dictionary = new HashMap<>();
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 

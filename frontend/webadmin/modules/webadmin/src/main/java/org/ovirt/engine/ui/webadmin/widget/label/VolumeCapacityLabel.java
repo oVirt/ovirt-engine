@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.ValueLabel;
 public class VolumeCapacityLabel<T extends Number> extends ValueLabel<T> {
 
     public VolumeCapacityLabel(CommonApplicationConstants constants) {
-        super(new VolumeCapacityRenderer<Number>(constants));
+        super(new VolumeCapacityRenderer<>(constants));
     }
 
 }

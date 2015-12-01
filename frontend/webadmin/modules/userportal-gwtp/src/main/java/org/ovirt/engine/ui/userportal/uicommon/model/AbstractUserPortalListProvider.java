@@ -85,7 +85,7 @@ public abstract class AbstractUserPortalListProvider<M extends AbstractUserPorta
      * Returns {@code true} if there is a change between {@code newItems} and {@code oldItems}, {@code false} otherwise.
      */
     boolean itemsChanged(List<UserPortalItemModel> newItems, List<UserPortalItemModel> oldItems) {
-        Map<Guid, UserPortalItemModel> oldItemMap = new HashMap<Guid, UserPortalItemModel>(oldItems.size());
+        Map<Guid, UserPortalItemModel> oldItemMap = new HashMap<>(oldItems.size());
         for (UserPortalItemModel oldItem : oldItems) {
             oldItemMap.put(oldItem.getId(), oldItem);
         }

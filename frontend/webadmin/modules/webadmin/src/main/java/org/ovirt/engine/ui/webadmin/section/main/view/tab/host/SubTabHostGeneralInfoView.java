@@ -55,10 +55,10 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
 
     @Path("IScsiInitiatorName")
     StringValueLabel iScsiInitiatorName = new StringValueLabel();
-    PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
+    PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<>();
     BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
-    NullableNumberValueLabel<Integer> activeVms = new NullableNumberValueLabel<Integer>();
-    NullableNumberValueLabel<Integer> logicalCores = new NullableNumberValueLabel<Integer>();
+    NullableNumberValueLabel<Integer> activeVms = new NullableNumberValueLabel<>();
+    NullableNumberValueLabel<Integer> logicalCores = new NullableNumberValueLabel<>();
     StringValueLabel onlineCores = new StringValueLabel();
     StringValueLabel spmPriority = new StringValueLabel();
     StringValueLabel hostedEngineHa = new StringValueLabel();
@@ -66,32 +66,28 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     StringValueLabel kdumpStatus = new StringValueLabel();
     StringValueLabel selinuxEnforceMode = new StringValueLabel();
 
-    MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<Integer>();
-    MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<Integer>();
-    MemorySizeTextBoxLabel<Integer> freeMemory = new MemorySizeTextBoxLabel<Integer>();
+    MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<>();
+    MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<>();
+    MemorySizeTextBoxLabel<Integer> freeMemory = new MemorySizeTextBoxLabel<>();
 
-    MemorySizeTextBoxLabel<Long> swapTotal = new MemorySizeTextBoxLabel<Long>();
-    MemorySizeTextBoxLabel<Long> usedSwap = new MemorySizeTextBoxLabel<Long>();
-    MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<Long>();
-    MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>();
+    MemorySizeTextBoxLabel<Long> swapTotal = new MemorySizeTextBoxLabel<>();
+    MemorySizeTextBoxLabel<Long> usedSwap = new MemorySizeTextBoxLabel<>();
+    MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<>();
+    MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<>();
 
     BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
     BooleanTextBoxLabel hostDevicePassthroughSupport = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
 
     @Ignore
     DetailsTextBoxLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
-            new DetailsTextBoxLabel<ArrayList<ValueLabel<Integer>>, Integer>(constants.total(),
-                    constants.used(),
-                    constants.free());
+            new DetailsTextBoxLabel<>(constants.total(), constants.used(), constants.free());
 
     @Ignore
     DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> swapSizeDetails =
-            new DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(),
-                    constants.used(),
-                    constants.free());
+            new DetailsTextBoxLabel<>(constants.total(), constants.used(), constants.free());
 
     @Ignore
-    EnumTextBoxLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumTextBoxLabel<VdsTransparentHugePagesState>();
+    EnumTextBoxLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumTextBoxLabel<>();
 
     @UiField(provided = true)
     @WithElementId
@@ -172,10 +168,10 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         automaticLargePage.setValue((VdsTransparentHugePagesState) getDetailModel().getAutomaticLargePage());
 
         ArrayList<ValueLabel<Integer>> physicalMemoryDetailsArray =
-                new ArrayList<ValueLabel<Integer>>(Arrays.asList(physicalMemory, usedMemory, freeMemory));
+                new ArrayList<>(Arrays.<ValueLabel<Integer>>asList(physicalMemory, usedMemory, freeMemory));
 
         ArrayList<ValueLabel<Long>> swapSizeDetailsArray =
-                new ArrayList<ValueLabel<Long>>(Arrays.asList(swapTotal, usedSwap, swapFree));
+                new ArrayList<>(Arrays.<ValueLabel<Long>>asList(swapTotal, usedSwap, swapFree));
 
         physicalMemoryDetails.setValue(physicalMemoryDetailsArray);
         swapSizeDetails.setValue(swapSizeDetailsArray);

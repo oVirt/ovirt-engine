@@ -38,8 +38,8 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
 
     private void setMessage() {
 
-        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
-        ArrayList<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();
+        ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
             VdcQueryParametersBase parameter = new IdQueryParameters(((NetworkQoS) networkQoS).getId());
             parameters.add(parameter);
@@ -49,7 +49,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                ArrayList<VnicProfileView> vnicProfiles = new ArrayList<VnicProfileView>();
+                ArrayList<VnicProfileView> vnicProfiles = new ArrayList<>();
 
                 setHelpTag(HelpTag.remove_network_qos);
                 setHashName("remove_network_qos"); //$NON-NLS-1$
@@ -58,7 +58,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
                     vnicProfiles.addAll((ArrayList<VnicProfileView>) returnValue.getReturnValue());
                 }
                 if (vnicProfiles.isEmpty()) {
-                    ArrayList<String> list = new ArrayList<String>();
+                    ArrayList<String> list = new ArrayList<>();
                     for (Object item : sourceListModel.getSelectedItems()) {
                         NetworkQoS i = (NetworkQoS) item;
                         list.add(i.getName());
@@ -67,7 +67,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
                 } else {
                     setMessage(ConstantsManager.getInstance().getMessages().removeNetworkQoSMessage(vnicProfiles.size()));
 
-                    ArrayList<String> list = new ArrayList<String>();
+                    ArrayList<String> list = new ArrayList<>();
                     for (VnicProfileView item : vnicProfiles) {
                         list.add(item.getName());
                     }
@@ -78,10 +78,10 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
     }
 
     public void onRemove() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
-            QosParametersBase<NetworkQoS> parameter = new QosParametersBase<NetworkQoS>();
+            QosParametersBase<NetworkQoS> parameter = new QosParametersBase<>();
             NetworkQoS tempQos = (NetworkQoS) networkQoS;
             parameter.setQos(tempQos);
             parameters.add(parameter);

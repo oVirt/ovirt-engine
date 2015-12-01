@@ -30,7 +30,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
 
     public AbstractFindDcPopupView(EventBus eventBus, boolean multiSelection) {
         super(eventBus);
-        table = new EntityModelCellTable<ListModel>(multiSelection);
+        table = new EntityModelCellTable<>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns

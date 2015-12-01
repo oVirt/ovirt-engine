@@ -78,7 +78,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             return new Object[0];
         }
         else {
-            ArrayList<Object> items = new ArrayList<Object>();
+            ArrayList<Object> items = new ArrayList<>();
             for (Object i : getSelectedItems()) {
                 items.add(((VDSGroup) i).getId());
             }
@@ -149,11 +149,11 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedUsers(TagListModel model) {
-        ArrayList<Guid> userIds = new ArrayList<Guid>();
-        ArrayList<Guid> grpIds = new ArrayList<Guid>();
+        ArrayList<Guid> userIds = new ArrayList<>();
+        ArrayList<Guid> grpIds = new ArrayList<>();
 
-        attachedTagsToEntities = new HashMap<Guid, Boolean>();
-        allAttachedTags = new ArrayList<Tags>();
+        attachedTagsToEntities = new HashMap<>();
+        allAttachedTags = new ArrayList<>();
         selectedItemsCounter = 0;
 
         for (Object item : getSelectedItems()) {
@@ -236,8 +236,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
 
     public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
-        ArrayList<Guid> userIds = new ArrayList<Guid>();
-        ArrayList<Guid> grpIds = new ArrayList<Guid>();
+        ArrayList<Guid> userIds = new ArrayList<>();
+        ArrayList<Guid> grpIds = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             DbUser user = (DbUser) item;
@@ -250,8 +250,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         }
 
         // prepare attach/detach lists
-        ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
-        ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
+        ArrayList<Guid> tagsToAttach = new ArrayList<>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<>();
 
         if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
@@ -259,8 +259,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<VdcActionParametersBase>();
-        ArrayList<VdcActionParametersBase> grpsToAttach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> grpsToAttach = new ArrayList<>();
         for (Guid tag_id : tagsToAttach) {
             if (userIds.size() > 0) {
                 usersToAttach.add(new AttachEntityToTagParameters(tag_id, userIds));
@@ -276,8 +276,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
-        ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<VdcActionParametersBase>();
-        ArrayList<VdcActionParametersBase> grpsToDetach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> grpsToDetach = new ArrayList<>();
         for (Guid tag_id : tagsToDetach) {
             if (userIds.size() > 0) {
                 usersToDetach.add(new AttachEntityToTagParameters(tag_id, userIds));
@@ -326,7 +326,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         model.setHelpTag(HelpTag.remove_user);
         model.setHashName("remove_user"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (DbUser item : Linq.<DbUser> cast(getSelectedItems())) {
             list.add(item.getFirstName());
         }
@@ -384,7 +384,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             return;
         }
 
-        ArrayList<DbUser> items = new ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<>();
         for (Object item : model.getItems()) {
             EntityModel entityModel = (EntityModel) item;
             if (entityModel.getIsSelected()) {
@@ -392,8 +392,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             }
         }
 
-        ArrayList<VdcActionType> actionsList = new ArrayList<VdcActionType>(items.size());
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
+        ArrayList<VdcActionType> actionsList = new ArrayList<>(items.size());
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>(items.size());
         VdcActionParametersBase parameters = null;
         for (DbUser item : items) {
             if (item.isGroup()) {
@@ -431,7 +431,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             }
         };
 
-        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<IFrontendActionAsyncCallback>(items.size());
+        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<>(items.size());
         for (int i = 1; i < items.size(); i++) {
             callbacksList.add(nopCallback);
         }
@@ -443,8 +443,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     public void onRemove() {
         ArrayList<DbUser> items = Linq.<DbUser> cast(getSelectedItems());
 
-        ArrayList<VdcActionParametersBase> userPrms = new ArrayList<VdcActionParametersBase>();
-        ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> userPrms = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<>();
         for (DbUser item : items) {
             if (!item.isGroup()) {
                 userPrms.add(new IdParameters(item.getId()));

@@ -30,7 +30,7 @@ public abstract class AbstractSubTabEventView<I, M extends ListWithDetailsModel,
 
     public AbstractSubTabEventView(SearchableDetailModelProvider<AuditLog, M, D> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new EventListModelTable<D>(modelProvider, eventBus, clientStorage));
+        super(new EventListModelTable<>(modelProvider, eventBus, clientStorage));
         generateIds();
         initTable();
         initWidget(getModelBoundTableWidget());

@@ -24,7 +24,7 @@ public class GlusterVolumeGeoReplicationSessionConfigModel extends Model {
     private UICommand cancelCommand;
 
     public GlusterVolumeGeoReplicationSessionConfigModel(GlusterGeoRepSession selectedGeoRepSession) {
-        configsModel = new ListModel<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>>();
+        configsModel = new ListModel<>();
         configsMap = new LinkedHashMap<>();
         this.geoRepSession = selectedGeoRepSession;
     }

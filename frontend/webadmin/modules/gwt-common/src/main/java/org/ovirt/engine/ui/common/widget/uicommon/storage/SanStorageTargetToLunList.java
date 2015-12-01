@@ -69,7 +69,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     @Override
     protected void createHeaderWidget() {
-        EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false,
+        EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false,
                 (Resources) GWT.create(SanStorageListHeaderResources.class),
                 true);
 
@@ -191,8 +191,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         }
 
         final EntityModelCellTable<ListModel<LunModel>> table =
-                new EntityModelCellTable<ListModel<LunModel>>(multiSelection,
-                        (Resources) GWT.create(SanStorageListLunTableResources.class));
+                new EntityModelCellTable<>(multiSelection, (Resources) GWT.create(SanStorageListLunTableResources.class));
 
         AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
             @Override

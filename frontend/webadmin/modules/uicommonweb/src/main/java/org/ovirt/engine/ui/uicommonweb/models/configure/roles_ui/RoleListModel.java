@@ -176,7 +176,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
                 RoleListModel roleListModel = (RoleListModel) model;
-                ArrayList<Role> filteredList = new ArrayList<Role>();
+                ArrayList<Role> filteredList = new ArrayList<>();
                 for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()) {
                     // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
@@ -223,7 +223,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         model.setHelpTag(HelpTag.remove_role);
         model.setHashName("remove_role"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (Role role : Linq.<Role> cast(getSelectedItems())) {
             list.add(role.getName());
         }
@@ -272,7 +272,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         if (getWindow() != null
                 && sender == ((RoleModel) getWindow()).getIsAdminRole()) {
             if (commandType == CommandType.New) {
-                List<ActionGroup> selectedActionGroups = new ArrayList<ActionGroup>();
+                List<ActionGroup> selectedActionGroups = new ArrayList<>();
                 selectedActionGroups.add(ActionGroup.LOGIN);
                 setAttachedActionGroups(selectedActionGroups);
             } else {
@@ -424,9 +424,8 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         role.setName(model.getName().getEntity());
         role.setDescription(model.getDescription().getEntity());
 
-        ArrayList<ActionGroup> actions = new ArrayList<ActionGroup>();
-        HashMap<ActionGroup, ActionGroup> actionDistinctSet =
-                new HashMap<ActionGroup, ActionGroup>();
+        ArrayList<ActionGroup> actions = new ArrayList<>();
+        HashMap<ActionGroup, ActionGroup> actionDistinctSet = new HashMap<>();
         for (SelectionTreeNodeModel sm : model.getPermissionGroupModels()) {
             for (SelectionTreeNodeModel smChild : sm.getChildren()) {
                 if (smChild.getIsSelectedNullable() == null || smChild.getIsSelectedNullable()) {

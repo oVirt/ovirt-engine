@@ -75,7 +75,7 @@ public class ElementTooltip implements HasId, HasHover {
      * A static registry of all tooltips in existence. Keyed by the id of the element the
      * tooltip is bound to.
      */
-    private static Map<String, ElementTooltipDetails> tooltipRegistry = new HashMap<String, ElementTooltipDetails>();
+    private static Map<String, ElementTooltipDetails> tooltipRegistry = new HashMap<>();
 
     /**
      * Creates an empty ElementTooltip

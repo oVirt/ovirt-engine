@@ -144,7 +144,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
                     public void onSuccess(Object model, Object returnValue) {
                             List<Q> qosList =
                                     (ArrayList<Q>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            qosMap = new HashMap<Guid, Q>();
+                            qosMap = new HashMap<>();
                         if (qosList != null) {
                                 for (Q qos : qosList) {
                                     qosMap.put(qos.getId(), qos);

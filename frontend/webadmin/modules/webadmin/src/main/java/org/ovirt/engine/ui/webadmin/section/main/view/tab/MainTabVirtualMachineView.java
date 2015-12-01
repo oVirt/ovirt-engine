@@ -97,7 +97,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         nameColumn.makeSortable(VmConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
 
-        CommentColumn<VM> commentColumn = new CommentColumn<VM>();
+        CommentColumn<VM> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
@@ -232,7 +232,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         list.add(migrationProgressColumn);
         list.add(importProgressColumn);
 
-        Cell<VM> compositeCell = new StatusCompositeCell<VM>(list);
+        Cell<VM> compositeCell = new StatusCompositeCell<>(list);
 
         AbstractColumn<VM, VM> statusTextColumn = new AbstractColumn<VM, VM>(compositeCell) {
             @Override
@@ -485,7 +485,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             List<ActionButtonDefinition<VM>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("VM", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>(constants.showReportVm(),
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportVm(),
                         resourceSubActions));
             }
         }

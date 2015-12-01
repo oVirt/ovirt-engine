@@ -495,10 +495,10 @@ public class VmInitModel extends Model {
         setAddNetworkCommand(new UICommand("addNetwork", this)); //$NON-NLS-1$
         setRemoveNetworkCommand(new UICommand("removeNetwork", this)); //$NON-NLS-1$
 
-        networkMap = new TreeMap<String, VmInitNetwork>();
-        networkStartOnBoot = new HashSet<String>();
+        networkMap = new TreeMap<>();
+        networkStartOnBoot = new HashSet<>();
         lastSelectedNetworkName = null;
-        getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+        getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
         getNetworkList().setSelectedItem(lastSelectedNetworkName);
 
         getNetworkList().getSelectedItemChangedEvent().addListener(this);
@@ -658,8 +658,8 @@ public class VmInitModel extends Model {
             return;
         }
 
-        networkMap = new TreeMap<String, VmInitNetwork>();
-        networkStartOnBoot = new HashSet<String>();
+        networkMap = new TreeMap<>();
+        networkStartOnBoot = new HashSet<>();
         lastSelectedNetworkName = null;
 
         for (VmInitNetwork network : vmInit.getNetworks()) {
@@ -682,7 +682,7 @@ public class VmInitModel extends Model {
 
         // update silently - do not listen to events
         getNetworkList().getSelectedItemChangedEvent().removeListener(this);
-        getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+        getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
         getNetworkList().setSelectedItem(lastSelectedNetworkName);
         getNetworkList().getSelectedItemChangedEvent().addListener(this);
 
@@ -811,12 +811,12 @@ public class VmInitModel extends Model {
 
     /* Validate a shared display element, without having to display each shared value */
     private boolean validateHidden(Model entity, final String value, final String message, final IValidation[] validations) {
-        EntityModel<String> tmp = new EntityModel<String>(value);
+        EntityModel<String> tmp = new EntityModel<>(value);
         tmp.setIsValid(true);
         tmp.validateEntity(validations);
         if (!tmp.getIsValid()) {
             if (message != null) {
-                List<String> reasons = new ArrayList<String>();
+                List<String> reasons = new ArrayList<>();
                 reasons.add(message);
                 entity.setInvalidityReasons(reasons);
             } else {
@@ -910,7 +910,7 @@ public class VmInitModel extends Model {
                     params.setStartOnBoot(networkStartOnBoot.contains(entry.getKey()));
                     params.setName(entry.getKey());
                 }
-                vmInit.setNetworks(new ArrayList<VmInitNetwork>(networkMap.values()));
+                vmInit.setNetworks(new ArrayList<>(networkMap.values()));
             }
         }
         vmInit.setDnsServers(getDnsServers().getEntity());
@@ -921,7 +921,7 @@ public class VmInitModel extends Model {
 
     private List<String> tokenizeString(String spaceDelimitedString) {
         if (spaceDelimitedString != null) {
-            return new ArrayList<String>(Arrays.asList(spaceDelimitedString.split("\\s+"))); //$NON-NLS-1$
+            return new ArrayList<>(Arrays.asList(spaceDelimitedString.split("\\s+"))); //$NON-NLS-1$
         } else {
             return null;
         }
@@ -1001,7 +1001,7 @@ public class VmInitModel extends Model {
             } else {
                 networkMap.remove(oldName);
                 networkMap.put(newName, obj);
-                getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+                getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
                 getNetworkList().setSelectedItem(newName);
             }
         }
@@ -1010,14 +1010,14 @@ public class VmInitModel extends Model {
     private void addNetwork() {
         if (!networkMap.containsKey(newNetworkText)) {
             networkMap.put(newNetworkText, new VmInitNetwork());
-            getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+            getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
         }
         getNetworkList().setSelectedItem(newNetworkText);
     }
 
     private void removeNetwork() {
         networkMap.remove(getNetworkList().getSelectedItem());
-        getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+        getNetworkList().setItems(new ArrayList<>(networkMap.keySet()));
         getNetworkList().setSelectedItem(Linq.firstOrNull(networkMap.keySet()));
     }
 

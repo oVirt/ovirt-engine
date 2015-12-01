@@ -31,7 +31,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         this.profiles = profiles;
         this.fullMsg = isFullMsg;
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (VnicProfileView profile : profiles) {
             if (isFullMsg) {
                 items.add(getRemoveVnicProfileFullMsg(profile));
@@ -52,7 +52,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (VnicProfileView profile : getProfiles()) {
             VdcActionParametersBase parameters = getRemoveVnicProfileParams(profile);
             list.add(parameters);

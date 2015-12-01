@@ -13,7 +13,7 @@ public class EntityModelTextAreaLabelEditor<T> extends AbstractValueBoxWithLabel
      * A ValueBoxWithLabelEditor that has a Label as the widget
      */
     public EntityModelTextAreaLabelEditor(Renderer<T> renderer, Parser<T> parser) {
-        this(new EntityModelTextAreaLabel<T>(renderer, parser));
+        this(new EntityModelTextAreaLabel<>(renderer, parser));
     }
 
     public EntityModelTextAreaLabelEditor(EntityModelTextAreaLabel<T> widget) {

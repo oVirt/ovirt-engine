@@ -25,8 +25,7 @@ public class SubTabExtendedVmPermissionView extends AbstractSubTabTableWidgetVie
     @Inject
     public SubTabExtendedVmPermissionView(VmPermissionListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new PermissionListModelTable<UserPortalPermissionListModel<UserPortalListModel>>(modelProvider, eventBus,
-                clientStorage));
+        super(new PermissionListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

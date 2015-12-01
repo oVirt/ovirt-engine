@@ -27,8 +27,8 @@ import com.google.gwt.user.client.ui.RadioButton;
 
 public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstrainedValue<K> {
 
-    private final Map<K, RadioButton> buttons = new HashMap<K, RadioButton>();
-    private final Map<K, FlowPanel> panels = new HashMap<K, FlowPanel>();
+    private final Map<K, RadioButton> buttons = new HashMap<>();
+    private final Map<K, FlowPanel> panels = new HashMap<>();
     private final FlowPanel wrapperPanel = new FlowPanel();
     private final Renderer<K> renderer;
     private boolean enabled;

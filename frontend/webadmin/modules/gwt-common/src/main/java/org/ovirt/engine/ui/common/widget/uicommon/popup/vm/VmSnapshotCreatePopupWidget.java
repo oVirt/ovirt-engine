@@ -99,7 +99,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     }
 
     private void initTables() {
-        disksTable = new ListModelObjectCellTable<DiskImage, ListModel>(true, true);
+        disksTable = new ListModelObjectCellTable<>(true, true);
         disksTable.enableColumnResizing();
 
         disksTable.addColumn(new AbstractTextColumn<DiskImage>() {

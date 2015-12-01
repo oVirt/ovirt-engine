@@ -23,10 +23,10 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetHeader = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetHeader = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<>();
 
     private final HeaderPresenterWidget header;
     private final PluginManager pluginManager;

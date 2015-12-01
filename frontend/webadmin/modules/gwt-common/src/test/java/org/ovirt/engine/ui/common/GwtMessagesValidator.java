@@ -42,7 +42,7 @@ public class GwtMessagesValidator {
 
     public static List<String> validateClass(Class<? extends Messages> classUnderTest)
             throws URISyntaxException, IOException {
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
 
         if (classUnderTest.isInterface()) {
             File messagesDir = new File(classUnderTest.getResource(".")
@@ -73,7 +73,7 @@ public class GwtMessagesValidator {
         String methodName = method.getName();
 
         if (PropertiesFileInfo.properties.getProperty(methodName) != null) {
-            Set<Integer> foundIndex = new HashSet<Integer>();
+            Set<Integer> foundIndex = new HashSet<>();
             Set<Integer> requiredIndexes = determineRequiredIndexes(method.getParameterAnnotations());
             int minRequired = requiredIndexes.size();
             int methodParamCount = method.getParameterTypes().length;
@@ -112,7 +112,7 @@ public class GwtMessagesValidator {
     }
 
     private static Set<Integer> determineRequiredIndexes(Annotation[][] methodParamAnnotations) {
-        Set<Integer> result = new HashSet<Integer>();
+        Set<Integer> result = new HashSet<>();
         for (int i = 0; i < methodParamAnnotations.length; i++) {
             boolean isOptional = false;
             Annotation[] annotations = methodParamAnnotations[i];

@@ -294,7 +294,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         }
 
         if (returnValue instanceof StoragePool) {
-            List<StoragePool> res = new ArrayList<StoragePool>();
+            List<StoragePool> res = new ArrayList<>();
             res.add((StoragePool) returnValue);
             return res;
         }
@@ -313,7 +313,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.setHelpTag(HelpTag.remove_pool);
         model.setHashName("remove_pool"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (VmPool item : Linq.<VmPool> cast(getSelectedItems())) {
             list.add(item.getName());
         }
@@ -332,7 +332,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmPool pool = (VmPool) item;
             list.add(new VmPoolParametersBase(pool.getVmPoolId()));
@@ -482,7 +482,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                 param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
             }
             Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPoolWithVms,
-                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
+                    new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -494,7 +494,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         }
         else {
             Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
-                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
+                    new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

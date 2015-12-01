@@ -126,7 +126,7 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
             }
         });
 
-        networks = new EntityModelCellTable<ListModel<VfsConfigNetwork>>(SelectionMode.NONE, true);
+        networks = new EntityModelCellTable<>(SelectionMode.NONE, true);
 
         labelsWidget = new VfsNicLabelWidget();
 

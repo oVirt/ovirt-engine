@@ -25,7 +25,7 @@ public class DiscoverNetworksModel extends ImportNetworksModel {
     }
 
     public void discoverNetworks() {
-        Collection<Provider<?>> items = new ArrayList<Provider<?>>();
+        Collection<Provider<?>> items = new ArrayList<>();
         items.add(provider);
         getProviders().setItems(items);
         getProviders().setSelectedItem(provider);

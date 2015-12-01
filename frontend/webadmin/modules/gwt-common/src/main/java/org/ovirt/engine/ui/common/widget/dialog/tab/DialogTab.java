@@ -139,7 +139,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     private List<HasValidation> getInvalidWidgets(Widget content) {
-        List<HasValidation> hasValidations = new ArrayList<HasValidation>();
+        List<HasValidation> hasValidations = new ArrayList<>();
         if (content instanceof IndexedPanel) {
             for (int i = 0; i < ((IndexedPanel) content).getWidgetCount(); i++) {
                 hasValidations.addAll(getInvalidWidgets(((IndexedPanel) content).getWidget(i)));

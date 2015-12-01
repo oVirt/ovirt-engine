@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
-    private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<NetworkBootProtocol>();
+    private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<>();
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationResources resources = AssetProvider.getResources();

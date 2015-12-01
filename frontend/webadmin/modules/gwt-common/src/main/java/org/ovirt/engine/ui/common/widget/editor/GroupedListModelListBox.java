@@ -60,7 +60,7 @@ public abstract class GroupedListModelListBox<T> extends ListModelListBox<T> {
     @UiField
     public Style style;
 
-    List<T> selectableObjects = new ArrayList<T>();
+    List<T> selectableObjects = new ArrayList<>();
 
     public GroupedListModelListBox(Renderer<T> renderer) {
         super(renderer);

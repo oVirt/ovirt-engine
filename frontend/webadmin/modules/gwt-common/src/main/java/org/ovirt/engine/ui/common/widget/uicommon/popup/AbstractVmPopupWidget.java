@@ -926,7 +926,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
-    private final Map<TabName, DialogTab> tabMap = new HashMap<TabName, DialogTab>();
+    private final Map<TabName, DialogTab> tabMap = new HashMap<>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(EventBus eventBus) {
@@ -935,7 +935,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // Contains a special parser/renderer
         memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
-        minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
+        minAllocatedMemoryEditor = new EntityModelTextBoxEditor<>(
                 new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
         numOfIoThreadsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -944,7 +944,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
-        watchdogModelEditor = new ListModelListBoxEditor<VmWatchdogType>(new NullSafeRenderer<VmWatchdogType>() {
+        watchdogModelEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VmWatchdogType>() {
             @Override
             public String render(VmWatchdogType object) {
                 return object == null ? constants.noWatchdogLabel() : renderNullSafe(object);
@@ -956,7 +956,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        watchdogActionEditor = new ListModelListBoxEditor<VmWatchdogAction>(new NullSafeRenderer<VmWatchdogAction>() {
+        watchdogActionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VmWatchdogAction>() {
             @Override
             protected String renderNullSafe(VmWatchdogAction object) {
                 return EnumTranslator.getInstance().translate(object);
@@ -1211,7 +1211,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         });
 
-        quotaEditor = new ListModelTypeAheadListBoxEditor<Quota>(
+        quotaEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Quota>() {
 
                     @Override
@@ -1230,7 +1230,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
 
                     @Override
@@ -1282,16 +1282,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ModeSwitchingVisibilityRenderer(),
                 new SuggestionMatcher.ContainsSuggestionMatcher());
 
-        oSTypeEditor = new ListModelListBoxEditor<Integer>(new AbstractRenderer<Integer>() {
+        oSTypeEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Integer>() {
             @Override
             public String render(Integer object) {
                 return AsyncDataProvider.getInstance().getOsName(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer<VmType>(), new ModeSwitchingVisibilityRenderer());
+        vmTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<VmType>(), new ModeSwitchingVisibilityRenderer());
 
-        instanceTypesEditor = new ListModelTypeAheadListBoxEditor<InstanceType>(
+        instanceTypesEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<InstanceType>() {
 
                     @Override
@@ -1301,10 +1301,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
                     @Override
                     public String getDisplayStringNullSafe(InstanceType data) {
-                            return typeAheadNameDescriptionTemplateNullSafe(
-                                    data.getName(),
-                                    data.getDescription()
-                            );
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                data.getName(),
+                                data.getDescription()
+                        );
                     }
                 },
                 new ModeSwitchingVisibilityRenderer()
@@ -1341,20 +1341,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ModeSwitchingVisibilityRenderer(),
                 constants.clusterDefaultOption());
 
-        numOfSocketsEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
+        numOfSocketsEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
         numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
-        corePerSocketEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
+        corePerSocketEditor = new ListModelListBoxEditor<>(new ModeSwitchingVisibilityRenderer());
         corePerSocketEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(corePerSocketEditor);
 
         // Pools
-        poolTypeEditor = new ListModelListBoxEditor<EntityModel<VmPoolType>>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
+        poolTypeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
             @Override
             public String renderNullSafe(EntityModel<VmPoolType> object) {
                 return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        timeZoneEditor = new ListModelListBoxOnlyEditor<TimeZoneModel>(new NullSafeRenderer<TimeZoneModel>() {
+        timeZoneEditor = new ListModelListBoxOnlyEditor<>(new NullSafeRenderer<TimeZoneModel>() {
             @Override
             public String renderNullSafe(TimeZoneModel timeZone) {
                 if (timeZone.isDefault()) {
@@ -1378,18 +1378,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         graphicsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<UnitVmModel.GraphicsTypes>());
 
         usbSupportEditor =
-                new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
         consoleDisconnectActionEditor =
-                new ListModelListBoxEditor<ConsoleDisconnectAction>(new EnumRenderer<ConsoleDisconnectAction>(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<>(new EnumRenderer<ConsoleDisconnectAction>(), new ModeSwitchingVisibilityRenderer());
 
-        numOfMonitorsEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
+        numOfMonitorsEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
                 return object.toString();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(), new ModeSwitchingVisibilityRenderer());
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer(), new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
@@ -1400,16 +1400,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         defaultHostEditor.asListBox().setVisibleItemCount(3);
 
         migrationModeEditor =
-                new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
 
         overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
 
-        autoConvergeEditor = new ListModelListBoxEditor<Boolean>(
+        autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromCluster()),
                 new ModeSwitchingVisibilityRenderer());
 
-        migrateCompressedEditor = new ListModelListBoxEditor<Boolean>(
+        migrateCompressedEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromCluster()),
                 new ModeSwitchingVisibilityRenderer());
 
@@ -1420,21 +1420,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
 
         // Boot Options Tab
-        firstBootDeviceEditor = new ListModelListBoxEditor<EntityModel<BootSequence>>(new NullSafeRenderer<EntityModel<BootSequence>>() {
+        firstBootDeviceEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<BootSequence>>() {
             @Override
             public String renderNullSafe(EntityModel<BootSequence> object) {
                 return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        secondBootDeviceEditor = new ListModelListBoxEditor<EntityModel<BootSequence>>(new NullSafeRenderer<EntityModel<BootSequence>>() {
+        secondBootDeviceEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<BootSequence>>() {
             @Override
             public String renderNullSafe(EntityModel<BootSequence> object) {
                 return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        cdImageEditor = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
+        cdImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<String>() {
             @Override
             public String renderNullSafe(String object) {
                 return object;
@@ -1444,9 +1444,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cpuProfilesEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
 
         cpuSharesAmountSelectionEditor =
-                new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxOnlyEditor<>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
 
-        numaTuneMode = new ListModelListBoxEditor<NumaTuneMode>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+        numaTuneMode = new ListModelListBoxEditor<>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
 
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         providersEditor.setLabel(constants.providerLabel());
@@ -1967,7 +1967,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private ArrayList<String> getDisksAliasesByImageStatus(List<DiskModel> disks, ImageStatus status) {
-        ArrayList<String> disksAliases = new ArrayList<String>();
+        ArrayList<String> disksAliases = new ArrayList<>();
 
         if (disks == null) {
             return disksAliases;
@@ -2157,7 +2157,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> consoleTabWidgets() {
-        return Arrays.<Widget> asList(
+        return Arrays.asList(
                 displayTypeEditor,
                 graphicsTypeEditor,
                 usbSupportEditor,
@@ -2174,7 +2174,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> poolSpecificFields() {
-        return Arrays.<Widget> asList(numOfVmsEditor,
+        return Arrays.asList(numOfVmsEditor,
                 newPoolEditVmsPanel,
                 editPoolEditVmsPanel,
                 editPoolIncraseNumOfVmsPanel,
@@ -2210,7 +2210,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 vcpusAdvancedParameterExpander,
                 copyTemplatePermissionsEditor,
                 vmIdEditor
-                );
+        );
     }
 
     protected List<Widget> detachableWidgets() {
@@ -2230,7 +2230,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> adminOnlyWidgets() {
-        return Arrays.<Widget> asList(
+        return Arrays.asList(
                 // general tab
                 vmIdEditor,
 
@@ -2354,7 +2354,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     public List<HasValidation> getInvalidWidgets() {
-        List<HasValidation> hasValidations = new ArrayList<HasValidation>();
+        List<HasValidation> hasValidations = new ArrayList<>();
         for (DialogTab dialogTab : allDialogTabs()) {
             hasValidations.addAll(dialogTab.getInvalidWidgets());
         }

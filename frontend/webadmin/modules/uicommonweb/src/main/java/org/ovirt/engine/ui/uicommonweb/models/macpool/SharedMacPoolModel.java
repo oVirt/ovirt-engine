@@ -22,8 +22,8 @@ public class SharedMacPoolModel extends MacPoolModel {
     protected final Model sourceModel;
     private final VdcActionType actionType;
 
-    private final EntityModel<String> name = new EntityModel<String>();
-    private final EntityModel<String> description = new EntityModel<String>();
+    private final EntityModel<String> name = new EntityModel<>();
+    private final EntityModel<String> description = new EntityModel<>();
 
     public EntityModel<String> getName() {
         return name;

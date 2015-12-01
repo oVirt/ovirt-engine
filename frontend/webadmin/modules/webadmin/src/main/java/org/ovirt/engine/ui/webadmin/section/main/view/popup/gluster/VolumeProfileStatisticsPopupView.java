@@ -158,7 +158,7 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         brickRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
         bricks = new ListModelListBoxEditor<>(new NameRenderer<BrickProfileDetails>());
         nfsServers = new ListModelListBoxEditor<>(new NameRenderer<GlusterVolumeProfileStats>());
-        volumeProfileStats = new EntityModelCellTable<ListModel>(false, true);
+        volumeProfileStats = new EntityModelCellTable<>(false, true);
 
         volumeProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
@@ -195,7 +195,7 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
             }
         }, constants.fOpAvgLatency());
 
-        nfsServerProfileStats = new EntityModelCellTable<ListModel>(false, true);
+        nfsServerProfileStats = new EntityModelCellTable<>(false, true);
 
         nfsServerProfileStats.addColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override

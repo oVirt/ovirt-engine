@@ -164,7 +164,7 @@ public class ClusterGuideModel extends GuideModel {
             return;
         }
 
-        ArrayList<VDS> availableHosts = new ArrayList<VDS>();
+        ArrayList<VDS> availableHosts = new ArrayList<>();
         for (VDS vds : allHosts) {
             if (!getEntity().getId().equals(vds.getVdsGroupId())
                     && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
@@ -249,7 +249,7 @@ public class ClusterGuideModel extends GuideModel {
                         ClusterGuideModel model = (ClusterGuideModel) target;
                         @SuppressWarnings("unchecked")
                         List<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
-                        final List<StoragePool> localDataCenters = new ArrayList<StoragePool>();
+                        final List<StoragePool> localDataCenters = new ArrayList<>();
                         boolean enableButton = false;
                         for (StoragePool dataCenter: dataCenters) {
                             //Find at least one compatible data-center, so we can show the button.
@@ -281,7 +281,7 @@ public class ClusterGuideModel extends GuideModel {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     ClusterGuideModel model = (ClusterGuideModel) target;
-                    List<StoragePool> localDataCenterWithCluster = new ArrayList<StoragePool>();
+                    List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
                     @SuppressWarnings("unchecked")
                     List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
                     for (StoragePool dataCenter: localDataCenters) {
@@ -308,7 +308,7 @@ public class ClusterGuideModel extends GuideModel {
             addDataCenterAction.setIsAvailable(enableButton);
             getOptionalActions().add(addDataCenterAction);
         } else {
-            setNote(new EntityModel<String>(noAvailableActions));
+            setNote(new EntityModel<>(noAvailableActions));
         }
         stopProgress();
     }
@@ -336,7 +336,7 @@ public class ClusterGuideModel extends GuideModel {
     }
 
     public void selectHost() {
-        final ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
+        final ArrayList<VDSGroup> clusters = new ArrayList<>();
         clusters.add(getEntity());
 
         final MoveHost model = new MoveHost();
@@ -450,8 +450,8 @@ public class ClusterGuideModel extends GuideModel {
                 ClusterGuideModel guideModel = (ClusterGuideModel) target;
                 @SuppressWarnings("unchecked")
                 List<StoragePool> allDataCenters = (List<StoragePool>) returnValue;
-                List<EntityModel<StoragePool>> filteredDataCenters = new ArrayList<EntityModel<StoragePool>>();
-                List<StoragePool> localDataCenters = new ArrayList<StoragePool>();
+                List<EntityModel<StoragePool>> filteredDataCenters = new ArrayList<>();
+                List<StoragePool> localDataCenters = new ArrayList<>();
                 for (StoragePool dataCenter: allDataCenters) {
                     //Find at least one compatible data-center, so we can show the button.
                     if (guideModel.getEntity().getCompatibilityVersion().compareTo(
@@ -460,7 +460,7 @@ public class ClusterGuideModel extends GuideModel {
                             //Check if there are any clusters associated with this data-center already.
                             localDataCenters.add(dataCenter);
                         } else {
-                            filteredDataCenters.add(new EntityModel<StoragePool>(dataCenter));
+                            filteredDataCenters.add(new EntityModel<>(dataCenter));
                         }
                     }
                 }
@@ -481,7 +481,7 @@ public class ClusterGuideModel extends GuideModel {
         AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
-                    List<StoragePool> localDataCenterWithCluster = new ArrayList<StoragePool>();
+                    List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
                     @SuppressWarnings("unchecked")
                     List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
                     for (StoragePool dataCenter: localDataCenters) {
@@ -495,7 +495,7 @@ public class ClusterGuideModel extends GuideModel {
                     }
                     localDataCenters.removeAll(localDataCenterWithCluster);
                     for (StoragePool dataCenter: localDataCenters) {
-                        filteredDataCenters.add(new EntityModel<StoragePool>(dataCenter));
+                        filteredDataCenters.add(new EntityModel<>(dataCenter));
                     }
                     displayAddDataCenter(filteredDataCenters);
                 }
@@ -504,7 +504,7 @@ public class ClusterGuideModel extends GuideModel {
     }
 
     private void displayAddDataCenter(List<EntityModel<StoragePool>> dataCenters) {
-        ListModel<EntityModel<StoragePool>> dataCentersModel = new ListModel<EntityModel<StoragePool>>();
+        ListModel<EntityModel<StoragePool>> dataCentersModel = new ListModel<>();
         dataCentersModel.setItems(dataCenters);
         dataCentersModel.setTitle(addDataCenterTitle);
         dataCentersModel.setHashName("add_datacenter"); //$NON-NLS-1$

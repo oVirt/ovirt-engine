@@ -47,7 +47,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         nameColumn.makeSortable(PoolConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<VmPool> commentColumn = new CommentColumn<VmPool>();
+        CommentColumn<VmPool> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$

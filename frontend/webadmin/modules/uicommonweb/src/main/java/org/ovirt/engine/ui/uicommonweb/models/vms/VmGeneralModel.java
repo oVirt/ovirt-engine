@@ -447,7 +447,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     }
 
     public VmGeneralModel() {
-        setUpdateCompleteEvent(new Event<EventArgs>(updateCompleteEventDefinition));
+        setUpdateCompleteEvent(new Event<>(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);

@@ -260,7 +260,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
     private void onChangeQuota() {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : model.getItems()) {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;

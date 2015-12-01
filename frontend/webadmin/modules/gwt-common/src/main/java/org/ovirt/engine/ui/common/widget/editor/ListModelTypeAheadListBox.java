@@ -77,7 +77,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
      */
     private final boolean autoAddToValidValues;
 
-    private Collection<T> acceptableValues = new ArrayList<T>();
+    private Collection<T> acceptableValues = new ArrayList<>();
 
     private HandlerRegistration eventHandler;
 
@@ -100,7 +100,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues,
                                      SuggestionMatcher suggestionMatcher) {
-        super(new RenderableSuggestOracle<T>(renderer, suggestionMatcher));
+        super(new RenderableSuggestOracle<>(renderer, suggestionMatcher));
         this.renderer = renderer;
         this.autoAddToValidValues = autoAddToValidValues;
 
@@ -382,7 +382,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         public void onFocus(FocusEvent event) {
             if (eventHandler != null) {
                 eventHandler =
-                        Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<T>(ListModelTypeAheadListBox.this));
+                        Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<>(ListModelTypeAheadListBox.this));
             }
         }
     }
@@ -421,7 +421,7 @@ class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
     final private SuggestionMatcher matcher;
 
     // inited to avoid null checks
-    private Collection<T> data = new ArrayList<T>();
+    private Collection<T> data = new ArrayList<>();
 
     public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer, SuggestionMatcher matcher) {
         this.renderer = renderer;
@@ -430,11 +430,11 @@ class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
 
     @Override
     public void requestSuggestions(Request request, Callback callback) {
-        List<RenderableSuggestion<T>> suggestions = new ArrayList<RenderableSuggestion<T>>();
+        List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
 
         String query = request.getQuery();
         for (T row : data) {
-            RenderableSuggestion<T> suggestionCandidate = new RenderableSuggestion<T>(row, renderer);
+            RenderableSuggestion<T> suggestionCandidate = new RenderableSuggestion<>(row, renderer);
             if (this.matcher.match(query, suggestionCandidate)) {
                 suggestions.add(suggestionCandidate);
             }
@@ -445,10 +445,10 @@ class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
 
     @Override
     public void requestDefaultSuggestions(Request request, Callback callback) {
-        List<RenderableSuggestion<T>> suggestions = new ArrayList<RenderableSuggestion<T>>();
+        List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
 
         for (T row : data) {
-            suggestions.add(new RenderableSuggestion<T>(row, renderer));
+            suggestions.add(new RenderableSuggestion<>(row, renderer));
         }
 
         callback.onSuggestionsReady(request, new Response(suggestions));

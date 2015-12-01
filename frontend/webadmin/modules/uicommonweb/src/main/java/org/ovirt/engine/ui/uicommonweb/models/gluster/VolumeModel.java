@@ -105,7 +105,7 @@ public class VolumeModel extends Model {
         setName(new EntityModel<String>());
 
         setTypeList(new ListModel<GlusterVolumeType>());
-        ArrayList<GlusterVolumeType> list = new ArrayList<GlusterVolumeType>(Arrays.asList(GlusterVolumeType.values()));
+        ArrayList<GlusterVolumeType> list = new ArrayList<>(Arrays.asList(GlusterVolumeType.values()));
         list.remove(GlusterVolumeType.DISPERSE);
         list.remove(GlusterVolumeType.DISTRIBUTED_DISPERSE);
         list.remove(GlusterVolumeType.DISTRIBUTED_STRIPE);
@@ -405,11 +405,11 @@ public class VolumeModel extends Model {
             getStripeCount().setEntity(volumeBrickModel.getStripeCount().getEntity());
         }
 
-        ArrayList<EntityModel<GlusterBrickEntity>> brickList = new ArrayList<EntityModel<GlusterBrickEntity>>();
+        ArrayList<EntityModel<GlusterBrickEntity>> brickList = new ArrayList<>();
         brickList.addAll(volumeBrickModel.getBricks().getItems());
         volumeBrickModel.getBricks().setItems(null);
 
-        ListModel<EntityModel<GlusterBrickEntity>> brickListModel = new ListModel<EntityModel<GlusterBrickEntity>>();
+        ListModel<EntityModel<GlusterBrickEntity>> brickListModel = new ListModel<>();
         brickListModel.setItems(brickList);
         brickListModel.setSelectedItems(brickList);
 

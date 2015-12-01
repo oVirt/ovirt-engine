@@ -155,20 +155,20 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
     private final CompositeCell<M> compositeCell;
 
-    private final MultiSelectionModel<M> selectionModel = new MultiSelectionModel<M>();
+    private final MultiSelectionModel<M> selectionModel = new MultiSelectionModel<>();
 
     private NodeSelectionHandler nodeSelectionHandler;
 
     private final HandlerRegistration selectionModelChangeHandlerReg;
-    private final List<HandlerRegistration> nodeModelSelectionHandlerRegList = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> nodeModelSelectionHandlerRegList = new ArrayList<>();
 
     private String elementIdPrefix = DOM.createUniqueId();
 
     public ModelListTreeViewModel() {
-        List<HasCell<M, ?>> cells = new ArrayList<HasCell<M, ?>>();
+        List<HasCell<M, ?>> cells = new ArrayList<>();
         cells.add(new CheckboxColumn());
         cells.add(new CellLabel());
-        this.compositeCell = new CompositeCell<M>(cells);
+        this.compositeCell = new CompositeCell<>(cells);
 
         asyncTreeDataProvider = new AsyncDataProvider<M>() {
             @Override
@@ -191,7 +191,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
-                HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<TreeNodeModel<?, ?>>();
+                HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<>();
                 updateSelectionSets(selectedSet, removedSet, roots);
                 for (M toSelect : selectedSet) {
                     toSelect.setSelected(true);
@@ -251,13 +251,13 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
         if (value == null) {
             // root node
-            return new DefaultNodeInfo<M>(asyncTreeDataProvider,
+            return new DefaultNodeInfo<>(asyncTreeDataProvider,
                     compositeCell, selectionModel,
                     DefaultSelectionEventManager.<M> createCheckboxManager(),
                     null);
         } else {
             // child nodes
-            return new DefaultNodeInfo<M>(new ListDataProvider<M>(model.getChildren()),
+            return new DefaultNodeInfo<>(new ListDataProvider<>(model.getChildren()),
                     compositeCell, selectionModel,
                     DefaultSelectionEventManager.<M> createCheckboxManager(),
                     null);

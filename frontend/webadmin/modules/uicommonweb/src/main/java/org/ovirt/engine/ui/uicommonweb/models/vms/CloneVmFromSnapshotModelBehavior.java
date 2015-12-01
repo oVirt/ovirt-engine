@@ -43,7 +43,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
 
     @Override
     public void initDisks() {
-        ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> disks = new ArrayList<>();
         for (DiskImage diskImage : vm.getDiskList()) {
             disks.add(Linq.diskToModel(diskImage));
         }

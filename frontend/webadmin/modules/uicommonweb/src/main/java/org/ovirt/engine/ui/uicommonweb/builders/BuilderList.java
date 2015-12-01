@@ -35,10 +35,10 @@ public class BuilderList<S, D> extends LinkedList<Builder<S, D>> {
     @SuppressWarnings("unchecked")
     public BuilderList<S, D> append(Builder<S, D> builder) {
         // working on the shallow copy of the list to not affect the original one
-        List<Builder<S, D>> enriched = new BuilderList<S, D>(subList(0, size())).subList(0, size());
+        List<Builder<S, D>> enriched = new BuilderList<>(subList(0, size())).subList(0, size());
         Collections.addAll(enriched, builder);
 
-        return new BuilderList<S, D>(enriched);
+        return new BuilderList<>(enriched);
     }
 
     /**
@@ -58,11 +58,11 @@ public class BuilderList<S, D> extends LinkedList<Builder<S, D>> {
      */
     public BuilderList<S, D> tail() {
         if (size() >= 2) {
-            return new BuilderList<S, D>(subList(1, size()));
+            return new BuilderList<>(subList(1, size()));
         }
 
         // the tail of the empty list and of the list containing one element is empty
-        return new BuilderList<S, D>();
+        return new BuilderList<>();
     }
 
     /**

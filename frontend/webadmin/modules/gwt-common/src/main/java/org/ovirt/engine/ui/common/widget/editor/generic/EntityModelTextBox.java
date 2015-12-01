@@ -24,7 +24,7 @@ public class EntityModelTextBox<T> extends ValueBox<T> implements EditorWidget<T
     @Override
     public ValueBoxEditor<T> asEditor() {
         if (editor == null) {
-            editor = new ObservableValueBoxEditor<T>(this);
+            editor = new ObservableValueBoxEditor<>(this);
         }
         return editor;
     }

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.Timer;
  */
 public abstract class TimerFactory {
 
-    private static Map<String, Timer> timerList = new HashMap<String, Timer>();
+    private static Map<String, Timer> timerList = new HashMap<>();
     private static final Logger logger = Logger.getLogger(TimerFactory.class.getName());
 
     public static Timer factoryTimer(String timerName, Timer timer) {

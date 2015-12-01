@@ -34,7 +34,7 @@ public class SubTabQuotaTemplateView extends AbstractSubTabTreeView<TemplatesTre
 
     @Override
     protected TemplatesTree<QuotaTemplateListModel> getTree() {
-        return new TemplatesTree<QuotaTemplateListModel>();
+        return new TemplatesTree<>();
     }
 
 }

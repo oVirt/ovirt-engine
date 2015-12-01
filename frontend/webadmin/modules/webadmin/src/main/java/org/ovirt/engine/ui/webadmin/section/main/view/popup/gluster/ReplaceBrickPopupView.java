@@ -57,7 +57,7 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
     }
 
     private void initListBoxEditors() {
-        serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
+        serverEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VDS>() {
             @Override
             public String renderNullSafe(VDS vds) {
                 return vds.getHostName();

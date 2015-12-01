@@ -31,24 +31,20 @@ public class BuilderExecutorTest {
 
     @Test
     public void both_emptyBuilderList_ShuldDoNothing() {
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new FrontendAssert(fe1, fe2)).build(
-                frontendModel,
-                backendModel);
+        new BuilderExecutor<>(new FrontendAssert(fe1, fe2)).build(frontendModel, backendModel);
 
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(be1, be2)).build(frontendModel,
-                backendModel);
+        new BuilderExecutor<>(new BackendAssert(be1, be2)).build(frontendModel, backendModel);
 
     }
 
     @Test
     public void frontendToBackend_oneBuilder() {
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, be2),
-                new Property1Builder()).build(frontendModel, backendModel);
+        new BuilderExecutor<>(new BackendAssert(fe1, be2), new Property1Builder()).build(frontendModel, backendModel);
     }
 
     @Test
     public void frontendToBackend_twoBuilders() {
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, fe2),
+        new BuilderExecutor<>(new BackendAssert(fe1, fe2),
                 new Property1Builder(),
                 new Property2Builder())
                 .build(frontendModel, backendModel);
@@ -57,10 +53,7 @@ public class BuilderExecutorTest {
     @Test
     public void oneComposite_oneInner_fromBackendToFrontend() {
         BuilderExecutor<TestingFrontendModel, TestingBackendModel> builderExecutor =
-                new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, be2),
-                        new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                                new Property1Builder()
-                        ));
+                new BuilderExecutor<>(new BackendAssert(fe1, be2), new CompositeBuilder<>(new Property1Builder()));
 
         builderExecutor.build(frontendModel, backendModel);
     }
@@ -68,11 +61,8 @@ public class BuilderExecutorTest {
     @Test
     public void oneComposite_twoInners_fromBackendToFrontend() {
         BuilderExecutor<TestingFrontendModel, TestingBackendModel> builderExecutor =
-                new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, fe2),
-                        new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                                new Property1Builder(),
-                                new Property2Builder()
-                        ));
+                new BuilderExecutor<>(new BackendAssert(fe1, fe2),
+                        new CompositeBuilder<>(new Property1Builder(), new Property2Builder()));
 
         builderExecutor.build(frontendModel, backendModel);
     }
@@ -81,20 +71,13 @@ public class BuilderExecutorTest {
     public void twoComposites_oneInner_fromBackendToFrontend() {
 
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        new Property1Builder()
-                );
+                new CompositeBuilder<>(new Property1Builder());
 
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite2 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        new Property2Builder()
-                );
+                new CompositeBuilder<>(new Property2Builder());
 
         BuilderExecutor<TestingFrontendModel, TestingBackendModel> builderExecutor =
-                new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, fe2),
-                        composite1,
-                        composite2
-                );
+                new BuilderExecutor<>(new BackendAssert(fe1, fe2), composite1, composite2);
 
         builderExecutor.build(frontendModel, backendModel);
     }
@@ -102,49 +85,33 @@ public class BuilderExecutorTest {
     @Test
     public void compositeInComposite_fromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        new Property1Builder()
-                );
+                new CompositeBuilder<>(new Property1Builder());
 
-        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite2 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        composite1
-                );
+        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite2 = new CompositeBuilder<>(composite1);
 
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, be2),
+        new BuilderExecutor<>(new BackendAssert(fe1, be2),
                 composite2).build(frontendModel, backendModel);
     }
 
     @Test
     public void compositeInCompositeInsideComposite_fromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite0 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        new Property1Builder(),
-                        new Property2Builder()
-                );
+                new CompositeBuilder<>(new Property1Builder(), new Property2Builder());
 
-        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        composite0
-                );
+        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 = new CompositeBuilder<>(composite0);
 
-        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite2 =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        composite1
-                );
+        CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite2 = new CompositeBuilder<>(composite1);
 
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, fe2),
+        new BuilderExecutor<>(new BackendAssert(fe1, fe2),
                 composite2).build(frontendModel, backendModel);
     }
 
     @Test
     public void compositeAndThanNormal_fromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite =
-                new CompositeBuilder<TestingFrontendModel, TestingBackendModel>(
-                        new Property1Builder()
-                );
+                new CompositeBuilder<>(new Property1Builder());
 
-        new BuilderExecutor<TestingFrontendModel, TestingBackendModel>(new BackendAssert(fe1, fe2),
+        new BuilderExecutor<>(new BackendAssert(fe1, fe2),
                 composite,
                 new Property2Builder()).build(frontendModel, backendModel);
     }

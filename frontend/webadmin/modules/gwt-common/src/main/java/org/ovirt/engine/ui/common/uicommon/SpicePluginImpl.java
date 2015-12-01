@@ -81,7 +81,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     }
 
     private List<String> getHotKeysAsList() {
-        List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<>();
         ConsoleOptions options = getOptions();
 
         if (!StringHelper.isNullOrEmpty(options.getReleaseCursorHotKey())) {

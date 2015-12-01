@@ -23,7 +23,7 @@ public class Enlistment {
 
     public Enlistment(Object context) {
 
-        doneEvent = new Event<EventArgs>(doneEventDefinition);
+        doneEvent = new Event<>(doneEventDefinition);
         this.context = context;
     }
 

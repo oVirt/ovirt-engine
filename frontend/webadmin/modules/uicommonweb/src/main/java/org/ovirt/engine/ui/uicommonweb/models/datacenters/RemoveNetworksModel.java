@@ -27,7 +27,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         setHelpTag(HelpTag.remove_logical_network);
         setHashName("remove_logical_network"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         boolean externalNetworksWillBeRemoved = false;
         for (Network network : (Iterable<Network>) sourceListModel.getSelectedItems()) {
             if (network instanceof NetworkView) {
@@ -72,7 +72,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
     }
 
     public void onRemove() {
-        ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
 
         for (Object a : sourceListModel.getSelectedItems()) {
             Network network = (Network) a;

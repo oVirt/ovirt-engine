@@ -21,7 +21,7 @@ public class EditHostNetworkQosModel extends QosModel<HostNetworkQos, HostNetwor
 
     @Override
     protected QosParametersBase<HostNetworkQos> getParameters() {
-        QosParametersBase<HostNetworkQos> parameters = new QosParametersBase<HostNetworkQos>();
+        QosParametersBase<HostNetworkQos> parameters = new QosParametersBase<>();
         parameters.setQos(getQos());
         return parameters;
     }

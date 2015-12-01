@@ -43,7 +43,7 @@ public class OperationProcessor {
     @Inject
     public OperationProcessor(final CommunicationProvider commProvider) {
         this.communicationProvider = commProvider;
-        this.pending = new ArrayList<VdcOperation<?, ?>>();
+        this.pending = new ArrayList<>();
     }
 
     /**
@@ -91,9 +91,9 @@ public class OperationProcessor {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     void processAvailableOperations(final VdcOperationManager manager) {
-        List<VdcOperation<?, ?>> operations = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> operations = new ArrayList<>();
         Map<VdcOperationCallback<VdcOperation<?, ?>, ?>, VdcOperationCallback<VdcOperation<?, ?>, ?>> usedCallbacks =
-                new HashMap<VdcOperationCallback<VdcOperation<?, ?>, ?>, VdcOperationCallback<VdcOperation<?, ?>, ?>>();
+                new HashMap<>();
         VdcOperation<?, ?> operation;
 
         while ((operation = manager.pollOperation()) != null) {

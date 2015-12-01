@@ -112,7 +112,7 @@ public class CreateBrickModel extends Model {
     }
 
     private void initSize() {
-        setBrickSize(new Pair<SizeConverter.SizeUnit, Double>(SizeUnit.BYTES, 0D));
+        setBrickSize(new Pair<>(SizeUnit.BYTES, 0D));
     }
 
     private void setBrickSize(Pair<SizeUnit, Double> size) {

@@ -34,7 +34,7 @@ public class AddDataCenterClusterPopupView extends AbstractModelBoundPopupView<L
     @Inject
     public AddDataCenterClusterPopupView(EventBus eventBus) {
         super(eventBus);
-        dataCentersTable = new EntityModelCellTable<ListModel<EntityModel<StoragePool>>>(false, false);
+        dataCentersTable = new EntityModelCellTable<>(false, false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initTableColumns();
     }

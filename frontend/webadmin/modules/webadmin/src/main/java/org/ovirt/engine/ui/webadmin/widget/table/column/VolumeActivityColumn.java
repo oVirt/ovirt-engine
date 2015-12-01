@@ -10,7 +10,7 @@ import com.google.gwt.cell.client.HasCell;
 public class VolumeActivityColumn<T extends GlusterTaskSupport> extends AbstractColumn<T, GlusterTaskSupport> {
 
     public VolumeActivityColumn(List<HasCell<GlusterTaskSupport, ?>> list) {
-        this(new VolumeActivityCompositeCell<GlusterTaskSupport>(list));
+        this(new VolumeActivityCompositeCell<>(list));
     }
 
     public VolumeActivityColumn(VolumeActivityCompositeCell<GlusterTaskSupport> cell) {

@@ -42,7 +42,7 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetUnassignedPanel = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetUnassignedPanel = new Type<>();
 
     private final UnassignedVNumaNodesPanelPresenterWidget unassignedVNumaNodesPanelPresenterWidget;
 

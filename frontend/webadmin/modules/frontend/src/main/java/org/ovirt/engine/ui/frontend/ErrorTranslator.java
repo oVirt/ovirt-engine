@@ -60,7 +60,7 @@ public class ErrorTranslator {
 
     public ArrayList<String> translateMessages(ArrayList<String> errorMsg,
             Boolean changeIfNotFound) {
-        ArrayList<String> translatedMessages = new ArrayList<String>();
+        ArrayList<String> translatedMessages = new ArrayList<>();
         if (errorMsg != null && errorMsg.size() > 0) {
             for (String curError : errorMsg) {
                 translatedMessages.add(translateErrorTextSingle(curError,
@@ -131,8 +131,8 @@ public class ErrorTranslator {
      * @return
      */
     public ArrayList<String> resolveMessages(ArrayList<String> translatedMessages) {
-        ArrayList<String> translatedErrors = new ArrayList<String>();
-        Map<String, LinkedList<String>> variables = new HashMap<String, LinkedList<String>>();
+        ArrayList<String> translatedErrors = new ArrayList<>();
+        Map<String, LinkedList<String>> variables = new HashMap<>();
 
         for (String currentMessage : translatedMessages) {
             if (isVariableDeclaration(currentMessage)) {
@@ -143,7 +143,7 @@ public class ErrorTranslator {
         }
 
         // /Place to global variable adding
-        ArrayList<String> returnValue = new ArrayList<String>();
+        ArrayList<String> returnValue = new ArrayList<>();
         for (String error : translatedErrors) {
             returnValue.add(resolveMessage(error, variables));
         }

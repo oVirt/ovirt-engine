@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -37,7 +36,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
 
     @Override
     protected void initMainTable() {
-        this.table = new ListModelObjectCellTable<Object, ImportVmFromExportDomainModel>();
+        this.table = new ListModelObjectCellTable<>();
 
         AbstractCheckboxColumn<Object> cloneTemplateColumn = new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
             @Override

@@ -1725,7 +1725,7 @@ public final class FormatterJava {
 
     // Look for format specifiers in the format string.
     private FormatString[] parse(String s) {
-        ArrayList<FormatString> al = new ArrayList<FormatString>();
+        ArrayList<FormatString> al = new ArrayList<>();
         while (s.length() > 0) {
             MatchResult m = fsPattern.exec(s);
             if (m != null) {

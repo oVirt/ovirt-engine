@@ -44,21 +44,18 @@ public abstract class BaseInterfaceCreatingManager {
             public void onSuccess(Object model, Object result) {
                 Iterable<VmNetworkInterface> existingVnics = (Iterable<VmNetworkInterface>) result;
                 if (existingVnics == null) {
-                    existingVnics = new ArrayList<VmNetworkInterface>();
+                    existingVnics = new ArrayList<>();
                 }
 
-                Map<String, VmNetworkInterface> existingVnicForName = new HashMap<String, VmNetworkInterface>();
+                Map<String, VmNetworkInterface> existingVnicForName = new HashMap<>();
                 for (VmNetworkInterface vnic : existingVnics) {
                     existingVnicForName.put(vnic.getName(), vnic);
                 }
 
-                final ArrayList<VdcActionParametersBase> createVnicParameters =
-                        new ArrayList<VdcActionParametersBase>();
-                final ArrayList<VdcActionParametersBase> updateVnicParameters =
-                        new ArrayList<VdcActionParametersBase>();
-                final ArrayList<VdcActionParametersBase> removeVnicParameters =
-                        new ArrayList<VdcActionParametersBase>();
-                final Set<String> vnicsEncountered = new HashSet<String>();
+                final ArrayList<VdcActionParametersBase> createVnicParameters = new ArrayList<>();
+                final ArrayList<VdcActionParametersBase> updateVnicParameters = new ArrayList<>();
+                final ArrayList<VdcActionParametersBase> removeVnicParameters = new ArrayList<>();
+                final Set<String> vnicsEncountered = new HashSet<>();
 
                 // iterate over edited VNICs, see if any need to be added or have been assigned a different profile
                 for (VnicInstanceType vnicWithProfile : vnicsWithProfiles) {

@@ -29,7 +29,7 @@ public class ReportActionsHelper {
 
     public <T> List<ActionButtonDefinition<T>> getResourceSubActions(String resourceType,
             MainModelProvider<?, ? extends SearchableListModel> modelProvider) {
-        List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
+        List<ActionButtonDefinition<T>> subActions = new LinkedList<>();
 
         Resource resource = ReportInit.getInstance().getResource(resourceType);
         if (resource != null) {
@@ -57,7 +57,7 @@ public class ReportActionsHelper {
 
     public <T> List<ActionButtonDefinition<T>> getCategorySubActions(final Category category,
             final MainModelProvider<?, ? extends SearchableListModel> modelProvider) {
-        List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
+        List<ActionButtonDefinition<T>> subActions = new LinkedList<>();
 
         for (final URI uri : category.getUriList()) {
             subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), null, true) {

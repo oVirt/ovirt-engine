@@ -52,9 +52,9 @@ public class UnassignedVNumaNodesPanelPresenterWidget extends
     public void populateView() {
         getView().clear();
         List<VNodeModel> unassignedNodeList = model.getUnassignedVNodeModelList();
-        Map<VM, List<VNodeModel>> vmToNodeMap = new HashMap<VM, List<VNodeModel>>();
+        Map<VM, List<VNodeModel>> vmToNodeMap = new HashMap<>();
         for(VM currentVM: this.model.getVmsWithvNumaNodeList()) {
-            List<VNodeModel> nodeModelList = new ArrayList<VNodeModel>();
+            List<VNodeModel> nodeModelList = new ArrayList<>();
             vmToNodeMap.put(currentVM, nodeModelList);
         }
         for (VNodeModel vNodeModel: unassignedNodeList) {

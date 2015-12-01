@@ -50,7 +50,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
     @Override
     protected List<StorageDomain> filterStorageDomains(List<StorageDomain> storageDomains) {
-        List<StorageDomain> availableStorageDomains = new ArrayList<StorageDomain>();
+        List<StorageDomain> availableStorageDomains = new ArrayList<>();
 
         // Filtering out domains that are not active
         for (StorageDomain storageDomainItem : storageDomains) {
@@ -81,7 +81,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
         startProgress();
 
-        ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<>();
 
         for (EntityModel entity : getEntities()) {
             RepoImage repoImage = (RepoImage) entity.getEntity();

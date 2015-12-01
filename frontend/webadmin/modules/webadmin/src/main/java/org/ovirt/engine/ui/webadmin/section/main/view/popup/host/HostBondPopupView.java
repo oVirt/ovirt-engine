@@ -125,9 +125,9 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         super(eventBus);
 
         bondSuggestEditor = new ListModelSuggestBoxEditor();
-        bondEditor = new ListModelListBoxEditor<String>();
+        bondEditor = new ListModelListBoxEditor<>();
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
-        bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
+        bondingModeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
             @Override
             protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {
                 String key = pair.getKey();
@@ -138,7 +138,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
                 return value;
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
+        bootProtocol = new EnumRadioEditor<>(NetworkBootProtocol.class);
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);

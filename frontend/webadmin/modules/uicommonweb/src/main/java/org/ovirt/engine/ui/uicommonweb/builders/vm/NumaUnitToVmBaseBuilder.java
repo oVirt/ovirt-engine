@@ -26,7 +26,7 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
             if (model.getVmNumaNodes() != null && nodeCount == model.getVmNumaNodes().size()) {
                 nodeList = model.getVmNumaNodes();
             } else {
-                nodeList = new ArrayList<VmNumaNode>(nodeCount);
+                nodeList = new ArrayList<>(nodeCount);
                 for (int i = 0; i < nodeCount; i++) {
                     VmNumaNode newNode = new VmNumaNode();
                     newNode.setIndex(i);
@@ -52,7 +52,7 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
     }
 
     private Integer updateCpus(VmNumaNode vmNumaNode, int coresPerNode, Integer cpuCount) {
-        List<Integer> coreList = new ArrayList<Integer>();
+        List<Integer> coreList = new ArrayList<>();
         for (int j = 0; j < coresPerNode; j++, cpuCount++) {
             coreList.add(cpuCount);
         }
@@ -62,9 +62,9 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
 
     private void updateNumaPinning(VmNumaNode vmNumaNode, int index) {
         if (vmNumaNode.getVdsNumaNodeList() == null) {
-            ArrayList<Pair<Guid, Pair<Boolean, Integer>>> list = new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>();
-            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<Guid, Pair<Boolean, Integer>>();
-            pair.setSecond(new Pair<Boolean, Integer>(false, index));
+            ArrayList<Pair<Guid, Pair<Boolean, Integer>>> list = new ArrayList<>();
+            Pair<Guid, Pair<Boolean, Integer>> pair = new Pair<>();
+            pair.setSecond(new Pair<>(false, index));
             list.add(pair);
             vmNumaNode.setVdsNumaNodeList(list);
         }

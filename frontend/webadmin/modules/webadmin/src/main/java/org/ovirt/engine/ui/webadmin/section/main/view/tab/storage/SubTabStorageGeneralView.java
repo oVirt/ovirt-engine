@@ -40,25 +40,25 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     }
 
     @Ignore
-    StorageSizeLabel<Integer> totalSize = new StorageSizeLabel<Integer>();
+    StorageSizeLabel<Integer> totalSize = new StorageSizeLabel<>();
 
     @Ignore
-    StorageSizeLabel<Integer> availableSize = new StorageSizeLabel<Integer>();
+    StorageSizeLabel<Integer> availableSize = new StorageSizeLabel<>();
 
     @Ignore
-    StorageSizeLabel<Integer> usedSize = new StorageSizeLabel<Integer>();
+    StorageSizeLabel<Integer> usedSize = new StorageSizeLabel<>();
 
     @Ignore
-    StorageSizeLabel<Integer> allocatedSize = new StorageSizeLabel<Integer>();
+    StorageSizeLabel<Integer> allocatedSize = new StorageSizeLabel<>();
 
     @Ignore
-    PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
+    PercentLabel<Integer> overAllocationRatio = new PercentLabel<>();
 
     @Ignore
     StringValueLabel warningLowSpaceIndicator = new StringValueLabel();
 
     @Ignore
-    StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<Integer>();
+    StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<>();
 
     @Path("path")
     StringValueLabel path = new StringValueLabel();

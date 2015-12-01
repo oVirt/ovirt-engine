@@ -46,9 +46,9 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
 
     public ListModelObjectCellTable() {
         super(DEFAULT_PAGESIZE, (CellTable.Resources) GWT.create(PopupTableResources.class));
-        this.editorAdapter = new HasDataListModelEditorAdapter<M, T>(this);
+        this.editorAdapter = new HasDataListModelEditorAdapter<>(this);
 
-        SingleSelectionModel<T> selectionModel = new SingleSelectionModel<T>();
+        SingleSelectionModel<T> selectionModel = new SingleSelectionModel<>();
         setSelectionModel(selectionModel);
 
         getSelectionModel().addSelectionChangeHandler(new Handler() {
@@ -90,7 +90,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
                 if (selectionModel instanceof SingleSelectionModel) {
                     getListModel().setSelectedItem(((SingleSelectionModel<T>) selectionModel).getSelectedObject());
                 } else if (selectionModel instanceof MultiSelectionModel) {
-                    List<T> selectedItems = new ArrayList<T>();
+                    List<T> selectedItems = new ArrayList<>();
                     for (T entity : ((MultiSelectionModel<T>) selectionModel).getSelectedSet()) {
                         selectedItems.add(entity);
                     }

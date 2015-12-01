@@ -75,7 +75,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     public VmTable(UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider,
             SubTableResources headerResources) {
         this.modelProvider = modelProvider;
-        tableHeader = new ActionCellTable<VM>(modelProvider, headerResources);
+        tableHeader = new ActionCellTable<>(modelProvider, headerResources);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initTable();
     }
@@ -171,7 +171,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     }
 
     private void setSelectionToModel() {
-        List<VM> selectedVMs = new ArrayList<VM>();
+        List<VM> selectedVMs = new ArrayList<>();
         for (int i = 0; i < vmTree.getItemCount(); i++) {
             if (vmTree.getItem(i) instanceof VmTreeItem) {
                 if (vmTree.getItem(i).getState()) {
@@ -196,10 +196,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     }
 
     private TreeItem createDiskItem(DiskImage disk) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        diskRowResources,
-                        true);
+        EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false, diskRowResources, true);
 
         Column<EntityModel, EntityModel> diskWithMappingColumn =
                 new Column<EntityModel, EntityModel>(createDiskImageWithMappingComoisiteCell()) {
@@ -252,10 +249,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     }
 
     private VmTreeItem createVmItem(VM vm) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        vmRowResources,
-                        true);
+        EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false, vmRowResources, true);
 
         AbstractColumn<EntityModel, EntityModel> vmImageWithNameColumn =
                 new AbstractColumn<EntityModel, EntityModel>(createVmImageWithNameCompositeCell()) {
@@ -330,7 +324,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        return new StyledCompositeCell<EntityModel>(
+        return new StyledCompositeCell<>(
                 new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(diskImageColumn, driveMappingColumn)),
                 new StyledCompositeCell.StyledProvider<EntityModel>() {
 
@@ -365,7 +359,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        return new StyledCompositeCell<EntityModel>(
+        return new StyledCompositeCell<>(
                 new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(vmImageColumn, nameColumn)),
                 new StyledCompositeCell.StyledProvider<EntityModel>() {
 

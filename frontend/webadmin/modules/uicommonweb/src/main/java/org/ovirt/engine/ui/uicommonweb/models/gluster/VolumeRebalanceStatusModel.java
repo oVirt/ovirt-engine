@@ -113,9 +113,9 @@ public class VolumeRebalanceStatusModel extends Model {
     public void showStatus(GlusterVolumeTaskStatusEntity rebalanceStatusEntity) {
         List<GlusterVolumeTaskStatusForHost> rebalanceSessionsList =
                 rebalanceStatusEntity.getHostwiseStatusDetails();
-        List<EntityModel<GlusterVolumeTaskStatusForHost>> sessionList = new ArrayList<EntityModel<GlusterVolumeTaskStatusForHost>>();
+        List<EntityModel<GlusterVolumeTaskStatusForHost>> sessionList = new ArrayList<>();
         for (GlusterVolumeTaskStatusForHost hostDetail : rebalanceSessionsList) {
-            EntityModel<GlusterVolumeTaskStatusForHost> sessionModel = new EntityModel<GlusterVolumeTaskStatusForHost>(hostDetail);
+            EntityModel<GlusterVolumeTaskStatusForHost> sessionModel = new EntityModel<>(hostDetail);
             sessionList.add(sessionModel);
         }
         getStartTime().setEntity(rebalanceStatusEntity.getStartTime());

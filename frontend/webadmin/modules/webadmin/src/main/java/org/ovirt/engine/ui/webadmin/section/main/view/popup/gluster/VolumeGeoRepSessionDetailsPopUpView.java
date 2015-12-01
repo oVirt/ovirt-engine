@@ -124,7 +124,7 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
 
     private void intiEditors(final ApplicationConstants constants) {
         checkPointStatus =
-                new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+                new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
                     @Override
                     public String render(GlusterGeoRepSessionDetails object) {
                         String checkPointStatusValue = object.getCheckPointStatus();
@@ -132,52 +132,52 @@ public class VolumeGeoRepSessionDetailsPopUpView extends AbstractModelBoundPopup
                                 : checkPointStatusValue;
                     }
                 });
-        crawlStatus = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        crawlStatus = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return object.getCrawlStatus().toString();
             }
         });
-        dataOpsPending = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        dataOpsPending = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return object.getDataOpsPending().toString();
             }
         });
-        metaOpsPending = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        metaOpsPending = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return object.getMetaOpsPending().toString();
             }
         });
-        entryOpsPending = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        entryOpsPending = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return object.getEntryOpsPending().toString();
             }
         });
-        failures = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        failures = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return object.getFailures().toString();
             }
         });
 
-        checkPointTime = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        checkPointTime = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return new FullDateTimeRenderer().render(object.getCheckPointTime());
             }
         });
 
-        checkPointCompletedAt = new EntityModelLabelEditor<GlusterGeoRepSessionDetails>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
+        checkPointCompletedAt = new EntityModelLabelEditor<>(new AbstractRenderer<GlusterGeoRepSessionDetails>() {
             @Override
             public String render(GlusterGeoRepSessionDetails object) {
                 return new FullDateTimeRenderer().render(object.getCheckPointCompletedAt());
             }
         });
 
-        geoRepSessionSummaryTable = new EntityModelCellTable<ListModel<EntityModel<GlusterGeoRepSessionDetails>>>(false, true);
+        geoRepSessionSummaryTable = new EntityModelCellTable<>(false, true);
 
         geoRepSessionSummaryTable.addColumn(new AbstractEntityModelTextColumn<GlusterGeoRepSessionDetails>() {
             @Override

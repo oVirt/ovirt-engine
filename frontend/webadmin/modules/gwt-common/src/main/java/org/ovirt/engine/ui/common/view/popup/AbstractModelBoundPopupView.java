@@ -48,7 +48,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     private String elementId = DOM.createUniqueId();
 
-    private final List<FocusableComponentsContainer> focusableButtons = new ArrayList<FocusableComponentsContainer>();
+    private final List<FocusableComponentsContainer> focusableButtons = new ArrayList<>();
 
     public AbstractModelBoundPopupView(EventBus eventBus) {
         super(eventBus);

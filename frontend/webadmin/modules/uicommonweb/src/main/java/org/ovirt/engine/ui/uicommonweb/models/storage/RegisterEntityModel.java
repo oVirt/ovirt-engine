@@ -119,8 +119,8 @@ public abstract class RegisterEntityModel<T> extends Model {
             return;
         }
 
-        List<VdcQueryType> queries = new ArrayList<VdcQueryType>();
-        List<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
+        List<VdcQueryType> queries = new ArrayList<>();
+        List<VdcQueryParametersBase> params = new ArrayList<>();
         for (VDSGroup cluster : clusters) {
             queries.add(VdcQueryType.GetAllRelevantQuotasForVdsGroup);
             params.add(new IdQueryParameters(cluster.getId()));
@@ -129,7 +129,7 @@ public abstract class RegisterEntityModel<T> extends Model {
         Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<Guid, List<Quota>> clusterQuotasMap = new HashMap<Guid, List<Quota>>();
+                Map<Guid, List<Quota>> clusterQuotasMap = new HashMap<>();
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     List<Quota> quotas = result.getReturnValues().get(i).getReturnValue();
                     Guid clusterId = ((IdQueryParameters) result.getParameters().get(i)).getId();
@@ -151,7 +151,7 @@ public abstract class RegisterEntityModel<T> extends Model {
     }
 
     public List<String> getQuotaNames(List<Quota> quotas) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         if (quotas != null) {
             for (Quota quota : quotas) {
                 names.add(quota.getQuotaName());

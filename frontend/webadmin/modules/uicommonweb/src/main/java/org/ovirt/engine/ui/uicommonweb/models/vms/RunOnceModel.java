@@ -565,7 +565,7 @@ public abstract class RunOnceModel extends Model {
         setInitrdImage(new ListModel<String>());
 
         // Initial Boot tab - Sysprep
-        setIsCloudInitEnabled(new EntityModel<Boolean>(false));
+        setIsCloudInitEnabled(new EntityModel<>(false));
 
         setSysPrepDomainName(new ListModel<String>());
         setSysPrepSelectedDomainName(new EntityModel<String>());
@@ -574,12 +574,12 @@ public abstract class RunOnceModel extends Model {
         setSysPrepPassword(new EntityModel<String>().setIsChangeable(false));
         setSysPrepPasswordVerification(new EntityModel<String>().setIsChangeable(false));
 
-        setIsSysprepEnabled(new EntityModel<Boolean>(false));
+        setIsSysprepEnabled(new EntityModel<>(false));
         setIsSysprepPossible(new EntityModel<Boolean>());
 
-        setIsVmFirstRun(new EntityModel<Boolean>(false));
+        setIsVmFirstRun(new EntityModel<>(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
-        setUseAlternateCredentials(new EntityModel<Boolean>(false));
+        setUseAlternateCredentials(new EntityModel<>(false));
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         // Initial Boot tab - Cloud-Init
@@ -590,10 +590,10 @@ public abstract class RunOnceModel extends Model {
         // Custom Properties tab
         setCustomPropertySheet(new KeyValueModel());
 
-        setBootMenuEnabled(new EntityModel<Boolean>(false));
+        setBootMenuEnabled(new EntityModel<>(false));
         getBootMenuEnabled().setIsAvailable(AsyncDataProvider.getInstance().isBootMenuSupported(vm.getVdsGroupCompatibilityVersion().toString()));
-        setRunAndPause(new EntityModel<Boolean>(false));
-        setRunAsStateless(new EntityModel<Boolean>(false));
+        setRunAndPause(new EntityModel<>(false));
+        setRunAsStateless(new EntityModel<>(false));
 
         // Display Protocol tab
         setDisplayConsole_Spice_IsSelected(new EntityModel<Boolean>());
@@ -632,7 +632,7 @@ public abstract class RunOnceModel extends Model {
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         // availability/visibility
-        setIsLinuxOptionsAvailable(new EntityModel<Boolean>(false));
+        setIsLinuxOptionsAvailable(new EntityModel<>(false));
 
         setIsHostTabVisible(true);
 
@@ -683,10 +683,10 @@ public abstract class RunOnceModel extends Model {
         setIsBootFromHardDiskAllowedForVm();
 
         // Display protocols.
-        EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>(DisplayType.vga)
+        EntityModel<DisplayType> vncProtocol = new EntityModel<>(DisplayType.vga)
            .setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
-        EntityModel<DisplayType> qxlProtocol = new EntityModel<DisplayType>(DisplayType.qxl)
+        EntityModel<DisplayType> qxlProtocol = new EntityModel<>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         boolean hasSpiceSupport = AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
@@ -997,7 +997,7 @@ public abstract class RunOnceModel extends Model {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
                             if (returnValue != null) {
-                                Set<String> emulatedSet = new TreeSet<String>((HashSet<String>) returnValue);
+                                Set<String> emulatedSet = new TreeSet<>((HashSet<String>) returnValue);
                                 String oldVal = getEmulatedMachine().getSelectedItem();
                                 getEmulatedMachine().setItems(emulatedSet);
                                 getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
@@ -1020,7 +1020,7 @@ public abstract class RunOnceModel extends Model {
                                                 @Override
                                                 public void onSuccess(Object model, Object returnValue) {
                                                     if (returnValue != null) {
-                                                        List<String> cpuList = new ArrayList<String>();
+                                                        List<String> cpuList = new ArrayList<>();
                                                         for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
                                                             cpuList.add(cpu.getVdsVerbData());
                                                         }
@@ -1261,7 +1261,7 @@ public abstract class RunOnceModel extends Model {
 
         List<String> layouts =
                 (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
-        List<String> vncKeyboardLayoutItems = new ArrayList<String>();
+        List<String> vncKeyboardLayoutItems = new ArrayList<>();
         vncKeyboardLayoutItems.add(null);
         vncKeyboardLayoutItems.addAll(layouts);
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);

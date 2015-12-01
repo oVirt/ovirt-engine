@@ -81,7 +81,7 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
     }
 
     private void createSotrageDomainsTable() {
-        storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
+        storageDomainsTable = new ListModelObjectCellTable<>(true, true);
         storageDomainsTable.enableColumnResizing();
 
         AbstractEditTextColumn<StorageDomain> nameColumn = new AbstractEditTextColumn<StorageDomain>(

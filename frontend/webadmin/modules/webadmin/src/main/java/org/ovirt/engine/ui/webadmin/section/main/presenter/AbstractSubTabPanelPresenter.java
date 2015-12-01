@@ -37,7 +37,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<>();
 
     protected final ScrollableTabBarPresenterWidget tabBar;
     protected List<? extends IVdcQueryable> mainTabSelectedItems;

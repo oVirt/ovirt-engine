@@ -185,7 +185,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
     }
 
     private void initApplicationsTable() {
-        applicationsTable = new ActionCellTable<String>(new AbstractDataProvider<String>() {
+        applicationsTable = new ActionCellTable<>(new AbstractDataProvider<String>() {
             @Override
             protected void onRangeChanged(HasData<String> display) {
             }

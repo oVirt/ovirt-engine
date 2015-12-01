@@ -29,7 +29,7 @@ public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
         initPriority(0);
         getModel().getTotalCPUCores().setEntity("1"); //$NON-NLS-1$
 
-        getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(new ArrayList<VnicProfileView>(Arrays.asList(VnicProfileView.EMPTY)));
+        getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY)));
         getModel().getNicsWithLogicalNetworks().setItems(new ArrayList<VnicInstanceType>());
     }
 

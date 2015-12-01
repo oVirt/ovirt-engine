@@ -77,14 +77,14 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
 
     private void initLogicalNetworksPanel() {
         VerticalPanel panel = new VerticalPanel();
-        networksTable = new ListModelObjectCellTable<Network, ListModel>(true);
+        networksTable = new ListModelObjectCellTable<>(true);
         panel.add(networksTable);
         logicalNetworksPanel.setWidget(panel);
     }
 
     private void initStorageConnectionsPanel() {
         VerticalPanel panel = new VerticalPanel();
-        connectionsTable = new ListModelObjectCellTable<StorageServerConnections, ListModel>(true);
+        connectionsTable = new ListModelObjectCellTable<>(true);
         panel.add(connectionsTable);
         storageTargetsPanel.setWidget(panel);
     }

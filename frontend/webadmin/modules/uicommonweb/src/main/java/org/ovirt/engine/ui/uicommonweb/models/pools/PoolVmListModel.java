@@ -100,7 +100,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
         model.setHelpTag(HelpTag.detach_virtual_machine);
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (VM item : getSelectedItems()) {
             list.add(item.getName());
         }
@@ -132,7 +132,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             list.add(new RemoveVmFromPoolParameters(vm.getId(), true));

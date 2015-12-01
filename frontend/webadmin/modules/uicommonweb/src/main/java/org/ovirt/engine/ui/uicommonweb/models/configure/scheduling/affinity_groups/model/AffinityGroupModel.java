@@ -50,8 +50,8 @@ public abstract class AffinityGroupModel extends Model {
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
-        setPositive(new EntityModel<Boolean>(true));
-        setEnforcing(new EntityModel<Boolean>(true));
+        setPositive(new EntityModel<>(true));
+        setEnforcing(new EntityModel<>(true));
 
         setVmsSelectionModel(new VmsSelectionModel());
 

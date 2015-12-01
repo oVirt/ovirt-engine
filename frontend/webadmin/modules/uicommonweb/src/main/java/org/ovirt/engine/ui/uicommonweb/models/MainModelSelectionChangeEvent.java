@@ -36,7 +36,7 @@ public class MainModelSelectionChangeEvent extends GwtEvent<MainModelSelectionCh
         public void onMainModelSelectionChange(MainModelSelectionChangeEvent event);
     }
 
-    private static final Type<MainModelSelectionChangeHandler> TYPE = new Type<MainModelSelectionChangeHandler>();
+    private static final Type<MainModelSelectionChangeHandler> TYPE = new Type<>();
 
     public static Type<MainModelSelectionChangeHandler> getType() {
         return TYPE;

@@ -159,7 +159,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             }
         });
 
-        List<ActionButtonDefinition<Snapshot>> previewSubActions = new LinkedList<ActionButtonDefinition<Snapshot>>();
+        List<ActionButtonDefinition<Snapshot>> previewSubActions = new LinkedList<>();
         previewSubActions.add(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.customPreviewSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
@@ -172,7 +172,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             protected UICommand resolveCommand() {
                 return getModel().getPreviewCommand();
             }
-        }, new DropdownActionButton<Snapshot>(previewSubActions, new DropdownActionButton.SelectedItemsProvider<Snapshot>() {
+        }, new DropdownActionButton<>(previewSubActions, new DropdownActionButton.SelectedItemsProvider<Snapshot>() {
             @Override
             public List<Snapshot> getSelectedItems() {
                 return getModel().getSelectedItems();

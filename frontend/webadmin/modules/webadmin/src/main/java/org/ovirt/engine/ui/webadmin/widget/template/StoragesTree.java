@@ -84,7 +84,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
     @Override
     protected TreeItem getNodeHeader() {
-        EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
+        EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false, true);
         table.addColumn(new EmptyColumn(), constants.empty(), "30px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.sizeStorageTree(), "120px"); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     }
 
     protected ArrayList<Object> getSelectedEntities() {
-        ArrayList<Object> selectedEntities = new ArrayList<Object>();
+        ArrayList<Object> selectedEntities = new ArrayList<>();
         for (StorageDomainModel storageDomainModel : (ArrayList<StorageDomainModel>) listModel.getItems()) {
             for (DiskModel entity : storageDomainModel.getDisksModels()) {
                 if (selectedItems.contains(getEntityId(entity))) {

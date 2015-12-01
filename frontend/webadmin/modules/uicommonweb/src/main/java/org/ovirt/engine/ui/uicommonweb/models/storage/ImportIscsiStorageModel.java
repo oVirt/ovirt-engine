@@ -82,13 +82,13 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
         SortedSet<SanTargetModel> targetsSet = getTargetsSet();
         targetsSet.addAll(getTargets().getItems());
         targetsSet.addAll(getSanTargetModels(newItems.iterator()));
-        getTargets().setItems(new ArrayList<SanTargetModel>(targetsSet));
+        getTargets().setItems(new ArrayList<>(targetsSet));
 
         proposeDiscover();
     }
 
     private SortedSet<SanTargetModel> getTargetsSet() {
-        return new TreeSet<SanTargetModel>(new Comparator<SanTargetModel>() {
+        return new TreeSet<>(new Comparator<SanTargetModel>() {
             LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
             @Override
@@ -99,7 +99,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     }
 
     private List<SanTargetModel> getSanTargetModels(Iterator<StorageServerConnections> itemsIterator) {
-        List<SanTargetModel> targets = new ArrayList<SanTargetModel>();
+        List<SanTargetModel> targets = new ArrayList<>();
         while (itemsIterator.hasNext()) {
             StorageServerConnections connection = itemsIterator.next();
             SanTargetModel targetModel = getSanTargetModelByConnection(connection);
@@ -122,7 +122,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     }
 
     private List<StorageServerConnections> getStorageServerConnections(List<SanTargetModel> targetModels) {
-        List<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
+        List<StorageServerConnections> connections = new ArrayList<>();
         for (SanTargetModel targetModel : targetModels) {
             connections.add(targetModel.getEntity());
         }

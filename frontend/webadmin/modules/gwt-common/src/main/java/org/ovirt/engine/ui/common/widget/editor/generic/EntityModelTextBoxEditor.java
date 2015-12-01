@@ -15,10 +15,10 @@ public class EntityModelTextBoxEditor<T> extends AbstractValueBoxWithLabelEditor
     }
 
     public EntityModelTextBoxEditor(Renderer<T> renderer, Parser<T> parser) {
-        super(new EntityModelTextBox<T>(renderer, parser));
+        super(new EntityModelTextBox<>(renderer, parser));
     }
 
     public EntityModelTextBoxEditor(Renderer<T> renderer, Parser<T> parser, VisibilityRenderer visibilityRenderer) {
-        super(new EntityModelTextBox<T>(renderer, parser), visibilityRenderer);
+        super(new EntityModelTextBox<>(renderer, parser), visibilityRenderer);
     }
 }

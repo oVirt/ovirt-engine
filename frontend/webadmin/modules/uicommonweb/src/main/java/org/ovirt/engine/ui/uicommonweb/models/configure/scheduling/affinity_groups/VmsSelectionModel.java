@@ -28,14 +28,14 @@ public class VmsSelectionModel extends BaseKeyModel {
         if (vms == null || usedVms == null) {
             return;
         }
-        allVmNameMap = new HashMap<String, VM>();
-        Map<Guid, VM> vmmMap = new HashMap<Guid, VM>();
+        allVmNameMap = new HashMap<>();
+        Map<Guid, VM> vmmMap = new HashMap<>();
         for (VM vm : vms) {
             allVmNameMap.put(vm.getName(), vm);
             vmmMap.put(vm.getId(), vm);
         }
 
-        Set<String> usedVmNames = new HashSet<String>();
+        Set<String> usedVmNames = new HashSet<>();
         for (Guid guid : usedVms) {
             usedVmNames.add(vmmMap.get(guid).getName());
         }
@@ -62,7 +62,7 @@ public class VmsSelectionModel extends BaseKeyModel {
     }
 
     public List<Guid> getSelectedVmIds() {
-        List<Guid> list = new ArrayList<Guid>();
+        List<Guid> list = new ArrayList<>();
         for (KeyValueLineModel keyModel : getItems()) {
             String selectedItem = keyModel.getKeys().getSelectedItem();
             if (isKeyValid(selectedItem)) {

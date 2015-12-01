@@ -43,7 +43,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
      * model is updated which causes a redraw to happen. Then after the redraw we can use the map to restore the
      * state of the tree to what it was before the redraw.
      */
-    protected final Map<Object, Map<String, Boolean>> nodeStateMap = new HashMap<Object, Map<String, Boolean>>();
+    protected final Map<Object, Map<String, Boolean>> nodeStateMap = new HashMap<>();
 
     interface WidgetUiBinder extends UiBinder<Widget, SystemTree> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -145,7 +145,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 Object entity = ((SystemTreeItemModel) treeNode.getChildValue(i)).getEntity();
                 Map<String, Boolean> entityStringMap = expandedStateMap.get(entity);
                 if (entityStringMap == null) {
-                    entityStringMap = new HashMap<String, Boolean>();
+                    entityStringMap = new HashMap<>();
                     expandedStateMap.put(entity, entityStringMap);
                 }
                 entityStringMap.put(((SystemTreeItemModel) treeNode.getChildValue(i)).getTitle(),
@@ -199,7 +199,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         }
 
         // first construct a list of all ancestors of the target node
-        List<SystemTreeItemModel> modelPath = new ArrayList<SystemTreeItemModel>();
+        List<SystemTreeItemModel> modelPath = new ArrayList<>();
         SystemTreeItemModel model = targetNodeModel.getParent();
         while (model != null) {
             modelPath.add(model);

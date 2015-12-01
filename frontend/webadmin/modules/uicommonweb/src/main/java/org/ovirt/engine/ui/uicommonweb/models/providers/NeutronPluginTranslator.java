@@ -16,8 +16,8 @@ public class NeutronPluginTranslator {
     private static final Map<String, OpenstackNetworkPluginType> pluginForDisplay;
 
     static {
-        pluginForDisplay = new HashMap<String, OpenstackNetworkPluginType>();
-        displayStrings = new ArrayList<String>();
+        pluginForDisplay = new HashMap<>();
+        displayStrings = new ArrayList<>();
         for (OpenstackNetworkPluginType plugin : OpenstackNetworkPluginType.values()) {
             if (plugin != OpenstackNetworkPluginType.LINUX_BRIDGE) {
                 String displayString = EnumTranslator.getInstance().translate(plugin);

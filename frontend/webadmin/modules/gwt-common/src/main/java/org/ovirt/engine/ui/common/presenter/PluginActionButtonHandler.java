@@ -11,8 +11,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class PluginActionButtonHandler {
-    private final Map<String, List<ActionButtonDefinition<?>>> definitionMap =
-            new HashMap<String, List<ActionButtonDefinition<?>>>();
+    private final Map<String, List<ActionButtonDefinition<?>>> definitionMap = new HashMap<>();
 
     @Inject
     public PluginActionButtonHandler(EventBus eventBus) {
@@ -23,7 +22,7 @@ public class PluginActionButtonHandler {
             public void onAddTabActionButton(AddTabActionButtonEvent event) {
                 List<ActionButtonDefinition<?>> buttonDefinitionList = definitionMap.get(event.getHistoryToken());
                 if (buttonDefinitionList == null) {
-                    buttonDefinitionList = new ArrayList<ActionButtonDefinition<?>>();
+                    buttonDefinitionList = new ArrayList<>();
                     definitionMap.put(event.getHistoryToken(), buttonDefinitionList);
                 }
                 buttonDefinitionList.add(event.getButtonDefinition());

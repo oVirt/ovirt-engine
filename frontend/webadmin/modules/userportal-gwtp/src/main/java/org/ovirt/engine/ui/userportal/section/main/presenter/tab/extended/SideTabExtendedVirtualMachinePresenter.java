@@ -55,7 +55,7 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetSubTabPanelContent = new Type<>();
 
     @Inject
     public SideTabExtendedVirtualMachinePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,

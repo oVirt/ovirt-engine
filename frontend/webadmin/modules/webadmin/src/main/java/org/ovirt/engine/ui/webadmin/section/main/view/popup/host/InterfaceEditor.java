@@ -64,7 +64,7 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public InterfaceEditor() {
-        protocolEditor = new ValueListBox<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
+        protocolEditor = new ValueListBox<>(new EnumRenderer<NetworkBootProtocol>());
         protocolEditor.setAcceptableValues(Arrays.asList(NetworkBootProtocol.class.getEnumConstants()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         addressLabel.setText(constants.addressInterfaceEditor());

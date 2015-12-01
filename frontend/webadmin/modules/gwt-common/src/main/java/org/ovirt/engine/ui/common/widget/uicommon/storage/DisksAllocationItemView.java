@@ -112,7 +112,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         storageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 
-        volumeFormatListEditor = new ListModelListBoxEditor<VolumeFormat>(new EnumRenderer<VolumeFormat>());
+        volumeFormatListEditor = new ListModelListBoxEditor<>(new EnumRenderer<VolumeFormat>());
 
         sourceStorageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 

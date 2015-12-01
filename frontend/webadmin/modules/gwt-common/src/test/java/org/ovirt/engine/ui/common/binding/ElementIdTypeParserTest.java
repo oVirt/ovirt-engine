@@ -77,7 +77,7 @@ public class ElementIdTypeParserTest {
         stubPassingField(field, mock(JClassType.class), "field"); //$NON-NLS-1$
 
         JClassType ownerTypeParent = mock(JClassType.class);
-        Set<? extends JClassType> ownerTypeFlattenedSupertypeHierarchy = new HashSet<JClassType>(
+        Set<? extends JClassType> ownerTypeFlattenedSupertypeHierarchy = new HashSet<>(
                 Arrays.asList(ownerType, ownerTypeParent));
         doReturn(ownerTypeFlattenedSupertypeHierarchy).when(ownerType).getFlattenedSupertypeHierarchy();
         when(ownerType.getFields()).thenReturn(new JField[] { ownerTypeField1, ownerTypeField2 });
@@ -89,7 +89,7 @@ public class ElementIdTypeParserTest {
         stubPassingField(ownerTypeField2, mock(JClassType.class), "ownerTypeField2"); //$NON-NLS-1$
         stubPassingField(ownerTypeParentField, ownerTypeParentFieldType, "ownerTypeParentField"); //$NON-NLS-1$
 
-        Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy = new HashSet<JClassType>(
+        Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy = new HashSet<>(
                 Arrays.asList(ownerTypeParentFieldType));
         doReturn(ownerTypeParentFieldTypeFlattenedSupertypeHierarchy).when(ownerTypeParentFieldType)
                 .getFlattenedSupertypeHierarchy();
@@ -219,7 +219,7 @@ public class ElementIdTypeParserTest {
     @Test(expected = UnableToCompleteException.class)
     public void doParse_unhandledFieldTypeRecursion() throws UnableToCompleteException {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
-                new HashSet<JClassType>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
+                new HashSet<>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
@@ -230,7 +230,7 @@ public class ElementIdTypeParserTest {
     @Test
     public void doParse_handledFieldTypeRecursion() throws UnableToCompleteException {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
-                new HashSet<JClassType>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
+                new HashSet<>(Arrays.asList(ownerTypeParentFieldTypeSubField1Type));
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });

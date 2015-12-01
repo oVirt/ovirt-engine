@@ -39,7 +39,7 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         this.eventBus = eventBus;
 
         // Configure UiCommon dialog handler
-        this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus);
+        this.popupHandler = new ModelBoundPopupHandler<>(this, eventBus);
         this.popupHandler.setDefaultConfirmPopupProvider(defaultConfirmPopupProvider);
     }
 

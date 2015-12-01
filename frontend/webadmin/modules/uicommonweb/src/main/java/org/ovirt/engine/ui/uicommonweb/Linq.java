@@ -447,7 +447,7 @@ public final class Linq {
     }
 
     public static ArrayList<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName())) {
                 ret.add(i);
@@ -457,7 +457,7 @@ public final class Linq {
     }
 
     public static ArrayList<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (StringHelper.isNullOrEmpty(i.getBondName())) {
                 ret.add(i);
@@ -467,7 +467,7 @@ public final class Linq {
     }
 
     public static ArrayList<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items) {
-        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<>();
         for (VdsNetworkInterface i : items) {
             if (i.getVlanId() == null) {
                 ret.add(i);
@@ -513,7 +513,7 @@ public final class Linq {
     }
 
     public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items) {
-        ArrayList<VDS> ret = new ArrayList<VDS>();
+        ArrayList<VDS> ret = new ArrayList<>();
         for (VDS i : items) {
             if (i.isPmEnabled()) {
                 ret.add(i);
@@ -533,7 +533,7 @@ public final class Linq {
 
     public static ArrayList<StorageDomain> findAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
             StorageDomainSharedStatus status) {
-        ArrayList<StorageDomain> ret = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> ret = new ArrayList<>();
         for (StorageDomain i : items) {
             if (i.getStorageDomainSharedStatus() == status) {
                 ret.add(i);
@@ -569,7 +569,7 @@ public final class Linq {
      */
     public static <TSource> ArrayList<TSource> except(ArrayList<TSource> first,
             ArrayList<TSource> second) {
-        ArrayList<TSource> newIEnumerable = new ArrayList<TSource>();
+        ArrayList<TSource> newIEnumerable = new ArrayList<>();
 
         if (first != null && second != null) {
             for (TSource t : first) {
@@ -625,7 +625,7 @@ public final class Linq {
 
     public static <TSource> Collection<TSource> where(Collection<TSource> source,
             IPredicate<? super TSource> predicate) {
-        ArrayList<TSource> list = new ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<>();
 
         for (TSource item : source) {
             if (predicate.match(item)) {
@@ -650,7 +650,7 @@ public final class Linq {
      * Returns a new instance of list containing all items of the provided source.
      */
     public static <TSource> ArrayList<TSource> toList(Iterable<TSource> source) {
-        ArrayList<TSource> list = new ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<>();
         for (TSource item : source) {
             list.add(item);
         }
@@ -660,7 +660,7 @@ public final class Linq {
 
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer) {
-        ArrayList<TSource> list = new ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<>();
         for (TSource a : source) {
             boolean found = false;
             for (TSource b : list) {
@@ -679,7 +679,7 @@ public final class Linq {
     }
 
     public static <TResult> ArrayList<TResult> cast(Iterable source) {
-        ArrayList<TResult> list = new ArrayList<TResult>();
+        ArrayList<TResult> list = new ArrayList<>();
         for (Object a : source) {
             TResult item = (TResult) a;
             list.add(item);
@@ -689,7 +689,7 @@ public final class Linq {
     }
 
     public static List concatUnsafe(List... lists) {
-        List result = new ArrayList<Object>();
+        List result = new ArrayList<>();
         for (List list : lists) {
             for (Object item : list) {
                 result.add(item);
@@ -705,17 +705,17 @@ public final class Linq {
     }
 
     public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists) {
-        HashSet<T> set = new HashSet<T>();
+        HashSet<T> set = new HashSet<>();
 
         for (ArrayList<T> list : lists) {
             set.addAll(list);
         }
 
-        return new ArrayList<T>(set);
+        return new ArrayList<>(set);
     }
 
     public static <T> ArrayList<T> intersection(ArrayList<ArrayList<T>> lists) {
-        ArrayList<T> result = new ArrayList<T>();
+        ArrayList<T> result = new ArrayList<>();
 
         if (lists != null && !lists.isEmpty()) {
             result.addAll(lists.get(0));
@@ -768,11 +768,11 @@ public final class Linq {
     }
 
     public static <T> ArrayList<EntityModel<T>> toEntityModelList(ArrayList<T> list) {
-        ArrayList<EntityModel<T>> entityModelList = new ArrayList<EntityModel<T>>();
+        ArrayList<EntityModel<T>> entityModelList = new ArrayList<>();
 
         if (list != null) {
             for (T item : list) {
-                EntityModel<T> model = new EntityModel<T>();
+                EntityModel<T> model = new EntityModel<>();
                 model.setEntity(item);
                 entityModelList.add(model);
             }
@@ -782,7 +782,7 @@ public final class Linq {
     }
 
     public static ArrayList<DiskModel> filterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type) {
-        ArrayList<DiskModel> filteredList = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> filteredList = new ArrayList<>();
 
         if (diskModels != null) {
             for (DiskModel item : diskModels) {
@@ -824,12 +824,12 @@ public final class Linq {
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            EntityModel<Integer> sizeEntity = new EntityModel<Integer>();
+            EntityModel<Integer> sizeEntity = new EntityModel<>();
             sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
             diskModel.setSize(sizeEntity);
             ListModel volumeList = new ListModel();
             volumeList.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ?
-                    new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))
+                    new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
                     : AsyncDataProvider.getInstance().getVolumeTypeList()));
             volumeList.setSelectedItem(diskImage.getVolumeType());
             diskModel.setVolumeType(volumeList);
@@ -841,7 +841,7 @@ public final class Linq {
     }
 
     public static ArrayList<DiskModel> disksToDiskModelList(List<Disk> disks) {
-        ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> diskModels = new ArrayList<>();
 
         for (Disk disk : disks) {
             DiskModel diskModel = new DiskModel();
@@ -853,7 +853,7 @@ public final class Linq {
     }
 
     public static Set<String> getDiskAliases(List<? extends Disk> disks) {
-        Set<String> aliases = new HashSet<String>();
+        Set<String> aliases = new HashSet<>();
         for (Disk disk : disks) {
             aliases.add(disk.getDiskAlias());
         }
@@ -861,7 +861,7 @@ public final class Linq {
     }
 
     public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
-        List<DiskImage> subtract = new ArrayList<DiskImage>();
+        List<DiskImage> subtract = new ArrayList<>();
         for (DiskImage image : images) {
             if (Linq.getDiskImageById(image.getId(), imagesToSubtract) == null) {
                 subtract.add(image);

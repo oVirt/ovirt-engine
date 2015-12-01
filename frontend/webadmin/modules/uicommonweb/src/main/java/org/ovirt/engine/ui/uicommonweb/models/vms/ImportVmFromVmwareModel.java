@@ -64,7 +64,7 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
     }
 
     private List<VdcActionParametersBase> buildImportVmFromExternalProviderParameters() {
-        List<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> prms = new ArrayList<>();
 
         for (Object item : getItems()) {
             VM vm = ((ImportVmData) item).getVm();

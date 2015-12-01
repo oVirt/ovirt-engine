@@ -20,7 +20,7 @@ public class VdcOperationManager {
     /**
      * The operation queue. It can hold any kind of VdcOperation.
      */
-    private final List<VdcOperation<?, ?>> operationQueue = new ArrayList<VdcOperation<?, ?>>();
+    private final List<VdcOperation<?, ?>> operationQueue = new ArrayList<>();
 
     /**
      * The operation processor.

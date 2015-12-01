@@ -119,8 +119,8 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
     private VolumeActivityCompositeCell<GlusterTaskSupport> getActivityCell() {
         MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu();
-        List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
-        list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
+        List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<>();
+        list.add(new VolumeActivityStatusColumn<>());
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
             @Override
             public GlusterTaskSupport getValue(GlusterTaskSupport object) {

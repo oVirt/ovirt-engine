@@ -59,7 +59,7 @@ public class ValidationCompleteEvent extends GwtEvent<ValidationCompleteEvent.Va
     /**
      * Type instance.
      */
-    private static final Type<ValidationCompleteEventHandler> TYPE = new Type<ValidationCompleteEventHandler>();
+    private static final Type<ValidationCompleteEventHandler> TYPE = new Type<>();
 
     /**
      * Get the GWT event type.

@@ -23,7 +23,7 @@ public class MatchFieldsValidator implements IValidation {
         rs.setSuccess(false);
 
         if (!Objects.equals(first, second)) {
-            ArrayList<String> reasons = new ArrayList<String>();
+            ArrayList<String> reasons = new ArrayList<>();
             reasons.add(ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage());
             rs.setReasons(reasons);
         } else {

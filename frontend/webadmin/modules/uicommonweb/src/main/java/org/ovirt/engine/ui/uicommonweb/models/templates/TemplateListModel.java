@@ -204,8 +204,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     protected boolean entitiesSelectedOnDifferentDataCenters() {
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
 
-        Map<Guid, ArrayList<VmTemplate>> t =
-                new HashMap<Guid, ArrayList<VmTemplate>>();
+        Map<Guid, ArrayList<VmTemplate>> t = new HashMap<>();
         for (VmTemplate a : templates) {
             if (!a.getId().equals(Guid.Empty)) {
                 if (!t.containsKey(a.getStoragePoolId())) {
@@ -283,7 +282,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                             TemplateListModel templateListModel = (TemplateListModel) target;
                             HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
                                     (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
-                            ArrayList<String> verTempMissingBase = new ArrayList<String>();
+                            ArrayList<String> verTempMissingBase = new ArrayList<>();
 
                             // check if relevant templates are already there
                             for (Object selectedItem : templateListModel.getSelectedItems()) {
@@ -344,7 +343,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     private void doExport() {
         ExportVmModel model = (ExportVmModel) getWindow();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
             if (a.getId().equals(Guid.Empty)) {
@@ -412,12 +411,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             return;
         }
 
-        Map<Guid, VmTemplate> templateIdToTemplate = new HashMap<Guid, VmTemplate>();
+        Map<Guid, VmTemplate> templateIdToTemplate = new HashMap<>();
         for (VmTemplate template : items) {
             templateIdToTemplate.put(template.getId(), template);
         }
 
-        templateIdToBaseTemplateName = new HashMap<Guid, String>();
+        templateIdToBaseTemplateName = new HashMap<>();
         for (VmTemplate template : items) {
             VmTemplate baseTemplate = templateIdToTemplate.get(template.getBaseTemplateId());
             templateIdToBaseTemplateName.put(template.getId(),
@@ -507,7 +506,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.setHelpTag(HelpTag.remove_template);
         model.setHashName("remove_template"); //$NON-NLS-1$
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
         for (VmTemplate template : templates) {
             if (!template.getId().equals(Guid.Empty)) {
@@ -530,7 +529,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
             list.add(new VmTemplateParametersBase(a.getId()));

@@ -122,7 +122,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
-                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<GlusterVolumeOptionInfo>();
+                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
 
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
 
@@ -132,7 +132,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                             .errorInFetchingVolumeOptionList());
                 } else {
                     optionInfoList =
-                            new ArrayList<GlusterVolumeOptionInfo>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
+                            new ArrayList<>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
                     optionInfoList.add(getCifsVolumeOption());
                 }
 
@@ -223,7 +223,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
-                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<GlusterVolumeOptionInfo>();
+                ArrayList<GlusterVolumeOptionInfo> optionInfoList = new ArrayList<>();
 
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
 
@@ -233,7 +233,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                             .errorInFetchingVolumeOptionList());
                 } else {
                     optionInfoList =
-                            new ArrayList<GlusterVolumeOptionInfo>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
+                            new ArrayList<>((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue());
                     optionInfoList.add(getCifsVolumeOption());
                 }
 
@@ -278,7 +278,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         model.setHashName("reset_option"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().resetOptionVolumeMsg());
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.add(selectedOption.getKey());
         model.setItems(list);
 
@@ -378,7 +378,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
             return;
         }
         GlusterVolumeEntity glusterVolumeEntity = getEntity();
-        ArrayList<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>();
+        ArrayList<GlusterVolumeOptionEntity> list = new ArrayList<>();
         for (GlusterVolumeOptionEntity glusterVolumeOption : glusterVolumeEntity.getOptions()) {
             list.add(glusterVolumeOption);
         }

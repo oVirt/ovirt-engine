@@ -85,7 +85,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         model.setHelpTag(HelpTag.remove_backed_up_vm);
         model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (VM vm : getSelectedItems()) {
             items.add(vm.getName());
         }
@@ -116,8 +116,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                 if (pools != null && pools.size() > 0) {
                     StoragePool pool = pools.get(0);
                     VmBackupModel backupModel = (VmBackupModel) model;
-                    ArrayList<VdcActionParametersBase> list =
-                            new ArrayList<VdcActionParametersBase>();
+                    ArrayList<VdcActionParametersBase> list = new ArrayList<>();
                     for (VM vm : backupModel.getSelectedItems()) {
                         list.add(new RemoveVmFromImportExportParameters(vm.getId(),
                                 backupModel.getEntity().getId(), pool.getId()));

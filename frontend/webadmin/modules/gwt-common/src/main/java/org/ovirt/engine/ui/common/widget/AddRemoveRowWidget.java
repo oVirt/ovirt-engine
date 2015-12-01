@@ -70,7 +70,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     protected boolean showAddButton = true;
 
     public AddRemoveRowWidget() {
-        items = new LinkedList<Pair<T, V>>();
+        items = new LinkedList<>();
         itemsChangedListener = new IEventListener<EventArgs>() {
 
             @Override
@@ -104,7 +104,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
         modelItems = model.getItems();
         if (modelItems == null) {
-            modelItems = new LinkedList<T>();
+            modelItems = new LinkedList<>();
             model.setItems(modelItems); // this will invoke init() again with the empty list as values instead of null
             return;
         }
@@ -158,12 +158,12 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     protected Pair<T, V> addGhostEntry() {
         T value = createGhostValue();
         V widget = addEntry(value, true);
-        return new Pair<T, V>(value, widget);
+        return new Pair<>(value, widget);
     }
 
     private V addEntry(final T value, boolean lastItem) {
         final V widget = createWidget(value);
-        Pair<T, V> item = new Pair<T, V>(value, widget);
+        Pair<T, V> item = new Pair<>(value, widget);
         items.add(item);
 
         PushButton removeButton = createButton(item, false);
@@ -297,7 +297,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     protected class AddRemoveRowPanel extends FlowPanel {
 
-        private List<PushButton> buttons = new LinkedList<PushButton>();
+        private List<PushButton> buttons = new LinkedList<>();
         private SimplePanel div = new SimplePanel();
 
         public AddRemoveRowPanel(Widget widget, boolean floatLeft, PushButton... buttons) {

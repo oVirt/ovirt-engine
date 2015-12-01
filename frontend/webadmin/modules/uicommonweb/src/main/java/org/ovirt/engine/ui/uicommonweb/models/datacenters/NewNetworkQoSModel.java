@@ -25,7 +25,7 @@ public class NewNetworkQoSModel extends NetworkQoSModel {
     @Override
     protected void executeSave() {
         // New network QoS
-        final QosParametersBase<NetworkQoS> parameters = new QosParametersBase<NetworkQoS>();
+        final QosParametersBase<NetworkQoS> parameters = new QosParametersBase<>();
         parameters.setQos(networkQoS);
         Frontend.getInstance().runAction(VdcActionType.AddNetworkQoS, parameters, new IFrontendActionAsyncCallback() {
             @Override

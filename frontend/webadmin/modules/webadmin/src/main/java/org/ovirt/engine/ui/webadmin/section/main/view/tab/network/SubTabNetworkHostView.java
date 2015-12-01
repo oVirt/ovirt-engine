@@ -58,7 +58,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     @Inject
     public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
         super(modelProvider);
-        viewRadioGroup = new ViewRadioGroup<NetworkHostFilter>(Arrays.asList(NetworkHostFilter.values()));
+        viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(NetworkHostFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
         viewRadioGroup.addStyleName("stnhv_radioGroup_pfly_fix"); //$NON-NLS-1$
         labelImage =
@@ -291,7 +291,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
-        nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VdsNetworkInterface, VDS>>(nicStatusColumn));
+        nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<>(nicStatusColumn));
         nicColumn.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
 
             private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();

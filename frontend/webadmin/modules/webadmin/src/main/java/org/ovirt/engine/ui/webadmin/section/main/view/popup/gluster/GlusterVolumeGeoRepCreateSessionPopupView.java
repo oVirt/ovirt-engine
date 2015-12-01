@@ -117,7 +117,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
 
         startSessionEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        slaveClusterEditor = new ListModelTypeAheadListBoxEditor<String>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<String>() {
+        slaveClusterEditor = new ListModelTypeAheadListBoxEditor<>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<String>() {
 
             @Override
             public String getReplacementStringNullSafe(String data) {
@@ -130,7 +130,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
             }
         });
 
-        slaveHostIpEditor = new ListModelTypeAheadListBoxEditor<Pair<String, Guid>>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Pair<String, Guid>>() {
+        slaveHostIpEditor = new ListModelTypeAheadListBoxEditor<>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Pair<String, Guid>>() {
 
             @Override
             public String getReplacementStringNullSafe(Pair<String, Guid> data) {
@@ -143,7 +143,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
             }
         });
 
-        slaveVolumeEditor = new ListModelTypeAheadListBoxEditor<GlusterVolumeEntity>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<GlusterVolumeEntity>() {
+        slaveVolumeEditor = new ListModelTypeAheadListBoxEditor<>(new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<GlusterVolumeEntity>() {
             @Override
             public String getReplacementStringNullSafe(GlusterVolumeEntity data) {
                 return data.getName();

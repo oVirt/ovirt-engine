@@ -19,7 +19,7 @@ public class VmImportDiskListModel extends SearchableListModel {
         if (getEntity() != null) {
             VM vm = (VM) getEntity();
             if (vm != null && vm.getDiskMap() != null) {
-                List<Disk> disks = new ArrayList<Disk>(vm.getDiskMap().values());
+                List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
                 Collections.sort(disks, new DiskByAliasComparer());
                 setItems(disks);
             }

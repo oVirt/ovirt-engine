@@ -71,7 +71,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         nameColumn.makeSortable(StorageDomainFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
+        CommentColumn<StorageDomain> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
@@ -191,7 +191,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
             List<ActionButtonDefinition<StorageDomain>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Storage", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<StorageDomain>(constants.showReportStorage(),
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportStorage(),
                         resourceSubActions));
             }
         }

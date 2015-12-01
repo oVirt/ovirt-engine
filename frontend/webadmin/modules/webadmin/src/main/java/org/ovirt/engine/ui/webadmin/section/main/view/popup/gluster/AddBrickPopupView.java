@@ -143,7 +143,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Inject
     public AddBrickPopupView(EventBus eventBus) {
         super(eventBus);
-        bricksTable = new EntityModelCellTable<ListModel>(true);
+        bricksTable = new EntityModelCellTable<>(true);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -155,10 +155,10 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     private void initEditors() {
-        volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>());
+        volumeTypeEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterVolumeType>());
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         showBricksListEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
+        serverEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VDS>() {
             @Override
             public String renderNullSafe(VDS vds) {
                 return vds.getHostName();

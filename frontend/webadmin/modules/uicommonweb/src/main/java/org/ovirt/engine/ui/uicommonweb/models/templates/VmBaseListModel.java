@@ -116,8 +116,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                         List<StorageDomain> storageDomains =
                                 (List<StorageDomain>) returnValue;
 
-                        List<StorageDomain> filteredStorageDomains =
-                                new ArrayList<StorageDomain>();
+                        List<StorageDomain> filteredStorageDomains = new ArrayList<>();
                         for (StorageDomain a : storageDomains) {
                             if (a.getStorageDomainType() == StorageDomainType.ImportExport) {
                                 filteredStorageDomains.add(a);
@@ -223,7 +222,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                 @Override
                 public void onSuccess(Object model, Object result) {
                     ExportVmModel windowModel = (ExportVmModel) getWindow();
-                    List<T> foundVms = new ArrayList<T>();
+                    List<T> foundVms = new ArrayList<>();
 
                     if (result != null) {
                         VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
@@ -257,7 +256,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
     }
 
     private String composeExistingVmsWarningMessage(List<T> existingVms) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         for (T t : existingVms) {
             list.add(extractNameFromEntity(t));
         }

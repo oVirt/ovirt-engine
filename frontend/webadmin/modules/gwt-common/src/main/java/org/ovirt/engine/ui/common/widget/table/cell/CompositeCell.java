@@ -47,7 +47,7 @@ public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C
      */
     @Override
     public Set<String> getConsumedEvents() {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         TooltipMixin.addTooltipsEvents(set);
         return set;
     }

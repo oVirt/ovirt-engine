@@ -31,7 +31,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
         this.vnics = vnics;
         this.fullMsg = isFullMsg;
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (VmNetworkInterface vnic : vnics) {
             if (isFullMsg) {
                 items.add(getRemoveVnicFullMsg(vnic));
@@ -52,7 +52,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (VmNetworkInterface vnic : getVnics()) {
             VdcActionParametersBase parameters = getRemoveVmInterfaceParams(vnic);
             list.add(parameters);

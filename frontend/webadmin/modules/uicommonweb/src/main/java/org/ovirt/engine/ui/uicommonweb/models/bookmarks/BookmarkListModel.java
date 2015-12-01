@@ -118,8 +118,8 @@ public class BookmarkListModel extends SearchableListModel {
     }
 
     public BookmarkListModel() {
-        setNavigatedEvent(new Event<EventArgs>(navigatedEventDefinition));
-        setItemSavedEvent(new Event<EventArgs>(savedEventDefinition));
+        setNavigatedEvent(new Event<>(navigatedEventDefinition));
+        setItemSavedEvent(new Event<>(savedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class BookmarkListModel extends SearchableListModel {
         model.setHelpTag(HelpTag.remove_bookmark);
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             org.ovirt.engine.core.common.businessentities.Bookmark i =
                     (org.ovirt.engine.core.common.businessentities.Bookmark) item;

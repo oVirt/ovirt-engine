@@ -148,7 +148,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
                     Guid storageId = storageIds.get(0);
                     StorageDomain storageDomain = Linq.getStorageById(storageId, activeStorageDomains);
-                    List<StorageDomain> diskStorageDomains = new ArrayList<StorageDomain>();
+                    List<StorageDomain> diskStorageDomains = new ArrayList<>();
                     diskStorageDomains.add(storageDomain);
                     diskModel.getStorageDomain().setItems(diskStorageDomains);
                     diskModel.getStorageDomain().setIsChangeable(false);

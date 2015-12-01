@@ -12,7 +12,7 @@ public class EntityModelLabelEditor<T> extends AbstractValueBoxWithLabelEditor<T
      * A ValueBoxWithLabelEditor that has a Label as the widget
      */
     public EntityModelLabelEditor(Renderer<T> renderer, Parser<T> parser) {
-        this(new EntityModelLabel<T>(renderer, parser));
+        this(new EntityModelLabel<>(renderer, parser));
     }
 
     /**
@@ -20,7 +20,7 @@ public class EntityModelLabelEditor<T> extends AbstractValueBoxWithLabelEditor<T
      * @param renderer The renderer.
      */
     public EntityModelLabelEditor(Renderer<T> renderer) {
-        this(new EntityModelLabel<T>(renderer, new Parser<T>() {
+        this(new EntityModelLabel<>(renderer, new Parser<T>() {
             @Override
             public T parse(CharSequence text) throws ParseException {
                 //Parser is not needed as its a read only field and value is not used.

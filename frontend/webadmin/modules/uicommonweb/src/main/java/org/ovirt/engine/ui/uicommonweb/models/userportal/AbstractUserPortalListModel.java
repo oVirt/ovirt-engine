@@ -42,7 +42,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     }
 
     protected Iterable filterVms(List all) {
-        List<VM> result = new LinkedList<VM>();
+        List<VM> result = new LinkedList<>();
         for (Object o : all) {
             if (o instanceof VM) {
                 result.add((VM) o);
@@ -52,7 +52,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     }
 
     public List<VmConsoles> getAutoConnectableConsoles() {
-        List<VmConsoles> autoConnectableConsoles = new LinkedList<VmConsoles>();
+        List<VmConsoles> autoConnectableConsoles = new LinkedList<>();
 
         if (items != null) {
             for (UserPortalItemModel upItem : items) {
@@ -136,7 +136,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
         }
 
         // Remove pools that has provided VMs.
-        final ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
+        final ArrayList<VmPool> filteredPools = new ArrayList<>();
         for (VmPool pool : pools) {
             // Add pool to map.
 
@@ -163,8 +163,8 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                 }
             });
         } else { // if we have pools we have to update their console cache and THEN finish search
-            List<VdcQueryType> poolQueryList = new ArrayList<VdcQueryType>();
-            List<VdcQueryParametersBase> poolParamList = new ArrayList<VdcQueryParametersBase>();
+            List<VdcQueryType> poolQueryList = new ArrayList<>();
+            List<VdcQueryParametersBase> poolParamList = new ArrayList<>();
 
             for (VmPool p : filteredPools) {
                 poolQueryList.add(VdcQueryType.GetVmDataByPoolId);
@@ -176,7 +176,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
                     new IFrontendMultipleQueryAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleQueryAsyncResult result) {
-                            List<VM> poolRepresentants = new LinkedList<VM>();
+                            List<VM> poolRepresentants = new LinkedList<>();
                             List<VdcQueryReturnValue> poolRepresentantsRetval = result.getReturnValues();
                             for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
                                 poolRepresentants.add((VM) poolRepresentant.getReturnValue());

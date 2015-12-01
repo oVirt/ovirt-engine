@@ -73,8 +73,7 @@ public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractMode
     }
 
     private void initEditors() {
-        configsTable =
-                new EntityModelCellTable<ListModel<EntityModel<VolumeSnapshotOptionModel>>>(false, true);
+        configsTable = new EntityModelCellTable<>(false, true);
         configsTable.setSelectionModel(new NoSelectionModel());
 
         configsTable.addColumn(new AbstractEntityModelTextColumn<VolumeSnapshotOptionModel>() {

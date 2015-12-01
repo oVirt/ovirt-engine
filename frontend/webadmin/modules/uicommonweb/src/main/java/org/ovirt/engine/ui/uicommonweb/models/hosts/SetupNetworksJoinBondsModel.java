@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
 
-    private List<Entry<String, EntityModel<String>>> bondOptions = new ArrayList<Entry<String, EntityModel<String>>>();
-    private Map<String, Entry<String, EntityModel<String>>> pairForBondOption = new HashMap<String, Entry<String, EntityModel<String>>>();
+    private List<Entry<String, EntityModel<String>>> bondOptions = new ArrayList<>();
+    private Map<String, Entry<String, EntityModel<String>>> pairForBondOption = new HashMap<>();
 
     public SetupNetworksJoinBondsModel(List<String> freeBonds,
             BondNetworkInterfaceModel source,
@@ -27,7 +27,7 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
 
         setTitle(ConstantsManager.getInstance().getConstants().joinBondsTitle());
 
-        Set<String> availableBonds = new HashSet<String>();
+        Set<String> availableBonds = new HashSet<>();
         availableBonds.addAll(freeBonds);
         availableBonds.add(source.getName());
         availableBonds.add(target.getName());
@@ -50,9 +50,9 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
             return;
         }
         if (!pairForBondOption.containsKey(candidateOption)) {
-            EntityModel<String> entityModel = new EntityModel<String>();
+            EntityModel<String> entityModel = new EntityModel<>();
             entityModel.setEntity(candidateOption);
-            Entry<String, EntityModel<String>> newPair = new KeyValuePairCompat<String, EntityModel<String>>("custom", entityModel); //$NON-NLS-1$
+            Entry<String, EntityModel<String>> newPair = new KeyValuePairCompat<>("custom", entityModel); //$NON-NLS-1$
             bondOptions.add(newPair);
             pairForBondOption.put(candidateOption, newPair);
         }

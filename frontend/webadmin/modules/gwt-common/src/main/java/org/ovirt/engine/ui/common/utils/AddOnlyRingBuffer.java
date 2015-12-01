@@ -87,7 +87,7 @@ public class AddOnlyRingBuffer<T> {
      * Performs in linear time O(n).
      */
     public List<T> list() {
-        List<T> result = new ArrayList<T>(size);
+        List<T> result = new ArrayList<>(size);
 
         for (int offset = 0; offset < size; offset += 1) {
             int index = (head + offset) % capacity;

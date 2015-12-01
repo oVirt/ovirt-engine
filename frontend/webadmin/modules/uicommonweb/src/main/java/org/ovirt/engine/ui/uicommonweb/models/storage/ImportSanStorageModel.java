@@ -38,7 +38,7 @@ public abstract class ImportSanStorageModel extends SanStorageModel {
     }
 
     protected void addStorageDomains(ArrayList<StorageDomain> storageDomains) {
-        ArrayList<StorageDomain> allStorageDomains = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> allStorageDomains = new ArrayList<>();
         allStorageDomains.addAll(getStorageDomains().getItems());
         allStorageDomains.addAll(storageDomains);
         getStorageDomains().setItems(allStorageDomains);

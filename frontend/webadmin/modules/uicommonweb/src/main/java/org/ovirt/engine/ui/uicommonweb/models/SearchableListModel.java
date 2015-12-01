@@ -106,7 +106,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         privateForceRefreshCommand = value;
     }
 
-    private final List<ReportCommand> openReportCommands = new LinkedList<ReportCommand>();
+    private final List<ReportCommand> openReportCommands = new LinkedList<>();
 
     public ReportCommand addOpenReportCommand(String idParamName, boolean isMultiple, String uriId) {
         return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this)); //$NON-NLS-1$
@@ -238,7 +238,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
         setForceRefreshCommand(new UICommand("ForceRefresh", this)); //$NON-NLS-1$
         setSearchPageSize(UnknownInteger);
-        asyncCallback = new PrivateAsyncCallback<E, T>(this);
+        asyncCallback = new PrivateAsyncCallback<>(this);
 
         updateActionAvailability();
 
@@ -793,7 +793,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         Collection<T> items = getItems();
         if (items != null) {
-            Collection<T> maybeSortedItems = (comparator != null) ? sortItems(items) : new ArrayList<T>(items);
+            Collection<T> maybeSortedItems = (comparator != null) ? sortItems(items) : new ArrayList<>(items);
             setItems(maybeSortedItems);
         }
     }
@@ -802,7 +802,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     public void setItems(Collection<T> value) {
         if (items != value) {
             T lastSelectedItem = getSelectedItem();
-            List<T> lastSelectedItems = new ArrayList<T>();
+            List<T> lastSelectedItems = new ArrayList<>();
 
             if (getSelectedItems() != null) {
                 for (T item : getSelectedItems()) {
@@ -832,7 +832,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
             if (lastSelectedItem != null && items != null) {
                 T newSelectedItem = null;
-                List<T> newItems = new ArrayList<T>();
+                List<T> newItems = new ArrayList<>();
 
                 for (T item : items) {
                     newItems.add(item);

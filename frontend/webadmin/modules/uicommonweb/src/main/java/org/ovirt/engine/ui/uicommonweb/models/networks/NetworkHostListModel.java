@@ -83,8 +83,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
                 if (model.equals(getViewFilterType())) {
                     final Iterable returnList = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
-                        final List<PairQueryable<VdsNetworkInterface, VDS>> items =
-                                new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
+                        final List<PairQueryable<VdsNetworkInterface, VDS>> items = new ArrayList<>();
                         for (Object obj : returnList) {
                             items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS) obj));
                         }

@@ -58,10 +58,10 @@ public class ImportNetworksModel extends Model {
 
     private final StoragePool treeSelectedDc;
 
-    private final ListModel<Provider<?>> providers = new ListModel<Provider<?>>();
-    private final ListModel<ExternalNetwork> providerNetworks = new ListModel<ExternalNetwork>();
-    private final ListModel<ExternalNetwork> importedNetworks = new ListModel<ExternalNetwork>();
-    private final ListModel<String> errors = new ListModel<String>();
+    private final ListModel<Provider<?>> providers = new ListModel<>();
+    private final ListModel<ExternalNetwork> providerNetworks = new ListModel<>();
+    private final ListModel<ExternalNetwork> importedNetworks = new ListModel<>();
+    private final ListModel<String> errors = new ListModel<>();
 
     private final UICommand addImportCommand = new UICommand(null, this);
     private final UICommand cancelImportCommand = new UICommand(null, this);
@@ -147,7 +147,7 @@ public class ImportNetworksModel extends Model {
             return;
         }
 
-        final List<StoragePool> dataCenters = new LinkedList<StoragePool>();
+        final List<StoragePool> dataCenters = new LinkedList<>();
 
         final AsyncQuery networkQuery = new AsyncQuery();
         networkQuery.asyncCallback = new INewAsyncCallback() {
@@ -155,7 +155,7 @@ public class ImportNetworksModel extends Model {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 Map<Network, Set<Guid>> externalNetworkToDataCenters = (Map<Network, Set<Guid>>) returnValue;
-                List<ExternalNetwork> items = new LinkedList<ExternalNetwork>();
+                List<ExternalNetwork> items = new LinkedList<>();
                 for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
                     Network network = entry.getKey();
                     Set<Guid> attachedDataCenters = entry.getValue();
@@ -165,7 +165,7 @@ public class ImportNetworksModel extends Model {
                     externalNetwork.setDisplayName(network.getName());
                     externalNetwork.setPublicUse(true);
 
-                    List<StoragePool> availableDataCenters = new LinkedList<StoragePool>();
+                    List<StoragePool> availableDataCenters = new LinkedList<>();
                     for (StoragePool dc : dataCenters) {
                         if (!attachedDataCenters.contains(dc.getId())) {
                             availableDataCenters.add(dc);
@@ -206,8 +206,8 @@ public class ImportNetworksModel extends Model {
         String errorDuplicate = ConstantsManager.getInstance().getConstants().importDuplicateName();
         boolean valid = true;
         Collection<ExternalNetwork> networks = importedNetworks.getItems();
-        List<String> errors = new ArrayList<String>(networks.size());
-        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
+        List<String> errors = new ArrayList<>(networks.size());
+        Map<String, Integer> nameToIndex = new HashMap<>();
         int i = 0;
         for (ExternalNetwork network : networks) {
             String networkName = network.getDisplayName();
@@ -238,10 +238,9 @@ public class ImportNetworksModel extends Model {
             return;
         }
 
-        List<VdcActionParametersBase> multipleActionParameters =
-                new LinkedList<VdcActionParametersBase>();
-        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
-        dcClusters = new HashMap<Guid, Collection<VDSGroup>>();
+        List<VdcActionParametersBase> multipleActionParameters = new LinkedList<>();
+        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<>();
+        dcClusters = new HashMap<>();
 
         for (final ExternalNetwork externalNetwork : importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();

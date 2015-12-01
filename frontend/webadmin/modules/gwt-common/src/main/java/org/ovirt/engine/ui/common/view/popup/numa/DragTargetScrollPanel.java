@@ -84,11 +84,11 @@ public class DragTargetScrollPanel extends Composite implements HasHandlers {
     }
 
     private Pair<Guid, Pair<Boolean, Integer>> parseDropString(String dropString) {
-        Pair<Boolean, Integer> pinnedIndexPair = new Pair<Boolean, Integer>();
+        Pair<Boolean, Integer> pinnedIndexPair = new Pair<>();
         String[] splitString = dropString.split("_"); //$NON-NLS-1$
         pinnedIndexPair.setFirst(Boolean.valueOf(splitString[1]));
         pinnedIndexPair.setSecond(Integer.valueOf(splitString[2]));
-        return new Pair<Guid, Pair<Boolean, Integer>>(Guid.createGuidFromString(splitString[0]), pinnedIndexPair);
+        return new Pair<>(Guid.createGuidFromString(splitString[0]), pinnedIndexPair);
     }
 
     public void setIndex(int numaNodeIndex) {

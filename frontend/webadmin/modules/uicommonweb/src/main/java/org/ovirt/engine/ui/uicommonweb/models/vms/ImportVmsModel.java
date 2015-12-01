@@ -116,7 +116,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setvCenter(new EntityModel<String>());
         setEsx(new EntityModel<String>());
         setVmwareDatacenter(new EntityModel<String>());
-        setVerify(new EntityModel<Boolean>(false));
+        setVerify(new EntityModel<>(false));
 
         // OVA
         setHosts(new ListModel<VDS>());
@@ -317,7 +317,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                final List<StoragePool> dataCenters = new ArrayList<>();
                 for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getStatus() == StoragePoolStatus.Up) {
                         dataCenters.add(a);
@@ -541,7 +541,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         clearVms();
         List<EntityModel<VM>> externalVms = new ArrayList<>();
         for (VM vm : vms) {
-            externalVms.add(new EntityModel<VM>(vm));
+            externalVms.add(new EntityModel<>(vm));
         }
 
         externalVmModels.setItems(externalVms);

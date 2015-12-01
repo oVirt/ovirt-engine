@@ -25,7 +25,7 @@ public class ElementIdTypeParser {
     private final TreeLogger logger;
     private final JClassType ownerType;
 
-    final List<ElementIdStatement> statements = new ArrayList<ElementIdStatement>();
+    final List<ElementIdStatement> statements = new ArrayList<>();
 
     public ElementIdTypeParser(TreeLogger logger, JClassType interfaceToImplement) throws UnableToCompleteException {
         assert logger != null : "logger was null"; //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class ElementIdTypeParser {
                 statements.add(statement);
 
                 if (idAnnotation.processType()) {
-                    List<JClassType> newGrandParents = new ArrayList<JClassType>(grandParents);
+                    List<JClassType> newGrandParents = new ArrayList<>(grandParents);
                     newGrandParents.add(fieldType);
 
                     doParse(fieldType, newGrandParents, parentFieldExpression + fieldName + ".", elementId); //$NON-NLS-1$

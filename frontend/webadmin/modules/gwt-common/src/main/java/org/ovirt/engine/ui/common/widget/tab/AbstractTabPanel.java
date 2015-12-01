@@ -27,7 +27,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     public Panel tabContentContainer;
 
     // List of tabs managed by this tab panel, sorted by tab priority
-    private final List<TabDefinition> tabList = new ArrayList<TabDefinition>();
+    private final List<TabDefinition> tabList = new ArrayList<>();
 
     private Tab activeTab;
     private String activeTabHistoryToken;

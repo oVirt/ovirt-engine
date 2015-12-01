@@ -123,7 +123,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     }
 
     private void createTargetsTable() {
-        targetsTable = new EntityModelCellTable<ListModel<SanTargetModel>>(true, true);
+        targetsTable = new EntityModelCellTable<>(true, true);
         targetsTable.enableColumnResizing();
 
         addTargetsSelectionColumn();
@@ -169,7 +169,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
                 if (!listModel.getItems().iterator().hasNext()) {
                     return;
                 }
-                ArrayList<SanTargetModel> selectedItems = new ArrayList<SanTargetModel>();
+                ArrayList<SanTargetModel> selectedItems = new ArrayList<>();
                 for (SanTargetModel entity : (Iterable<SanTargetModel>) listModel.getItems()) {
                     if (!entity.getIsLoggedIn()) {
                         if (value) {
@@ -205,7 +205,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     }
 
     private void createSotrageDomainsTable() {
-        storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
+        storageDomainsTable = new ListModelObjectCellTable<>(true, true);
         storageDomainsTable.enableColumnResizing();
 
         AbstractEditTextColumn<StorageDomain> nameColumn = new AbstractEditTextColumn<StorageDomain>(

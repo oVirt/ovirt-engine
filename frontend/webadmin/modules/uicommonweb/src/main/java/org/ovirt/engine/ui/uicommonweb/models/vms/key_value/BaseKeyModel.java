@@ -16,8 +16,8 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
     private final String noKeys;
     boolean disableEvent = false;
 
-    Set<String> allKeys = new HashSet<String>();
-    Set<String> usedKeys = new HashSet<String>();
+    Set<String> allKeys = new HashSet<>();
+    Set<String> usedKeys = new HashSet<>();
 
     public BaseKeyModel(String selectKey, String noKeys) {
         this.selectKey = selectKey;
@@ -25,9 +25,9 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
     }
 
     protected void init(Set<String> allKeys, Set<String> usedKeys) {
-        this.allKeys = new HashSet<String>(allKeys);
-        this.usedKeys = new HashSet<String>(usedKeys);
-        List<KeyValueLineModel> list = new ArrayList<KeyValueLineModel>();
+        this.allKeys = new HashSet<>(allKeys);
+        this.usedKeys = new HashSet<>(usedKeys);
+        List<KeyValueLineModel> list = new ArrayList<>();
         disableEvent = true;
         for (String key : usedKeys) {
             KeyValueLineModel lineModel = createNewLineModel(key);
@@ -103,7 +103,7 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
 
     private List<String> getAvailableKeys() {
         List<String> list =
-                (allKeys == null) ? new LinkedList<String>() : new LinkedList<String>(allKeys);
+                (allKeys == null) ? new LinkedList<String>() : new LinkedList<>(allKeys);
         list.removeAll(getUsedKeys());
         if (list.size() > 0) {
             list.add(0, selectKey);
@@ -116,9 +116,9 @@ public abstract class BaseKeyModel extends ListModel<KeyValueLineModel> {
 
     private List<String> getUsedKeys() {
         if (usedKeys == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         } else {
-            return new ArrayList<String>(usedKeys);
+            return new ArrayList<>(usedKeys);
         }
     }
 

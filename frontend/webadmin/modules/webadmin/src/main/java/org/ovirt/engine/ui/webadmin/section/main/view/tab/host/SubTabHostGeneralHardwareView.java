@@ -50,7 +50,7 @@ public class SubTabHostGeneralHardwareView
     StringValueLabel hardwareFamily = new StringValueLabel();
     StringValueLabel cpuType = new StringValueLabel();
     StringValueLabel cpuModel = new StringValueLabel();
-    NullableNumberValueLabel<Integer> numberOfSockets = new NullableNumberValueLabel<Integer>(constants.unknown());
+    NullableNumberValueLabel<Integer> numberOfSockets = new NullableNumberValueLabel<>(constants.unknown());
     StringValueLabel coresPerSocket = new StringValueLabel();
     StringValueLabel threadsPerCore = new StringValueLabel();
 

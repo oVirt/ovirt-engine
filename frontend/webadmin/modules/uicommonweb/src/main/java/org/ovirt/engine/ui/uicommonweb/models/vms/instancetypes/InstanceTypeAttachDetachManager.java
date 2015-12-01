@@ -46,7 +46,7 @@ public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs
         this.managedInstanceType = instanceType;
         setAttachedTo(instanceType);
 
-        modelToProperValue = new HashMap<Model, Object>();
+        modelToProperValue = new HashMap<>();
 
         for (Model model : detachableModels) {
             if (model instanceof ListModel) {

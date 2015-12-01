@@ -25,17 +25,17 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NeutronAgentModel extends EntityModel {
 
-    private ListModel<String> pluginType = new ListModel<String>();
+    private ListModel<String> pluginType = new ListModel<>();
 
-    private EntityModel<Boolean> pluginConfigurationAvailable = new EntityModel<Boolean>();
-    private EntityModel<String> interfaceMappingsLabel = new EntityModel<String>();
-    private EntityModel<String> interfaceMappingsExplanation = new EntityModel<String>();
-    private EntityModel<String> interfaceMappings = new EntityModel<String>();
-    private ListModel<BrokerType> brokerType = new ListModel<BrokerType>();
-    private EntityModel<String> messagingServer = new EntityModel<String>();
-    private EntityModel<String> messagingServerPort = new EntityModel<String>();
-    private EntityModel<String> messagingServerUsername = new EntityModel<String>();
-    private EntityModel<String> messagingServerPassword = new EntityModel<String>();
+    private EntityModel<Boolean> pluginConfigurationAvailable = new EntityModel<>();
+    private EntityModel<String> interfaceMappingsLabel = new EntityModel<>();
+    private EntityModel<String> interfaceMappingsExplanation = new EntityModel<>();
+    private EntityModel<String> interfaceMappings = new EntityModel<>();
+    private ListModel<BrokerType> brokerType = new ListModel<>();
+    private EntityModel<String> messagingServer = new EntityModel<>();
+    private EntityModel<String> messagingServerPort = new EntityModel<>();
+    private EntityModel<String> messagingServerUsername = new EntityModel<>();
+    private EntityModel<String> messagingServerPassword = new EntityModel<>();
 
     public ListModel<String> getPluginType() {
         return pluginType;

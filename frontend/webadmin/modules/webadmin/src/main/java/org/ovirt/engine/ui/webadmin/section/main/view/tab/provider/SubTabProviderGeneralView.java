@@ -41,7 +41,7 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     private final Driver driver = GWT.create(Driver.class);
 
     StringValueLabel name = new StringValueLabel();
-    ValueLabel<ProviderType> type = new ValueLabel<ProviderType>(new EnumRenderer<ProviderType>());
+    ValueLabel<ProviderType> type = new ValueLabel<>(new EnumRenderer<ProviderType>());
     StringValueLabel description = new StringValueLabel();
     StringValueLabel url = new StringValueLabel();
 

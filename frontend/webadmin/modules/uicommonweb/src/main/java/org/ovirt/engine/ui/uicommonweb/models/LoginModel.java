@@ -130,8 +130,8 @@ public class LoginModel extends Model {
     }
 
     public LoginModel() {
-        setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
-        setLoginFailedEvent(new Event<EventArgs>(loginFailedEventDefinition));
+        setLoggedInEvent(new Event<>(loggedInEventDefinition));
+        setLoginFailedEvent(new Event<>(loginFailedEventDefinition));
 
         setProfile(new ListModel<String>());
         getProfile().setIsChangeable(false);
@@ -140,7 +140,7 @@ public class LoginModel extends Model {
         getUserName().getEntityChangedEvent().addListener(this);
         setPassword(new EntityModel<String>());
         getPassword().setIsChangeable(false);
-        setCreateInstanceOnly(new EntityModel<Boolean>(false));
+        setCreateInstanceOnly(new EntityModel<>(false));
 
         setIsConnecting(true);
 

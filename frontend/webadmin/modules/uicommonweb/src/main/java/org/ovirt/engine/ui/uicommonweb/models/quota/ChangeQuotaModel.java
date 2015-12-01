@@ -29,9 +29,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
 
     public void init(final ArrayList<DiskImage> disks) {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
-        Set<Guid> storageDomainIdSet = new HashSet<Guid>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        Set<Guid> storageDomainIdSet = new HashSet<>();
         for (DiskImage diskImage : disks) {
             for (Guid storageDomainId : diskImage.getStorageIds()) {
                 storageDomainIdSet.add(storageDomainId);
@@ -46,14 +46,14 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<Guid, List<Quota>> storageDomainIdMap = new HashMap<Guid, List<Quota>>();
+                Map<Guid, List<Quota>> storageDomainIdMap = new HashMap<>();
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);
                     Guid storageId =
                             ((IdQueryParameters) result.getParameters().get(i)).getId();
                     storageDomainIdMap.put(storageId, (ArrayList<Quota>) retVal.getReturnValue());
                 }
-                ArrayList<ChangeQuotaItemModel> list = new ArrayList<ChangeQuotaItemModel>();
+                ArrayList<ChangeQuotaItemModel> list = new ArrayList<>();
                 Guid storageDomainId;
                 for (DiskImage diskImage : disks) {
                     for (int i = 0; i < diskImage.getStorageIds().size(); i++) {

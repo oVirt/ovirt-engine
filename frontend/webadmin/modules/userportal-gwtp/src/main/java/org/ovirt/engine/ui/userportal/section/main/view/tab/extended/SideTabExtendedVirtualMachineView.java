@@ -94,7 +94,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
     @Override
     protected SimpleActionTable<UserPortalItemModel> createActionTable() {
-        return new UserPortalSimpleActionTable<UserPortalItemModel>(modelProvider,
+        return new UserPortalSimpleActionTable<>(modelProvider,
                 getTableResources(),
                 ClientGinjectorProvider.getEventBus(),
                 ClientGinjectorProvider.getClientStorage(),
@@ -383,7 +383,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         rebootCell.setElementIdPrefix(elementIdPrefix);
         rebootCell.setColumnId("rebootColumn"); //$NON-NLS-1$
 
-        List<HasCell<UserPortalItemModel, ?>> list = new ArrayList<HasCell<UserPortalItemModel, ?>>();
+        List<HasCell<UserPortalItemModel, ?>> list = new ArrayList<>();
 
         list.add(new AbstractColumn(runCell) {
             @Override
@@ -420,7 +420,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             }
         });
 
-        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(list);
+        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<>(list);
 
         return compositeCell;
     }

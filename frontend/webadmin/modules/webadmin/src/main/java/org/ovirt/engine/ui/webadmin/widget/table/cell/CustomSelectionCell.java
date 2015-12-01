@@ -37,7 +37,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     private static CellTemplate template = GWT.create(CellTemplate.class);
 
-    private final HashMap<String, Integer> indexForOption = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> indexForOption = new HashMap<>();
 
     private List<String> options;
 
@@ -53,7 +53,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
      */
     public CustomSelectionCell(List<String> options) {
         super();
-        this.options = new ArrayList<String>(options);
+        this.options = new ArrayList<>(options);
         int index = 0;
         for (String option : options) {
             indexForOption.put(option, index++);
@@ -134,7 +134,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
     }
 
     public void setOptions(List<String> options) {
-        this.options = new ArrayList<String>(options);
+        this.options = new ArrayList<>(options);
         int index = 0;
         for (String option : options) {
             indexForOption.put(option, index++);

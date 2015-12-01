@@ -205,15 +205,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     public void transmitOperationList(final List<VdcOperation<?, ?>> operations) {
         // Operations can be either actions or queries. Both require different handling so lets
         // Split them out into two lists so we can process them independently.
-        List<VdcOperation<?, ?>> queriesList = new ArrayList<VdcOperation<?, ?>>();
-        Map<VdcActionType, List<VdcOperation<?, ?>>> actionsMap =
-                new HashMap<VdcActionType, List<VdcOperation<?, ?>>>();
+        List<VdcOperation<?, ?>> queriesList = new ArrayList<>();
+        Map<VdcActionType, List<VdcOperation<?, ?>>> actionsMap = new HashMap<>();
 
         for (VdcOperation<?, ?> operation: operations) {
             if (operation.isAction()) {
                 List<VdcOperation<?, ?>> actionsList = actionsMap.get(operation.getOperation());
                 if (actionsList == null) {
-                    actionsList = new ArrayList<VdcOperation<?, ?>>();
+                    actionsList = new ArrayList<>();
                     actionsMap.put((VdcActionType) operation.getOperation(), actionsList);
                 }
                 actionsList.add(operation);
@@ -240,10 +239,10 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     private void transmitMultipleQueries(final List<VdcOperation<?, ?>> queriesList) {
         if (queriesList.size() > 1 || (queriesList.size() == 1
                 && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList)) {
-            final List<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
-            final List<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
+            final List<VdcQueryType> queryTypes = new ArrayList<>();
+            final List<VdcQueryParametersBase> parameters = new ArrayList<>();
 
-            for (VdcOperation<?, ?> operation: new ArrayList<VdcOperation<?, ?>>(queriesList)) {
+            for (VdcOperation<?, ?> operation: new ArrayList<>(queriesList)) {
                 if (operation.isPublic()) {
                     queriesList.remove(operation);
                     runPublicQuery(operation);
@@ -326,7 +325,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     private void transmitMultipleActions(final Map<VdcActionType, List<VdcOperation<?, ?>>> actions) {
         for (final Map.Entry<VdcActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
-            List<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+            List<VdcActionParametersBase> parameters = new ArrayList<>();
             final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
 
             for (VdcOperation<?, ?> operation: allActionOperations) {
@@ -353,7 +352,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     }
 
     private List<VdcOperation<?, ?>> getWaitForResultList(List<VdcOperation<?, ?>> originalList) {
-        List<VdcOperation<?, ?>> result = new ArrayList<VdcOperation<?, ?>>();
+        List<VdcOperation<?, ?>> result = new ArrayList<>();
         for (VdcOperation<?, ?> operation: originalList) {
             if (!operation.isFromList()) {
                 result.add(operation);
@@ -428,13 +427,12 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     private Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> getCallbackMap(
             final List<VdcOperation<?, ?>> operationList) {
-        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                new HashMap<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>>();
+        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = new HashMap<>();
 
         for (VdcOperation<?, ?> operation: operationList) {
             List<VdcOperation<?, ?>> operationsByCallback = callbackMap.get(operation.getCallback());
             if (operationsByCallback == null) {
-                operationsByCallback = new ArrayList<VdcOperation<?, ?>>();
+                operationsByCallback = new ArrayList<>();
                 callbackMap.put(operation.getCallback(), operationsByCallback);
             }
             operationsByCallback.add(operation);

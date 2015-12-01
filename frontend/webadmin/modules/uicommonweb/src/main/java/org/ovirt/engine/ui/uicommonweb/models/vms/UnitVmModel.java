@@ -1406,9 +1406,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.behavior.setModel(this);
 
         setNicsWithLogicalNetworks(new VnicInstancesModel());
-        setAdvancedMode(new EntityModel<Boolean>(false));
-        setValid(new EntityModel<Boolean>(true));
-        setAttachedToInstanceType(new EntityModel<Boolean>(true));
+        setAdvancedMode(new EntityModel<>(false));
+        setValid(new EntityModel<>(true));
+        setAttachedToInstanceType(new EntityModel<>(true));
         setStorageDomain(new NotChangableForVmInPoolListModel<StorageDomain>());
         setName(new NotChangableForVmInPoolEntityModel<String>());
         setNumOfMonitors(new NotChangableForVmInPoolListModel<Integer>());
@@ -1453,10 +1453,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMemoryBalloonDeviceEnabled().setEntity(true);
         getMemoryBalloonDeviceEnabled().setIsAvailable(false);
 
-        setSpiceProxyEnabled(new EntityModel<Boolean>(false));
+        setSpiceProxyEnabled(new EntityModel<>(false));
         setSpiceProxy(new EntityModel<String>());
 
-        setIsSubTemplate(new NotChangableForVmInPoolEntityModel<Boolean>(false));
+        setIsSubTemplate(new NotChangableForVmInPoolEntityModel<>(false));
         getIsSubTemplate().getEntityChangedEvent().addListener(this);
         setTemplateVersionName(new NotChangableForVmInPoolEntityModel<String>());
         setBaseTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
@@ -1485,7 +1485,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
         setBootMenuEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
-        setVmInitEnabled(new EntityModel<Boolean>(false));
+        setVmInitEnabled(new EntityModel<>(false));
         setCloudInitEnabled(new EntityModel<Boolean>());
         setSpiceFileTransferEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSpiceCopyPasteEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1566,7 +1566,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setWatchdogAction(new NotChangableForVmInPoolListModel<VmWatchdogAction>());
         getWatchdogAction().getSelectedItemChangedEvent().addListener(this);
-        ArrayList<VmWatchdogAction> watchDogActions = new ArrayList<VmWatchdogAction>();
+        ArrayList<VmWatchdogAction> watchDogActions = new ArrayList<>();
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
             watchDogActions.add(action);
         }
@@ -2052,7 +2052,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         tempVar.setEntity(BootSequence.C);
         EntityModel hardDiskOption = tempVar;
 
-        List<EntityModel<BootSequence>> firstBootDeviceItems = new ArrayList<EntityModel<BootSequence>>();
+        List<EntityModel<BootSequence>> firstBootDeviceItems = new ArrayList<>();
         firstBootDeviceItems.add(hardDiskOption);
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
@@ -2073,7 +2073,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void initVncKeyboardLayout() {
         final List<String> layouts =
                 (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
-        final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
+        final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<>();
         vncKeyboardLayoutItems.add(null); // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
@@ -2251,7 +2251,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
-        List<VmWatchdogType> watchDogModels = new ArrayList<VmWatchdogType>();
+        List<VmWatchdogType> watchDogModels = new ArrayList<>();
         for (VmWatchdogType vmWatchdogType : vmWatchdogTypes) {
             watchDogModels.add(vmWatchdogType);
         }
@@ -2274,7 +2274,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         BootSequence firstDevice = entityModel.getEntity();
         EntityModel<BootSequence> prevItem = null;
 
-        List<EntityModel<BootSequence>> list = new ArrayList<EntityModel<BootSequence>>();
+        List<EntityModel<BootSequence>> list = new ArrayList<>();
         for (EntityModel<BootSequence> item : getFirstBootDevice().getItems()) {
             if (item.getEntity() != firstDevice) {
                 list.add(item);
@@ -2284,7 +2284,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        EntityModel<BootSequence> tempVar = new EntityModel<BootSequence>();
+        EntityModel<BootSequence> tempVar = new EntityModel<>();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().noneTitle());
         EntityModel<BootSequence> noneOption = tempVar;
 
@@ -2421,7 +2421,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void setBootSequence(BootSequence value) {
-        ArrayList<BootSequence> items = new ArrayList<BootSequence>();
+        ArrayList<BootSequence> items = new ArrayList<>();
         for (char a : value.toString().toCharArray()) {
             items.add(BootSequence.valueOf(String.valueOf(a)));
         }
@@ -2485,8 +2485,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        List<DataCenterWithCluster> dataCentersWithClusters =
-                new ArrayList<DataCenterWithCluster>();
+        List<DataCenterWithCluster> dataCentersWithClusters = new ArrayList<>();
 
         for (VDSGroup cluster : possibleClusters) {
             if (cluster.getStoragePoolId() != null && cluster.getStoragePoolId().equals(dataCenter.getId())) {
@@ -2501,7 +2500,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             List<VDSGroup> clusters,
             Guid selectedCluster) {
 
-        Map<Guid, List<VDSGroup>> dataCenterToCluster = new HashMap<Guid, List<VDSGroup>>();
+        Map<Guid, List<VDSGroup>> dataCenterToCluster = new HashMap<>();
         for (VDSGroup cluster : clusters) {
             if (cluster.getStoragePoolId() == null) {
                 continue;
@@ -2513,8 +2512,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             dataCenterToCluster.get(cluster.getStoragePoolId()).add(cluster);
         }
 
-        List<DataCenterWithCluster> dataCentersWithClusters =
-                new ArrayList<DataCenterWithCluster>();
+        List<DataCenterWithCluster> dataCentersWithClusters = new ArrayList<>();
 
         for (StoragePool dataCenter : dataCenters) {
             if (dataCenterToCluster.containsKey(dataCenter.getId())) {

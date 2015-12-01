@@ -21,7 +21,7 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
 
     protected final EventBus eventBus;
 
-    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
     protected final SafeHtml title;
 

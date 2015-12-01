@@ -250,7 +250,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
         Collections.sort(snapshots, Collections.reverseOrder(new SnapshotByCreationDateCommparer()));
-        ArrayList<Snapshot> sortedSnapshots = new ArrayList<Snapshot>();
+        ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
 
         for (Snapshot snapshot : snapshots) {
             SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());

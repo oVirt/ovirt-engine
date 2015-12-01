@@ -36,7 +36,7 @@ public class AttachDiskModel extends NewDiskModel {
     private EntityModel<String> warningLabel;
 
     public AttachDiskModel() {
-        attachableDisksMap = new HashMap<DiskStorageType, ListModel<EntityModel<DiskModel>>>();
+        attachableDisksMap = new HashMap<>();
         attachableDisksMap.put(DiskStorageType.IMAGE, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.LUN, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.CINDER, new ListModel<EntityModel<DiskModel>>());
@@ -132,9 +132,9 @@ public class AttachDiskModel extends NewDiskModel {
             return;
         }
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         IFrontendActionAsyncCallback onFinishCallback = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
@@ -203,7 +203,7 @@ public class AttachDiskModel extends NewDiskModel {
     }
 
     public List<EntityModel<DiskModel>> getSelectedDisks() {
-        List<EntityModel<DiskModel>> selectedDisks = new ArrayList<EntityModel<DiskModel>>();
+        List<EntityModel<DiskModel>> selectedDisks = new ArrayList<>();
         for (ListModel<EntityModel<DiskModel>> listModel : attachableDisksMap.values()) {
             if (listModel.getSelectedItems() != null && !listModel.getSelectedItems().isEmpty()) {
                 selectedDisks.addAll(listModel.getSelectedItems());

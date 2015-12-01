@@ -43,7 +43,7 @@ public class ErrataModule extends AbstractGinModule {
             final Provider<EntityModel<Erratum>> modelProvider) {
 
         DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> result = new
-                DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>>(eventBus, defaultConfirmPopupProvider);
+                DetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
 
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);

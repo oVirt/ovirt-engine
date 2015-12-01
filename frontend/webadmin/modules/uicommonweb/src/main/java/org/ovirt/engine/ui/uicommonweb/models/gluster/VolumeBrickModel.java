@@ -143,7 +143,7 @@ public class VolumeBrickModel extends Model {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
-                    List<String> brickDirectories = new ArrayList<String>();
+                    List<String> brickDirectories = new ArrayList<>();
                     for (StorageDevice brick : bricks) {
                         String mountPoint = brick.getMountPoint();
                         if (mountPoint != null && !mountPoint.isEmpty()) {
@@ -336,10 +336,10 @@ public class VolumeBrickModel extends Model {
         brickEntity.setServerName(server.getHostName());
         brickEntity.setBrickDirectory(brickDir);
 
-        EntityModel<GlusterBrickEntity> entityModel = new EntityModel<GlusterBrickEntity>(brickEntity);
+        EntityModel<GlusterBrickEntity> entityModel = new EntityModel<>(brickEntity);
         List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
         if (items == null) {
-            items = new ArrayList<EntityModel<GlusterBrickEntity>>();
+            items = new ArrayList<>();
         }
 
         for (EntityModel<GlusterBrickEntity> model : items) {
@@ -420,7 +420,7 @@ public class VolumeBrickModel extends Model {
     private void moveItemsUpDown(boolean isUp) {
 
         List<EntityModel<GlusterBrickEntity>> selectedItems = bricks.getSelectedItems();
-        ArrayList<EntityModel<GlusterBrickEntity>> items = new ArrayList<EntityModel<GlusterBrickEntity>>(bricks.getItems());
+        ArrayList<EntityModel<GlusterBrickEntity>> items = new ArrayList<>(bricks.getItems());
         for (EntityModel<GlusterBrickEntity> selectedItem : selectedItems) {
             int position = items.indexOf(selectedItem);
 
@@ -615,7 +615,7 @@ public class VolumeBrickModel extends Model {
     public boolean validateReplicateBricks(int oldReplicaCount, List<GlusterBrickEntity> existingBricks) {
 
         int replicaCount = getReplicaCountValue();
-        Set<String> servers = new HashSet<String>();
+        Set<String> servers = new HashSet<>();
 
         if(replicaCount > oldReplicaCount) {
             int count = 0;

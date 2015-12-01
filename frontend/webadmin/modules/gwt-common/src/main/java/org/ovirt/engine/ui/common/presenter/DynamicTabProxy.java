@@ -39,7 +39,7 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
             this.targetHistoryToken = historyToken;
             this.requestTabsEventType = requestTabsEventType;
             this.changeTabEventType = changeTabEventType;
-            this.presenter = new StandardProvider<T>(presenterProvider);
+            this.presenter = new StandardProvider<>(presenterProvider);
             addRequestTabsHandler();
         }
 
@@ -53,7 +53,7 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
             Type<ChangeTabHandler> changeTabEventType,
             String label, float priority, String historyToken, Align align) {
         bind(placeManager, eventBus);
-        setProxy(new WrappedProxy<T>(placeManager, eventBus, this,
+        setProxy(new WrappedProxy<>(placeManager, eventBus, this,
                 requestTabsEventType, changeTabEventType, label, priority, historyToken, align));
         setPlace(new PlaceWithGatekeeper(historyToken, gatekeeper));
 

@@ -32,7 +32,7 @@ public class ApplicationModeHelper {
     }
 
     public static ArrayList<EventNotificationEntity> getModeSpecificEventNotificationTypeList() {
-        ArrayList<EventNotificationEntity> subList = new ArrayList<EventNotificationEntity>();
+        ArrayList<EventNotificationEntity> subList = new ArrayList<>();
         for (EventNotificationEntity entity : AsyncDataProvider.getInstance().getEventNotificationTypeList()) {
             if ((entity.getAvailableInModes() & UI_MODE.getValue()) > 0) {
                 subList.add(entity);
@@ -42,7 +42,7 @@ public class ApplicationModeHelper {
     }
 
     public static boolean filterActionGroupTreeByApplictionMode(RoleNode tree) {
-        ArrayList<RoleNode> list = new ArrayList<RoleNode>();
+        ArrayList<RoleNode> list = new ArrayList<>();
         for (RoleNode node : tree.getLeafRoles()) {
             if (node.getLeafRoles() == null || node.getLeafRoles().isEmpty()) {
                 return (ActionGroup.valueOf(node.getName()).getAvailableInModes() & getUiMode().getValue()) == 0;
@@ -59,14 +59,14 @@ public class ApplicationModeHelper {
     }
 
     public static boolean filterSystemTreeByApplictionMode(SystemTreeItemModel systemItem) {
-        List<SystemTreeItemModel> list = new ArrayList<SystemTreeItemModel>();
+        List<SystemTreeItemModel> list = new ArrayList<>();
         for (SystemTreeItemModel item : systemItem.getChildren()) {
             if (filterSystemTreeByApplictionMode(item)) {
                 list.add(item);
             }
         }
         if (list.size() > 0 && list.size() == systemItem.getChildren().size()) {
-            List<SystemTreeItemModel> childItems = new ArrayList<SystemTreeItemModel>();
+            List<SystemTreeItemModel> childItems = new ArrayList<>();
             for (SystemTreeItemModel item : list) {
                 childItems.addAll(item.getChildren());
             }

@@ -204,7 +204,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
     /**
      * The elements used to display labels above the ticks.
      */
-    private final List<Element> labelElements = new ArrayList<Element>();
+    private final List<Element> labelElements = new ArrayList<>();
 
     /**
      * The formatter used to generate label text.
@@ -272,7 +272,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      * The elements used to display tick marks, which are the vertical lines
      * along the slider bar.
      */
-    private final List<Element> tickElements = new ArrayList<Element>();
+    private final List<Element> tickElements = new ArrayList<>();
 
     /**
      * Create a slider bar.

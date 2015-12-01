@@ -25,7 +25,7 @@ public class SubTabExtendedTemplatePermissionsView extends AbstractSubTabTableWi
     @Inject
     public SubTabExtendedTemplatePermissionsView(TemplatePermissionListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new PermissionListModelTable<UserPortalPermissionListModel<VmTemplate>>(modelProvider, eventBus, clientStorage));
+        super(new PermissionListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

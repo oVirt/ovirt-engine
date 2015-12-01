@@ -120,7 +120,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
         UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
 
-        List<String> macPoolNames = new ArrayList<String>();
+        List<String> macPoolNames = new ArrayList<>();
         for (MacPool macPool : getSelectedItems()) {
             macPoolNames.add(macPool.getName());
         }
@@ -135,7 +135,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
 
     private void onRemove() {
         cancel();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
         for (MacPool macPool : getSelectedItems()) {
             params.add(new RemoveMacPoolByIdParameters(macPool.getId()));
         }

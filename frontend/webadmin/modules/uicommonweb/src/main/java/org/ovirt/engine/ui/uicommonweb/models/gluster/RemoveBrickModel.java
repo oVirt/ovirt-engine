@@ -19,7 +19,7 @@ public class RemoveBrickModel extends ConfirmationModel {
 
     public RemoveBrickModel() {
         setReduceReplica(false);
-        setMigrateData(new EntityModel<Boolean>(false));
+        setMigrateData(new EntityModel<>(false));
         setMigrationSupported(true);
     }
 

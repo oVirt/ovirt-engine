@@ -112,7 +112,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             CinderDisk disk = (CinderDisk) item;
             RegisterCinderDiskParameters parameters = new RegisterCinderDiskParameters(disk, getEntity().getId());

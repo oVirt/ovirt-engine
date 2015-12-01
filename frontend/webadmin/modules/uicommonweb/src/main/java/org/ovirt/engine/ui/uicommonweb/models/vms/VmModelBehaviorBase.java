@@ -611,7 +611,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 UnitVmModel model = (UnitVmModel) target;
                                 ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
                                 Collections.sort(disks, new Linq.DiskByAliasComparer());
-                                ArrayList<DiskModel> list = new ArrayList<DiskModel>();
+                                ArrayList<DiskModel> list = new ArrayList<>();
 
                                 for (Disk disk : disks) {
                                     DiskModel diskModel = new DiskModel();
@@ -728,7 +728,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains) {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
-        ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> list = new ArrayList<>();
         for (StorageDomain a : storageDomains) {
             if (Linq.isDataActiveStorageDomain(a)) {
                 list.add(a);
@@ -739,7 +739,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
             StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
             StorageDomain sd = Linq.firstOrNull(list, new Linq.IdPredicate<>(selectStorage.getId()));
-            list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
+            list = new ArrayList<>(Arrays.asList(new StorageDomain[]{sd}));
         }
 
         return list;
@@ -855,7 +855,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                                 @Override
                                                 public void onSuccess(Object target, Object returnValue) {
                                                     ArrayList<VmTemplate> templatesChain =
-                                                            new ArrayList<VmTemplate>((List<VmTemplate>) returnValue);
+                                                            new ArrayList<>((List<VmTemplate>) returnValue);
                                                     initTemplateWithVersion(templatesChain, templateId, useLatest);
                                                 }
                                             }), rawTemplate.getBaseTemplateId());
@@ -1174,7 +1174,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * Returns a list of integers which can divide the param
      */
     protected List<Integer> findIndependentPossibleValues(int max) {
-        List<Integer> res = new ArrayList<Integer>();
+        List<Integer> res = new ArrayList<>();
         int totalCPUCores = getTotalCpuCores();
 
         for (int i = 1; i <= Math.min(totalCPUCores, max); i++) {
@@ -1190,7 +1190,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * Filters out the values, which can not be used in conjuction with the others to reach the total CPUs
      */
     protected List<Integer> filterPossibleValues(List<Integer> candidates, List<Integer> others) {
-        List<Integer> res = new ArrayList<Integer>();
+        List<Integer> res = new ArrayList<>();
         int currentCpusCores = getTotalCpuCores();
 
         for (Integer candidate : candidates) {
@@ -1238,7 +1238,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         if (returnValue != null) {
-                            Set<String> emulatedSet = new TreeSet<String>((HashSet<String>) returnValue);
+                            Set<String> emulatedSet = new TreeSet<>((HashSet<String>) returnValue);
                             emulatedSet.add(""); //$NON-NLS-1$
                             String oldVal = getModel().getEmulatedMachine().getSelectedItem();
                             getModel().getEmulatedMachine().setItems(emulatedSet);
@@ -1264,7 +1264,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         if (returnValue != null) {
-                            List<String> cpuList = new ArrayList<String>();
+                            List<String> cpuList = new ArrayList<>();
                             cpuList.add(""); //$NON-NLS-1$
                             for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
                                 cpuList.add(cpu.getVdsVerbData());

@@ -42,7 +42,7 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
     public void makeSortable() {
         makeSortable(new Comparator<T>() {
 
-            IdentifiableComparator<VMStatus> valueComparator = new Linq.IdentifiableComparator<VMStatus>();
+            IdentifiableComparator<VMStatus> valueComparator = new Linq.IdentifiableComparator<>();
 
             @Override
             public int compare(T o1, T o2) {

@@ -46,13 +46,13 @@ public class DataCenterQosSubTabPanelPresenter extends
     }
 
     @RequestTabs
-    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<RequestTabsHandler>();
+    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<>();
 
     @ChangeTab
-    public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<ChangeTabHandler>();
+    public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<>();
 
     private Presenter<?, ?> lastPresenter;
 

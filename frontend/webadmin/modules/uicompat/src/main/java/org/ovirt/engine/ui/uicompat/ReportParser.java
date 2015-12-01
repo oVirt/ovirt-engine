@@ -15,10 +15,9 @@ public class ReportParser {
 
     private static ReportParser INSTANCE = new ReportParser();
 
-    private final Map<String, Resource> resourceMap =
-            new HashMap<String, Resource>();
+    private final Map<String, Resource> resourceMap = new HashMap<>();
 
-    private final Map<String, Dashboard> dashboardMap = new HashMap<String, Dashboard>();
+    private final Map<String, Dashboard> dashboardMap = new HashMap<>();
 
     private boolean isCommunityEdition = false;
 
@@ -134,7 +133,7 @@ public class ReportParser {
     public static class Resource {
         private final String type;
 
-        private final List<Category> catergoriesList = new LinkedList<Category>();
+        private final List<Category> catergoriesList = new LinkedList<>();
 
         public Resource(String type) {
             super();
@@ -156,7 +155,7 @@ public class ReportParser {
 
     public static class Category {
         private final String name;
-        private final List<URI> uriList = new LinkedList<URI>();
+        private final List<URI> uriList = new LinkedList<>();
 
         public Category(String name) {
             super();

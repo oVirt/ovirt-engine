@@ -10,7 +10,7 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
     private static final double GIGA = 1024;
     private static final double MB_GB_THRESHOLD = 4; // over this threshold number would be presented in GB not MB
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GiB);
+            new DiskSizeRenderer<>(SizeConverter.SizeUnit.GiB);
 
     public QuotaMemoryProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
         super(quotaUsagePerUser);

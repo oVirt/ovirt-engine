@@ -117,7 +117,7 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

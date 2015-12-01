@@ -231,7 +231,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         clientConsoleResourcesUrl = new Anchor(dynamicMessages.consoleClientResources());
 
-        disableSmartcard = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        disableSmartcard = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
@@ -246,7 +246,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         disableSmartcard.setLabel(constants.disableSmartcard());
 
-        wanEnabled = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        wanEnabled = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
@@ -261,7 +261,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         wanEnabled.setLabel(constants.enableWanOptions());
 
-        remapCtrlAltDeleteSpice = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        remapCtrlAltDeleteSpice = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
             @Override
             protected void updateModel(ISpice spice, boolean value) {
                 spice.getOptions().setRemapCtrlAltDelete(value);
@@ -274,7 +274,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         });
 
-        remapCtrlAltDeleteVnc = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new VncRenderer() {
+        remapCtrlAltDeleteVnc = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new VncRenderer() {
             @Override
             protected void updateModel(IVnc vnc, boolean value) {
                 vnc.getOptions().setRemapCtrlAltDelete(value);
@@ -286,7 +286,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             }
         });
 
-        enableUsbAutoshare = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        enableUsbAutoshare = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
@@ -300,7 +300,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         enableUsbAutoshare.setLabel(constants.usbAutoshare());
 
-        openInFullScreen = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        openInFullScreen = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
@@ -314,7 +314,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         openInFullScreen.setLabel(constants.openInFullScreen());
 
-        enableSpiceProxy = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        enableSpiceProxy = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new SpiceRenderer() {
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
@@ -328,9 +328,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         enableSpiceProxy.setLabel(constants.enableSpiceProxy());
 
-        useLocalDrives =
-                new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT,
-                        new ValueCheckboxRenderer<ConsoleModel>() {
+        useLocalDrives = new EntityModelValueCheckBoxEditor<>(Align.RIGHT, new ValueCheckboxRenderer<ConsoleModel>() {
 
                             @Override
                             public boolean render(ConsoleModel value) {

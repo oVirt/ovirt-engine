@@ -80,7 +80,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                         List<VmTemplate> vmtList =
                                 (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                        List<ImportTemplateData> templateDataList = new ArrayList<ImportTemplateData>();
+                        List<ImportTemplateData> templateDataList = new ArrayList<>();
                         for (VmTemplate template : externalTemplates) {
                             ImportTemplateData templateData = new ImportTemplateData(template);
                             boolean templateExistsInSystem = vmtList.contains(template);

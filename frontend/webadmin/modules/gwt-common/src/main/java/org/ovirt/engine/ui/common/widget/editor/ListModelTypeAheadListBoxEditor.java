@@ -43,7 +43,7 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
             boolean autoAddToValidValues,
             VisibilityRenderer visibilityRenderer,
             SuggestionMatcher suggestionMatcher) {
-        super(new ListModelTypeAheadListBox<T>(renderer, autoAddToValidValues, suggestionMatcher), visibilityRenderer);
+        super(new ListModelTypeAheadListBox<>(renderer, autoAddToValidValues, suggestionMatcher), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

@@ -36,7 +36,7 @@ public class FilteredListModel<T> extends ListModel<T> {
             }
             setItemsSelectionAware(this.allItems);
         }
-        final Collection<T> itemsToShow = new ArrayList<T>();
+        final Collection<T> itemsToShow = new ArrayList<>();
         for (T item : this.allItems) {
             if (filter.filter(item)) {
                 itemsToShow.add(item);

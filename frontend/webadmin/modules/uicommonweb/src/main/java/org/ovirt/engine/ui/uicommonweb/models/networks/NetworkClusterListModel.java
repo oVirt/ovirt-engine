@@ -67,7 +67,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
     }
 
     private ClusterNetworkManageModel createManageList() {
-        List<ClusterNetworkModel> networkManageModelList = new ArrayList<ClusterNetworkModel>();
+        List<ClusterNetworkModel> networkManageModelList = new ArrayList<>();
         Iterable<PairQueryable<VDSGroup, NetworkCluster>> items = getItems();
 
         for (PairQueryable<VDSGroup, NetworkCluster> item : items) {

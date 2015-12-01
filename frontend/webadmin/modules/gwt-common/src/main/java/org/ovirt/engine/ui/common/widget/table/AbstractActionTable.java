@@ -136,7 +136,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
         super(dataProvider, eventBus);
-        this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
+        this.selectionModel = new OrderedMultiSelectionModel<>(dataProvider);
         this.table = new ActionCellTable<T>(dataProvider, resources) {
 
             @Override

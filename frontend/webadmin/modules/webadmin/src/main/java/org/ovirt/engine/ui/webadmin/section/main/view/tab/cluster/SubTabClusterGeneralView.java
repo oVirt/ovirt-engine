@@ -94,8 +94,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         // init form
         form.initialize();
 
-        glusterSwiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(
-                new EnumRenderer<GlusterServiceStatus>());
+        glusterSwiftStatusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterServiceStatus>());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

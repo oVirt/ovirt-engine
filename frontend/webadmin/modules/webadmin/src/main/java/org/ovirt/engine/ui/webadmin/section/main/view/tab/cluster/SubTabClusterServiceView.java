@@ -77,7 +77,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     @Inject
     public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {
         super(modelProvider);
-        servicesTable = new EntityModelCellTable<ListModel>(false, true);
+        servicesTable = new EntityModelCellTable<>(false, true);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
@@ -92,7 +92,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     }
 
     private void initListBoxEditors() {
-        hostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        hostEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 if (object != null) {
@@ -103,7 +103,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
                 }
             }
         });
-        serviceTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer() {
+        serviceTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer() {
             @Override
             public String render(Enum object) {
                 if (object != null) {

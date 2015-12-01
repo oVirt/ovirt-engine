@@ -49,8 +49,8 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     GuidLabel id = new GuidLabel();
     StringValueLabel description = new StringValueLabel();
     BooleanLabel vmNetwork = new BooleanLabel(constants.trueVmNetwork(), constants.falseVmNetwork());
-    ValueLabel<Integer> vlan = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
-    ValueLabel<Integer> mtu = new ValueLabel<Integer>(new MtuRenderer());
+    ValueLabel<Integer> vlan = new ValueLabel<>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
+    ValueLabel<Integer> mtu = new ValueLabel<>(new MtuRenderer());
     StringValueLabel externalId = new StringValueLabel();
 
     @UiField(provided = true)

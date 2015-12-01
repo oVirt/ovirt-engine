@@ -22,7 +22,7 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
         this.sourceListModel = sourceListModel;
         this.profiles = profiles;
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (P profile : profiles) {
             items.add(profile.getName());
         }
@@ -41,7 +41,7 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
             return;
         }
 
-        ArrayList<VdcActionParametersBase> vdcActionParametersBaseList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> vdcActionParametersBaseList = new ArrayList<>();
         for (P profile : getProfiles()) {
             VdcActionParametersBase parameters = getRemoveProfileParams(profile);
             vdcActionParametersBaseList.add(parameters);

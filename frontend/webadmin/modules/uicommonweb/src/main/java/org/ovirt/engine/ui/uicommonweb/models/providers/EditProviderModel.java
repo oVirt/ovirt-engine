@@ -36,7 +36,7 @@ public class EditProviderModel extends ProviderModel {
     private static final String CMD_CANCEL = "OnCancel"; //$NON-NLS-1$
 
     private final String oldUrl;
-    private Collection<Network> providedNetworks = new ArrayList<Network>();
+    private Collection<Network> providedNetworks = new ArrayList<>();
 
     public EditProviderModel(SearchableListModel sourceListModel, Provider provider) {
         super(sourceListModel, VdcActionType.UpdateProvider, provider);
@@ -68,8 +68,8 @@ public class EditProviderModel extends ProviderModel {
     @Override
     protected void preSave() {
         if (!StringHelper.stringsEqualIgnoreCase((String) getUrl().getEntity(), oldUrl)) {
-            ArrayList<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
-            ArrayList<VdcQueryParametersBase> queryParams = new ArrayList<VdcQueryParametersBase>();
+            ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
+            ArrayList<VdcQueryParametersBase> queryParams = new ArrayList<>();
             final Set<VdcObjectType> providedTypes = provider.getType().getProvidedTypes();
 
             if (providedTypes.contains(VdcObjectType.Network)) {

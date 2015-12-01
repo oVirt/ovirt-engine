@@ -270,7 +270,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         usedFilterPanel.clear();
         PolicyUnitPanel first = null;
         PolicyUnitPanel last = null;
-        List<PolicyUnitPanel> list = new ArrayList<PolicyUnitPanel>();
+        List<PolicyUnitPanel> list = new ArrayList<>();
         PolicyUnitPanel tempPolicyUnitPanel;
         for (PolicyUnit policyUnit : model.getUsedFilters()) {
             tempPolicyUnitPanel =

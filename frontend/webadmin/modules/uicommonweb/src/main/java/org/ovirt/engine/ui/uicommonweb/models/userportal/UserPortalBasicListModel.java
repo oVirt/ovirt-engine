@@ -77,7 +77,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         this.vmBasicDiskListModel = vmBasicDiskListModel;
         setDetailList();
         setApplicationPlace(UserPortalApplicationPlaces.basicMainTabPlace);
-        setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event<>(searchCompletedEventDefinition));
 
         setSelectedItemDefinedMemory(new EntityModel<String>());
         setSelectedItemNumOfCpuCores(new EntityModel<String>());
@@ -103,8 +103,8 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                        ArrayList<VM> vms = new ArrayList<VM>();
-                        ArrayList<VmPool> pools = new ArrayList<VmPool>();
+                        ArrayList<VM> vms = new ArrayList<>();
+                        ArrayList<VmPool> pools = new ArrayList<>();
 
                         VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
                         if (retValue != null && retValue.getSucceeded()) {

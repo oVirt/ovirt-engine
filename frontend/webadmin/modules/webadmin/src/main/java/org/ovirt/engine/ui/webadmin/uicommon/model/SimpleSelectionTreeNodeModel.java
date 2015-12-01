@@ -24,7 +24,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
      * Build from a list of {@link SelectionTreeNodeModel} instances
      */
     public static List<SimpleSelectionTreeNodeModel> fromList(List<SelectionTreeNodeModel> list) {
-        List<SimpleSelectionTreeNodeModel> result = new ArrayList<SimpleSelectionTreeNodeModel>();
+        List<SimpleSelectionTreeNodeModel> result = new ArrayList<>();
         for (SelectionTreeNodeModel selectionTreeNodeModel : list) {
             result.add(new SimpleSelectionTreeNodeModel(selectionTreeNodeModel));
         }
@@ -49,7 +49,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
         this.model = model;
 
         // Build children list using depth-first recursion
-        this.children = new ArrayList<SimpleSelectionTreeNodeModel>();
+        this.children = new ArrayList<>();
         for (SelectionTreeNodeModel childModel : model.getChildren()) {
             SimpleSelectionTreeNodeModel child = new SimpleSelectionTreeNodeModel(childModel);
             child.parent = this;

@@ -10,7 +10,7 @@ public class EnumCompat {
      * Returns the Enum names as an Arraylist
      */
     public static <T extends Enum> String[] GetNames(Class<T> clazz) {
-        ArrayList<String> returnValues = new ArrayList<String>();
+        ArrayList<String> returnValues = new ArrayList<>();
         if (!clazz.isEnum()) {
             throw new RuntimeException("Class is not an Enum: " + clazz.getName());
         }

@@ -293,7 +293,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
         final List<EntityModel<GlusterGeoRepSessionDetails>> detailRows = new ArrayList<>();
         for (GlusterGeoRepSessionDetails detail : details) {
-            detailRows.add(new EntityModel<GlusterGeoRepSessionDetails>(detail));
+            detailRows.add(new EntityModel<>(detail));
         }
         windowModel.getGeoRepSessionSummary().setItems(detailRows, detailRows.get(0));
     }
@@ -353,7 +353,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                     List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
                             new ArrayList<>();
                             for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
-                                sessionConfigEntities.add(new EntityModel<>(new Pair<Boolean, GlusterGeoRepSessionConfiguration>(false,
+                                sessionConfigEntities.add(new EntityModel<>(new Pair<>(false,
                                         currentSession)));
                             }
                             geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
@@ -364,8 +364,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void updateConfig() {
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         List<IFrontendActionAsyncCallback> callbacks;
 
         final GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
@@ -397,7 +397,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             closeWindow();
             return;
         }
-        callbacks = new ArrayList<IFrontendActionAsyncCallback>(Collections.nCopies(numberOfConfigUpdates, (IFrontendActionAsyncCallback)null));
+        callbacks = new ArrayList<>(Collections.nCopies(numberOfConfigUpdates, (IFrontendActionAsyncCallback) null));
         callbacks.set(numberOfConfigUpdates - 1, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {

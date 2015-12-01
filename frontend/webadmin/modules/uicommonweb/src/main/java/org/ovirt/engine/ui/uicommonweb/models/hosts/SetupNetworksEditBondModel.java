@@ -38,7 +38,7 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
             }
         }
         if (!found) {
-            EntityModel<String> value = new EntityModel<String>();
+            EntityModel<String> value = new EntityModel<>();
             value.setEntity(bondOptions);
             customItem.setValue(value);
             getBondingOptions().setSelectedItem(customItem);

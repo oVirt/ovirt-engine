@@ -151,7 +151,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     void initEditors() {
-        isoEditor = new ListModelListBoxEditor<RpmVersion>(new NullSafeRenderer<RpmVersion>() {
+        isoEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<RpmVersion>() {
             @Override
             public String renderNullSafe(RpmVersion version) {
                 // Format string to contain major.minor version only.

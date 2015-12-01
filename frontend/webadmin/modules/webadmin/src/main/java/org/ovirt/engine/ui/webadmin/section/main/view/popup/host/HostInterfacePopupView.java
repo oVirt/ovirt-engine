@@ -169,7 +169,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         interfaceEditor = new ListModelListBoxEditor<>(new NameRenderer<VdsNetworkInterface>());
-        bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
+        bondingModeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
             @Override
             protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {
                 String key = pair.getKey();
@@ -180,9 +180,9 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 return value;
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
+        bootProtocol = new EnumRadioEditor<>(NetworkBootProtocol.class);
         qosWidget = new HostNetworkQosWidget();
-        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
+        customPropertiesWidget = new KeyValueWidget<>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);

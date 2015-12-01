@@ -53,10 +53,10 @@ public class PluginManager {
     private static final Logger logger = Logger.getLogger(PluginManager.class.getName());
 
     // Maps plugin names to corresponding object representations
-    private final Map<String, Plugin> plugins = new HashMap<String, Plugin>();
+    private final Map<String, Plugin> plugins = new HashMap<>();
 
     // Maps plugin names to scheduled event handler functions invoked via Command interface
-    private final Map<String, List<Command>> scheduledFunctionCommands = new HashMap<String, List<Command>>();
+    private final Map<String, List<Command>> scheduledFunctionCommands = new HashMap<>();
 
     // Controls plugin invocation, allowing WebAdmin to call plugins only in a specific context
     private boolean canInvokePlugins = false;

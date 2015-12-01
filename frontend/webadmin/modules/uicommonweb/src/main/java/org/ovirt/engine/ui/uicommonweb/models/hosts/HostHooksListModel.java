@@ -70,15 +70,14 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-                ArrayList<HashMap<String, String>> list =
-                        new ArrayList<HashMap<String, String>>();
+                ArrayList<HashMap<String, String>> list = new ArrayList<>();
                 HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 HashMap<String, String> row;
                 for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
                     for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
                             .entrySet()) {
                         for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet()) {
-                            row = new HashMap<String, String>();
+                            row = new HashMap<>();
                             row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$
                             row.put("ScriptName", keyValuePair1.getKey()); //$NON-NLS-1$
                             row.put("PropertyName", keyValuePair2.getKey()); //$NON-NLS-1$

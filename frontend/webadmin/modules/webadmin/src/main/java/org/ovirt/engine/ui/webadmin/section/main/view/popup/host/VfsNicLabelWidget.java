@@ -40,7 +40,7 @@ public class VfsNicLabelWidget extends ScrollableAddRemoveRowWidget<VfsNicLabelM
 
     @Override
     protected ListModel<String> createGhostValue() {
-        ListModel<String> value = new ListModel<String>();
+        ListModel<String> value = new ListModel<>();
         value.setItems(suggestions);
         value.setSelectedItem(""); //$NON-NLS-1$
         return value;

@@ -140,9 +140,9 @@ public class ListModel<T> extends Model {
     }
 
     public ListModel() {
-        setSelectedItemChangedEvent(new Event<EventArgs>(selectedItemChangedEventDefinition));
-        setSelectedItemsChangedEvent(new Event<EventArgs>(selectedItemsChangedEventDefinition));
-        setItemsChangedEvent(new Event<EventArgs>(itemsChangedEventDefinition));
+        setSelectedItemChangedEvent(new Event<>(selectedItemChangedEventDefinition));
+        setSelectedItemsChangedEvent(new Event<>(selectedItemsChangedEventDefinition));
+        setItemsChangedEvent(new Event<>(itemsChangedEventDefinition));
     }
 
     protected void onSelectedItemChanging(T newValue, T oldValue) {
@@ -218,7 +218,7 @@ public class ListModel<T> extends Model {
         if (selectedItem == null) {
             itemsChanged();
         } else {
-            List<T> selectedItems = new ArrayList<T>();
+            List<T> selectedItems = new ArrayList<>();
             selectedItems.add(selectedItem);
             setSelectedItem(selectedItem);
             setSelectedItems(selectedItems);

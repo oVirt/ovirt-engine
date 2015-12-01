@@ -23,7 +23,7 @@ public class EditOptionsModel extends Model {
     }
 
     public EditOptionsModel() {
-        setEnableConnectAutomatically(new EntityModel<Boolean>(true));
+        setEnableConnectAutomatically(new EntityModel<>(true));
         setPublicKey(new EntityModel<String>());
     }
 

@@ -118,16 +118,16 @@ public class DataCenterPopupView extends AbstractTabbedModelBoundPopupView<DataC
     }
 
     void initListBoxEditors() {
-        storagePoolTypeEditor = new ListModelListBoxEditor<Boolean>(new BooleanRenderer(constants.storageTypeLocal(), constants.storageTypeShared()));
+        storagePoolTypeEditor = new ListModelListBoxEditor<>(new BooleanRenderer(constants.storageTypeLocal(), constants.storageTypeShared()));
 
-        versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
+        versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override
             public String renderNullSafe(Version object) {
                 return object.getValue();
             }
         });
 
-        quotaEnforceTypeEditor = new ListModelListBoxEditor<QuotaEnforcementTypeEnum>(new EnumRenderer());
+        quotaEnforceTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
 
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
     }

@@ -108,7 +108,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(new GlusterHookParameters(hook.getId()));
         }
@@ -131,7 +131,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
         model.setHashName("disable_hooks"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().disableGlusterHooksMessage());
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(hook.getName());
         }
@@ -154,7 +154,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             GlusterHookEntity hook = (GlusterHookEntity) item;
@@ -258,24 +258,24 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
                 List<GlusterServerHook> serverHooks = ((GlusterHookEntity) returnValue).getServerHooks();
                 hookEntity.setServerHooks(serverHooks);
 
-                ArrayList<EntityModel<GlusterServerHook>> serverHookModels = new ArrayList<EntityModel<GlusterServerHook>>();
+                ArrayList<EntityModel<GlusterServerHook>> serverHookModels = new ArrayList<>();
                 GlusterServerHook engineCopy = new GlusterServerHook();
                 engineCopy.setHookId(hookEntity.getId());
                 engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
                 engineCopy.setStatus(hookEntity.getStatus());
                 engineCopy.setContentType(hookEntity.getContentType());
                 engineCopy.setChecksum(hookEntity.getChecksum());
-                EntityModel<GlusterServerHook> engineCopyModel = new EntityModel<GlusterServerHook>(engineCopy);
+                EntityModel<GlusterServerHook> engineCopyModel = new EntityModel<>(engineCopy);
                 serverHookModels.add(engineCopyModel);
 
                 for (GlusterServerHook serverHook : serverHooks) {
-                    serverHookModels.add(new EntityModel<GlusterServerHook>(serverHook));
+                    serverHookModels.add(new EntityModel<>(serverHook));
                 }
 
                 innerConflictsModel.getHookSources().setItems(serverHookModels);
                 innerConflictsModel.getHookSources().setSelectedItem(engineCopyModel);
 
-                ArrayList<GlusterServerHook> serverHooksWithEngine = new ArrayList<GlusterServerHook>(serverHooks);
+                ArrayList<GlusterServerHook> serverHooksWithEngine = new ArrayList<>(serverHooks);
                 serverHooksWithEngine.add(0, engineCopy);
                 innerConflictsModel.getServerHooksList().setItems(serverHooksWithEngine);
                 innerConflictsModel.getServerHooksList().setSelectedItem(engineCopy);
@@ -319,9 +319,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, G
 
         GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntity();
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         if (resolveConflictsModel.getResolveContentConflict().getEntity()) {
             actionTypes.add(VdcActionType.UpdateGlusterHook);

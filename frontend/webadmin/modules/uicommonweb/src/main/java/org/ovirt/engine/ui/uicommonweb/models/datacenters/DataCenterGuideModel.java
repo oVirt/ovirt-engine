@@ -240,7 +240,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         List<VDS> hosts =
                                 ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (hosts == null) {
-                            hosts = new ArrayList<VDS>();
+                            hosts = new ArrayList<>();
                         }
                         dataCenterGuideModel.allHosts = hosts;
                         AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
@@ -269,9 +269,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         updateAddClusterAvailability();
 
-        ArrayList<VDS> hosts = new ArrayList<VDS>();
-        ArrayList<VDS> availableHosts = new ArrayList<VDS>();
-        ArrayList<VDS> upHosts = new ArrayList<VDS>();
+        ArrayList<VDS> hosts = new ArrayList<>();
+        ArrayList<VDS> availableHosts = new ArrayList<>();
+        ArrayList<VDS> upHosts = new ArrayList<>();
         for (VDS vds : allHosts) {
             if (Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId())) {
                 hosts.add(vds);
@@ -291,8 +291,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         List<StorageDomain> unattachedStorages = getUnattachedStorages();
 
-        List<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
-        List<StorageDomain> attachedIsoStorages = new ArrayList<StorageDomain>();
+        List<StorageDomain> attachedDataStorages = new ArrayList<>();
+        List<StorageDomain> attachedIsoStorages = new ArrayList<>();
         for (StorageDomain sd : attachedStorageDomains) {
             if (sd.getStorageDomainType().isDataDomain()) {
                 attachedDataStorages.add(sd);
@@ -342,7 +342,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     }
 
     private List<StorageDomain> getUnattachedStorages() {
-        List<StorageDomain> unattachedStorage = new ArrayList<StorageDomain>();
+        List<StorageDomain> unattachedStorage = new ArrayList<>();
         for (StorageDomain item : allStorageDomains) {
             if (item.getStorageDomainType() == StorageDomainType.Data
                     && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
@@ -554,7 +554,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         LocalStorageModel localStorageModel = new LocalStorageModel();
         localStorageModel.setRole(StorageDomainType.Data);
 
-        ArrayList<IStorageModel> list = new ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> list = new ArrayList<>();
         list.add(localStorageModel);
         model.setStorageModels(list);
         model.setCurrentStorageItem(list.get(0));
@@ -569,7 +569,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         VDS localHost = (VDS) returnValue;
 
                         model.getHost()
-                                .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { localHost })));
+                                .setItems(new ArrayList<>(Arrays.asList(new VDS[]{localHost})));
                         model.getHost().setSelectedItem(localHost);
                         model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
                         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddStorage", listModel); //$NON-NLS-1$
@@ -595,7 +595,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.setTitle(title);
         model.setHelpTag(HelpTag.new_domain);
         model.setHashName("new_domain"); //$NON-NLS-1$
-        ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
+        ArrayList<StoragePool> dataCenters = new ArrayList<>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters, getEntity());
         model.getDataCenter().setIsChangeable(false);
@@ -690,7 +690,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveLocal"}))).run(); //$NON-NLS-1$
     }
 
     private void saveLocalStorage(TaskContext context) {
@@ -746,8 +746,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
@@ -797,8 +797,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                        callback1, callback2 })),
+                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2})),
                 failureCallback,
                 this);
     }
@@ -816,8 +815,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         context.invokeUIThread(this,
-                new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
-                        message })));
+                new ArrayList<>(Arrays.asList(new Object[]{"Finish", isSucceeded, model, message}))); //$NON-NLS-1$
     }
 
     private void saveNfsStorage() {
@@ -827,7 +825,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveNfs"}))).run(); //$NON-NLS-1$
     }
 
     private void saveNfsStorage(TaskContext context) {
@@ -883,8 +881,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         tempVar.setstorage_type(nfsModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
@@ -946,8 +944,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                        callback1, callback2, callback3 })),
+                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2, callback3})),
                 failureCallback,
                 this);
     }
@@ -959,7 +956,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveSan"}))).run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage(TaskContext context) {
@@ -1066,7 +1063,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
-        ArrayList<String> lunIds = new ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<>();
         for (LunModel lun : sanModel.getAddedLuns()) {
             lunIds.add(lun.getLunId());
         }
@@ -1122,7 +1119,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.setTitle(title);
         setWindow(model);
 
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<>();
         for (StorageDomain sd : storages) {
             EntityModel tempVar = new EntityModel();
             tempVar.setEntity(sd);
@@ -1147,7 +1144,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     public void onAttachStorage() {
         ListModel model = (ListModel) getWindow();
 
-        ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> items = new ArrayList<>();
         for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
             if (a.getIsSelected()) {
                 items.add((StorageDomain) a.getEntity());
@@ -1171,7 +1168,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> attachedStorage =
-                                new ArrayList<StorageDomain>();
+                                new ArrayList<>();
 
                         AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery(new Object[] {dataCenterGuideModel,
                                 attachedStorage},
@@ -1185,7 +1182,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                                        ArrayList<StorageDomain> isoStorageDomains =
                                                                                                                (ArrayList<StorageDomain>) returnValue;
                                                                                                        ArrayList<StorageDomain> sdl =
-                                                                                                               new ArrayList<StorageDomain>();
+                                                                                                               new ArrayList<>();
 
                                                                                                        for (StorageDomain a : isoStorageDomains) {
                                                                                                            boolean isContains = false;
@@ -1219,7 +1216,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                             (ArrayList<StorageDomain>) returnValue;
 
                                                                                     ArrayList<StorageDomain> unattachedStorage =
-                                                                                            new ArrayList<StorageDomain>();
+                                                                                            new ArrayList<>();
                                                                                     boolean addToList;
                                                                                     Version version3_0 = new Version(3, 0);
                                                                                     for (StorageDomain item : storageDomains) {
@@ -1263,7 +1260,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         model.setHashName("new_cluster"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
+        ArrayList<StoragePool> dataCenters = new ArrayList<>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters, getEntity());
         model.getDataCenter().setIsChangeable(false);

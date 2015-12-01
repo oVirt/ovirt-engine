@@ -104,7 +104,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
     private void initTables() {
         // Create custom preview table
-        previewTable = new EntityModelCellTable<ListModel>(false, true);
+        previewTable = new EntityModelCellTable<>(false, true);
         previewTable.enableColumnResizing();
 
         // Create Snapshot information tab panel

@@ -53,7 +53,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected CellList<Bookmark> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
-        final CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell());
+        final CellList<Bookmark> display = new CellList<>(new BookmarkListItemCell());
 
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
         display.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
@@ -94,7 +94,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected SimpleActionPanel<Bookmark> createActionPanel(BookmarkModelProvider modelProvider) {
-        return new SimpleActionPanel<Bookmark>(modelProvider, modelProvider.getSelectionModel(),
+        return new SimpleActionPanel<>(modelProvider, modelProvider.getSelectionModel(),
                 ClientGinjectorProvider.getEventBus());
     }
 

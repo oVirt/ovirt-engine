@@ -35,7 +35,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
         setHelpTag(HelpTag.remove_provider);
         setHashName("remove_provider"); //$NON-NLS-1$
 
-        List<String> providerNames = new ArrayList<String>();
+        List<String> providerNames = new ArrayList<>();
         for (Provider provider : providers) {
             providerNames.add(provider.getName());
         }
@@ -52,7 +52,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
     }
 
     private void onRemove() {
-        List<VdcActionParametersBase> parameterList = new LinkedList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> parameterList = new LinkedList<>();
         for (Provider provider : providers) {
             parameterList.add(new ProviderParameters(provider));
         }

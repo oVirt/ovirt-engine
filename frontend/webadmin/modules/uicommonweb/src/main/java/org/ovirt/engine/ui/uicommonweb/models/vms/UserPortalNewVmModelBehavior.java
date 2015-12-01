@@ -51,7 +51,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                        final List<StoragePool> dataCenters = new ArrayList<>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                             if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);
@@ -87,7 +87,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
 
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
@@ -95,8 +95,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
 
         ArrayList<VdcQueryParametersBase> parametersList =
-                new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        getEntitiesWithPermittedActionParameters }));
+                new ArrayList<>(Arrays.asList(new VdcQueryParametersBase[]{
+                        getEntitiesWithPermittedActionParameters}));
 
         // Get clusters and templates
         Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel());

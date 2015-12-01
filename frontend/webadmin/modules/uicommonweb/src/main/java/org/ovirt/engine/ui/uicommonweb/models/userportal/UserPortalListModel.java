@@ -269,7 +269,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setDetailList();
 
         setApplicationPlace(UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace);
-        setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event<>(searchCompletedEventDefinition));
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$
@@ -349,8 +349,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<VM> vms = new ArrayList<VM>();
-                        ArrayList<VmPool> pools = new ArrayList<VmPool>();
+                        ArrayList<VM> vms = new ArrayList<>();
+                        ArrayList<VmPool> pools = new ArrayList<>();
 
                         VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
                         if (retValue != null && retValue.getSucceeded()) {
@@ -641,33 +641,33 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.RunVmOnce));
 
         getCloneVmCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.CloneVm));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {
-                (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
+                (VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {
-                (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
+                (VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.AddVmTemplate));
     }
@@ -763,7 +763,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         confirmModel.setHelpTag(HelpTag.remove_virtual_machine);
         confirmModel.setHashName("remove_virtual_machine"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (VM vm : getSelectedVms()) {
             list.add(vm.getName());
         }
@@ -779,7 +779,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void onRemove() {
         getConfirmWindow().startProgress();
 
-        List<VdcActionParametersBase> paramsList = new ArrayList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> paramsList = new ArrayList<>();
         for (VM vm : getSelectedVms()) {
             paramsList.add(new RemoveVmParameters(vm.getId(), false));
         }
@@ -799,7 +799,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private List<VM> getSelectedVms() {
-        List<VM> vms = new ArrayList<VM>();
+        List<VM> vms = new ArrayList<>();
         if (getSelectedItems() == null) {
             return vms;
         }
@@ -830,9 +830,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHashName("change_cd"); //$NON-NLS-1$
 
         ArrayList<String> defaultImages =
-                new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance()
-                        .getConstants()
-                        .noCds() }));
+                new ArrayList<>(Arrays.asList(new String[]{ConstantsManager.getInstance().getConstants().noCds()}));
         model.getIsoImage().setItems(defaultImages);
         model.getIsoImage().setSelectedItem(Linq.firstOrNull(defaultImages));
 

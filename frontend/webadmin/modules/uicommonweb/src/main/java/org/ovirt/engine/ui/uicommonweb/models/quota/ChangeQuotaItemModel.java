@@ -14,9 +14,9 @@ public class ChangeQuotaItemModel extends EntityModel<DiskImage> {
     private String storageDomainName;
 
     public ChangeQuotaItemModel() {
-        object = new EntityModel<String>();
-        currentQuota = new EntityModel<String>();
-        quota = new ListModel<Quota>();
+        object = new EntityModel<>();
+        currentQuota = new EntityModel<>();
+        quota = new ListModel<>();
     }
 
     public EntityModel<String> getObject() {

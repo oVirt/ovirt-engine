@@ -46,7 +46,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
     public Style style;
 
     // Used with form item auto placement feature
-    private final Map<Integer, Integer> nextAvailableRowForColumn = new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> nextAvailableRowForColumn = new HashMap<>();
 
     public int getNextAvailableRow(int column) {
         if(!nextAvailableRowForColumn.containsKey(column)) {

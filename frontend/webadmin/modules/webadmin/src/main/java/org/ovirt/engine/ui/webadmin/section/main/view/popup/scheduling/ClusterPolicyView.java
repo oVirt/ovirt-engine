@@ -83,7 +83,7 @@ public class ClusterPolicyView extends Composite {
     }
 
     private void initClusterPolicyTable() {
-        table = new SimpleActionTable<ClusterPolicy>(clusterPolicyModelProvider,
+        table = new SimpleActionTable<>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         table.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
@@ -166,7 +166,7 @@ public class ClusterPolicyView extends Composite {
     }
 
     private void initClustersTable() {
-        clusterTable = new SimpleActionTable<VDSGroup>(clusterPolicyClusterModelProvider,
+        clusterTable = new SimpleActionTable<>(clusterPolicyClusterModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         AbstractTextColumn<VDSGroup> clusterColumn = new AbstractTextColumn<VDSGroup>() {

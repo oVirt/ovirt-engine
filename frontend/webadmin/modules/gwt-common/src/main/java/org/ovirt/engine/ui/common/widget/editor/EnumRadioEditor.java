@@ -129,9 +129,9 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         private final AbstractEnumColumn<E, E> nameColumn;
 
         public EnumRadioCellTable(Class<E> enumClass, final EnumRadioCellTableResources resources) {
-            super(15, resources, new ListDataProvider<E>(Arrays.asList(enumClass.getEnumConstants())));
+            super(15, resources, new ListDataProvider<>(Arrays.asList(enumClass.getEnumConstants())));
             this.resources = resources;
-            disabledSet = new HashSet<E>();
+            disabledSet = new HashSet<>();
             RowStyles<E> rowStyles = new RowStyles<E>() {
 
                 @Override
@@ -146,7 +146,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
             // Radio Column
             Column<E, Boolean> radioColumn = new Column<E, Boolean>(
-                    new ExRadioboxCell<E>(true, false, disabledSet)) {
+                    new ExRadioboxCell<>(true, false, disabledSet)) {
                 @Override
                 public Boolean getValue(E object) {
                     return getSelectionModel().isSelected(object);
@@ -227,7 +227,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
      */
     public EnumRadioEditor(Class<E> enumClass) {
         this.handlerManager = new HandlerManager(this);
-        peer = new EnumRadioCellTable<E>(enumClass,
+        peer = new EnumRadioCellTable<>(enumClass,
                 GWT.<EnumRadioCellTableResources> create(EnumRadioCellTableResources.class));
 
         // Selection Model

@@ -16,7 +16,7 @@ public class InternalNetworksPanel extends UnassignedNetworksPanel<NetworkPanel>
 
     private final VerticalPanel requiredPanel = new VerticalPanel();
     private final VerticalPanel nonRequiredPanel = new VerticalPanel();
-    private final List<VerticalPanel> unassignNetworksList = new ArrayList<VerticalPanel>();
+    private final List<VerticalPanel> unassignNetworksList = new ArrayList<>();
     private SimplePanel requiredTitlePanel;
     private SimplePanel nonRequiredTitlePanel;
 

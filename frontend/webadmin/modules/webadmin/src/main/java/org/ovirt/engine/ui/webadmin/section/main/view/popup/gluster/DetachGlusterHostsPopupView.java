@@ -55,7 +55,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @Inject
     public DetachGlusterHostsPopupView(EventBus eventBus) {
         super(eventBus);
-        hostsTable = new EntityModelCellTable<ListModel>(true, false, true);
+        hostsTable = new EntityModelCellTable<>(true, false, true);
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);

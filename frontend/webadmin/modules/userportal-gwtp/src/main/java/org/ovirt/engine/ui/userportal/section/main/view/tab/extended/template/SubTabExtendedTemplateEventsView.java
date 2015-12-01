@@ -26,7 +26,7 @@ public class SubTabExtendedTemplateEventsView extends AbstractSubTabTableWidgetV
             UserPortalSearchableDetailModelProvider<AuditLog, UserPortalTemplateListModel,
                 UserPortalTemplateEventListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new EventListModelTable<UserPortalTemplateEventListModel>(modelProvider, eventBus, clientStorage));
+        super(new EventListModelTable<>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

@@ -37,10 +37,10 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<>();
 
     @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<RevealContentHandler<?>>();
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<>();
 
     private final SearchPanelPresenterWidget searchPanel;
     private final ScrollableTabBarPresenterWidget tabBar;

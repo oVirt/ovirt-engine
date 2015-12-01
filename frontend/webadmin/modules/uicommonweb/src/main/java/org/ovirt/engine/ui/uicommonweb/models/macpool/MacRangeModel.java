@@ -11,8 +11,8 @@ public class MacRangeModel extends Model {
 
     private final MacRange macRange;
 
-    private final EntityModel<String> leftBound = new EntityModel<String>();
-    private final EntityModel<String> rightBound = new EntityModel<String>();
+    private final EntityModel<String> leftBound = new EntityModel<>();
+    private final EntityModel<String> rightBound = new EntityModel<>();
 
     public EntityModel<String> getLeftBound() {
         return leftBound;

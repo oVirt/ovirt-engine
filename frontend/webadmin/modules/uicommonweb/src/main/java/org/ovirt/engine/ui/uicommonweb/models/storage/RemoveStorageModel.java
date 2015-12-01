@@ -33,7 +33,7 @@ public class RemoveStorageModel extends Model {
     public RemoveStorageModel() {
         setHostList(new ListModel<VDS>());
 
-        setFormat(new EntityModel<Boolean>(false));
+        setFormat(new EntityModel<>(false));
         getFormat().getEntityChangedEvent().addListener(this);
         getFormat().getPropertyChangedEvent().addListener(this);
     }

@@ -198,9 +198,9 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     }
 
     private void initEditors() {
-        statusEditor = new EntityModelLabelEditor<GlusterStatus>(new EnumRenderer<GlusterStatus>());
-        clientsTable = new EntityModelCellTable<ListModel>(false, true);
-        memoryPoolsTable = new EntityModelCellTable<ListModel>(false, true);
+        statusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterStatus>());
+        clientsTable = new EntityModelCellTable<>(false, true);
+        memoryPoolsTable = new EntityModelCellTable<>(false, true);
     }
 
     private void addStyles() {

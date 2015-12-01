@@ -60,7 +60,7 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
 
     @Inject
     public ExternalSubnetWidget() {
-        ipVersionEditor = new ListModelListBoxEditor<IpVersion>(new EnumRenderer<IpVersion>());
+        ipVersionEditor = new ListModelListBoxEditor<>(new EnumRenderer<IpVersion>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);

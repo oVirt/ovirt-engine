@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 
 public class TimeZoneModel {
-    private static final Map<TimeZoneType, Collection<TimeZoneModel>> cachedTimeZoneModels = new HashMap<TimeZoneType, Collection<TimeZoneModel>>();
+    private static final Map<TimeZoneType, Collection<TimeZoneModel>> cachedTimeZoneModels = new HashMap<>();
 
     public static Collection<TimeZoneModel> getTimeZones(TimeZoneType timeZoneType) {
         return cachedTimeZoneModels.get(timeZoneType);
@@ -25,7 +25,7 @@ public class TimeZoneModel {
     }
 
     private static void mapListModels(TimeZoneType timeZoneType, Map<String, String> timeZones) {
-        List<TimeZoneModel> models = new ArrayList<TimeZoneModel>();
+        List<TimeZoneModel> models = new ArrayList<>();
         models.add(new TimeZoneModel(null, timeZoneType)); // add empty field representing default engine TZ
         for (Map.Entry<String, String> entry : timeZones.entrySet()) {
             models.add(new TimeZoneModel(entry.getKey(), timeZoneType));

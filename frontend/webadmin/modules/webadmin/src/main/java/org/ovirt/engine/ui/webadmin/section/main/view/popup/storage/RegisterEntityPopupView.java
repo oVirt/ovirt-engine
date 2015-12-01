@@ -79,7 +79,7 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
 
     private void initTables() {
         // Create the entities main table
-        entityTable = new EntityModelCellTable<ListModel<ImportEntityData<E>>>(false, true);
+        entityTable = new EntityModelCellTable<>(false, true);
         entityTable.enableColumnResizing();
 
         // Create split layout panel

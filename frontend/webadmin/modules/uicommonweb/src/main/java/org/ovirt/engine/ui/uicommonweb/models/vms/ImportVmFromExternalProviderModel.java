@@ -48,7 +48,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
     private ListModel<StorageDomain> storage;
     private ListModel<VolumeType> allocation;
-    private final Map<String, ImportDiskData> diskImportDataMap = new HashMap<String, ImportDiskData>();
+    private final Map<String, ImportDiskData> diskImportDataMap = new HashMap<>();
     private VmImportDiskListModel importDiskListModel;
     private VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
@@ -65,7 +65,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
         setIso(new ListModel<String>());
         getIso().setIsChangeable(false);
-        setAttachDrivers(new EntityModel<Boolean>(false));
+        setAttachDrivers(new EntityModel<>(false));
         getAttachDrivers().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -76,7 +76,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel);
     }
 
-    private final Map<String, ImportNetworkData> networkImportDataMap = new HashMap<String, ImportNetworkData>();
+    private final Map<String, ImportNetworkData> networkImportDataMap = new HashMap<>();
 
     public List<VnicProfileView> getNetworkProfiles() {
         return networkProfiles;
@@ -262,7 +262,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
             queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
-        storageQuotaMap = new HashMap<Guid, ArrayList<Quota>>();
+        storageQuotaMap = new HashMap<>();
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
                 new IFrontendMultipleQueryAsyncCallback() {

@@ -141,7 +141,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
         model.getLatch().setEntity(false);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (IscsiBond selected : getSelectedItems()) {
             items.add(selected.getName());
         }
@@ -155,7 +155,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             params.add(new RemoveIscsiBondParameters(((IscsiBond) item).getId()));

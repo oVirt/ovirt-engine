@@ -248,7 +248,7 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                 ArrayList<Version> versions = (ArrayList<Version>) result;
 
                 // Rebuild version items.
-                ArrayList<Version> list = new ArrayList<Version>();
+                ArrayList<Version> list = new ArrayList<>();
                 Boolean isLocalType = dataCenterModel.getStoragePoolType().getSelectedItem();
 
                 for (Version item : versions) {

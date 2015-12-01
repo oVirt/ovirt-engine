@@ -9,7 +9,7 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
     private Event<EventArgs> collectionChangedEvent;
 
     public ObservableCollection() {
-        setCollectionChangedEvent(new Event<EventArgs>(ProvideCollectionChangedEvent.Definition));
+        setCollectionChangedEvent(new Event<>(ProvideCollectionChangedEvent.Definition));
     }
 
     /** Moves a collection element from the index sourceIndex to the index destIndex

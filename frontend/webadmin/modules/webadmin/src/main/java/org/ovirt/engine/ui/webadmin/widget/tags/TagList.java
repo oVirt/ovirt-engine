@@ -45,7 +45,7 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
 
     @Override
     protected CellTree createDataDisplayWidget(TagModelProvider modelProvider) {
-        CellTree display = new ElementIdCellTree<TagModelProvider>(modelProvider, null, res);
+        CellTree display = new ElementIdCellTree<>(modelProvider, null, res);
         display.setAnimationEnabled(true);
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
         return display;

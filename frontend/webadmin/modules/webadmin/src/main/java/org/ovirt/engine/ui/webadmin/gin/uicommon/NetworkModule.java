@@ -123,8 +123,7 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<NetworkListModel> mainModelProvider,
             final Provider<NetworkGeneralModel> modelProvider) {
         DetailTabModelProvider<NetworkListModel, NetworkGeneralModel> result =
-                new DetailTabModelProvider<NetworkListModel, NetworkGeneralModel>(
-                        eventBus, defaultConfirmPopupProvider);
+                new DetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
         result.setMainModelProvider(mainModelProvider);
         result.setModelProvider(modelProvider);
         return result;

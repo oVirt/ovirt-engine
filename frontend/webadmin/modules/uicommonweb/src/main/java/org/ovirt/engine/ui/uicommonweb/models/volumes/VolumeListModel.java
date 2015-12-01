@@ -358,7 +358,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         for (StoragePool dc : dataCenters) {
                             if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerVolumeModel.getDataCenter()
-                                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] {dc})));
+                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                                 innerVolumeModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -377,7 +377,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         StoragePool selectDataCenter =
                                 (StoragePool) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         innerVolumeModel.getDataCenter()
-                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
+                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangeable(false);
                         innerVolumeModel.getDataCenter().setChangeProhibitionReason(
@@ -432,7 +432,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
             list.add(item.getName());
         }
@@ -459,7 +459,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
@@ -728,7 +728,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         } else if(command.getName().equalsIgnoreCase("CancelOptimizeForVirtStore")) {//$NON-NLS-1$
             setConfirmWindow(null);
         } else if (command.getName().equalsIgnoreCase("ConfirmOptimiseForVirtStore")) {//$NON-NLS-1$
-            List<GlusterVolumeEntity> selectedVolumes = new ArrayList<GlusterVolumeEntity>();
+            List<GlusterVolumeEntity> selectedVolumes = new ArrayList<>();
             for(Object selectedVolume : getSelectedItems()) {
                 selectedVolumes.add((GlusterVolumeEntity) selectedVolume);
             }
@@ -759,7 +759,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
         List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
@@ -772,7 +772,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
         List<GlusterVolumeEntity> selectedVolumesList = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
@@ -793,7 +793,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
@@ -949,7 +949,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             return;
         }
-        ArrayList<GlusterVolumeEntity> volumesForOptimiseForVirtStore = new ArrayList<GlusterVolumeEntity>();
+        ArrayList<GlusterVolumeEntity> volumesForOptimiseForVirtStore = new ArrayList<>();
         Boolean isDiscouragedVolumePresent = false;
         StringBuilder discouragedConfigVolumeNamesBuilder = new StringBuilder();
         discouragedConfigVolumeNamesBuilder.append(constants.optimiseForVirtStoreWarning());
@@ -1007,7 +1007,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                 String optionOwnerUserVirt = (String) resultInner;
                                 String optionOwnerGroupVirt = (String) resultInner1;
 
-                                ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+                                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
                                 for (GlusterVolumeEntity volume : volumeList) {
                                     Guid volumeId = volume.getId();
 
@@ -1077,7 +1077,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
             list.add(item.getName());
         }
@@ -1103,7 +1103,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
@@ -1181,7 +1181,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             closeConfirmationWindow();
             force = cModel.getForce().getEntity();
         }
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
@@ -1223,7 +1223,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             volume.getTransportTypes().add(TransportType.RDMA);
         }
 
-        ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
+        ArrayList<GlusterBrickEntity> brickList = new ArrayList<>();
 
         for (Object model : volumeModel.getBricks().getItems()) {
             brickList.add((GlusterBrickEntity) ((EntityModel) model).getEntity());
@@ -1383,7 +1383,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         GlusterClusterSnapshotConfigModel clusterSnapshotConfigModel = (GlusterClusterSnapshotConfigModel) getWindow();
 
         Guid clusterId = clusterSnapshotConfigModel.getClusters().getSelectedItem().getId();
-        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<GlusterVolumeSnapshotConfig>();
+        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<>();
         for (EntityModel<GlusterVolumeSnapshotConfig> clusterCfg : clusterSnapshotConfigModel.getClusterConfigOptions()
                 .getItems()) {
             vdsParams.add(new GlusterVolumeSnapshotConfig(clusterId,
@@ -1490,7 +1490,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         GlusterVolumeSnapshotConfigModel volumeSnapshotConfigModel = (GlusterVolumeSnapshotConfigModel) getWindow();
 
         GlusterVolumeEntity volumeEntity = volumeSnapshotConfigModel.getSelectedVolumeEntity();
-        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<GlusterVolumeSnapshotConfig>();
+        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<>();
         for (EntityModel<VolumeSnapshotOptionModel> volumeCfg : volumeSnapshotConfigModel.getConfigOptions()
                 .getItems()) {
             vdsParams.add(new GlusterVolumeSnapshotConfig(volumeEntity.getClusterId(),

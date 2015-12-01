@@ -14,7 +14,7 @@ public class UiCommonEventMap {
     private final Map<String, Event<?>> eventMap;
 
     public UiCommonEventMap() {
-        eventMap = new HashMap<String, Event<?>>();
+        eventMap = new HashMap<>();
     }
 
     /**

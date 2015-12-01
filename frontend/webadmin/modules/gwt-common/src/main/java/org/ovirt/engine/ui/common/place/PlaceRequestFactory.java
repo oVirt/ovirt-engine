@@ -10,7 +10,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  */
 public class PlaceRequestFactory {
 
-    private static final Map<String, PlaceRequest> instances = new HashMap<String, PlaceRequest>();
+    private static final Map<String, PlaceRequest> instances = new HashMap<>();
 
     public static PlaceRequest get(String nameToken) {
         if (!instances.containsKey(nameToken)) {

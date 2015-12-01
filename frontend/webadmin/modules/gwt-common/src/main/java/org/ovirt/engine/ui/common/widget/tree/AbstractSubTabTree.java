@@ -64,10 +64,10 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         tree = new Tree();
         initWidget(tree);
 
-        selectedItems = new ArrayList<Object>();
-        newSelectedItems = new ArrayList<Object>();
-        oldRootItemsMap = new HashMap<Object, TreeItem>();
-        oldItemStatesMap = new HashMap<Object, Boolean>();
+        selectedItems = new ArrayList<>();
+        newSelectedItems = new ArrayList<>();
+        oldRootItemsMap = new HashMap<>();
+        oldItemStatesMap = new HashMap<>();
         isMultiSelection = true;
 
         tree.addOpenHandler(treeOpenHandler);
@@ -443,7 +443,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     protected ArrayList<Object> getSelectedEntities() {
-        ArrayList<Object> selectedEntities = new ArrayList<Object>();
+        ArrayList<Object> selectedEntities = new ArrayList<>();
         for (Object entity : (ArrayList<Object>) listModel.getItems()) {
             if (selectedItems.contains(getEntityId(entity))) {
                 selectedEntities.add(entity);

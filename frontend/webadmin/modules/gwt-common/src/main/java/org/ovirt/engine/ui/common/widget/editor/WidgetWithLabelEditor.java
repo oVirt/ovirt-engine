@@ -27,7 +27,7 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
 
     public static <T, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, W> of(
             LeafValueEditor<T> subEditor, W widgetWithLabel) {
-        return new WidgetWithLabelEditor<T, W>(subEditor, widgetWithLabel);
+        return new WidgetWithLabelEditor<>(subEditor, widgetWithLabel);
     }
 
     private final LeafValueEditor<T> subEditor;

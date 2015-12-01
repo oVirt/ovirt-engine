@@ -58,7 +58,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                         @Override
                                         public void onSuccess(Object nothing, Object returnValue) {
                                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                                            ArrayList<VDSGroup> clustersSupportingVirt = new ArrayList<VDSGroup>();
+                                            ArrayList<VDSGroup> clustersSupportingVirt = new ArrayList<>();
                                             // filter clusters supporting virt service only
                                             for (VDSGroup cluster : clusters) {
                                                 if (cluster.supportsVirtService()) {
@@ -71,7 +71,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                             template.getClusterArch());
 
                                             getModel().setDataCentersAndClusters(getModel(),
-                                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter})),
+                                                    new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter})),
                                                     filteredClusters,
                                                     template.getVdsGroupId());
 

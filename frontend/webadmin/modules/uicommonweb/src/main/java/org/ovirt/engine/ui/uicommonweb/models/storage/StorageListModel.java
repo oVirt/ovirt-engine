@@ -331,7 +331,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         IStorageModel item = prepareStorageForEdit(storage, model);
 
-        model.setStorageModels(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] { item })));
+        model.setStorageModels(new ArrayList<>(Arrays.asList(new IStorageModel[]{item})));
         model.setCurrentStorageItem(item);
 
         model.initialize();
@@ -441,29 +441,29 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             nfsModel.setMessage(null);
 
             Task.create(this,
-                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                    new ArrayList<>(Arrays.asList(new Object[]{"ImportFile", //$NON-NLS-1$
                             host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS,
-                            model.getActivateDomain().getEntity() }))).run();
+                            model.getActivateDomain().getEntity()}))).run();
         } else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
             LocalStorageModel localModel = (LocalStorageModel) model.getCurrentStorageItem();
             localModel.setMessage(null);
 
             Task.create(this,
-                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                    new ArrayList<>(Arrays.asList(new Object[]{"ImportFile", //$NON-NLS-1$
                             host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS,
-                            model.getActivateDomain().getEntity() }))).run();
+                            model.getActivateDomain().getEntity()}))).run();
         } else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
             PosixStorageModel posixModel = (PosixStorageModel) model.getCurrentStorageItem();
             posixModel.setMessage(null);
 
             Task.create(this,
-                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                    new ArrayList<>(Arrays.asList(new Object[]{"ImportFile", //$NON-NLS-1$
                             host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), posixModel.getType(),
-                            model.getActivateDomain().getEntity() }))).run();
+                            model.getActivateDomain().getEntity()}))).run();
         } else if (model.getCurrentStorageItem() instanceof ImportSanStorageModel) {
             Task.create(this,
-                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
-                            host.getId(), model.getActivateDomain().getEntity() }))).run();
+                    new ArrayList<>(Arrays.asList(new Object[]{"ImportSan", //$NON-NLS-1$
+                            host.getId(), model.getActivateDomain().getEntity()}))).run();
         }
     }
 
@@ -601,7 +601,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
         model.setHelpTag(HelpTag.destroy_storage_domain);
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         items.add(getSelectedItem().getStorageName());
         model.setItems(items);
 
@@ -633,7 +633,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ForceRemoveStorageDomain,
-                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
+                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -679,7 +679,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveLocal"}))).run(); //$NON-NLS-1$
     }
 
     private void saveNfsStorage() {
@@ -689,7 +689,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveNfs"}))).run(); //$NON-NLS-1$
     }
 
     private void savePosixStorage() {
@@ -700,7 +700,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SavePosix"}))).run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage() {
@@ -763,7 +763,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         cancelConfirm();
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveSan"}))).run(); //$NON-NLS-1$
     }
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
@@ -1077,8 +1077,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         connection.setMountOptions(posixModel.getMountOptions().getEntity());
         this.connection = connection;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
@@ -1133,8 +1133,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
         Frontend.getInstance().runMultipleActions(actionTypes,
             parameters,
-            new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                        callback1, callback2 })),
+            new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2})),
             failureCallback,
             this);
     }
@@ -1253,8 +1252,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
         connection = storageConnection;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
@@ -1318,8 +1317,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                        callback1, callback2, callback3 })),
+                new ArrayList<>(Arrays.asList(callback1, callback2, callback3)),
                 failureCallback,
                 this);
     }
@@ -1330,7 +1328,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
-        ArrayList<String> lunIds = new ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<>();
         for (LunModel lun : sanModel.getAddedLuns()) {
             lunIds.add(lun.getLunId());
         }
@@ -1426,8 +1424,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
@@ -1478,8 +1476,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         };
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                        callback1, callback2 })),
+                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2})),
                 failureCallback,
                 this);
     }
@@ -1490,8 +1487,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
         context.invokeUIThread(this,
-                new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
-                        message })));
+                new ArrayList<>(Arrays.asList(new Object[]{"Finish", isSucceeded, model, message}))); //$NON-NLS-1$
     }
 
     private void saveSanStorage(TaskContext context) {
@@ -1532,7 +1528,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                     SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getCurrentStorageItem();
                     boolean force = sanStorageModel.isForce();
                     StorageDomain storageDomain1 = storageListModel.getSelectedItem();
-                    ArrayList<String> lunIds = new ArrayList<String>();
+                    ArrayList<String> lunIds = new ArrayList<>();
 
                     for (LunModel lun : sanStorageModel.getAddedLuns()) {
                         lunIds.add(lun.getLunId());
@@ -1544,7 +1540,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                             null, this);
                     }
 
-                    ArrayList<String> lunToRefreshIds = new ArrayList<String>();
+                    ArrayList<String> lunToRefreshIds = new ArrayList<>();
                     for (LunModel lun : sanStorageModel.getLunsToRefresh()) {
                         lunToRefreshIds.add(lun.getLunId());
                     }
@@ -1599,8 +1595,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
         final List<StorageDomain> storageDomains = importSanStorageModel.getStorageDomains().getSelectedItems();
 
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
-        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>(items.size());
+        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<>();
 
         for (final StorageDomain storageDomain : storageDomains) {
             StorageDomainStatic staticData = storageDomain.getStorageStaticData();
@@ -1868,7 +1864,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                             model.setHelpTag(HelpTag.import_storage_domain_confirmation);
                             model.setHashName("import_storage_domain_confirmation"); //$NON-NLS-1$
 
-                            List<String> stoageDomainNames = new ArrayList<String>();
+                            List<String> stoageDomainNames = new ArrayList<>();
                             for (StorageDomainStatic domain : attachedStorageDomains) {
                                 stoageDomainNames.add(domain.getStorageName());
                             }

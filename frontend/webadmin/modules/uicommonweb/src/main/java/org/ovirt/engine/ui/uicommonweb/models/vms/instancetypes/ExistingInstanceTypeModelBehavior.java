@@ -28,8 +28,8 @@ public class ExistingInstanceTypeModelBehavior extends ExistingNonClusterModelBe
         getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                List<VnicProfileView> profiles = new ArrayList<VnicProfileView>(Arrays.asList(VnicProfileView.EMPTY));
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
+                List<VnicProfileView> profiles = new ArrayList<>(Arrays.asList(VnicProfileView.EMPTY));
+                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<>();
 
                 for (VmNetworkInterface nic : (List<VmNetworkInterface>) result) {
                     final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);

@@ -61,10 +61,11 @@ public class PluginDataManager {
     private final ObjectMapper mapper;
 
     // Cached plugin data, maps descriptor file names to corresponding object representations
-    private final AtomicReference<Map<String, PluginData>> dataMapRef =
-            new AtomicReference<Map<String, PluginData>>(new HashMap<String, PluginData>());
+    private final AtomicReference<Map<String, PluginData>> dataMapRef;
 
     private PluginDataManager(String pluginDataPath, String pluginConfigPath) {
+        Map<String, PluginData> map = new HashMap<>();
+        this.dataMapRef = new AtomicReference<>(map);
         this.pluginDataDir = new File(pluginDataPath);
         this.pluginConfigDir = new File(pluginConfigPath);
         this.mapper = createJsonMapper();
@@ -115,7 +116,7 @@ public class PluginDataManager {
         Map<String, PluginData> currentDataMapSnapshot = dataMapRef.get();
 
         // Create a local working copy of current data mappings (avoid modifying 'live' data)
-        Map<String, PluginData> currentDataMapCopy = new HashMap<String, PluginData>(currentDataMapSnapshot);
+        Map<String, PluginData> currentDataMapCopy = new HashMap<>(currentDataMapSnapshot);
 
         File[] descriptorFiles = pluginDataDir.listFiles(new FileFilter() {
             @Override
@@ -139,11 +140,11 @@ public class PluginDataManager {
     }
 
     void reloadData(File[] descriptorFiles, Map<String, PluginData> currentDataMapCopy) {
-        Map<String, PluginData> entriesToUpdate = new HashMap<String, PluginData>();
-        Set<String> keysToRemove = new HashSet<String>();
+        Map<String, PluginData> entriesToUpdate = new HashMap<>();
+        Set<String> keysToRemove = new HashSet<>();
 
         // Optimization: make sure we don't check data that we already processed
-        Set<String> keysToCheckForRemoval = new HashSet<String>(currentDataMapCopy.keySet());
+        Set<String> keysToCheckForRemoval = new HashSet<>(currentDataMapCopy.keySet());
 
         // Compare (possibly added or modified) files against cached data
         for (final File df : descriptorFiles) {

@@ -146,7 +146,7 @@ public class RoleView extends Composite {
     }
 
     private void initRoleTable() {
-        this.table = new SimpleActionTable<Role>(roleModelProvider,
+        this.table = new SimpleActionTable<>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         this.table.enableColumnResizing();
@@ -219,7 +219,7 @@ public class RoleView extends Composite {
     }
 
     private void initPermissionTable() {
-        permissionTable = new SimpleActionTable<Permission>(permissionModelProvider,
+        permissionTable = new SimpleActionTable<>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         permissionTable.enableColumnResizing();

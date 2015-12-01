@@ -47,7 +47,7 @@ public class RemoveDiskModel extends ConfirmationModel {
 
         getLatch().setEntity(false);
 
-        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> items = new ArrayList<>();
         for (Disk disk : disksToRemove) {
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
@@ -71,7 +71,7 @@ public class RemoveDiskModel extends ConfirmationModel {
     public void onRemove(final ICommandTarget target) {
         boolean removeDisk = getLatch().getEntity();
         VdcActionType actionType = removeDisk ? VdcActionType.RemoveDisk : VdcActionType.DetachDiskFromVm;
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Disk disk : disksToRemove) {
             VdcActionParametersBase parameters = removeDisk ?

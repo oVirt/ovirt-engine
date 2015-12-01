@@ -67,7 +67,7 @@ public class AsyncIterator<T> {
                 break;
             }
 
-            AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<T>();
+            AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<>();
 
             callback.getNotifyEvent().addListener(
                     new IEventListener<ValueEventArgs<T>>() {
@@ -101,7 +101,7 @@ public class AsyncIterator<T> {
                             }
                         }
                     },
-                    new CallbackContext<T>(this, item, action));
+                    new CallbackContext<>(this, item, action));
 
             func.run(item, callback);
         }

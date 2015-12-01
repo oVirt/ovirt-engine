@@ -21,7 +21,7 @@ public class NewStorageQosModel extends QosModel<StorageQos, StorageQosParameter
 
     @Override
     protected QosParametersBase<StorageQos> getParameters() {
-        QosParametersBase<StorageQos> qosParametersBase = new QosParametersBase<StorageQos>();
+        QosParametersBase<StorageQos> qosParametersBase = new QosParametersBase<>();
         qosParametersBase.setQos(getQos());
         return qosParametersBase;
     }

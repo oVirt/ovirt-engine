@@ -59,7 +59,7 @@ public final class RegistrationResult {
     }
 
     public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data) {
-        setRetrievedEvent(new Event<EventArgs>(RetrievedEventDefinition));
+        setRetrievedEvent(new Event<>(RetrievedEventDefinition));
 
         setId(id);
         setData(data);

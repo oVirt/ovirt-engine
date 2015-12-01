@@ -14,8 +14,8 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     private boolean vmUnpinned;
 
     public VmNextRunConfigurationModel() {
-        setApplyCpuLater(new EntityModel<Boolean>(false));
-        setLatch(new EntityModel<Boolean>(false));
+        setApplyCpuLater(new EntityModel<>(false));
+        setLatch(new EntityModel<>(false));
     }
 
     public boolean isVmUnpinned() {

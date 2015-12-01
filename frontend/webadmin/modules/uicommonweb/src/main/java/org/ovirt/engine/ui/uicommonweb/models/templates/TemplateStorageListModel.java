@@ -105,13 +105,13 @@ public class TemplateStorageListModel extends SearchableListModel {
 
                             ArrayList<StorageDomain> storageDomains =
                                     Linq.<StorageDomain> cast(templateStorageListModel.value);
-                            ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<StorageDomainModel>();
+                            ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
                             for (StorageDomain storageDomain : storageDomains) {
                                 StorageDomainModel storageDomainModel = new StorageDomainModel();
                                 storageDomainModel.setStorageDomain(storageDomain);
 
-                                ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+                                ArrayList<DiskImage> disks = new ArrayList<>();
                                 for (DiskImage diskImage : diskImages) {
                                     if (diskImage.getStorageIds().contains(storageDomain.getId())) {
                                         disks.add(diskImage);
@@ -144,7 +144,7 @@ public class TemplateStorageListModel extends SearchableListModel {
 
         ArrayList<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (DiskModel diskModel : disks) {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
@@ -160,7 +160,7 @@ public class TemplateStorageListModel extends SearchableListModel {
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getSelectedItems();
 
         for (DiskModel diskModel : disks) {

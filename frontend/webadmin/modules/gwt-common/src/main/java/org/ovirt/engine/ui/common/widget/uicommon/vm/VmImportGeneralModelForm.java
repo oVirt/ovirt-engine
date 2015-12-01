@@ -58,7 +58,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     public VmImportGeneralModelForm(ModelProvider<VmImportGeneralModel> modelProvider) {
         super(modelProvider, 3, 7);
 
-        operatingSystems = new ListModelListBox<Integer>(new AbstractRenderer<Integer>() {
+        operatingSystems = new ListModelListBox<>(new AbstractRenderer<Integer>() {
             @Override
             public String render(Integer object) {
                 return AsyncDataProvider.getInstance().getOsName(object);

@@ -15,7 +15,7 @@ public class TakesConstrainedValueListEditor<T> extends TakesConstrainedValueEdi
     public static <T> TakesConstrainedValueListEditor<T> ofList(TakesListValue<T> peer,
             HasConstrainedValue<List<T>> peerWithConstraints,
             HasValueChangeHandlers<List<T>> peerWithValueChangeHandlers) {
-        return new TakesConstrainedValueListEditor<T>(peer, peerWithConstraints, peerWithValueChangeHandlers);
+        return new TakesConstrainedValueListEditor<>(peer, peerWithConstraints, peerWithValueChangeHandlers);
     }
 
     TakesValue<List<T>> peer;

@@ -36,7 +36,7 @@ public class ApplySearchStringEvent extends GwtEvent<ApplySearchStringEvent.Appl
     public void onApplySearchString(ApplySearchStringEvent event);
   }
 
-  private static final Type<ApplySearchStringHandler> TYPE = new Type<ApplySearchStringHandler>();
+  private static final Type<ApplySearchStringHandler> TYPE = new Type<>();
 
   public static Type<ApplySearchStringHandler> getType() {
     return TYPE;

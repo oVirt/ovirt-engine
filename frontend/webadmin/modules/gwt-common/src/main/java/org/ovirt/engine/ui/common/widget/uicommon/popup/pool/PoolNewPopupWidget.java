@@ -43,7 +43,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected void createNumOfDesktopEditors() {
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor();
-        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor<Integer>(
+        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor<>(
                 new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
 
             @Override

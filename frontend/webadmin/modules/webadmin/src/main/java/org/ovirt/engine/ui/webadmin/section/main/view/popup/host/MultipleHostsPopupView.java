@@ -95,7 +95,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     }
 
     private void initEditors() {
-        hostsTable = new EntityModelCellTable<ListModel<EntityModel<HostDetailModel>>>(SelectionMode.SINGLE, true);
+        hostsTable = new EntityModelCellTable<>(SelectionMode.SINGLE, true);
         useCommonPasswordEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         configureFirewallEditor = new EntityModelCheckBoxEditor(Align.LEFT);
         configureFirewallEditor.setAccessible(true);

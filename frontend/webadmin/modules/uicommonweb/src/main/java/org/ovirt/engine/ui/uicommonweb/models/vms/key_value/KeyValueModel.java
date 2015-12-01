@@ -24,7 +24,7 @@ public class KeyValueModel extends BaseKeyModel {
     }
     Map<String, String> allKeyValueMap;
     Map<String, List<String>> allRegExKeys;
-    private Map<String, String> keyValueMap_used = new HashMap<String, String>();
+    private Map<String, String> keyValueMap_used = new HashMap<>();
 
     @Override
     protected void initLineModel(KeyValueLineModel keyValueLineModel, String key) {
@@ -60,7 +60,7 @@ public class KeyValueModel extends BaseKeyModel {
         }
 
         //always reset the list of items when the item changes
-        keyValueMap_used = new HashMap<String, String>();
+        keyValueMap_used = new HashMap<>();
         if (value != null && !value.isEmpty()) {
             String[] lines = value.split(PROPERTIES_DELIMETER);
             String[] splitLine;
@@ -84,8 +84,8 @@ public class KeyValueModel extends BaseKeyModel {
         if (lines == null) {
             return;
         }
-        allKeyValueMap = new HashMap<String, String>();
-        allRegExKeys = new HashMap<String, List<String>>();
+        allKeyValueMap = new HashMap<>();
+        allRegExKeys = new HashMap<>();
         RegexValidation regexValidation = new RegexValidation();
         regexValidation.setExpression("\\^\\((([a-zA-Z0-9_]+[|]+)*)[a-zA-Z0-9_]+\\)\\$"); //$NON-NLS-1$
         String[] splitLine;
@@ -113,7 +113,7 @@ public class KeyValueModel extends BaseKeyModel {
             return;
         }
 
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         for (Map.Entry<String, String> entry : keyValueMap.entrySet()) {
             lines.add(entry.getKey() + '=' + entry.getValue());
         }
@@ -181,7 +181,7 @@ public class KeyValueModel extends BaseKeyModel {
      *         constant)
      */
     public static Map<String, String> convertProperties(String properties) {
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         if (!StringHelper.isNullOrEmpty(properties)) {
             String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
             for (String keyValuePairStr : keyValuePairs) {

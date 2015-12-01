@@ -52,7 +52,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected void onInitDisks() {
-        ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
+        ArrayList<DiskModel> disks = new ArrayList<>();
         for (DiskImage disk : getDiskImages()) {
             disks.add(Linq.diskToModel(disk));
         }

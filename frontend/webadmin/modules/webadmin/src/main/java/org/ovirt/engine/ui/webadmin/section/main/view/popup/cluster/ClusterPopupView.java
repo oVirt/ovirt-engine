@@ -594,21 +594,21 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
-        managementNetworkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
+        managementNetworkEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Network>() {
             @Override
             protected String renderNullSafe(Network network) {
                 return network.getName();
             }
         });
 
-        cpuEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
+        cpuEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<ServerCpu>() {
             @Override
             public String renderNullSafe(ServerCpu object) {
                 return object.getCpuName();
             }
         });
 
-        versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
+        versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override
             public String renderNullSafe(Version object) {
                 return object.toString();
@@ -629,7 +629,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         });
 
         clusterPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer<ClusterPolicy>());
-        hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
+        hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
                 if (object == null) {
@@ -641,13 +641,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        autoConvergeEditor = new ListModelListBoxEditor<Boolean>(
+        autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
 
-        migrateCompressedEditor = new ListModelListBoxEditor<Boolean>(
+        migrateCompressedEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
 
-        customPropertiesSheetEditor = new KeyValueWidget<KeyValueModel>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
+        customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     private void initCheckBoxEditors() {

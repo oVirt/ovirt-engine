@@ -52,7 +52,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     protected void createNumOfDesktopEditors() {
         incraseNumOfVmsEditor = new IntegerEntityModelTextBoxOnlyEditor();
 
-        numOfVmsEditor = new EntityModelTextBoxEditor<Integer>(new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
+        numOfVmsEditor = new EntityModelTextBoxEditor<>(new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
 
             @Override
             public Integer parse(CharSequence text) throws ParseException {

@@ -53,7 +53,7 @@ public class NetworkQosParametersModel extends Model {
         setAverage(new EntityModel<Integer>());
         setPeak(new EntityModel<Integer>());
         setBurst(new EntityModel<Integer>());
-        setEnabled(new EntityModel<Boolean>(true));
+        setEnabled(new EntityModel<>(true));
         getEnabled().getPropertyChangedEvent().addListener(this);
         getPropertyChangedEvent().addListener(this);
     }

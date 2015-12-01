@@ -50,7 +50,7 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
             @Override
             public void onAddTabActionButton(AddTabActionButtonEvent event) {
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
-                    List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<ActionButtonDefinition<?>>();
+                    List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
                     addPluginActionButtons(pluginActionButtonList);
                 }

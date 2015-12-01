@@ -462,14 +462,14 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedHosts(TagListModel model) {
-        ArrayList<Guid> hostIds = new ArrayList<Guid>();
+        ArrayList<Guid> hostIds = new ArrayList<>();
 
         for (VDS vds : getSelectedItems()) {
             hostIds.add(vds.getId());
         }
 
-        attachedTagsToEntities = new HashMap<Guid, Boolean>();
-        allAttachedTags = new ArrayList<Tags>();
+        attachedTagsToEntities = new HashMap<>();
+        allAttachedTags = new ArrayList<>();
         selectedItemsCounter = 0;
 
         for (Guid hostId : hostIds) {
@@ -522,7 +522,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     public void postOnAssignTags(Map<Guid, Boolean> attachedTags) {
         TagListModel model = (TagListModel) getWindow();
-        ArrayList<Guid> hostIds = new ArrayList<Guid>();
+        ArrayList<Guid> hostIds = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
@@ -530,8 +530,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
 
         // prepare attach/detach lists
-        ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
-        ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
+        ArrayList<Guid> tagsToAttach = new ArrayList<>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<>();
 
         if (model.getItems() != null && model.getItems().size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
@@ -539,13 +539,13 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<>();
         for (Guid tag_id : tagsToAttach) {
             prmsToAttach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
 
-        ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<>();
         for (Guid tag_id : tagsToDetach) {
             prmsToDetach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
@@ -560,7 +560,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
         model.setHelpTag(HelpTag.manual_fence_are_you_sure);
         model.setHashName("manual_fence_are_you_sure"); //$NON-NLS-1$
-        ArrayList<VDS> items = new ArrayList<VDS>();
+        ArrayList<VDS> items = new ArrayList<>();
         items.add(getSelectedItem());
         model.setItems(items);
 
@@ -584,7 +584,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             FenceVdsManualyParameters parameters = new FenceVdsManualyParameters(true);
@@ -720,7 +720,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         for (StoragePool dc : dataCenters) {
                             if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerHostModel.getDataCenter()
-                                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
+                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                                 innerHostModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -736,7 +736,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         StoragePool selectDataCenter =
                                 (StoragePool) hostListModel.getSystemTreeSelectedItem().getEntity();
                         innerHostModel.getDataCenter()
-                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
+                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerHostModel.getDataCenter().setIsChangeable(false);
                         innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
@@ -1045,7 +1045,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         params.setAuthMethod(model.getAuthenticationMethod());
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ApproveVds,
-                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { params })),
+                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{params})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1066,8 +1066,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHelpTag(HelpTag.remove_host);
         model.setHashName("remove_host"); //$NON-NLS-1$
 
-        Set<Guid> clusters = new HashSet<Guid>();
-        ArrayList<String> list = new ArrayList<String>();
+        Set<Guid> clusters = new HashSet<>();
+        ArrayList<String> list = new ArrayList<>();
         for (VDS item : Linq.<VDS> cast(getSelectedItems())) {
             list.add(item.getName());
             clusters.add(item.getVdsGroupId());
@@ -1105,7 +1105,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         }
 
         boolean force = model.getForce().getEntity();
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new RemoveVdsParameters(vds.getId(), force));
@@ -1127,7 +1127,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     public void activate() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
 
         Collections.sort(getSelectedItems(), new Linq.VdsSPMPriorityComparer());
 
@@ -1191,7 +1191,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
         model.setReasonVisible(isMaintenanceReasonVisible);
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        ArrayList<String> vdss = new ArrayList<String>();
+        ArrayList<String> vdss = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             vdss.add(vds.getName());
@@ -1211,8 +1211,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        ArrayList<Guid> vdss = new ArrayList<Guid>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<Guid> vdss = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
@@ -1315,7 +1315,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         InstallModel model = (InstallModel) getWindow();
 
         if (!model.validate(host.isOvirtNode())) {
-            model.setValidationFailed(new EntityModel<Boolean>(true));
+            model.setValidationFailed(new EntityModel<>(true));
             return;
         }
 
@@ -1379,7 +1379,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHelpTag(HelpTag.restart_host);
         model.setHashName("restart_host"); //$NON-NLS-1$
         model.setMessage(constants.areYouSureYouWantToRestartTheFollowingHostsMsg());
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             int runningVms = vds.getVmCount();
@@ -1408,7 +1408,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1430,7 +1430,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     public void start() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1453,7 +1453,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setHashName("stop_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToStopTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             items.add(vds.getName());
@@ -1473,7 +1473,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1606,7 +1606,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     private void refreshCapabilities() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new VdsActionParameters(vds.getId()));
@@ -2034,7 +2034,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     private void updateVNodesMap(VM vm, Map<Guid, VmNumaNode> map) {
-        List<VmNumaNode> list = new ArrayList<VmNumaNode>();
+        List<VmNumaNode> list = new ArrayList<>();
         for (VmNumaNode node : vm.getvNumaNodeList()) {
             list.add(node);
         }

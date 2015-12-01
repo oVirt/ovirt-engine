@@ -61,7 +61,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     @Override
     protected void createHeaderWidget() {
-        EntityModelCellTable<ListModel<LunModel>> table = new EntityModelCellTable<ListModel<LunModel>>(false,
+        EntityModelCellTable<ListModel<LunModel>> table = new EntityModelCellTable<>(false,
                 (Resources) GWT.create(SanStorageListHeaderResources.class),
                 true);
 
@@ -150,8 +150,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
     @Override
     protected TreeItem createRootNode(LunModel rootModel) {
         final EntityModelCellTable<ListModel<LunModel>> table =
-                new EntityModelCellTable<ListModel<LunModel>>(multiSelection,
-                        (Resources) GWT.create(SanStorageListLunRootResources.class));
+                new EntityModelCellTable<>(multiSelection, (Resources) GWT.create(SanStorageListLunRootResources.class));
 
         // Create table
         initRootNodeTable(table);
@@ -166,9 +165,9 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.setCustomSelectionColumn(lunSelectionColumn, "20px"); //$NON-NLS-1$
 
         // Add items
-        List<LunModel> items = new ArrayList<LunModel>();
+        List<LunModel> items = new ArrayList<>();
         items.add(rootModel);
-        ListModel<LunModel> listModel = new ListModel<LunModel>();
+        ListModel<LunModel> listModel = new ListModel<>();
         listModel.setItems(items);
 
         // Update table
@@ -273,9 +272,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }
 
         EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        (Resources) GWT.create(SanStorageListTargetTableResources.class),
-                        true);
+                new EntityModelCellTable<>(false, (Resources) GWT.create(SanStorageListTargetTableResources.class), true);
 
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override

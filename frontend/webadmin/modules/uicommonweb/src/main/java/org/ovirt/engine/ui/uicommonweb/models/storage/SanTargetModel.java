@@ -120,7 +120,7 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
     }
 
     public SanTargetModel() {
-        setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
+        setLoggedInEvent(new Event<>(loggedInEventDefinition));
         setLoginCommand(new UICommand("", this)); //$NON-NLS-1$
         setLunsList(new ListModel<LunModel>());
     }

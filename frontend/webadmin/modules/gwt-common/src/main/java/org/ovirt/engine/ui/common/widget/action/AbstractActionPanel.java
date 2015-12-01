@@ -103,12 +103,11 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private final FlowPanel contentPanel;
 
     // List of action buttons that show in the tool-bar and context menu
-    private final List<ActionButtonDefinition<T>> actionButtonList = new ArrayList<ActionButtonDefinition<T>>();
+    private final List<ActionButtonDefinition<T>> actionButtonList = new ArrayList<>();
     // List of buttons that only show in the tool-bar.
-    private final List<ActionButtonDefinition<T>> toolbarOnlyActionButtonList =
-            new ArrayList<ActionButtonDefinition<T>>();
+    private final List<ActionButtonDefinition<T>> toolbarOnlyActionButtonList = new ArrayList<>();
     // List of original visibility state for each button
-    private final Map<Widget, Boolean> originallyVisible = new HashMap<Widget, Boolean>();
+    private final Map<Widget, Boolean> originallyVisible = new HashMap<>();
 
     private final SearchableModelProvider<T, ?> dataProvider;
     private final EventBus eventBus;
@@ -447,8 +446,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
             @Override
             public void onClick(ClickEvent event) {
                 if (!cascadePopupPanel.isShowing()) {
-                    List<ActionButtonDefinition<T>> cascadeActionButtonList =
-                            new ArrayList<ActionButtonDefinition<T>>();
+                    List<ActionButtonDefinition<T>> cascadeActionButtonList = new ArrayList<>();
                     for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
                         if (!contentPanel.getWidget(i).isVisible()) {
                             cascadeActionButtonList.add(toolbarOnlyActionButtonList.get(i));

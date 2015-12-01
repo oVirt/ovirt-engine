@@ -201,7 +201,7 @@ public class QuotaModel extends EntityModel<Quota> {
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
         setDataCenter(new ListModel<StoragePool>());
-        setCopyPermissions(new EntityModel<Boolean>(false));
+        setCopyPermissions(new EntityModel<>(false));
         getCopyPermissions().setIsAvailable(false); // visible on copy quota.
         setGraceCluster(new EntityModel<Integer>());
         getGraceCluster().setEntity(20);
@@ -261,7 +261,7 @@ public class QuotaModel extends EntityModel<Quota> {
         setQuotaClusters(new ListModel<QuotaVdsGroup>());
         setQuotaStorages(new ListModel<QuotaStorage>());
 
-        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
+        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
         quotaVdsGroup.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
         quotaVdsGroup.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
@@ -270,7 +270,7 @@ public class QuotaModel extends EntityModel<Quota> {
         quotaClusterList.add(quotaVdsGroup);
         getQuotaClusters().setItems(quotaClusterList);
 
-        ArrayList<QuotaStorage> quotaStorgaeList = new ArrayList<QuotaStorage>();
+        ArrayList<QuotaStorage> quotaStorgaeList = new ArrayList<>();
         QuotaStorage quotaStorage = new QuotaStorage();
         quotaStorage.setStorageSizeGB(QuotaStorage.UNLIMITED);
         quotaStorage.setStorageSizeGBUsage(0.0);

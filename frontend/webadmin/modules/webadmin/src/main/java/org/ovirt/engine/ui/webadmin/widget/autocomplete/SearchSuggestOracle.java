@@ -31,7 +31,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
         String search = request.getQuery();
 
         // Create suggestions list
-        List<SearchSuggestion> suggestions = new ArrayList<SearchSuggestion>();
+        List<SearchSuggestion> suggestions = new ArrayList<>();
 
         // Invoke model update options by search string method
         searchSuggestModel.setSearchObjectFilter(getSearchObjectFilter());
@@ -57,7 +57,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
      * Returns search object suggestions that should be excluded due to their model being not available.
      */
     private String[] getSearchObjectFilter() {
-        List<String> filter = new ArrayList<String>();
+        List<String> filter = new ArrayList<>();
 
         for (SearchableListModel list : commonModel.getItems()) {
             if (list != null && !list.getIsAvailable()) {

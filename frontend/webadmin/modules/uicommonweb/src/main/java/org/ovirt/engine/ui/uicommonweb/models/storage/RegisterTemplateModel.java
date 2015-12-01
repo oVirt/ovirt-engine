@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate> {
 
     protected void onSave() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (ImportEntityData<VmTemplate> entityData : getEntities().getItems()) {
             VmTemplate vmTemplate = entityData.getEntity();
             VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();

@@ -28,7 +28,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
 
         getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
 
-        getModel().updateWatchdogItems(new HashSet<VmWatchdogType>(Arrays.asList(VmWatchdogType.values())));
+        getModel().updateWatchdogItems(new HashSet<>(Arrays.asList(VmWatchdogType.values())));
 
         // no cluster data - init list to 'use cluster default' option
         getModel().getEmulatedMachine().setItems(Arrays.asList("")); //$NON-NLS-1$
@@ -43,13 +43,10 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
             }
         });
 
-        List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<Pair<GraphicsType, DisplayType>>();
+        List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<>();
         for (GraphicsType graphicsType : GraphicsType.values()) {
             for (DisplayType displayType : DisplayType.values()) {
-                allGraphicsAndDisplays.add(new Pair<GraphicsType, DisplayType>(
-                        graphicsType,
-                        displayType
-                ));
+                allGraphicsAndDisplays.add(new Pair<>(graphicsType, displayType));
             }
         }
 

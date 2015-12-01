@@ -75,7 +75,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
     }
 
     private void initStatitsticsTable() {
-        statisticsTable = new EntityModelCellTable<ListModel>(false, true);
+        statisticsTable = new EntityModelCellTable<>(false, true);
         statisticsTable.enableColumnResizing();
 
         AbstractTextColumn<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
@@ -151,7 +151,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
     }
 
     private void initGuestAgentDataTable() {
-        guestAgentDataTable = new EntityModelCellTable<ListModel>(false, true);
+        guestAgentDataTable = new EntityModelCellTable<>(false, true);
         guestAgentDataTable.enableColumnResizing();
 
         AbstractTextColumn<VmGuestAgentInterface> nameColumn = new AbstractTextColumn<VmGuestAgentInterface>() {

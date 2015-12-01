@@ -65,7 +65,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
     }
 
     private void initTable() {
-        policyUnitTable = new ListModelObjectCellTable<PolicyUnit, ListModel>();
+        policyUnitTable = new ListModelObjectCellTable<>();
         policyUnitTable.enableColumnResizing();
         policyUnitTableContainer.add(policyUnitTable);
 

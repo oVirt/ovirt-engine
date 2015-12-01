@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ViewRadioGroup<K> extends Composite {
 
     private final List<? extends ViewFilter<K>> items;
-    private final Map<K, RadioButton> buttons = new HashMap<K, RadioButton>();
+    private final Map<K, RadioButton> buttons = new HashMap<>();
 
     public ViewRadioGroup(List<? extends ViewFilter<K>> items) {
         this.items = items;

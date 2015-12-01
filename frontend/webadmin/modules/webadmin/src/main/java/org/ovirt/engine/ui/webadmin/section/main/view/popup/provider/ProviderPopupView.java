@@ -141,7 +141,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     public ProviderPopupView(EventBus eventBus) {
         super(eventBus);
 
-        typeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer());
+        typeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
         datacenterEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
             @Override
             public String render(StoragePool storagePool) {

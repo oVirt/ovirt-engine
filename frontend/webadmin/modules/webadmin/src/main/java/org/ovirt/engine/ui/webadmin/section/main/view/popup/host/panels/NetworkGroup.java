@@ -46,7 +46,7 @@ public class NetworkGroup extends FocusPanel {
         this.table = new FlexTable();
 
         List<NetworkLabelModel> labels = nicModel.getLabels();
-        SortedSet<LogicalNetworkModel> networks = new TreeSet<LogicalNetworkModel>(nicModel.getItems());
+        SortedSet<LogicalNetworkModel> networks = new TreeSet<>(nicModel.getItems());
         for (NetworkLabelModel label : labels) {
             networks.removeAll(label.getNetworks());
         }

@@ -92,7 +92,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
 
         Translator translator = EnumTranslator.getInstance();
 
-        ArrayList<SelectionTreeNodeModel> list = new ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> list = new ArrayList<>();
 
         ArrayList<event_subscriber> items =
                 getItems() == null ? new ArrayList<event_subscriber>()
@@ -156,11 +156,11 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
             return;
         }
 
-        ArrayList<VdcActionParametersBase> toAddList = new ArrayList<VdcActionParametersBase>();
-        ArrayList<VdcActionParametersBase> toRemoveList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> toAddList = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> toRemoveList = new ArrayList<>();
 
         // var selected = model.EventGroupModels.SelectMany(a => a.Children).Where(a => a.IsSelected == true);
-        ArrayList<SelectionTreeNodeModel> selected = new ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> selected = new ArrayList<>();
         for (SelectionTreeNodeModel node : model.getEventGroupModels()) {
             for (SelectionTreeNodeModel child : node.getChildren()) {
                 if (child.getIsSelectedNullable() != null && child.getIsSelectedNullable().equals(true)) {
@@ -172,8 +172,8 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         ArrayList<event_subscriber> existing =
                 getItems() != null ? Linq.<event_subscriber> cast(getItems())
                         : new ArrayList<event_subscriber>();
-        ArrayList<SelectionTreeNodeModel> added = new ArrayList<SelectionTreeNodeModel>();
-        ArrayList<event_subscriber> removed = new ArrayList<event_subscriber>();
+        ArrayList<SelectionTreeNodeModel> added = new ArrayList<>();
+        ArrayList<event_subscriber> removed = new ArrayList<>();
 
         // check what has been added:
         for (SelectionTreeNodeModel selectedEvent : selected) {

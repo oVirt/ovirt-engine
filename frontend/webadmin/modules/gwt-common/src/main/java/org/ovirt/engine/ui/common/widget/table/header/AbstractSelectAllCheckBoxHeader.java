@@ -31,7 +31,7 @@ public abstract class AbstractSelectAllCheckBoxHeader<T> extends Header<Boolean>
         if (!listModel.getItems().iterator().hasNext()) {
             return;
         }
-        ArrayList<T> selectedItems = new ArrayList<T>();
+        ArrayList<T> selectedItems = new ArrayList<>();
         for (T entity : (Iterable<T>) listModel.getItems()) {
             if (value) {
                 selectedItems.add(entity);

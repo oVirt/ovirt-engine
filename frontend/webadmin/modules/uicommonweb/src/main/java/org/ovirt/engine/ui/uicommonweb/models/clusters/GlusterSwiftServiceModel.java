@@ -26,9 +26,9 @@ public class GlusterSwiftServiceModel extends EntityModel<GlusterServerService> 
     }
 
     public GlusterSwiftServiceModel(GlusterServerService service, List<GlusterServerService> internalServiceList) {
-        setStartSwift(new EntityModel<Boolean>(Boolean.FALSE));
-        setStopSwift(new EntityModel<Boolean>(Boolean.FALSE));
-        setRestartSwift(new EntityModel<Boolean>(Boolean.FALSE));
+        setStartSwift(new EntityModel<>(Boolean.FALSE));
+        setStopSwift(new EntityModel<>(Boolean.FALSE));
+        setRestartSwift(new EntityModel<>(Boolean.FALSE));
         setEntity(service);
         setInternalServiceList(internalServiceList);
     }

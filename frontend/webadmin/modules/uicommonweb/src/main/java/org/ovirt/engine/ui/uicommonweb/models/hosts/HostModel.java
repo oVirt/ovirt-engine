@@ -742,20 +742,20 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void updateSpmPriority(Integer value) {
 
-        List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
+        List<EntityModel<Integer>> items = new ArrayList<>();
 
         if (value == null) {
             value = defaultSpmPriority;
         }
 
         int neverValue = -1;
-        EntityModel<Integer> neverItem = new EntityModel<Integer>(constants.neverTitle(), neverValue);
+        EntityModel<Integer> neverItem = new EntityModel<>(constants.neverTitle(), neverValue);
         items.add(neverItem);
         int lowValue = defaultSpmPriority / 2;
-        items.add(new EntityModel<Integer>(constants.lowTitle(), lowValue));
-        items.add(new EntityModel<Integer>(constants.normalTitle(), defaultSpmPriority));
+        items.add(new EntityModel<>(constants.lowTitle(), lowValue));
+        items.add(new EntityModel<>(constants.normalTitle(), defaultSpmPriority));
         int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
-        items.add(new EntityModel<Integer>(constants.highTitle(), highValue));
+        items.add(new EntityModel<>(constants.highTitle(), highValue));
 
         // Determine whether to set custom SPM priority, and where.
         EntityModel<Integer> selectedItem = null;
@@ -771,7 +771,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 selectedItem = items.get(i);
                 break;
             } else if (prevValue != null && value > prevValue && value < currentValue) {
-                EntityModel<Integer> customItem = new EntityModel<Integer>("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
+                EntityModel<Integer> customItem = new EntityModel<>("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
 
                 items.add(i, customItem);
                 selectedItem = customItem;
@@ -836,7 +836,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
                                 ArchitectureType architecture = (ArchitectureType) returnValue;
 
-                                ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+                                ArrayList<VDSGroup> filteredClusters = new ArrayList<>();
 
                                 for (VDSGroup cluster : clusters) {
                                     if (architecture == ArchitectureType.undefined
@@ -1053,7 +1053,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
                 model.setPmOptionsMap(VdsStatic.pmOptionsStringToMap(agent.getOptions()));
                 model.setOrder(agent.getOrder());
-                if (!examinedAgents.contains(new Pair<String, String>(model.getManagementIp().getEntity(),
+                if (!examinedAgents.contains(new Pair<>(model.getManagementIp().getEntity(),
                         model.getPmType().getSelectedItem()))) {
                     boolean added = false;
                     for (FenceAgentModel concurrentModel: agents) {
@@ -1067,7 +1067,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                         agents.add(model);
                     }
                 }
-                examinedAgents.add(new Pair<String, String>(model.getManagementIp().getEntity(),
+                examinedAgents.add(new Pair<>(model.getManagementIp().getEntity(),
                         model.getPmType().getSelectedItem()));
             }
             getFenceAgentListModel().setItems(agents);
@@ -1107,7 +1107,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             case DataCenter:
                 StoragePool selectDataCenter = (StoragePool) selectedSystemTreeItem.getEntity();
                 getDataCenter()
-                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
+                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
                 getDataCenter().setSelectedItem(selectDataCenter);
                 getDataCenter().setIsChangeable(false);
                 break;

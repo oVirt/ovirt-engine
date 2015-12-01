@@ -21,7 +21,7 @@ public class NewCpuQosModel extends QosModel<CpuQos, CpuQosParametersModel> {
 
     @Override
     protected QosParametersBase<CpuQos> getParameters() {
-        QosParametersBase<CpuQos> qosParametersBase = new QosParametersBase<CpuQos>();
+        QosParametersBase<CpuQos> qosParametersBase = new QosParametersBase<>();
         qosParametersBase.setQos(getQos());
         return qosParametersBase;
     }

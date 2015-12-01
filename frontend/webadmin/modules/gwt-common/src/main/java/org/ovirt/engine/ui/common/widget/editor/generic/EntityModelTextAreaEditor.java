@@ -8,7 +8,7 @@ import com.google.gwt.text.shared.Renderer;
 public class EntityModelTextAreaEditor<T> extends AbstractValueBoxWithLabelEditor<T, EntityModelTextArea<T>> {
 
     public EntityModelTextAreaEditor(Renderer<T> renderer, Parser<T> parser) {
-        this(new EntityModelTextArea<T>(renderer, parser));
+        this(new EntityModelTextArea<>(renderer, parser));
 
         registerEnterIgnoringHandlers();
     }

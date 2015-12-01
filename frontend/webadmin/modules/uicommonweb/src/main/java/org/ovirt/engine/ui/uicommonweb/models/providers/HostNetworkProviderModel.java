@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class HostNetworkProviderModel extends EntityModel {
 
-    private ListModel<Provider<OpenstackNetworkProviderProperties>> networkProviders = new ListModel<Provider<OpenstackNetworkProviderProperties>>();
-    private ListModel<ProviderType> networkProviderType = new ListModel<ProviderType>();
+    private ListModel<Provider<OpenstackNetworkProviderProperties>> networkProviders = new ListModel<>();
+    private ListModel<ProviderType> networkProviderType = new ListModel<>();
     private NeutronAgentModel neutronAgentModel = new HostNeutronAgentModel();
 
     public ListModel<Provider<OpenstackNetworkProviderProperties>> getNetworkProviders() {

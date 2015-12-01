@@ -174,7 +174,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     private void updateActionAvailability() {
         VM vm = getEntity();
 
-        ArrayList<VM> items = new ArrayList<VM>();
+        ArrayList<VM> items = new ArrayList<>();
         if (vm != null) {
             items.add(vm);
         }
@@ -239,7 +239,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
             setSelectionGuestAgentData(null);
             return;
         }
-        List<VmGuestAgentInterface> selectionInterfaces = new ArrayList<VmGuestAgentInterface>();
+        List<VmGuestAgentInterface> selectionInterfaces = new ArrayList<>();
 
         for (VmGuestAgentInterface guestInterface : getGuestAgentData()) {
             if (Objects.equals(guestInterface.getMacAddress(), selectedItem.getMacAddress())) {

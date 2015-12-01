@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class ShortEntityModelTextBoxEditor extends NumberEntityModelTextBoxEditor<Short> {
 
     public ShortEntityModelTextBoxEditor(VisibilityRenderer visibilityRenderer) {
-        super(new EntityModelTextBox<Short>(new ToStringEntityModelRenderer<Short>(), new ToShortEntityModelParser()), visibilityRenderer);
+        super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Short>(), new ToShortEntityModelParser()), visibilityRenderer);
     }
 
     public ShortEntityModelTextBoxEditor() {

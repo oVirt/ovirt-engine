@@ -28,7 +28,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
 
             @Override
             public Set<String> getConsumedEvents() {  // override this to add MOUSEMOVE for mouse cursor changes
-                Set<String> set = new HashSet<String>();
+                Set<String> set = new HashSet<>();
                 TooltipMixin.addTooltipsEvents(set);
                 set.add(BrowserEvents.CHANGE);
                 set.add(BrowserEvents.KEYDOWN);

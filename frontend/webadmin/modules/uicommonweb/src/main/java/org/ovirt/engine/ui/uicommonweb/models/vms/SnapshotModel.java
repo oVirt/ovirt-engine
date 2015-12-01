@@ -184,13 +184,13 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
     public SnapshotModel() {
         setDescription(new EntityModel<String>());
-        setMemory(new EntityModel<Boolean>(true));
+        setMemory(new EntityModel<>(true));
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
         setSnapshotDisks(new ListModel<DiskImage>());
 
-        ListModel<PreivewPartialSnapshotOption> partialPreviewSnapshotOptions = new ListModel<PreivewPartialSnapshotOption>();
+        ListModel<PreivewPartialSnapshotOption> partialPreviewSnapshotOptions = new ListModel<>();
         partialPreviewSnapshotOptions.setItems(Arrays.asList(PreivewPartialSnapshotOption.values()));
         setPartialPreviewSnapshotOptions(partialPreviewSnapshotOptions);
     }
@@ -377,7 +377,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         startProgress();
 
         VM vm = getVm();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
         CreateAllSnapshotsFromVmParameters param =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(),
                         getDescription().getEntity(),

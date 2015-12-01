@@ -215,21 +215,21 @@ public class SpiceConsoleModel extends ConsoleModel {
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
                     Frontend.getInstance().runMultipleAction(VdcActionType.RunVm,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { tempVar })));
+                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{tempVar})));
 
                 } else if (CommandSuspend.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new VmOperationParameterBase(getEntity().getId()) })));
+                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VmOperationParameterBase(getEntity().getId())})));
 
                 } else if (CommandStop.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.ShutdownVm,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getId(),
-                                    true) })));
+                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new ShutdownVmParameters(getEntity().getId(),
+                                    true)})));
 
                 } else if (CommandChangeCD.equals(item.getCommandName())) {
                     Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
-                                    getEjectLabel().equals(item.getText()) ? "" : item.getText()) }))); //$NON-NLS-1$
+                            new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new ChangeDiskCommandParameters(getEntity().getId(),
+                                    getEjectLabel().equals(item.getText()) ? "" : item.getText())}))); //$NON-NLS-1$
                 }
             }
         }

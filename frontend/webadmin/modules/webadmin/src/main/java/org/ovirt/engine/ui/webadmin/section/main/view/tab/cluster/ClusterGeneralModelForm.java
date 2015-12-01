@@ -51,7 +51,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
      */
     public void initialize() {
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
-        memoryOverCommit = new PercentLabel<Integer>();
+        memoryOverCommit = new PercentLabel<>();
         resiliencePolicy = new ResiliencePolicyLabel();
         clusterType = new ClusterTypeLabel();
 

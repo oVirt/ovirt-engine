@@ -17,7 +17,7 @@ public class EntityModelTextBoxOnlyEditor<T> extends AbstractValidatedWidgetWith
     private final WidgetWithLabelEditor<T, EntityModelTextBoxOnlyEditor<T>> editor;
 
     public EntityModelTextBoxOnlyEditor(Renderer<T> renderer, Parser<T> parser) {
-        this(new EntityModelTextBox<T>(renderer, parser), new VisibilityRenderer.SimpleVisibilityRenderer());
+        this(new EntityModelTextBox<>(renderer, parser), new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     public EntityModelTextBoxOnlyEditor(EntityModelTextBox<T> textBox, VisibilityRenderer visibilityRenderer) {

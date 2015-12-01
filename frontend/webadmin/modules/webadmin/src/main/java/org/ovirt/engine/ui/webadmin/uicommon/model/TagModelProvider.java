@@ -51,7 +51,7 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
 
         // Create selection model
-        selectionModel = new SingleSelectionModel<TagModel>();
+        selectionModel = new SingleSelectionModel<>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
@@ -97,12 +97,10 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             // Not a root node
             TagModel parentModel = (TagModel) parent;
             List<TagModel> children = parentModel.getChildren();
-            return new DefaultNodeInfo<TagModel>(new ListDataProvider<TagModel>(children),
-                    cell, selectionModel, selectionManager, null);
+            return new DefaultNodeInfo<>(new ListDataProvider<>(children), cell, selectionModel, selectionManager, null);
         } else {
             // This is the root node
-            return new DefaultNodeInfo<TagModel>(getDataProvider(),
-                    cell, selectionModel, selectionManager, null);
+            return new DefaultNodeInfo<>(getDataProvider(), cell, selectionModel, selectionManager, null);
         }
     }
 

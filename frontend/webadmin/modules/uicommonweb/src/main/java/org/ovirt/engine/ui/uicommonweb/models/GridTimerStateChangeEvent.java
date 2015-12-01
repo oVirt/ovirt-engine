@@ -35,7 +35,7 @@ public class GridTimerStateChangeEvent extends GwtEvent<GridTimerStateChangeEven
         public void onGridTimerStateChange(GridTimerStateChangeEvent event);
     }
 
-    private static final Type<GridTimerStateChangeEventHandler> TYPE = new Type<GridTimerStateChangeEventHandler>();
+    private static final Type<GridTimerStateChangeEventHandler> TYPE = new Type<>();
 
     public static Type<GridTimerStateChangeEventHandler> getType() {
         return TYPE;

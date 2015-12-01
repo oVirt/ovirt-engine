@@ -68,7 +68,7 @@ public class SnapshotsViewColumns {
             String descriptionStr = description.asString();
 
             if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                List<String> previewedItems = new ArrayList<String>(Arrays.asList(constants.vmConfiguration()));
+                List<String> previewedItems = new ArrayList<>(Arrays.asList(constants.vmConfiguration()));
                 previewedItems.addAll(Linq.getDiskAliases(snapshot.getDiskImages()));
                 descriptionStr = messages.snapshotPreviewing(
                         descriptionStr, StringUtils.join(previewedItems, ", ")); //$NON-NLS-1$

@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
-    private final Event<EventArgs> poolModelBehaviorInitializedEvent = new Event<EventArgs>("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
+    private final Event<EventArgs> poolModelBehaviorInitializedEvent = new Event<>("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
 
     public Event<EventArgs> getPoolModelBehaviorInitializedEvent() {
@@ -55,7 +55,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
-                final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                final List<StoragePool> dataCenters = new ArrayList<>();
                 for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getStatus() == StoragePoolStatus.Up) {
                         dataCenters.add(a);

@@ -286,7 +286,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void onChangeQuota() {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : model.getItems()) {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
@@ -377,7 +377,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private ArrayList<VdcActionParametersBase> createHotPlugDiskToVmParameters(boolean plug) {
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         VM vm = getEntity();
 
         for (Object item : getSelectedItems()) {
@@ -397,7 +397,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.setHashName("deactivate_vm_disk"); //$NON-NLS-1$
         setWindow(model);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<>();
         for (Disk selected : getSelectedItems()) {
             items.add(selected.getDiskAlias());
         }
@@ -440,7 +440,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private void scanAlignment() {
-        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<>();
 
         for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));

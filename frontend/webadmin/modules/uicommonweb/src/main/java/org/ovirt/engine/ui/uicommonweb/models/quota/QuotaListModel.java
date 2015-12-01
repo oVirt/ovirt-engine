@@ -218,7 +218,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                             qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
                             return;
                         }
-                        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
+                        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
                         QuotaVdsGroup quotaVdsGroup;
                         for (VDSGroup vdsGroup : clusterList) {
                             quotaVdsGroup = new QuotaVdsGroup();
@@ -244,7 +244,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                             qModel.stopProgress();
                             return;
                         }
-                        ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
+                        ArrayList<QuotaStorage> quotaStorageList = new ArrayList<>();
                         QuotaStorage quotaStorage;
                         for (StorageDomain storage : storageList) {
                             if (!storage.getStorageDomainType().isDataDomain()) {
@@ -300,7 +300,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             }
         } else {
             quota.setGlobalQuotaVdsGroup(null);
-            ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
+            ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
             QuotaVdsGroup quotaVdsGroup;
             for (QuotaVdsGroup iter : model.getAllDataCenterClusters().getItems()) {
                 quotaVdsGroup = iter;
@@ -320,7 +320,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             }
         } else {
             quota.setGlobalQuotaStorage(null);
-            ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
+            ArrayList<QuotaStorage> quotaStorageList = new ArrayList<>();
             QuotaStorage quotaStorage;
             for (QuotaStorage iter : model.getAllDataCenterStorages().getItems()) {
                 quotaStorage = iter;
@@ -459,7 +459,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                                     }
                                     return;
                                 }
-                                ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
+                                ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
                                 QuotaVdsGroup quotaVdsGroup;
                                 for (VDSGroup vdsGroup : clusterList) {
                                     quotaVdsGroup = new QuotaVdsGroup();
@@ -507,7 +507,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                                             qModel.stopProgress();
                                             return;
                                         }
-                                        ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
+                                        ArrayList<QuotaStorage> quotaStorageList = new ArrayList<>();
                                         QuotaStorage quotaStorage;
                                         for (StorageDomain storage : storageList) {
                                             if (!storage.getStorageDomainType().isDataDomain()) {
@@ -545,7 +545,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                     }
                 });
 
-                ArrayList<StoragePool> dataCenterList = new ArrayList<StoragePool>();
+                ArrayList<StoragePool> dataCenterList = new ArrayList<>();
                 StoragePool dataCenter = new StoragePool();
                 dataCenter.setId(quota.getStoragePoolId());
                 dataCenter.setName(quota.getStoragePoolName());
@@ -599,7 +599,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         QuotaCRUDParameters crudParameters;
         for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
             crudParameters = new QuotaCRUDParameters();
@@ -633,7 +633,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         model.setHelpTag(HelpTag.remove_quota);
         model.setHashName("remove_quota"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (Quota a : Linq.<Quota> cast(getSelectedItems())) {
             list.add(a.getQuotaName());
         }

@@ -27,7 +27,7 @@ public class ListModelListBoxEditor<T> extends AbstractValidatedWidgetWithLabel<
     }
 
     public ListModelListBoxEditor(Renderer<T> renderer, VisibilityRenderer visibilityRenderer) {
-        super(new ListModelListBox<T>(renderer), visibilityRenderer);
+        super(new ListModelListBox<>(renderer), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

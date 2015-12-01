@@ -136,7 +136,7 @@ public class ClusterHostListModel extends HostListModel<VDSGroup> {
     }
 
     private void updateMomPolicy() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
         for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));
         }

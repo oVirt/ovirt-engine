@@ -26,7 +26,7 @@ public class BuilderExecutor<S, D> {
      * to perform build from <code>source</code> to <code>destination</code>.
      */
     public static <S, D> void build(S source, D destination, SyncBuilder<S, D>... builders) {
-        new BuilderExecutor<S, D>(builders).build(source, destination);
+        new BuilderExecutor<>(builders).build(source, destination);
     }
 
     /**
@@ -48,14 +48,14 @@ public class BuilderExecutor<S, D> {
      *            the chain of builders
      */
     public BuilderExecutor(Builder<S, D>... builders) {
-        this.builders = new BuilderList<S, D>(builders);
+        this.builders = new BuilderList<>(builders);
     }
 
     /**
      * @see BuilderExecutor(BuilderExecutionFinished<S, D> callback, Builder<S, D>... builders)
      */
     public BuilderExecutor(BuilderExecutionFinished<S, D> callback, List<Builder<S, D>> builders) {
-        this.builders = new BuilderList<S, D>(builders).append(new BuilderExecutionFinishedCaller(callback));
+        this.builders = new BuilderList<>(builders).append(new BuilderExecutionFinishedCaller(callback));
     }
 
     public void build(S source, D destination) {

@@ -179,12 +179,12 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     }
 
     private void initEditors() {
-        contentSourcesTable = new EntityModelCellTable<ListModel>(false, true);
+        contentSourcesTable = new EntityModelCellTable<>(false, true);
 
-        statusEditor = new EntityModelLabelEditor<GlusterHookStatus>(new EnumRenderer<GlusterHookStatus>());
+        statusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterHookStatus>());
 
         resolveContentConflict = new EntityModelCheckBoxEditor(Align.RIGHT);
-        useContentSourceEditor = new ListModelListBoxEditor<GlusterServerHook>(new NullSafeRenderer<GlusterServerHook>() {
+        useContentSourceEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<GlusterServerHook>() {
             @Override
             protected String renderNullSafe(GlusterServerHook hook) {
                 return hook.getServerName();

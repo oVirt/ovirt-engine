@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -17,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class RegisterVmModel extends RegisterEntityModel<VM> {
 
     protected void onSave() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (ImportEntityData<VM> entityData : getEntities().getItems()) {
             VM vm = entityData.getEntity();
             VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();
@@ -32,7 +31,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
                 Quota quota = entityData.getClusterQuota().getSelectedItem();
                 params.setQuotaId(quota != null ? quota.getId() : null);
                 params.setDiskMap(vm.getDiskMap());
-                updateDiskQuotas(new ArrayList<Disk>(params.getDiskMap().values()));
+                updateDiskQuotas(new ArrayList<>(params.getDiskMap().values()));
             }
 
             parameters.add(params);

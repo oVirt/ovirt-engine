@@ -78,8 +78,8 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
         getUsageType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUuid().validateEntity(new IValidation[] { new NotEmptyValidation(), new GuidValidation() });
 
-        ArrayList<IValidation> valueValidations = new ArrayList<IValidation>(
-                Collections.singletonList(new RegexValidation(ValidationUtils.BASE_64_PATTERN,
+        ArrayList<IValidation> valueValidations = new ArrayList<>(
+                Collections.<IValidation>singletonList(new RegexValidation(ValidationUtils.BASE_64_PATTERN,
                         ConstantsManager.getInstance().getConstants().secretValueMustBeInBase64())));
         if (isNew()) {
             valueValidations.add(new NotEmptyValidation());

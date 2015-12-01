@@ -62,7 +62,7 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
     }
 
     private void initTree() {
-        tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
+        tree = new EntityModelCellTree<>(res);
     }
 
     @Override
