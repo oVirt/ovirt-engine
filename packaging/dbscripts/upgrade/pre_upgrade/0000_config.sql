@@ -623,7 +623,7 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
-select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
+select fn_db_add_config_value('AutoRecoveryAllowedTypes','{"storage domains":"true","hosts":"true"}','general');
 -- SPICE client mode default settings (Auto, Native, Plugin)
 select fn_db_add_config_value('ClientModeSpiceDefault','Native','general');
 -- VNC client mode default settings (Native, NoVnc)
@@ -759,7 +759,7 @@ select fn_db_add_config_value_for_versions_up_to('InitialSizeSparseDiskSupported
 --                  Update with override section
 ------------------------------------------------------------------------------------
 
-select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
+select fn_db_update_config_value('AutoRecoveryAllowedTypes','{"storage domains":"true","hosts":"true"}','general');
 select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
