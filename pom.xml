@@ -17,7 +17,7 @@
   </ciManagement>
   <issueManagement>
     <system>bugzilla</system>
-    <url>https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt</url>
+    <url>https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine</url>
   </issueManagement>
   <scm>
     <developerConnection>scm:git:ssh://gerrit.ovirt.org/ovirt-engine.git</developerConnection>
