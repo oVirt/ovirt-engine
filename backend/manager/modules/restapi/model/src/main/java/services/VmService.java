@@ -79,6 +79,26 @@ public interface VmService extends MeasurableService {
 
     interface Get {
         @Out Vm vm();
+
+        /**
+         * Indicates if the returned result describes the virtual machine as it is currently running, or if describes
+         * it with the modifications that have already been performed but that will have effect only when it is
+         * restarted. By default the values is `false`.
+         *
+         * If the parameter is included in the request, but without a value, it is assumed that the value is `true`, so
+         * the following request:
+         *
+         * ```
+         * GET /vms/{vm:id};next_run
+         * ```
+         *
+         * Is equivalent to using the value `true`:
+         *
+         * ```
+         * GET /vms/{vm:id};next_run=true
+         * ```
+         */
+        @In Boolean nextRun();
     }
 
     interface Logon {
