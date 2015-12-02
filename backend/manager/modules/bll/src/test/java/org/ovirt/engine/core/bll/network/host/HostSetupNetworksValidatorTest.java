@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -39,6 +41,7 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
+import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -85,6 +88,9 @@ public class HostSetupNetworksValidatorTest {
     private NetworkAttachmentDao networkAttachmentDaoMock;
 
     @Mock
+    private BusinessEntityMap<Network> mockBusinessEntityMap;
+
+    @Mock
     private NetworkClusterDao networkClusterDaoMock;
 
     @Mock
@@ -113,6 +119,8 @@ public class HostSetupNetworksValidatorTest {
     private NetworkExclusivenessValidatorResolver mockNetworkExclusivenessValidatorResolver;
     @Mock
     private NetworkExclusivenessValidator mockNetworkExclusivenessValidator;
+    @Mock
+    private NetworkAttachmentIpConfigurationValidator mockNetworkAttachmentIpConfigurationValidator;
 
     @Before
     public void setUp() throws Exception {
@@ -128,6 +136,7 @@ public class HostSetupNetworksValidatorTest {
 
         when(mockNetworkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(TEST_SUPPORTED_VERSIONS))
                 .thenReturn(mockNetworkExclusivenessValidator);
+        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(anyCollection())).thenReturn(ValidationResult.VALID);
     }
 
     public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
@@ -329,7 +338,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
             .addExistingAttachments((List<NetworkAttachment>) null)
             .addNetworks(Collections.singletonList(labeledNetwork))
             .build();
@@ -458,7 +467,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
             .build();
 
         NetworkAttachment requiredNetworkAttachment = new NetworkAttachment();
@@ -482,7 +491,7 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(bond.getId()))
-            .addExistingInterfaces(Collections.<VdsNetworkInterface> singletonList(bond))
+            .addExistingInterfaces(Collections.<VdsNetworkInterface>singletonList(bond))
             .build();
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment>emptyList()), isValid());
@@ -536,9 +545,9 @@ public class HostSetupNetworksValidatorTest {
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder()
-                .addNetworkAttachments(networkAttachmentB)
-                .addRemovedNetworkAttachments(networkAttachmentA)
-                .build())
+                    .addNetworkAttachments(networkAttachmentB)
+                    .addRemovedNetworkAttachments(networkAttachmentA)
+                    .build())
             .addExistingAttachments(Arrays.asList(networkAttachmentA, networkAttachmentB))
             .addNetworks((Collection<Network>) null)
             .build();
@@ -567,11 +576,87 @@ public class HostSetupNetworksValidatorTest {
         assertThat(attachmentsToConfigure.contains(networkAttachmentB), is(true));
     }
 
-    private NetworkAttachment createNetworkAttachment(Network networkA, VdsNetworkInterface nic) {
-        NetworkAttachment attachment = createNetworkAttachment(networkA, Guid.newGuid());
-        attachment.setNicId(nic.getId());
-        attachment.setNicName(nic.getName());
+    @Test
+    public void testInvalidNetworkAttachmentIpConfiguration() {
+        HostSetupNetworksValidator validator = initValidator();
+        NetworkAttachment networkAttachment = validator.getAttachmentsToConfigure().iterator().next();
+        Collection<String> replacements = createReplacement(networkAttachment);
+        EngineMessage engineMessage = EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION;
+        initMockNetworkAttachmentIpConfigurationValidator(engineMessage, replacements);
+
+        assertThat(validator.validNewOrModifiedNetworkAttachments(),
+                failsWith(engineMessage, replacements));
+    }
+
+    @Test
+    public void testValidNetworkAttachmentIpConfiguration() {
+        HostSetupNetworksValidator validator = initValidator();
+        Collection<String> replacements = new ArrayList<>();
+        EngineMessage engineMessage = null;
+        initMockNetworkAttachmentIpConfigurationValidator(engineMessage, replacements);
+        ValidationResult actual = validator.validNewOrModifiedNetworkAttachments();
+        Assert.assertEquals(ValidationResult.VALID, actual);
+
+    }
+
+    private Collection<String> createReplacement(NetworkAttachment networkAttachment) {
+        Collection<String> replacements = new ArrayList<>();
+        replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                networkAttachment.getNetworkName()));
+        replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_INTERFACE_NAME,
+                networkAttachment.getNicName()));
+        return replacements;
+    }
+
+    private HostSetupNetworksValidator initValidator() {
+        Network network = addNewNetworkToDaoMock();
+        VdsNetworkInterface vdsNetworkInterface = createNic(HostSetupNetworksValidator.VAR_INTERFACE_NAME);
+        NetworkAttachment networkAttachment = createNetworkAttachment(network, vdsNetworkInterface, null);
+        when(networkAttachmentDaoMock.get(networkAttachment.getId())).thenReturn(networkAttachment);
+        HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
+                .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
+                .addNetworks(network)
+                .addExistingInterfaces(vdsNetworkInterface)
+                .build();
+
+        return validator;
+    }
+
+    private Network addNewNetworkToDaoMock() {
+        Network network = createNetworkWithName(HostSetupNetworksValidator.VAR_NETWORK_NAME);
+        addNetworkIdToNetworkDaoMock(network);
+        addNetworkToClusterDaoMock(network.getId());
+        return network;
+    }
+
+    private void addNetworkToClusterDaoMock(Guid guid) {
+        when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), guid)))
+                .thenReturn(mock(NetworkCluster.class));
+    }
+
+    private void addNetworkIdToNetworkDaoMock(Network network) {
+        when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
+    }
+
+    private void initMockNetworkAttachmentIpConfigurationValidator(EngineMessage engineMessage,
+            Collection<String> replacements) {
+        ValidationResult validationResult =
+                replacements.isEmpty() ? ValidationResult.VALID : new ValidationResult(engineMessage, replacements);
+        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(anyCollection()))
+                .thenReturn(validationResult);
+    }
+
+    private NetworkAttachment createNetworkAttachment(Network networkA, VdsNetworkInterface nic, Guid guid) {
+        NetworkAttachment attachment = createNetworkAttachment(networkA, guid);
+        if (nic != null) {
+            attachment.setNicId(nic.getId());
+            attachment.setNicName(nic.getName());
+        }
         return attachment;
+    }
+
+    private NetworkAttachment createNetworkAttachment(Network networkA, VdsNetworkInterface nic) {
+        return createNetworkAttachment(networkA, nic, Guid.newGuid());
     }
 
     private NetworkAttachment createNetworkAttachment(Network network) {
@@ -625,7 +710,7 @@ public class HostSetupNetworksValidatorTest {
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
 
         when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-            .thenReturn(Collections.<String> emptyList());
+            .thenReturn(Collections.<String>emptyList());
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms(), isValid());
     }
@@ -1065,7 +1150,7 @@ public class HostSetupNetworksValidatorTest {
         //we do not test SimpleCustomPropertiesUtil here, we just state what happens if it does not find ValidationError
         SimpleCustomPropertiesUtil simpleCustomPropertiesUtilMock = mock(SimpleCustomPropertiesUtil.class);
         when(simpleCustomPropertiesUtilMock.validateProperties(any(Map.class), any(Map.class)))
-            .thenReturn(Collections.<ValidationError> emptyList());
+            .thenReturn(Collections.<ValidationError>emptyList());
 
         assertThat(validator.validateCustomProperties(simpleCustomPropertiesUtilMock,
                 Collections.<String, String> emptyMap(),
@@ -1091,14 +1176,13 @@ public class HostSetupNetworksValidatorTest {
         bond.setName("bond1");
         setBondSlaves(bond, nicA, nicB);
 
-        when(networkDaoMock.get(eq(networkA.getId()))).thenReturn(networkA);
-        when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), networkA.getId())))
-            .thenReturn(mock(NetworkCluster.class));
+        addNetworkIdToNetworkDaoMock(networkA);
+        addNetworkToClusterDaoMock(networkA.getId());
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder()
-                .addNetworkAttachments(networkAttachment)
-                .addBonds(bond).build())
+                    .addNetworkAttachments(networkAttachment)
+                    .addBonds(bond).build())
             .addExistingInterfaces(nicA, nicB)
             .addNetworks(networkA)
             .build();
@@ -1748,7 +1832,8 @@ public class HostSetupNetworksValidatorTest {
                 vdsDaoMock,
                 new HostSetupNetworksValidatorHelper(),
                 vmDao,
-                mockNetworkExclusivenessValidatorResolver);
+                mockNetworkExclusivenessValidatorResolver,
+                mockNetworkAttachmentIpConfigurationValidator);
         }
     }
 }

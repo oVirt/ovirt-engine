@@ -117,25 +117,6 @@ public class NetworkAttachmentValidator {
                 .when(getNetworkCluster() == null);
     }
 
-    public ValidationResult ipConfiguredForStaticBootProtocol() {
-        IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-
-        boolean failWhen = ipConfiguration != null
-            && ipConfiguration.hasPrimaryAddressSet()
-            && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
-            && unsetAddress(ipConfiguration);
-
-        //TODO MM: already used elsewhere, how to fix?
-        return ValidationResult.failWith(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP).when(failWhen);
-
-    }
-
-    private boolean unsetAddress(IpConfiguration ipConfiguration) {
-        return !ipConfiguration.hasPrimaryAddressSet()
-            || StringUtils.isEmpty(ipConfiguration.getPrimaryAddress().getAddress())
-            || StringUtils.isEmpty(ipConfiguration.getPrimaryAddress().getNetmask());
-    }
-
     public ValidationResult bootProtocolSetForRoleNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         boolean failWhen = (isRoleNetwork() &&
