@@ -3870,6 +3870,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network ${networkName} is attached (via label ${label}) to bond ${BondName}. VM networks cannot be attached to bonds in mode 0, 5 or 6.")
     String INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK();
 
+    @DefaultStringValue("Network attachment of Network ${networkName}, Interface ${interfaceName} is missing ip configuration details.")
+    String NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION();
+
+    @DefaultStringValue("Insufficient ip configuration details of Network attachment for Network ${networkName}, Interface ${interfaceName}. Boot protocol is missing.")
+    String NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL();
+
+    @DefaultStringValue("Incompatible ip configuration of Network attachment for Network ${networkName}, Interface ${interfaceName}. Can't determine the ip address, netmask or gateway when boot protocol is set to ${BootProtocol}.")
+    String NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS();
+
+    @DefaultStringValue("Insufficient ip configuration of Network attachment for Network ${networkName}, Interface ${interfaceName}. Must define ip address and netmask when boot protocol is static.")
+    String NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM has PCI host devices attached.")
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
 }
