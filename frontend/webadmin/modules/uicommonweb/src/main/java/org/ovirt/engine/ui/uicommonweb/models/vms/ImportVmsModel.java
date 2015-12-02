@@ -370,7 +370,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             public void onSuccess(Object model, Object returnValue) {
                 List<Provider<VmwareVmProviderProperties>> providers = new ArrayList<>();
                 for (Provider<VmwareVmProviderProperties> provider : (List<Provider<VmwareVmProviderProperties>>) returnValue) {
-                    if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())) {
+                    if (getDataCenters().getSelectedItem().getId().equals(provider.getAdditionalProperties().getStoragePoolId())
+                            || provider.getAdditionalProperties().getStoragePoolId() == null) {
                         providers.add(provider);
                     }
                 }

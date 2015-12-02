@@ -383,7 +383,8 @@ public class ProviderModel extends Model {
         } else if (isTypeOpenStackVolume()) {
             provider.setAdditionalProperties(new OpenStackVolumeProviderProperties(getDataCenter().getSelectedItem().getId()));
         } else if (isTypeVmware()) {
-            provider.setAdditionalProperties(getVmwarePropertiesModel().getVmwareVmProviderProperties(dataCenter.getSelectedItem().getId()));
+            provider.setAdditionalProperties(getVmwarePropertiesModel().getVmwareVmProviderProperties(
+                    dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));
             provider.setUrl(getVmwarePropertiesModel().getUrl());
         }
 
