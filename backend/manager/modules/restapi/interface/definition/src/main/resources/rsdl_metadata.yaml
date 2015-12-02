@@ -1318,6 +1318,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine in the storage domain
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
