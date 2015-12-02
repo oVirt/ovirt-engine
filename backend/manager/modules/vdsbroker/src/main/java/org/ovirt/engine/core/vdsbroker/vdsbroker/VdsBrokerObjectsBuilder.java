@@ -1698,10 +1698,27 @@ public class VdsBrokerObjectsBuilder {
 
             for (VdsNumaNode vdsNumaNode : newNumaNodeList) {
                 int index = vdsNumaNode.getIndex();
-                List<Integer> distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
-                Map<Integer, Integer> distanceMap = new HashMap<>(distances.size());
-                for (int i = 0; i < distances.size(); i++) {
-                    distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
+                Map<Integer, Integer> distanceMap = new HashMap<>();
+                List<Integer> distances = Collections.emptyList();
+
+                if (numaNodeDistanceMap != null) {
+                    // Save the received NUMA node distances
+                    distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
+                    for (int i = 0; i < distances.size(); i++) {
+                        distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
+                    }
+                }
+
+                if (distances.isEmpty()) {
+                    // Save faked distances
+                    for (VdsNumaNode otherNumaNode : newNumaNodeList) {
+                        // There is no distance if the node is the same one
+                        if (otherNumaNode.getIndex() == vdsNumaNode.getIndex()) {
+                            continue;
+                        }
+
+                        distanceMap.put(otherNumaNode.getIndex(), 0);
+                    }
                 }
                 VdsNumaNode newNumaNode = NumaUtils.getVdsNumaNodeByIndex(newNumaNodeList, index);
                 if (newNumaNode != null) {
@@ -1753,12 +1770,12 @@ public class VdsBrokerObjectsBuilder {
 
     private static List<Integer> extractIntegerList(Map<String, Object> xmlRpcStruct, String propertyName) {
         if (!xmlRpcStruct.containsKey(propertyName)){
-            return null;
+            return Collections.emptyList();
         }
 
         Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
         if (items.length == 0) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<Integer> list = new ArrayList<Integer>();
