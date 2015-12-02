@@ -2186,14 +2186,17 @@ public class VdsBrokerObjectsBuilder {
             for (VdsNumaNode vdsNumaNode : newNumaNodeList) {
                 int index = vdsNumaNode.getIndex();
                 Map<Integer, Integer> distanceMap = new HashMap<>();
+                List<Integer> distances = Collections.emptyList();
 
                 if (numaNodeDistanceMap != null) {
                     // Save the received NUMA node distances
-                    List<Integer> distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
+                    distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
                     for (int i = 0; i < distances.size(); i++) {
                         distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
                     }
-                } else {
+                }
+
+                if (distances.isEmpty()) {
                     // Save faked distances
                     for (VdsNumaNode otherNumaNode : newNumaNodeList) {
                         // There is no distance if the node is the same one
@@ -2255,12 +2258,12 @@ public class VdsBrokerObjectsBuilder {
 
     private static List<Integer> extractIntegerList(Map<String, Object> xmlRpcStruct, String propertyName) {
         if (!xmlRpcStruct.containsKey(propertyName)){
-            return null;
+            return Collections.emptyList();
         }
 
         Object[] items = (Object[]) xmlRpcStruct.get(propertyName);
         if (items.length == 0) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<Integer> list = new ArrayList<>();
