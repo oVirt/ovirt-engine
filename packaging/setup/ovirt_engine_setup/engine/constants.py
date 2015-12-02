@@ -422,7 +422,7 @@ class Const(object):
         ENGINE_URI,
     )
 
-    UPGRADE_YUM_GROUP_NAME = 'ovirt-engine-3.4'
+    UPGRADE_YUM_GROUP_NAME = 'ovirt-engine-4.0'
 
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
