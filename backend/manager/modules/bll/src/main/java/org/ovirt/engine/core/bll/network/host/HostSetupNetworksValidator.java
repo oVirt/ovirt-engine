@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.bll.validator.network.DetachNetworkUsedByVmValidator;
+import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -92,6 +93,7 @@ public class HostSetupNetworksValidator {
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
     private List<VdsNetworkInterface> existingInterfaces;
+    private NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator;
 
     public HostSetupNetworksValidator(VDS host,
             HostSetupNetworksParameters params,
@@ -104,7 +106,8 @@ public class HostSetupNetworksValidator {
             VdsDao vdsDao,
             HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
             VmDao vmDao,
-            NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver) {
+            NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver,
+            NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator) {
 
         this.host = host;
         this.params = params;
@@ -136,6 +139,7 @@ public class HostSetupNetworksValidator {
         nicLabelByLabel = Entities.entitiesByName(params.getLabels());
 
         this.hostSetupNetworksValidatorHelper = hostSetupNetworksValidatorHelper;
+        this.networkAttachmentIpConfigurationValidator = networkAttachmentIpConfigurationValidator;
     }
 
     private void setSupportedFeatures() {
@@ -618,7 +622,7 @@ public class HostSetupNetworksValidator {
         return false;
     }
 
-    private ValidationResult validNewOrModifiedNetworkAttachments() {
+    ValidationResult validNewOrModifiedNetworkAttachments() {
         ValidationResult vr = ValidationResult.VALID;
 
         Iterator<NetworkAttachment> iterator = params.getNetworkAttachments().iterator();
@@ -639,7 +643,6 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validateAttachmentAndNicReferenceSameLabelNotConflict(attachment);
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
-            vr = skipValidation(vr) ? vr : validator.ipConfiguredForStaticBootProtocol();
             vr = skipValidation(vr) ? vr : validator.bootProtocolSetForRoleNetwork();
 
             //this is not nic exist, but only nic is set.
@@ -649,6 +652,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfacesMap);
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : validator.validateGateway();
+            vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(params.getNetworkAttachments());
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
             if (attachmentUpdated) {

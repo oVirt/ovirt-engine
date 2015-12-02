@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -140,6 +141,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver;
 
+    @Inject
+    private NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator;
+
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
     }
@@ -232,7 +236,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 vdsDao,
                 hostSetupNetworksValidatorHelper,
                 vmDao,
-                networkExclusivenessValidatorResolver);
+                networkExclusivenessValidatorResolver,
+                networkAttachmentIpConfigurationValidator);
 
         return validator.validate();
     }
