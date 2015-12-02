@@ -99,7 +99,7 @@ public class VmwarePropertiesModel extends Model {
                 getVmwareDatacenter().getEntity(),
                 getVerifySSL().getEntity(),
                 dataCenterId,
-                getProxyHost() != null ? getProxyHost().getSelectedItem().getId() : null);
+                getProxyHost().getSelectedItem() != null ? getProxyHost().getSelectedItem().getId() : null);
     }
 
     public void init(Provider<VmwareVmProviderProperties> provider) {
