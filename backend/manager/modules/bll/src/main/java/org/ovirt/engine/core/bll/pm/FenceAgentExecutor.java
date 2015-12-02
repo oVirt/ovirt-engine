@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.pm;
 
+import static java.util.stream.Collectors.toMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +8,6 @@ import org.ovirt.engine.core.bll.VdsArchitectureHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
@@ -204,24 +204,18 @@ public class FenceAgentExecutor {
      * Creates a map of sanlock host ids per storage domain
      */
     protected Map<Guid, Integer> createStorageDomainHostIdMap() {
-        Map<Guid, Integer> map = null;
         if (fencingPolicy.isSkipFencingIfSDActive()) {
-            map = new HashMap<>();
-
-            VdsSpmIdMap hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(
-                    fencedHost.getId());
-
-            // create a map SD_GUID -> HOST_ID
-            for (StorageDomain sd : getDbFacade().getStorageDomainDao().getAllForStoragePool(
-                    fencedHost.getStoragePoolId())) {
-                if (sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master ||
-                        sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data) {
-                    // VDS_SPM_ID identifies the host in sanlock
-                    map.put(sd.getId(), hostIdRecord.getVdsSpmId());
-                }
-            }
+            VdsSpmIdMap hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(fencedHost.getId());
+            return getDbFacade().getStorageDomainDao().getAllForStoragePool(fencedHost.getStoragePoolId()).stream()
+                    .filter(sd -> sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master
+                            || sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data)
+                    .collect(toMap(
+                            sd -> sd.getId(),
+                            // VDS_SPM_ID identifies the host in sanlock
+                            sd -> hostIdRecord.getVdsSpmId()
+                    ));
         }
-        return map;
+        return null;
     }
 
     protected void auditFenceActionExecution(FenceActionType action, FenceAgent realAgent, VDS proxyHost) {
