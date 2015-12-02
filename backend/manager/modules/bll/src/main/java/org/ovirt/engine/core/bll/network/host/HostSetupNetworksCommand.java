@@ -759,9 +759,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private boolean isManagementNetworkChanged(){
-        List<NetworkAttachment> newAttachments = getParameters().getNetworkAttachments();
-        List<NetworkAttachment> existingAttachments = this.existingAttachments;
-
         String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getVdsGroupId()).getName();
         for (HostNetwork network : getNetworksToConfigure()) {
             if (mgmtNetworkName.equals(network.getNetworkName())){
