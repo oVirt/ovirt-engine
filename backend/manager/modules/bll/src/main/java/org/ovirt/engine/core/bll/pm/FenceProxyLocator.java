@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.pm;
 
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -90,27 +91,17 @@ public class FenceProxyLocator {
     }
 
     protected VDS selectBestProxy(FenceProxySourceType fenceProxySource, Guid excludedHostId) {
-        Version minSupportedVersion = getMinSupportedVersionForFencingPolicy();
-        List<VDS> proxyCandidates = getDbFacade().getVdsDao().getAll();
-        Iterator<VDS> iterator = proxyCandidates.iterator();
-        while (iterator.hasNext()) {
-            VDS proxyCandidate = iterator.next();
-            log.debug("Evaluating host '{}'", proxyCandidate.getHostName());
-            if (proxyCandidate.getId().equals(fencedHost.getId())
-                    || isHostExcluded(proxyCandidate, excludedHostId)
-                    || !isHostFromSelectedSource(proxyCandidate, fenceProxySource)
-                    || !areAgentsVersionCompatible(proxyCandidate)
-                    || !isFencingPolicySupported(proxyCandidate, minSupportedVersion)
-                    || isHostNetworkUnreachable(proxyCandidate)) {
-                iterator.remove();
-            }
-        }
-        for (VDS proxyCandidate : proxyCandidates) {
-            if (proxyCandidate.getStatus() == VDSStatus.Up) {
-                return proxyCandidate;
-            }
-        }
-        return proxyCandidates.size() == 0 ? null : proxyCandidates.get(0);
+        return getDbFacade().getVdsDao().getAll().stream()
+                .peek(vds -> log.debug("Evaluating host '{}'", vds.getHostName()))
+                .filter(vds -> !Objects.equals(vds.getId(), fencedHost.getId()))
+                .filter(vds -> !isHostExcluded(vds, excludedHostId))
+                .filter(vds -> isHostFromSelectedSource(vds, fenceProxySource))
+                .filter(this::areAgentsVersionCompatible)
+                .filter(vds -> isFencingPolicySupported(vds, getMinSupportedVersionForFencingPolicy()))
+                .filter(vds -> !isHostNetworkUnreachable(vds))
+                .sorted(Comparator.comparingInt(vds -> vds.getStatus() == VDSStatus.Up ? -1 : 1))
+                .findFirst()
+                .orElse(null);
     }
 
     protected boolean isHostExcluded(VDS proxyCandidate, Guid excludedHostId) {
