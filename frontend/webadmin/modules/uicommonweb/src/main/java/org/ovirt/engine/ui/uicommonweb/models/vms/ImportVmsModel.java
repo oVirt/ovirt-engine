@@ -452,27 +452,36 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
 
         startProgress(null);
-        AsyncDataProvider.getInstance().getVmsFromExternalServer(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                List<VM> remoteVms = (List<VM>) returnValue;
-                List<VM> remoteDownVms = new ArrayList<>();
-                for (VM vm : remoteVms) {
-                    if (vm.isDown()) {
-                        remoteDownVms.add(vm);
+                if (returnValue instanceof VdcQueryReturnValue) {
+                    setError(messages.providerFailure());
+                    stopProgress();
+                }
+                else {
+                    List<VM> remoteVms = (List<VM>) returnValue;
+                    List<VM> remoteDownVms = new ArrayList<>();
+                    for (VM vm : remoteVms) {
+                        if (vm.isDown()) {
+                            remoteDownVms.add(vm);
+                        }
                     }
+                    if (remoteVms.size() != remoteDownVms.size()) {
+                        setWarning(constants.runningVmsWereFilteredOnImportVm());
+                    }
+                    updateVms(remoteDownVms);
                 }
-                if (remoteVms.size() != remoteDownVms.size()) {
-                    setWarning(constants.runningVmsWereFilteredOnImportVm());
-                }
-                updateVms(remoteDownVms);
             }
-        }),
-        getDataCenters().getSelectedItem().getId(),
-        getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null,
-        getUrl(),
-        getUsername().getEntity(),
-        getPassword().getEntity());
+        });
+        query.setHandleFailure(true);
+        AsyncDataProvider.getInstance().getVmsFromExternalServer(
+                query,
+                getDataCenters().getSelectedItem().getId(),
+                getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null,
+                getUrl(),
+                getUsername().getEntity(),
+                getPassword().getEntity());
     }
 
     private boolean validateVmwareConfiguration() {

@@ -574,4 +574,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Errata for VM {0}")
     String errataForVm(String vmName);
 
+    @DefaultMessage("Failed to communicate with the external provider, see log for additional details.")
+    String providerFailure();
 }
