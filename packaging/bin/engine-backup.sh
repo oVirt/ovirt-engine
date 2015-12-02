@@ -182,7 +182,9 @@ USAGE:
  --db-compressor=COMPRESSOR         compress the Engine database, same options as --archive-compressor
  --db-dump-format=FORMAT
     Engine database dump format; see pg_dump(1) for details. Can be one of:
-    plain
+    plain                           Note that with this format engine-backup does not allow backing
+                                    up or restoring special permissions, by passing to pg_dump the
+                                    options '--no-owner --no-privileges'.
     custom
  --db-restore-jobs=JOBS             number of restore jobs for the Engine database,
                                     when using custom dump format and compressor None.
@@ -235,6 +237,12 @@ USAGE:
  --reports-db-name=name             set Reports database name
  --reports-db-secured               set a secured connection for the Reports database
  --reports-db-secured-validation    validate host for Reports database
+
+ --no-restore-permissions           Affects only the custom dump format. Will pass
+                                    to pg_restore '--no-owner --no-privileges'.
+ --restore-permissions              Affects only the custom dump format. Will not
+                                    pass to pg_restore '--no-owner --no-privileges'.
+                                    Might not work as expected with the --*db-user options.
 
  --fast-restore                     the default for backup, equivalent to:
          --archive-compressor=gzip \\
@@ -370,6 +378,7 @@ MY_REPORTS_DB_DATABASE=
 MY_REPORTS_DB_SECURED=False
 MY_REPORTS_DB_SECURED_VALIDATION=False
 MY_REPORTS_DB_CREDS=
+RESTORE_PERMISSIONS=
 
 compressor_to_tar_option() {
 	local res
@@ -627,6 +636,12 @@ parseArgs() {
 			--reports-db-sec-validation)
 				MY_REPORTS_DB_SECURED_VALIDATION="True"
 			;;
+			--restore-permissions)
+				RESTORE_PERMISSIONS=1
+			;;
+			--no-restore-permissions)
+				RESTORE_PERMISSIONS=0
+			;;
 			--fast-restore)
 				ARCHIVE_COMPRESS_OPTION=z
 				FILES_COMPRESS_OPTION=J
@@ -680,6 +695,7 @@ verifyArgs() {
 	if [ "${MODE}" == "restore" ] ; then
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
 	fi
+
 	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
 		[ -n "${PROVISION_DB}" ] && die "Cannot change credentials if provisioning a database"
 		[ -n "${MY_DB_HOST}" ] || die "--db-host is missing"
@@ -728,6 +744,30 @@ verifyArgs() {
 			-o -n "${MY_REPORTS_DB_DATABASE}" \
 		\) \
 	] && die "Please use --change-reports-db-credentials to change reports db credentials"
+
+	if [ "${DB_DUMP_FORMAT}" = "plain" \
+		-o "${DWH_DB_DUMP_FORMAT}" = "plain" \
+		-o "${REPORTS_DB_DUMP_FORMAT}" = "plain" \
+	]; then
+		output "#####################################################################################################"
+		output "Please note: permissions are not backed up with a plain dump format, thus not restored during restore"
+		output "#####################################################################################################"
+	fi
+}
+
+# Similar to verifyArgs above, but called during restore after reading
+# the config from the restore file, thus can handle options that depend
+# on or are relevant to a specific configuration.
+verifyArgsConfig() {
+	if [ "${MODE}" == "restore" ]; then
+		[ -z "${RESTORE_PERMISSIONS}" -a \
+			\( \
+				"${DB_DUMP_FORMAT}" = "custom" \
+				-o "${DWH_DB_DUMP_FORMAT}" = "custom" \
+				-o "${REPORTS_DB_DUMP_FORMAT}" = "custom" \
+			\) \
+		] && die "Please pass one of --restore-permissions or --no-restore-permissions when restoring a backup with a custom dump format"
+	fi
 }
 
 # Expects user/host/port/database in the environment.
@@ -843,14 +883,16 @@ backupDB() {
 	local pgdump_log="${TEMP_FOLDER}/pgdump.log"
 	local failed_msg=
 
+	local no_perms=
+	[ "${format}" = "plain" ] && no_perms='--no-owner --no-privileges'
+
 	if [ -n "${compressor}" ]; then
 		pg_cmd pg_dump \
 			-E "UTF8" \
 			--disable-dollar-quoting \
 			--disable-triggers \
 			--format="${format}" \
-			--no-owner \
-			--no-privileges \
+			${no_perms:-$no_perms} \
 			2> "${pgdump_log}" \
 			| "${compressor}" > "${file}" \
 			|| failed_msg="${compressor} failed compressing the backup of database ${database}"
@@ -860,8 +902,7 @@ backupDB() {
 			--disable-dollar-quoting \
 			--disable-triggers \
 			--format="${format}" \
-			--no-owner \
-			--no-privileges \
+			${no_perms:-$no_perms} \
 			2> "${pgdump_log}" \
 			> "${file}" \
 			|| failed_msg="Database ${database} backup failed"
@@ -908,7 +949,10 @@ dorestore() {
 	log "Verifying version"
 	verifyVersion
 
+	log "Reading config"
 	. "${TEMP_FOLDER}/config"
+
+	verifyArgsConfig
 
 	# Refresh scope vars according to what actually found
 	[ -s "${TEMP_FOLDER}/files" ] || SCOPE_FILES=
@@ -1102,12 +1146,14 @@ restoreDB() {
 				|| failed_msg="Database ${database} restore failed"
 		fi
 	elif [ "${format}" = "custom" ]; then
+		local no_perms=
+		[ "${RESTORE_PERMISSIONS}" = "0" ] && no_perms='--no-owner --no-privileges'
 		if [ -z "${compressor}" ]; then
-			pg_cmd pg_restore --no-owner --no-privileges -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
+			pg_cmd pg_restore ${no_perms:-$no_perms} -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				pg_cmd pg_restore --no-owner --no-privileges > "${pgrestorelog}"  2>&1
+				pg_cmd pg_restore ${no_perms:-$no_perms} > "${pgrestorelog}"  2>&1
 		fi
 	else
 		logdie "Unsupported format ${format}"
