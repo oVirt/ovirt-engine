@@ -767,8 +767,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
         for (Bond bond : getParameters().getBonds()) {
             // We are only interested in existing bonds, whose bonding options/slave have changed, so it
-            // enough to check exising bonds. New bonds which have the management network
-            // are covered by network attachements
+            // enough to check existing bonds. New bonds which have the management network
+            // are covered by network attachments
             VdsNetworkInterface bondNic = getExistingNicsBusinessEntityMap().get(bond.getId());
             if (bondNic != null && mgmtNetworkName.equals(bondNic.getNetworkName())) {
                 return true;
