@@ -462,6 +462,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     diskImage);
             return;
         }
+        setVolumeDescription(diskImage, storageDomain);
+    }
+
+    protected void setVolumeDescription(DiskImage diskImage, StorageDomain storageDomain) {
         try {
             SetVolumeDescriptionVDSCommandParameters vdsCommandParameters =
                     new SetVolumeDescriptionVDSCommandParameters(getVm().getStoragePoolId(),

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -60,9 +59,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -414,10 +410,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockVdsCommandSetVolumeDescription() {
-        VDSReturnValue ret = new VDSReturnValue();
-        doReturn(ret).when(command).runVdsCommand
-                (eq(VDSCommandType.SetVolumeDescription),
-                        any(SetVolumeDescriptionVDSCommandParameters.class));
+        doNothing().when(command).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
     }
 
     @Test
@@ -643,8 +636,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).runVdsCommand(eq(VDSCommandType.SetVolumeDescription),
-                any(SetVolumeDescriptionVDSCommandParameters.class));
+        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
     }
 
     @Test
@@ -657,8 +649,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).runVdsCommand(eq(VDSCommandType.SetVolumeDescription),
-                any(SetVolumeDescriptionVDSCommandParameters.class));
+        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
     }
 
     @Test
@@ -672,8 +663,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).runVdsCommand(eq(VDSCommandType.SetVolumeDescription),
-                any(SetVolumeDescriptionVDSCommandParameters.class));
+        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
     }
 
     @Test
