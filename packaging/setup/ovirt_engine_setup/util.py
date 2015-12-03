@@ -244,4 +244,36 @@ def addExitCode(environment, code, priority=plugin.Stages.PRIORITY_DEFAULT):
         }
     )
 
+
+@util.export
+def getPackageManager(logger=None):
+    """Return a tuple with the package manager printable name string, the mini
+    implementation class and the sink base class, for the preferred package
+    manager available in the system.
+
+    The only parameter accepted by this function is a logger instance, that
+    can be ommited (or None) if the user don't wants logs.
+    """
+    try:
+        from otopi import minidnf
+        minidnf.MiniDNF()
+        if logger is not None:
+            logger.debug('Using DNF as package manager')
+        return 'DNF', minidnf.MiniDNF, minidnf.MiniDNFSinkBase
+    except (ImportError, RuntimeError):
+        try:
+            from otopi import miniyum
+            # yum does not raises validation exceptions in constructor,
+            # then its not worth instantiating it to test.
+            if logger is not None:
+                logger.debug('Using Yum as package manager')
+            return 'Yum', miniyum.MiniYum, miniyum.MiniYumSinkBase
+        except ImportError:
+            raise RuntimeError(
+                _(
+                    'No supported package manager found in your system'
+                )
+            )
+
+
 # vim: expandtab tabstop=4 shiftwidth=4

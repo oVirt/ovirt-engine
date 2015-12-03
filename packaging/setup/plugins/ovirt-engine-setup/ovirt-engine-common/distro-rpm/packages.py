@@ -30,6 +30,7 @@ from otopi import plugin, transaction, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_setup_lib import dialog
+from ovirt_engine_setup import util as osetuputil
 
 
 def _(m):
@@ -183,37 +184,36 @@ class Plugin(plugin.PluginBase):
                             )
 
     def _getSink(self):
-        # TODO: otopi is now providing minidnf too
-        class MyMiniYumSink(self._miniyum.MiniYumSinkBase):
+        pm = self._PM
+        class MyPMSink(self._MiniPMSinkBase):
             def __init__(self, log):
-                super(MyMiniYumSink, self).__init__()
+                super(MyPMSink, self).__init__()
                 self._log = log
 
             def verbose(self, msg):
-                super(MyMiniYumSink, self).verbose(msg)
-                self._log.debug('Yum: %s', msg)
+                super(MyPMSink, self).verbose(msg)
+                self._log.debug('%s %s', pm, msg)
 
             def info(self, msg):
-                super(MyMiniYumSink, self).info(msg)
-                self._log.info('Yum: %s', msg)
+                super(MyPMSink, self).info(msg)
+                self._log.info('%s %s', pm, msg)
 
             def error(self, msg):
-                super(MyMiniYumSink, self).error(msg)
-                self._log.error('Yum: %s', msg)
-        return MyMiniYumSink(self.logger)
+                super(MyPMSink, self).error(msg)
+                self._log.error('%s %s', pm, msg)
+        return MyPMSink(self.logger)
 
     def _checkForPackagesUpdate(self, packages):
-        # TODO: otopi is now providing minidnf too
         update = []
-        myum = self._miniyum.MiniYum(
+        mpm = self._MiniPM(
             sink=self._getSink(),
             disabledPlugins=('versionlock',),
         )
         for package in packages:
-            with myum.transaction():
-                myum.update(packages=(package,))
-                if myum.buildTransaction():
-                    if myum.queryTransaction():
+            with mpm.transaction():
+                mpm.update(packages=(package,))
+                if mpm.buildTransaction():
+                    if mpm.queryTransaction():
                         update.append(package)
 
         return update
@@ -222,26 +222,25 @@ class Plugin(plugin.PluginBase):
         # TODO: otopi is now providing minidnf too
         missingRollback = []
         upgradeAvailable = False
-        myum = self._miniyum.MiniYum(
+        mpm = self._MiniPM(
             sink=self._getSink(),
             disabledPlugins=('versionlock',),
         )
         plist = []
-        with myum.transaction():
-            groups = [group['name'] for group in myum.queryGroups()]
+        with mpm.transaction():
+            groups = [group['name'] for group in mpm.queryGroups()]
             for entry in self.environment[
                 osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
             ]:
                 if 'group' in entry and entry['group'] in groups:
-                    myum.updateGroup(group=entry['group'])
+                    mpm.updateGroup(group=entry['group'])
                 else:
-                    myum.install(packages=entry['packages'])
-                    myum.update(packages=entry['packages'])
+                    mpm.installUpdate(packages=entry['packages'])
 
-            if myum.buildTransaction():
+            if mpm.buildTransaction():
                 upgradeAvailable = True
 
-                for p in myum.queryTransaction():
+                for p in mpm.queryTransaction():
                     self.logger.debug('PACKAGE: [%s] %s' % (
                         p['operation'],
                         p['display_name']
@@ -256,10 +255,10 @@ class Plugin(plugin.PluginBase):
                     )
 
                 # Verify all installed packages available in yum
-                for package in myum.queryTransaction():
+                for package in mpm.queryTransaction():
                     installed = False
                     reinstall_available = False
-                    for query in myum.queryPackages(
+                    for query in mpm.queryPackages(
                         patterns=(package['display_name'],),
                         showdups=True,
                     ):
@@ -332,9 +331,10 @@ class Plugin(plugin.PluginBase):
                 parent=self,
             )
         )
-        # TODO: otopi is now providing minidnf too
-        from otopi import miniyum
-        self._miniyum = miniyum
+        self._PM, self._MiniPM, self._MiniPMSinkBase = (
+            osetuputil.getPackageManager(self.logger)
+        )
+
         self._enabled = True
 
     @plugin.event(
@@ -397,9 +397,10 @@ class Plugin(plugin.PluginBase):
                     text=_(
                         'An update for the Setup packages {packages} was '
                         'found. Please update that package by running:\n'
-                        '"yum update {packages}"\nand then execute Setup '
+                        '"{pm} update {packages}"\nand then execute Setup '
                         'again.'
                     ).format(
+                        pm=self._PM.lower(),
                         packages=' '.join(update),
                     ),
                 )
