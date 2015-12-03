@@ -348,7 +348,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(new ArrayList<>());
         doReturn(new ArrayList<DiskImage>()).when(command).getAllImageSnapshots();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
-        doReturn(false).when(command).acquireLock();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(disk.getId()).when(command).getImageGroupId();
