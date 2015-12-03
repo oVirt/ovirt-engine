@@ -103,11 +103,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
 
     @Override
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    @Override
     public Guid createTask(
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -123,11 +118,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
-    @Override
-    public VdcActionType getActionType() {
-        return super.getActionType();
     }
 
     @Override

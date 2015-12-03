@@ -775,18 +775,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     /// TaskHandlerCommand implementation ///
     /////////////////////////////////////////
 
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    public VdcActionType getActionType() {
-        return super.getActionType();
-    }
-
-    public VdcReturnValueBase getReturnValue() {
-        return super.getReturnValue();
-    }
-
     public void preventRollback() {
         throw new NotImplementedException();
     }

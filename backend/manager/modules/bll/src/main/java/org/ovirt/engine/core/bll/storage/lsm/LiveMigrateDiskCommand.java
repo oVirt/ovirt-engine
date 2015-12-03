@@ -105,22 +105,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
 
     @Override
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
         return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public VdcActionType getActionType() {
-        return super.getActionType();
     }
 
     @Override

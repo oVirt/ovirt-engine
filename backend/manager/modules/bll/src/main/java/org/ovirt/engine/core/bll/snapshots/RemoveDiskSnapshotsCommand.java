@@ -581,11 +581,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
-    public VdcActionType getActionType() {
-        return super.getActionType();
-    }
-
-    @Override
     public void preventRollback() {
         getParameters().setExecutionIndex(0);
     }
