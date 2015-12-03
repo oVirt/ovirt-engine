@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -1023,13 +1022,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                     list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
 
                                     final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
-                                    List<PredicateFilter<GlusterVolumeOptionEntity>> predicaetFilters = Collections.singletonList(new PredicateFilter<GlusterVolumeOptionEntity>(new Predicate<GlusterVolumeOptionEntity>() {
+                                    PredicateFilter<GlusterVolumeOptionEntity> predicaetFilter = new PredicateFilter<>(new Predicate<GlusterVolumeOptionEntity>() {
                                         @Override
                                         public boolean evaluate(GlusterVolumeOptionEntity obj) {
                                             return obj.getKey().equalsIgnoreCase(checkOption.getKey());
                                         }
-                                    }));
-                                    if(!isOptionEnabledOnVolume(volume, predicaetFilters)) {
+                                    });
+                                    if(!isOptionEnabledOnVolume(volume, predicaetFilter)) {
                                         list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
                                     }
                                 }
@@ -1052,11 +1051,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 aQuery);
     }
 
-    private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, List<PredicateFilter<GlusterVolumeOptionEntity>> predicates) {
+    private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, PredicateFilter<GlusterVolumeOptionEntity> predicate) {
         List<GlusterVolumeOptionEntity> filteredOptions = new ArrayList<>(volume.getOptions());
-        for(PredicateFilter<GlusterVolumeOptionEntity> predicate  : predicates) {
-             filteredOptions = ListUtils.filter(filteredOptions, predicate);
-        }
+        filteredOptions = ListUtils.filter(filteredOptions, predicate);
         return !filteredOptions.isEmpty();
     }
 
