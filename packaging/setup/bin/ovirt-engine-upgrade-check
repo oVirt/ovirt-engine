@@ -47,6 +47,7 @@ sys.path.append(os.path.dirname(
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 
 
@@ -133,14 +134,14 @@ def main():
 
         exit = 1
 
-        from otopi import miniyum
+        PM, MiniPM, MiniPMSinkBase = osetuputil.getPackageManager()
 
-        class _MyMiniYumSink(miniyum.MiniYumSinkBase):
+        class _MyMiniPMSink(MiniPMSinkBase):
 
             KEEPALIVE_INTERVAL = 60
 
             def __init__(self):
-                super(_MyMiniYumSink, self).__init__()
+                super(_MyMiniPMSink, self).__init__()
                 self._stream = os.dup(sys.stdout.fileno())
                 self._touch()
 
@@ -151,21 +152,21 @@ def main():
                 self._last = time.time()
 
             def verbose(self, msg):
-                super(_MyMiniYumSink, self).verbose(msg)
+                super(_MyMiniPMSink, self).verbose(msg)
                 os.write(self._stream, ('VERB: %s\n' % msg).encode('utf-8'))
 
             def info(self, msg):
-                super(_MyMiniYumSink, self).info(msg)
+                super(_MyMiniPMSink, self).info(msg)
                 self._touch()
                 os.write(self._stream, ('OK:   %s\n' % msg).encode('utf-8'))
 
             def error(self, msg):
-                super(_MyMiniYumSink, self).error(msg)
+                super(_MyMiniPMSink, self).error(msg)
                 self._touch()
                 os.write(self._stream, ('FAIL: %s\n' % msg).encode('utf-8'))
 
             def keepAlive(self, msg):
-                super(_MyMiniYumSink, self).keepAlive(msg)
+                super(_MyMiniPMSink, self).keepAlive(msg)
                 if time.time() - self._last >= \
                         self.KEEPALIVE_INTERVAL:
                     self.info(msg)
@@ -179,18 +180,18 @@ def main():
                 )
                 return True
 
-        myum = miniyum.MiniYum(
+        mpm = MiniPM(
             sink=(
                 None if options.quiet
-                else _MyMiniYumSink()
+                else _MyMiniPMSink()
             ),
             disabledPlugins=('versionlock',),
         )
-        with myum.transaction():
-            myum.update(
+        with mpm.transaction():
+            mpm.update(
                 packages=setup_packages,
             )
-            if myum.buildTransaction():
+            if mpm.buildTransaction():
                 exit = 0
 
         if not options.quiet:
