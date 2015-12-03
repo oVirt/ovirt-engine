@@ -564,7 +564,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected DialogTab rngDeviceTab;
 
-    @UiField(provided = true)
     @Path(value = "isRngEnabled.entity")
     @WithElementId("isRngEnabled")
     public EntityModelCheckBoxOnlyEditor isRngEnabledEditor;

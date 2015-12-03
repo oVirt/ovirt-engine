@@ -102,6 +102,10 @@
             margin-left: -9px;
         }
 
+        .rngEnabledCheckbox {
+            margin-left: -3px;
+        }
+
         .checkboxWithLongLabel {
             width: 400px;
             float: left;
@@ -785,8 +789,7 @@
             <t:DialogTab ui:field="rngDeviceTab" label="{constants.rngDeviceTab}">
                 <t:content>
                     <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                        <w:EntityModelWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
-                        <ge:EntityModelCheckBoxOnlyEditor ui:field="isRngEnabledEditor" label="{constants.rngDevEnabled}" />
+                        <w:EntityModelWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.rngEnabledCheckbox}" />
                         <g:FlowPanel ui:field="rngPanel">
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor" label="{constants.rngPeriod}"/>
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngBytesEditor" label="{constants.rngBytes}"/>
