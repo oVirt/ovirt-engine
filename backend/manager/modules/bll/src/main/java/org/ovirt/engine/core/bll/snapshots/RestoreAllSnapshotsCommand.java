@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -356,9 +357,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         Guid activeSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         List<DiskImage> imagesFromActiveSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(activeSnapshotId);
 
-        Guid previewSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
-        List<DiskImage> imagesFromPreviewSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(previewSnapshotId);
-
+        Snapshot previewedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
+        List<DiskImage> imagesFromPreviewSnapshot = new ArrayList<>();
+        if (previewedSnapshot != null) {
+            SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
+            VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
+                    previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
+            imagesFromPreviewSnapshot.addAll(vmFromConf.getImages());
+        }
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
 
         switch (targetSnapshot.getType()) {
@@ -380,7 +386,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             break;
 
         case REGULAR:
-            prepareToDeletePreviewBranch();
+            prepareToDeletePreviewBranch(imagesFromActiveSnapshot);
 
             // Set the active snapshot's images as target images for restore, because they are what we keep.
             getParameters().setImages(imagesFromActiveSnapshot);
@@ -432,14 +438,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * be queued for deletion.<br>
      * The traversal between snapshots is done according to the {@link DiskImage} level.
      */
-    protected void prepareToDeletePreviewBranch() {
+    protected void prepareToDeletePreviewBranch(List<DiskImage> imagesFromActiveSnapshot) {
         removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
         Guid previewedSnapshotId =
                 getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
         snapshotsToRemove.add(removedSnapshotId);
         List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(removedSnapshotId);
-
         for (DiskImage image : images) {
             if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
@@ -453,16 +458,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 }
             }
         }
-        addRedundantCinderSnapshots(previewedSnapshotId);
+        addRedundantCinderSnapshots(previewedSnapshotId, imagesFromActiveSnapshot);
     }
 
-    private void addRedundantCinderSnapshots(Guid previewedSnapshotId) {
+    private void addRedundantCinderSnapshots(Guid previewedSnapshotId, List<DiskImage> imagesFromActiveSnapshot) {
         List<CinderDisk> cinderImagesForPreviewedSnapshot =
                 ImagesHandler.filterDisksBasedOnCinder(getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshotId));
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
-            List<Guid> redundantSnapshotIdsToDelete =
-                    CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(image.getImageId(),
-                            image.getId());
+            List<DiskImage> cinderDiskFromSnapshot = imagesFromActiveSnapshot.stream().filter(diskImage->
+                    diskImage.getId().equals(image.getId())).collect(Collectors.toList());
+            List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(
+                    image.getId(), cinderDiskFromSnapshot.get(0).getImageId());
             snapshotsToRemove.addAll(redundantSnapshotIdsToDelete);
         }
     }
