@@ -501,7 +501,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             }
         }
 
-        if (result && Version.v3_6.compareTo(getVdsGroup().getCompatibilityVersion()) >= 0) {
+        if (result && Version.v3_6.compareTo(getVdsGroup().getCompatibilityVersion()) <= 0) {
             List<String> names = new ArrayList<>();
             for (VDS host : allForVdsGroup) {
                 if (VdsProtocol.XML == host.getProtocol()) {
