@@ -593,7 +593,7 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceType','alom,apc,bladec
 select fn_db_add_config_value_for_versions_up_to('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,eps,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.3');
 select fn_db_add_config_value_for_versions_up_to('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.6');
 select fn_db_add_config_value('CustomVdsFenceType','','general');
-select fn_db_add_config_value('vdsHeartbeatInSeconds','10','general');
+select fn_db_add_config_value('vdsHeartbeatInSeconds','30','general');
 select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
 select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','general');
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
@@ -961,6 +961,9 @@ select fn_db_update_default_config_value('ServerCPUList', '3:Intel Conroe Family
 
 -- Update mount points filter for storage device list
 select fn_db_update_default_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/home,/boot,/run/gluster/snaps/.*', '/,/home,/boot,/run/gluster/snaps/.*,/var/run/gluster/snaps/.*','general', false);
+
+-- Increase heartbeat interval from 10 to 30 seconds
+select fn_db_update_default_config_value('vdsHeartbeatInSeconds','10','30','general',false);
 
 ------------------------------------------------------------------------------------
 --                  Split config section
