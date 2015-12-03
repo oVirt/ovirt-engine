@@ -467,6 +467,7 @@ Requires:	cracklib-python
 Requires:	libselinux-python
 Requires:	m2crypto
 Requires:	nfs-utils
+Requires:	ovirt-setup-lib
 Requires:	policycoreutils-python
 Requires:	python-psycopg2
 Requires:	yum
