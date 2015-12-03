@@ -705,10 +705,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     @Ignore
-    public Label cpuSharesEditor;
-
-    @UiField
-    @Ignore
     public FlowPanel cpuAllocationPanel;
 
     @UiField(provided = true)
@@ -757,10 +753,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab resourceAllocationTab;
 
     @UiField
-    protected FlowPanel cpuSharesPanel;
+    protected FlowPanel cpuPinningPanel;
 
     @UiField
-    protected FlowPanel cpuPinningPanel;
+    @Ignore
+    protected GenericWidgetWithLabel cpuSharesEditor;
 
     @UiField
     protected FlowPanel memAllocationPanel;

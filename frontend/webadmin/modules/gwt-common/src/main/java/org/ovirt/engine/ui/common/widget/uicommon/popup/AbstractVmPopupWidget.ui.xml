@@ -190,7 +190,7 @@
             float: left;
         }
 
-        .expanderContent,.generalExpanderContent {
+        .expanderContent, .generalExpanderContent {
             padding-left: 10px;
         }
 
@@ -281,7 +281,7 @@
 
         .generalTabExtendedRightWidgetWrapperWidth {
             width: 280px !important;
-         }
+        }
 
         .headerPanel {
             padding-bottom: 6px;
@@ -352,8 +352,19 @@
             float: left;
         }
 
-        .cpuSahresValueListBox, .cpuSahresValueTextBox {
-            width: 110px;
+        .cpuSharesValueListBox, .cpuSharesValueTextBox {
+            line-height: 16px;
+        }
+
+        .cpuSharesListEditor {
+            display: inline-block;
+            width: 100px;
+         }
+
+        .cpuSharesTextEditor {
+            display: inline-block;
+            width: 127px;
+            padding: 0px;
         }
 
         .cpuPinningTextBox {
@@ -373,7 +384,6 @@
             float: left;
         }
 
-
         .detachableCheckBox {
             width: 400px;
         }
@@ -385,6 +395,7 @@
         .detachableStyle {
             display: inline-block;
         }
+
         .button {
             padding: 0 5px;
         }
@@ -402,7 +413,7 @@
         }
 
         .serialNumberPolicy {
-          margin-top: 9px;
+            margin-top: 9px;
         }
 
         .totalVcpusStyle {
@@ -490,10 +501,10 @@
                             </g:FlowPanel>
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                            <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.statelessVmPopup}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.runAndPauseVmPopup}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.deleteProtectionPopup}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.copyTemplatePermissions}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <ii:InstanceImagesEditor ui:field="instanceImagesEditor"/>
@@ -667,12 +678,17 @@
                         <g:FlowPanel addStyleNames="{style.sectionPanelTight}" ui:field="cpuAllocationPanel" >
                             <g:Label text="{constants.cpuAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
                             <g:FlowPanel addStyleNames="{style.labelToCouple}">
-                                <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" label="{constants.cpuProfileLabel}" />
-                                <g:FlowPanel ui:field="cpuSharesPanel" addStyleNames="{style.labelToCoupleCouple}">
-                                    <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
-                                    <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetContainerStyleName="{style.cpuSahresValueListBox}" />
-                                    <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetContainerStyleName="avmpw_cpuSahresValueTextBox_pfly_fix" />
-                                </g:FlowPanel>
+                                <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" label="{constants.cpuProfileLabel}"/>
+                                <w:GenericWidgetWithLabel label="{constants.cpuShares}" ui:field="cpuSharesEditor">
+                                    <g:FlowPanel>
+                                        <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor"
+                                                                      contentWidgetContainerStyleName="{style.cpuSharesValueListBox}"
+                                                                      addStyleNames="{style.cpuSharesListEditor}"/>
+                                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor"
+                                                                                contentWidgetContainerStyleName="{style.cpuSharesValueTextBox}"
+                                                                                addStyleNames="{style.cpuSharesTextEditor}"/>
+                                    </g:FlowPanel>
+                                </w:GenericWidgetWithLabel>
                             </g:FlowPanel>
 
                             <g:FlowPanel ui:field="cpuPinningPanel" addStyleNames="{style.labelToCouple}">
