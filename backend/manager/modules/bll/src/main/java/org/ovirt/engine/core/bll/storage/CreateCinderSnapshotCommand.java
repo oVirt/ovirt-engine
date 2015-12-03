@@ -104,7 +104,7 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
                 getParentParameters(getParameters().getParentCommand()).getCommandId()).size() == 1) {
             getBackend().endAction(getParameters().getParentCommand(),
                     getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+                    getContext().clone().withoutCompensationContext().withoutLock());
         }
         setSucceeded(true);
     }
@@ -121,7 +121,7 @@ public class CreateCinderSnapshotCommand<T extends ImagesContainterParametersBas
             getParameters().getParentParameters().setTaskGroupSuccess(false);
             getBackend().endAction(getParameters().getParentCommand(),
                     getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+                    getContext().clone().withoutCompensationContext().withoutLock());
         }
     }
 
