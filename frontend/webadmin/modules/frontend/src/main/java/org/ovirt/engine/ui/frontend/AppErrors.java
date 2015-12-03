@@ -3815,7 +3815,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("XML protocol not supported by cluster 3.6 or higher")
     String NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION();
 
-    @DefaultStringValue("Some of the host still use xmlrpc protocol which is not supported by cluster 3.6 or higher")
+    @DefaultStringValue("Some of the hosts still use legacy protocol which is not supported by cluster 3.6 or higher. In order to change it a host needs to be put to maintenance and edited in advanced options section")
     String ACTION_TYPE_FAILED_WRONG_PROTOCOL_FOR_CLUSTER_VERSION();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host ${vdsName} cannot serve as proxy. Verify its cluster architecture and compatibility version are supported.")
