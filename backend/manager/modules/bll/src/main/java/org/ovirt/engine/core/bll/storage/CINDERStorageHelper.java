@@ -263,7 +263,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     public static ValidationResult isCinderHasNoImages(Guid storageDomainId) {
-        List<DiskImage> cinderDisks = getDbFacade().getDiskImageDao().getAllForStorageDomain(storageDomainId);
+        List<DiskImage> cinderDisks = getDiskImageDao().getAllForStorageDomain(storageDomainId);
         if (!cinderDisks.isEmpty()) {
             return new ValidationResult(EngineMessage.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
         }
