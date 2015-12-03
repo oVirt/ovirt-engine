@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -33,6 +34,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
@@ -79,6 +82,19 @@ public class HostDeviceManager implements BackendService {
     public boolean checkVmNeedsDirectPassthrough(VM vm) {
         return vm.getDedicatedVmForVdsList().size() > 0 && supportsHostDevicePassthrough(vm) &&
                 checkVmNeedsDirectPassthrough(vm.getId());
+    }
+
+    /**
+     * Checks whether one of host devices attached to given VM is of 'pci' capability.
+     */
+    public boolean checkVmNeedsPciDevices(Guid vmId) {
+        List<HostDeviceView> hostDevices = hostDeviceDao.getVmExtendedHostDevicesByVmId(vmId);
+        return null != LinqUtils.firstOrNull(hostDevices, new Predicate<HostDeviceView>() {
+            @Override
+            public boolean eval(HostDeviceView hostDeviceView) {
+                return hostDeviceView.isPci();
+            }
+        });
     }
 
     private boolean checkVmNeedsDirectPassthrough(Guid vmId) {

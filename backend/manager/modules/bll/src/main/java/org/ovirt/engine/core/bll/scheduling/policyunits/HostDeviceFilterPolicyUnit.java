@@ -7,17 +7,12 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,13 +38,7 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        List<HostDeviceView> hostDevices = getHostDeviceDao().getVmExtendedHostDevicesByVmId(vm.getId());
-        boolean hasPciDevices = null != LinqUtils.firstOrNull(hostDevices, new Predicate<HostDeviceView>() {
-            @Override
-            public boolean eval(HostDeviceView hostDeviceView) {
-                return hostDeviceView.isPci();
-            }
-        });
+        boolean hasPciDevices = hostDeviceManager.checkVmNeedsPciDevices(vm.getId());
 
         List<VDS> list = new ArrayList<>();
         for (VDS host : hosts) {
@@ -69,7 +58,4 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
         return list;
     }
 
-    private HostDeviceDao getHostDeviceDao() {
-        return DbFacade.getInstance().getHostDeviceDao();
-    }
 }

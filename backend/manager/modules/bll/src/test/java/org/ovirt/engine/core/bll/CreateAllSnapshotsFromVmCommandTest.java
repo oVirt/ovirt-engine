@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -147,6 +151,32 @@ public class CreateAllSnapshotsFromVmCommandTest {
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.name()));
+    }
+
+    @Test
+    public void testSaveMemoryPciPassthroughFailure() {
+        setUpGeneralValidations();
+        cmd.getParameters().setSaveMemory(true);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingPciPassthroughDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        assertFalse(cmd.canDoAction());
+        assertThat(cmd.getReturnValue().getCanDoActionMessages(),
+                hasItem(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES.name()));
+    }
+
+    @Test
+    public void testNoMemoryPciPassthroughSuccess() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        cmd.getParameters().setSaveMemory(false);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingPciPassthroughDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        assertTrue(cmd.canDoAction());
+        assertThat(cmd.getReturnValue().getCanDoActionMessages(), is(empty()));
     }
 
     @Test
@@ -342,6 +372,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotIlegal();
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotLocked();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingPciPassthroughDevices();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
     }

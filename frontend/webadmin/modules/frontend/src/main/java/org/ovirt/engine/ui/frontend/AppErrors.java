@@ -3869,4 +3869,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Network ${networkName} is attached (via label ${label}) to bond ${BondName}. VM networks cannot be attached to bonds in mode 0, 5 or 6.")
     String INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM has PCI host devices attached.")
+    String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
 }
