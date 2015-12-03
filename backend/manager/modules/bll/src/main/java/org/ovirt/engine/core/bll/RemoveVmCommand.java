@@ -434,21 +434,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     ///////////////////////////////////////
 
     @Override
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    @Override
-    public VdcActionType getActionType() {
-        return super.getActionType();
-    }
-
-    @Override
-    public VdcReturnValueBase getReturnValue() {
-        return super.getReturnValue();
-    }
-
-    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
