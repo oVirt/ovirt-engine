@@ -45,18 +45,6 @@ public class ListUtilsTest {
     }
 
     @Test
-    public void nullSafeAdd() {
-        ListUtils.nullSafeAdd(null, "foo");
-        ListUtils.nullSafeAdd(null, new Object());
-        ListUtils.nullSafeAdd(null, 1L);
-
-        final ArrayList<String> list = new ArrayList<String>();
-        ListUtils.nullSafeAdd(list, "foo");
-        Assert.assertEquals(1, list.size());
-        Assert.assertTrue(list.contains("foo"));
-    }
-
-    @Test
     public void testListsEqual() {
         List<String> lst1 = Arrays.asList("a", "b", "c");
 

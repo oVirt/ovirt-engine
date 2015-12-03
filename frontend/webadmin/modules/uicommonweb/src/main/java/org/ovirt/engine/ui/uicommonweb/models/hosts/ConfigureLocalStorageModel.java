@@ -11,8 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -550,7 +548,12 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 temp = "0"; //$NON-NLS-1$
             }
 
-            ListUtils.nullSafeElemAdd(notAvailableNumberList, IntegerCompat.tryParse(temp));
+            try {
+                Integer i = Integer.valueOf(temp);
+                notAvailableNumberList.add(i);
+            } catch (NumberFormatException ignore) {
+                // do nothing, this is not a number
+            }
         }
 
         Collections.sort(notAvailableNumberList);

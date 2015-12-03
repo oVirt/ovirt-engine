@@ -72,18 +72,6 @@ public class ListUtils {
         }
     }
 
-    public static <T> void nullSafeAdd(List<T> list, T elem) {
-        if (list != null) {
-            list.add(elem);
-        }
-    }
-
-    public static <T> void nullSafeElemAdd(List<T> list, T elem) {
-        if (elem != null) {
-            nullSafeAdd(list, elem);
-        }
-    }
-
     /**
      * Compares two lists for equality of all their elements. Returns true if both lists are of same size and every
      * element in first list has an equal in the second.
