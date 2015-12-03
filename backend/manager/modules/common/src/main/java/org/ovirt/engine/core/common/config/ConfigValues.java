@@ -53,7 +53,7 @@ public enum ConfigValues {
      * Timeout in seconds how often we should receive heart-beat.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("10")
+    @DefaultValueAttribute("30")
     vdsHeartbeatInSeconds,
 
     /**
