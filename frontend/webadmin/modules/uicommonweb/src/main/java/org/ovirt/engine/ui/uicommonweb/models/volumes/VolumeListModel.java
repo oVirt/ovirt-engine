@@ -1058,10 +1058,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         for(PredicateFilter<GlusterVolumeOptionEntity> predicate  : predicates) {
              filteredOptions = ListUtils.filter(filteredOptions, predicate);
         }
-        if(filteredOptions.size() > 0) {
-            return true;
-        }
-        return false;
+        return !filteredOptions.isEmpty();
     }
 
     private GlusterVolumeOptionEntity getOption(Guid volumeId, String key, String value) {
