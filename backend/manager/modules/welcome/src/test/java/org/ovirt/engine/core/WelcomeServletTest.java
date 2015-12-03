@@ -81,8 +81,12 @@ public class WelcomeServletTest {
 
             private static final long serialVersionUID = 1446616158991683162L;
             @Override
-            public String getCurrentSsoSessionUser(HttpServletRequest request, HttpServletResponse response, String token) {
+            public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {
                 return "admin@internal";
+            }
+
+            public boolean getChangePasswordEnabled(Map<String, Object> userInfoMap) {
+                return true;
             }
 
             @Override

@@ -11,7 +11,12 @@ import org.ovirt.engine.api.extensions.ExtKey;
 public class JsonExtKeySerializer extends JsonSerializer<ExtKey> {
 
     @Override
-    public void serialize(ExtKey extKey, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        jsonGenerator.writeFieldName(extKey.getUuid().getName() + ";" + extKey.getType().getName() + ";" + extKey.getUuid().getUuid());
+    public void serialize(ExtKey extKey, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+            throws IOException, JsonProcessingException {
+        jsonGenerator.writeFieldName(
+                String.format("%s;%s;%s",
+                        extKey.getUuid().getName(),
+                        extKey.getType().getName(),
+                        extKey.getUuid().getUuid()));
     }
 }

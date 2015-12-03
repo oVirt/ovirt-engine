@@ -36,14 +36,17 @@ public class TokenCleanupUtility {
                     cleanupSsoSession(ssoContext, entry.getValue(), entry.getValue().getAssociatedClientIds());
                 } catch (Exception ex) {
                     log.error("Unable to cleanup expired session for token {} : {}", entry.getKey(), ex.getMessage());
-                    log.debug("Unable to cleanup expired session for token", ex);
+                    log.debug("Exception", ex);
                 }
             }
         }
         log.debug("Done cleaning up expired tokens");
     }
 
-    public static void cleanupSsoSession(SSOContext ssoContext, SSOSession ssoSession, Set<String> associateClientIds) throws Exception {
+    public static void cleanupSsoSession(
+            SSOContext ssoContext,
+            SSOSession ssoSession,
+            Set<String> associateClientIds) throws Exception {
         ssoContext.removeSsoSession(ssoSession.getAccessToken());
         HttpSession existingSession = ssoSession.getHttpSession();
         if (existingSession == null) {
@@ -67,7 +70,8 @@ public class TokenCleanupUtility {
         try {
             authRecord = ssoSession.getAuthRecord();
             if (StringUtils.isNotEmpty(profileName) && StringUtils.isNotEmpty(principalName)) {
-                for (ExtensionProxy authnExtension : ssoContext.getSsoExtensionsManager().getExtensionsByService(Authn.class.getName())) {
+                for (ExtensionProxy authnExtension :
+                        ssoContext.getSsoExtensionsManager().getExtensionsByService(Authn.class.getName())) {
                     Properties config = authnExtension.getContext().get(Base.ContextKeys.CONFIGURATION);
                     if (profileName.equals(config.getProperty(Authn.ConfigKeys.PROFILE_NAME))) {
                         authn = authnExtension;

@@ -29,7 +29,7 @@ public class InteractiveBasicAuthServlet extends HttpServlet {
             credentialsValid = credentials != null && credentials.isValid();
         } catch (AuthenticationException ex) {
             log.error("Error validating credentials: {}", ex.getMessage());
-            log.debug("Error validating credentials", ex);
+            log.debug("Exception", ex);
         }
         if (credentialsValid) {
             log.debug("Credentials Valid redirecting to url: {}", SSOConstants.INTERACTIVE_LOGIN_URI);

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,13 @@ public class OAuthRevokeServlet extends HttpServlet {
     private static final long serialVersionUID = -473606118937052463L;
     private static Logger log = LoggerFactory.getLogger(OAuthRevokeServlet.class);
 
+    private SSOContext ssoContext;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ssoContext = SSOUtils.getSsoContext(config.getServletContext());
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,7 +45,6 @@ public class OAuthRevokeServlet extends HttpServlet {
             String[] clientIdAndSecret = SSOUtils.getClientIdClientSecret(request);
             SSOUtils.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], scope, null);
 
-            SSOContext ssoContext = SSOUtils.getSsoContext(request);
             SSOSession ssoSession = ssoContext.getSsoSession(token);
             if (ssoSession != null) {
                 Set<String> associatedClientIds = new TreeSet<>(ssoSession.getAssociatedClientIds());

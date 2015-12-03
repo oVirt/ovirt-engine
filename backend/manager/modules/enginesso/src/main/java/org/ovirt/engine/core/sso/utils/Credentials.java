@@ -7,6 +7,9 @@ public class Credentials {
     private String password;
     private String profile;
     private boolean profileValid;
+    private String credentials;
+    private String newCredentials;
+    private String confirmedNewCredentials;
 
     public Credentials() {
     }
@@ -16,6 +19,19 @@ public class Credentials {
         setPassword(password);
         setProfile(profile);
         setProfileValid(profileValid);
+    }
+
+    public Credentials(
+            String username,
+            String credentials,
+            String newCredentials,
+            String confirmedNewCredentials,
+            String profile) {
+        setUsername(username);
+        setCredentials(credentials);
+        setNewCredentials(newCredentials);
+        setConfirmedNewCredentials(confirmedNewCredentials);
+        setProfile(profile);
     }
 
     public String getUsername() {
@@ -65,5 +81,29 @@ public class Credentials {
                 StringUtils.defaultIfEmpty(username, ""),
                 StringUtils.defaultIfEmpty(profile, ""));
         return "@".equals(user) ? "" : (" for user " + user);
+    }
+
+    public String getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
+    }
+
+    public String getNewCredentials() {
+        return newCredentials;
+    }
+
+    public void setNewCredentials(String credentialsNew1) {
+        this.newCredentials = credentialsNew1;
+    }
+
+    public String getConfirmedNewCredentials() {
+        return confirmedNewCredentials;
+    }
+
+    public void setConfirmedNewCredentials(String credentialsNew2) {
+        this.confirmedNewCredentials = credentialsNew2;
     }
 }

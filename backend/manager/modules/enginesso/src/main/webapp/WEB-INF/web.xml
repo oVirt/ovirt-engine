@@ -142,6 +142,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>InteractiveChangePasswdServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveChangePasswdServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InteractiveChangePasswdServlet</servlet-name>
+        <url-pattern>/interactive-change-passwd</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>SSOUnauthorizedServlet</servlet-name>
         <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveNextAuthServlet</servlet-class>
     </servlet>
@@ -214,6 +224,16 @@
     <servlet-mapping>
         <servlet-name>LoginForm</servlet-name>
         <url-pattern>/login.html</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ChangePasswordForm</servlet-name>
+        <jsp-file>/WEB-INF/credentialsChange.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ChangePasswordForm</servlet-name>
+        <url-pattern>/credentials-change.html</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

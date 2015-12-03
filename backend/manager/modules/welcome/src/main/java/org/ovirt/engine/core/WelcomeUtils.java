@@ -11,6 +11,7 @@ public class WelcomeUtils {
 
     public static final String AUTH_CODE = "authCode";
     public static final String AUTHORIZATION_CODE = "authorization_code";
+    public static final String CAPABILITY_CREDENTIALS_CHANGE = "capability_credentials_change";
     public static final String CODE = "code";
     public static final String ENGINE_URI = "ENGINE_URI";
     public static final String ENGINE_SSO_AUTH_URL = "ENGINE_SSO_AUTH_URL";
@@ -23,6 +24,7 @@ public class WelcomeUtils {
     public static final String UTF8 = "UTF-8";
 
     public static final String ERROR_PAGE_URI = "/error.html";
+    public static final String CREDENTIALS_CHANGE_FORM_URI = "/credentials-change.html";
     public static final String LOGIN_URI = "/login";
     public static final String LOGOUT_URI = "/logout";
     public static final String OAUTH_CALLBACK_URL_FORMAT = "%s://%s:%s%s/oauth2-callback";

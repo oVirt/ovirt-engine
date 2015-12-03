@@ -60,10 +60,11 @@ public class SSOExtensionsManager extends ExtensionsManager {
                             try {
                                 load(file);
                             } catch (Exception ex) {
-                                log.error("Could not load extension based on configuration file '{}'. Please check the configuration file is valid. Exception message is: {}",
+                                log.error("Could not load extension based on configuration file '{}'. " +
+                                        "Please check the configuration file is valid. Exception message is: {}",
                                         file.getAbsolutePath(),
                                         ex.getMessage());
-                                log.debug("", ex);
+                                log.debug("Exception", ex);
                             }
                         }
                     }
@@ -92,7 +93,7 @@ public class SSOExtensionsManager extends ExtensionsManager {
                     log.error("Could not initialize extension '{}'. Exception message is: {}",
                             extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME),
                             ex.getMessage());
-                    log.debug("", ex);
+                    log.debug("Exception", ex);
                 }
             }
         }

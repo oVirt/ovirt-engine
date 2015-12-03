@@ -34,8 +34,10 @@ public class SSOSession implements Serializable {
     private ExtMap authRecord;
     private ExtMap principalRecord;
     private String loginMessage;
+    private String changePasswdMessage;
     private boolean reauthenticate;
     private Credentials tempCredentials;
+    private Credentials changePasswdCredentials;
     private Credentials autheticatedCredentials;
     private Set<String> associateClientIds = new TreeSet<>();
     private Stack<InteractiveAuth> authStack;
@@ -187,6 +189,14 @@ public class SSOSession implements Serializable {
         this.loginMessage = loginMessage;
     }
 
+    public String getChangePasswdMessage() {
+        return changePasswdMessage;
+    }
+
+    public void setChangePasswdMessage(String changePasswdMessage) {
+        this.changePasswdMessage = changePasswdMessage;
+    }
+
     public boolean isReauthenticate() {
         return reauthenticate;
     }
@@ -209,6 +219,14 @@ public class SSOSession implements Serializable {
 
     public void setTempCredentials(Credentials tempCredentials) {
         this.tempCredentials = tempCredentials;
+    }
+
+    public Credentials getChangePasswdCredentials() {
+        return changePasswdCredentials;
+    }
+
+    public void setChangePasswdCredentials(Credentials changePasswdCredentials) {
+        this.changePasswdCredentials = changePasswdCredentials;
     }
 
     public Credentials getAutheticatedCredentials() {

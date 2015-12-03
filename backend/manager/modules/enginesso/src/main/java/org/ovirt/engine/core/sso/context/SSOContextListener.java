@@ -25,7 +25,10 @@ public class SSOContextListener implements ServletContextListener {
         ssoContext.setSsoClientRegistry(DBUtils.getAllSsoClientsInfo());
         ssoContext.setScopeDependencies(DBUtils.getAllSsoScopeDependencies());
         ssoContext.setSsoProfiles(AuthenticationUtils.getAvailableProfiles(ssoContext.getSsoExtensionsManager()));
-        ssoContext.setSsoProfilesSupportingPasswd(AuthenticationUtils.getAvailableProfilesSupportingPasswd(ssoContext.getSsoExtensionsManager()));
+        ssoContext.setSsoProfilesSupportingPasswd(
+                AuthenticationUtils.getAvailableProfilesSupportingPasswd(ssoContext.getSsoExtensionsManager()));
+        ssoContext.setSsoProfilesSupportingPasswdChange(
+                AuthenticationUtils.getAvailableProfilesSupportingPasswdChange(ssoContext.getSsoExtensionsManager()));
         ssoContext.setNegotiateAuthUtils(new NegotiateAuthUtils(ssoContext.getProfiles()));
         ctx.setAttribute(SSOConstants.OVIRT_SSO_CONTEXT, ssoContext);
     }

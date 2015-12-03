@@ -10,7 +10,8 @@ import org.ovirt.engine.api.extensions.ExtKey;
 public class JsonExtDeserializer extends KeyDeserializer {
 
     @Override
-    public Object deserializeKey(String s, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public Object deserializeKey(String s, DeserializationContext deserializationContext)
+            throws IOException, JsonProcessingException {
         String[] tokens = s.split(";");
         try {
             return new ExtKey(tokens[0], Class.forName(tokens[1]), tokens[2]);

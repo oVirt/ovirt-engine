@@ -33,7 +33,8 @@ public class NegotiateAuthUtils {
     private long caps = 0;
 
     public NegotiateAuthUtils(final Collection<AuthenticationProfile> availableProfiles) {
-        caps |= Authn.Capabilities.AUTHENTICATE_NEGOTIATE_INTERACTIVE | Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE;
+        caps |= Authn.Capabilities.AUTHENTICATE_NEGOTIATE_INTERACTIVE |
+                Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE;
 
         cacheNegotiatingProfiles(availableProfiles);
     }
@@ -56,7 +57,8 @@ public class NegotiateAuthUtils {
     public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        Deque<AuthenticationProfile> stack = (Deque<AuthenticationProfile>) request.getAttribute(NegotiateAuthUtils.STACK_ATTR);
+        Deque<AuthenticationProfile> stack = (Deque<AuthenticationProfile>)
+                request.getAttribute(NegotiateAuthUtils.STACK_ATTR);
         request.getSession(true).setAttribute(REQUEST_SCHEMES_KEY, schemes);
         if (stack == null) {
             stack = new ArrayDeque<>();

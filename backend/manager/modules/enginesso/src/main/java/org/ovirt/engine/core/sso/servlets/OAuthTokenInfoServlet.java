@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.utils.OAuthException;
 import org.ovirt.engine.core.sso.utils.SSOConstants;
+import org.ovirt.engine.core.sso.utils.SSOContext;
 import org.ovirt.engine.core.sso.utils.SSOSession;
 import org.ovirt.engine.core.sso.utils.SSOUtils;
 import org.slf4j.Logger;
@@ -24,6 +26,13 @@ import org.slf4j.LoggerFactory;
 public class OAuthTokenInfoServlet extends HttpServlet {
     private static final long serialVersionUID = 5190618483759215735L;
     private static Logger log = LoggerFactory.getLogger(OAuthTokenInfoServlet.class);
+
+    private SSOContext ssoContext;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ssoContext = SSOUtils.getSsoContext(config.getServletContext());
+    }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -71,10 +80,13 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         ovirt.put("version", SSOConstants.OVIRT_SSO_VERSION);
         ovirt.put("principal_id", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID));
         ovirt.put("email", ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.EMAIL));
-        ovirt.put("group_ids", ssoSession.getPrincipalRecord().<List>get(Authz.PrincipalRecord.GROUPS, Collections.<ExtMap>emptyList()));
+        ovirt.put("group_ids", ssoSession.getPrincipalRecord().<List>get(Authz.PrincipalRecord.GROUPS,
+                Collections.<ExtMap>emptyList()));
         if (password != null) {
             ovirt.put("password", password);
         }
+        ovirt.put("capability_credentials_change",
+                ssoContext.getSsoProfilesSupportingPasswdChange().contains(ssoSession.getProfile()));
         payload.put("ovirt", ovirt);
         return payload;
     }

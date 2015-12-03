@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.utils.InteractiveAuth;
 import org.ovirt.engine.core.sso.utils.OAuthException;
 import org.ovirt.engine.core.sso.utils.SSOConstants;
+import org.ovirt.engine.core.sso.utils.SSOContext;
 import org.ovirt.engine.core.sso.utils.SSOSession;
 import org.ovirt.engine.core.sso.utils.SSOUtils;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
@@ -24,6 +26,13 @@ import org.slf4j.LoggerFactory;
 public class OAuthAuthorizeServlet extends HttpServlet {
     private static final long serialVersionUID = -4822437649213489822L;
     private static Logger log = LoggerFactory.getLogger(OAuthAuthorizeServlet.class);
+
+    private SSOContext ssoContext;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ssoContext = SSOUtils.getSsoContext(config.getServletContext());
+    }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +60,13 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         }
     }
 
-    private static void login(HttpServletRequest request, HttpServletResponse response, String clientId, String scope, String state, String redirectUri) throws Exception {
+    private void login(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String clientId,
+            String scope,
+            String state,
+            String redirectUri) throws Exception {
         log.debug("Entered login queryString: {}", request.getQueryString());
         String redirectUrl;
 
@@ -66,16 +81,17 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         ssoSession.getHttpSession().setMaxInactiveInterval(-1);
 
         if (SSOUtils.isUserAuthenticated(request)) {
-            log.debug("User is authenticated redirecting to LoginPhase4Servlet");
+            log.debug("User is authenticated redirecting to interactive-redirect-to-module");
             redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
         } else if (SSOUtils.scopeAsList(scope).contains("ovirt-ext=auth:identity")) {
             redirectUrl = new URLBuilder(SSOUtils.getRedirectUrl(request))
                     .addParameter("error_code", SSOConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
                     .addParameter("error", SSOConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
         } else {
-            ssoSession.setAuthStack(getAuthSeq(request, scope));
+            ssoSession.setAuthStack(getAuthSeq(scope));
             if (ssoSession.getAuthStack().isEmpty()) {
-                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED, "No valid authentication mechanism found.");
+                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED,
+                        "No valid authentication mechanism found.");
             }
             redirectUrl = request.getContextPath() + SSOConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI;
         }
@@ -83,8 +99,8 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         response.sendRedirect(redirectUrl);
     }
 
-    private static Stack<InteractiveAuth> getAuthSeq(HttpServletRequest request, String scopes) {
-        String appAuthSeq = SSOUtils.getSsoContext(request).getSsoLocalConfig().getProperty("SSO_AUTH_LOGIN_SEQUENCE");
+    private Stack<InteractiveAuth> getAuthSeq(String scopes) {
+        String appAuthSeq = ssoContext.getSsoLocalConfig().getProperty("SSO_AUTH_LOGIN_SEQUENCE");
 
         String authSeq = null;
         for (String scope : SSOUtils.scopeAsList(scopes)) {

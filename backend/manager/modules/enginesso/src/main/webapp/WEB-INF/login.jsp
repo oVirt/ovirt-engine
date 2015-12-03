@@ -49,7 +49,7 @@
                                 </span>
                                 ${ssoSession.loginMessage}
                             </span>
-                            <c:set var="ssoSession.loginMessage" scope="session" value="" />
+                            <c:set target="${ssoSession}" property="loginMessage" value="" />
                         </c:if>
                     </div>
                     <div style="vertical-align:top;display: table;">

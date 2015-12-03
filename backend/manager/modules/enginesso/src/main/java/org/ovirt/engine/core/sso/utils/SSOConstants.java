@@ -24,6 +24,7 @@ public class SSOConstants {
     public static final String INTERACTIVE_LOGIN_NEXT_AUTH_URI = "/interactive-login-next-auth";
     public static final String INTERACTIVE_REDIRECT_TO_MODULE_URI = "/interactive-redirect-to-module";
     public static final String INTERACTIVE_LOGIN_FORM_URI = "/login.html";
+    public static final String INTERACTIVE_CHANGE_PASSWD_FORM_URI = "/credentials-change.html";
 
     public static final String JSON_ACCESS_TOKEN = "access_token";
     public static final String JSON_ACTIVE = "active";
@@ -45,10 +46,15 @@ public class SSOConstants {
     public static final String ERR_CODE_ACCESS_DENIED = "access_denied";
     public static final String ERR_CODE_INVALID_SCOPE = "invalid_scope";
     public static final String ERR_CODE_SERVER_ERROR = "server_error";
-    public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG = "The authorization grant type is not supported by the authorization server.";
-    public static final String ERR_CODE_INVALID_REQUEST_MSG = "Invalid request, parameter '%s' not found or contains invalid value.";
+    public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG = "The authorization grant type is not supported " +
+            "by the authorization server.";
+    public static final String ERR_CODE_INVALID_REQUEST_MSG = "Invalid request, parameter '%s' not found or contains " +
+            "invalid value.";
     public static final String ERR_CODE_NOT_AUTHENTICATED_MSG = "The user is not authenticated.";
-    public static final String ERR_CODE_UNAUTHORIZED_CLIENT_MSG = "The client is not authorized to request an authorization.";
-    public static final String ERR_CODE_ACCESS_DENIED_MSG = "The resource owner or authorization server denied the request.";
-    public static final String ERR_CODE_INVALID_SCOPE_MSG = "The requested scope '%s' is invalid, unknown, malformed, or exceeds the scope granted by the resource owner.";
+    public static final String ERR_CODE_UNAUTHORIZED_CLIENT_MSG = "The client is not authorized to request an " +
+            "authorization.";
+    public static final String ERR_CODE_ACCESS_DENIED_MSG = "The resource owner or authorization server denied the " +
+            "request.";
+    public static final String ERR_CODE_INVALID_SCOPE_MSG = "The requested scope '%s' is invalid, unknown, " +
+            "malformed, or exceeds the scope granted by the resource owner.";
 }

@@ -113,6 +113,7 @@ public class WelcomeServlet extends HttpServlet {
         if (StringUtils.isNotEmpty(token) && !isSessionValid(request, token)) {
             request.getSession(true).removeAttribute(WelcomeUtils.TOKEN);
             request.getSession(true).removeAttribute(WelcomeUtils.SSO_USER);
+            request.getSession(true).removeAttribute(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE);
             token = "";
         }
         if (authCode == null && StringUtils.isEmpty(error) && StringUtils.isEmpty(reauthenticate)) {
@@ -128,7 +129,7 @@ public class WelcomeServlet extends HttpServlet {
             request.getSession(true).removeAttribute(WelcomeUtils.REAUTHENTICATE);
             log.debug("Displaying Welcome Page");
             try {
-                setUserNameForMenu(request, response, token);
+                setUserNameForMenu(request, token);
             } catch (Exception ex) {
                 log.debug("Unable to set request attributed for user menu", ex);
                 log.error("Unable to set request attributed for user menu: {}", ex.getMessage());
@@ -155,13 +156,16 @@ public class WelcomeServlet extends HttpServlet {
         log.debug("Exiting WelcomeServlet");
     }
 
-    private void setUserNameForMenu(HttpServletRequest request, HttpServletResponse response, String token) {
+    private void setUserNameForMenu(HttpServletRequest request, String token) {
         try {
            log.debug("setting request attributes for User Menu");
             if (StringUtils.isNotEmpty(token)) {
-                String username = getCurrentSsoSessionUser(request, response, token);
+                Map<String, Object> userInfoMap = SSOOAuthServiceUtils.getTokenInfo(token);
+                String username = getCurrentSsoSessionUser(request, userInfoMap);
                 if (StringUtils.isNotEmpty(username)) {
                     request.getSession(true).setAttribute(WelcomeUtils.SSO_USER, username);
+                    request.getSession(true).setAttribute(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE,
+                            getChangePasswordEnabled(userInfoMap));
                 }
             }
         } catch (Exception e) {
@@ -171,9 +175,8 @@ public class WelcomeServlet extends HttpServlet {
         }
     }
 
-    public String getCurrentSsoSessionUser(HttpServletRequest request, HttpServletResponse response, String token) {
+    public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {
         String username  = null;
-        Map<String, Object> userInfoMap = SSOOAuthServiceUtils.getTokenInfo(token);
         if (userInfoMap.containsKey(WelcomeUtils.ERROR)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, userInfoMap.get(WelcomeUtils.ERROR));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, userInfoMap.get(WelcomeUtils.ERROR_CODE));
@@ -182,6 +185,10 @@ public class WelcomeServlet extends HttpServlet {
             log.debug("Got current user {} for session", username);
         }
         return username;
+    }
+
+    public boolean getChangePasswordEnabled(Map<String, Object> userInfoMap) {
+        return (boolean) ((Map<String, Object>) userInfoMap.get("ovirt")).get(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE);
     }
 
     public Map<String, Object> isSsoWebappDeployed() {

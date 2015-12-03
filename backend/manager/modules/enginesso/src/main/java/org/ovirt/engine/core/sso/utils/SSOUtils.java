@@ -67,7 +67,7 @@ public class SSOUtils {
             log.debug("Redirecting back to module: {}", redirectUrl);
         } catch (Exception ex) {
             log.error("Error redirecting back to module: {}", ex.getMessage());
-            log.debug("Error redirecting back to module", ex);
+            log.debug("Exception", ex);
             throw new RuntimeException(ex);
         } finally {
             SSOUtils.getSsoSession(request).cleanup();
@@ -76,22 +76,30 @@ public class SSOUtils {
 
     public static String getRedirectUrl(HttpServletRequest request) throws Exception {
         String uri = getSsoSession(request, true).getRedirectUri();
-        return StringUtils.isEmpty(uri) ? new URLBuilder(getSsoContext(request).getEngineUrl(), "/oauth2-callback").build()  : uri;
+        return StringUtils.isEmpty(uri) ?
+                new URLBuilder(getSsoContext(request).getEngineUrl(), "/oauth2-callback").build()  : uri;
     }
 
     public static void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, Exception ex) {
         log.error(ex.getMessage());
-        log.debug("Exception in OAuthAuthorizeServlet:", ex);
-        redirectToErrorPageImpl(request, response, new OAuthException(SSOConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
+        log.debug("Exception", ex);
+        redirectToErrorPageImpl(request,
+                response,
+                new OAuthException(SSOConstants.ERR_CODE_SERVER_ERROR, ex.getMessage(), ex));
     }
 
-    public static void redirectToErrorPage(HttpServletRequest request, HttpServletResponse response, OAuthException ex) {
+    public static void redirectToErrorPage(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           OAuthException ex) {
         log.error("OAuthException {}: {}", ex.getCode(), ex.getMessage());
-        log.debug("OAuthException:", ex);
+        log.debug("Exception", ex);
         redirectToErrorPageImpl(request, response, ex);
     }
 
-    private static void redirectToErrorPageImpl(HttpServletRequest request, HttpServletResponse response, OAuthException ex) {
+    private static void redirectToErrorPageImpl(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            OAuthException ex) {
         log.debug("Entered redirectToErrorPage");
         SSOSession ssoSession = null;
         try {
@@ -106,7 +114,7 @@ public class SSOUtils {
             log.debug("Redirecting back to module: {}", redirectUrl);
         } catch (Exception e) {
             log.error("Error redirecting to error page: {}", e.getMessage());
-            log.debug("Error redirecting to error page", e);
+            log.debug("Exception", e);
             throw new RuntimeException(ex);
         } finally {
             if (ssoSession != null) {
@@ -142,10 +150,12 @@ public class SSOUtils {
             retVal = getClientIdClientSecretFromHeader(request);
         }
         if (StringUtils.isEmpty(retVal[0])) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST, String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_ID));
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_ID));
         }
         if (StringUtils.isEmpty(retVal[1])) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST, String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
         }
         return retVal;
     }
@@ -176,15 +186,18 @@ public class SSOUtils {
         return retVal;
     }
 
-    public static String getParameter(HttpServletRequest request, String paramName) throws UnsupportedEncodingException {
+    public static String getParameter(HttpServletRequest request, String paramName)
+            throws UnsupportedEncodingException {
         String value = request.getParameter(paramName);
-        return value == null ? null : URLDecoder.decode(new String(value.getBytes("iso-8859-1")), StandardCharsets.UTF_8.name());
+        return value == null ?
+                null : URLDecoder.decode(new String(value.getBytes("iso-8859-1")), StandardCharsets.UTF_8.name());
     }
 
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
         String value = getParameter(request, paramName);
         if (value == null) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST, String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
         }
         return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
@@ -245,7 +258,11 @@ public class SSOUtils {
         return getSsoSession(request, null, token, mustExist);
     }
 
-    public static SSOSession getSsoSession(HttpServletRequest request, String clientId, String token, boolean mustExist) {
+    public static SSOSession getSsoSession(
+            HttpServletRequest request,
+            String clientId,
+            String token,
+            boolean mustExist) {
         TokenCleanupUtility.cleanupExpiredTokens(request.getServletContext());
         SSOSession ssoSession = null;
         if (StringUtils.isNotEmpty(token)) {
@@ -255,26 +272,31 @@ public class SSOUtils {
             }
         }
         if (mustExist && ssoSession == null) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT, "The provided authorization grant for the auth code has expired");
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT,
+                    "The provided authorization grant for the auth code has expired");
         }
         if (StringUtils.isNotEmpty(clientId) &&
                 StringUtils.isNotEmpty(ssoSession.getClientId()) &&
                 !ssoSession.getClientId().equals(clientId)) {
-            throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT, SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT);
+            throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                    SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT);
         }
         return ssoSession;
     }
 
     public static SSOSession getSsoSession(HttpServletRequest request) {
-        SSOSession ssoSession = request.getSession(false) == null ? null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
+        SSOSession ssoSession = request.getSession(false) == null ?
+                null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
         if (ssoSession == null) {
             throw new OAuthException(SSOConstants.ERR_CODE_INVALID_GRANT, "Session expired please try again.");
         }
         return ssoSession;
     }
 
-    public static SSOSession getSsoSession(HttpServletRequest request, boolean mustExist) throws UnsupportedEncodingException {
-        SSOSession ssoSession = request.getSession(false) == null ? null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
+    public static SSOSession getSsoSession(HttpServletRequest request, boolean mustExist)
+            throws UnsupportedEncodingException {
+        SSOSession ssoSession = request.getSession(false) == null ?
+                null : (SSOSession) request.getSession().getAttribute(SSOConstants.OVIRT_SSO_SESSION);
         if ((ssoSession == null || StringUtils.isEmpty(ssoSession.getClientId())) && mustExist) {
             ssoSession = ssoSession == null ? new SSOSession() : ssoSession;
             ssoSession.setClientId(getClientId(request));
@@ -322,11 +344,28 @@ public class SSOUtils {
         return principal != null ? principal : principalRecord.<String>get(Authz.PrincipalRecord.NAME);
     }
 
-    public static SSOSession persistAuthInfoInContextWithToken(HttpServletRequest request,
-                                                               String password,
-                                                               String profileName,
-                                                               ExtMap authRecord,
-                                                               ExtMap principalRecord) throws Exception {
+    public static void persistUserPassword(
+            HttpServletRequest request,
+            SSOSession ssoSession,
+            String password) {
+        try {
+            if (ssoSession.getScopeAsList().contains("ovirt-ext=token:password-access") &&
+                    password != null &&
+                    StringUtils.isNotEmpty(ssoSession.getClientId())) {
+                ssoSession.setPassword(encrypt(request.getServletContext(), ssoSession.getClientId(), password));
+            }
+        } catch (Exception ex) {
+            log.error("Unable to encrypt password: {}", ex.getMessage());
+            log.debug("Exception", ex);
+        }
+    }
+
+    public static SSOSession persistAuthInfoInContextWithToken(
+            HttpServletRequest request,
+            String password,
+            String profileName,
+            ExtMap authRecord,
+            ExtMap principalRecord) throws Exception {
         String validTo = authRecord.get(Authn.AuthRecord.VALID_TO);
         String authCode = generateAuthorizationToken();
         String accessToken = generateAuthorizationToken();
@@ -348,21 +387,15 @@ public class SSOUtils {
         ssoSession.setTempCredentials(null);
         ssoSession.setUserId(getUserId(principalRecord));
         try {
-            ssoSession.setValidTo(validTo == null ? Integer.MAX_VALUE : (int) new SimpleDateFormat("yyyyMMddHHmmssZ").parse(validTo).getTime());
+            ssoSession.setValidTo(validTo == null ?
+                    Integer.MAX_VALUE : (int) new SimpleDateFormat("yyyyMMddHHmmssZ").parse(validTo).getTime());
         } catch (Exception ex) {
             log.error("Unable to parse Auth Record valid_to value: {}", ex.getMessage());
-            log.debug("Unable to parse Auth Record valid_to value", ex);
+            log.debug("Exception", ex);
         }
-        try {
-            if (ssoSession.getScopeAsList().contains("ovirt-ext=token:password-access") &&
-                    password != null &&
-                    StringUtils.isNotEmpty(ssoSession.getClientId())) {
-                ssoSession.setPassword(encrypt(request.getServletContext(), ssoSession.getClientId(), password));
-            }
-        } catch (Exception ex) {
-            log.error("Unable to encrypt password: {}", ex.getMessage());
-            log.debug("Unable to encrypt password", ex);
-        }
+
+        persistUserPassword(request, ssoSession, password);
+
         ssoSession.touch();
         return ssoSession;
     }
@@ -370,27 +403,37 @@ public class SSOUtils {
     public static void validateClientAcceptHeader(HttpServletRequest request) {
         String acceptHeader = request.getHeader("Accept");
         if (StringUtils.isEmpty(acceptHeader) || !acceptHeader.equals("application/json")) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST, String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, "Accept Header"));
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, "Accept Header"));
         }
     }
 
-    public static void validateClientRequest(HttpServletRequest request, String clientId, String clientSecret, String scope, String redirectUri) {
+    public static void validateClientRequest(
+            HttpServletRequest request,
+            String clientId,
+            String clientSecret,
+            String scope,
+            String redirectUri) {
         try {
             SSOContext ssoContext = getSsoContext(request);
             ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
             if (clientInfo == null) {
-                throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT, SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+                throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                        SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
             }
             if (!clientInfo.isTrusted()) {
-                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED, SSOConstants.ERR_CODE_ACCESS_DENIED_MSG);
+                throw new OAuthException(SSOConstants.ERR_CODE_ACCESS_DENIED,
+                        SSOConstants.ERR_CODE_ACCESS_DENIED_MSG);
             }
             if (StringUtils.isNotEmpty(clientSecret) && !EnvelopePBE.check(clientInfo.getClientSecret(), clientSecret)) {
-                throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST, String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
+                throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
+                        String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, SSOConstants.HTTP_PARAM_CLIENT_SECRET));
             }
             if (StringUtils.isNotEmpty(scope)) {
                 validateScope(clientInfo.getScope(), scope);
             }
-            if (StringUtils.isNotEmpty(redirectUri) && ssoContext.getSsoLocalConfig().getBoolean("SSO_CALLBACK_PREFIX_CHECK")) {
+            if (StringUtils.isNotEmpty(redirectUri) &&
+                    ssoContext.getSsoLocalConfig().getBoolean("SSO_CALLBACK_PREFIX_CHECK")) {
                 List<String> allowedPrefixes = scopeAsList(clientInfo.getCallbackPrefix());
                 boolean isValidUri = false;
                 for (String allowedPrefix : allowedPrefixes) {
@@ -400,14 +443,15 @@ public class SSOUtils {
                     }
                 }
                 if (!isValidUri) {
-                    throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT, SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+                    throw new OAuthException(SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                            SSOConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
                 }
             }
         } catch (OAuthException ex) {
             throw ex;
         } catch (Exception ex) {
             log.error("Internal Server Error: {}", ex.getMessage());
-            log.debug("Internal Server Error", ex);
+            log.debug("Exception", ex);
             throw new OAuthException(SSOConstants.ERR_CODE_SERVER_ERROR, ex.getMessage());
         }
     }
@@ -424,11 +468,15 @@ public class SSOUtils {
     public static void validateScope(List<String> scope, String requestScope) {
         List<String> requestedScope = strippedScopeAsList(scopeAsList(requestScope));
         if (!scope.containsAll(requestedScope)) {
-            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_SCOPE, String.format(SSOConstants.ERR_CODE_INVALID_SCOPE_MSG, requestedScope));
+            throw new OAuthException(SSOConstants.ERR_CODE_INVALID_SCOPE,
+                    String.format(SSOConstants.ERR_CODE_INVALID_SCOPE_MSG, requestedScope));
         }
     }
 
-    public static void sendJsonDataWithMessage(HttpServletResponse response, String errorCode, Exception ex) throws IOException {
+    public static void sendJsonDataWithMessage(
+            HttpServletResponse response,
+            String errorCode,
+            Exception ex) throws IOException {
         sendJsonDataWithMessage(response, new OAuthException(errorCode, ex.getMessage(), ex));
     }
 
@@ -436,13 +484,16 @@ public class SSOUtils {
         sendJsonDataWithMessage(response, ex, false);
     }
 
-    public static void sendJsonDataWithMessage(HttpServletResponse response, OAuthException ex, boolean isValidateRequest) throws IOException {
+    public static void sendJsonDataWithMessage(
+            HttpServletResponse response,
+            OAuthException ex,
+            boolean isValidateRequest) throws IOException {
         if (isValidateRequest) {
             log.debug("OAuthException {}: {}", ex.getCode(), ex.getMessage());
         } else {
             log.error("OAuthException {}: {}", ex.getCode(), ex.getMessage());
         }
-        log.debug("OAuthException:", ex);
+        log.debug("Exception", ex);
         Map<String, Object> errorData = new HashMap<>();
         errorData.put(SSOConstants.ERROR_CODE, ex.getCode());
         errorData.put(SSOConstants.ERROR, ex.getMessage());
@@ -489,7 +540,10 @@ public class SSOUtils {
         }
     }
 
-    public static void notifyClientsOfLogoutEvent(SSOContext ssoContext, Set<String> clientIdsForToken, String token) throws Exception {
+    public static void notifyClientsOfLogoutEvent(
+            SSOContext ssoContext,
+            Set<String> clientIdsForToken,
+            String token) throws Exception {
         if (clientIdsForToken != null) {
             for (String clientId : clientIdsForToken) {
                 notifyClientOfLogoutEvent(ssoContext, clientId, token);
@@ -497,7 +551,10 @@ public class SSOUtils {
         }
     }
 
-    private static void notifyClientOfLogoutEvent(SSOContext ssoContext, String clientId, String token) throws Exception {
+    private static void notifyClientOfLogoutEvent(
+            SSOContext ssoContext,
+            String clientId,
+            String token) throws Exception {
         ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
         String url = clientInfo.getClientNotificationCallback();
         if (StringUtils.isNotEmpty(url)) {
@@ -531,8 +588,12 @@ public class SSOUtils {
         }
     }
 
-    private static HttpURLConnection createConnection(SSOLocalConfig config, ClientInfo clientInfo, String url) throws Exception {
-        HttpURLConnection connection = new HttpURLConnectionBuilder(url).setHttpsProtocol(clientInfo.getNotificationCallbackProtocol())
+    private static HttpURLConnection createConnection(
+            SSOLocalConfig config,
+            ClientInfo clientInfo,
+            String url) throws Exception {
+        HttpURLConnection connection = new HttpURLConnectionBuilder(url)
+                .setHttpsProtocol(clientInfo.getNotificationCallbackProtocol())
                 .setReadTimeout(config.getInteger("SSO_CALLBACK_READ_TIMEOUT"))
                 .setConnectTimeout(config.getInteger("SSO_CALLBACK_CONNECT_TIMEOUT"))
                 .setTrustManagerAlgorithm(TrustManagerFactory.getDefaultAlgorithm())

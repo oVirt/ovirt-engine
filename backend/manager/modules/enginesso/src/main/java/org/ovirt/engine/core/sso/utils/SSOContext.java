@@ -24,6 +24,7 @@ public class SSOContext implements Serializable{
     private NegotiateAuthUtils negotiateAuthUtils;
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
+    private List<String> ssoProfilesSupportingPasswdChange;
     private Map<String, ClientInfo> ssoClientRegistry;
     private Map<String, SSOSession> ssoSessions = new ConcurrentHashMap<>();
     private Map<String, AuthenticationProfile> profiles = null;
@@ -45,8 +46,10 @@ public class SSOContext implements Serializable{
         Map<String, AuthenticationProfile> results = new HashMap<>();
         for (ExtensionProxy authnExtension : ssoExtensionsManager.getExtensionsByService(Authn.class.getName())) {
             try {
-                String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
-                String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
+                String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                        .getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
+                String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                        .getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
                 AuthenticationProfile profile = new AuthenticationProfile(
                         authnExtension,
                         ssoExtensionsManager.getExtensionByName(authzName),
@@ -64,7 +67,7 @@ public class SSOContext implements Serializable{
                     results.put(profile.getName(), profile);
                 }
             } catch (ConfigurationException e) {
-                log.debug("Ignoring", e);
+                log.debug("Exception", e);
             }
         }
         profiles = results;
@@ -103,6 +106,14 @@ public class SSOContext implements Serializable{
 
     public void setSsoProfilesSupportingPasswd(List<String> ssoProfiles) {
         this.ssoProfilesSupportingPasswd = ssoProfiles;
+    }
+
+    public List<String> getSsoProfilesSupportingPasswdChange() {
+        return ssoProfilesSupportingPasswdChange;
+    }
+
+    public void setSsoProfilesSupportingPasswdChange(List<String> ssoProfiles) {
+        this.ssoProfilesSupportingPasswdChange = ssoProfiles;
     }
 
     public void setSsoClientRegistry(Map<String, ClientInfo> ssoClientRegistry) {

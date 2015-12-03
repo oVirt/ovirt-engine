@@ -23,7 +23,10 @@ public enum NonInteractiveAuth {
                 retVal.setStatus(Authn.AuthResult.CREDENTIALS_INVALID);
             } else {
                 retVal.setCredentials(credentials);
-                AuthenticationUtils.handleCredentials(request, credentials);
+                AuthenticationUtils.handleCredentials(
+                        SSOUtils.getSsoContext(request),
+                        request,
+                        credentials);
                 retVal.setToken((String) request.getAttribute(SSOConstants.HTTP_REQ_ATTR_ACCESS_TOKEN));
                 if (retVal.getToken() != null) {
                     log.debug("Basic authentication succeeded");
