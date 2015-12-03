@@ -56,6 +56,11 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
     @WithElementId("vmwareDatacenter")
     StringEntityModelTextBoxEditor vmwareDatacenterEditor;
 
+    @UiField
+    @Path("vmwareCluster.entity")
+    @WithElementId("vmwareCluster")
+    StringEntityModelTextBoxEditor vmwareClusterEditor;
+
     @UiField(provided = true)
     @Path("proxyHost.selectedItem")
     @WithElementId("proxyHost")
@@ -86,6 +91,7 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
         vCenterEditor.setLabel(constants.vCenter());
         esxEditor.setLabel(constants.esxi());
         vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
+        vmwareClusterEditor.setLabel(constants.vmwareCluster());
         proxyHostEditor.setLabel(constants.proxyHost());
         verifySSLEditor.setLabel(constants.vmwareVerifyCredentials());
     }
@@ -105,6 +111,7 @@ public class VmwarePropertiesWidget extends AbstractModelBoundPopupWidget<Vmware
         vCenterEditor.setTabIndex(nextTabIndex++);
         esxEditor.setTabIndex(nextTabIndex++);
         vmwareDatacenterEditor.setTabIndex(nextTabIndex++);
+        vmwareClusterEditor.setTabIndexes(nextTabIndex++);
         verifySSLEditor.setTabIndex(nextTabIndex++);
         proxyHostEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;

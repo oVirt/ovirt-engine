@@ -10,6 +10,7 @@
 		<ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" />
 		<ge:StringEntityModelTextBoxEditor ui:field="esxEditor" />
 		<ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" />
+		<ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" />
 		<ge:EntityModelCheckBoxEditor ui:field="verifySSLEditor" />
 		<e:ListModelListBoxEditor ui:field="proxyHostEditor" />
 	</g:FlowPanel>

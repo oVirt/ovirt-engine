@@ -5,6 +5,7 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -23,6 +24,7 @@ public class VmwarePropertiesModel extends Model {
     private EntityModel<String> vCenter = new EntityModel<>();
     private EntityModel<String> esx = new EntityModel<>();
     private EntityModel<String> vmwareDatacenter = new EntityModel<>();
+    private EntityModel<String> vmwareCluster = new EntityModel<>();
     private EntityModel<Boolean> verifySSL = new EntityModel<>(false);
     private ListModel<VDS> proxyHost = new ListModel<>();
 
@@ -37,6 +39,7 @@ public class VmwarePropertiesModel extends Model {
                     vCenter.setIsAvailable(getIsAvailable());
                     esx.setIsAvailable(getIsAvailable());
                     vmwareDatacenter.setIsAvailable(getIsAvailable());
+                    vmwareCluster.setIsAvailable(getIsAvailable());
                     verifySSL.setIsAvailable(getIsAvailable());
                     proxyHost.setIsAvailable(getIsAvailable());
                 }
@@ -52,13 +55,12 @@ public class VmwarePropertiesModel extends Model {
                     new NotEmptyValidation(),
                     new LengthValidation(255),
                     new HostAddressValidation() });
-            getEsx().validateEntity(new IValidation[] {
+            getEsx().validateEntity(new IValidation[]{
                     new NotEmptyValidation(),
                     new LengthValidation(255),
-                    new HostAddressValidation() });
-            vmwareDatacenter.validateEntity(new IValidation[] {
+                    new HostAddressValidation()});
+            vmwareDatacenter.validateEntity(new IValidation[]{
                     new NotEmptyValidation()});
-
             setIsValid(getvCenter().getIsValid()
                     && getEsx().getIsValid()
                     && getVmwareDatacenter().getIsValid());
@@ -87,6 +89,14 @@ public class VmwarePropertiesModel extends Model {
         return vmwareDatacenter;
     }
 
+    public EntityModel<String> getVmwareCluster() {
+        return vmwareCluster;
+    }
+
+    public void setVmwareCluster(EntityModel<String> vmwareCluster) {
+        this.vmwareCluster = vmwareCluster;
+    }
+
     void disableProxyHost() {
         getProxyHost().setItems(Collections.<VDS>singleton(null));
         getProxyHost().setIsChangeable(false);
@@ -96,7 +106,7 @@ public class VmwarePropertiesModel extends Model {
         return new VmwareVmProviderProperties(
                 getvCenter().getEntity(),
                 getEsx().getEntity(),
-                getVmwareDatacenter().getEntity(),
+                ImportVmsModel.mergeDcAndCluster(getVmwareDatacenter().getEntity(), getVmwareCluster().getEntity()),
                 getVerifySSL().getEntity(),
                 dataCenterId,
                 getProxyHost().getSelectedItem() != null ? getProxyHost().getSelectedItem().getId() : null);
@@ -106,7 +116,9 @@ public class VmwarePropertiesModel extends Model {
         VmwareVmProviderProperties properties = provider.getAdditionalProperties();
         getvCenter().setEntity(properties.getvCenter());
         getEsx().setEntity(properties.getEsx());
-        getVmwareDatacenter().setEntity(properties.getDataCenter());
+        Pair<String, String> dcAndCluster = ImportVmsModel.splitToDcAndCluster(properties.getDataCenter());
+        getVmwareDatacenter().setEntity(dcAndCluster.getFirst());
+        getVmwareCluster().setEntity(dcAndCluster.getSecond());
         getVerifySSL().setEntity(properties.isVerifySSL());
         this.lastProxyHostId = properties.getProxyHostId();
         this.lastStoragePoolId = properties.getStoragePoolId();
@@ -122,6 +134,7 @@ public class VmwarePropertiesModel extends Model {
 
     public String getUrl() {
         return ImportVmsModel.getVmwareUrl(null, getvCenter().getEntity(),
-                getVmwareDatacenter().getEntity(), getEsx().getEntity(), getVerifySSL().getEntity());
+                getVmwareDatacenter().getEntity(), getVmwareCluster().getEntity(),
+                getEsx().getEntity(), getVerifySSL().getEntity());
     }
 }

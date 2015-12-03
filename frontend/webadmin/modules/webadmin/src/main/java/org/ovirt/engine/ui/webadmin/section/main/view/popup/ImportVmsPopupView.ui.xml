@@ -65,7 +65,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="800px" height="630px">
+	<d:SimpleDialogPanel width="800px" height="660px">
 		<d:content>
 			<g:VerticalPanel width="100%">
 				<g:FlowPanel addStyleNames="{style.generalSectionStyle}">
@@ -92,12 +92,13 @@
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
-					    <ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 				    </g:HorizontalPanel>
 				    <g:HorizontalPanel>
 					    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 					    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 				    </g:HorizontalPanel>
+					<ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 				    <e:ListModelListBoxEditor ui:field="proxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
 					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
 						<w:UiCommandButton ui:field="loadVmsFromVmwareButton"/>
