@@ -1053,8 +1053,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, List<PredicateFilter<GlusterVolumeOptionEntity>> predicates) {
-        List<GlusterVolumeOptionEntity> volumeOptionsEnabled = new ArrayList<GlusterVolumeOptionEntity>(volume.getOptions());
-        List<GlusterVolumeOptionEntity> filteredOptions = volumeOptionsEnabled;
+        List<GlusterVolumeOptionEntity> filteredOptions = new ArrayList<>(volume.getOptions());
         for(PredicateFilter<GlusterVolumeOptionEntity> predicate  : predicates) {
              filteredOptions = ListUtils.filter(filteredOptions, predicate);
         }
