@@ -592,6 +592,9 @@ public class ExecutionHandler {
             } else {
                 executionContext.setParentTasksStep(parentExecutionContext.getParentTasksStep());
             }
+            executionContext.setStep(parentExecutionContext.getStep());
+            executionContext.setStepsList(parentExecutionContext.getStepsList());
+            executionContext.setJob(parentExecutionContext.getJob());
         }
         return executionContext;
     }
