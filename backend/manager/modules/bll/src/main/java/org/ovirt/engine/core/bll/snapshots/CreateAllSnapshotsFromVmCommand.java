@@ -322,7 +322,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.CreateCinderSnapshot,
                         params,
-                        cloneContextAndDetachFromParent());
+                        cloneContext().withoutCompensationContext().withoutLock());
                 try {
                     VdcReturnValueBase vdcReturnValueBase = future.get();
                     if (!vdcReturnValueBase.getSucceeded()) {
