@@ -111,6 +111,11 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     StringEntityModelTextBoxEditor vmwareDatacenterEditor;
 
     @UiField
+    @Path("vmwareCluster.entity")
+    @WithElementId("vmwareClusterEditor")
+    StringEntityModelTextBoxEditor vmwareClusterEditor;
+
+    @UiField
     @Path("verify.entity")
     @WithElementId("verify")
     EntityModelCheckBoxEditor verifyEditor;
@@ -226,6 +231,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         vCenterEditor.setLabel(constants.vCenter());
         esxEditor.setLabel(constants.esxi());
         vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
+        vmwareClusterEditor.setLabel(constants.vmwareCluster());
         verifyEditor.setLabel(constants.vmwareVerifyCredentials());
         usernameEditor.setLabel(constants.usernameProvider());
         passwordEditor.setLabel(constants.passwordProvider());

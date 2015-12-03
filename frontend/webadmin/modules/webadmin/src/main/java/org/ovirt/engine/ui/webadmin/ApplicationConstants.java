@@ -3585,6 +3585,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String vmwareDataCenter();
 
+    @DefaultStringValue("Cluster")
+    String vmwareCluster();
+
     @DefaultStringValue("Verify Credentials")
     String vmwareVerifyCredentials();
 

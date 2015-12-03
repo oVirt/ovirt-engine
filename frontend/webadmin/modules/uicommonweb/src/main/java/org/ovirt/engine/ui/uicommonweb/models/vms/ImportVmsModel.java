@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -61,6 +62,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private EntityModel<String> vCenter;
     private EntityModel<String> esx;
     private EntityModel<String> vmwareDatacenter;
+    private EntityModel<String> vmwareCluster;
     private EntityModel<Boolean> verify;
     private EntityModel<String> username;
     private EntityModel<String> password;
@@ -117,6 +119,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         setEsx(new EntityModel<String>());
         setVmwareDatacenter(new EntityModel<String>());
         setVerify(new EntityModel<Boolean>(false));
+        setVmwareCluster(new EntityModel<String>());
 
         // OVA
         setHosts(new ListModel<VDS>());
@@ -252,7 +255,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         VmwareVmProviderProperties properties = (VmwareVmProviderProperties) provider.getAdditionalProperties();
         getvCenter().setEntity(properties.getvCenter());
         getEsx().setEntity(properties.getEsx());
-        getVmwareDatacenter().setEntity(properties.getDataCenter());
+        Pair<String, String> dcAndCluster = splitToDcAndCluster(properties.getDataCenter());
+        getVmwareDatacenter().setEntity(dcAndCluster.getFirst());
+        getVmwareCluster().setEntity(dcAndCluster.getSecond());
         getVerify().setEntity(properties.isVerifySSL());
         if (properties.getProxyHostId() == null) {
             getProxyHosts().setSelectedItem(null);
@@ -422,25 +427,25 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
         startProgress(null);
         AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) returnValue;
-                if (queryReturnValue.getSucceeded()) {
-                    VM vm = queryReturnValue.getReturnValue();
-                    updateVms(Collections.singletonList(vm));
-                } else {
-                    setError(messages.failedToLoadOva(getOvaPath().getEntity()));
-                }
-                stopProgress();
-            }
-        }),
-        getHosts().getSelectedItem().getId(),
-        getOvaPath().getEntity());
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) returnValue;
+                        if (queryReturnValue.getSucceeded()) {
+                            VM vm = queryReturnValue.getReturnValue();
+                            updateVms(Collections.singletonList(vm));
+                        } else {
+                            setError(messages.failedToLoadOva(getOvaPath().getEntity()));
+                        }
+                        stopProgress();
+                    }
+                }),
+                getHosts().getSelectedItem().getId(),
+                getOvaPath().getEntity());
     }
 
     private boolean validateOvaConfiguration() {
-        getOvaPath().validateEntity(new IValidation[] {
-                new NotEmptyValidation() });
+        getOvaPath().validateEntity(new IValidation[]{
+                new NotEmptyValidation()});
 
         return getOvaPath().getIsValid();
     }
@@ -489,17 +494,17 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 new NotEmptyValidation(),
                 new LengthValidation(255),
                 new HostAddressValidation() });
-        getEsx().validateEntity(new IValidation[] {
+        getEsx().validateEntity(new IValidation[]{
                 new NotEmptyValidation(),
                 new LengthValidation(255),
-                new HostAddressValidation() });
-        getVmwareDatacenter().validateEntity(new IValidation[] {
-                new NotEmptyValidation() });
-        getUsername().validateEntity(new IValidation[] {
+                new HostAddressValidation()});
+        getVmwareDatacenter().validateEntity(new IValidation[]{
+                new NotEmptyValidation()});
+        getUsername().validateEntity(new IValidation[]{
                 new NotEmptyValidation(),
-                new NameAndOptionalDomainValidation() });
-        getPassword().validateEntity(new IValidation[] {
-                new NotEmptyValidation() });
+                new NameAndOptionalDomainValidation()});
+        getPassword().validateEntity(new IValidation[]{
+                new NotEmptyValidation()});
 
         return getvCenter().getIsValid()
                 && getEsx().getIsValid()
@@ -518,11 +523,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private String getUrl() {
         return getVmwareUrl(getUsername().getEntity(), getvCenter().getEntity(),
-                getVmwareDatacenter().getEntity(), getEsx().getEntity(), getVerify().getEntity());
+                getVmwareDatacenter().getEntity(), getVmwareCluster().getEntity(), getEsx().getEntity(), getVerify().getEntity());
     }
 
     public static String getVmwareUrl(String username, String vcenter,
-            String dataCenter, String esx, boolean verify) {
+            String dataCenter, String cluster, String esx, boolean verify) {
         if (username != null) {
             username = username.replace("@", "%40"); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -531,10 +536,34 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 (StringUtils.isEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
                 vcenter +
                 "/" + //$NON-NLS-1$
-                dataCenter +
+                mergeDcAndCluster(dataCenter, cluster) +
                 "/" + //$NON-NLS-1$
                 esx +
                 (verify ? "" : "?no_verify=1"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public static Pair<String, String> splitToDcAndCluster(String dataCenter) {
+        if (dataCenter == null) {
+            return new Pair<>(null, null);
+        }
+
+        if (!dataCenter.contains("/")) { //$NON-NLS-1$
+            return new Pair<>(dataCenter, null);
+        }
+
+        int lastSlash = dataCenter.lastIndexOf("/"); //$NON-NLS-1$
+        String dataCenterPart = dataCenter.substring(0, lastSlash);
+        String clusterPart = dataCenter.substring(lastSlash + 1);
+
+        return new Pair<>(dataCenterPart, clusterPart);
+    }
+
+    public static String mergeDcAndCluster(String dataCenter, String cluster) {
+        if (StringUtils.isEmpty(cluster)) {
+            return dataCenter;
+        }
+
+        return dataCenter + "/" + cluster; //$NON-NLS-1$
     }
 
     private void updateVms(List<VM> vms) {
@@ -716,6 +745,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public EntityModel<String> getVmwareDatacenter() {
         return vmwareDatacenter;
+    }
+
+    public EntityModel<String> getVmwareCluster() {
+        return vmwareCluster;
+    }
+
+    public void setVmwareCluster(EntityModel<String> vmwareCluster) {
+        this.vmwareCluster = vmwareCluster;
     }
 
     public void setVmwareDatacenter(EntityModel<String> vmwareDatacenter) {
