@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage;
+package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;

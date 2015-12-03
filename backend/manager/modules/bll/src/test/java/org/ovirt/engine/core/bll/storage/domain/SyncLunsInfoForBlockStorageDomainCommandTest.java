@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage;
+package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
