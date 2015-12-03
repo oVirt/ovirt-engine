@@ -215,42 +215,42 @@
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
-                    <t:DialogTab ui:field="generalTab">
+                    <t:DialogTab ui:field="generalTab" label="{constants.clusterPopupGeneralTabLabel}">
                         <t:content>
                             <g:FlowPanel addStyleNames="{style.sectionPanel}">
                                 <g:FlowPanel ui:field="dataCenterPanel" addStyleNames="{style.generalTabTopDecorator} generalTabTopDecorator_pfly_fix">
-                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" />
+                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.clusterPopupDataCenterLabel}" />
                                 </g:FlowPanel>
-                                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
-                                <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-                                <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
-                                <e:ListModelListBoxEditor ui:field="managementNetworkEditor" />
-                                <e:ListModelListBoxEditor ui:field="architectureEditor" />
-                                <e:ListModelListBoxEditor ui:field="cpuEditor" />
-                                <e:ListModelListBoxEditor ui:field="versionEditor" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPopupNameLabel}" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.descriptionLabel}" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" />
+                                <e:ListModelListBoxEditor ui:field="managementNetworkEditor" label="{constants.managementNetworkLabel}" />
+                                <e:ListModelListBoxEditor ui:field="architectureEditor" label="{constants.clusterPopupArchitectureLabel}" />
+                                <e:ListModelListBoxEditor ui:field="cpuEditor" label="{constants.clusterPopupCPUTypeLabel}" />
+                                <e:ListModelListBoxEditor ui:field="versionEditor" label="{constants.clusterPopupVersionLabel}" />
                                 <g:VerticalPanel ui:field="servicesCheckboxPanel">
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" label="{constants.clusterEnableOvirtServiceLabel}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" label="{constants.clusterEnableGlusterServiceLabel}" />
                                 </g:VerticalPanel>
                                 <g:VerticalPanel ui:field="servicesRadioPanel">
-                                    <ge:EntityModelRadioButtonEditor ui:field="enableOvirtServiceOptionEditor" />
-                                    <ge:EntityModelRadioButtonEditor ui:field="enableGlusterServiceOptionEditor" />
+                                    <ge:EntityModelRadioButtonEditor ui:field="enableOvirtServiceOptionEditor" label="{constants.clusterEnableOvirtServiceLabel}" />
+                                    <ge:EntityModelRadioButtonEditor ui:field="enableGlusterServiceOptionEditor" label="{constants.clusterEnableGlusterServiceLabel}" />
                                 </g:VerticalPanel>
-                                <ge:EntityModelCheckBoxEditor ui:field="importGlusterConfigurationEditor"/>
-                                <g:Label ui:field="importGlusterExplanationLabel" addStyleNames="{style.explanationLabel}"/>
-                                <ge:StringEntityModelTextBoxEditor ui:field="glusterHostAddressEditor" />
-                                <ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.fingerprintLabel}" ui:field="glusterHostFingerprintEditor" />
-                                <ge:StringEntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" />
+                                <ge:EntityModelCheckBoxEditor ui:field="importGlusterConfigurationEditor" label="{constants.clusterImportGlusterConfigurationLabel}" />
+                                <g:Label ui:field="importGlusterExplanationLabel" addStyleNames="{style.explanationLabel}" text="{constants.clusterImportGlusterConfigurationExplanationLabel}" />
+                                <ge:StringEntityModelTextBoxEditor ui:field="glusterHostAddressEditor" label="{constants.hostPopupHostAddressLabel}" />
+                                <ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.fingerprintLabel}" ui:field="glusterHostFingerprintEditor" label="{constants.hostPopupHostFingerprintLabel}" />
+                                <ge:StringEntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" label="{constants.hostPopupPasswordLabel}" />
                                 <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-                                <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" />
-                                <ge:EntityModelCheckBoxEditor ui:field="enableHostMaintenanceReasonEditor" />
+                                <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" label="{constants.clusterPolicyEnableReasonLabel}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="enableHostMaintenanceReasonEditor" label="{constants.clusterPolicyEnableHostMaintenanceReasonLabel}" />
                                 <g:FlowPanel>
-                                    <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" />
+                                    <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle}" text="{constants.requiredRngSources}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" label="{constants.rngSourceRandom}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" label="{constants.rngSourceHwrng}" />
                                 </g:FlowPanel>
-                                <e:ListModelListBoxEditor ui:field="glusterTunedProfileEditor" />
-                                <d:AdvancedParametersExpander ui:field="additionalFeaturesExpander"/>
+                                <e:ListModelListBoxEditor ui:field="glusterTunedProfileEditor" label="{constants.glusterTunedProfileLabel}" />
+                                <d:AdvancedParametersExpander ui:field="additionalFeaturesExpander" titleWhenCollapsed="{constants.addtionalClusterFeaturesTitle}" titleWhenExpanded="{constants.addtionalClusterFeaturesTitle}" />
                                 <g:FlowPanel ui:field="additionalFeaturesExpanderContent">
                                      <e:ListModelCheckBoxGroup	ui:field="additionalFeaturesEditor" />
                                 </g:FlowPanel>
@@ -259,29 +259,29 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="optimizationTab">
+                    <t:DialogTab ui:field="optimizationTab" label="{constants.clusterPopupOptimizationTabLabel}">
                         <t:content>
                             <g:FlowPanel addStyleNames="{style.optimizationTabPanel}">
                                 <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
-                                    <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
+                                    <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" text="{constants.clusterPopupMemoryOptimizationPanelTitle}" />
                                     <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
-                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" addStyleNames="{style.radioButtonPositioning}"/>
-                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" addStyleNames="{style.radioButtonPositioning}"/>
-                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" addStyleNames="{style.radioButtonPositioning}"/>
-                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" addStyleNames="{style.radioButtonPositioning}"/>
+                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" addStyleNames="{style.radioButtonPositioning}" label="{constants.clusterPopupOptimizationNoneLabel}" />
+                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" addStyleNames="{style.radioButtonPositioning}" />
+                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" addStyleNames="{style.radioButtonPositioning}" />
+                                    <ge:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" addStyleNames="{style.radioButtonPositioning}" />
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
-                                    <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />
+                                    <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />
                                     <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" label="{constants.clusterPopupCountThreadsAsCoresLabel}" />
                                 </g:FlowPanel>
                                 <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
                                     <g:Label text="{constants.ballooningLabelTitle}" addStyleNames="{style.panelTitle}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableBallooning" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableBallooning" label="{constants.enableBallooningLabel}" />
                                 </g:FlowPanel>
                                 <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
                                     <g:Label text="{constants.ksmLabelTitle}" addStyleNames="{style.panelTitle}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableKsm" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableKsm" label="{constants.enableKsmLabel}" />
                                     <e:ListModelRadioGroupEditor  ui:field="ksmPolicyForNumaEditor" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
@@ -289,42 +289,42 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="resiliencePolicyTab">
+                    <t:DialogTab ui:field="resiliencePolicyTab" label="{constants.clusterPopupResiliencePolicyTabLabel}">
                         <t:content>
                             <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" />
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" />
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" />
+                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_YesLabel}" />
+                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_HaLabel}" />
+                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupOptimizationNoneLabel}" />
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="clusterPolicyTab">
+                    <t:DialogTab ui:field="clusterPolicyTab" label="{constants.clusterPopupClusterPolicyTabLabel}">
                         <t:content>
                             <g:FlowPanel addStyleNames="cvp_clusterPolicyContent_pfly_fix">
-                                <e:ListModelListBoxEditor ui:field="clusterPolicyEditor" />
+                                <e:ListModelListBoxEditor ui:field="clusterPolicyEditor" label="{constants.clusterPolicySelectPolicyLabel}" />
                                 <g:Label addStyleNames="{style.labelStyle}" text="{constants.clusterPolicyPropertiesLabel}" />
                                 <g:ScrollPanel height="100px">
                                     <k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
                                 </g:ScrollPanel>
                                 <g:FlowPanel>
-                                    <g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
+                                    <g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.panelTitle}" text="{constants.schedulerOptimizationPanelLabel}" />
                                     <d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo}" />
                                     <g:HorizontalPanel>
-                                        <ge:EntityModelRadioButtonEditor ui:field="optimizeForUtilizationEditor" addStyleNames="{style.radioButtonLabel}" />
-                                        <ge:EntityModelRadioButtonEditor ui:field="optimizeForSpeedEditor" addStyleNames="{style.radioButtonLabel}" />
+                                        <ge:EntityModelRadioButtonEditor ui:field="optimizeForUtilizationEditor" addStyleNames="{style.radioButtonLabel}" label="{constants.optimizeForUtilizationLabel}" />
+                                        <ge:EntityModelRadioButtonEditor ui:field="optimizeForSpeedEditor" addStyleNames="{style.radioButtonLabel}" label="{constants.optimizeForSpeedLabel}" />
                                     </g:HorizontalPanel>
                                     <g:HorizontalPanel ui:field="allowOverbookingPanel">
-                                        <ge:EntityModelRadioButtonEditor ui:field="guarantyResourcesEditor" addStyleNames="{style.radioButtonLabel}"/>
-                                        <ge:EntityModelRadioButtonEditor ui:field="allowOverbookingEditor" addStyleNames="{style.radioButtonLabel}"/>
+                                        <ge:EntityModelRadioButtonEditor ui:field="guarantyResourcesEditor" addStyleNames="{style.radioButtonLabel}" label="{constants.guarantyResourcesLabel}" />
+                                        <ge:EntityModelRadioButtonEditor ui:field="allowOverbookingEditor" addStyleNames="{style.radioButtonLabel}" label="{constants.allowOverbookingLabel}" />
                                         <d:InfoIcon ui:field="allowOverbookingInfoIcon" addStyleNames="{style.panelInfo}" />
                                     </g:HorizontalPanel>
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
-                                    <g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" />
+                                    <g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" text="{constants.clusterPolicyAdditionalPropsPanelTitle}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" label="{constants.clusterPolicyEnableTrustedServiceLabel}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" label="{constants.clusterPolicyEnableHaReservationLabel}" />
                                 </g:FlowPanel>
                                 <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" addStyleNames="{style.serialNumberPolicy}" />
                                 <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" />
@@ -334,39 +334,39 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="consoleTab">
+                    <t:DialogTab ui:field="consoleTab" label="{constants.consoleTabLabel}">
                         <t:content>
                             <g:FlowPanel addStyleNames="cvp_consoleContent_pfly_fix">
                                 <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" addStyleNames="cpv_spiceProxyEnabledCheckbox_pfly_fix" />
-                                <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor"/>
+                                <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" label="{constants.overriddenSpiceProxyAddress}"/>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="fencingPolicyTab">
+                    <t:DialogTab ui:field="fencingPolicyTab" label="{constants.fencingPolicyTabLabel}">
                         <t:content>
                           <b:Container addStyleNames="{style.container}">
                             <b:Row addStyleNames="{style.topElement}">
                               <b:Column size="LG_12">
-                                <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" label="{constants.fencingEnabled}" />
                                 <d:InfoIcon ui:field="fencingEnabledInfo" />
                               </b:Column>
                             </b:Row>
                             <b:Row>
                               <b:Column size="LG_12">
-                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" label="{constants.skipFencingIfSDActive}" />
                                 <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" />
                               </b:Column>
                             </b:Row>
                             <b:Row>
                               <b:Column size="LG_7">
                                 <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft} {style.thresholdCheckboxWidth}" />
-                                <g:Label ui:field="skipFencingIfConnectivityBrokenCheckBoxLabel" addStyleNames="{style.floatLeft} {style.thresholdLabelWidth}" />
+                                <g:Label ui:field="skipFencingIfConnectivityBrokenCheckBoxLabel" addStyleNames="{style.floatLeft} {style.thresholdLabelWidth}" text="{constants.skipFencingWhenConnectivityBroken}" />
                                 <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft} {style.thresholdIconWidth}" />
                               </b:Column>
                               <b:Column size="LG_5">
-                                <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" />
+                                <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="LG_5" widgetColSize="LG_7" addStyleNames="{style.floatLeft}" label="{constants.hostsWithBrokenConnectivityThresholdLabel}" />
                               </b:Column>
                             </b:Row>
                           </b:Container>

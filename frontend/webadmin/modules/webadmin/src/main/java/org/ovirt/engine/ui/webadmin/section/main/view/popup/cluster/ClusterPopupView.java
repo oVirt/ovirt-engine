@@ -462,7 +462,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
 
         addStyles();
-        localize();
         driver.initialize(this);
         applyModeCustomizations();
         setVisibilities();
@@ -497,78 +496,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         additionalFeaturesExpanderContent.setStyleName(style.additionalFeaturesExpanderContent());
         ksmPolicyForNumaEditor.addContentWidgetContainerStyleName(style.overrideRadioButtonPanelWidth());
         ksmPolicyForNumaEditor.addLabelStyleName(style.overideRadioButtonLabel());
-    }
-
-    private void localize() {
-        generalTab.setLabel(constants.clusterPopupGeneralTabLabel());
-
-        dataCenterEditor.setLabel(constants.clusterPopupDataCenterLabel());
-        nameEditor.setLabel(constants.clusterPopupNameLabel());
-        descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
-        commentEditor.setLabel(constants.commentLabel());
-        managementNetworkEditor.setLabel(constants.managementNetworkLabel());
-        cpuEditor.setLabel(constants.clusterPopupCPUTypeLabel());
-        architectureEditor.setLabel(constants.clusterPopupArchitectureLabel());
-        versionEditor.setLabel(constants.clusterPopupVersionLabel());
-        enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
-        enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
-        enableOvirtServiceOptionEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
-        enableGlusterServiceOptionEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
-        glusterTunedProfileEditor.setLabel(constants.glusterTunedProfileLabel());
-        importGlusterConfigurationEditor.setLabel(constants.clusterImportGlusterConfigurationLabel());
-        importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());
-        glusterHostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
-        glusterHostFingerprintEditor.setLabel(constants.hostPopupHostFingerprintLabel());
-        glusterHostPasswordEditor.setLabel(constants.hostPopupPasswordLabel());
-        additionalFeaturesExpander.setTitleWhenCollapsed(constants.addtionalClusterFeaturesTitle());
-        additionalFeaturesExpander.setTitleWhenExpanded(constants.addtionalClusterFeaturesTitle());
-
-        rngLabel.setText(constants.requiredRngSources());
-        rngRandomSourceRequired.setLabel(constants.rngSourceRandom());
-        rngHwrngSourceRequired.setLabel(constants.rngSourceHwrng());
-
-        optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
-
-        memoryOptimizationPanelTitle.setText(constants.clusterPopupMemoryOptimizationPanelTitle());
-        optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
-
-        cpuThreadsPanelTitle.setText(constants.clusterPopupCpuThreadsPanelTitle());
-        countThreadsAsCoresEditor.setLabel(constants.clusterPopupCountThreadsAsCoresLabel());
-
-        resiliencePolicyTab.setLabel(constants.clusterPopupResiliencePolicyTabLabel());
-
-        migrateOnErrorOption_YESEditor.setLabel(constants.clusterPopupMigrateOnError_YesLabel());
-        migrateOnErrorOption_HA_ONLYEditor.setLabel(constants.clusterPopupMigrateOnError_HaLabel());
-        migrateOnErrorOption_NOEditor.setLabel(constants.clusterPopupMigrateOnError_NoLabel());
-
-        clusterPolicyTab.setLabel(constants.clusterPopupClusterPolicyTabLabel());
-
-        additionPropsPanelTitle.setText(constants.clusterPolicyAdditionalPropsPanelTitle());
-        enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
-        enableHaReservationEditor.setLabel(constants.clusterPolicyEnableHaReservationLabel());
-        enableOptionalReasonEditor.setLabel(constants.clusterPolicyEnableReasonLabel());
-        enableHostMaintenanceReasonEditor.setLabel(constants.clusterPolicyEnableHostMaintenanceReasonLabel());
-        clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
-
-        enableKsm.setLabel(constants.enableKsmLabel());
-        enableBallooning.setLabel(constants.enableBallooningLabel());
-
-        schedulerOptimizationPanelTitle.setText(constants.schedulerOptimizationPanelLabel());
-        optimizeForUtilizationEditor.setLabel(constants.optimizeForUtilizationLabel());
-        optimizeForSpeedEditor.setLabel(constants.optimizeForSpeedLabel());
-        guarantyResourcesEditor.setLabel(constants.guarantyResourcesLabel());
-        allowOverbookingEditor.setLabel(constants.allowOverbookingLabel());
-
-        spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
-
-        consoleTab.setLabel(constants.consoleTabLabel());
-
-        fencingPolicyTab.setLabel(constants.fencingPolicyTabLabel());
-
-        fencingEnabledCheckBox.setLabel(constants.fencingEnabled());
-        skipFencingIfSDActiveCheckBox.setLabel(constants.skipFencingIfSDActive());
-        skipFencingIfConnectivityBrokenCheckBoxLabel.setText(constants.skipFencingWhenConnectivityBroken());
-        hostsWithBrokenConnectivityThresholdEditor.setLabel(constants.hostsWithBrokenConnectivityThresholdLabel());
     }
 
     private void initRadioButtonEditors() {
