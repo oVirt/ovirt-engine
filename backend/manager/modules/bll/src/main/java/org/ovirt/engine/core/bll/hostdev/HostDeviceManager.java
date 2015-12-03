@@ -81,6 +81,16 @@ public class HostDeviceManager implements BackendService {
                 checkVmNeedsDirectPassthrough(vm.getId());
     }
 
+    /**
+     * Checks whether one of host devices attached to given VM is of 'pci' capability.
+     */
+    public boolean checkVmNeedsPciDevices(Guid vmId) {
+        return hostDeviceDao
+                .getVmExtendedHostDevicesByVmId(vmId)
+                .stream()
+                .anyMatch(HostDevice::isPci);
+    }
+
     private boolean checkVmNeedsDirectPassthrough(Guid vmId) {
         return vmDeviceDao.existsVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV);
     }

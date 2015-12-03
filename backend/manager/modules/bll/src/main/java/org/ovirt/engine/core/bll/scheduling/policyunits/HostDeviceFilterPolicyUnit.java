@@ -7,14 +7,11 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +38,7 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        boolean hasPciDevices = getHostDeviceDao()
-                .getVmExtendedHostDevicesByVmId(vm.getId()).stream()
-                .anyMatch(HostDevice::isPci);
+        boolean hasPciDevices = hostDeviceManager.checkVmNeedsPciDevices(vm.getId());
 
         List<VDS> list = new ArrayList<>();
         for (VDS host : hosts) {
@@ -63,7 +58,4 @@ public class HostDeviceFilterPolicyUnit extends PolicyUnitImpl {
         return list;
     }
 
-    private HostDeviceDao getHostDeviceDao() {
-        return DbFacade.getInstance().getHostDeviceDao();
-    }
 }

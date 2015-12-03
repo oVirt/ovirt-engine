@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /** A Validator for various VM canDoAction needs */
@@ -264,5 +266,18 @@ public class VmValidator {
             }
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult vmNotHavingPciPassthroughDevices() {
+        for (VM vm : vms) {
+           if (getHostDeviceManager().checkVmNeedsPciDevices(vm.getId())) {
+               return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
+           }
+        }
+        return ValidationResult.VALID;
+    }
+
+    private HostDeviceManager getHostDeviceManager() {
+        return Injector.get(HostDeviceManager.class);
     }
 }
