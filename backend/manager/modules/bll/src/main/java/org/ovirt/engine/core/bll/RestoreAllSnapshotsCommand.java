@@ -68,6 +68,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private final Set<Guid> snapshotsToRemove = new HashSet<>();
     private Snapshot snapshot;
     List<DiskImage> imagesToRestore = new ArrayList<>();
+    List<DiskImage> imagesFromPreviewSnapshot = new ArrayList<>();
 
     /**
      * The snapshot id which will be removed (the stateless/preview/active image).
@@ -354,7 +355,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         List<DiskImage> imagesFromActiveSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(activeSnapshotId);
 
         Snapshot previewedSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.PREVIEW);
-        List<DiskImage> imagesFromPreviewSnapshot = new ArrayList<>();
         if (previewedSnapshot != null) {
             SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
             VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
@@ -370,7 +370,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     SnapshotStatus.OK);
 
             getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
-            imagesToRestore = imagesFromPreviewSnapshot;
+            for (DiskImage imageFromPreviewSnapshot : imagesFromPreviewSnapshot) {
+                if (imageFromPreviewSnapshot.getDiskStorageType() != DiskStorageType.CINDER) {
+                    imagesToRestore.add(imageFromPreviewSnapshot);
+                } else {
+                    for (DiskImage diskImageFromIntersection : intersection) {
+                        if (diskImageFromIntersection.getId().equals(imageFromPreviewSnapshot.getId())) {
+                            imagesToRestore.add(diskImageFromIntersection);
+                        }
+                    }
+                }
+            }
             updateSnapshotIdForSkipRestoreImages(
                     ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), targetSnapshot.getId());
             restoreConfiguration(targetSnapshot);
@@ -386,7 +396,24 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
             // Set the active snapshot's images as target images for restore, because they are what we keep.
             getParameters().setImages(imagesFromActiveSnapshot);
-            imagesToRestore = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
+            List<DiskImage> imagesIntersection = new ArrayList<>();
+            for (DiskImage imageFromActive : imagesFromActiveSnapshot) {
+                for (DiskImage imageFromPreview : imagesFromPreviewSnapshot) {
+                    if (imageFromPreview.getId().equals(imageFromActive.getId())) {
+                        imagesIntersection.add(imageFromPreview);
+                    }
+                }
+                if (!imagesIntersection.isEmpty()) {
+                    if (imageFromActive.getDiskStorageType() == DiskStorageType.IMAGE) {
+                        imagesToRestore.add(imageFromActive);
+                    } else if (imageFromActive.getDiskStorageType() == DiskStorageType.CINDER) {
+                        CinderDisk cinderVolume = getInitialCinderVolumeToDelete(imageFromActive);
+                        if (cinderVolume != null) {
+                            imagesToRestore.add(cinderVolume);
+                        }
+                    }
+                }
+            }
             updateSnapshotIdForSkipRestoreImages(
                     ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
             break;
