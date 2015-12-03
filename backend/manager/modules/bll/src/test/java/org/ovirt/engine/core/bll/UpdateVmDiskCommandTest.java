@@ -584,7 +584,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
             }
 
         });
-        doReturn(true).when(command).acquireLockInternal();
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
