@@ -18,57 +18,57 @@ public class BootSequenceTest {
     }
 
     @Test
-    public void threeSequence_oneSubsequence() {
+    public void threeSequenceOneSubsequence() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.C));
     }
 
     @Test
-    public void threeSequence_twoSubsequence() {
+    public void threeSequenceTwoSubsequence() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.CD));
     }
 
     @Test
-    public void threeSequence_twoSubsequence_secondPosition() {
+    public void threeSequenceTwoSubsequenceSecondPosition() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.DN));
     }
 
     @Test
-    public void threeSequence_oneSubsequence_secondPosition() {
+    public void threeSequenceOneSubsequenceSecondPosition() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.D));
     }
 
     @Test
-    public void threeSequence_oneSubsequence_thirdPosition() {
+    public void threeSequenceOneSubsequenceThirdPosition() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.N));
     }
 
     @Test
-    public void threeSequence_threeSubsequence() {
+    public void threeSequenceThreeSubsequence() {
         assertTrue(BootSequence.CDN.containsSubsequence(BootSequence.CDN));
     }
 
     @Test
-    public void oneSequence_oneWrongSubsequence() {
+    public void oneSequenceOneWrongSubsequence() {
         assertFalse(BootSequence.C.containsSubsequence(BootSequence.D));
     }
 
     @Test
-    public void oneSequence_twoSubsequence() {
+    public void oneSequenceTwoSubsequence() {
         assertFalse(BootSequence.C.containsSubsequence(BootSequence.DC));
     }
 
     @Test
-    public void oneSequence_threeSubsequence() {
+    public void oneSequenceThreeSubsequence() {
         assertFalse(BootSequence.C.containsSubsequence(BootSequence.DCN));
     }
 
     @Test
-    public void twoSequence_twoSubsequence_oppositeOrder() {
+    public void twoSequenceTwoSubsequenceOppositeOrder() {
         assertTrue(BootSequence.CD.containsSubsequence(BootSequence.DC));
     }
 
     @Test
-    public void twoSequence_oneSubsequence_notInItAtAll() {
+    public void twoSequenceOneSubsequenceNotInItAtAll() {
         assertFalse(BootSequence.CD.containsSubsequence(BootSequence.N));
     }
 
