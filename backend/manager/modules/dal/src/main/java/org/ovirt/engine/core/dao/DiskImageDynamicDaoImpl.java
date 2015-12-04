@@ -35,9 +35,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
                 throws SQLException {
             DiskImageDynamic entity = new DiskImageDynamic();
             entity.setId(getGuidDefaultEmpty(rs, "image_id"));
-            entity.setread_rate((Integer) rs.getObject("read_rate"));
-            entity.setwrite_rate((Integer) rs.getObject("write_rate"));
-            entity.setactual_size(rs.getLong("actual_size"));
+            entity.setReadRate((Integer) rs.getObject("read_rate"));
+            entity.setWriteRate((Integer) rs.getObject("write_rate"));
+            entity.setActualSize(rs.getLong("actual_size"));
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
             entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")
@@ -63,9 +63,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
     @Override
     protected MapSqlParameterSource createFullParametersMapper(DiskImageDynamic entity) {
         return createIdParameterMapper(entity.getId())
-                .addValue("read_rate", entity.getread_rate())
-                .addValue("write_rate", entity.getwrite_rate())
-                .addValue("actual_size", entity.getactual_size())
+                .addValue("read_rate", entity.getReadRate())
+                .addValue("write_rate", entity.getWriteRate())
+                .addValue("actual_size", entity.getActualSize())
                 .addValue("read_latency_seconds", entity.getReadLatency())
                 .addValue("write_latency_seconds", entity.getWriteLatency())
                 .addValue("flush_latency_seconds", entity.getFlushLatency());
@@ -86,9 +86,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
                 MapSqlParameterSource paramValue = new MapSqlParameterSource()
                         .addValue("vm_id", vmId)
                         .addValue("image_group_id", diskImageDynamic.getId())
-                        .addValue("read_rate", diskImageDynamic.getread_rate())
-                        .addValue("write_rate", diskImageDynamic.getwrite_rate())
-                        .addValue("actual_size", diskImageDynamic.getactual_size())
+                        .addValue("read_rate", diskImageDynamic.getReadRate())
+                        .addValue("write_rate", diskImageDynamic.getWriteRate())
+                        .addValue("actual_size", diskImageDynamic.getActualSize())
                         .addValue("read_latency_seconds", diskImageDynamic.getReadLatency())
                         .addValue("write_latency_seconds", diskImageDynamic.getWriteLatency())
                         .addValue("flush_latency_seconds", diskImageDynamic.getFlushLatency());

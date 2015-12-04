@@ -1573,15 +1573,15 @@ public class VdsBrokerObjectsBuilder {
             if (!StringUtils.isEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
                 diskData.setId(imageGroupIdGuid);
-                diskData.setread_rate(assignIntValue(disk, VdsProperties.vm_disk_read_rate));
-                diskData.setwrite_rate(assignIntValue(disk, VdsProperties.vm_disk_write_rate));
+                diskData.setReadRate(assignIntValue(disk, VdsProperties.vm_disk_read_rate));
+                diskData.setWriteRate(assignIntValue(disk, VdsProperties.vm_disk_write_rate));
 
                 if (disk.containsKey(VdsProperties.disk_actual_size)) {
                     Long size = assignLongValue(disk, VdsProperties.disk_actual_size);
-                    diskData.setactual_size(size != null ? size * 512 : 0);
+                    diskData.setActualSize(size != null ? size * 512 : 0);
                 } else if (disk.containsKey(VdsProperties.disk_true_size)) {
                     Long size = assignLongValue(disk, VdsProperties.disk_true_size);
-                    diskData.setactual_size(size != null ? size : 0);
+                    diskData.setActualSize(size != null ? size : 0);
                 }
                 if (disk.containsKey(VdsProperties.vm_disk_read_latency)) {
                     diskData.setReadLatency(assignDoubleValueWithNullProtection(disk,

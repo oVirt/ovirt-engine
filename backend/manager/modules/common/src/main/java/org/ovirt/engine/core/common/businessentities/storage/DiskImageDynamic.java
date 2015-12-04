@@ -26,19 +26,19 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
     public DiskImageDynamic() {
     }
 
-    public Integer getread_rate() {
+    public Integer getReadRate() {
         return readRate;
     }
 
-    public void setread_rate(Integer rate) {
+    public void setReadRate(Integer rate) {
         readRate = rate;
     }
 
-    public Integer getwrite_rate() {
+    public Integer getWriteRate() {
         return writeRate;
     }
 
-    public void setwrite_rate(Integer rate) {
+    public void setWriteRate(Integer rate) {
         writeRate = rate;
     }
 
@@ -66,11 +66,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         this.flushLatency = flushLatency;
     }
 
-    public long getactual_size() {
+    public long getActualSize() {
         return this.actualSize;
     }
 
-    public void setactual_size(long size) {
+    public void setActualSize(long size) {
         this.actualSize = size;
     }
 

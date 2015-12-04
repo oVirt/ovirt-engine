@@ -97,7 +97,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getImageId());
-        diskDynamic.setactual_size(getDiskImage().getActualSizeInBytes());
+        diskDynamic.setActualSize(getDiskImage().getActualSizeInBytes());
         DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
 
         setActionReturnValue(newImage);

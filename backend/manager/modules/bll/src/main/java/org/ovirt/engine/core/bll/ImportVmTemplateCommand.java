@@ -443,7 +443,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getImageId());
-            diskDynamic.setactual_size(image.getActualSizeInBytes());
+            diskDynamic.setActualSize(image.getActualSizeInBytes());
             DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }

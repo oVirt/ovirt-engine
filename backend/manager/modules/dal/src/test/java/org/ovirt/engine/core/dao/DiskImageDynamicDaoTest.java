@@ -79,7 +79,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
      */
     @Test
     public void testUpdate() {
-        existingDynamic.setactual_size(existingDynamic.getactual_size() * 10);
+        existingDynamic.setActualSize(existingDynamic.getActualSize() * 10);
 
         dao.update(existingDynamic);
 
@@ -119,8 +119,8 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         imageDao.save(newImage.getImage());
         diskDao.save(newImage);
         DiskImageDynamic dynamic = new DiskImageDynamic();
-        dynamic.setread_rate(5);
-        dynamic.setwrite_rate(6);
+        dynamic.setReadRate(5);
+        dynamic.setWriteRate(6);
         dynamic.setReadLatency(0d);
         dynamic.setFlushLatency(0.0202020d);
         dynamic.setWriteLatency(null);
@@ -145,8 +145,8 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
     @Test
     public void testUpdateAll() throws Exception {
         DiskImageDynamic existingDynamic2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
-        existingDynamic.setactual_size(100);
-        existingDynamic2.setread_rate(120);
+        existingDynamic.setActualSize(100);
+        existingDynamic2.setReadRate(120);
         existingDynamic.setReadLatency(100d);
         existingDynamic2.setReadLatency(0.00001d);
 
@@ -162,14 +162,14 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
         DiskImageDynamic existingDynamic2 = dao.get(imageId);
-        assertFalse(existingDynamic2.getread_rate().equals(120));
+        assertFalse(existingDynamic2.getReadRate().equals(120));
 
         VmDevice device = dbFacade.getVmDeviceDao().get(new VmDeviceId(imageGroupId, FixturesTool.VM_RHEL5_POOL_57));
         assertNull(device.getSnapshotId());
 
         existingDynamic2.setId(imageGroupId);
         Integer readRate = new Integer(120);
-        existingDynamic2.setread_rate(readRate);
+        existingDynamic2.setReadRate(readRate);
 
         // test that the record is updated when the active disk is attached to the vm
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.<Pair<Guid, DiskImageDynamic>> asList(new Pair(FixturesTool.VM_RHEL5_POOL_57,
@@ -182,9 +182,9 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         device.setSnapshotId(FixturesTool.EXISTING_SNAPSHOT_ID);
         dbFacade.getVmDeviceDao().update(device);
 
-        existingDynamic2.setread_rate(150);
+        existingDynamic2.setReadRate(150);
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.<Pair<Guid, DiskImageDynamic>>asList(new Pair(FixturesTool.VM_RHEL5_POOL_57,
                 existingDynamic2)));
-        assertEquals(readRate, dao.get(imageId).getread_rate());
+        assertEquals(readRate, dao.get(imageId).getReadRate());
     }
 }
