@@ -31,10 +31,10 @@ public class CommandMultiAsyncTasks {
         setCommandId(commandId);
     }
 
-    public void AttachTask(CommandAsyncTask asyncTask) {
+    public void attachTask(CommandAsyncTask asyncTask) {
         synchronized (_listTasks) {
             if (!_listTasks.containsKey(asyncTask.getVdsmTaskId())) {
-                log.info("CommandMultiAsyncTasks::AttachTask: Attaching task '{}' to command '{}'.",
+                log.info("CommandMultiAsyncTasks::attachTask: Attaching task '{}' to command '{}'.",
                         asyncTask.getVdsmTaskId(), getCommandId());
 
                 _listTasks.put(asyncTask.getVdsmTaskId(), asyncTask);
@@ -57,7 +57,7 @@ public class CommandMultiAsyncTasks {
         return retValue;
     }
 
-    public boolean ShouldEndAction() {
+    public boolean shouldEndAction() {
         synchronized (_listTasks) {
             ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
@@ -82,7 +82,7 @@ public class CommandMultiAsyncTasks {
         return true;
     }
 
-    public void MarkAllWithAttemptingEndAction() {
+    public void markAllWithAttemptingEndAction() {
         synchronized (_listTasks) {
             ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
@@ -123,7 +123,7 @@ public class CommandMultiAsyncTasks {
         return returnValue;
     }
 
-    public void Repoll() {
+    public void repoll() {
         synchronized (_listTasks) {
             ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
@@ -133,7 +133,7 @@ public class CommandMultiAsyncTasks {
         }
     }
 
-    public void ClearTasks() {
+    public void clearTasks() {
         synchronized (_listTasks) {
             ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
@@ -152,7 +152,7 @@ public class CommandMultiAsyncTasks {
         }
     }
 
-    public void StartPollingTask(Guid TaskID) {
+    public void startPollingTask(Guid TaskID) {
         synchronized (_listTasks) {
             if (_listTasks.containsKey(TaskID) && _listTasks.get(TaskID).getParameters() != null
                     && _listTasks.get(TaskID).getParameters().getDbAsyncTask() != null) {

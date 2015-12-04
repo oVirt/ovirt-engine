@@ -54,7 +54,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             }
 
             CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
-            entityInfo.AttachTask(this);
+            entityInfo.attachTask(this);
         }
 
         if (duringInit && isNewCommandAdded) {
@@ -74,7 +74,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
     @Override
     public void concreteStartPollingTask() {
         CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
-        entityInfo.StartPollingTask(getVdsmTaskId());
+        entityInfo.startPollingTask(getVdsmTaskId());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             clearAsyncTask();
         }
 
-        else if (entityInfo.ShouldEndAction() && !hasRunningChildCommands()) {
+        else if (entityInfo.shouldEndAction() && !hasRunningChildCommands()) {
             log.info(
                     "CommandAsyncTask::endActionIfNecessary: All tasks of command '{}' has ended -> executing 'endAction'",
                     getCommandId());
@@ -103,7 +103,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     entityInfo.getTasksCountCurrentActionType(),
                     entityInfo.getCommandId());
 
-            entityInfo.MarkAllWithAttemptingEndAction();
+            entityInfo.markAllWithAttemptingEndAction();
             ThreadPoolUtil.execute(new Runnable() {
                 @SuppressWarnings("synthetic-access")
                 @Override
@@ -235,7 +235,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                                     + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);
 
-                    commandInfo.Repoll();
+                    commandInfo.repoll();
                 }
 
                 else {
@@ -252,7 +252,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                         ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded() && isTaskGroupSuccess);
                     }
 
-                    commandInfo.ClearTasks();
+                    commandInfo.clearTasks();
 
                     synchronized (_lockObject) {
                         if (commandInfo.getAllCleared()) {
