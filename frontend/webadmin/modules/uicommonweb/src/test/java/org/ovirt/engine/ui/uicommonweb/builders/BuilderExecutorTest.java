@@ -30,7 +30,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void both_emptyBuilderList_ShuldDoNothing() {
+    public void bothEmptyBuilderListShouldDoNothing() {
         new BuilderExecutor<>(new FrontendAssert(fe1, fe2)).build(frontendModel, backendModel);
 
         new BuilderExecutor<>(new BackendAssert(be1, be2)).build(frontendModel, backendModel);
@@ -38,12 +38,12 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void frontendToBackend_oneBuilder() {
+    public void frontendToBackendOneBuilder() {
         new BuilderExecutor<>(new BackendAssert(fe1, be2), new Property1Builder()).build(frontendModel, backendModel);
     }
 
     @Test
-    public void frontendToBackend_twoBuilders() {
+    public void frontendToBackendTwoBuilders() {
         new BuilderExecutor<>(new BackendAssert(fe1, fe2),
                 new Property1Builder(),
                 new Property2Builder())
@@ -51,7 +51,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void oneComposite_oneInner_fromBackendToFrontend() {
+    public void oneCompositeOneInnerFromBackendToFrontend() {
         BuilderExecutor<TestingFrontendModel, TestingBackendModel> builderExecutor =
                 new BuilderExecutor<>(new BackendAssert(fe1, be2), new CompositeBuilder<>(new Property1Builder()));
 
@@ -59,7 +59,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void oneComposite_twoInners_fromBackendToFrontend() {
+    public void oneCompositeTwoInnersFromBackendToFrontend() {
         BuilderExecutor<TestingFrontendModel, TestingBackendModel> builderExecutor =
                 new BuilderExecutor<>(new BackendAssert(fe1, fe2),
                         new CompositeBuilder<>(new Property1Builder(), new Property2Builder()));
@@ -68,7 +68,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void twoComposites_oneInner_fromBackendToFrontend() {
+    public void twoCompositesOneInnerFromBackendToFrontend() {
 
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 =
                 new CompositeBuilder<>(new Property1Builder());
@@ -83,7 +83,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void compositeInComposite_fromBackendToFrontend() {
+    public void compositeInCompositeFromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite1 =
                 new CompositeBuilder<>(new Property1Builder());
 
@@ -94,7 +94,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void compositeInCompositeInsideComposite_fromBackendToFrontend() {
+    public void compositeInCompositeInsideCompositeFromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite0 =
                 new CompositeBuilder<>(new Property1Builder(), new Property2Builder());
 
@@ -107,7 +107,7 @@ public class BuilderExecutorTest {
     }
 
     @Test
-    public void compositeAndThanNormal_fromBackendToFrontend() {
+    public void compositeAndThanNormalFromBackendToFrontend() {
         CompositeBuilder<TestingFrontendModel, TestingBackendModel> composite =
                 new CompositeBuilder<>(new Property1Builder());
 
