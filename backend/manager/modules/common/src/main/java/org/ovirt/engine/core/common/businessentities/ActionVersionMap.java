@@ -19,31 +19,31 @@ public class ActionVersionMap implements Serializable {
 
     private int actionType;
 
-    public VdcActionType getaction_type() {
+    public VdcActionType getActionType() {
         return VdcActionType.forValue(actionType);
     }
 
-    public void setaction_type(VdcActionType value) {
+    public void setActionType(VdcActionType value) {
         actionType = value.getValue();
     }
 
     private String clusterMinimalVersion;
 
-    public String getcluster_minimal_version() {
+    public String getClusterMinimalVersion() {
         return clusterMinimalVersion;
     }
 
-    public void setcluster_minimal_version(String value) {
+    public void setClusterMinimalVersion(String value) {
         clusterMinimalVersion = value;
     }
 
     private String storagePoolMinimalVersion;
 
-    public String getstorage_pool_minimal_version() {
+    public String getStoragePoolMinimalVersion() {
         return storagePoolMinimalVersion;
     }
 
-    public void setstorage_pool_minimal_version(String value) {
+    public void setStoragePoolMinimalVersion(String value) {
         storagePoolMinimalVersion = value;
     }
 

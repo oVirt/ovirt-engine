@@ -928,10 +928,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // cluster level ok check storage_pool level
         if (actionVersionMap != null
                 && ((getVdsGroup() != null && getVdsGroup().getCompatibilityVersion().compareTo(
-                        new Version(actionVersionMap.getcluster_minimal_version())) < 0) ||
-                (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
+                        new Version(actionVersionMap.getClusterMinimalVersion())) < 0) ||
+                (!"*".equals(actionVersionMap.getStoragePoolMinimalVersion()) && getStoragePool() != null && getStoragePool()
                         .getCompatibilityVersion().compareTo(
-                                new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
+                                new Version(actionVersionMap.getStoragePoolMinimalVersion())) < 0))) {
             result = false;
             addCanDoActionMessage(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }

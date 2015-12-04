@@ -71,7 +71,7 @@ public class VersionSupport implements Serializable {
                 new Version(DbFacade.getInstance()
                         .getActionGroupDao()
                         .getActionVersionMapByActionType(action)
-                        .getcluster_minimal_version());
+                        .getClusterMinimalVersion());
         return version.compareTo(minimalVersion) >= 0;
     }
 }

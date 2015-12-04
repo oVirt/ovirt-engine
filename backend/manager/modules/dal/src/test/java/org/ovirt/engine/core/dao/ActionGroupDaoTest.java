@@ -28,9 +28,9 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getActionGroupDao();
         existingActionMap = dao.getActionVersionMapByActionType(VdcActionType.AddVm);
         newActionMap = new ActionVersionMap();
-        newActionMap.setaction_type(VdcActionType.ActivateStorageDomain);
-        newActionMap.setcluster_minimal_version("3.0");
-        newActionMap.setstorage_pool_minimal_version("3.0");
+        newActionMap.setActionType(VdcActionType.ActivateStorageDomain);
+        newActionMap.setClusterMinimalVersion("3.0");
+        newActionMap.setStoragePoolMinimalVersion("3.0");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetActionVersionMapByType() {
-        ActionVersionMap result = dao.getActionVersionMapByActionType(existingActionMap.getaction_type());
+        ActionVersionMap result = dao.getActionVersionMapByActionType(existingActionMap.getActionType());
 
         assertNotNull(result);
         assertEquals(existingActionMap, result);
@@ -62,7 +62,7 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
     public void testAddActionVersionMap() {
         dao.addActionVersionMap(newActionMap);
 
-        ActionVersionMap result = dao.getActionVersionMapByActionType(newActionMap.getaction_type());
+        ActionVersionMap result = dao.getActionVersionMapByActionType(newActionMap.getActionType());
 
         assertNotNull(result);
         assertEquals(newActionMap, result);
@@ -71,17 +71,17 @@ public class ActionGroupDaoTest extends BaseDaoTestCase {
     @Test
     public void testRemoveActionVersionMap() {
         ActionVersionMap dummy = new ActionVersionMap();
-        dummy.setaction_type(VdcActionType.RebootVm);
-        dummy.setcluster_minimal_version("3.0");
-        dummy.setstorage_pool_minimal_version("3.0");
+        dummy.setActionType(VdcActionType.RebootVm);
+        dummy.setClusterMinimalVersion("3.0");
+        dummy.setStoragePoolMinimalVersion("3.0");
         dao.addActionVersionMap(dummy);
 
-        ActionVersionMap result = dao.getActionVersionMapByActionType(dummy.getaction_type());
+        ActionVersionMap result = dao.getActionVersionMapByActionType(dummy.getActionType());
         assertNotNull(result);
 
-        dao.removeActionVersionMap(dummy.getaction_type());
+        dao.removeActionVersionMap(dummy.getActionType());
 
-        result = dao.getActionVersionMapByActionType(dummy.getaction_type());
+        result = dao.getActionVersionMapByActionType(dummy.getActionType());
         assertNull(result);
     }
 }

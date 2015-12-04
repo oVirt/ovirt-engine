@@ -67,9 +67,9 @@ public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
     @Override
     public void addActionVersionMap(ActionVersionMap actionVersionMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type",
-                actionVersionMap.getaction_type()).addValue("cluster_minimal_version",
-                actionVersionMap.getcluster_minimal_version()).addValue("storage_pool_minimal_version",
-                actionVersionMap.getstorage_pool_minimal_version());
+                actionVersionMap.getActionType()).addValue("cluster_minimal_version",
+                actionVersionMap.getClusterMinimalVersion()).addValue("storage_pool_minimal_version",
+                actionVersionMap.getStoragePoolMinimalVersion());
 
         getCallsHandler().executeModification("Insertaction_version_map", parameterSource);
     }
@@ -96,9 +96,9 @@ public class ActionGroupDaoImpl extends BaseDao implements ActionGroupDao {
         @Override
         public ActionVersionMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             ActionVersionMap entity = new ActionVersionMap();
-            entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
-            entity.setcluster_minimal_version(rs.getString("cluster_minimal_version"));
-            entity.setstorage_pool_minimal_version(rs.getString("storage_pool_minimal_version"));
+            entity.setActionType(VdcActionType.forValue(rs.getInt("action_type")));
+            entity.setClusterMinimalVersion(rs.getString("cluster_minimal_version"));
+            entity.setStoragePoolMinimalVersion(rs.getString("storage_pool_minimal_version"));
             return entity;
         }
     }

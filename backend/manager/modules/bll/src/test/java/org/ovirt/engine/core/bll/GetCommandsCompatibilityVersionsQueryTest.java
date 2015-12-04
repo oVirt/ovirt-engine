@@ -38,13 +38,13 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
     public void testExecuteQueryCommand() {
         GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase> queryToRun = getQuery();
         ActionVersionMap runVm = new ActionVersionMap();
-        runVm.setaction_type(VdcActionType.RunVm);
-        runVm.setcluster_minimal_version(RUN_VM_VERSION.toString());
-        runVm.setstorage_pool_minimal_version(RUN_VM_VERSION.toString());
+        runVm.setActionType(VdcActionType.RunVm);
+        runVm.setClusterMinimalVersion(RUN_VM_VERSION.toString());
+        runVm.setStoragePoolMinimalVersion(RUN_VM_VERSION.toString());
         ActionVersionMap addVmFromSnapshot = new ActionVersionMap();
-        addVmFromSnapshot.setaction_type(VdcActionType.AddVmFromSnapshot);
-        addVmFromSnapshot.setcluster_minimal_version(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
-        addVmFromSnapshot.setstorage_pool_minimal_version(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
+        addVmFromSnapshot.setActionType(VdcActionType.AddVmFromSnapshot);
+        addVmFromSnapshot.setClusterMinimalVersion(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
+        addVmFromSnapshot.setStoragePoolMinimalVersion(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
         List<ActionVersionMap> entriesFromDb = Arrays.asList(runVm, addVmFromSnapshot);
         doReturn(entriesFromDb).when(actionGroupDaoMock).getAllActionVersionMap();
         queryToRun.execute();
