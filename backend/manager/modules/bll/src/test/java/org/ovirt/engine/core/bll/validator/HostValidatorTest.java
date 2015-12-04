@@ -109,7 +109,7 @@ public class HostValidatorTest {
     }
 
     @Test
-    public void NameLengthIsTooLong() {
+    public void nameLengthIsTooLong() {
         when(host.getName()).thenReturn(RandomUtils.instance().nextString(HOST_NAME_SIZE * 2));
         assertThat(validator.nameLengthIsLegal(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG));
     }
