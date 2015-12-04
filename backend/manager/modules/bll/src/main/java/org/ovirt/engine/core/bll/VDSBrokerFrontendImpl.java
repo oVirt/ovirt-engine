@@ -28,28 +28,11 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
 
     private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.ovirt.engine.core.bll.VDSBrokerFrontend#RunVdsCommand(org.ovirt.engine.core
-     * .common.vdscommands.VDSCommandType,
-     * org.ovirt.engine.core.common.vdscommands.VDSParametersBase)
-     */
     @Override
     public VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
         return VdsHandler.handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.ovirt.engine.core.bll.VDSBrokerFrontend#RunAsyncVdsCommand(com.redhat.
-     * engine.common.vdscommands.VDSCommandType,
-     * org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase,
-     * org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand)
-     */
     @Override
     public VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType, VdsAndVmIDVDSParametersBase parameters,
                                              IVdsAsyncCommand command) {
@@ -67,13 +50,6 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.ovirt.engine.core.bll.VDSBrokerFrontend#GetAsyncCommandForVm(com.redhat
-     * .engine.compat.Guid)
-     */
     @Override
     public IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId) {
         IVdsAsyncCommand result = null;
@@ -81,13 +57,6 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.ovirt.engine.core.bll.VDSBrokerFrontend#RemoveAsyncRunningCommand(com.
-     * redhat.engine.compat.Guid)
-     */
     @Override
     public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
         return _asyncRunningCommands.remove(vmId);
