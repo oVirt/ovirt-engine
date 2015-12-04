@@ -24,19 +24,19 @@ public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainM
         this.diskProfileId = diskProfileId;
     }
 
-    public Guid getstorage_domain_id() {
+    public Guid getStorageDomainId() {
         return this.id.getStorageDomainId();
     }
 
-    public void setstorage_domain_id(Guid value) {
+    public void setStorageDomainId(Guid value) {
         this.id.setStorageDomainId(value);
     }
 
-    public Guid getimage_id() {
+    public Guid getImageId() {
         return this.id.getImageId();
     }
 
-    public void setimage_id(Guid value) {
+    public void setImageId(Guid value) {
         this.id.setImageId(value);
     }
 

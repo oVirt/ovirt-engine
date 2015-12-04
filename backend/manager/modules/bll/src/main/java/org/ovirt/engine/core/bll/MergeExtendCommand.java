@@ -56,7 +56,7 @@ public class MergeExtendCommand<T extends MergeParameters>
             List<ImageStorageDomainMap> maps = getDbFacade().getImageStorageDomainMapDao()
                     .getAllByImageId(getParameters().getBaseImage().getImageId());
             if (!maps.isEmpty()
-                    && getStorageDomainDao().get(maps.get(0).getstorage_domain_id())
+                    && getStorageDomainDao().get(maps.get(0).getStorageDomainId())
                     .getStorageType().isBlockDomain()) {
                 return true;
             }

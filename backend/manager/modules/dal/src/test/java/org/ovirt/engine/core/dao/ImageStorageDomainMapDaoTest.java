@@ -38,7 +38,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (ImageStorageDomainMap mapping : result) {
-            assertEquals(EXISTING_IMAGE_ID, mapping.getimage_id());
+            assertEquals(EXISTING_IMAGE_ID, mapping.getImageId());
         }
     }
 
@@ -50,7 +50,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (ImageStorageDomainMap mapping : result) {
-            assertEquals(EXISTING_DOMAIN_ID, mapping.getstorage_domain_id());
+            assertEquals(EXISTING_DOMAIN_ID, mapping.getStorageDomainId());
         }
     }
 
@@ -82,7 +82,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         dao.remove(new ImageStorageDomainMapId(EXISTING_IMAGE_ID, EXISTING_DOMAIN_ID));
         List<ImageStorageDomainMap> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
         for (ImageStorageDomainMap entry : entries) {
-            assertFalse(entry.getstorage_domain_id().equals(EXISTING_DOMAIN_ID));
+            assertFalse(entry.getStorageDomainId().equals(EXISTING_DOMAIN_ID));
         }
         assertNotNull(entries);
         assertTrue(entries.isEmpty());

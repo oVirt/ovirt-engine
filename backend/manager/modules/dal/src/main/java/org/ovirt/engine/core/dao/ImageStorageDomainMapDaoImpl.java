@@ -22,8 +22,8 @@ public class ImageStorageDomainMapDaoImpl extends BaseDao implements ImageStorag
     public void save(ImageStorageDomainMap entity) {
         getCallsHandler().executeModification("Insertimage_storage_domain_map",
                 getCustomMapSqlParameterSource().addValue("image_id",
-                        entity.getimage_id()).addValue("storage_domain_id",
-                        entity.getstorage_domain_id())
+                        entity.getImageId()).addValue("storage_domain_id",
+                        entity.getStorageDomainId())
                         .addValue("quota_id", entity.getQuotaId())
                         .addValue("disk_profile_id", entity.getDiskProfileId()));
     }
@@ -98,8 +98,8 @@ public class ImageStorageDomainMapDaoImpl extends BaseDao implements ImageStorag
                 @Override
                 public ImageStorageDomainMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                     ImageStorageDomainMap entity = new ImageStorageDomainMap();
-                    entity.setimage_id(getGuidDefaultEmpty(rs, "image_id"));
-                    entity.setstorage_domain_id(getGuidDefaultEmpty(rs, "storage_domain_id"));
+                    entity.setImageId(getGuidDefaultEmpty(rs, "image_id"));
+                    entity.setStorageDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
                     entity.setQuotaId(getGuid(rs, "quota_id"));
                     entity.setDiskProfileId(getGuid(rs, "disk_profile_id"));
                     return entity;
