@@ -18,7 +18,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
 
     @Override
     protected void executeIrsBrokerCommand() {
-        Map[] vms = BuildVmsStuctListFromParameters();
+        Map[] vms = buildVmsStuctListFromParameters();
         if (getParameters().getStorageDomainId().equals(Guid.Empty)) {
             status = getIrsProxy().updateVM(getParameters().getStoragePoolId().toString(), vms);
         } else {
@@ -28,7 +28,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
         proceedProxyReturnValue();
     }
 
-    private Map[] BuildVmsStuctListFromParameters() {
+    private Map[] buildVmsStuctListFromParameters() {
         // ("vm":vmGUID, "ovf":metaOVF, "imglist":imgList)
         Map[] result = new Map[getParameters().getInfoDictionary().entrySet().size()];
         int counter = 0;
