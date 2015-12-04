@@ -181,7 +181,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         List<Guid> storageDomainIds = new LinkedList<>();
         for (StoragePoolIsoMap isoMap : poolIsoMap) {
             if (statuses.contains(isoMap.getStatus())) {
-                storageDomainIds.add(isoMap.getstorage_id());
+                storageDomainIds.add(isoMap.getStorageId());
             }
         }
 

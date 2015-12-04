@@ -15,8 +15,8 @@ public class StoragePoolIsoMap implements BusinessEntityWithStatus<StoragePoolIs
 
     public StoragePoolIsoMap(Guid storage_id, Guid storage_pool_id, StorageDomainStatus status) {
         this();
-        setstorage_id(storage_id);
-        setstorage_pool_id(storage_pool_id);
+        setStorageId(storage_id);
+        setStoragePoolId(storage_pool_id);
         this.setStatus(status);
     }
 
@@ -32,19 +32,19 @@ public class StoragePoolIsoMap implements BusinessEntityWithStatus<StoragePoolIs
         this.id = id;
     }
 
-    public Guid getstorage_id() {
+    public Guid getStorageId() {
         return id.getStorageId();
     }
 
-    public void setstorage_id(Guid value) {
+    public void setStorageId(Guid value) {
         id.setStorageId(value);
     }
 
-    public Guid getstorage_pool_id() {
+    public Guid getStoragePoolId() {
         return this.id.getStoragePoolId();
     }
 
-    public void setstorage_pool_id(Guid value) {
+    public void setStoragePoolId(Guid value) {
         this.id.setStoragePoolId(value);
     }
 

@@ -75,7 +75,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     public void setId(Guid id) {
         getStorageStaticData().setId(id);
         getStorageDynamicData().setId(id);
-        getStoragePoolIsoMapData().setstorage_id(id);
+        getStoragePoolIsoMapData().setStorageId(id);
     }
 
     public String getStorage() {
@@ -119,11 +119,11 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     }
 
     public Guid getStoragePoolId() {
-        return getStoragePoolIsoMapData().getstorage_pool_id();
+        return getStoragePoolIsoMapData().getStoragePoolId();
     }
 
     public void setStoragePoolId(Guid storagePoolId) {
-        getStoragePoolIsoMapData().setstorage_pool_id(storagePoolId);
+        getStoragePoolIsoMapData().setStoragePoolId(storagePoolId);
     }
 
     public Integer getAvailableDiskSize() {

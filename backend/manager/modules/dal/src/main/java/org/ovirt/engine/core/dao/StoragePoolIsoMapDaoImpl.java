@@ -24,8 +24,8 @@ public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoM
         @Override
         public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             StoragePoolIsoMap entity = new StoragePoolIsoMap();
-            entity.setstorage_id(getGuidDefaultEmpty(rs, "storage_id"));
-            entity.setstorage_pool_id(getGuid(rs, "storage_pool_id"));
+            entity.setStorageId(getGuidDefaultEmpty(rs, "storage_id"));
+            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
             return entity;
         }
@@ -44,7 +44,7 @@ public class StoragePoolIsoMapDaoImpl extends BaseDao implements StoragePoolIsoM
     @Override
     public void save(StoragePoolIsoMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id",
-                map.getstorage_id()).addValue("storage_pool_id", map.getstorage_pool_id()).addValue("status",
+                map.getStorageId()).addValue("storage_pool_id", map.getStoragePoolId()).addValue("status",
                 map.getStatus());
         getCallsHandler().executeModification("Insertstorage_pool_iso_map", parameterSource);
     }

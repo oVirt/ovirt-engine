@@ -331,7 +331,7 @@ public class IsoDomainListSyncronizer {
         List<StoragePoolIsoMap> isoMapList = fetchAllStoragePoolsForIsoDomain(storageDomainId, imageType);
 
         for (StoragePoolIsoMap storagePoolIsoMap : isoMapList) {
-            Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id();
+            Guid storagePoolId = storagePoolIsoMap.getStoragePoolId();
             StorageDomainStatus status = storagePoolIsoMap.getStatus();
 
             if (StorageDomainStatus.Active != status) {

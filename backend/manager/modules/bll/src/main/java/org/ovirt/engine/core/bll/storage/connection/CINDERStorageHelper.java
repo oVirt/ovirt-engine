@@ -266,8 +266,8 @@ public class CINDERStorageHelper extends StorageHelperBase {
         execute(new Callable<Object>() {
             @Override
             public Object call() {
-                getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
-                        mapToRemove.getstorage_pool_id()));
+                getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
+                        mapToRemove.getStoragePoolId()));
                 return null;
             }
         });

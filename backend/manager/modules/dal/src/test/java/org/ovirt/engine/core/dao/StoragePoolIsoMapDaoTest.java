@@ -40,8 +40,8 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetStoragePoolIsoMap() {
         StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        existingStoragePoolIsoMap.getstorage_pool_id()));
+                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
+                        existingStoragePoolIsoMap.getStoragePoolId()));
 
         assertNotNull(result);
         assertEquals(existingStoragePoolIsoMap, result);
@@ -52,8 +52,8 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         dao.save(newStoragePoolIsoMap);
 
         StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(newStoragePoolIsoMap.getstorage_id(),
-                        newStoragePoolIsoMap.getstorage_pool_id()));
+                dao.get(new StoragePoolIsoMapId(newStoragePoolIsoMap.getStorageId(),
+                        newStoragePoolIsoMap.getStoragePoolId()));
 
         assertNotNull(result);
         assertEquals(newStoragePoolIsoMap, result);
@@ -66,8 +66,8 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         dao.update(existingStoragePoolIsoMap);
 
         StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        existingStoragePoolIsoMap.getstorage_pool_id()));
+                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
+                        existingStoragePoolIsoMap.getStoragePoolId()));
 
         assertNotNull(result);
         assertEquals(existingStoragePoolIsoMap, result);
@@ -75,12 +75,12 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveStoragePoolIsoMap() {
-        dao.remove(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                existingStoragePoolIsoMap.getstorage_pool_id()));
+        dao.remove(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
+                existingStoragePoolIsoMap.getStoragePoolId()));
 
         StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        existingStoragePoolIsoMap.getstorage_pool_id()));
+                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
+                        existingStoragePoolIsoMap.getStoragePoolId()));
 
         assertNull(result);
     }
@@ -92,7 +92,7 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StoragePoolIsoMap mapping : result) {
-            assertEquals(existingPool.getId(), mapping.getstorage_pool_id());
+            assertEquals(existingPool.getId(), mapping.getStoragePoolId());
         }
     }
 
@@ -103,7 +103,7 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StoragePoolIsoMap mapping : result) {
-            assertEquals(EXISTING_ISO_ID, mapping.getstorage_id());
+            assertEquals(EXISTING_ISO_ID, mapping.getStorageId());
         }
     }
 }

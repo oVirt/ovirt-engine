@@ -455,7 +455,7 @@ public class IrsProxyData {
                 if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.Inactive
                         && domainFromDb.getStorageDomainType() == StorageDomainType.Master) {
                     StoragePool pool = DbFacade.getInstance().getStoragePoolDao()
-                            .get(domainPoolMap.getstorage_pool_id());
+                            .get(domainPoolMap.getStoragePoolId());
                     if (pool != null) {
                         DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),
                                 StoragePoolStatus.Maintenance);

@@ -48,9 +48,9 @@ public class StoragePoolDomainHelper {
             if (domain.getStatus() == StorageDomainStatus.Maintenance ||
                     domain.getStatus() == StorageDomainStatus.PreparingForMaintenance ||
                     domain.getStatus() == StorageDomainStatus.Activating) {
-                storageDomains.put(domain.getstorage_id().toString(), "attached");
+                storageDomains.put(domain.getStorageId().toString(), "attached");
             } else {
-                storageDomains.put(domain.getstorage_id().toString(),
+                storageDomains.put(domain.getStorageId().toString(),
                         StorageDomainStatus.Active.toString().toLowerCase());
             }
         }
@@ -118,7 +118,7 @@ public class StoragePoolDomainHelper {
                     && applicableStatusesForUpdate.contains(storageStatusInPool.getStatus())) {
                 log.info("Storage Pool '{}' - Updating Storage Domain '{}' status from '{}' to '{}', reason: {}",
                         storagePoolId,
-                        storageStatusInPool.getstorage_id(),
+                        storageStatusInPool.getStorageId(),
                         storageStatusInPool.getStatus().name(),
                         newStatus.name(),
                         reason);
