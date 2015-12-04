@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 
-public class event_subscriber_id implements Serializable {
+public class EventSubscriberId implements Serializable {
     private static final long serialVersionUID = 9035847334394545216L;
 
     Guid subscriberId;
@@ -29,10 +29,10 @@ public class event_subscriber_id implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof event_subscriber_id)) {
+        if (!(obj instanceof EventSubscriberId)) {
             return false;
         }
-        event_subscriber_id other = (event_subscriber_id) obj;
+        EventSubscriberId other = (EventSubscriberId) obj;
         return Objects.equals(subscriberId, other.subscriberId)
                 && Objects.equals(eventUpName, other.eventUpName)
                 && eventNotificationMethod == other.eventNotificationMethod

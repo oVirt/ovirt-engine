@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -37,14 +37,14 @@ public class SubTabUserEventNotifierPresenter extends AbstractSubTabPresenter<Db
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
     static TabData getTabData(
-            SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
+            SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
         return new ModelBoundTabData(constants.userEventNotifierSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
     public SubTabUserEventNotifierPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
+            SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 UserSubTabPanelPresenter.TYPE_SetTabContent);
     }

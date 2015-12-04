@@ -16,13 +16,13 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
     protected boolean canDoAction() {
         boolean retValue;
         // get notification method
-        EventNotificationMethod event_notification_method = getParameters().getEventSubscriber().getevent_notification_method();
+        EventNotificationMethod event_notification_method = getParameters().getEventSubscriber().getEventNotificationMethod();
         if (event_notification_method != null) {
             // Validate user
             DbUser user =
                     DbFacade.getInstance()
                             .getDbUserDao()
-                            .get(getParameters().getEventSubscriber().getsubscriber_id());
+                            .get(getParameters().getEventSubscriber().getSubscriberId());
             if (user == null) {
                 addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                 retValue = false;

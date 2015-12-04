@@ -8,7 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,24 +21,24 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class EventDaoImpl extends BaseDao implements EventDao {
 
-    private static final class EventSubscriberRowMapper implements RowMapper<event_subscriber> {
+    private static final class EventSubscriberRowMapper implements RowMapper<EventSubscriber> {
         public static final EventSubscriberRowMapper instance = new EventSubscriberRowMapper();
 
         @Override
-        public event_subscriber mapRow(ResultSet rs, int rowNum)
+        public EventSubscriber mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            event_subscriber entity = new event_subscriber();
-            entity.setevent_up_name(rs.getString("event_up_name"));
-            entity.setevent_notification_method(EventNotificationMethod.valueOfString(rs.getString("notification_method")));
-            entity.setmethod_address(rs.getString("method_address"));
-            entity.setsubscriber_id(getGuidDefaultEmpty(rs, "subscriber_id"));
-            entity.settag_name(rs.getString("tag_name"));
+            EventSubscriber entity = new EventSubscriber();
+            entity.setEventUpName(rs.getString("event_up_name"));
+            entity.setEventNotificationMethod(EventNotificationMethod.valueOfString(rs.getString("notification_method")));
+            entity.setMethodAddress(rs.getString("method_address"));
+            entity.setSubscriberId(getGuidDefaultEmpty(rs, "subscriber_id"));
+            entity.setTagName(rs.getString("tag_name"));
             return entity;
         }
     }
 
     @Override
-    public List<event_subscriber> getAllForSubscriber(Guid id) {
+    public List<EventSubscriber> getAllForSubscriber(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("subscriber_id", id);
         return getCallsHandler().executeReadList("Getevent_subscriberBysubscriber_id",
@@ -47,24 +47,24 @@ public class EventDaoImpl extends BaseDao implements EventDao {
     }
 
     @Override
-    public void subscribe(event_subscriber subscriber) {
+    public void subscribe(EventSubscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("notification_method", subscriber.getevent_notification_method().getAsString())
-                .addValue("method_address", subscriber.getmethod_address())
-                .addValue("subscriber_id", subscriber.getsubscriber_id())
-                .addValue("tag_name", subscriber.gettag_name());
+                .addValue("event_up_name", subscriber.getEventUpName())
+                .addValue("notification_method", subscriber.getEventNotificationMethod().getAsString())
+                .addValue("method_address", subscriber.getMethodAddress())
+                .addValue("subscriber_id", subscriber.getSubscriberId())
+                .addValue("tag_name", subscriber.getTagName());
 
         getCallsHandler().executeModification("Insertevent_subscriber", parameterSource);
     }
 
     @Override
-    public void unsubscribe(event_subscriber subscriber) {
+    public void unsubscribe(EventSubscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("notification_method", subscriber.getevent_notification_method().getAsString())
-                .addValue("subscriber_id", subscriber.getsubscriber_id())
-                .addValue("tag_name", subscriber.gettag_name());
+                .addValue("event_up_name", subscriber.getEventUpName())
+                .addValue("notification_method", subscriber.getEventNotificationMethod().getAsString())
+                .addValue("subscriber_id", subscriber.getSubscriberId())
+                .addValue("tag_name", subscriber.getTagName());
 
         getCallsHandler().executeModification("Deleteevent_subscriber", parameterSource);
     }

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -31,8 +31,8 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
         }
-        jobProperties.put("address", getParameters().getEventSubscriber().getmethod_address());
-        jobProperties.put("eventtype", getParameters().getEventSubscriber().getevent_up_name());
+        jobProperties.put("address", getParameters().getEventSubscriber().getMethodAddress());
+        jobProperties.put("eventtype", getParameters().getEventSubscriber().getEventUpName());
         return jobProperties;
     }
 
@@ -42,21 +42,21 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *
      * @param eventNotificationMethod
      *            The eventNotificationMethods.
-     * @param event_subscriber
-     *            The event_subscriber.
+     * @param eventSubscriber
+     *            The eventSubscriber.
      * @param user
      *            The user.
      * @return
      */
     protected boolean ValidateNotificationMethod(EventNotificationMethod eventNotificationMethod,
-                                                 event_subscriber event_subscriber, DbUser user) {
+                                                 EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = true;
         EventNotificationMethod notificationMethod = eventNotificationMethod;
 
         switch (notificationMethod) {
         case SMTP:
-            String mailAddress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getEmail()
-                    : event_subscriber.getmethod_address();
+            String mailAddress = (StringUtils.isEmpty(eventSubscriber.getMethodAddress())) ? user.getEmail()
+                    : eventSubscriber.getMethodAddress();
 
             if (!isEmailValid(mailAddress)) {
                 addCanDoActionMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
@@ -76,17 +76,17 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *
      * @param eventNotificationMethod
      *            The eventNotificationMethod.
-     * @param event_subscriber
-     *            The event_subscriber.
+     * @param eventSubscriber
+     *            The eventSubscriber.
      * @param user
      *            The user.
      * @return
      */
     protected boolean ValidateAdd(EventNotificationMethod eventNotificationMethod,
-                                  event_subscriber event_subscriber, DbUser user) {
-        String tagName = event_subscriber.gettag_name();
+                                  EventSubscriber eventSubscriber, DbUser user) {
+        String tagName = eventSubscriber.getTagName();
         // validate notification method
-        boolean retValue = ValidateNotificationMethod(eventNotificationMethod, event_subscriber, user);
+        boolean retValue = ValidateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
 
         // validate tag name if exists
         if (retValue && StringUtils.isNotEmpty(tagName)) {
@@ -96,21 +96,21 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     }
 
     protected boolean ValidateRemove(EventNotificationMethod eventNotificationMethod,
-                                     event_subscriber event_subscriber, DbUser user) {
+                                     EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = false;
         // check if user is subscribed to the event
-        List<event_subscriber> list = DbFacade.getInstance()
+        List<EventSubscriber> list = DbFacade.getInstance()
                 .getEventDao()
-                .getAllForSubscriber(event_subscriber.getsubscriber_id());
+                .getAllForSubscriber(eventSubscriber.getSubscriberId());
         if (list.isEmpty()) {
             addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
         } else {
-            if (!ValidateSubscription(list, event_subscriber)) {
+            if (!ValidateSubscription(list, eventSubscriber)) {
                 addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
             } else {
-                String tagName = event_subscriber.gettag_name();
+                String tagName = eventSubscriber.getTagName();
                 // validate notification method
-                retValue = ValidateNotificationMethod(eventNotificationMethod, event_subscriber, user);
+                retValue = ValidateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
 
                 // validate tag name if exists
                 if (retValue && StringUtils.isNotEmpty(tagName)) {
@@ -162,12 +162,12 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         return valid;
     }
 
-    private static boolean ValidateSubscription(Iterable<event_subscriber> subscriptions, event_subscriber current) {
+    private static boolean ValidateSubscription(Iterable<EventSubscriber> subscriptions, EventSubscriber current) {
         boolean retValue = false;
-        for (event_subscriber event_subscriber : subscriptions) {
-            if (event_subscriber.getsubscriber_id().equals(current.getsubscriber_id())
-                    && StringUtils.equals(event_subscriber.getevent_up_name(), current.getevent_up_name())
-                    && event_subscriber.getevent_notification_method() == current.getevent_notification_method()) {
+        for (EventSubscriber eventSubscriber : subscriptions) {
+            if (eventSubscriber.getSubscriberId().equals(current.getSubscriberId())
+                    && StringUtils.equals(eventSubscriber.getEventUpName(), current.getEventUpName())
+                    && eventSubscriber.getEventNotificationMethod() == current.getEventNotificationMethod()) {
                 retValue = true;
                 break;
             }

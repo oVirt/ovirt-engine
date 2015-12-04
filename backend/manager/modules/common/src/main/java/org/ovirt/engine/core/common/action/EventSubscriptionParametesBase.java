@@ -2,24 +2,24 @@ package org.ovirt.engine.core.common.action;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 
 public class EventSubscriptionParametesBase extends VdcActionParametersBase {
     private static final long serialVersionUID = -6988075041053848616L;
 
-    public EventSubscriptionParametesBase(event_subscriber event_subscriber, String domain) {
-        setEventSubscriber(event_subscriber);
+    public EventSubscriptionParametesBase(EventSubscriber eventSubscriber, String domain) {
+        setEventSubscriber(eventSubscriber);
         setDomain(domain);
     }
 
     @Valid
-    private event_subscriber privateEventSubscriber;
+    private EventSubscriber privateEventSubscriber;
 
-    public event_subscriber getEventSubscriber() {
+    public EventSubscriber getEventSubscriber() {
         return privateEventSubscriber;
     }
 
-    private void setEventSubscriber(event_subscriber value) {
+    private void setEventSubscriber(EventSubscriber value) {
         privateEventSubscriber = value;
     }
 

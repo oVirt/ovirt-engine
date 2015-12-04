@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -23,11 +23,11 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         boolean retValue;
         // check if user is not already subscribed to this event with same
         // method and address
-        Guid subscriberId = getParameters().getEventSubscriber().getsubscriber_id();
-        String eventName = getParameters().getEventSubscriber().getevent_up_name();
+        Guid subscriberId = getParameters().getEventSubscriber().getSubscriberId();
+        String eventName = getParameters().getEventSubscriber().getEventUpName();
         EventNotificationMethod eventNotificationMethod =
-                getParameters().getEventSubscriber().getevent_notification_method();
-        List<event_subscriber> subscriptions = DbFacade.getInstance()
+                getParameters().getEventSubscriber().getEventNotificationMethod();
+        List<EventSubscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
         if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
             addCanDoActionMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
@@ -74,13 +74,13 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
      * @return <c>true</c> if [is already subscribed] [the specified
      * subscriptions]; otherwise, <c>false</c>.
      */
-    private static boolean IsAlreadySubscribed(Iterable<event_subscriber> subscriptions, Guid subscriberId,
+    private static boolean IsAlreadySubscribed(Iterable<EventSubscriber> subscriptions, Guid subscriberId,
             String eventName, EventNotificationMethod eventNotificationMethod) {
         boolean retval = false;
-        for (event_subscriber eventSubscriber : subscriptions) {
-            if (subscriberId.equals(eventSubscriber.getsubscriber_id())
-                    && StringUtils.equals(eventSubscriber.getevent_up_name(), eventName)
-                    && eventSubscriber.getevent_notification_method() == eventNotificationMethod) {
+        for (EventSubscriber eventSubscriber : subscriptions) {
+            if (subscriberId.equals(eventSubscriber.getSubscriberId())
+                    && StringUtils.equals(eventSubscriber.getEventUpName(), eventName)
+                    && eventSubscriber.getEventNotificationMethod() == eventNotificationMethod) {
                 retval = true;
                 break;
             }
@@ -90,8 +90,8 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getEventSubscriber().gettag_name() == null) {
-            getParameters().getEventSubscriber().settag_name("");
+        if (getParameters().getEventSubscriber().getTagName() == null) {
+            getParameters().getEventSubscriber().setTagName("");
         }
         DbFacade.getInstance().getEventDao().subscribe(getParameters().getEventSubscriber());
         setSucceeded(true);

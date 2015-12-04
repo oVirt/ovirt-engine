@@ -6,81 +6,81 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class event_notification_hist implements Serializable {
+public class EventNotificationHist implements Serializable {
     private static final long serialVersionUID = 5812544412663001644L;
 
-    public event_notification_hist() {
+    public EventNotificationHist() {
         sentAt = new Date(0);
         subscriberId = Guid.Empty;
     }
 
     private long auditLogId;
 
-    public long getaudit_log_id() {
+    public long getAuditLogId() {
         return this.auditLogId;
     }
 
-    public void setaudit_log_id(long value) {
+    public void setAuditLogId(long value) {
         this.auditLogId = value;
     }
 
     private String eventName;
 
-    public String getevent_name() {
+    public String getEventName() {
         return this.eventName;
     }
 
-    public void setevent_name(String value) {
+    public void setEventName(String value) {
         this.eventName = value;
     }
 
     private String methodType;
 
-    public String getmethod_type() {
+    public String getMethodType() {
         return this.methodType;
     }
 
-    public void setmethod_type(String value) {
+    public void setMethodType(String value) {
         this.methodType = value;
     }
 
     private String reason;
 
-    public String getreason() {
+    public String getReason() {
         return this.reason;
     }
 
-    public void setreason(String value) {
+    public void setReason(String value) {
         this.reason = value;
     }
 
     private Date sentAt;
 
-    public Date getsent_at() {
+    public Date getSentAt() {
         return this.sentAt;
     }
 
-    public void setsent_at(Date value) {
+    public void setSentAt(Date value) {
         this.sentAt = value;
     }
 
     private boolean status;
 
-    public boolean getstatus() {
+    public boolean getStatus() {
         return this.status;
     }
 
-    public void setstatus(boolean value) {
+    public void setStatus(boolean value) {
         this.status = value;
     }
 
     private Guid subscriberId;
 
-    public Guid getsubscriber_id() {
+    public Guid getSubscriberId() {
         return this.subscriberId;
     }
 
-    public void setsubscriber_id(Guid value) {
+    public void setSubscriberId(Guid value) {
         this.subscriberId = value;
     }
 
@@ -102,10 +102,10 @@ public class event_notification_hist implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof event_notification_hist)) {
+        if (!(obj instanceof EventNotificationHist)) {
             return false;
         }
-        event_notification_hist other = (event_notification_hist) obj;
+        EventNotificationHist other = (EventNotificationHist) obj;
         return auditLogId == other.auditLogId
                 && Objects.equals(subscriberId, other.subscriberId)
                 && Objects.equals(eventName, other.eventName)

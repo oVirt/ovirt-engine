@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -86,13 +86,13 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ManageEventsPopupPresenterWidget> manageEventsPopupProvider,
             final Provider<UserListModel> mainModelProvider,
             final Provider<UserEventNotifierListModel> modelProvider) {
-        SearchableDetailTabModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> result =
-                new SearchableDetailTabModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel>(
+        SearchableDetailTabModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> result =
+                new SearchableDetailTabModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserEventNotifierListModel source,

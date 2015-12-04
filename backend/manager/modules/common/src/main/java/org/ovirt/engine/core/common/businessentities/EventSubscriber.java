@@ -7,13 +7,13 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-public class event_subscriber implements IVdcQueryable {
+public class EventSubscriber implements IVdcQueryable {
     private static final long serialVersionUID = 5899827011779820180L;
 
-    private event_subscriber_id id;
+    private EventSubscriberId id;
 
-    public event_subscriber() {
-        id = new event_subscriber_id();
+    public EventSubscriber() {
+        id = new EventSubscriberId();
     }
 
     @Override
@@ -29,70 +29,70 @@ public class event_subscriber implements IVdcQueryable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof event_subscriber)) {
+        if (!(obj instanceof EventSubscriber)) {
             return false;
         }
-        event_subscriber other = (event_subscriber) obj;
+        EventSubscriber other = (EventSubscriber) obj;
         return Objects.equals(id, other.id)
                 && Objects.equals(methodAddress, other.methodAddress);
     }
 
-    public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod,
-                            Guid subscriber_id, String tagName) {
+    public EventSubscriber(String eventUpName, EventNotificationMethod eventNotificationMethod,
+                           Guid subscriberId, String tagName) {
         this();
-        this.id.eventUpName = event_up_name;
+        this.id.eventUpName = eventUpName;
         this.id.eventNotificationMethod = eventNotificationMethod;
         this.methodAddress = "";
-        this.id.subscriberId = subscriber_id;
+        this.id.subscriberId = subscriberId;
         this.id.tagName = tagName;
     }
 
-    public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod, String method_address, Guid subscriber_id,
-            String tagName) {
-        this (event_up_name, eventNotificationMethod, subscriber_id, tagName);
-        this.methodAddress = method_address;
+    public EventSubscriber(String eventUpName, EventNotificationMethod eventNotificationMethod, String methodAddress, Guid subscriberId,
+                           String tagName) {
+        this (eventUpName, eventNotificationMethod, subscriberId, tagName);
+        this.methodAddress = methodAddress;
     }
 
-    public String getevent_up_name() {
+    public String getEventUpName() {
         return this.id.eventUpName;
     }
 
-    public void setevent_up_name(String value) {
+    public void setEventUpName(String value) {
         this.id.eventUpName = value;
     }
 
-    public EventNotificationMethod getevent_notification_method() {
+    public EventNotificationMethod getEventNotificationMethod() {
         return this.id.eventNotificationMethod;
     }
 
-    public void setevent_notification_method(EventNotificationMethod eventNotificationMethod) {
+    public void setEventNotificationMethod(EventNotificationMethod eventNotificationMethod) {
         this.id.eventNotificationMethod = eventNotificationMethod;
     }
 
     @Email(message = "VALIDATION_EVENTS_EMAIL_FORMAT")
     private String methodAddress;
 
-    public String getmethod_address() {
+    public String getMethodAddress() {
         return this.methodAddress;
     }
 
-    public void setmethod_address(String value) {
+    public void setMethodAddress(String value) {
         this.methodAddress = value;
     }
 
-    public Guid getsubscriber_id() {
+    public Guid getSubscriberId() {
         return this.id.subscriberId;
     }
 
-    public void setsubscriber_id(Guid value) {
+    public void setSubscriberId(Guid value) {
         this.id.subscriberId = value;
     }
 
-    public String gettag_name() {
+    public String getTagName() {
         return this.id.tagName;
     }
 
-    public void settag_name(String value) {
+    public void setTagName(String value) {
         this.id.tagName = value;
     }
 

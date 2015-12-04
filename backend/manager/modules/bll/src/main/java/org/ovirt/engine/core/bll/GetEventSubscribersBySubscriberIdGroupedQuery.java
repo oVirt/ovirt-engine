@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -17,27 +17,25 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
 
     @Override
     protected void executeQueryCommand() {
-        List<event_subscriber> list = DbFacade
+        List<EventSubscriber> list = DbFacade
                 .getInstance()
                 .getEventDao()
                 .getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
-            HashMap<String, event_subscriber> dic = new HashMap<>();
+            HashMap<String, EventSubscriber> dic = new HashMap<>();
 
-            for (event_subscriber ev : list) {
-                // event_subscriber foundEv = groupedList.FirstOrDefault(a =>
-                // a.event_up_name == ev.event_up_name);
-                if (dic.containsKey(ev.getevent_up_name())) {
-                    dic.get(ev.getevent_up_name()).settag_name(
-                            dic.get(ev.getevent_up_name()).gettag_name() + ", " + ev.gettag_name());
+            for (EventSubscriber ev : list) {
+                if (dic.containsKey(ev.getEventUpName())) {
+                    dic.get(ev.getEventUpName()).setTagName(
+                            dic.get(ev.getEventUpName()).getTagName() + ", " + ev.getTagName());
                 } else {
-                    dic.put(ev.getevent_up_name(), ev);
+                    dic.put(ev.getEventUpName(), ev);
                 }
             }
 
-            ArrayList<event_subscriber> groupedList = new ArrayList<>(dic.values());
-            for (event_subscriber event : groupedList) {
-                event.settag_name(StringUtils.strip(event.gettag_name(), ", "));
+            ArrayList<EventSubscriber> groupedList = new ArrayList<>(dic.values());
+            for (EventSubscriber event : groupedList) {
+                event.setTagName(StringUtils.strip(event.getTagName(), ", "));
             }
             getQueryReturnValue().setReturnValue(groupedList);
         } else {

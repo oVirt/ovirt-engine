@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -395,7 +395,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> getSubTabUserPermissionlModelProvider();
 
-    SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getSubTabUserEventNotifierModelProvider();
+    SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> getSubTabUserEventNotifierModelProvider();
 
     SearchableDetailModelProvider<AuditLog, UserListModel, UserEventListModel> getSubTabUserEventModelProvider();
 

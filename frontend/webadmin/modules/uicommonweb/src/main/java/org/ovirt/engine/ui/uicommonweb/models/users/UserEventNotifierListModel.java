@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class UserEventNotifierListModel extends SearchableListModel<DbUser, event_subscriber> {
+public class UserEventNotifierListModel extends SearchableListModel<DbUser, EventSubscriber> {
 
     private UICommand privateManageEventsCommand;
 
@@ -94,9 +94,9 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
 
         ArrayList<SelectionTreeNodeModel> list = new ArrayList<>();
 
-        ArrayList<event_subscriber> items =
-                getItems() == null ? new ArrayList<event_subscriber>()
-                        : Linq.<event_subscriber> cast(getItems());
+        ArrayList<EventSubscriber> items =
+                getItems() == null ? new ArrayList<EventSubscriber>()
+                        : Linq.<EventSubscriber> cast(getItems());
         for (EventNotificationEntity eventType : eventTypes) {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
             stnm.setTitle(eventType.toString());
@@ -118,8 +118,8 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
                 eventGrp.setParent(list.get(list.size() - 1));
                 eventGrp.setIsSelectedNotificationPrevent(true);
                 eventGrp.setIsSelectedNullable(false);
-                for (event_subscriber es : items) {
-                    if (es.getevent_up_name().equals(logtype.toString())) {
+                for (EventSubscriber es : items) {
+                    if (es.getEventUpName().equals(logtype.toString())) {
                         eventGrp.setIsSelectedNullable(true);
                         break;
                     }
@@ -138,7 +138,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
             model.getEmail().setEntity(getEntity().getEmail());
         }
         else if (items.size() > 0) {
-            model.getEmail().setEntity(items.get(0).getmethod_address());
+            model.getEmail().setEntity(items.get(0).getMethodAddress());
         }
 
         model.setOldEmail((String) model.getEmail().getEntity());
@@ -169,17 +169,17 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
             }
         }
 
-        ArrayList<event_subscriber> existing =
-                getItems() != null ? Linq.<event_subscriber> cast(getItems())
-                        : new ArrayList<event_subscriber>();
+        ArrayList<EventSubscriber> existing =
+                getItems() != null ? Linq.<EventSubscriber> cast(getItems())
+                        : new ArrayList<EventSubscriber>();
         ArrayList<SelectionTreeNodeModel> added = new ArrayList<>();
-        ArrayList<event_subscriber> removed = new ArrayList<>();
+        ArrayList<EventSubscriber> removed = new ArrayList<>();
 
         // check what has been added:
         for (SelectionTreeNodeModel selectedEvent : selected) {
             boolean selectedInExisting = false;
-            for (event_subscriber existingEvent : existing) {
-                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name())) {
+            for (EventSubscriber existingEvent : existing) {
+                if (selectedEvent.getTitle().equals(existingEvent.getEventUpName())) {
                     selectedInExisting = true;
                     break;
                 }
@@ -191,10 +191,10 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         }
 
         // check what has been deleted:
-        for (event_subscriber existingEvent : existing) {
+        for (EventSubscriber existingEvent : existing) {
             boolean existingInSelected = false;
             for (SelectionTreeNodeModel selectedEvent : selected) {
-                if (selectedEvent.getTitle().equals(existingEvent.getevent_up_name())) {
+                if (selectedEvent.getTitle().equals(existingEvent.getEventUpName())) {
                     existingInSelected = true;
                     break;
                 }
@@ -206,14 +206,14 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         }
         if (!StringHelper.isNullOrEmpty(model.getOldEmail())
                 && !model.getOldEmail().equals(model.getEmail().getEntity())) {
-            for (event_subscriber a : existing) {
-                toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
+            for (EventSubscriber a : existing) {
+                toRemoveList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getEventUpName(),
                         EventNotificationMethod.SMTP,
-                        a.getmethod_address(),
-                        a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
+                        a.getMethodAddress(),
+                        a.getSubscriberId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             for (SelectionTreeNodeModel a : selected) {
-                toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
+                toAddList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -221,17 +221,17 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, even
         }
         else {
             for (SelectionTreeNodeModel a : added) {
-                toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
+                toAddList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            for (event_subscriber a : removed) {
-                toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
+            for (EventSubscriber a : removed) {
+                toRemoveList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getEventUpName(),
                         EventNotificationMethod.SMTP,
-                        a.getmethod_address(),
-                        a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
+                        a.getMethodAddress(),
+                        a.getSubscriberId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 

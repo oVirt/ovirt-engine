@@ -2,11 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>EventDao</code> defines a type for performing CRUD operations on instances of {@link event_subscriber}.
+ * <code>EventDao</code> defines a type for performing CRUD operations on instances of {@link EventSubscriber}.
  *
  *
  */
@@ -18,7 +18,7 @@ public interface EventDao extends Dao {
      *            the subscriber id
      * @return the subscriptions
      */
-    List<event_subscriber> getAllForSubscriber(Guid id);
+    List<EventSubscriber> getAllForSubscriber(Guid id);
 
     /**
      * Saves the provided subscriber.
@@ -26,7 +26,7 @@ public interface EventDao extends Dao {
      * @param subscriber
      *            the subscriber
      */
-    void subscribe(event_subscriber subscriber);
+    void subscribe(EventSubscriber subscriber);
 
     /**
      * Removes the specified subscriber.
@@ -34,6 +34,6 @@ public interface EventDao extends Dao {
      * @param subscriber
      *            the subscriber
      */
-    void unsubscribe(event_subscriber subscriber);
+    void unsubscribe(EventSubscriber subscriber);
 
 }
