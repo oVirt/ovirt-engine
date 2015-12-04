@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 public class SyntaxCheckerFactoryTest {
 
     @Test
-    public void CreateUISyntaxChecker() {
+    public void createUISyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createUISyntaxChecker("foo");
         Assert.assertNotNull(checker);
         Assert.assertEquals(checker, SyntaxCheckerFactory.createUISyntaxChecker("foo"));
@@ -20,7 +20,7 @@ public class SyntaxCheckerFactoryTest {
     }
 
     @Test
-    public void CreateBackendSyntaxChecker() {
+    public void createBackendSyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
         Assert.assertNotNull(checker);
         Assert.assertEquals(checker, SyntaxCheckerFactory.createBackendSyntaxChecker("foo"));
@@ -28,7 +28,7 @@ public class SyntaxCheckerFactoryTest {
     }
 
     @Test
-    public void CreateADSyntaxChecker() {
+    public void createADSyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createADSyntaxChecker("foo");
         Assert.assertNotNull(checker);
         Assert.assertEquals(checker, SyntaxCheckerFactory.createADSyntaxChecker("foo"));
@@ -36,7 +36,7 @@ public class SyntaxCheckerFactoryTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
         Mockito.when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn(100);
