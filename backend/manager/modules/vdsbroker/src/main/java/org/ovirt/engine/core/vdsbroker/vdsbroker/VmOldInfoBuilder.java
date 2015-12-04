@@ -185,17 +185,17 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 VnicProfile profile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
 
                 if (profile != null) {
-                    List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures = new ArrayList<>();
+                    List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
                     if (profile.isPortMirroring()) {
-                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.PORT_MIRRORING);
+                        unsupportedFeatures.add(VnicProfileProperties.PORT_MIRRORING);
                     }
 
                     if (profile.getNetworkQosId() != null) {
-                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.NETWORK_QOS);
+                        unsupportedFeatures.add(VnicProfileProperties.NETWORK_QOS);
                     }
 
                     if (profile.getCustomProperties() != null && !profile.getCustomProperties().isEmpty()) {
-                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.CUSTOM_PROPERTIES);
+                        unsupportedFeatures.add(VnicProfileProperties.CUSTOM_PROPERTIES);
                     }
 
                     reportUnsupportedVnicProfileFeatures(vm, nic, profile, unsupportedFeatures);

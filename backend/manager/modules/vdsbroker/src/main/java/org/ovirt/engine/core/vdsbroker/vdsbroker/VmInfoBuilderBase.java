@@ -298,7 +298,7 @@ public abstract class VmInfoBuilderBase {
     protected static void reportUnsupportedVnicProfileFeatures(VM vm,
             VmNic nic,
             VnicProfile vnicProfile,
-            List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures) {
+            List<VnicProfileProperties> unsupportedFeatures) {
 
         if (unsupportedFeatures.isEmpty()) {
             return;
@@ -369,14 +369,14 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmHostDevices();
 
-    protected static enum VNIC_PROFILE_PROPERTIES {
+    protected static enum VnicProfileProperties {
         PORT_MIRRORING("Port Mirroring"),
         CUSTOM_PROPERTIES("Custom Properties"),
         NETWORK_QOS("Network QoS");
 
         private final String featureName;
 
-        private VNIC_PROFILE_PROPERTIES(String featureName) {
+        private VnicProfileProperties(String featureName) {
             this.featureName = featureName;
         }
 

@@ -838,7 +838,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         VnicProfile vnicProfile = null;
         Network network = null;
         String networkName = "";
-        List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures = new ArrayList<>();
+        List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
         if (nic.getVnicProfileId() != null) {
             vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
             if (vnicProfile != null) {
@@ -847,7 +847,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(), vnicProfile, networkName);
                 if (!addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion())) {
-                    unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.NETWORK_QOS);
+                    unsupportedFeatures.add(VnicProfileProperties.NETWORK_QOS);
                 }
             }
         }
@@ -855,7 +855,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.NETWORK, networkName);
 
         if (!addPortMirroringToVmInterface(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion(), network)) {
-            unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.PORT_MIRRORING);
+            unsupportedFeatures.add(VnicProfileProperties.PORT_MIRRORING);
         }
 
         if (!addCustomPropertiesForDevice(struct,
@@ -863,7 +863,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 vmDevice,
                 vm.getVdsGroupCompatibilityVersion(),
                 getVnicCustomProperties(vnicProfile))) {
-            unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.CUSTOM_PROPERTIES);
+            unsupportedFeatures.add(VnicProfileProperties.CUSTOM_PROPERTIES);
         }
 
         reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
