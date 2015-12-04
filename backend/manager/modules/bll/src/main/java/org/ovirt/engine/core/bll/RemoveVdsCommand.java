@@ -78,13 +78,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
             @Override
             public Void runInTransaction() {
-                RemoveVdsStatisticsFromDb();
-                RemoveVdsDynamicFromDb();
-                RemoveVdsStaticFromDb();
+                removeVdsStatisticsFromDb();
+                removeVdsDynamicFromDb();
+                removeVdsStaticFromDb();
                 return null;
             }
         });
-        RemoveVdsFromCollection();
+        removeVdsFromCollection();
         setSucceeded(true);
     }
 
@@ -141,19 +141,19 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     .getStatus() == VDSStatus.NonOperational) || (vds.getStatus() == VDSStatus.InstallingOS));
     }
 
-    private void RemoveVdsFromCollection() {
+    private void removeVdsFromCollection() {
         runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
     }
 
-    private void RemoveVdsStaticFromDb() {
+    private void removeVdsStaticFromDb() {
         getVdsStaticDao().remove(getVdsId());
     }
 
-    private void RemoveVdsDynamicFromDb() {
+    private void removeVdsDynamicFromDb() {
         getVdsDynamicDao().remove(getVdsId());
     }
 
-    private void RemoveVdsStatisticsFromDb() {
+    private void removeVdsStatisticsFromDb() {
         getVdsStatisticsDao().remove(getVdsId());
     }
 
