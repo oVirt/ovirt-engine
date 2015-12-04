@@ -56,7 +56,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetstorage_domain_by_type_for_storagePoolId() {
+    public void testGetStorageDomainByTypeForStoragePoolId() {
         List<StorageDomain> result = dao.getStorageDomains(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"),
                 StorageDomainType.Master);
 
