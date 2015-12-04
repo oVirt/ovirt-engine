@@ -401,7 +401,7 @@ public class ResourceManager implements BackendService {
      * @param parameters
      * @return The command, or null if it can't be created.
      */
-    private <P extends VDSParametersBase> VDSCommandBase<P> CreateCommand(
+    private <P extends VDSParametersBase> VDSCommandBase<P> createCommand(
             VDSCommandType commandType, P parameters) {
         try {
             @SuppressWarnings("unchecked")
@@ -415,11 +415,11 @@ public class ResourceManager implements BackendService {
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
-                log.error("CreateCommand failed: {}", e.getCause().getMessage());
+                log.error("createCommand failed: {}", e.getCause().getMessage());
                 log.error("Exception", e);
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
-            log.error("CreateCommand failed: {}", e.getMessage());
+            log.error("createCommand failed: {}", e.getMessage());
             log.debug("Exception", e);
         }
         return null;
@@ -459,7 +459,7 @@ public class ResourceManager implements BackendService {
 
     public <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
         // try run vds command
-        VDSCommandBase<P> command = CreateCommand(commandType, parameters);
+        VDSCommandBase<P> command = createCommand(commandType, parameters);
 
         if (command != null) {
             command.execute();
@@ -470,7 +470,7 @@ public class ResourceManager implements BackendService {
     }
 
     public <P extends VDSParametersBase> VDSAsyncReturnValue runAsyncVdsCommand(VDSCommandType commandType, P parameters) {
-        VDSCommandBase<P> command = CreateCommand(commandType, parameters);
+        VDSCommandBase<P> command = createCommand(commandType, parameters);
 
         if (command != null) {
             command.setAsync(true);
