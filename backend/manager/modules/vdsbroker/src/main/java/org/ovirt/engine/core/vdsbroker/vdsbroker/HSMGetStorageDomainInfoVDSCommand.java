@@ -27,12 +27,12 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     protected void executeVdsBrokerCommand() {
         result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        Pair<StorageDomainStatic, Guid> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(result.storageInfo);
+        Pair<StorageDomainStatic, Guid> pairSdStatic = buildStorageStaticFromXmlRpcStruct(result.storageInfo);
         pairSdStatic.getFirst().setId(getParameters().getStorageDomainId());
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<StorageDomainStatic, Guid> BuildStorageStaticFromXmlRpcStruct(Map<String, Object>  xmlRpcStruct) {
+    private static Pair<StorageDomainStatic, Guid> buildStorageStaticFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
         Pair<StorageDomainStatic, Guid> returnValue = new Pair<>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (xmlRpcStruct.containsKey("name")) {
