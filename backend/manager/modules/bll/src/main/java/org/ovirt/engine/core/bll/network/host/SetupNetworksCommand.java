@@ -60,7 +60,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     @Inject
     private NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver;
 
-    public static enum SETUP_NETWORKS_RESOLUTION {
+    public static enum SetupNetworksResolution {
         NO_CHANGES_DETECTED;
     };
 
@@ -145,7 +145,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                     getVdsId());
 
             if (isInternalExecution()) {
-                setActionReturnValue(SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED);
+                setActionReturnValue(SetupNetworksResolution.NO_CHANGES_DETECTED);
             }
 
             setSucceeded(true);
