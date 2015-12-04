@@ -600,8 +600,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             }
         }
         if (retValue.getExecuteFailedMessages().size() > 0) {
-            // List<string> msgs =
-            // ErrorTranslator.TranslateErrorText(retValue.ExecuteFailedMessages);
             for (String s : retValue.getExecuteFailedMessages()) {
                 log.error("{} - Ececution Fault - {}", prefixToMessage, s);
             }
