@@ -187,7 +187,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         }
 
-        UpdateVmNetworks();
+        updateVmNetworks();
         updateVmNumaNodes();
         if (isHotSetEnabled()) {
             hotSetCpus(cpuPerSocket, numOfSockets, threadsPerCpu);
@@ -491,7 +491,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
-    private void UpdateVmNetworks() {
+    private void updateVmNetworks() {
         // check if the cluster has changed
         if (!Objects.equals(getVm().getVdsGroupId(), getParameters().getVmStaticData().getVdsGroupId())) {
             List<Network> networks =
