@@ -26,10 +26,10 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
         public VdcOption mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             VdcOption entity = new VdcOption();
-            entity.setoption_name(rs.getString("option_name"));
-            entity.setoption_value(rs.getString("option_value"));
-            entity.setoption_id(rs.getInt("option_id"));
-            entity.setversion(rs.getString("version"));
+            entity.setOptionName(rs.getString("option_name"));
+            entity.setOptionValue(rs.getString("option_value"));
+            entity.setOptionId(rs.getInt("option_id"));
+            entity.setVersion(rs.getString("version"));
             return entity;
         }
     }
@@ -60,10 +60,10 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
     @Override
     public void save(VdcOption option) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("option_name", option.getoption_name())
-                .addValue("option_value", option.getoption_value())
-                .addValue("version", option.getversion())
-                .addValue("option_id", option.getoption_id());
+                .addValue("option_name", option.getOptionName())
+                .addValue("option_value", option.getOptionValue())
+                .addValue("version", option.getVersion())
+                .addValue("option_id", option.getOptionId());
 
         getCallsHandler().executeModification("InsertVdcOption", parameterSource);
     }
@@ -71,10 +71,10 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
     @Override
     public void update(VdcOption option) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("option_name", option.getoption_name())
-                .addValue("option_value", option.getoption_value())
-                .addValue("option_id", option.getoption_id())
-                .addValue("version", option.getversion());
+                .addValue("option_name", option.getOptionName())
+                .addValue("option_value", option.getOptionValue())
+                .addValue("option_id", option.getOptionId())
+                .addValue("version", option.getVersion());
 
         getCallsHandler().executeModification("UpdateVdcOption", parameterSource);
     }

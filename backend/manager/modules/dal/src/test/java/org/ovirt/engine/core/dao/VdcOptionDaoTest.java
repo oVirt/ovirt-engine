@@ -26,9 +26,9 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
         existingOption = dao.getByNameAndVersion("UserDefinedVmPropertiesKey1", "general");
 
         newOption = new VdcOption();
-        newOption.setoption_name("option_name");
-        newOption.setoption_value("option_value");
-        newOption.setversion("general");
+        newOption.setOptionName("option_name");
+        newOption.setOptionValue("option_value");
+        newOption.setVersion("general");
     }
 
     /**
@@ -46,7 +46,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        VdcOption result = dao.get(existingOption.getoption_id());
+        VdcOption result = dao.get(existingOption.getOptionId());
 
         assertNotNull(result);
         assertEquals(existingOption, result);
@@ -57,7 +57,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByNameAndVersionWithInvalidName() {
-        VdcOption result = dao.getByNameAndVersion("farkle", existingOption.getversion());
+        VdcOption result = dao.getByNameAndVersion("farkle", existingOption.getVersion());
 
         assertNull(result);
     }
@@ -67,7 +67,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByNameAndVersionWithInvalidVersion() {
-        VdcOption result = dao.getByNameAndVersion(existingOption.getoption_name(), "farkle");
+        VdcOption result = dao.getByNameAndVersion(existingOption.getOptionName(), "farkle");
 
         assertNull(result);
     }
@@ -77,7 +77,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetBynameAndVersion() {
-        VdcOption result = dao.getByNameAndVersion(existingOption.getoption_name(), existingOption.getversion());
+        VdcOption result = dao.getByNameAndVersion(existingOption.getOptionName(), existingOption.getVersion());
 
         assertNotNull(result);
         assertEquals(existingOption, result);
@@ -102,7 +102,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
     public void testSave() {
         dao.save(newOption);
 
-        VdcOption result = dao.getByNameAndVersion(newOption.getoption_name(), newOption.getversion());
+        VdcOption result = dao.getByNameAndVersion(newOption.getOptionName(), newOption.getVersion());
 
         assertNotNull(result);
         assertEquals(newOption, result);
@@ -113,11 +113,11 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdate() {
-        existingOption.setoption_value("this is a new value");
+        existingOption.setOptionValue("this is a new value");
 
         dao.update(existingOption);
 
-        VdcOption result = dao.get(existingOption.getoption_id());
+        VdcOption result = dao.get(existingOption.getOptionId());
 
         assertEquals(existingOption, result);
     }
@@ -127,9 +127,9 @@ public class VdcOptionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingOption.getoption_id());
+        dao.remove(existingOption.getOptionId());
 
-        VdcOption result = dao.get(existingOption.getoption_id());
+        VdcOption result = dao.get(existingOption.getOptionId());
 
         assertNull(result);
     }

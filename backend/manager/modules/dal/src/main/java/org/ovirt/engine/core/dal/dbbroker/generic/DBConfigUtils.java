@@ -89,17 +89,17 @@ public class DBConfigUtils extends ConfigUtilsBase {
      * @return
      */
     private static Object getValue(VdcOption option) {
-        Object result = option.getoption_value();
-        EnumValue enumValue = parseEnumValue(option.getoption_name());
+        Object result = option.getOptionValue();
+        EnumValue enumValue = parseEnumValue(option.getOptionName());
         if (enumValue != null) {
             final OptionBehaviourAttribute optionBehaviour = enumValue.getOptionBehaviour();
             final Class<?> fieldType = enumValue.getFieldType();
             final String defaultValue = enumValue.getDefaultValue();
-            result = parseValue(option.getoption_value(), option.getoption_name(), fieldType);
+            result = parseValue(option.getOptionValue(), option.getOptionName(), fieldType);
 
             // if null use default from @DefaultValueAttribute
             if (result == null) {
-                result = parseValue(defaultValue, option.getoption_name(), fieldType);
+                result = parseValue(defaultValue, option.getOptionName(), fieldType);
             }
 
             if (optionBehaviour != null) {
@@ -114,7 +114,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                         result = EngineEncryptionUtils.decrypt((String) result);
                     } catch (Exception e) {
                         log.error("Failed to decrypt value for property '{}', encrypted value will be used. Error: {} ",
-                                option.getoption_name(), e.getMessage());
+                                option.getOptionName(), e.getMessage());
                         log.debug("Exception", e);
                     }
                     break;
@@ -139,7 +139,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                             versions.add(new Version(ver));
                         } catch (Exception e) {
                             log.error("Could not parse version '{}' for config value '{}'",
-                                    ver, option.getoption_name());
+                                    ver, option.getOptionName());
                         }
                     }
                     result = versions;
@@ -183,11 +183,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
     @Override
     protected void setValue(String name, String value, String version) {
         VdcOption vdcOption = dbfacade.getVdcOptionDao().getByNameAndVersion(name, version);
-        vdcOption.setoption_value(value);
+        vdcOption.setOptionValue(value);
         dbfacade.getVdcOptionDao().update(vdcOption);
         try {
             // refresh the cache entry after update
-            _vdcOptionCache.get(vdcOption.getoption_name()).put(version, getValue(vdcOption));
+            _vdcOptionCache.get(vdcOption.getOptionName()).put(version, getValue(vdcOption));
         } catch (Exception e) {
             log.error("Error updating option '{}' in cache: {}", name, e.getMessage());
             log.debug("Exception", e);
@@ -212,8 +212,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
             returnValue = (T) values.get(version);
         } else {
             VdcOption option = new VdcOption();
-            option.setoption_name(name.toString());
-            option.setoption_value(null);
+            option.setOptionName(name.toString());
+            option.setOptionValue(null);
             // returns default value - version independent
             returnValue = (T) getValue(option);
 
@@ -224,7 +224,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 // Couldn't find this value at all, adding to cache.
                 Map<String, Object> defaultValues = new HashMap<>();
                 defaultValues.put(version, returnValue);
-                _vdcOptionCache.put(option.getoption_name(), defaultValues);
+                _vdcOptionCache.put(option.getOptionName(), defaultValues);
                 log.debug("Adding new value to configuration cache.");
             }
             log.debug("Didn't find the value of '{}' in DB for version '{}' - using default: '{}'",
@@ -241,11 +241,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
         List<VdcOption> list = getVdcOptionDao().getAll();
         for (VdcOption option : list) {
             try {
-                if (isReloadable(option.getoption_name())) {
+                if (isReloadable(option.getOptionName())) {
                     updateOption(option);
                 }
             } catch (NoSuchFieldException e) {
-                log.error("Not refreshing field '{}': does not exist in class {}.", option.getoption_name(),
+                log.error("Not refreshing field '{}': does not exist in class {}.", option.getOptionName(),
                         ConfigValues.class.getSimpleName());
             }
         }
@@ -256,12 +256,12 @@ public class DBConfigUtils extends ConfigUtilsBase {
     }
 
     private static void updateOption(VdcOption option) {
-        Map<String, Object> values = _vdcOptionCache.get(option.getoption_name());
+        Map<String, Object> values = _vdcOptionCache.get(option.getOptionName());
         if (values == null) {
             values = new HashMap<>();
-            _vdcOptionCache.put(option.getoption_name(), values);
+            _vdcOptionCache.put(option.getOptionName(), values);
         }
-        values.put(option.getversion(), getValue(option));
+        values.put(option.getVersion(), getValue(option));
     }
 
     private static boolean isReloadable(String optionName) throws NoSuchFieldException {

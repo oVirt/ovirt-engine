@@ -424,7 +424,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // and can not use the cached configuration.
         String mode =
                 (dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
-                        ConfigCommon.defaultConfigurationVersion)).getoption_value();
+                        ConfigCommon.defaultConfigurationVersion)).getOptionValue();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
         }
@@ -533,7 +533,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
             String mode = (dbFacade.getVdcOptionDao().getByNameAndVersion
-                    (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getoption_value();
+                    (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getOptionValue();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
