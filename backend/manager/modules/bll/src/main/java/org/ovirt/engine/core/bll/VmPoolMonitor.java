@@ -105,7 +105,7 @@ public class VmPoolMonitor implements BackendService {
         if (vmPoolMaps != null && vmPoolMaps.size() > 0) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
-                    if (prestartVm(map.getvm_guid())) {
+                    if (prestartVm(map.getVmId())) {
                         prestartedVmsCounter++;
                         failedAttempts = 0;
                     } else {

@@ -116,8 +116,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getvm_guid(), getReturnValue().getCanDoActionMessages())) {
-                    return map.getvm_guid();
+                if (canAttachPrestartedVmToUser(map.getVmId(), getReturnValue().getCanDoActionMessages())) {
+                    return map.getVmId();
                 }
             }
         }
@@ -128,8 +128,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachNonPrestartedVmToUser(map.getvm_guid(), getReturnValue().getCanDoActionMessages())) {
-                    return map.getvm_guid();
+                if (canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getCanDoActionMessages())) {
+                    return map.getVmId();
                 }
             }
         }

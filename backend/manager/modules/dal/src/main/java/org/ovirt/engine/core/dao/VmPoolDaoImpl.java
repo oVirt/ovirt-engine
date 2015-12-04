@@ -134,8 +134,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
 
     @Override
     public void addVmToPool(VmPoolMap map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", map.getvm_guid())
-                .addValue("vm_pool_id", map.getvm_pool_id());
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", map.getVmId())
+                .addValue("vm_pool_id", map.getVmPoolId());
 
         getCallsHandler().executeModification("InsertVm_pool_map", parameterSource);
     }
@@ -213,8 +213,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
         @Override
         public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             VmPoolMap entity = new VmPoolMap();
-            entity.setvm_guid(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setvm_pool_id(getGuidDefaultEmpty(rs, "vm_pool_id"));
+            entity.setVmId(getGuidDefaultEmpty(rs, "vm_guid"));
+            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
             return entity;
         }
     }

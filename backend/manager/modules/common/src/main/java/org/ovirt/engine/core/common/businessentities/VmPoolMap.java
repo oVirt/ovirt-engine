@@ -19,21 +19,21 @@ public class VmPoolMap implements Serializable {
 
     private Guid vmId;
 
-    public Guid getvm_guid() {
+    public Guid getVmId() {
         return this.vmId;
     }
 
-    public void setvm_guid(Guid value) {
+    public void setVmId(Guid value) {
         this.vmId = value;
     }
 
     private Guid vmPoolId;
 
-    public Guid getvm_pool_id() {
+    public Guid getVmPoolId() {
         return this.vmPoolId;
     }
 
-    public void setvm_pool_id(Guid value) {
+    public void setVmPoolId(Guid value) {
         this.vmPoolId = value;
     }
 
