@@ -47,7 +47,7 @@ public class I18NRegexpTest {
     @Theory
     public void allCharsetCanPass(CorrectString correct) {
         assertThat("Check can not recognize all chars in a valid string '" + correct.text + "'",
-                new Regex(REGEXP).IsMatch(correct.text),
+                new Regex(REGEXP).isMatch(correct.text),
                 is(true));
     }
 
@@ -55,10 +55,10 @@ public class I18NRegexpTest {
     public void anyCharsetWithIncorrectPartCanNotPass(CorrectString correctPart, IncorrectString incorrectPart) {
         assertThat("Check can not recognize incorrect char in string incorrect string '" + correctPart.text
                 + incorrectPart.text
-                + "'", new Regex(REGEXP).IsMatch(correctPart.text + incorrectPart.text), is(false));
+                + "'", new Regex(REGEXP).isMatch(correctPart.text + incorrectPart.text), is(false));
         assertThat("Check can not recognize incorrect char in string incorrect string '" + incorrectPart.text
                 + correctPart.text
-                + "'", new Regex(REGEXP).IsMatch(incorrectPart.text + correctPart.text), is(false));
+                + "'", new Regex(REGEXP).isMatch(incorrectPart.text + correctPart.text), is(false));
     }
 
 }

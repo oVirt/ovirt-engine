@@ -10,11 +10,11 @@ import java.util.regex.Pattern;
  */
 @Deprecated
 public class Regex {
-    public static Match Match(String string, String pattern) {
-        return Match(string, pattern, 0);
+    public static Match match(String string, String pattern) {
+        return match(string, pattern, 0);
     }
 
-    public static Match Match(String string, String pattern, int options) {
+    public static Match match(String string, String pattern, int options) {
         Matcher matcher = Pattern.compile(pattern, options).matcher(string);
         boolean success = matcher.find();
         return new Match(matcher.toMatchResult(), success);
@@ -30,12 +30,12 @@ public class Regex {
         pattern = Pattern.compile(string, options);
     }
 
-    public boolean IsMatch(String candidate) {
+    public boolean isMatch(String candidate) {
         return pattern.matcher(candidate).find();
     }
 
-    public static boolean IsMatch(String candidate, String regEx) {
-        return (new Regex(regEx)).IsMatch(candidate);
+    public static boolean isMatch(String candidate, String regEx) {
+        return (new Regex(regEx)).isMatch(candidate);
     }
 
     public static String replace(String searchString, String pageStringRegex, String format) {
@@ -48,12 +48,12 @@ public class Regex {
         throw new NotImplementedException(); // juicommon
     }
 
-    public static boolean IsMatch(String string, String expression, RegexOptions options) {
+    public static boolean isMatch(String string, String expression, RegexOptions options) {
         // TODO Auto-generated method stub
         throw new NotImplementedException(); // juicommon
     }
 
-    public static boolean IsMatch(String searchString, String pageStringRegex, int ignorecase) {
+    public static boolean isMatch(String searchString, String pageStringRegex, int ignorecase) {
         // TODO Auto-generated method stub
         throw new NotImplementedException(); // juicommon
     }

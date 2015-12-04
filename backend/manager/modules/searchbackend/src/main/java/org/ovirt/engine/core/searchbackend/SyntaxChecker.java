@@ -120,7 +120,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (curChar == '"') {
             betweenDoubleQuotes = (!betweenDoubleQuotes);
             if (betweenDoubleQuotes) {
-                if (!firstDQRegexp.IsMatch(strRealObj)) {
+                if (!firstDQRegexp.isMatch(strRealObj)) {
                     container.setErr(SyntaxError.INVALID_CONDITION_VALUE, startPos.argvalue, idx + 1);
                     return ValueParseResult.Err;
                 }
@@ -135,7 +135,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             if (((curChar == ' ') || (idx + 1 == searchText.length())) && (betweenDoubleQuotes == false)
                     && (addObjFlag == false)) {
                 strRealObj = strRealObj.trim();
-                if (nonSpaceRegexp.IsMatch(strRealObj)) {
+                if (nonSpaceRegexp.isMatch(strRealObj)) {
                     addObjFlag = true;
                 } else {
                     startPos.argvalue = idx + 1;
@@ -144,7 +144,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         } else {
             if ((curChar == ' ') && (betweenDoubleQuotes == false) && (addObjFlag == false)) {
                 strRealObj = strRealObj.trim();
-                if (nonSpaceRegexp.IsMatch(strRealObj)) {
+                if (nonSpaceRegexp.isMatch(strRealObj)) {
                     addObjFlag = true;
                 } else {
                     startPos.argvalue = idx + 1;

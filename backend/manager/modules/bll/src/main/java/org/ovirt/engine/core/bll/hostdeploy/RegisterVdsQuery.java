@@ -569,8 +569,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     String vds_unique_id_helper = getParameters().getVdsUniqueId().toLowerCase()
                             .replace(":", "-");
                     if (vds_hostname_helper.startsWith(pattern) || vds_unique_id_helper.startsWith(pattern)
-                            || pattern_regex.IsMatch(vds_hostname_helper)
-                            || pattern_regex.IsMatch(vds_unique_id_helper)) {
+                            || pattern_regex.isMatch(vds_hostname_helper)
+                            || pattern_regex.isMatch(vds_unique_id_helper)) {
                         isPending.argvalue = false;
                         break;
                     }

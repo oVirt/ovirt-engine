@@ -91,7 +91,7 @@ public class FenceValidator {
     public boolean isFenceAgentVersionCompatible(FenceAgent agent,
             String clusterCompatibilityVersion,
             List<String> messages) {
-        if (!Regex.IsMatch(FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(),
+        if (!Regex.isMatch(FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(),
                 clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)", agent.getType()))) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED.name());
             return false;

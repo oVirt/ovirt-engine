@@ -227,7 +227,7 @@ public enum TimeZoneType {
 
     public int getStandardOffset(String timeZoneKey) {
         String s = getTimeZoneList().get(timeZoneKey);
-        Match match = Regex.Match(s, TimeZoneExtractTimePattern);
+        Match match = Regex.match(s, TimeZoneExtractTimePattern);
         int value = 0;
         if(match.success() && match.groups().size() > 0) {
             value = extractOffsetFromMatch(match);
@@ -254,8 +254,8 @@ public enum TimeZoneType {
         @Override
         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
             int a = 0, b = 0;
-            Match match1 = Regex.Match(o1.toString(), TimeZoneExtractTimePattern);
-            Match match2 = Regex.Match(o2.toString(), TimeZoneExtractTimePattern);
+            Match match1 = Regex.match(o1.toString(), TimeZoneExtractTimePattern);
+            Match match2 = Regex.match(o2.toString(), TimeZoneExtractTimePattern);
             if (match1.success() && match1.groups().size() > 0) {
                 a = extractOffsetFromMatch(match1);
             }

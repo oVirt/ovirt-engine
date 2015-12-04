@@ -52,8 +52,8 @@ public class RegexValidation implements IValidation {
 
         if (value != null
                 && value instanceof String
-                && (getIsNegate() ? Regex.IsMatch(value.toString(), getExpression())
-                        : !Regex.IsMatch(value.toString(), getExpression()))) {
+                && (getIsNegate() ? Regex.isMatch(value.toString(), getExpression())
+                        : !Regex.isMatch(value.toString(), getExpression()))) {
             result.setSuccess(false);
             result.getReasons().add(getMessage());
         }

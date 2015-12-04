@@ -16,7 +16,7 @@ public class MailAddress {
     private static String pattern = "^" + ATOM + "+(\\." + ATOM + "+)*@" + DOMAIN + "|" + IP_DOMAIN + ")$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
     public MailAddress(String value) {
-        if (!Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase)) {
+        if (!Regex.isMatch(value, pattern, RegexOptions.IgnoreCase)) {
             throw new RuntimeException();
         }
     }

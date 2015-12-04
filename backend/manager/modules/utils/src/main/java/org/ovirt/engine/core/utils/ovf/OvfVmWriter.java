@@ -124,7 +124,7 @@ public class OvfVmWriter extends OvfWriter {
             for (String app : apps) {
                 String product = app;
                 String version = "";
-                Match match = Regex.Match(app, "(.*) ([0-9.]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Match match = Regex.match(app, "(.*) ([0-9.]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
                 if (match.groups().size() > 1) {
                     product = match.groups().get(1).getValue();

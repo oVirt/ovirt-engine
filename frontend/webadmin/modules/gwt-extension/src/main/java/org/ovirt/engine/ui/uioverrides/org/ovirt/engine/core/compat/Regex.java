@@ -9,20 +9,20 @@ import org.ovirt.engine.core.compat.Match;
  */
 public class Regex {
 
-    public static boolean IsMatch(String input, String pattern) {
-        return IsMatch(input, pattern, RegexOptions.None);
+    public static boolean isMatch(String input, String pattern) {
+        return isMatch(input, pattern, RegexOptions.None);
     }
 
-    public static boolean IsMatch(String input, String pattern, int options) {
-        return new Regex(pattern, options).IsMatch(input);
+    public static boolean isMatch(String input, String pattern, int options) {
+        return new Regex(pattern, options).isMatch(input);
     }
 
-    public static Match Match(String input, String pattern) {
-        return Match(input, pattern, RegexOptions.None);
+    public static Match match(String input, String pattern) {
+        return match(input, pattern, RegexOptions.None);
     }
 
-    public static Match Match(String input, String pattern, int options) {
-        return new Regex(pattern, options).Match(input);
+    public static Match match(String input, String pattern, int options) {
+        return new Regex(pattern, options).match(input);
     }
 
     public static String replace(String input, String pattern, String replacement) {
@@ -64,7 +64,7 @@ public class Regex {
         return (options & RegexOptions.IgnoreCase) != 0;
     }
 
-    public boolean IsMatch(String input) {
+    public boolean isMatch(String input) {
         return impl.test(input);
     }
 
@@ -72,7 +72,7 @@ public class Regex {
         return (options & RegexOptions.Multiline) != 0;
     }
 
-    public Match Match(String input) {
+    public Match match(String input) {
         MatchResult matchResult = impl.exec(input);
         return new Match(matchResult);
     }

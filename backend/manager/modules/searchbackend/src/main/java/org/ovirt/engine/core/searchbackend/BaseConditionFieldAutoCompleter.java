@@ -192,7 +192,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public final static ValueValidationFunction validCharacters = new ValueValidationFunction() {
         @Override
         public boolean isValid(String field, String value) {
-            return validChar.IsMatch(value);
+            return validChar.isMatch(value);
         }
     };
 
