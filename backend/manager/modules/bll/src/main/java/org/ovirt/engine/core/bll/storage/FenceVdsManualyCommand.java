@@ -105,7 +105,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         }
         setSucceeded(true);
         // Remove all alerts except NOT CONFIG alert
-        AlertDirector.RemoveAllVdsAlerts(_problematicVds.getId(), false);
+        AlertDirector.removeAllVdsAlerts(_problematicVds.getId(), false);
     }
 
     @Override

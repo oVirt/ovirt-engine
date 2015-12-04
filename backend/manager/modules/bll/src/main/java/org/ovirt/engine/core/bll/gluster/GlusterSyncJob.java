@@ -1053,7 +1053,7 @@ public class GlusterSyncJob extends GlusterJob {
             logUtil.logAuditMessage(volume.getClusterId(), volume, null,
                 AuditLogType.GLUSTER_BRICK_STATUS_DOWN, brick.getId(), brick.getQualifiedName());
         }else if(fetchedStatus == GlusterStatus.UP){
-            AlertDirector.RemoveAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
+            AlertDirector.removeAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
         }
     }
 

@@ -57,7 +57,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_ERROR, message);
                 break;
             case ALERT:
-                AlertDirector.Alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
+                AlertDirector.alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
                 break;
         }
         AuditLog auditLog = DbFacade.getInstance().getAuditLogDao().getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());

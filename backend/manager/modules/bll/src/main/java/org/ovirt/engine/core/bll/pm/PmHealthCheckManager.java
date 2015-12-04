@@ -179,11 +179,11 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void removeAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.RemoveVdsAlert(hostId, auditMessage);
+        AlertDirector.removeVdsAlert(hostId, auditMessage);
     }
 
     private void addAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.AddVdsAlert(hostId, auditMessage, auditLogDirector);
+        AlertDirector.addVdsAlert(hostId, auditMessage, auditLogDirector);
     }
 
     /**

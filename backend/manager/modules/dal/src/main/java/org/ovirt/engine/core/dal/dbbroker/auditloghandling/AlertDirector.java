@@ -17,16 +17,16 @@ public final class AlertDirector {
      * @param logType
      *            Type of the log.
      */
-    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
+    public static void alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
         auditLogDirector.log(auditLogable, logType);
     }
 
-    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector, String message) {
+    public static void alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector, String message) {
         auditLogDirector.log(auditLogable, logType, message);
     }
 
-    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
-        AddVdsAlert(vdsId, type, auditLogDirector, new AuditLogableBase());
+    public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
+        addVdsAlert(vdsId, type, auditLogDirector, new AuditLogableBase());
     }
 
     /**
@@ -34,9 +34,9 @@ public final class AlertDirector {
      * @param vdsId
      * @param type
      */
-    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
+    public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
         alert.setVdsId(vdsId);
-        AlertDirector.Alert(alert, type, auditLogDirector);
+        AlertDirector.alert(alert, type, auditLogDirector);
     }
     /**
      * Removes the alert.
@@ -46,7 +46,7 @@ public final class AlertDirector {
      * @param type
      *            The type.
      */
-    public static void RemoveVdsAlert(Guid vdsId, AuditLogType type) {
+    public static void removeVdsAlert(Guid vdsId, AuditLogType type) {
         DbFacade.getInstance().getAuditLogDao().removeAllOfTypeForVds(vdsId, type.getValue());
     }
 
@@ -69,7 +69,7 @@ public final class AlertDirector {
      * @param removeConfigAlerts
      *            if set to <c>true</c> [remove config alerts].
      */
-    public static void RemoveAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
+    public static void removeAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
         DbFacade.getInstance().getAuditLogDao().removeAllForVds(vdsId, removeConfigAlerts);
     }
 
@@ -81,7 +81,7 @@ public final class AlertDirector {
      * @param type
      *            The type.
      */
-    public static void RemoveAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
+    public static void removeAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
         DbFacade.getInstance().getAuditLogDao().removeAllofTypeForBrick(brickId, logtype.getValue());
     }
 }

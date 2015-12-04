@@ -898,7 +898,7 @@ public class SchedulingManager implements BackendService {
                         String failedHostsStr = StringUtils.join(Entities.objectNames(returnedFailedHosts), ", ");
 
                         logable.addCustomValue("Hosts", failedHostsStr);
-                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION, auditLogDirector);
+                        AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION, auditLogDirector);
                         log.info("Cluster '{}' fail to pass HA reservation check.", cluster.getName());
                     }
 
@@ -914,7 +914,7 @@ public class SchedulingManager implements BackendService {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setVdsGroupId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
-                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
+                        AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
                     }
                 }
             }

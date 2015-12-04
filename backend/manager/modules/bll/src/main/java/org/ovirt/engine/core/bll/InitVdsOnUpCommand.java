@@ -376,13 +376,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 if (!vdsProxyFound) {
                     logable.addCustomValue("Reason",
                             auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                 } else if (!fenceSucceeded) {
                     logable.addCustomValue("Reason", fenceStatusResult.getMessage());
-                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                    AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                 }
             } else {
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
+                AlertDirector.alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
             }
         }
 

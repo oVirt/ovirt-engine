@@ -129,7 +129,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
-        AlertDirector.Alert(alert, logType, auditLogDirector);
+        AlertDirector.alert(alert, logType, auditLogDirector);
     }
 
     /**
@@ -148,7 +148,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
         alert.updateCallStackFromThrowable(throwable);
-        AlertDirector.Alert(alert, logType, auditLogDirector);
+        AlertDirector.alert(alert, logType, auditLogDirector);
     }
 
     /**
@@ -165,10 +165,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         if (!vdsStatic.isPmEnabled()) {
             Alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             // remove any test failure alerts
-            AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
+            AlertDirector.removeVdsAlert(vdsStatic.getId(),
                     AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
         } else {
-            AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
+            AlertDirector.removeVdsAlert(vdsStatic.getId(),
                     AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
         }
     }
