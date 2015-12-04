@@ -94,7 +94,7 @@ public class SSHDialog implements Closeable {
      * Used for mocking.
      * @internal
      */
-    protected SSHClient _getSSHClient() {
+    protected SSHClient getSSHClient() {
         return new SSHClient();
     }
 
@@ -232,7 +232,7 @@ public class SSHDialog implements Closeable {
                 throw new IOException("Already connected");
             }
 
-            _client = _getSSHClient();
+            _client = getSSHClient();
             if (_hardTimeout != 0) {
                 _client.setHardTimeout(_hardTimeout);
             }

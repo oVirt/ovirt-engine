@@ -62,7 +62,7 @@ public class SSHClient implements Closeable {
      *
      * For testing using org.mockito.Mockito.
      */
-    SshClient _createSshClient() {
+    SshClient createSshClient() {
         return SshClient.setUpDefaultClient();
     }
 
@@ -74,7 +74,7 @@ public class SSHClient implements Closeable {
      * This is required as we use shell to pipe into
      * file, so no special charachters are allowed.
      */
-    private void _remoteFileName(String file) {
+    private void remoteFileName(String file) {
         if (
             file.indexOf('\'') != -1 ||
             file.indexOf('\n') != -1 ||
@@ -91,7 +91,7 @@ public class SSHClient implements Closeable {
      * @param actual String digest.
      * @throws IOException.
      */
-    private void _validateDigest(
+    private void validateDigest(
         MessageDigest digest,
         String actual
     ) throws IOException {
@@ -263,7 +263,7 @@ public class SSHClient implements Closeable {
         log.debug("Connecting '{}'", this.getDisplayHost());
 
         try {
-            _client = _createSshClient();
+            _client = createSshClient();
 
             _client.setServerKeyVerifier(
                 new ServerKeyVerifier() {
@@ -594,7 +594,7 @@ public class SSHClient implements Closeable {
 
         log.debug("Sending: '{}' '{}'", file1, file2);
 
-        _remoteFileName(file2);
+        remoteFileName(file2);
 
         MessageDigest localDigest = MessageDigest.getInstance("MD5");
 
@@ -642,7 +642,7 @@ public class SSHClient implements Closeable {
                 throw new IllegalStateException("Cannot stop SSH stream thread");
             }
 
-            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), StandardCharsets.UTF_8).trim());
+            validateDigest(localDigest, new String(remoteDigest.toByteArray(), StandardCharsets.UTF_8).trim());
         }
         catch(Exception e) {
             log.debug("Send failed", e);
@@ -676,7 +676,7 @@ public class SSHClient implements Closeable {
 
         log.debug("Receiving: '{}' '{}'", file1, file2);
 
-        _remoteFileName(file1);
+        remoteFileName(file1);
 
         MessageDigest localDigest = MessageDigest.getInstance("MD5");
 
@@ -725,7 +725,7 @@ public class SSHClient implements Closeable {
                 throw new IllegalStateException("Cannot stop SSH stream thread");
             }
 
-            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), StandardCharsets.UTF_8).trim());
+            validateDigest(localDigest, new String(remoteDigest.toByteArray(), StandardCharsets.UTF_8).trim());
         }
         catch(Exception e) {
             log.debug("Receive failed", e);

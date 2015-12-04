@@ -150,7 +150,7 @@ public class SSHDialogTest {
 
     private SSHDialog _sshdialog;
 
-    private static KeyPair _getKeyPair(String p12, String alias, String password) throws KeyStoreException {
+    private static KeyPair getKeyPair(String p12, String alias, String password) throws KeyStoreException {
 
         KeyStore.PrivateKeyEntry entry;
         InputStream in = null;
@@ -236,7 +236,7 @@ public class SSHDialogTest {
             s_user = System.getProperty("ssh-test-user", "root");
             s_password = System.getProperty("ssh-test-password", "password");
             try {
-                s_keyPair = _getKeyPair(
+                s_keyPair = getKeyPair(
                     System.getProperty("ssh-test-p12", "src/test/resources/key.p12"),
                     System.getProperty("ssh-test-p12-alias", "1"),
                     System.getProperty("ssh-test-p12-password", "NoSoup4U")

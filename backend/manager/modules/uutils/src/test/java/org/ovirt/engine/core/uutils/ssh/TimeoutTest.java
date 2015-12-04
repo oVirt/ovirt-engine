@@ -65,7 +65,7 @@ public class TimeoutTest {
         SshClient ssh = spy(SshClient.setUpDefaultClient());
         ConnectFuture future = mock(ConnectFuture.class);
 
-        doReturn(ssh).when(_client)._createSshClient();
+        doReturn(ssh).when(_client).createSshClient();
         doReturn(future).when(ssh).connect(anyString(), anyInt());
         when(future.await(anyLong())).thenReturn(false);
 
@@ -79,7 +79,7 @@ public class TimeoutTest {
         ConnectFuture future = mock(ConnectFuture.class);
         ClientSession session = mock(ClientSession.class);
 
-        doReturn(ssh).when(_client)._createSshClient();
+        doReturn(ssh).when(_client).createSshClient();
         doReturn(future).when(ssh).connect(anyString(), anyInt());
         when(future.await(anyLong())).thenReturn(true);
         when(future.getSession()).thenReturn(session);
