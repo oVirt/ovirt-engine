@@ -821,14 +821,14 @@ public class IsoDomainListSyncronizer {
             VDSBrokerFrontend resourceManager = Backend.getInstance().getResourceManager();
             boolean vdsmFileStatsSupported = FeatureSupported.getFileStats(dc.getCompatibilityVersion());
             if (vdsmFileStatsSupported) {
-                return resourceManager.RunVdsCommand(VDSCommandType.GetFileStats,
+                return resourceManager.runVdsCommand(VDSCommandType.GetFileStats,
                         new GetFileStatsParameters(repoStoragePoolId,
                                 repoStorageDomainId, filePattern, false));
             } else {
                 if (alternateGetFileStatsCommand == null) {
                     return null;
                 } else {
-                    return resourceManager.RunVdsCommand(alternateGetFileStatsCommand,
+                    return resourceManager.runVdsCommand(alternateGetFileStatsCommand,
                             new IrsBaseVDSCommandParameters(repoStoragePoolId));
                 }
             }

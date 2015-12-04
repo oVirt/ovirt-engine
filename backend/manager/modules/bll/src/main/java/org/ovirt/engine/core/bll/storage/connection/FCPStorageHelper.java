@@ -86,7 +86,7 @@ public class FCPStorageHelper extends StorageHelperBase {
         VDSReturnValue returnValue = Backend
                 .getInstance()
                 .getResourceManager()
-                .RunVdsCommand(
+                .runVdsCommand(
                         VDSCommandType.forValue(type),
                         new StorageServerConnectionManagementVDSParameters(vdsId,
                                 storagePoolId, StorageType.FCP, Arrays.asList(getFCPConnection())));

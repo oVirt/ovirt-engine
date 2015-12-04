@@ -107,7 +107,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(Collections.<VDS>emptyList()).when(cmd).getAllRunningVdssInPool();
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
-        when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
+        when(vdsBrokerFrontend.runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
                 .thenReturn(returnValue);
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         map.setStatus(StorageDomainStatus.Active);

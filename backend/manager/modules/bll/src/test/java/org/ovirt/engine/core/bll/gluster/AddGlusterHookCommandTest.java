@@ -90,7 +90,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.AddGlusterHook), argThat(anyHookVDS()))).thenReturn(
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AddGlusterHook), argThat(anyHookVDS()))).thenReturn(
                 vdsReturnValue);
     }
 

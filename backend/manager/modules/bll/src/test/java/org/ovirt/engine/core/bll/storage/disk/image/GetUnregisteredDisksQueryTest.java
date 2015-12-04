@@ -95,7 +95,7 @@ public class GetUnregisteredDisksQueryTest
         VDSReturnValue volListReturnValue = new VDSReturnValue();
         volListReturnValue.setSucceeded(true);
         volListReturnValue.setReturnValue(importDiskIds);
-        doReturn(volListReturnValue).when(vdsBroker).RunVdsCommand(eq(VDSCommandType.GetImagesList),
+        doReturn(volListReturnValue).when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetImagesList),
                 any(GetImagesListVDSCommandParameters.class));
 
         // Mock the get unregistered disk query

@@ -29,14 +29,14 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
     private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<>();
 
     @Override
-    public VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
+    public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
         return VdsHandler.handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
     }
 
     @Override
-    public VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType, VdsAndVmIDVDSParametersBase parameters,
+    public VDSReturnValue runAsyncVdsCommand(VDSCommandType commandType, VdsAndVmIDVDSParametersBase parameters,
                                              IVdsAsyncCommand command) {
-        VDSReturnValue result = RunVdsCommand(commandType, parameters);
+        VDSReturnValue result = runVdsCommand(commandType, parameters);
         if (result.getSucceeded()) {
             // Add async command to cached commands
             IVdsAsyncCommand prevCommand = _asyncRunningCommands.put(parameters.getVmId(), command);
@@ -51,14 +51,14 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
     }
 
     @Override
-    public IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId) {
+    public IVdsAsyncCommand getAsyncCommandForVm(Guid vmId) {
         IVdsAsyncCommand result = null;
         result = _asyncRunningCommands.get(vmId);
         return result;
     }
 
     @Override
-    public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
+    public IVdsAsyncCommand removeAsyncRunningCommand(Guid vmId) {
         return _asyncRunningCommands.remove(vmId);
     }
 

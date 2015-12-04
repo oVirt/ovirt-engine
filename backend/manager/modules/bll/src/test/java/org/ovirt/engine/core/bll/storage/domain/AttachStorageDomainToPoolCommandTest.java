@@ -128,7 +128,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     private void mockAttachStorageDomainVdsCommand() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.AttachStorageDomain),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AttachStorageDomain),
                 any(AttachStorageDomainVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
@@ -137,7 +137,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         VDSReturnValue returnValueForGetStorageDomainInfo = new VDSReturnValue();
         returnValueForGetStorageDomainInfo.setSucceeded(true);
         returnValueForGetStorageDomainInfo.setReturnValue(pairResult);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValueForGetStorageDomainInfo);
     }
 }

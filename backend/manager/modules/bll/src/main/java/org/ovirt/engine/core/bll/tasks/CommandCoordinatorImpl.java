@@ -393,7 +393,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, parameters);
+        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, parameters);
     }
 
     @Override

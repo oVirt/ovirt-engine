@@ -173,7 +173,7 @@ public class ImportValidator {
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, parameters);
+        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, parameters);
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {

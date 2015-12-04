@@ -177,7 +177,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
     }
 
     private Matcher<Boolean> booleanMatcher(final boolean value) {

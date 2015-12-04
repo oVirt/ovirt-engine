@@ -85,7 +85,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(lunsInput);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.GetDeviceList),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList),
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Return 'lunsFromDb'

@@ -186,7 +186,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         try {
             command.executeCommand();
         } catch (EngineException exception) {
-            verify(vdsBrokerFrontend).RunVdsCommand(eq(VDSCommandType.SetVdsStatus),
+            verify(vdsBrokerFrontend).runVdsCommand(eq(VDSCommandType.SetVdsStatus),
                     any(SetVdsStatusVDSCommandParameters.class));
             return;
         }

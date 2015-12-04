@@ -140,7 +140,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {
-                returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.RegisterLibvirtSecrets,
                         new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets));
             } catch (RuntimeException e) {
@@ -168,7 +168,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
             try {
-                returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.UnregisterLibvirtSecrets,
                         new UnregisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecretsUuids));
             } catch (RuntimeException e) {
@@ -194,7 +194,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
         if (FeatureSupported.cinderProviderSupported(parameters.getStoragePool().getCompatibilityVersion())) {
             // unregister all libvirt secrets if needed
-            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                     VDSCommandType.RegisterLibvirtSecrets,
                     new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.<LibvirtSecret>emptyList(), true));
             if (!returnValue.getSucceeded()) {
@@ -221,7 +221,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {
-        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, clearUnusedSecrets));
         return returnValue.getSucceeded();

@@ -290,7 +290,7 @@ public class VmHandler {
     public static void lockVm(Guid vmId) {
         Backend.getInstance()
                 .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVmStatus,
+                .runVdsCommand(VDSCommandType.SetVmStatus,
                         new SetVmStatusVDSCommandParameters(vmId, VMStatus.ImageLocked));
     }
 
@@ -318,7 +318,7 @@ public class VmHandler {
     public static void unLockVm(VM vm) {
         Backend.getInstance()
                 .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVmStatus,
+                .runVdsCommand(VDSCommandType.SetVmStatus,
                         new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
         vm.setStatus(VMStatus.Down);
     }
@@ -758,7 +758,7 @@ public class VmHandler {
         vmDynamic.setCurrentCd(currentCd);
         Backend.getInstance()
                .getResourceManager()
-               .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
+               .runVdsCommand(VDSCommandType.UpdateVmDynamicData,
                        new UpdateVmDynamicDataVDSCommandParameters(vmDynamic));
     }
 

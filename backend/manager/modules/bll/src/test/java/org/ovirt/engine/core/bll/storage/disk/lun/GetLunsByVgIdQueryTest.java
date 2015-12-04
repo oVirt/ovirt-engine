@@ -106,7 +106,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(setUpLunsFromDeviceList());
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.GetDeviceList),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList),
                 any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
     }
 

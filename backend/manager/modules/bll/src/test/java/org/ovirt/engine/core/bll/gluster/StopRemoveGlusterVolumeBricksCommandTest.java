@@ -98,7 +98,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
             vdsReturnValue.setReturnValue(new GlusterVolumeTaskStatusEntity());
         }
 
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.StopRemoveGlusterVolumeBricks),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRemoveGlusterVolumeBricks),
                 argThat(anyGlusterVolumeVDS()))).thenReturn(vdsReturnValue);
     }
 

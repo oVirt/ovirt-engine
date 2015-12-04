@@ -197,7 +197,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     private void mockGetImagesList() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(new ArrayList<Guid>());
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetImagesList),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetImagesList),
                 Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
     }
 

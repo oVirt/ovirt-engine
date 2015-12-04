@@ -80,7 +80,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.UpdateGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.UpdateGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
      }
 
     private void mockForReadContent(boolean succeeded, EngineError errorCode) {
@@ -92,7 +92,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetGlusterHookContent), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetGlusterHookContent), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
 
     }
 

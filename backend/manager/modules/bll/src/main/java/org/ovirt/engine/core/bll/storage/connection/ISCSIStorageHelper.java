@@ -66,7 +66,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             returnValue = Backend
                     .getInstance()
                     .getResourceManager()
-                    .RunVdsCommand(
+                    .runVdsCommand(
                             VDSCommandType.forValue(type),
                             new StorageServerConnectionManagementVDSParameters(vdsId,
                                     poolId, StorageType.ISCSI, list));

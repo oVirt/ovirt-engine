@@ -78,7 +78,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.RemoveGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.RemoveGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
      }
 
     private ArgumentMatcher<VDSParametersBase> anyHookVDS() {

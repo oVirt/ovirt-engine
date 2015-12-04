@@ -78,7 +78,7 @@ public class AutoRecoveryManager {
 
                         for (VDS vds : list) {
                             if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
-                                getBackend().getResourceManager().RunVdsCommand(VDSCommandType.GetStats,
+                                getBackend().getResourceManager().runVdsCommand(VDSCommandType.GetStats,
                                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                                 nics = vds.getInterfaces();
                             } else {

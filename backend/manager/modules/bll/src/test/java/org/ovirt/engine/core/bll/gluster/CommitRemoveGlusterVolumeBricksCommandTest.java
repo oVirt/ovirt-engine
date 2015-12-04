@@ -111,7 +111,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
 
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.CommitRemoveGlusterVolumeBricks),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.CommitRemoveGlusterVolumeBricks),
                 argThat(anyGlusterVolumeVDS()))).thenReturn(vdsReturnValue);
     }
 

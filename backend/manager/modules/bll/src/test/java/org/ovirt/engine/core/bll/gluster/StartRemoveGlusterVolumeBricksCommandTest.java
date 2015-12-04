@@ -155,7 +155,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.StartRemoveGlusterVolumeBricks),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StartRemoveGlusterVolumeBricks),
                 argThat(anyGlusterVolumeRemoveBricksVDSParameters()))).thenReturn(vdsReturnValue);
     }
 

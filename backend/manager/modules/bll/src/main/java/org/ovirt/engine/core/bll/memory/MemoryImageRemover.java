@@ -143,7 +143,7 @@ public abstract class MemoryImageRemover {
 
     protected VDSReturnValue removeImage(DeleteImageGroupVDSCommandParameters parameters) {
         try {
-            return Backend.getInstance().getResourceManager().RunVdsCommand(
+            return Backend.getInstance().getResourceManager().runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
                     parameters);
         }

@@ -228,7 +228,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVds() != null) {
             try {
                 VDSReturnValue result = getVdsBroker()
-                        .RunAsyncVdsCommand(
+                        .runAsyncVdsCommand(
                                 VDSCommandType.Resume,
                                 new ResumeVDSCommandParameters(getVdsId(), getVm().getId()),
                                 this);
@@ -590,7 +590,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         initParametersForPassthroughVnics();
 
         VMStatus vmStatus = (VMStatus) getVdsBroker()
-                .RunAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
+                .runAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
 
         // Don't use the memory from the active snapshot anymore if there's a chance that disks were changed
         memoryFromSnapshotUsed = vmStatus.isRunning() || vmStatus == VMStatus.RestoringState;

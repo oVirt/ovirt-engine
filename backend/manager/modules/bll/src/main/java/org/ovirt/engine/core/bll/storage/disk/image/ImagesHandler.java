@@ -390,7 +390,7 @@ public final class ImagesHandler {
         }
         return cdPathWindowsToLinux(windowsPath, (String) Backend.getInstance()
                 .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
+                .runVdsCommand(VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
                 .getReturnValue());
     }
 
@@ -429,7 +429,7 @@ public final class ImagesHandler {
             fromIrs = (DiskImage) Backend
                     .getInstance()
                     .getResourceManager()
-                    .RunVdsCommand(
+                    .runVdsCommand(
                             VDSCommandType.GetImageInfo,
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     image.getImageId())).getReturnValue();

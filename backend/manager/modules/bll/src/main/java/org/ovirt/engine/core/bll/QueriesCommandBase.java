@@ -251,6 +251,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        return getVdsBroker().RunVdsCommand(commandType, parameters);
+        return getVdsBroker().runVdsCommand(commandType, parameters);
     }
 }

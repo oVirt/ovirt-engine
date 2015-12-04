@@ -152,10 +152,10 @@ public class VdsEventListener implements IVdsEventListener {
                 StoragePool storage_pool = storagePoolDao.get(vds.getStoragePoolId());
                 if (StoragePoolStatus.Uninitialized != storage_pool
                         .getStatus()) {
-                    vdsBroker.RunVdsCommand(
-                                VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
+                    vdsBroker.runVdsCommand(
+                            VDSCommandType.DisconnectStoragePool,
+                            new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                    vds.getStoragePoolId(), vds.getVdsSpmId()));
                     HostStoragePoolParametersBase params =
                             new HostStoragePoolParametersBase(storage_pool, vds);
                     backend.runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
@@ -426,7 +426,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmPoweringUp(Guid vmId) {
-        IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
+        IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
 
         if (command != null) {
             command.onPowerringUp();
@@ -513,7 +513,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void rerun(Guid vmId) {
-        final IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
+        final IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
         if (command != null) {
             // The command will be invoked in a different VDS in its rerun method, so we're calling
             // its rerun method from a new thread so that it won't be executed within our current VDSM lock
@@ -528,7 +528,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void runningSucceded(Guid vmId) {
-        IVdsAsyncCommand command = vdsBroker.GetAsyncCommandForVm(vmId);
+        IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
         if (command != null) {
             command.runningSucceded();
         }
@@ -536,7 +536,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void removeAsyncRunningCommand(Guid vmId) {
-        IVdsAsyncCommand command = vdsBroker.RemoveAsyncRunningCommand(vmId);
+        IVdsAsyncCommand command = vdsBroker.removeAsyncRunningCommand(vmId);
         if (command != null) {
             command.reportCompleted();
         }

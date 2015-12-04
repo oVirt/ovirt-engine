@@ -137,7 +137,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         doReturn(backendInternal).when(getQuery()).getBackend();
 
         VDSReturnValue returnValue = getVDSReturnValue();
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GlusterServersList),
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GlusterServersList),
                 any(VDSParametersBase.class))).thenReturn(returnValue);
         VdcQueryReturnValue vdcReturnValue = getVdcReturnValue();
         when(backendInternal.runInternalQuery(eq(VdcQueryType.GetServerSSHKeyFingerprint),

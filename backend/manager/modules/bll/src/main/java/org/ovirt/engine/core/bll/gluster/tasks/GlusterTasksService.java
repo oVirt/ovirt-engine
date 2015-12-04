@@ -61,7 +61,7 @@ public class GlusterTasksService {
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, params);
+        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, params);
     }
 
 }

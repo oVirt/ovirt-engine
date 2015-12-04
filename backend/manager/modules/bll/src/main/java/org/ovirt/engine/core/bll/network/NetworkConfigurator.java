@@ -130,7 +130,7 @@ public class NetworkConfigurator {
 
             @Override
             public Void runInTransaction() {
-                getBackend().getResourceManager().RunVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
+                getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
                         new CollectHostNetworkDataVdsCommandParameters(host));
                 return null;
             }

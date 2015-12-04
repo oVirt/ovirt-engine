@@ -2116,7 +2116,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws EngineException {
-        return getVdsBroker().RunVdsCommand(commandType, parameters);
+        return getVdsBroker().runVdsCommand(commandType, parameters);
     }
 
     /**

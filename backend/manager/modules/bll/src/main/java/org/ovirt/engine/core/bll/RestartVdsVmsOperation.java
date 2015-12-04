@@ -59,7 +59,7 @@ public class RestartVdsVmsOperation {
         if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
                 if (vm.getMigratingToVds() != null) {
-                    Backend.getInstance().getResourceManager().RunVdsCommand(
+                    Backend.getInstance().getResourceManager().runVdsCommand(
                             VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(
                                     new Guid(vm.getMigratingToVds().toString()),
@@ -98,7 +98,7 @@ public class RestartVdsVmsOperation {
         // restart all running vms of a failed vds.
         for (VM vm : vms) {
             destroyVmOnDestination(vm);
-            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
                     VDSCommandType.SetVmStatus,
                     new SetVmStatusVDSCommandParameters(
                             vm.getId(),

@@ -43,7 +43,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                 try {
                     Backend.getInstance()
                             .getResourceManager()
-                            .RunVdsCommand(
+                            .runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId),
                                             getStoragePool(), masterStorageDomainId, storagePoolIsoMap));
@@ -58,7 +58,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                     }
                 }
             } else {
-                Backend.getInstance().getResourceManager().RunVdsCommand(
+                Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId), getStoragePool(),
                                 masterStorageDomainId, storagePoolIsoMap, true));

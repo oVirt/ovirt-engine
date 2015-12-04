@@ -556,7 +556,7 @@ public class RunVmValidator {
     protected boolean isVmDuringInitiating(VM vm) {
         return (Boolean) getBackend()
                 .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                .runVdsCommand(VDSCommandType.IsVmDuringInitiating,
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                 .getReturnValue();
     }

@@ -120,7 +120,7 @@ public class CoCoAsyncTaskHelper {
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
-                    getBackend().getResourceManager().RunVdsCommand(
+                    getBackend().getResourceManager().runVdsCommand(
                             VDSCommandType.SPMRevertTask,
                             new SPMTaskGuidBaseVDSCommandParameters(
                                     command.getStoragePool().getId(), taskId));

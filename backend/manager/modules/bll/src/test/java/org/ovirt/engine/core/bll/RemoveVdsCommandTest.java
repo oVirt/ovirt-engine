@@ -252,7 +252,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     private void mockForExecute() {
-        doReturn(null).when(vdsBrokerFrontend).RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
+        doReturn(null).when(vdsBrokerFrontend).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
         doNothing().when(vdsStaticDao).remove(any(Guid.class));
         doNothing().when(vdsStatisticsDao).remove(any(Guid.class));
         doNothing().when(vdsDynamicDao).remove(any(Guid.class));

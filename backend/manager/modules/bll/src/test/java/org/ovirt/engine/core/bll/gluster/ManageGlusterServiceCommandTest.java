@@ -134,7 +134,7 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
                 vdsReturnValue.setReturnValue(serverServiceList);
             }
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.ManageGlusterService), argThat(anyServiceVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.ManageGlusterService), argThat(anyServiceVDS()))).thenReturn(vdsReturnValue);
     }
 
     private ArgumentMatcher<VDSParametersBase> anyServiceVDS() {

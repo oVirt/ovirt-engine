@@ -55,7 +55,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                 Backend
                 .getInstance()
                 .getResourceManager()
-                .RunVdsCommand(
+                .runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(
                                 storagePool.getId(),
@@ -85,7 +85,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                 Backend
                 .getInstance()
                 .getResourceManager()
-                .RunVdsCommand(
+                .runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(
                                 storagePool.getId(),

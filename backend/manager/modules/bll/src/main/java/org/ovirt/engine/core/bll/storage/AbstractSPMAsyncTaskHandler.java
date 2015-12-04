@@ -47,7 +47,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
 
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
         return Backend.getInstance().getResourceManager()
-                .RunVdsCommand(commandType, params);
+                .runVdsCommand(commandType, params);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId =
                 new Pair<>(storageDomain.getStorageStaticData(), Guid.newGuid());
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command
@@ -108,7 +108,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId =
                 new Pair<>(storageDomain.getStorageStaticData(), Guid.newGuid());
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command
@@ -140,7 +140,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId =
                 new Pair<>(storageDomain.getStorageStaticData(), Guid.newGuid());
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command
@@ -172,7 +172,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId =
                 new Pair<>(storageDomain.getStorageStaticData(), Guid.newGuid());
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command
@@ -203,7 +203,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId = new Pair<>(storageDomain.getStorageStaticData(), null);
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command
@@ -233,7 +233,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         Pair<StorageDomainStatic, Guid> storageDomainToPoolId =
                 new Pair<>(storageDomain.getStorageStaticData(), Guid.newGuid());
         returnValue.setReturnValue(storageDomainToPoolId);
-        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValue);
 
         // Execute command

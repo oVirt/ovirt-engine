@@ -35,7 +35,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
     @Override
     public void execute(int iterationId) {
         try {
-            Backend.getInstance().getResourceManager().RunVdsCommand(
+            Backend.getInstance().getResourceManager().runVdsCommand(
                     VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId), getStoragePool(),
                             masterStorageDomainId, storagePoolIsoMap, true));

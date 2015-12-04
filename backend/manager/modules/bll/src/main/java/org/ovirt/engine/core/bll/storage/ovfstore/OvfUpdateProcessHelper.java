@@ -147,7 +147,7 @@ public class OvfUpdateProcessHelper {
                                                   Guid storageDomainId) {
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, metaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
+        return Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType.UpdateVM, tempVar)
                 .getSucceeded();
     }
 
@@ -155,7 +155,7 @@ public class OvfUpdateProcessHelper {
      * Removes the ovf of the vm/template with the given id from the given storage pool/storage domain.
      */
     protected boolean executeRemoveVmInSpm(Guid storagePoolId, Guid id, Guid storageDomainId) {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveVM,
+        return Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType.RemoveVM,
                 new RemoveVMVDSCommandParameters(storagePoolId, id, storageDomainId)).getSucceeded();
     }
 }

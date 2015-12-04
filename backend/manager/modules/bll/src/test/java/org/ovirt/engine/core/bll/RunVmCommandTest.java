@@ -125,7 +125,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(true);
-        when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
 
         // Set Valid Iso Prefix
         setIsoPrefixVDSMethod(ACTIVE_ISO_PREFIX);
@@ -140,7 +140,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private void setCreateVmVDSMethod() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(VMStatus.Up);
-        when(vdsBrokerFrontend.RunAsyncVdsCommand(eq(VDSCommandType.CreateVm),
+        when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.CreateVm),
                 any(VdsAndVmIDVDSParametersBase.class),
                 any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }

@@ -83,7 +83,7 @@ public class GlusterGeoRepUtil {
         VDSReturnValue returnValue =
                 Backend.getInstance()
                         .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
+                        .runVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
                                 new GlusterVolumeVDSParameters(slaveUpserverId, slaveVolumeName));
         return returnValue.getSucceeded() && (boolean) returnValue.getReturnValue();
     }
