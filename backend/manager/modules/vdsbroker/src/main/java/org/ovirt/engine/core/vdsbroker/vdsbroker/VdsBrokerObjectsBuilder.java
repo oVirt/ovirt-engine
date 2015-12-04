@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
@@ -56,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
@@ -1912,11 +1915,25 @@ public class VdsBrokerObjectsBuilder {
                         bondOptions = (config == null) ? null : config.get("BONDING_OPTS");
                     }
                     if (bondOptions != null) {
+                        bondOptions = normalizeBondOptions(bondOptions.toString());
                         bond.setBondOptions(bondOptions.toString());
                     }
                 }
             }
         }
+    }
+
+    private static String normalizeBondOptions(String bondOptions){
+        Matcher matcher = Pattern.compile("mode=([\\w-\\.]+)").matcher(bondOptions);
+        if (!matcher.find()) {
+            return bondOptions;
+        }
+
+        BondMode bondMode = BondMode.getBondMode(matcher.group(1));
+        if (bondMode != null) {
+            return matcher.replaceAll("mode=" + bondMode.getValue());
+        }
+        return bondOptions;
     }
 
     /**
