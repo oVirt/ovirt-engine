@@ -97,11 +97,11 @@ public final class AsyncTaskManager {
         _tasks = new ConcurrentHashMap<>();
 
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
-        scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
+        scheduler.scheduleAFixedDelayJob(this, "timerElapsed", new Class[]{},
                 new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate),
                 Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(this, "_cacheTimer_Elapsed", new Class[]{},
+        scheduler.scheduleAFixedDelayJob(this, "cacheTimerElapsed", new Class[]{},
                 new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
                 Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
         _cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
@@ -138,8 +138,8 @@ public final class AsyncTaskManager {
 
     }
 
-    @OnTimerMethodAnnotation("_timer_Elapsed")
-    public synchronized void _timer_Elapsed() {
+    @OnTimerMethodAnnotation("timerElapsed")
+    public synchronized void timerElapsed() {
         if (thereAreTasksToPoll()) {
             pollAndUpdateAsyncTasks();
 
@@ -159,8 +159,8 @@ public final class AsyncTaskManager {
         }
     }
 
-    @OnTimerMethodAnnotation("_cacheTimer_Elapsed")
-    public void _cacheTimer_Elapsed() {
+    @OnTimerMethodAnnotation("cacheTimerElapsed")
+    public void cacheTimerElapsed() {
         removeClearedAndOldTasks();
     }
 
