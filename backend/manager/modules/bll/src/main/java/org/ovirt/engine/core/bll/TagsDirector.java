@@ -216,31 +216,6 @@ public class TagsDirector {
         Backend.getInstance().runInternalAction(VdcActionType.UpdateTag, new TagsOperationParameters(tag));
     }
 
-    private String GetTagIdAndParentsIds(Tags tag) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tag.gettag_id());
-        Guid tempTagId = new Guid(tag.getparent_id().toString());
-        while (!tempTagId.equals(Guid.Empty)) {
-            builder.append(String.format(",%1$s", tempTagId));
-            tag = GetTagById(tempTagId);
-            tempTagId = new Guid(tag.getparent_id().toString());
-        }
-
-        return builder.toString();
-    }
-
-    /**
-     * This function will return the tag's ID and its parents IDs.
-     *
-     * @param tagId
-     *            the tag ID.
-     * @return a comma separated list of IDs.
-     */
-    public String GetTagIdAndParentsIds(Guid tagId) {
-        Tags tag = GetTagById(tagId);
-        return GetTagIdAndParentsIds(tag);
-    }
-
     /**
      * This function will return the tag's ID and its children IDs. Its used to determine if a tag is assigned to an
      * entity. Tag is determined as assigned to an entity if the entity is assigned to the tag or to one of its
