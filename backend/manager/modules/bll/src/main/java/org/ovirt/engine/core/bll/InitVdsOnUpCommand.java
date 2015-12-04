@@ -160,7 +160,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initVirtResources() {
         resourceManager.clearLastStatusEventStampsFromVds(getVdsId());
-        if (InitializeStorage()) {
+        if (initializeStorage()) {
             processFence();
             processStoragePoolStatus();
             runUpdateMomPolicy(getVdsGroup(), getVds());
@@ -213,7 +213,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 ExecutionHandler.createInternalJobContext(getContext()));
     }
 
-    private boolean InitializeStorage() {
+    private boolean initializeStorage() {
         boolean returnValue = false;
 
         // if no pool or pool is uninitialized or in maintenance mode no need to
