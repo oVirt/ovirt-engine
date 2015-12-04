@@ -326,10 +326,10 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             if (pair.getFirst() != null && pair.getFirst().equals("=")) {
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
-                Tags tag = tagsHandler.GetTagByTagName(pair.getSecond());
+                Tags tag = tagsHandler.getTagByTagName(pair.getSecond());
                 if (tag != null) {
                     pair.setSecond(
-                            StringFormat.format("(%1$s)", tagsHandler.GetTagNameAndChildrenNames(tag.gettag_id())));
+                            StringFormat.format("(%1$s)", tagsHandler.getTagNameAndChildrenNames(tag.gettag_id())));
                 } else {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 }
@@ -337,7 +337,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
 
-                String IDs = tagsHandler.GetTagNamesAndChildrenNamesByRegExp(pair.getSecond());
+                String IDs = tagsHandler.getTagNamesAndChildrenNamesByRegExp(pair.getSecond());
                 if (StringHelper.isNullOrEmpty(IDs)) {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 } else {

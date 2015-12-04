@@ -9,6 +9,6 @@ public class GetTagByTagIdQuery<P extends IdQueryParameters> extends QueriesComm
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetTagById(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().getTagById(getParameters().getId()));
     }
 }

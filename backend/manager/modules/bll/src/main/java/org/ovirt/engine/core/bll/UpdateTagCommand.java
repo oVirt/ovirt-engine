@@ -14,7 +14,7 @@ public class UpdateTagCommand<T extends TagsOperationParameters> extends TagsCom
 
     @Override
     protected void executeCommand() {
-        TagsDirector.getInstance().UpdateTag(getTag());
+        TagsDirector.getInstance().updateTag(getTag());
         DbFacade.getInstance().getTagDao().update(getTag());
         setSucceeded(true);
     }

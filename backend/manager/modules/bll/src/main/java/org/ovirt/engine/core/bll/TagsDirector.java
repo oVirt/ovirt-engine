@@ -95,7 +95,7 @@ public class TagsDirector {
         }
     }
 
-    private void RemoveTagFromHash(Tags tag) {
+    private void removeTagFromHash(Tags tag) {
         tagsMapByID.remove(tag.gettag_id());
         tagsMapByName.remove(tag.gettag_name());
     }
@@ -122,11 +122,11 @@ public class TagsDirector {
         return DbFacade.getInstance().getTagDao();
     }
 
-    private void RemoveTagAndChildren(Tags tag) {
+    private void removeTagAndChildren(Tags tag) {
         for (Tags child : tag.getChildren()) {
-            RemoveTagAndChildren(child);
+            removeTagAndChildren(child);
         }
-        RemoveTagFromHash(tag);
+        removeTagFromHash(tag);
     }
 
     public static TagsDirector getInstance() {
@@ -151,10 +151,10 @@ public class TagsDirector {
      * @param tagId
      *            tag to remove
      */
-    public void RemoveTag(Guid tagId) {
+    public void removeTag(Guid tagId) {
         if (tagsMapByID.containsKey(tagId)) {
             Tags tag = tagsMapByID.get(tagId);
-            RemoveTagAndChildren(tag);
+            removeTagAndChildren(tag);
             Tags parent = tagsMapByID.get(tag.getparent_id());
             parent.getChildren().remove(tag);
             addTagToHash(parent);
@@ -168,7 +168,7 @@ public class TagsDirector {
      *
      * @param tag
      */
-    public void UpdateTag(Tags tag) {
+    public void updateTag(Tags tag) {
         if (tagsMapByID.containsKey(tag.gettag_id())) {
             Tags tagFromCache = tagsMapByID.get(tag.gettag_id());
             String oldName = tagFromCache.gettag_name();
@@ -187,7 +187,7 @@ public class TagsDirector {
         }
     }
 
-    public void MoveTag(Guid tagId, Guid newParent) {
+    public void moveTag(Guid tagId, Guid newParent) {
         if (tagsMapByID.containsKey(tagId)) {
             Tags tag = tagsMapByID.get(tagId);
             if (tagsMapByID.containsKey(newParent)) {
@@ -225,8 +225,8 @@ public class TagsDirector {
      *            the ID of the 'root' tag.
      * @return a comma separated list of IDs.
      */
-    public String GetTagIdAndChildrenIds(Guid tagId) {
-        Tags tag = GetTagById(tagId);
+    public String getTagIdAndChildrenIds(Guid tagId) {
+        Tags tag = getTagById(tagId);
         if (tag == null) {
             return StringUtils.EMPTY;
         }
@@ -234,14 +234,14 @@ public class TagsDirector {
         return sb.toString();
     }
 
-    public String GetTagNameAndChildrenNames(Guid tagId) {
-        Tags tag = GetTagById(tagId);
+    public String getTagNameAndChildrenNames(Guid tagId) {
+        Tags tag = getTagById(tagId);
         StringBuilder sb = tag.getTagNameAndChildrenNames();
         return sb.toString();
     }
 
-    public HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
-        Tags tag = GetTagById(tagId);
+    public HashSet<Guid> getTagIdAndChildrenIdsAsSet(Guid tagId) {
+        Tags tag = getTagById(tagId);
         HashSet<Guid> set = new HashSet<>();
         tag.getTagIdAndChildrenIdsAsList(set);
         return set;
@@ -256,23 +256,23 @@ public class TagsDirector {
      *            the name of the 'root' tag.
      * @return a comma separated list of IDs.
      */
-    public String GetTagIdAndChildrenIds(String tagName) {
-        Tags tag = GetTagByName(tagName);
+    public String getTagIdAndChildrenIds(String tagName) {
+        Tags tag = getTagByName(tagName);
         StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
 
-    public String GetTagNamesAndChildrenNamesByRegExp(String tagNameRegExp) {
+    public String getTagNamesAndChildrenNamesByRegExp(String tagNameRegExp) {
         // add RegEx chars or beginning of string ('^') and end of string ('$'):
         tagNameRegExp = String.format("^%1$s$", tagNameRegExp);
         // convert to the regular expression format:
         tagNameRegExp = tagNameRegExp.replace("*", ".*");
         StringBuilder sb = new StringBuilder();
-        RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, getRootTag(), TagReturnValueIndicator.NAME);
+        recursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, getRootTag(), TagReturnValueIndicator.NAME);
         return sb.toString();
     }
 
-    private static void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator) {
+    private static void recursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator) {
         if ((tag.getChildren() != null) && !tag.getChildren().isEmpty()) {
             tagNameRegExp = BACKSLASH_REMOVER.matcher(tagNameRegExp).replaceAll("");
             for (Tags child : tag.getChildren()) {
@@ -296,7 +296,7 @@ public class TagsDirector {
                         }
                     }
                 } else {
-                    RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, child, indicator);
+                    recursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, child, indicator);
                 }
             }
         }
@@ -309,7 +309,7 @@ public class TagsDirector {
      * @param tagId
      * @return
      */
-    public Tags GetTagById(Guid tagId) {
+    public Tags getTagById(Guid tagId) {
         if (tagsMapByID.containsKey(tagId)) {
             return tagsMapByID.get(tagId);
         } else {
@@ -323,7 +323,7 @@ public class TagsDirector {
      * @param tagName
      * @return
      */
-    public Tags GetTagByName(String tagName) {
+    public Tags getTagByName(String tagName) {
         if (tagsMapByName.containsKey(tagName)) {
             return tagsMapByName.get(tagName);
         } else {
@@ -356,7 +356,7 @@ public class TagsDirector {
         if (sourceTagId.equals(potentialDescestorId)) {
             return true;
         }
-        Tags tag = GetTagById(sourceTagId);
+        Tags tag = getTagById(sourceTagId);
         if (tag != null && tag.getChildren() != null) {
             for (Tags childTag : tag.getChildren()) {
                 if (isTagDescestorOfTag(childTag.gettag_id(), potentialDescestorId)) {

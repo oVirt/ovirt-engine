@@ -5,11 +5,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface ITagsHandler {
     // void MoveTag(int tagId, int newParent);
-    Tags GetTagByTagName(String tagName);
+    Tags getTagByTagName(String tagName);
 
-    String GetTagIdAndChildrenIds(Guid tagId);
+    String getTagIdAndChildrenIds(Guid tagId);
 
-    String GetTagNameAndChildrenNames(Guid tagId);
+    String getTagNameAndChildrenNames(Guid tagId);
 
-    String GetTagNamesAndChildrenNamesByRegExp(String tagNameRegExp);
+    String getTagNamesAndChildrenNamesByRegExp(String tagNameRegExp);
 }

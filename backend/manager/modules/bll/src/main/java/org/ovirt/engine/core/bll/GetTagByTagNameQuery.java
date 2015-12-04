@@ -9,6 +9,6 @@ public class GetTagByTagNameQuery<P extends NameQueryParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetTagByName(getParameters().getName()));
+        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().getTagByName(getParameters().getName()));
     }
 }
