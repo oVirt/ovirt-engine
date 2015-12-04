@@ -11,7 +11,7 @@ public class DisconnectStoragePoolVDSCommand<P extends DisconnectStoragePoolVDSC
     @Override
     protected void executeVdsBrokerCommand() {
         status = getBroker().disconnectStoragePool(getParameters().getStoragePoolId().toString(),
-                getParameters().getvds_spm_id(), getParameters().getStoragePoolId().toString());
+                getParameters().getVdsSpmId(), getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
     }
 }
