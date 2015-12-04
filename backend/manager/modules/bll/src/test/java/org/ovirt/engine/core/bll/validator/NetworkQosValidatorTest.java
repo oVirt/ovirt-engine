@@ -110,13 +110,13 @@ public class NetworkQosValidatorTest {
     }
 
     @Test
-    public void NameNotTaken() {
+    public void nameNotTaken() {
         qos.setName("fubar");
         nameNotChangedOrNotTakenTest(isValid());
     }
 
     @Test
-    public void NameTaken() {
+    public void nameTaken() {
         qos.setName("foo");
         nameNotChangedOrNotTakenTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_QOS_NAME_EXIST));
     }
