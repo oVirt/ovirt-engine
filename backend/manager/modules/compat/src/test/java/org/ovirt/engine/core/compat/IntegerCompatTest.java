@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class IntegerCompatTest {
     @Test
-    public void TryParse() {
+    public void tryParse() {
         Assert.assertNull(IntegerCompat.tryParse(""));
         Assert.assertNull(IntegerCompat.tryParse("no good"));
         Assert.assertNull(IntegerCompat.tryParse("$1"));
