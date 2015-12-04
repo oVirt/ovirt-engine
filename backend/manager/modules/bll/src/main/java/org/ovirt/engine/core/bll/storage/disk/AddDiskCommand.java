@@ -179,8 +179,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             }
 
             for (StorageServerConnections conn : lun.getLunConnections()) {
-                if (StringUtils.isEmpty(conn.getiqn()) || StringUtils.isEmpty(conn.getconnection())
-                        || StringUtils.isEmpty(conn.getport())) {
+                if (StringUtils.isEmpty(conn.getIqn()) || StringUtils.isEmpty(conn.getConnection())
+                        || StringUtils.isEmpty(conn.getPort())) {
                     return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
                 }
             }

@@ -908,7 +908,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
                     ArrayList<StorageServerConnections> connections = (ArrayList<StorageServerConnections>) returnValue;
 
                     for (StorageServerConnections connection : connections) {
-                        if (connection.getstorage_type() == StorageType.ISCSI) {
+                        if (connection.getStorageType() == StorageType.ISCSI) {
                             hasIscsiStorage = true;
                             break;
                         }

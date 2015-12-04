@@ -72,7 +72,7 @@ public class StorageDomainMapper {
             HostStorage storage = model.getStorage();
             StorageType storageType = StorageType.fromValue(storage.getType());
             if (storageType != null) {
-                entity.setstorage_type(map(storageType, null));
+                entity.setStorageType(map(storageType, null));
                 switch (storageType) {
                 case ISCSI:
                     break;
@@ -82,7 +82,7 @@ public class StorageDomainMapper {
                     break;
                 case NFS:
                     if(storage.isSetAddress() && storage.isSetPath()) {
-                        entity.setconnection(storage.getAddress() + ":" + storage.getPath());
+                        entity.setConnection(storage.getAddress() + ":" + storage.getPath());
                     }
                     if(storage.getNfsRetrans() != null) {
                         entity.setNfsRetrans(storage.getNfsRetrans().shortValue());
@@ -102,15 +102,15 @@ public class StorageDomainMapper {
                     break;
                 case LOCALFS:
                     if (storage.isSetPath()) {
-                        entity.setconnection(storage.getPath());
+                        entity.setConnection(storage.getPath());
                     }
                     break;
                 case POSIXFS:
                 case GLUSTERFS:
                     if (storage.isSetAddress() && storage.isSetPath()) {
-                        entity.setconnection(storage.getAddress() + ":" + storage.getPath());
+                        entity.setConnection(storage.getAddress() + ":" + storage.getPath());
                     } else if (storage.isSetPath()) {
-                        entity.setconnection(storage.getPath());
+                        entity.setConnection(storage.getPath());
                     }
                     if (storage.isSetMountOptions()) {
                         entity.setMountOptions(storage.getMountOptions());
@@ -180,33 +180,33 @@ public class StorageDomainMapper {
     public static StorageServerConnections map(StorageConnection model, StorageServerConnections template) {
         StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetId()) {
-            entity.setid(model.getId());
+            entity.setId(model.getId());
         }
         org.ovirt.engine.core.common.businessentities.storage.StorageType storageType = null;
         if (model.getType() != null) {
            storageType = map(StorageType.fromValue(model.getType()), null);
         }
         else if (template != null) {
-           storageType = template.getstorage_type();
+           storageType = template.getStorageType();
         }
         if (storageType != null) {
-            entity.setstorage_type(storageType);
+            entity.setStorageType(storageType);
             switch (storageType) {
             case ISCSI:
                 if (model.isSetAddress()) {
-                    entity.setconnection(model.getAddress());
+                    entity.setConnection(model.getAddress());
                 }
                 if (model.isSetPort()) {
-                    entity.setport(model.getPort().toString());
+                    entity.setPort(model.getPort().toString());
                 }
                 if (model.isSetUsername()) {
-                    entity.setuser_name(model.getUsername());
+                    entity.setUserName(model.getUsername());
                 }
                 if (model.isSetTarget()) {
-                    entity.setiqn(model.getTarget());
+                    entity.setIqn(model.getTarget());
                 }
                 if (model.isSetPassword()) {
-                    entity.setpassword(model.getPassword());
+                    entity.setPassword(model.getPassword());
                 }
                 break;
             case FCP:
@@ -216,8 +216,8 @@ public class StorageDomainMapper {
                 // thus, need to take care of their assignment separately since they are merged
                 // in the backend into a single field.
                 String[] parts = null;
-                if (!StringUtils.isEmpty(entity.getconnection())) {
-                    parts = entity.getconnection().split(":");
+                if (!StringUtils.isEmpty(entity.getConnection())) {
+                    parts = entity.getConnection().split(":");
                 }
                 String address = null;
                 String path = null;
@@ -233,7 +233,7 @@ public class StorageDomainMapper {
                 else {
                     path = parts != null ? parts[1] : "";
                 }
-                entity.setconnection(address + ":" + path);
+                entity.setConnection(address + ":" + path);
 
                 if (model.getNfsRetrans() != null) {
                     entity.setNfsRetrans(model.getNfsRetrans().shortValue());
@@ -253,15 +253,15 @@ public class StorageDomainMapper {
                 break;
             case LOCALFS:
                 if (model.isSetPath()) {
-                    entity.setconnection(model.getPath());
+                    entity.setConnection(model.getPath());
                 }
                 break;
             case POSIXFS:
             case GLUSTERFS:
                 if (model.isSetAddress() && model.isSetPath()) {
-                    entity.setconnection(model.getAddress() + ":" + model.getPath());
+                    entity.setConnection(model.getAddress() + ":" + model.getPath());
                 } else if (model.isSetPath()) {
-                    entity.setconnection(model.getPath());
+                    entity.setConnection(model.getPath());
                 }
                 if (model.isSetMountOptions()) {
                     entity.setMountOptions(model.getMountOptions());
@@ -281,18 +281,18 @@ public class StorageDomainMapper {
             to = org.ovirt.engine.api.model.StorageConnection.class)
     public static StorageConnection map(StorageServerConnections entity, StorageConnection template) {
         StorageConnection model = template != null ? template : new StorageConnection();
-        model.setId(entity.getid());
-        model.setType(map(entity.getstorage_type(), null));
-        if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI) {
-            model.setAddress(entity.getconnection());
-            model.setPort(Integer.parseInt(entity.getport()));
-            model.setUsername(entity.getuser_name());
-            model.setTarget(entity.getiqn());
+        model.setId(entity.getId());
+        model.setType(map(entity.getStorageType(), null));
+        if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI) {
+            model.setAddress(entity.getConnection());
+            model.setPort(Integer.parseInt(entity.getPort()));
+            model.setUsername(entity.getUserName());
+            model.setTarget(entity.getIqn());
         }
-        if (entity.getstorage_type().isFileDomain()) {
+        if (entity.getStorageType().isFileDomain()) {
             setPath(entity, model);
         }
-        if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS)) {
+        if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS)) {
             if (entity.getNfsVersion() != null) {
                 model.setNfsVersion(entity.getNfsVersion().toString());
             }
@@ -306,8 +306,8 @@ public class StorageDomainMapper {
                 model.setMountOptions(entity.getMountOptions());
             }
         }
-        else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)
-                || entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS)) {
+        else if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)
+                || entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS)) {
             model.setMountOptions(entity.getMountOptions());
             model.setVfsType(entity.getVfsType());
         }
@@ -315,13 +315,13 @@ public class StorageDomainMapper {
     }
 
     private static void setPath(StorageServerConnections entity, StorageConnection model) {
-        if (entity.getconnection().contains(":")) {
-            String[] parts = entity.getconnection().split(":");
+        if (entity.getConnection().contains(":")) {
+            String[] parts = entity.getConnection().split(":");
             model.setAddress(parts[0]);
             model.setPath(parts[1]);
         }
         else {
-            model.setPath(entity.getconnection());
+            model.setPath(entity.getConnection());
         }
     }
 

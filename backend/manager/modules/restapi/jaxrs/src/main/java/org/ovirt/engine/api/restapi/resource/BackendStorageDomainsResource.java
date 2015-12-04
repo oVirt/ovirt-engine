@@ -82,11 +82,11 @@ public class BackendStorageDomainsResource
             StorageServerConnections connection) {
         Response response = null;
         boolean isConnNew = false;
-        if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getid())) {
+        if (connection.getStorageType().isFileDomain() && StringUtils.isEmpty(connection.getId())) {
             isConnNew = true;
-            connection.setid(addStorageServerConnection(connection, hostId));
+            connection.setId(addStorageServerConnection(connection, hostId));
         }
-        entity.setStorage(connection.getid());
+        entity.setStorage(connection.getId());
         if (action == VdcActionType.AddNFSStorageDomain || action == VdcActionType.AddPosixFsStorageDomain ||
                 action == VdcActionType.AddGlusterFsStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
@@ -170,7 +170,7 @@ public class BackendStorageDomainsResource
         List<StorageServerConnections> existingStorageServerConnections = new ArrayList<>();
         for (LUNs lun : luns) {
             for (StorageServerConnections storageServerConnection : lun.getLunConnections()) {
-                storageServerConnection.setstorage_type(storageType);
+                storageServerConnection.setStorageType(storageType);
                 existingStorageServerConnections.add(storageServerConnection);
             }
         }
@@ -267,13 +267,13 @@ public class BackendStorageDomainsResource
         if (!storageConnectionFromUser.isSetId()) {
             validateParameters(storageDomain, "storage.type");
             cnx = mapToCnx(storageDomain);
-            if (cnx.getstorage_type().isFileDomain()) {
+            if (cnx.getStorageType().isFileDomain()) {
                 validateParameters(storageConnectionFromUser, "path");
             }
         }
         else {
             cnx = getStorageServerConnection(storageConnectionFromUser.getId());
-            storageDomain.getStorage().setType(mapType(cnx.getstorage_type()));
+            storageDomain.getStorage().setType(mapType(cnx.getStorageType()));
         }
         StorageDomainStatic entity = mapToStatic(storageDomain);
         Response resp = null;
@@ -356,12 +356,12 @@ public class BackendStorageDomainsResource
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final HostStorage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
-        if (cnx.getconnection().contains(":")) {
-            String[] parts = cnx.getconnection().split(":");
+        if (cnx.getConnection().contains(":")) {
+            String[] parts = cnx.getConnection().split(":");
             storage.setAddress(parts[0]);
             storage.setPath(parts[1]);
         } else {
-            storage.setPath(cnx.getconnection());
+            storage.setPath(cnx.getConnection());
         }
         storage.setMountOptions(cnx.getMountOptions());
         storage.setVfsType(cnx.getVfsType());
@@ -493,8 +493,8 @@ public class BackendStorageDomainsResource
                                 new GetExistingStorageDomainListParameters(hostId,
                                         storageType,
                                         domainType,
-                                        cnx.getconnection()),
-                                "Existing storage domains: path=" + cnx.getconnection()));
+                                        cnx.getConnection()),
+                                "Existing storage domains: path=" + cnx.getConnection()));
         return existing.size() != 0 ? existing.get(0) : null;
     }
 

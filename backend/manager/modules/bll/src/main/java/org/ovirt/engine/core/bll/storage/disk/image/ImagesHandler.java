@@ -617,7 +617,7 @@ public final class ImagesHandler {
 
         if (!lun.getLunConnections().isEmpty()) {
             StorageHelperDirector.getInstance().getItem(
-                    lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
+                    lun.getLunConnections().get(0).getStorageType()).removeLun(lun);
         } else {
             // if there are no connections then the lun is fcp.
             StorageHelperDirector.getInstance().getItem(StorageType.FCP).removeLun(lun);

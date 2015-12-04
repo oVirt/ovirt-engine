@@ -31,11 +31,11 @@ public class StorageConnectionHelper {
 
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
         DefaultValueMap con = new DefaultValueMap();
-        con.put("id", connection.getid(), Guid.Empty.toString());
-        con.put("connection", connection.getconnection(), "");
-        con.putIfNotEmpty("tpgt", connection.getportal());
-        con.put("port", connection.getport(), "");
-        con.put("iqn", connection.getiqn(), "");
+        con.put("id", connection.getId(), Guid.Empty.toString());
+        con.put("connection", connection.getConnection(), "");
+        con.putIfNotEmpty("tpgt", connection.getPortal());
+        con.put("port", connection.getPort(), "");
+        con.put("iqn", connection.getIqn(), "");
         con.put("user", credentials.getFirst(), "");
         con.put("password", credentials.getSecond(), "");
         con.putIfNotEmpty("ifaceName", connection.getIface());
@@ -60,9 +60,9 @@ public class StorageConnectionHelper {
 
     public Pair<String, String> getStorageConnectionCredentialsForhost(Guid hostId, StorageServerConnections connection) {
         Pair<String, String> credentials;
-        StorageServerConnectionExtension connExt = getConnectionExtensionDao().getByHostIdAndTarget(hostId, connection.getiqn());
+        StorageServerConnectionExtension connExt = getConnectionExtensionDao().getByHostIdAndTarget(hostId, connection.getIqn());
         if (connExt == null) {
-            credentials = new Pair<>(connection.getuser_name(), connection.getpassword());
+            credentials = new Pair<>(connection.getUserName(), connection.getPassword());
         }
         else {
             credentials = new Pair<>(connExt.getUserName(), connExt.getPassword());

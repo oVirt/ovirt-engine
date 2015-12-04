@@ -160,7 +160,7 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                         StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
 
-                        generalModel.setPath(connection == null ? null : connection.getconnection());
+                        generalModel.setPath(connection == null ? null : connection.getConnection());
 
                         if (isNfs) {
                             generalModel.setNfsVersion(connection.getNfsVersion());

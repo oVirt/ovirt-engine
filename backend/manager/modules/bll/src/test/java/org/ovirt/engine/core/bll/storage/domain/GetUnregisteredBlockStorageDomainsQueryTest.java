@@ -233,10 +233,10 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
     private List<StorageServerConnections> getConnections() {
         StorageServerConnections connection1 = new StorageServerConnections();
-        connection1.setiqn(connectionIqn1);
+        connection1.setIqn(connectionIqn1);
 
         StorageServerConnections connection2 = new StorageServerConnections();
-        connection2.setiqn(connectionIqn2);
+        connection2.setIqn(connectionIqn2);
 
         return new ArrayList<>(Arrays.asList(connection1, connection2));
     }

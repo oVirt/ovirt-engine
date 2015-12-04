@@ -117,7 +117,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         AbstractTextColumn<StorageServerConnections> iqnColumn = new AbstractTextColumn<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
-                return conn.getiqn();
+                return conn.getIqn();
             }
         };
         connectionsTable.addColumn(iqnColumn, constants.iqn(), "40%"); //$NON-NLS-1$
@@ -125,7 +125,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         AbstractTextColumn<StorageServerConnections> addressColumn = new AbstractTextColumn<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
-                return conn.getconnection();
+                return conn.getConnection();
             }
         };
         connectionsTable.addColumn(addressColumn, constants.addressSanStorage(), "30%"); //$NON-NLS-1$
@@ -133,7 +133,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         AbstractTextColumn<StorageServerConnections> portColumn = new AbstractTextColumn<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
-                return conn.getport();
+                return conn.getPort();
             }
         };
         connectionsTable.addColumn(portColumn, constants.portSanStorage(), "30%"); //$NON-NLS-1$

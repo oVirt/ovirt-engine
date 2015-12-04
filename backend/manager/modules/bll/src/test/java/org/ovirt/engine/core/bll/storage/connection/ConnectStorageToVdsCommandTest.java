@@ -26,7 +26,7 @@ public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
 
     private StorageServerConnections createConnection(StorageType storageType, String mountOptions) {
         StorageServerConnections conn = new StorageServerConnections();
-        conn.setstorage_type(storageType);
+        conn.setStorageType(storageType);
         conn.setMountOptions(mountOptions);
         return conn;
     }

@@ -86,22 +86,22 @@ public class HostedEngineHelper {
                 getStorageDomainStatic().getId().toString());
         params.put(
                 "connectionUUID",
-                sdConnection.getid().toString());
+                sdConnection.getId().toString());
         params.put(
                 "iqn",
-                sdConnection.getiqn());
+                sdConnection.getIqn());
         params.put(
                 "portal",
-                sdConnection.getport());
+                sdConnection.getPort());
         params.put(
                 "user",
-                sdConnection.getuser_name());
+                sdConnection.getUserName());
         params.put(
                 "password",
-                sdConnection.getpassword());
+                sdConnection.getPassword());
         params.put(
                 "port",
-                sdConnection.getport());
+                sdConnection.getPort());
         params.put(
                 "ca_cert",
                 getCaCertPath());
@@ -156,7 +156,7 @@ public class HostedEngineHelper {
     }
 
     private String getStorageType() {
-        switch (sdConnection.getstorage_type()) {
+        switch (sdConnection.getStorageType()) {
         case NFS:
             if (sdConnection.getNfsVersion() == NfsVersion.V4) {
                 return "nfs4";

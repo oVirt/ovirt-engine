@@ -38,7 +38,7 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
-                getPath().setEntity(connection.getconnection());
+                getPath().setEntity(connection.getConnection());
                 prepareConnectionForEditing(connection);
             }
         }), storage.getStorage(), true);

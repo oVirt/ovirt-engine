@@ -37,7 +37,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
         StorageServerConnections entity = StorageDomainMapper.map(conn, null);
 
         IscsiBond iscsiBond = getIscsiBond();
-        iscsiBond.getStorageConnectionIds().add(entity.getid());
+        iscsiBond.getStorageConnectionIds().add(entity.getId());
         return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
     }
 

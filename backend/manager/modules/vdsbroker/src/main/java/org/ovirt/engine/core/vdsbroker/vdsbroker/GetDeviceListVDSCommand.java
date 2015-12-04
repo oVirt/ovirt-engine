@@ -177,22 +177,22 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     public static StorageServerConnections parseConnection(Map<String, Object> xcon) {
         StorageServerConnections con = new StorageServerConnections();
         if (xcon.containsKey("connection")) {
-            con.setconnection(xcon.get("connection").toString());
+            con.setConnection(xcon.get("connection").toString());
         }
         if (xcon.containsKey("portal")) {
-            con.setportal(xcon.get("portal").toString());
+            con.setPortal(xcon.get("portal").toString());
         }
         if (xcon.containsKey("port")) {
-            con.setport(xcon.get("port").toString());
+            con.setPort(xcon.get("port").toString());
         }
         if (xcon.containsKey("iqn")) {
-            con.setiqn(xcon.get("iqn").toString());
+            con.setIqn(xcon.get("iqn").toString());
         }
         if (xcon.containsKey("user")) {
-            con.setuser_name(xcon.get("user").toString());
+            con.setUserName(xcon.get("user").toString());
         }
         if (xcon.containsKey("password")) {
-            con.setpassword(xcon.get("password").toString());
+            con.setPassword(xcon.get("password").toString());
         }
         return con;
     }

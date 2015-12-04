@@ -89,8 +89,8 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         when(spDao.get(spId)).thenReturn(sp);
 
         StorageServerConnections conn = new StorageServerConnections();
-        conn.setid(connId.toString());
-        conn.setstorage_type(StorageType.NFS);
+        conn.setId(connId.toString());
+        conn.setStorageType(StorageType.NFS);
 
         when(sscDao.get(connId.toString())).thenReturn(conn);
 

@@ -34,7 +34,7 @@ public class StorageConnectionValidator {
     }
 
     public ValidationResult isSameStorageType(StorageDomain storageDomain) {
-        StorageType connectionStorageType = connection.getstorage_type();
+        StorageType connectionStorageType = connection.getStorageType();
         StorageType storageDomainType = storageDomain.getStorageType();
 
         if (!connectionStorageType.equals(storageDomainType)) {
@@ -50,7 +50,7 @@ public class StorageConnectionValidator {
             return validationResult;
         }
 
-        StorageType connectionStorageType = connection.getstorage_type();
+        StorageType connectionStorageType = connection.getStorageType();
         StorageType storageDomainType = storageDomain.getStorageType();
 
         if (!connectionStorageType.equals(StorageType.ISCSI) || !storageDomainType.equals(StorageType.ISCSI)) {
@@ -85,7 +85,7 @@ public class StorageConnectionValidator {
     public boolean isConnectionForISCSIDomainAttached(StorageDomain storageDomain) {
         List<StorageServerConnections> connectionsForDomain = getAllConnectionsForDomain(storageDomain.getId());
         for (StorageServerConnections connectionForDomain : connectionsForDomain) {
-            if (connectionForDomain.getid().equals(connection.getid())) {
+            if (connectionForDomain.getId().equals(connection.getId())) {
                 return true;
             }
         }

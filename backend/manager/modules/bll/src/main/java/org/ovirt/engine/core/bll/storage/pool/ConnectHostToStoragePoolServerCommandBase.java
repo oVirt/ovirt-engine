@@ -64,7 +64,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
     private void updateConnectionsTypeMap() {
         connectionsTypeMap = new HashMap<>();
         for (StorageServerConnections conn : _connections) {
-            StorageType connType = conn.getstorage_type();
+            StorageType connType = conn.getStorageType();
             MultiValueMapUtils.addToMap(connType, conn, connectionsTypeMap);
         }
     }

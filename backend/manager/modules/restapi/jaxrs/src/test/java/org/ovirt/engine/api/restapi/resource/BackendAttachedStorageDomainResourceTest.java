@@ -266,8 +266,8 @@ public class BackendAttachedStorageDomainResourceTest
 
     private StorageServerConnections setUpConnectionExpectations() {
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(STORAGE_CONNECTION_ID.toString());
-        connection.setconnection("10.11.12.13" + ":" + "/1");
+        connection.setId(STORAGE_CONNECTION_ID.toString());
+        connection.setConnection("10.11.12.13" + ":" + "/1");
         return connection;
     }
 

@@ -102,13 +102,13 @@ public class StorageDomainMapperTest extends
     public void checkISCSIStorageConnectionsMappings() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setiqn("iqn.my.target1");
-        connection.setport("3260");
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
-        connection.setconnection("1.2.135.255");
-        connection.setuser_name("myuser1");
-        connection.setpassword("123");
+        connection.setId(connId.toString());
+        connection.setIqn("iqn.my.target1");
+        connection.setPort("3260");
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
+        connection.setConnection("1.2.135.255");
+        connection.setUserName("myuser1");
+        connection.setPassword("123");
 
         HostStorage RESTConnection = new HostStorage();
         RESTConnection.setId(connId.toString());
@@ -133,9 +133,9 @@ public class StorageDomainMapperTest extends
     public void checkNFSStorageConnectionsMappings() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
-        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setId(connId.toString());
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
+        connection.setConnection("1.2.135.255:/myshare/data");
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
@@ -166,9 +166,9 @@ public class StorageDomainMapperTest extends
     public void checkPosixStorageConnectionsMappings() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
-        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setId(connId.toString());
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
+        connection.setConnection("1.2.135.255:/myshare/data");
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
 
@@ -193,9 +193,9 @@ public class StorageDomainMapperTest extends
     public void checkPosixStorageConnectionsMappingsToBll() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
-        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setId(connId.toString());
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
+        connection.setConnection("1.2.135.255:/myshare/data");
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
 
@@ -208,9 +208,9 @@ public class StorageDomainMapperTest extends
         RESTConnection.setMountOptions("timeo=30");
 
         StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
-        assertEquals(connection.getid(), mappedResult.getid());
-        assertEquals(connection.getstorage_type(), mappedResult.getstorage_type());
-        assertEquals(connection.getconnection(), mappedResult.getconnection());
+        assertEquals(connection.getId(), mappedResult.getId());
+        assertEquals(connection.getStorageType(), mappedResult.getStorageType());
+        assertEquals(connection.getConnection(), mappedResult.getConnection());
         assertEquals(connection.getVfsType(), mappedResult.getVfsType());
         assertEquals(connection.getMountOptions(), mappedResult.getMountOptions());
     }
@@ -219,9 +219,9 @@ public class StorageDomainMapperTest extends
     public void checkNFSStorageConnectionsMappingsToBll() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
-        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setId(connId.toString());
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
+        connection.setConnection("1.2.135.255:/myshare/data");
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
@@ -238,9 +238,9 @@ public class StorageDomainMapperTest extends
         RESTConnection.setMountOptions("tcp");
 
         StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
-        assertEquals(connection.getid(), mappedResult.getid());
-        assertEquals(connection.getstorage_type(), mappedResult.getstorage_type());
-        assertEquals(connection.getconnection(), mappedResult.getconnection());
+        assertEquals(connection.getId(), mappedResult.getId());
+        assertEquals(connection.getStorageType(), mappedResult.getStorageType());
+        assertEquals(connection.getConnection(), mappedResult.getConnection());
         assertEquals(connection.getNfsRetrans(), mappedResult.getNfsRetrans());
         assertEquals(connection.getNfsTimeo(), mappedResult.getNfsTimeo());
         assertEquals(connection.getNfsVersion(), mappedResult.getNfsVersion());
@@ -251,13 +251,13 @@ public class StorageDomainMapperTest extends
     public void checkISCSISStorageConnectionsMappingsToBll() {
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
-        connection.setid(connId.toString());
-        connection.setiqn("iqn.my.target1");
-        connection.setport("3260");
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
-        connection.setconnection("1.2.135.255");
-        connection.setuser_name("myuser1");
-        connection.setpassword("123");
+        connection.setId(connId.toString());
+        connection.setIqn("iqn.my.target1");
+        connection.setPort("3260");
+        connection.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
+        connection.setConnection("1.2.135.255");
+        connection.setUserName("myuser1");
+        connection.setPassword("123");
 
         StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
@@ -269,13 +269,13 @@ public class StorageDomainMapperTest extends
         RESTConnection.setPassword("123");
 
         StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
-        assertEquals(mappedResult.getid(), mappedResult.getid());
-        assertEquals(mappedResult.getstorage_type(), mappedResult.getstorage_type());
-        assertEquals(mappedResult.getconnection(), mappedResult.getconnection());
-        assertEquals(mappedResult.getiqn(), mappedResult.getiqn());
-        assertEquals(mappedResult.getuser_name(), mappedResult.getuser_name());
-        assertEquals(mappedResult.getpassword(), mappedResult.getpassword());
-        assertEquals(mappedResult.getport(), mappedResult.getport());
+        assertEquals(mappedResult.getId(), mappedResult.getId());
+        assertEquals(mappedResult.getStorageType(), mappedResult.getStorageType());
+        assertEquals(mappedResult.getConnection(), mappedResult.getConnection());
+        assertEquals(mappedResult.getIqn(), mappedResult.getIqn());
+        assertEquals(mappedResult.getUserName(), mappedResult.getUserName());
+        assertEquals(mappedResult.getPassword(), mappedResult.getPassword());
+        assertEquals(mappedResult.getPort(), mappedResult.getPort());
 
     }
 

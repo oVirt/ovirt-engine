@@ -61,7 +61,7 @@ public class Entities {
         if (entityList != null) {
             Map<String, E> map = new HashMap<>();
             for (E e : entityList) {
-                map.put(e.getiqn(), e);
+                map.put(e.getIqn(), e);
             }
             return map;
         } else {

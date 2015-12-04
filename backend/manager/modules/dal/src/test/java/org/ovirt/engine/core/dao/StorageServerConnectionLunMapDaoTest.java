@@ -29,8 +29,8 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
         StorageServerConnections existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297e");
 
         existingLUNStorageMap =
-                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", existingConnection.getid()));
-        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, existingConnection.getid());
+                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", existingConnection.getId()));
+        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, existingConnection.getId());
     }
 
     @Test

@@ -93,7 +93,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
 
             @Override
             public int compare(SanTargetModel targetModel1, SanTargetModel targetModel2) {
-                return lexoNumeric.compare(targetModel1.getEntity().getiqn(), targetModel2.getEntity().getiqn());
+                return lexoNumeric.compare(targetModel1.getEntity().getIqn(), targetModel2.getEntity().getIqn());
             }
         });
     }
@@ -114,7 +114,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
 
     private SanTargetModel getSanTargetModelByConnection(StorageServerConnections connection) {
         for (SanTargetModel targetModel : getTargets().getItems()) {
-            if (targetModel.getEntity().getiqn().equals(connection.getiqn())) {
+            if (targetModel.getEntity().getIqn().equals(connection.getIqn())) {
                 return targetModel;
             }
         }

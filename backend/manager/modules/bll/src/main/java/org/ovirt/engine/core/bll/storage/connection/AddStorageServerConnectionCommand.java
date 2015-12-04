@@ -53,9 +53,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
 
         StorageServerConnections connection = getConnection();
-        connection.setid(Guid.newGuid().toString());
+        connection.setId(Guid.newGuid().toString());
         saveConnection(connection);
-        getReturnValue().setActionReturnValue(connection.getid());
+        getReturnValue().setActionReturnValue(connection.getId());
 
         setSucceeded(true);
     }
@@ -72,7 +72,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected boolean canDoAction() {
         StorageServerConnections paramConnection = getConnection();
         // if an id was sent - it's not ok since only the backend should allocate ids
-        if (StringUtils.isNotEmpty(paramConnection.getid())) {
+        if (StringUtils.isNotEmpty(paramConnection.getId())) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 
@@ -107,16 +107,16 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getConnection().getstorage_type().isFileDomain()) {
+        if (getConnection().getStorageType().isFileDomain()) {
             // lock the path to NFS to avoid at the same time if some other user tries to:
             // add new storage domain to same path or edit another storage server connection to point to same path
-            return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
+            return Collections.singletonMap(getParameters().getStorageServerConnection().getConnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         else { // lock target details
-            return Collections.singletonMap(getConnection().getconnection() + ";" + getConnection().getiqn() + ";"
-                    + getConnection().getport() + ";" + getConnection().getuser_name(),
+            return Collections.singletonMap(getConnection().getConnection() + ";" + getConnection().getIqn() + ";"
+                    + getConnection().getPort() + ";" + getConnection().getUserName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }

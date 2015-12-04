@@ -456,10 +456,10 @@ public class MarshallingTestCase {
             String[] address = tokens[0].split(":");
             String[] literals = tokens[1].split(" ");
 
-            con.setconnection(address[0]);
-            con.setport(address[1]);
-            con.setportal(literals[0]);
-            con.setiqn(literals[1]);
+            con.setConnection(address[0]);
+            con.setPort(address[1]);
+            con.setPortal(literals[0]);
+            con.setIqn(literals[1]);
             connections.add(con);
         }
 

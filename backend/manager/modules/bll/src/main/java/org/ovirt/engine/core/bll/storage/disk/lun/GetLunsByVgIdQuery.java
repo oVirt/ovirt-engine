@@ -70,7 +70,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             if (!lunConnections.isEmpty()) {
                 StorageServerConnections connection =
                         getConnection(lunConnections.get(0).getstorage_server_connection());
-                storageType = connection.getstorage_type();
+                storageType = connection.getStorageType();
             } else {
                 storageType = StorageType.FCP;
             }

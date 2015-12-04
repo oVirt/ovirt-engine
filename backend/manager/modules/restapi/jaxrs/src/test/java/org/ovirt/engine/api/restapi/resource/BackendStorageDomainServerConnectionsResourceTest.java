@@ -108,11 +108,11 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
-        expect(entity.getconnection()).andReturn("1.1.1.255").anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getStorageType()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
+        expect(entity.getConnection()).andReturn("1.1.1.255").anyTimes();
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {
-            expect(entity.getport()).andReturn("3260").anyTimes();
+            expect(entity.getPort()).andReturn("3260").anyTimes();
         }
 
         return entity;

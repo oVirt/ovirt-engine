@@ -64,11 +64,11 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
-        expect(entity.getconnection()).andReturn("/data1").anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getStorageType()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
+        expect(entity.getConnection()).andReturn("/data1").anyTimes();
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {
-            expect(entity.getport()).andReturn("3260").anyTimes();
+            expect(entity.getPort()).andReturn("3260").anyTimes();
         }
 
         return entity;
@@ -108,12 +108,12 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setconnection("1.1.1.1:/data1");
-        connection.setstorage_type(STORAGE_TYPES_MAPPED[0]);
+        connection.setConnection("1.1.1.1:/data1");
+        connection.setStorageType(STORAGE_TYPES_MAPPED[0]);
         setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                new Object[] { connection.getconnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
+                new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },
                 true,
                 true,
                 GUIDS[0].toString(),
@@ -135,12 +135,12 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setconnection("/data1");
-        connection.setstorage_type(STORAGE_TYPES_MAPPED[1]);
+        connection.setConnection("/data1");
+        connection.setStorageType(STORAGE_TYPES_MAPPED[1]);
         setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                new Object[] { connection.getconnection(), STORAGE_TYPES_MAPPED[1], GUIDS[1] },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
+                new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[1], GUIDS[1] },
                 true,
                 true,
                 GUIDS[1].toString(),
@@ -162,12 +162,12 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setconnection("1.1.1.1:/data1");
-        connection.setstorage_type(STORAGE_TYPES_MAPPED[0]);
+        connection.setConnection("1.1.1.1:/data1");
+        connection.setStorageType(STORAGE_TYPES_MAPPED[0]);
         setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
-                new Object[] { connection.getconnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
+                new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },
                 false,
                 false,
                 GUIDS[0].toString(),

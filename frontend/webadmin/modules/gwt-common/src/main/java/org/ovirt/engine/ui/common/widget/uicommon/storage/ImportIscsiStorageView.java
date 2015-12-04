@@ -131,7 +131,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         AbstractTextColumn<SanTargetModel> iqnColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
-                return model.getEntity().getiqn();
+                return model.getEntity().getIqn();
             }
         };
         targetsTable.addColumn(iqnColumn, constants.iqn(), "60%"); //$NON-NLS-1$
@@ -139,7 +139,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         AbstractTextColumn<SanTargetModel> addressColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
-                return model.getEntity().getconnection();
+                return model.getEntity().getConnection();
             }
         };
         targetsTable.addColumn(addressColumn, constants.addressSanStorage(), "130px"); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         AbstractTextColumn<SanTargetModel> portColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
-                return model.getEntity().getport();
+                return model.getEntity().getPort();
             }
         };
         targetsTable.addColumn(portColumn, constants.portSanStorage(), "70px"); //$NON-NLS-1$

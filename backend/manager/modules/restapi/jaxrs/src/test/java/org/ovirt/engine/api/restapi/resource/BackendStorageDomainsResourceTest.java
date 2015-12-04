@@ -168,7 +168,7 @@ public class BackendStorageDomainsResourceTest
     public void doTestAddStorageDomain(int idx, Host host, boolean existing) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[idx] + ":" + PATHS[idx], STORAGE_TYPES_MAPPED[idx], GUIDS[0] },
                 true,
                 true,
@@ -215,7 +215,7 @@ public class BackendStorageDomainsResourceTest
     public void testAddLocalStorageDomain() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { PATHS[LOCAL_IDX], STORAGE_TYPES_MAPPED[LOCAL_IDX], GUIDS[0] },
                 true,
                 true,
@@ -256,8 +256,8 @@ public class BackendStorageDomainsResourceTest
     public void testAddPosixStorageDomain() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection",
-                        "StorageServerConnection.storage_type",
+                new String[] { "StorageServerConnection.Connection",
+                        "StorageServerConnection.StorageType",
                         "StorageServerConnection.MountOptions",
                         "StorageServerConnection.VfsType",
                         "VdsId" },
@@ -313,7 +313,7 @@ public class BackendStorageDomainsResourceTest
 
         setUriInfo(setUpActionExpectations(VdcActionType.ConnectStorageToVds,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "VdsId" },
+                new String[] { "StorageServerConnection.Connection", "VdsId" },
                 new Object[] { ADDRESSES[0], GUIDS[0] },
                 true,
                 true,
@@ -422,7 +422,7 @@ public class BackendStorageDomainsResourceTest
             throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
                 true,
                 true,
@@ -474,7 +474,7 @@ public class BackendStorageDomainsResourceTest
     private void doTestBadCnxAdd(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
-                new String[] { "StorageServerConnection.connection", "StorageServerConnection.storage_type", "VdsId" },
+                new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
                 canDo,
                 success,
@@ -558,18 +558,18 @@ public class BackendStorageDomainsResourceTest
     static StorageServerConnections setUpStorageServerConnection(int idIndex, int index, StorageType storageType) {
         StorageServerConnections cnx = new StorageServerConnections();
         if (idIndex != -1) {
-            cnx.setid(GUIDS[idIndex].toString());
+            cnx.setId(GUIDS[idIndex].toString());
         }
         if (storageType == StorageType.LOCALFS) {
-            cnx.setconnection(PATHS[index]);
+            cnx.setConnection(PATHS[index]);
         } else if (storageType == StorageType.POSIXFS) {
-            cnx.setconnection(ADDRESSES[index] + ":" + PATHS[index]);
+            cnx.setConnection(ADDRESSES[index] + ":" + PATHS[index]);
             cnx.setMountOptions(MOUNT_OPTIONS[index]);
             cnx.setVfsType(VFS_TYPES[index]);
         } else {
-            cnx.setconnection(ADDRESSES[index] + ":" + PATHS[index]);
+            cnx.setConnection(ADDRESSES[index] + ":" + PATHS[index]);
         }
-        cnx.setstorage_type(STORAGE_TYPES_MAPPED[index]);
+        cnx.setStorageType(STORAGE_TYPES_MAPPED[index]);
         return cnx;
     }
 
@@ -611,9 +611,9 @@ public class BackendStorageDomainsResourceTest
 
     protected List<LUNs> setUpLuns() {
         StorageServerConnections cnx = new StorageServerConnections();
-        cnx.setconnection(ADDRESSES[0]);
-        cnx.setiqn(TARGET);
-        cnx.setport(Integer.toString(PORT));
+        cnx.setConnection(ADDRESSES[0]);
+        cnx.setIqn(TARGET);
+        cnx.setPort(Integer.toString(PORT));
 
         LUNs lun = new LUNs();
         lun.setLUN_id(LUN);

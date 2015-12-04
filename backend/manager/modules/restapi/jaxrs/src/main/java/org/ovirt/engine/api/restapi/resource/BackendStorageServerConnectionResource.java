@@ -47,7 +47,7 @@ public class BackendStorageServerConnectionResource extends
     public Response remove() {
         get();
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
+        connection.setId(id);
 
         String host = QueryHelper.getMatrixConstraint(uriInfo, HOST);
         Guid hostId = Guid.Empty;

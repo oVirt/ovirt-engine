@@ -45,8 +45,8 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         existingNfsAutoConnection = dao.get(FixturesTool.EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID.toString());
 
         newServerConnection = new StorageServerConnections();
-        newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");
-        newServerConnection.setconnection(EXISTING_DOMAIN_STORAGE_NAME);
+        newServerConnection.setId("0cc146e8-e5ed-482c-8814-270bc48c2980");
+        newServerConnection.setConnection(EXISTING_DOMAIN_STORAGE_NAME);
     }
 
     /**
@@ -64,7 +64,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetServerConnection() {
-        StorageServerConnections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getId());
 
         assertNotNull(result);
         assertEquals(existingConnection, result);
@@ -79,7 +79,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetForIqn() {
-        StorageServerConnections result = dao.getForIqn(existingConnection.getiqn());
+        StorageServerConnections result = dao.getForIqn(existingConnection.getIqn());
 
         assertNotNull(result);
         assertEquals(existingConnection, result);
@@ -116,7 +116,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         assertEquals(2, conns.size());
 
         for (StorageServerConnections conn : conns) {
-            assertEquals(StorageType.ISCSI, conn.getstorage_type());
+            assertEquals(StorageType.ISCSI, conn.getStorageType());
         }
     }
 
@@ -129,7 +129,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         assertEquals(1, conns.size());
 
         for (StorageServerConnections conn : conns) {
-            assertEquals(StorageType.NFS, conn.getstorage_type());
+            assertEquals(StorageType.NFS, conn.getStorageType());
         }
     }
 
@@ -198,7 +198,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         for (StorageServerConnections storageServerConnection : result) {
             assertEquals("connections were loaded with incorrect storage type",
                     StorageType.NFS,
-                    storageServerConnection.getstorage_type());
+                    storageServerConnection.getStorageType());
         }
 
         List<StorageServerConnections> domainConnections = new LinkedList<>();
@@ -233,8 +233,8 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         assertFalse(result.isEmpty());
         Set<String> connections  = new HashSet<>();
         for (StorageServerConnections connection : result) {
-            assertFalse(connections.contains(connection.getid()));
-            connections.add(connection.getid());
+            assertFalse(connections.contains(connection.getId()));
+            connections.add(connection.getId());
         }
     }
 
@@ -253,8 +253,8 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
 
     @Test
     public void getAllForForConnection() {
-        StorageServerConnections conn = dao.get(existingConnection.getid());
-        conn.setid("copy");
+        StorageServerConnections conn = dao.get(existingConnection.getId());
+        conn.setId("copy");
         dao.save(conn);
         assertGetAllForConnectionResult(Arrays.asList(existingConnection, conn), existingConnection);
     }
@@ -298,13 +298,13 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
             String portal,
             String port) {
         StorageServerConnections newConn = new StorageServerConnections();
-        newConn.setid(id);
-        newConn.setconnection(connection);
-        newConn.setiqn(iqn);
-        newConn.setportal(portal);
-        newConn.setport(port);
-        newConn.setuser_name(username);
-        newConn.setpassword(password);
+        newConn.setId(id);
+        newConn.setConnection(connection);
+        newConn.setIqn(iqn);
+        newConn.setPortal(portal);
+        newConn.setPort(port);
+        newConn.setUserName(username);
+        newConn.setPassword(password);
         dao.save(newConn);
         return newConn;
     }
@@ -318,12 +318,12 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSaveServerConnection() {
-        StorageServerConnections conn = dao.get(newServerConnection.getid());
+        StorageServerConnections conn = dao.get(newServerConnection.getId());
         assertNull(conn);
 
         dao.save(newServerConnection);
 
-        conn = dao.get(newServerConnection.getid());
+        conn = dao.get(newServerConnection.getId());
 
         assertEquals(newServerConnection, conn);
     }
@@ -333,11 +333,11 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdateIscsiServerConnection() {
-        existingConnection.setiqn("1.2.3.4");
+        existingConnection.setIqn("1.2.3.4");
 
         dao.update(existingConnection);
 
-        StorageServerConnections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getId());
 
         assertEquals(existingConnection, result);
     }
@@ -346,9 +346,9 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     public void testUpdateNfsServerConnection() {
         //create a new connection
         StorageServerConnections newNFSServerConnection = new StorageServerConnections();
-        newNFSServerConnection.setid("0cb136e8-e5ed-472b-8914-260bc48c2987");
-        newNFSServerConnection.setstorage_type(StorageType.NFS);
-        newNFSServerConnection.setconnection("host/lib/data");
+        newNFSServerConnection.setId("0cb136e8-e5ed-472b-8914-260bc48c2987");
+        newNFSServerConnection.setStorageType(StorageType.NFS);
+        newNFSServerConnection.setConnection("host/lib/data");
         newNFSServerConnection.setNfsVersion(NfsVersion.V4);
         newNFSServerConnection.setNfsRetrans((short) 0);
         dao.save(newNFSServerConnection);
@@ -357,18 +357,18 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         StorageServerConnections newNFSServerConnectionFromDB = dao.get("0cb136e8-e5ed-472b-8914-260bc48c2987");
 
         //update its properties and save back to db (update)
-        newNFSServerConnectionFromDB.setconnection("/host2/lib/data");
+        newNFSServerConnectionFromDB.setConnection("/host2/lib/data");
         newNFSServerConnectionFromDB.setNfsRetrans((short) 3);
         newNFSServerConnectionFromDB.setNfsTimeo((short)100);
         dao.update(newNFSServerConnectionFromDB);
 
         //get it again after the update
         StorageServerConnections updatedNFSServerConnectionFromDB = dao.get("0cb136e8-e5ed-472b-8914-260bc48c2987");
-        assertEquals(updatedNFSServerConnectionFromDB.getconnection(), newNFSServerConnectionFromDB.getconnection());
-        assertEquals(updatedNFSServerConnectionFromDB.getid(), newNFSServerConnectionFromDB.getid());
+        assertEquals(updatedNFSServerConnectionFromDB.getConnection(), newNFSServerConnectionFromDB.getConnection());
+        assertEquals(updatedNFSServerConnectionFromDB.getId(), newNFSServerConnectionFromDB.getId());
         assertEquals(updatedNFSServerConnectionFromDB.getNfsRetrans(), newNFSServerConnectionFromDB.getNfsRetrans());
         assertEquals(updatedNFSServerConnectionFromDB.getNfsTimeo(), newNFSServerConnectionFromDB.getNfsTimeo());
-        assertNotSame(newNFSServerConnection.getconnection(), updatedNFSServerConnectionFromDB.getconnection());
+        assertNotSame(newNFSServerConnection.getConnection(), updatedNFSServerConnectionFromDB.getConnection());
         //cleanup...
         dao.remove("0cb136e8-e5ed-472b-8914-260bc48c2987");
     }
@@ -378,9 +378,9 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemoveServerConnection() {
-        dao.remove(existingConnection.getid());
+        dao.remove(existingConnection.getId());
 
-        StorageServerConnections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getId());
 
         assertNull(result);
     }
@@ -394,17 +394,17 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         newServerConnection.setNfsRetrans((short)5);
         dao.save(newServerConnection);
 
-        StorageServerConnections result = dao.get(newServerConnection.getid());
+        StorageServerConnections result = dao.get(newServerConnection.getId());
         assertEquals(result.getNfsVersion(), NfsVersion.V4);
         assertTrue(result.getNfsRetrans() == 5);
         assertNull(result.getNfsTimeo());
 
-        result = dao.get(existingNfsAutoConnection.getid());
+        result = dao.get(existingNfsAutoConnection.getId());
         assertEquals(result.getNfsVersion(), NfsVersion.AUTO);
         assertTrue(result.getNfsRetrans() == 7);
         assertTrue(result.getNfsTimeo() == 42);
 
-        result = dao.get(existingConnection.getid());
+        result = dao.get(existingConnection.getId());
         assertNull(result.getNfsVersion());
         assertNull(result.getNfsRetrans());
         assertNull(result.getNfsTimeo());
@@ -414,14 +414,14 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     public void testGetAllConnectionsOfNfsDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
       assertEquals(connections.size(), 1);
-      assertEquals(connections.get(0).getid(), "0cc146e8-e5ed-482c-8814-270bc48c2981");
+      assertEquals(connections.get(0).getId(), "0cc146e8-e5ed-482c-8814-270bc48c2981");
     }
 
     @Test
     public void testGetAllConnectionsOfIscsiDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
       assertEquals(connections.size(), 2);
-      assertTrue((connections.get(0).getid().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk")) || (connections.get(0).getid().equals("0cc146e8-e5ed-482c-8814-270bc48c297e")));
+      assertTrue((connections.get(0).getId().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk")) || (connections.get(0).getId().equals("0cc146e8-e5ed-482c-8814-270bc48c297e")));
     }
 
     @Test

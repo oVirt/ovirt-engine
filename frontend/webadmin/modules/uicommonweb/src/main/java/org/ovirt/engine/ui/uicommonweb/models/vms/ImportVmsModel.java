@@ -209,7 +209,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                        @Override
                        public void onSuccess(Object model, Object ReturnValue) {
                            StorageServerConnections connection = (StorageServerConnections) ReturnValue;
-                           setExportPath(connection == null ? null : connection.getconnection());
+                           setExportPath(connection == null ? null : connection.getConnection());
                            stopProgress();
                        }
                    };

@@ -36,7 +36,7 @@ public class StorageConnectionHelperTest {
         StorageServerConnections conn = createConnectionWithCredentials("target1", "userConn", "pwdConn");
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(Guid.newGuid(), conn);
-        assertCredentials(credentials, conn.getuser_name(), conn.getpassword());
+        assertCredentials(credentials, conn.getUserName(), conn.getPassword());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class StorageConnectionHelperTest {
         when(connExtDaoMock.getByHostIdAndTarget(connExt.getHostId(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
-        assertCredentials(credentials, conn.getuser_name(), conn.getpassword());
+        assertCredentials(credentials, conn.getUserName(), conn.getPassword());
     }
 
     @Test
@@ -66,14 +66,14 @@ public class StorageConnectionHelperTest {
         when(connExtDaoMock.getByHostIdAndTarget(Guid.newGuid(), connExt.getIqn())).thenReturn(connExt);
 
         Pair<String, String> credentials = helper.getStorageConnectionCredentialsForhost(connExt.getHostId(), conn);
-        assertCredentials(credentials, conn.getuser_name(), conn.getpassword());
+        assertCredentials(credentials, conn.getUserName(), conn.getPassword());
     }
 
     private static StorageServerConnections createConnectionWithCredentials(String target, String userName, String password) {
         StorageServerConnections conn = new StorageServerConnections();
-        conn.setiqn(target);
-        conn.setuser_name(userName);
-        conn.setpassword(password);
+        conn.setIqn(target);
+        conn.setUserName(userName);
+        conn.setPassword(password);
         return conn;
     }
 

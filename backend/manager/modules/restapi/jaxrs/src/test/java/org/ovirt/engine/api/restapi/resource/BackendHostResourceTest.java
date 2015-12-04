@@ -357,13 +357,13 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.ConnectStorageToVds,
                                            StorageServerConnectionParametersBase.class,
                                            new String[] { "VdsId",
-                                                          "StorageServerConnection.connection",
-                                                          "StorageServerConnection.portal",
-                                                          "StorageServerConnection.iqn",
-                                                          "StorageServerConnection.port",
-                                                          "StorageServerConnection.storage_type",
-                                                          "StorageServerConnection.user_name",
-                                                          "StorageServerConnection.password" },
+                                                          "StorageServerConnection.Connection",
+                                                          "StorageServerConnection.Portal",
+                                                          "StorageServerConnection.Iqn",
+                                                          "StorageServerConnection.Port",
+                                                          "StorageServerConnection.StorageType",
+                                                          "StorageServerConnection.UserName",
+                                                          "StorageServerConnection.Password" },
                                            new Object[] { GUIDS[0],
                                                           ISCSI_SERVER_ADDRESS,
                                                           StorageServerConnections.DEFAULT_TPGT, //TODO: right now hard-coded, but this should change when VDSM and Backend support portal
@@ -400,7 +400,7 @@ public class BackendHostResourceTest
 
         expect(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
                                 eqQueryParams(DiscoverSendTargetsQueryParameters.class,
-                                              addSession("VdsId", "Connection.connection", "Connection.port", "Connection.user_name", "Connection.password"),
+                                              addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                                               addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
                                               ))).andReturn(queryResult);
         control.replay();

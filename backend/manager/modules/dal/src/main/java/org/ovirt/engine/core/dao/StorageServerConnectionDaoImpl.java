@@ -114,11 +114,11 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByKey",
                 mapper,
                 getCustomMapSqlParameterSource()
-                        .addValue("iqn", connection.getiqn())
-                        .addValue("connection", connection.getconnection())
-                        .addValue("port", connection.getport())
-                        .addValue("portal", connection.getportal())
-                        .addValue("username", connection.getuser_name()));
+                        .addValue("iqn", connection.getIqn())
+                        .addValue("connection", connection.getConnection())
+                        .addValue("port", connection.getPort())
+                        .addValue("portal", connection.getPortal())
+                        .addValue("username", connection.getUserName()));
     }
 
     @Override
@@ -148,14 +148,14 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
     }
 
     private MapSqlParameterSource getFullParameterSource(final StorageServerConnections connection) {
-        return getIdParameterSource(connection.getid())
-                .addValue("connection", connection.getconnection())
-                .addValue("iqn", connection.getiqn())
-                .addValue("port", connection.getport())
-                .addValue("portal", connection.getportal())
-                .addValue("password", DbFacadeUtils.encryptPassword(connection.getpassword()))
-                .addValue("storage_type", connection.getstorage_type())
-                .addValue("user_name", connection.getuser_name())
+        return getIdParameterSource(connection.getId())
+                .addValue("connection", connection.getConnection())
+                .addValue("iqn", connection.getIqn())
+                .addValue("port", connection.getPort())
+                .addValue("portal", connection.getPortal())
+                .addValue("password", DbFacadeUtils.encryptPassword(connection.getPassword()))
+                .addValue("storage_type", connection.getStorageType())
+                .addValue("user_name", connection.getUserName())
                 .addValue("mount_options", connection.getMountOptions())
                 .addValue("vfs_type", connection.getVfsType())
                 .addValue("nfs_version", (connection.getNfsVersion() != null) ? connection.getNfsVersion().getValue() : null)
@@ -169,15 +169,15 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                 public StorageServerConnections mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     StorageServerConnections entity = new StorageServerConnections();
-                    entity.setconnection(rs.getString("connection"));
-                    entity.setid(rs.getString("id"));
-                    entity.setiqn(rs.getString("iqn"));
-                    entity.setport(rs.getString("port"));
-                    entity.setportal(rs.getString("portal"));
-                    entity.setpassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
-                    entity.setstorage_type(StorageType.forValue(rs
+                    entity.setConnection(rs.getString("connection"));
+                    entity.setId(rs.getString("id"));
+                    entity.setIqn(rs.getString("iqn"));
+                    entity.setPort(rs.getString("port"));
+                    entity.setPortal(rs.getString("portal"));
+                    entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
+                    entity.setStorageType(StorageType.forValue(rs
                             .getInt("storage_type")));
-                    entity.setuser_name(rs.getString("user_name"));
+                    entity.setUserName(rs.getString("user_name"));
                     entity.setMountOptions(rs.getString("mount_options"));
                     entity.setVfsType(rs.getString("vfs_type"));
                     entity.setNfsVersion((rs.getString("nfs_version") != null) ?

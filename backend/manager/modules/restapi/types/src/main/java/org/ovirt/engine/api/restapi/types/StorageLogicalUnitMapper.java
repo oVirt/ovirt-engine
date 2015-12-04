@@ -51,12 +51,12 @@ public class StorageLogicalUnitMapper {
     @Mapping(from = StorageServerConnections.class, to = LogicalUnit.class)
     public static LogicalUnit map(StorageServerConnections entity, LogicalUnit template) {
         LogicalUnit model = template != null ? template : new LogicalUnit();
-        model.setAddress(entity.getconnection());
-        model.setTarget(entity.getiqn());
-        model.setPort(Integer.parseInt(entity.getport()));
-        model.setUsername(entity.getuser_name());
-        if (entity.getconnection()!=null && entity.getport()!=null && entity.getportal()!=null) {
-            model.setPortal(entity.getconnection() + ":" + entity.getport() + "," + entity.getportal());
+        model.setAddress(entity.getConnection());
+        model.setTarget(entity.getIqn());
+        model.setPort(Integer.parseInt(entity.getPort()));
+        model.setUsername(entity.getUserName());
+        if (entity.getConnection()!=null && entity.getPort()!=null && entity.getPortal()!=null) {
+            model.setPortal(entity.getConnection() + ":" + entity.getPort() + "," + entity.getPortal());
         }
         return model;
     }
@@ -97,19 +97,19 @@ public class StorageLogicalUnitMapper {
     public static StorageServerConnections map(LogicalUnit logicalUnit, StorageServerConnections connection) {
         StorageServerConnections entity = connection != null ? connection : new StorageServerConnections();
         if (logicalUnit.isSetAddress()) {
-            entity.setconnection(logicalUnit.getAddress());
+            entity.setConnection(logicalUnit.getAddress());
         }
         if (logicalUnit.isSetTarget()) {
-            entity.setiqn(logicalUnit.getTarget());
+            entity.setIqn(logicalUnit.getTarget());
         }
         if (logicalUnit.isSetPort()) {
-            entity.setport(logicalUnit.getPort().toString());
+            entity.setPort(logicalUnit.getPort().toString());
         }
         if (logicalUnit.isSetUsername()) {
-            entity.setuser_name(logicalUnit.getUsername());
+            entity.setUserName(logicalUnit.getUsername());
         }
         if (logicalUnit.isSetPassword()) {
-            entity.setpassword(logicalUnit.getPassword());
+            entity.setPassword(logicalUnit.getPassword());
         }
         return entity;
     }

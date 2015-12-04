@@ -49,10 +49,10 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
     protected StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         if (id != null) {
-            connectionDetails.setid(id.toString());
+            connectionDetails.setId(id.toString());
         }
-        connectionDetails.setconnection(connection);
-        connectionDetails.setstorage_type(type);
+        connectionDetails.setConnection(connection);
+        connectionDetails.setStorageType(type);
         return connectionDetails;
     }
 
@@ -64,10 +64,10 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
                                                            String password) {
         Guid id = getConnectionId();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
-        connectionDetails.setiqn(iqn);
-        connectionDetails.setport(port);
-        connectionDetails.setuser_name(user);
-        connectionDetails.setpassword(password);
+        connectionDetails.setIqn(iqn);
+        connectionDetails.setPort(port);
+        connectionDetails.setUserName(user);
+        connectionDetails.setPassword(password);
         return connectionDetails;
     }
 
@@ -142,7 +142,7 @@ public abstract class StorageServerConnectionTestCommon extends BaseCommandTest 
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(ValidationResult.VALID).when(getCommand()).validateMountOptions();
-        when(getCommand().getStorageConnDao().get(newPosixConnection.getid())).thenReturn(newPosixConnection);
+        when(getCommand().getStorageConnDao().get(newPosixConnection.getId())).thenReturn(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(getCommand());
     }
 

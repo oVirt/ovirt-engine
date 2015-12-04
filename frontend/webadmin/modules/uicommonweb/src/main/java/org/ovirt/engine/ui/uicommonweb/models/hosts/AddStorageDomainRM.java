@@ -131,8 +131,8 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
             // Add storage domain.
             StorageServerConnections connection = new StorageServerConnections();
-            connection.setconnection(configureModel.getStorage().getPath().getEntity());
-            connection.setstorage_type(StorageType.LOCALFS);
+            connection.setConnection(configureModel.getStorage().getPath().getEntity());
+            connection.setStorageType(StorageType.LOCALFS);
             context.connection = connection;
             StorageServerConnectionParametersBase parameters =
                     new StorageServerConnectionParametersBase(connection, context.host.getId());

@@ -114,7 +114,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
      * @return The storage type of the lun (ISCSI or FCP).
      */
     protected StorageType getLUNStorageType(LUNs lun) {
-        return lun.getLunConnections().isEmpty() ? StorageType.FCP : lun.getLunConnections().get(0).getstorage_type();
+        return lun.getLunConnections().isEmpty() ? StorageType.FCP : lun.getLunConnections().get(0).getStorageType();
     }
 
     /**

@@ -52,7 +52,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected boolean canDoAction() {
         StorageServerConnections newConnectionDetails = getConnection();
-        StorageType storageType = newConnectionDetails.getstorage_type();
+        StorageType storageType = newConnectionDetails.getStorageType();
         if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI)) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
@@ -62,7 +62,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         }
 
         // Check if connection exists by id, otherwise there's nothing to update
-        String connectionId = newConnectionDetails.getid();
+        String connectionId = newConnectionDetails.getId();
 
         StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
 
@@ -70,11 +70,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
 
-        if (!newConnectionDetails.getstorage_type().equals(oldConnection.getstorage_type())) {
+        if (!newConnectionDetails.getStorageType().equals(oldConnection.getStorageType())) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
-        Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getid());
+        Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getId());
         if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
@@ -107,13 +107,13 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected List<LUNs> getLuns() {
         if (luns.isEmpty()) {
-            luns = getLunDao().getAllForStorageServerConnection(getConnection().getid());
+            luns = getLunDao().getAllForStorageServerConnection(getConnection().getId());
         }
         return luns;
     }
 
     protected boolean isConnectionEditable(StorageServerConnections connection) {
-        if (connection.getstorage_type().isFileDomain()) {
+        if (connection.getStorageType().isFileDomain()) {
             boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
                 addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
@@ -229,7 +229,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean doDomainsUseConnection(StorageServerConnections connection) {
         if (domains == null || domains.isEmpty()) {
-            domains = getStorageDomainsByConnId(connection.getid());
+            domains = getStorageDomainsByConnId(connection.getId());
         }
         return domains != null && !domains.isEmpty();
     }
@@ -293,7 +293,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         StorageServerConnectionManagementVDSParameters connectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
                         Guid.Empty,
-                        getConnection().getstorage_type(),
+                        getConnection().getStorageType(),
                         getConnection());
         boolean isDisconnectSucceeded =
                 runVdsCommand(VDSCommandType.DisconnectStorageServer, connectionParametersForVdsm).getSucceeded();
@@ -324,7 +324,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        domains = getStorageDomainsByConnId(getConnection().getid());
+        domains = getStorageDomainsByConnId(getConnection().getId());
         if (!domains.isEmpty()) {
             for (StorageDomain domain : domains) {
                 locks.put(domain.getId().toString(),
@@ -332,16 +332,16 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                                 EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
         }
-        if (getConnection().getstorage_type().isFileDomain()) {
+        if (getConnection().getStorageType().isFileDomain()) {
            // lock the path to avoid at the same time if some other user tries to
            // add new storage connection to same path or edit another storage server connection to point to same path
-           locks.put(getConnection().getconnection(),
+           locks.put(getConnection().getConnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         else {
           // for block domains, locking the target details
-          locks.put(getConnection().getconnection() + ";" + getConnection().getiqn() + ";" + getConnection().getport() + ";" + getConnection().getuser_name(),
+          locks.put(getConnection().getConnection() + ";" + getConnection().getIqn() + ";" + getConnection().getPort() + ";" + getConnection().getUserName(),
           LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
 
@@ -366,7 +366,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
-        locks.put(getConnection().getid(),
+        locks.put(getConnection().getId(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;

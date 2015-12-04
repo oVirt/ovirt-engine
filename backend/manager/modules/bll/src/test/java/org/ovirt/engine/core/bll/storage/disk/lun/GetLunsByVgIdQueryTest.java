@@ -173,11 +173,11 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
             assertNotNull(lun.getLunConnections());
             assertEquals(1, lun.getLunConnections().size());
             StorageServerConnections cnx = lun.getLunConnections().get(0);
-            assertEquals(ADDRESS, cnx.getconnection());
-            assertEquals(PORT, cnx.getport());
-            assertEquals(GUIDS[i], cnx.getid());
-            assertEquals(IQNS[i], cnx.getiqn());
-            assertEquals(StorageType.ISCSI, cnx.getstorage_type());
+            assertEquals(ADDRESS, cnx.getConnection());
+            assertEquals(PORT, cnx.getPort());
+            assertEquals(GUIDS[i], cnx.getId());
+            assertEquals(IQNS[i], cnx.getIqn());
+            assertEquals(StorageType.ISCSI, cnx.getStorageType());
             assertNotNull(lun.getPathsDictionary());
             assertEquals(1, lun.getPathsDictionary().size());
         }

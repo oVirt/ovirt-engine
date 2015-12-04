@@ -85,7 +85,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             }
             else {
                 log.error("Could not connect to target IQN '{}': {}",
-                        storageConnection.getiqn(), returnValue.getFault().getMessage());
+                        storageConnection.getIqn(), returnValue.getFault().getMessage());
             }
         }
 
@@ -137,7 +137,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         final Set<String> targetIQNs = Entities.connectionsByIQN(targets).keySet();
 
         return luns.stream()
-                .filter(lun -> lun.getLunConnections().stream().anyMatch(c -> targetIQNs.contains(c.getiqn())))
+                .filter(lun -> lun.getLunConnections().stream().anyMatch(c -> targetIQNs.contains(c.getIqn())))
                 .collect(Collectors.toList());
     }
 

@@ -105,8 +105,8 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[3].toString());
-        connection.setconnection("/data1");
+        connection.setId(GUIDS[3].toString());
+        connection.setConnection("/data1");
         UriInfo uriInfo = setUpActionExpectations(
             VdcActionType.RemoveStorageServerConnection,
             StorageServerConnectionParametersBase.class,
@@ -152,8 +152,8 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[3].toString());
-        connection.setconnection("/data1");
+        connection.setId(GUIDS[3].toString());
+        connection.setConnection("/data1");
         UriInfo uriInfo = setUpActionExpectations(
             VdcActionType.RemoveStorageServerConnection,
             StorageServerConnectionParametersBase.class,
@@ -215,16 +215,16 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index].toString()).anyTimes();
-        expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getStorageType()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
 
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {
-            expect(entity.getport()).andReturn("3260").anyTimes();
-            expect(entity.getconnection()).andReturn("1.122.10.125").anyTimes();
+            expect(entity.getPort()).andReturn("3260").anyTimes();
+            expect(entity.getConnection()).andReturn("1.122.10.125").anyTimes();
         }
 
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.NFS)) {
-            expect(entity.getconnection()).andReturn("1.122.10.125:/data1").anyTimes();
+            expect(entity.getConnection()).andReturn("1.122.10.125:/data1").anyTimes();
         }
 
         return entity;

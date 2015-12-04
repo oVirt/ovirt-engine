@@ -742,8 +742,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         // Create storage connection.
         StorageServerConnections tempVar = new StorageServerConnections();
-        tempVar.setconnection(path);
-        tempVar.setstorage_type(localModel.getType());
+        tempVar.setConnection(path);
+        tempVar.setStorageType(localModel.getType());
         connection = tempVar;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<>();
@@ -877,8 +877,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         // Create storage connection.
         StorageServerConnections tempVar = new StorageServerConnections();
-        tempVar.setconnection(path);
-        tempVar.setstorage_type(nfsModel.getType());
+        tempVar.setConnection(path);
+        tempVar.setStorageType(nfsModel.getType());
         connection = tempVar;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<>();

@@ -29,8 +29,8 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         if (connection == null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
-        if (connection.getstorage_type().isFileDomain()) {
-            domains = getStorageDomainsByConnId(connection.getid());
+        if (connection.getStorageType().isFileDomain()) {
+            domains = getStorageDomainsByConnId(connection.getId());
             if (domains.size() > 0) {
                 String domainNames = createDomainNamesListFromStorageDomains(domains);
                 return prepareFailureMessageForDomains(domainNames);
@@ -70,7 +70,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         return DbFacade.getInstance()
                 .getStorageServerConnectionDao()
                 .get(getStorageDomain().getStorage())
-                .getconnection();
+                .getConnection();
     }
 
 }

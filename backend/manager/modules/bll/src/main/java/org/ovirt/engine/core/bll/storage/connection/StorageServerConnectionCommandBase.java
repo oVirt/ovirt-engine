@@ -65,14 +65,14 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
 
     protected boolean isConnWithSameDetailsExists(StorageServerConnections connection, Guid storagePoolId) {
         List<StorageServerConnections> connections = null;
-        if (connection.getstorage_type() == StorageType.LOCALFS) {
+        if (connection.getStorageType() == StorageType.LOCALFS) {
             List<StorageServerConnections> connectionsForPool = storagePoolId == null ? Collections.<StorageServerConnections> emptyList() :
                     getStorageConnDao().getAllConnectableStorageSeverConnection(storagePoolId);
-            List<StorageServerConnections> connectionsForPath = getStorageConnDao().getAllForStorage(connection.getconnection());
+            List<StorageServerConnections> connectionsForPath = getStorageConnDao().getAllForStorage(connection.getConnection());
             connections = (List<StorageServerConnections>) CollectionUtils.intersection(connectionsForPool, connectionsForPath);
         }
-        else if (connection.getstorage_type().isFileDomain()) {
-            String connectionField = connection.getconnection();
+        else if (connection.getStorageType().isFileDomain()) {
+            String connectionField = connection.getConnection();
             connections = getStorageConnDao().getAllForStorage(connectionField);
         }
         else {
@@ -83,7 +83,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         }
 
         boolean isDuplicateConnExists = (connections.size() > 1
-                || (connections.size() == 1 && !connections.get(0).getid().equalsIgnoreCase(connection.getid())));
+                || (connections.size() == 1 && !connections.get(0).getId().equalsIgnoreCase(connection.getId())));
         return isDuplicateConnExists;
     }
 
@@ -92,7 +92,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     }
 
     protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {
-        if (StringUtils.isEmpty(connection.getconnection())) {
+        if (StringUtils.isEmpty(connection.getConnection())) {
             String fieldName = getFieldName(connection);
             addCanDoActionMessageVariable("fieldName", fieldName);
             addCanDoActionMessage(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
@@ -103,9 +103,9 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
 
     private static String getFieldName(StorageServerConnections paramConnection) {
         String fieldName;
-        if (paramConnection.getstorage_type().equals(StorageType.ISCSI)) {
+        if (paramConnection.getStorageType().equals(StorageType.ISCSI)) {
             fieldName = "address";
-        } else if (paramConnection.getstorage_type().isFileDomain()) {
+        } else if (paramConnection.getStorageType().isFileDomain()) {
             fieldName = "path";
         } else {
             fieldName = "connection";

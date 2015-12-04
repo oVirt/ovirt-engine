@@ -276,9 +276,9 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         if (a.getLunConnections() != null) {
             for (StorageServerConnections b : a.getLunConnections()) {
                 SanTargetModel tempVar = new SanTargetModel();
-                tempVar.setAddress(b.getconnection());
-                tempVar.setPort(b.getport());
-                tempVar.setName(b.getiqn());
+                tempVar.setAddress(b.getConnection());
+                tempVar.setPort(b.getPort());
+                tempVar.setName(b.getIqn());
                 tempVar.setIsSelected(true);
                 tempVar.setIsLoggedIn(true);
                 tempVar.setLuns(new ObservableCollection<LunModel>());

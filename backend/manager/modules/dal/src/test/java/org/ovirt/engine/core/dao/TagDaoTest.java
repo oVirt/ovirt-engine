@@ -189,7 +189,7 @@ public class TagDaoTest extends BaseDaoTestCase {
         Guid userGroupId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
         for (tags tag : result) {
-            assertEquals(userGroupId, tag.getUserGroup().getid());
+            assertEquals(userGroupId, tag.getUserGroup().getId());
         }*/
     }
 

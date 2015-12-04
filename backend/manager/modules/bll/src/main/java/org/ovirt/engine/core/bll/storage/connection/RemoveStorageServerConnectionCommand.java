@@ -34,7 +34,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected boolean canDoAction() {
-        String connectionId = getConnection().getid();
+        String connectionId = getConnection().getId();
         List<StorageDomain> domains = null;
         if (StringUtils.isEmpty(connectionId) ) {
            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
@@ -46,7 +46,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         // if user passed only the connection id for removal, vdsm still needs few more details in order to disconnect, so
         // bringing them from db and repopulating them in the connection object received in input parameters
         populateMissingFields(connection);
-        StorageType storageType = connection.getstorage_type();
+        StorageType storageType = connection.getStorageType();
         if (storageType.isFileDomain()) {
             // go to storage domain static, get all storage domains where storage field  = storage connection id
            domains = getStorageDomainsByConnId(connectionId);
@@ -104,7 +104,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void executeCommand() {
-        String connectionId = getConnection().getid();
+        String connectionId = getConnection().getId();
         getStorageServerConnectionDao().remove(connectionId);
         log.info("Removing connection '{}' from database ", connectionId);
         if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
@@ -118,24 +118,24 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected void populateMissingFields(StorageServerConnections connectionFromDb) {
         StorageServerConnections connectionFromParams = getConnection();
-        if(connectionFromParams.getstorage_type() == null || connectionFromParams.getstorage_type().equals(StorageType.UNKNOWN)) {
-            connectionFromParams.setstorage_type(connectionFromDb.getstorage_type());
+        if(connectionFromParams.getStorageType() == null || connectionFromParams.getStorageType().equals(StorageType.UNKNOWN)) {
+            connectionFromParams.setStorageType(connectionFromDb.getStorageType());
         }
-        if(StringUtils.isEmpty(connectionFromParams.getconnection())) {
-            connectionFromParams.setconnection(connectionFromDb.getconnection());
+        if(StringUtils.isEmpty(connectionFromParams.getConnection())) {
+            connectionFromParams.setConnection(connectionFromDb.getConnection());
         }
-        if(connectionFromParams.getstorage_type().equals(StorageType.ISCSI)){
-            if(StringUtils.isEmpty(connectionFromParams.getiqn())) {
-                connectionFromParams.setiqn(connectionFromDb.getiqn());
+        if(connectionFromParams.getStorageType().equals(StorageType.ISCSI)){
+            if(StringUtils.isEmpty(connectionFromParams.getIqn())) {
+                connectionFromParams.setIqn(connectionFromDb.getIqn());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getuser_name())) {
-                connectionFromParams.setuser_name(connectionFromDb.getuser_name());
+            if(StringUtils.isEmpty(connectionFromParams.getUserName())) {
+                connectionFromParams.setUserName(connectionFromDb.getUserName());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getpassword())) {
-                connectionFromParams.setpassword(connectionFromDb.getpassword());
+            if(StringUtils.isEmpty(connectionFromParams.getPassword())) {
+                connectionFromParams.setPassword(connectionFromDb.getPassword());
             }
-            if(StringUtils.isEmpty(connectionFromParams.getport())) {
-                connectionFromParams.setport(connectionFromDb.getport());
+            if(StringUtils.isEmpty(connectionFromParams.getPort())) {
+                connectionFromParams.setPort(connectionFromDb.getPort());
             }
         }
 
@@ -172,12 +172,12 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        locks.put(getConnection().getconnection(),
+        locks.put(getConnection().getConnection(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
-        locks.put(getConnection().getid(),
+        locks.put(getConnection().getId(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;

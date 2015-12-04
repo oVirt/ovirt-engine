@@ -284,12 +284,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
             StorageServerConnections connection = new StorageServerConnections();
-            connection.setstorage_type(StorageType.ISCSI);
-            connection.setuser_name(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
-            connection.setpassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
-            connection.setiqn(model.getName());
-            connection.setconnection(model.getAddress());
-            connection.setport(String.valueOf(model.getPort()));
+            connection.setStorageType(StorageType.ISCSI);
+            connection.setUserName(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
+            connection.setPassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
+            connection.setIqn(model.getName());
+            connection.setConnection(model.getAddress());
+            connection.setPort(String.valueOf(model.getPort()));
 
             actionTypes.add(VdcActionType.ConnectStorageToVds);
             parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
@@ -334,11 +334,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         VDS host = getContainer().getHost().getSelectedItem();
 
         StorageServerConnections tempVar = new StorageServerConnections();
-        tempVar.setconnection(getAddress().getEntity().trim());
-        tempVar.setport(getPort().getEntity().trim());
-        tempVar.setstorage_type(StorageType.ISCSI);
-        tempVar.setuser_name(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
-        tempVar.setpassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
+        tempVar.setConnection(getAddress().getEntity().trim());
+        tempVar.setPort(getPort().getEntity().trim());
+        tempVar.setStorageType(StorageType.ISCSI);
+        tempVar.setUserName(getUseUserAuth().getEntity() ? getUserName().getEntity() : ""); //$NON-NLS-1$
+        tempVar.setPassword(getUseUserAuth().getEntity() ? getPassword().getEntity() : ""); //$NON-NLS-1$
         DiscoverSendTargetsQueryParameters parameters =
                 new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
@@ -362,9 +362,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         for (StorageServerConnections a : items) {
             SanTargetModel model = new SanTargetModel();
-            model.setAddress(a.getconnection());
-            model.setPort(a.getport());
-            model.setName(a.getiqn());
+            model.setAddress(a.getConnection());
+            model.setPort(a.getPort());
+            model.setName(a.getIqn());
             model.setLuns(new ObservableCollection<LunModel>());
             model.getLoggedInEvent().addListener(this);
 

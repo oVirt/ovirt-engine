@@ -212,8 +212,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
         assertTrue(cmd.getSucceeded());
         assertEquals(cmd.getReturnValue().getActionReturnValue(), sd);
-        assertTrue(sd.getStorageStaticData().getConnection().getuser_name().equals(ISCSIUSER));
-        assertTrue(sd.getStorageStaticData().getConnection().getpassword().equals(ISCSIPASS));
+        assertTrue(sd.getStorageStaticData().getConnection().getUserName().equals(ISCSIUSER));
+        assertTrue(sd.getStorageStaticData().getConnection().getPassword().equals(ISCSIPASS));
         assertTrue(sd.getStorageStaticData().getStorage().equals(VG_ID.toString()));
     }
 
@@ -223,8 +223,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
         lun.setStorageDomainId(HE_SD_ID);
         ArrayList<StorageServerConnections> connections = new ArrayList<>();
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setuser_name(ISCSIUSER);
-        connection.setpassword(ISCSIPASS);
+        connection.setUserName(ISCSIUSER);
+        connection.setPassword(ISCSIPASS);
         connections.add(connection);
         lun.setLunConnections(connections);
 

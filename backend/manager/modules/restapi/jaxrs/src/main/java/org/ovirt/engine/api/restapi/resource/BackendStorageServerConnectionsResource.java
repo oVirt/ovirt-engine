@@ -56,7 +56,7 @@ public class BackendStorageServerConnectionsResource
         if (storageConn.getHost() != null) {
            hostId = getHostId(storageConn.getHost());
         }
-        switch (storageConnection.getstorage_type()) {
+        switch (storageConnection.getStorageType()) {
         case ISCSI:
             validateParameters(storageConn, "address", "target", "port");
             break;

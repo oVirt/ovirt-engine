@@ -30,14 +30,14 @@ public class StorageServerConnections implements Serializable {
             NfsVersion nfsVersion,
             Short nfsRetrans,
             Short nfsTimeo) {
-        setconnection(connection);
-        setid(id);
-        setiqn(iqn);
-        setpassword(password);
-        setstorage_type(storageType);
-        setuser_name(userName);
-        setport(port);
-        setportal(portal);
+        setConnection(connection);
+        setId(id);
+        setIqn(iqn);
+        setPassword(password);
+        setStorageType(storageType);
+        setUserName(userName);
+        setPort(port);
+        setPortal(portal);
         setVfsType(vfsType);
         setMountOptions(mountOptions);
         setNfsVersion(nfsVersion);
@@ -58,82 +58,82 @@ public class StorageServerConnections implements Serializable {
 
     private String connection;
 
-    public String getconnection() {
+    public String getConnection() {
         return this.connection;
     }
 
-    public void setconnection(String value) {
+    public void setConnection(String value) {
         this.connection = value;
     }
 
     private String id;
 
-    public String getid() {
+    public String getId() {
         return this.id;
     }
 
-    public void setid(String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
     // TODO this field needs to be made unique in the database
     private String iqn;
 
-    public String getiqn() {
+    public String getIqn() {
         return this.iqn;
     }
 
-    public void setiqn(String value) {
+    public void setIqn(String value) {
         this.iqn = getStringValueToSet(value);
     }
 
     private String port;
 
-    public String getport() {
+    public String getPort() {
         return this.port;
     }
 
-    public void setport(String value) {
+    public void setPort(String value) {
         this.port = getStringValueToSet(value);
     }
 
     private String portal = DEFAULT_TPGT;
 
-    public String getportal() {
+    public String getPortal() {
         return this.portal;
     }
 
-    public void setportal(String value) {
+    public void setPortal(String value) {
         this.portal = getStringValueToSet(value);
     }
 
     private String password;
 
-    public String getpassword() {
+    public String getPassword() {
         return this.password;
     }
 
-    public void setpassword(String value) {
+    public void setPassword(String value) {
         this.password = getStringValueToSet(value);
     }
 
     private StorageType storageType;
 
-    public StorageType getstorage_type() {
+    public StorageType getStorageType() {
         return this.storageType;
     }
 
-    public void setstorage_type(StorageType value) {
+    public void setStorageType(StorageType value) {
         this.storageType = value;
     }
 
     private String username;
 
-    public String getuser_name() {
+    public String getUserName() {
         return this.username;
     }
 
-    public void setuser_name(String value) {
+    public void setUserName(String value) {
         this.username = getStringValueToSet(value);
     }
 
@@ -208,7 +208,7 @@ public class StorageServerConnections implements Serializable {
         boolean returnValue = super.equals(obj);
         if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
             returnValue =
-                    (getid() != null && !getid().isEmpty() && getid().equals(((StorageServerConnections) obj).getid()));
+                    (getId() != null && !getId().isEmpty() && getId().equals(((StorageServerConnections) obj).getId()));
         }
         return returnValue;
     }
@@ -217,7 +217,7 @@ public class StorageServerConnections implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getid() == null) ? 0 : getid().hashCode());
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         return result;
     }
 
@@ -242,9 +242,9 @@ public class StorageServerConnections implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("id", getid())
-                .append("connection", getconnection())
-                .append("iqn", getiqn())
+                .append("id", getId())
+                .append("connection", getConnection())
+                .append("iqn", getIqn())
                 .append("vfsType", getVfsType())
                 .append("mountOptions", getMountOptions())
                 .append("nfsVersion", getNfsVersion())

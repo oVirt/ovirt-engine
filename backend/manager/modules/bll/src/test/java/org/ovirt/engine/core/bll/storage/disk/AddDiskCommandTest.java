@@ -580,9 +580,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         lun.setLUN_id("lunid");
         lun.setLunType(StorageType.ISCSI);
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setiqn("a");
-        connection.setconnection("0.0.0.0");
-        connection.setport("1234");
+        connection.setIqn("a");
+        connection.setConnection("0.0.0.0");
+        connection.setPort("1234");
         ArrayList<StorageServerConnections> connections = new ArrayList<>();
         connections.add(connection);
         lun.setLunConnections(connections);
@@ -664,7 +664,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        disk.getLun().getLunConnections().get(0).setiqn(null);
+        disk.getLun().getLunConnections().get(0).setIqn(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(
@@ -672,7 +672,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         clearCanDoActionMessages();
 
-        disk.getLun().getLunConnections().get(0).setiqn("");
+        disk.getLun().getLunConnections().get(0).setIqn("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(
@@ -685,7 +685,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        disk.getLun().getLunConnections().get(0).setconnection(null);
+        disk.getLun().getLunConnections().get(0).setConnection(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(
@@ -693,7 +693,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         clearCanDoActionMessages();
 
-        disk.getLun().getLunConnections().get(0).setconnection("");
+        disk.getLun().getLunConnections().get(0).setConnection("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(
@@ -706,7 +706,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        disk.getLun().getLunConnections().get(0).setport(null);
+        disk.getLun().getLunConnections().get(0).setPort(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(
@@ -714,7 +714,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         clearCanDoActionMessages();
 
-        disk.getLun().getLunConnections().get(0).setport("");
+        disk.getLun().getLunConnections().get(0).setPort("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(

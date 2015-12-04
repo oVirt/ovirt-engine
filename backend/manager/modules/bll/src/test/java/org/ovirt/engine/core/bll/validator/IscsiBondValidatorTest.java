@@ -182,8 +182,8 @@ public class IscsiBondValidatorTest {
         conns.add(createStorageConnection());
         doReturn(conns).when(storageServerConnectionDao).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
 
-        iscsiBond.getStorageConnectionIds().add(conns.get(0).getid());
-        iscsiBond.getStorageConnectionIds().add(conns.get(1).getid());
+        iscsiBond.getStorageConnectionIds().add(conns.get(0).getId());
+        iscsiBond.getStorageConnectionIds().add(conns.get(1).getId());
 
         assertEquals(ValidationResult.VALID, validator.validateAddedStorageConnections(iscsiBond));
     }
@@ -196,7 +196,7 @@ public class IscsiBondValidatorTest {
         conns.add(createStorageConnection());
         doReturn(conns).when(storageServerConnectionDao).getConnectableStorageConnectionsByStorageType(iscsiBond.getStoragePoolId(), StorageType.ISCSI);
 
-        iscsiBond.getStorageConnectionIds().add(conns.get(0).getid());
+        iscsiBond.getStorageConnectionIds().add(conns.get(0).getId());
         iscsiBond.getStorageConnectionIds().add(Guid.newGuid().toString());
 
         ValidationResult res = validator.validateAddedStorageConnections(iscsiBond);
@@ -229,7 +229,7 @@ public class IscsiBondValidatorTest {
 
     private StorageServerConnections createStorageConnection() {
         StorageServerConnections conn = new StorageServerConnections();
-        conn.setid(Guid.newGuid().toString());
+        conn.setId(Guid.newGuid().toString());
         return conn;
     }
 }

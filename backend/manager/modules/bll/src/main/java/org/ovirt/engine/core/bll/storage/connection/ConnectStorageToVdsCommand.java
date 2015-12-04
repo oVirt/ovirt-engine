@@ -60,17 +60,17 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     protected Pair<Boolean, Integer> connectHostToStorage() {
         List<StorageServerConnections> connections = Arrays.asList(getConnection());
 
-        if (getConnection().getstorage_type() == StorageType.ISCSI) {
+        if (getConnection().getStorageType() == StorageType.ISCSI) {
             connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
         }
 
         Map<String, String> result = (HashMap<String, String>) runVdsCommand(
                 VDSCommandType.ConnectStorageServer,
                 new StorageServerConnectionManagementVDSParameters(getVds().getId(), Guid.Empty,
-                        getConnection().getstorage_type(), connections)).getReturnValue();
+                        getConnection().getStorageType(), connections)).getReturnValue();
 
         return new Pair<>(StorageHelperDirector.getInstance()
-                .getItem(getConnection().getstorage_type())
+                .getItem(getConnection().getStorageType())
                 .isConnectSucceeded(result, connections),
                 Integer.parseInt(result.values().iterator().next()));
     }
@@ -80,9 +80,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     protected boolean isValidConnection(StorageServerConnections conn) {
-        StorageType storageType = conn.getstorage_type();
+        StorageType storageType = conn.getStorageType();
 
-        if (storageType == StorageType.NFS && !new NfsMountPointConstraint().isValid(conn.getconnection(), null)) {
+        if (storageType == StorageType.NFS && !new NfsMountPointConstraint().isValid(conn.getConnection(), null)) {
             return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
 
@@ -95,10 +95,10 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
 
         if (storageType == StorageType.ISCSI) {
-            if (StringUtils.isEmpty(conn.getiqn())) {
+            if (StringUtils.isEmpty(conn.getIqn())) {
                 return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
             }
-            if (!isValidStorageConnectionPort(conn.getport())) {
+            if (!isValidStorageConnectionPort(conn.getPort())) {
                 return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
             }
         }
@@ -127,7 +127,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
 
         List<String> disallowedOptions =
-                getConnection().getstorage_type() == StorageType.POSIXFS ? POSIX_MANAGED_OPTIONS : NFS_MANAGED_OPTIONS;
+                getConnection().getStorageType() == StorageType.POSIXFS ? POSIX_MANAGED_OPTIONS : NFS_MANAGED_OPTIONS;
         Map<String, String> optionsMap = XmlRpcStringUtils.string2Map(mountOptions);
 
         Set<String> optionsKeys = new HashSet<>();

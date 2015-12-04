@@ -400,19 +400,19 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateParameters(action, "iscsi.address", "iscsi.target");
         StorageServerConnections cnx = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
-        cnx.setconnection(iscsiDetails.getAddress());
-        cnx.setiqn(iscsiDetails.getTarget());
-        cnx.setstorage_type(StorageType.ISCSI);
+        cnx.setConnection(iscsiDetails.getAddress());
+        cnx.setIqn(iscsiDetails.getTarget());
+        cnx.setStorageType(StorageType.ISCSI);
         if (iscsiDetails.isSetPort()) {
-            cnx.setport(iscsiDetails.getPort().toString());
+            cnx.setPort(iscsiDetails.getPort().toString());
         } else {
-            cnx.setport(DEFAULT_ISCSI_PORT);
+            cnx.setPort(DEFAULT_ISCSI_PORT);
         }
         if (iscsiDetails.isSetUsername()) {
-            cnx.setuser_name(iscsiDetails.getUsername());
+            cnx.setUserName(iscsiDetails.getUsername());
         }
         if (iscsiDetails.isSetPassword()) {
-            cnx.setpassword(iscsiDetails.getPassword());
+            cnx.setPassword(iscsiDetails.getPassword());
         }
 
         StorageServerConnectionParametersBase connectionParms = new StorageServerConnectionParametersBase(cnx, guid);
@@ -434,7 +434,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             if (iscsiTargets != null) {
                 for (String iscsiTarget : iscsiTargets.getIscsiTargets()) {
                     StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
-                    connectionDetails.setiqn(iscsiTarget);
+                    connectionDetails.setIqn(iscsiTarget);
                     storageServerConnections.add(connectionDetails);
                 }
             }
@@ -505,18 +505,18 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private StorageServerConnections getInitializedConnectionIscsiDetails(Action action) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
-        connectionDetails.setconnection(iscsiDetails.getAddress());
-        connectionDetails.setstorage_type(StorageType.ISCSI);
+        connectionDetails.setConnection(iscsiDetails.getAddress());
+        connectionDetails.setStorageType(StorageType.ISCSI);
         if (iscsiDetails.isSetPort()) {
-            connectionDetails.setport(iscsiDetails.getPort().toString());
+            connectionDetails.setPort(iscsiDetails.getPort().toString());
         } else {
-            connectionDetails.setport(DEFAULT_ISCSI_PORT);
+            connectionDetails.setPort(DEFAULT_ISCSI_PORT);
         }
         if (iscsiDetails.isSetUsername()) {
-            connectionDetails.setuser_name(iscsiDetails.getUsername());
+            connectionDetails.setUserName(iscsiDetails.getUsername());
         }
         if (iscsiDetails.isSetPassword()) {
-            connectionDetails.setpassword(iscsiDetails.getPassword());
+            connectionDetails.setPassword(iscsiDetails.getPassword());
         }
         return connectionDetails;
     }
