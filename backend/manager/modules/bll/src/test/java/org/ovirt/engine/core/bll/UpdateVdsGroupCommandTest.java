@@ -210,7 +210,7 @@ public class UpdateVdsGroupCommandTest {
     public void versionDecreaseWithHost() {
         createCommandWithOlderVersion(true, false);
         setupCpu();
-        VdsExist();
+        vdsExist();
         canDoActionFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
@@ -239,7 +239,7 @@ public class UpdateVdsGroupCommandTest {
     public void updateWithLowerVersionThanHosts() {
         createCommandWithDefaultVdsGroup();
         setupCpu();
-        VdsExistWithHigherVersion();
+        vdsExistWithHigherVersion();
         architectureIsUpdatable();
         canDoActionFailedWithReason(EngineMessage.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
     }
@@ -686,7 +686,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(groupList);
     }
 
-    private void VdsExist() {
+    private void vdsExist() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.Up);
         List<VDS> vdsList = new ArrayList<>();
@@ -694,7 +694,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
-    private void VdsExistWithHigherVersion() {
+    private void vdsExistWithHigherVersion() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.Up);
         vds.setVdsGroupCompatibilityVersion(VERSION_1_2);
