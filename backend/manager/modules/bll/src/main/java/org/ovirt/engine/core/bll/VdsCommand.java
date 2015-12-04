@@ -112,8 +112,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param logType
      *            Type of the log.
      */
-    private void Alert(AuditLogType logType) {
-        Alert(logType, null);
+    private void alert(AuditLogType logType) {
+        alert(logType, null);
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param operation
      *            Operation name.
      */
-    private void Alert(AuditLogType logType, String operation) {
+    private void alert(AuditLogType logType, String operation) {
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
@@ -142,7 +142,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param throwable
      *            Throwable object with exception details.
      */
-    private void Alert(AuditLogType logType, String operation, Throwable throwable) {
+    private void alert(AuditLogType logType, String operation, Throwable throwable) {
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
@@ -163,7 +163,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         }
 
         if (!vdsStatic.isPmEnabled()) {
-            Alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+            alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             // remove any test failure alerts
             AlertDirector.removeVdsAlert(vdsStatic.getId(),
                     AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
@@ -189,7 +189,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Alerts if power management operation failed.
      */
     protected void alertIfPowerManagementOperationFailed() {
-        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_FAILED);
+        alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_FAILED);
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param operation The operation name.
      */
     protected void alertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
-        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
+        alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
     }
 
     protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
