@@ -13,7 +13,7 @@ public interface ErrorTranslator {
      *            messages to be translated
      * @return
      */
-    List<String> TranslateErrorText(List<String> errorMsg);
+    List<String> translateErrorText(List<String> errorMsg);
 
     /**
      * Translates and resolves errors from error types. error messages contains errors and variables. Variable used in
@@ -26,7 +26,7 @@ public interface ErrorTranslator {
      *            the locale to translate into
      * @return
      */
-    List<String> TranslateErrorText(List<String> errorMsg, Locale locale);
+    List<String> translateErrorText(List<String> errorMsg, Locale locale);
 
     /**
      * returns true if the specified strMessage is in the format: "$variable-name variable-value", false otherwise.
@@ -35,7 +35,7 @@ public interface ErrorTranslator {
      *            the string that may be a dynamic variable.
      * @return true if input is dynamic variable, false otherwise.
      */
-    boolean IsDynamicVariable(String strMessage);
+    boolean isDynamicVariable(String strMessage);
 
     /**
      * Translates a single error message.
@@ -47,7 +47,7 @@ public interface ErrorTranslator {
      *            unfound key as is.
      * @return
      */
-    String TranslateErrorTextSingle(String errorMsg, boolean changeIfNotFound);
+    String translateErrorTextSingle(String errorMsg, boolean changeIfNotFound);
 
     /**
      * Translates a single error message. Note: if message key not found, a beautified message will return!
@@ -56,7 +56,7 @@ public interface ErrorTranslator {
      *            the message to translate
      * @return the translated message or a beautifed message key
      */
-    String TranslateErrorTextSingle(String errorMsg);
+    String translateErrorTextSingle(String errorMsg);
 
     /**
      * Translates a single error message. Note: if message key not found, a beautified message will return!
@@ -67,7 +67,7 @@ public interface ErrorTranslator {
      *            the locale to translate into
      * @return the translated message or a beautifed message key
      */
-    String TranslateErrorTextSingle(String errorMsg, Locale locale);
+    String translateErrorTextSingle(String errorMsg, Locale locale);
 
     /**
      * Replacing variables ('${...}') within translatedMessages with their values ('$key value') that are also within
@@ -76,6 +76,6 @@ public interface ErrorTranslator {
      * @param translatedMessages
      * @return
      */
-    List<String> ResolveMessages(List<String> translatedMessages);
+    List<String> resolveMessages(List<String> translatedMessages);
 
 }

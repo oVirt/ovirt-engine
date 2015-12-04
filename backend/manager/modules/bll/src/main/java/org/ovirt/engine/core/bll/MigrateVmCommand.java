@@ -91,7 +91,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         return " due to Error: " + Backend.getInstance()
                 .getVdsErrorsTranslator()
-                .TranslateErrorTextSingle(migrationErrorCode.name(), true);
+                .translateErrorTextSingle(migrationErrorCode.name(), true);
     }
 
     /**

@@ -328,15 +328,15 @@ public class BaseBackendResource {
     protected String localize(String error) {
         Locale locale = getEffectiveLocale();
         return locale != null
-               ? backend.getErrorsTranslator().TranslateErrorTextSingle(error, locale)
-               : backend.getErrorsTranslator().TranslateErrorTextSingle(error);
+               ? backend.getErrorsTranslator().translateErrorTextSingle(error, locale)
+               : backend.getErrorsTranslator().translateErrorTextSingle(error);
     }
 
     protected String localize(List<String> errors) {
         Locale locale = getEffectiveLocale();
         return locale != null
-               ? backend.getErrorsTranslator().TranslateErrorText(errors, locale).toString()
-               : backend.getErrorsTranslator().TranslateErrorText(errors).toString();
+               ? backend.getErrorsTranslator().translateErrorText(errors, locale).toString()
+               : backend.getErrorsTranslator().translateErrorText(errors).toString();
     }
 
     public void validateParameters(Object model, String... required) {

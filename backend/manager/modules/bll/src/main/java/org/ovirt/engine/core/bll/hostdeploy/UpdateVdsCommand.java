@@ -152,7 +152,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                                 getVdsName(),
                                 StringUtils.join(Backend.getInstance()
                                         .getErrorsTranslator()
-                                        .TranslateErrorText(canDoActionMessages),
+                                        .translateErrorText(canDoActionMessages),
                                         ","));
                     }
                     // set can do action to false so can do action messages are

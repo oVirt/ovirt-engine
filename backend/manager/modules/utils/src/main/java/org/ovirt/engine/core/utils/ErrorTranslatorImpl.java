@@ -75,24 +75,24 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     private List<String> translate(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
         List<String> translatedMessages = doTranslation(errorMsg, changeIfNotFound, locale);
-        return ResolveMessages(translatedMessages);
+        return resolveMessages(translatedMessages);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorText(java.util.List)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#translateErrorText(java.util.List)
      */
-    public List<String> TranslateErrorText(List<String> errorMsg) {
+    public List<String> translateErrorText(List<String> errorMsg) {
         return translate(errorMsg, true, Locale.getDefault());
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorText(java.util.List)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#translateErrorText(java.util.List)
      */
-    public List<String> TranslateErrorText(List<String> errorMsg, Locale locale) {
+    public List<String> translateErrorText(List<String> errorMsg, Locale locale) {
         return translate(errorMsg, true, locale);
     }
 
@@ -109,27 +109,27 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#IsDynamicVariable(java.lang.String )
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#isDynamicVariable(java.lang.String )
      */
-    public final boolean IsDynamicVariable(String strMessage) {
+    public final boolean isDynamicVariable(String strMessage) {
         return startsWithVariableDefinitionPattern.matcher(strMessage).matches();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorTextSingle(java. lang.String, boolean)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#translateErrorTextSingle(java. lang.String, boolean)
      */
-    public final String TranslateErrorTextSingle(String errorMsg, boolean changeIfNotFound) {
+    public final String translateErrorTextSingle(String errorMsg, boolean changeIfNotFound) {
         return translate(errorMsg, changeIfNotFound, Locale.getDefault());
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorTextSingle(java. lang.String, boolean)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#translateErrorTextSingle(java. lang.String, boolean)
      */
-    public String TranslateErrorTextSingle(String errorMsg, Locale locale) {
+    public String translateErrorTextSingle(String errorMsg, Locale locale) {
         return translate(errorMsg, true, locale);
     }
 
@@ -140,7 +140,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
             ret = messages.get(errorMsg);
         } else {
             if (!(errorMsg == null || errorMsg.isEmpty())) {
-                if ((IsDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
+                if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
                     ret = errorMsg;
                 } else {
                 // just a message that doesn't have a value in the resource:
@@ -155,23 +155,23 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorTextSingle(java. lang.String)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#translateErrorTextSingle(java. lang.String)
      */
-    public final String TranslateErrorTextSingle(String errorMsg) {
-        return TranslateErrorTextSingle(errorMsg, true);
+    public final String translateErrorTextSingle(String errorMsg) {
+        return translateErrorTextSingle(errorMsg, true);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#ResolveMessages(java.util.List)
+     * @see org.ovirt.engine.core.utils.ErrorTranslator#resolveMessages(java.util.List)
      */
-    public final List<String> ResolveMessages(List<String> translatedMessages) {
+    public final List<String> resolveMessages(List<String> translatedMessages) {
         ArrayList<String> translatedErrors = new ArrayList<>();
         HashMap<String, String> variables = new HashMap<>();
         for (String currentMessage : translatedMessages) {
-            if (IsDynamicVariable(currentMessage)) {
-                AddVariable(currentMessage, variables);
+            if (isDynamicVariable(currentMessage)) {
+                addVariable(currentMessage, variables);
             } else {
                 translatedErrors.add(currentMessage);
             }
@@ -186,7 +186,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         return returnValue;
     }
 
-    private void AddVariable(String variable, HashMap<String, String> variables) {
+    private void addVariable(String variable, HashMap<String, String> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);

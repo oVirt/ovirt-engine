@@ -470,9 +470,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
             }
         };
         if (!locales.isEmpty()) {
-            expect(translator.TranslateErrorTextSingle(eq(error), eq(locales.get(0)))).andAnswer(answer).anyTimes();
+            expect(translator.translateErrorTextSingle(eq(error), eq(locales.get(0)))).andAnswer(answer).anyTimes();
         } else {
-            expect(translator.TranslateErrorTextSingle(eq(error))).andAnswer(answer).anyTimes();
+            expect(translator.translateErrorTextSingle(eq(error))).andAnswer(answer).anyTimes();
         }
         expect(backend.getErrorsTranslator()).andReturn(translator).anyTimes();
     }
@@ -480,10 +480,10 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected void setUpL10nExpectations(ArrayList<String> errors) {
         ErrorTranslator errorTranslator = control.createMock(ErrorTranslator.class);
         if (!locales.isEmpty()) {
-            expect(errorTranslator.TranslateErrorText(eq(errors), eq(locales.get(0)))).andReturn(mockl10n(errors))
+            expect(errorTranslator.translateErrorText(eq(errors), eq(locales.get(0)))).andReturn(mockl10n(errors))
                     .anyTimes();
         } else {
-            expect(errorTranslator.TranslateErrorText(eq(errors))).andReturn(mockl10n(errors)).anyTimes();
+            expect(errorTranslator.translateErrorText(eq(errors))).andReturn(mockl10n(errors)).anyTimes();
         }
         expect(backend.getErrorsTranslator()).andReturn(errorTranslator);
     }

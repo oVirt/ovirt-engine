@@ -146,7 +146,7 @@ public class HostSetupNetworksValidator {
     }
 
     List<String> translateErrorMessages(List<String> messages) {
-        return Backend.getInstance().getErrorsTranslator().TranslateErrorText(messages);
+        return Backend.getInstance().getErrorsTranslator().translateErrorText(messages);
     }
 
     public ValidationResult validate() {

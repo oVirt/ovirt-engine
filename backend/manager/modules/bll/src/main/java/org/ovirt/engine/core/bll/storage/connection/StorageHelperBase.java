@@ -194,7 +194,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         logger.error(
                 "The connection with details '{}' failed because of error code '{}' and error message is: {}",
                 connectionField, errorCode, Backend.getInstance().getVdsErrorsTranslator()
-                        .TranslateErrorTextSingle(translatedError));
+                        .translateErrorTextSingle(translatedError));
     }
 
     /**
@@ -213,7 +213,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             translatedError =
                     Backend.getInstance()
                             .getVdsErrorsTranslator()
-                            .TranslateErrorTextSingle(error.toString());
+                            .translateErrorTextSingle(error.toString());
         }
         return translatedError;
     }

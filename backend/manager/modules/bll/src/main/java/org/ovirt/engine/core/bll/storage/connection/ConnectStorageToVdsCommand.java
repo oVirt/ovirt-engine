@@ -52,7 +52,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             fault.setMessage(
                     Backend.getInstance()
                             .getVdsErrorsTranslator()
-                            .TranslateErrorTextSingle(fault.getError().toString()));
+                            .translateErrorTextSingle(fault.getError().toString()));
         }
         getReturnValue().setFault(fault);
     }

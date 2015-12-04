@@ -41,7 +41,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
 
     public String getError() {
         return Backend.getInstance().getVdsErrorsTranslator()
-                .TranslateErrorTextSingle(getParameters().getError().toString());
+                .translateErrorTextSingle(getParameters().getError().toString());
     }
 
     @Override

@@ -352,7 +352,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!setNumberOfCpusResult.getCanDoAction()) {
             AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().
-                    TranslateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
+                    translateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
@@ -367,7 +367,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!setAmountOfMemoryResult.getCanDoAction()) {
             AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().
-                    TranslateErrorText(setAmountOfMemoryResult.getCanDoActionMessages());
+                    translateErrorText(setAmountOfMemoryResult.getCanDoActionMessages());
             logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }

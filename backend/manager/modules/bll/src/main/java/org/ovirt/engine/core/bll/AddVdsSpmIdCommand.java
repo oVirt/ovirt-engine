@@ -83,7 +83,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         fault.setError(EngineError.ReachedMaxNumberOfHostsInDC);
         fault.setMessage(Backend.getInstance()
                 .getVdsErrorsTranslator()
-                .TranslateErrorTextSingle(fault.getError().toString()));
+                .translateErrorTextSingle(fault.getError().toString()));
         getReturnValue().setFault(fault);
     }
 

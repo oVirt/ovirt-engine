@@ -292,7 +292,7 @@ public class CommandExecutor {
             fault.setError(EngineError.ResourceException);
             fault.setMessage(Backend.getInstance()
                     .getVdsErrorsTranslator()
-                    .TranslateErrorTextSingle(fault.getError().toString()));
+                    .translateErrorTextSingle(fault.getError().toString()));
             retValue.setFault(fault);
         }
 

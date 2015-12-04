@@ -122,7 +122,7 @@ public class SetupNetworksHelper {
     }
 
     protected List<String> translateErrorMessages(List<String> messages) {
-        return Backend.getInstance().getErrorsTranslator().TranslateErrorText(messages);
+        return Backend.getInstance().getErrorsTranslator().translateErrorText(messages);
     }
 
     /**
