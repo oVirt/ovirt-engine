@@ -16,7 +16,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
  */
 public class Tar {
 
-    private static void _recurse(
+    private static void recurse(
         TarArchiveOutputStream archive,
         File file,
         String base
@@ -33,7 +33,7 @@ public class Tar {
             String[] names = entry.getFile().list();
             if (names != null) {
                 for (String f : names) {
-                    _recurse(
+                    recurse(
                         archive,
                         new File(entry.getFile(), f),
                         new File(entry.getName(), f).getPath()
@@ -85,7 +85,7 @@ public class Tar {
         try (TarArchiveOutputStream archive = new TarArchiveOutputStream(os)) {
             // TODO: use LONGFILE_POSIX in newer version of commons-compress
             archive.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
-            _recurse(archive, base, "./");
+            recurse(archive, base, "./");
         }
     }
 

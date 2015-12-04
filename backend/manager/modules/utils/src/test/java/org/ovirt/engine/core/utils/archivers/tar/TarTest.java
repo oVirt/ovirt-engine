@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class TarTest {
 
-    private void _writeFile(File file, String content, boolean executable) throws IOException {
+    private void writeFile(File file, String content, boolean executable) throws IOException {
         File f = file.getParentFile();
         if (f == null) {
             throw new IOException("File not found " + f);
@@ -105,12 +105,12 @@ public class TarTest {
                 throw new IOException("Cannot create " + tmpDir2);
             }
 
-            _writeFile(new File(tmpDir1, "script1"), "script1", true);
-            _writeFile(new File(tmpDir1, "script2"), "script2", true);
-            _writeFile(new File(tmpDir1, "file1"), "file1", false);
-            _writeFile(new File(tmpDir1, "file2"), "file2", false);
-            _writeFile(new File(tmpDir1, "dir1/file3"), "file2", false);
-            _writeFile(new File(tmpDir1, "dir1/dir2/file4"), "file4", false);
+            writeFile(new File(tmpDir1, "script1"), "script1", true);
+            writeFile(new File(tmpDir1, "script2"), "script2", true);
+            writeFile(new File(tmpDir1, "file1"), "file1", false);
+            writeFile(new File(tmpDir1, "file2"), "file2", false);
+            writeFile(new File(tmpDir1, "dir1/file3"), "file2", false);
+            writeFile(new File(tmpDir1, "dir1/dir2/file4"), "file4", false);
 
             OutputStream os = null;
             try {
