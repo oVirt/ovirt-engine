@@ -21,7 +21,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     protected void executeVdsBrokerCommand() {
         _result = getBroker().spmStatus(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        setReturnValue(ParseSpmStatusResult());
+        setReturnValue(parseSpmStatusResult());
         if (((SpmStatusResult) getReturnValue()).getSpmStatus() == SpmStatus.SPM_ERROR) {
             log.error("SPM '{}' status returned SPM_ERROR on VDS '{}'", getParameters().getStoragePoolId(),
                     getParameters().getVdsId());
@@ -44,7 +44,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
         }
     }
 
-    private SpmStatusResult ParseSpmStatusResult() {
+    private SpmStatusResult parseSpmStatusResult() {
         try {
             SpmStatusResult statusResult = new SpmStatusResult();
             statusResult
