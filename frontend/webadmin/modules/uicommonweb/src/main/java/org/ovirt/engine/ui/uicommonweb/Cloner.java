@@ -38,7 +38,7 @@ public final class Cloner {
             return cloneVDSGroup((VDSGroup) instance);
         }
         if (instance instanceof StoragePool) {
-            return cloneStorage_pool((StoragePool) instance);
+            return cloneStoragePool((StoragePool) instance);
         }
         if (instance instanceof Network) {
             return cloneNetwork((Network) instance);
@@ -264,7 +264,7 @@ public final class Cloner {
         return clonedAgent;
     }
 
-    private static StoragePool cloneStorage_pool(StoragePool instance) {
+    private static StoragePool cloneStoragePool(StoragePool instance) {
         StoragePool obj = new StoragePool();
 
         obj.setdescription(instance.getdescription());
