@@ -100,13 +100,13 @@ public class BackendVmsResourceTest
 
             org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
             VmStatistics vmStatistics = new VmStatistics();
-            vmStatistics.setcpu_sys(0D);
-            vmStatistics.setcpu_user(0D);
-            vmStatistics.setelapsed_time(0D);
+            vmStatistics.setCpuSys(0D);
+            vmStatistics.setCpuUser(0D);
+            vmStatistics.setElapsedTime(0D);
             vmStatistics.setRoundedElapsedTime(0D);
-            vmStatistics.setusage_cpu_percent(0);
-            vmStatistics.setusage_mem_percent(0);
-            vmStatistics.setusage_network_percent(0);
+            vmStatistics.setUsageCpuPercent(0);
+            vmStatistics.setUsageMemPercent(0);
+            vmStatistics.setUsageNetworkPercent(0);
             vm.setStatisticsData(vmStatistics);
             vm.setMigrationProgressPercent(50);
             for (int i=0; i<GUIDS.length-1; i++) {
@@ -1430,10 +1430,10 @@ public class BackendVmsResourceTest
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics) {
         entity.setVmMemSizeMb(10);
         entity.setStatisticsData(statistics);
-        statistics.setusage_mem_percent(20);
-        statistics.setcpu_user(30.0);
-        statistics.setcpu_sys(40.0);
-        statistics.setusage_cpu_percent(50);
+        statistics.setUsageMemPercent(20);
+        statistics.setCpuUser(30.0);
+        statistics.setCpuSys(40.0);
+        statistics.setUsageCpuPercent(50);
         entity.setMigrationProgressPercent(50);
         entity.setGuestMemoryFree(5120L);
         entity.setGuestMemoryBuffered(2048L);

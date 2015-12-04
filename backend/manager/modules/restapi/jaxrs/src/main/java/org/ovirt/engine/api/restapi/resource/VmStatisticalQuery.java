@@ -31,15 +31,15 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
     public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.VM entity) {
         VmStatistics s = entity.getStatisticsData();
         long mem = entity.getMemSizeMb() * Mb;
-        long memUsedByCent = s.getusage_mem_percent()==null ? 0 : mem * s.getusage_mem_percent();
+        long memUsedByCent = s.getUsageMemPercent()==null ? 0 : mem * s.getUsageMemPercent();
         long memFree = entity.getGuestMemoryFree() == null ? 0 : entity.getGuestMemoryFree() * Kb;
         long memBuffered = entity.getGuestMemoryBuffered() == null ? 0 : entity.getGuestMemoryBuffered() * Kb;
         long memCached = entity.getGuestMemoryCached() == null ? 0 : entity.getGuestMemoryCached() * Kb;
         long migrationProgress = entity.getMigrationProgressPercent() != null ? entity.getMigrationProgressPercent() : 0;
 
         Double zero = 0.0;
-        Double cpuUser = s.getcpu_user()==null ? zero : s.getcpu_user();
-        Double cpuSys = s.getcpu_sys()==null ? zero : s.getcpu_sys();
+        Double cpuUser = s.getCpuUser()==null ? zero : s.getCpuUser();
+        Double cpuSys = s.getCpuSys()==null ? zero : s.getCpuSys();
         return asList(setDatum(clone(MEM_CONFIG),   mem),
                       setDatum(clone(MEM_USED),     memUsedByCent/100),
                       setDatum(clone(CPU_GUEST),    cpuUser),

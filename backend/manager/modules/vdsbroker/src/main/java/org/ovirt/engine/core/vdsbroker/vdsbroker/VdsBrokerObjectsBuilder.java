@@ -725,7 +725,7 @@ public class VdsBrokerObjectsBuilder {
             vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
 
-        vm.setelapsed_time(assignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
+        vm.setElapsedTime(assignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
 
         // ------------- vm network statistics -----------------------
         if (xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
@@ -751,11 +751,11 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm cpu statistics -----------------------
-        vm.setcpu_sys(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
-        vm.setcpu_user(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
+        vm.setCpuSys(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
+        vm.setCpuUser(assignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
 
         // ------------- vm memory statistics -----------------------
-        vm.setusage_mem_percent(assignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
+        vm.setUsageMemPercent(assignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
         vm.setVmBalloonInfo(getBalloonInfo(xmlRpcStruct));
 
         // ------------- vm migration statistics -----------------------

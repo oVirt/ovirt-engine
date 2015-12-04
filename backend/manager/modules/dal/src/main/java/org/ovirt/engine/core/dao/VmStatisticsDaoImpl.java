@@ -39,17 +39,17 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmStatistics statistics) {
         return createIdParameterMapper(statistics.getId())
-                .addValue("cpu_sys", statistics.getcpu_sys())
-                .addValue("cpu_user", statistics.getcpu_user())
-                .addValue("elapsed_time", statistics.getelapsed_time())
+                .addValue("cpu_sys", statistics.getCpuSys())
+                .addValue("cpu_user", statistics.getCpuUser())
+                .addValue("elapsed_time", statistics.getElapsedTime())
                 .addValue("usage_cpu_percent",
-                        statistics.getusage_cpu_percent())
+                        statistics.getUsageCpuPercent())
                 .addValue("usage_mem_percent",
-                        statistics.getusage_mem_percent())
+                        statistics.getUsageMemPercent())
                 .addValue("migration_progress_percent",
                         statistics.getMigrationProgressPercent())
                 .addValue("usage_network_percent",
-                        statistics.getusage_network_percent())
+                        statistics.getUsageNetworkPercent())
                 .addValue("disks_usage",
                                 statistics.getDisksUsage())
                 .addValue("memory_usage_history",
@@ -71,13 +71,13 @@ public class VmStatisticsDaoImpl extends MassOperationsGenericDao<VmStatistics, 
         @Override
         public VmStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
             VmStatistics entity = new VmStatistics();
-            entity.setcpu_sys(rs.getDouble("cpu_sys"));
-            entity.setcpu_user(rs.getDouble("cpu_user"));
-            entity.setelapsed_time(rs.getDouble("elapsed_time"));
-            entity.setusage_cpu_percent((Integer) rs.getObject("usage_cpu_percent"));
-            entity.setusage_mem_percent((Integer) rs.getObject("usage_mem_percent"));
+            entity.setCpuSys(rs.getDouble("cpu_sys"));
+            entity.setCpuUser(rs.getDouble("cpu_user"));
+            entity.setElapsedTime(rs.getDouble("elapsed_time"));
+            entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
+            entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
             entity.setMigrationProgressPercent(rs.getInt("migration_progress_percent"));
-            entity.setusage_network_percent((Integer) rs.getObject("usage_network_percent"));
+            entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
             entity.setDisksUsage((String) rs.getObject("disks_usage"));
             entity.setMemoryUsageHistory(asIntList((String) rs.getObject("memory_usage_history")));
             entity.setCpuUsageHistory(asIntList((String) rs.getObject("cpu_usage_history")));

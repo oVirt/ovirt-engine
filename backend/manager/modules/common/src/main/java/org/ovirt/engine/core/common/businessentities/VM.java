@@ -845,27 +845,27 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public Double getCpuUser() {
-        return this.vmStatistics.getcpu_user();
+        return this.vmStatistics.getCpuUser();
     }
 
     public void setCpuUser(Double value) {
-        this.vmStatistics.setcpu_user(value);
+        this.vmStatistics.setCpuUser(value);
     }
 
     public Double getCpuSys() {
-        return this.vmStatistics.getcpu_sys();
+        return this.vmStatistics.getCpuSys();
     }
 
     public void setCpuSys(Double value) {
-        this.vmStatistics.setcpu_sys(value);
+        this.vmStatistics.setCpuSys(value);
     }
 
     public Double getElapsedTime() {
-        return this.vmStatistics.getelapsed_time();
+        return this.vmStatistics.getElapsedTime();
     }
 
     public void setElapsedTime(Double value) {
-        this.vmStatistics.setelapsed_time(value);
+        this.vmStatistics.setElapsedTime(value);
     }
 
     public Double getRoundedElapsedTime() {
@@ -877,19 +877,19 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public Integer getUsageNetworkPercent() {
-        return this.vmStatistics.getusage_network_percent();
+        return this.vmStatistics.getUsageNetworkPercent();
     }
 
     public void setUsageNetworkPercent(Integer value) {
-        this.vmStatistics.setusage_network_percent(value);
+        this.vmStatistics.setUsageNetworkPercent(value);
     }
 
     public Integer getUsageMemPercent() {
-        return this.vmStatistics.getusage_mem_percent();
+        return this.vmStatistics.getUsageMemPercent();
     }
 
     public void setUsageMemPercent(Integer value) {
-        this.vmStatistics.setusage_mem_percent(value);
+        this.vmStatistics.setUsageMemPercent(value);
     }
 
     public List<Integer> getMemoryUsageHistory() {
@@ -937,11 +937,11 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     public Integer getUsageCpuPercent() {
-        return this.vmStatistics.getusage_cpu_percent();
+        return this.vmStatistics.getUsageCpuPercent();
     }
 
     public void setUsageCpuPercent(Integer value) {
-        this.vmStatistics.setusage_cpu_percent(value);
+        this.vmStatistics.setUsageCpuPercent(value);
     }
 
     public Guid getVmtGuid() {
@@ -1483,13 +1483,13 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
 
-        setElapsedTime(vmStatistics.getelapsed_time());
+        setElapsedTime(vmStatistics.getElapsedTime());
 
         vm.getStatisticsData().setDisksUsage(vmStatistics.getDisksUsage());
 
         // -------- cpu --------------
-        setCpuSys(vmStatistics.getcpu_sys());
-        setCpuUser(vmStatistics.getcpu_user());
+        setCpuSys(vmStatistics.getCpuSys());
+        setCpuUser(vmStatistics.getCpuUser());
         if ((getCpuSys() != null) && (getCpuUser() != null)) {
             Double percent = (getCpuSys() + getCpuUser()) / vm.getNumOfCpus();
             setUsageCpuPercent(percent.intValue());
@@ -1500,7 +1500,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         addCpuUsageHistory(getUsageCpuPercent(), usageHistoryLimit);
 
         // -------- memory --------------
-        setUsageMemPercent(vmStatistics.getusage_mem_percent());
+        setUsageMemPercent(vmStatistics.getUsageMemPercent());
         addMemoryUsageHistory(getUsageMemPercent(), usageHistoryLimit);
 
         // -------- migration --------------

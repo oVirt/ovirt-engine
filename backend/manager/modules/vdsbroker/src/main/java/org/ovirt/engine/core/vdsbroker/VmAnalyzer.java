@@ -382,8 +382,8 @@ public class VmAnalyzer {
             // save the current value for the next time we check it
             balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
 
-            if (vdsmVm.getVmStatistics().getusage_mem_percent() != null
-                    && vdsmVm.getVmStatistics().getusage_mem_percent() == 0  // guest agent is down
+            if (vdsmVm.getVmStatistics().getUsageMemPercent() != null
+                    && vdsmVm.getVmStatistics().getUsageMemPercent() == 0  // guest agent is down
                     && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
                     && !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())) {
                 guestAgentIsDownAndBalloonInfalted(vmId);

@@ -81,7 +81,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
     public void testUpdateStatistics() {
         VmStatistics before = dao.get(EXISTING_VM_ID);
 
-        before.setusage_mem_percent(17);
+        before.setUsageMemPercent(17);
         before.setDisksUsage("java.util.map { [ ] }");
         dao.update(before);
 
@@ -108,8 +108,8 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
     public void testUpdateAll() throws Exception {
         VmStatistics existingVm = dao.get(EXISTING_VM_ID);
         VmStatistics existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
-        existingVm.setcpu_sys(50.0);
-        existingVm2.setcpu_user(50.0);
+        existingVm.setCpuSys(50.0);
+        existingVm2.setCpuUser(50.0);
 
         dao.updateAll(Arrays.asList(new VmStatistics[] { existingVm, existingVm2 }));
 

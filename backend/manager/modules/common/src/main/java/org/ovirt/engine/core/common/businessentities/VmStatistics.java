@@ -80,31 +80,31 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && Objects.equals(vNumaNodeStatisticsList, other.vNumaNodeStatisticsList);
     }
 
-    public Double getcpu_sys() {
+    public Double getCpuSys() {
         return this.cpu_sysField;
     }
 
-    public void setcpu_sys(Double value) {
+    public void setCpuSys(Double value) {
         this.cpu_sysField = value;
     }
 
     private Double cpu_userField;
 
-    public Double getcpu_user() {
+    public Double getCpuUser() {
         return this.cpu_userField;
     }
 
-    public void setcpu_user(Double value) {
+    public void setCpuUser(Double value) {
         this.cpu_userField = value;
     }
 
     private Double elapsed_timeField;
 
-    public Double getelapsed_time() {
+    public Double getElapsedTime() {
         return this.elapsed_timeField;
     }
 
-    public void setelapsed_time(Double value) {
+    public void setElapsedTime(Double value) {
         this.elapsed_timeField = value;
         setRoundedElapsedTime(value);
     }
@@ -139,21 +139,21 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     private Integer usage_cpu_percentField;
 
-    public Integer getusage_cpu_percent() {
+    public Integer getUsageCpuPercent() {
         return this.usage_cpu_percentField;
     }
 
-    public void setusage_cpu_percent(Integer value) {
+    public void setUsageCpuPercent(Integer value) {
         this.usage_cpu_percentField = value;
     }
 
     private Integer usage_mem_percentField;
 
-    public Integer getusage_mem_percent() {
+    public Integer getUsageMemPercent() {
         return this.usage_mem_percentField;
     }
 
-    public void setusage_mem_percent(Integer value) {
+    public void setUsageMemPercent(Integer value) {
         this.usage_mem_percentField = value;
     }
 
@@ -182,11 +182,11 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     private Integer usage_network_percentField;
 
-    public Integer getusage_network_percent() {
+    public Integer getUsageNetworkPercent() {
         return this.usage_network_percentField;
     }
 
-    public void setusage_network_percent(Integer value) {
+    public void setUsageNetworkPercent(Integer value) {
         this.usage_network_percentField = value;
     }
 
