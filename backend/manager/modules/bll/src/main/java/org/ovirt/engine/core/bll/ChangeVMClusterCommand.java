@@ -31,7 +31,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             return false;
         }
 
-        if (!isInternalExecution() && !ObjectIdentityChecker.CanUpdateField(getVm(), "vdsGroupId", getVm().getStatus())) {
+        if (!isInternalExecution() && !ObjectIdentityChecker.canUpdateField(getVm(), "vdsGroupId", getVm().getStatus())) {
             addCanDoActionMessage(EngineMessage.VM_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }

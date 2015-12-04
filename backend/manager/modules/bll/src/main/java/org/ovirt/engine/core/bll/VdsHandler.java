@@ -37,11 +37,11 @@ public class VdsHandler extends BaseHandler {
 
 
         for (Pair<EditableField, Field> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
-            updateVdsStatic.AddPermittedFields(pair.getSecond().getName());
+            updateVdsStatic.addPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnVdsStatus, Field> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
-            updateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            updateVdsStatic.addField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
         }
     }
 
@@ -51,11 +51,11 @@ public class VdsHandler extends BaseHandler {
 
     public static boolean isUpdateValid(VdsStatic source, VdsStatic distination, VDSStatus status) {
 
-        return updateVdsStatic.IsUpdateValid(source, distination, status);
+        return updateVdsStatic.isUpdateValid(source, distination, status);
     }
 
     public static boolean isFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
-        return updateVdsStatic.IsFieldsUpdated(source, destination, list);
+        return updateVdsStatic.isFieldsUpdated(source, destination, list);
     }
 
     public static boolean isPendingOvirt(VDS vds) {

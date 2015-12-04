@@ -46,7 +46,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
        }
 
         // Collect changed fields to update in a list.
-        List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
+        List<String> props = ObjectIdentityChecker.getChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
 
         // Allow changes to the following fields only:

@@ -40,16 +40,16 @@ public class VmTemplateHandler {
 
         for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                                                                                    (inspectedClassNames))) {
-            updateVmTemplate.AddPermittedFields(pair.getSecond().getName());
+            updateVmTemplate.addPermittedFields(pair.getSecond().getName());
         }
 
         for (Pair<EditableOnTemplate, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
-            updateVmTemplate.AddPermittedFields(pair.getSecond().getName());
+            updateVmTemplate.addPermittedFields(pair.getSecond().getName());
         }
     }
 
     public static boolean isUpdateValid(VmTemplate source, VmTemplate destination) {
-        return updateVmTemplate.IsUpdateValid(source, destination);
+        return updateVmTemplate.isUpdateValid(source, destination);
     }
 
     public static void updateDisksFromDb(VmTemplate vmt) {

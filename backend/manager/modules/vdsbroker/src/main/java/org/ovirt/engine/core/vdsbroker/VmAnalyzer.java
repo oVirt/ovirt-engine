@@ -586,7 +586,7 @@ public class VmAnalyzer {
         }
         if (dbVm != null) {
             // check if dynamic data changed - update cache and DB
-            List<String> props = ObjectIdentityChecker.GetChangedFields(
+            List<String> props = ObjectIdentityChecker.getChangedFields(
                     dbVm.getDynamicData(), vdsmVm.getVmDynamic());
             // remove all fields that should not be checked:
             props.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
