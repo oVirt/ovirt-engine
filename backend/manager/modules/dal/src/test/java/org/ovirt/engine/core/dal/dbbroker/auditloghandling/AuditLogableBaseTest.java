@@ -146,7 +146,7 @@ public class AuditLogableBaseTest {
     }
 
     @Test
-    public void GetUserNameFromUser() {
+    public void getUserNameFromUser() {
         final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         u.setLoginName(NAME);
@@ -383,7 +383,7 @@ public class AuditLogableBaseTest {
     }
 
     @Test
-    public void VdsIdRefVds() {
+    public void vdsIdRefVds() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(null);
         final VDS v = new VDS();
@@ -440,7 +440,7 @@ public class AuditLogableBaseTest {
     }
 
     @Test
-    public void VdsNameVds() {
+    public void vdsNameVds() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsName(null);
         final VDS v = new VDS();
