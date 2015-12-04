@@ -175,7 +175,7 @@ public class IrsProxyData {
         _storagePoolId = storagePoolId;
         int storagePoolRefreshTime = Config.<Integer> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
         storagePoolRefreshJobId = getSchedulUtil().scheduleAFixedDelayJob(this,
-                "_updatingTimer_Elapsed", new Class[0], new Object[0], storagePoolRefreshTime,
+                "updatingTimerElapsed", new Class[0], new Object[0], storagePoolRefreshTime,
                 storagePoolRefreshTime, TimeUnit.SECONDS);
         domainRecoverOnHostJobId =
                 getSchedulUtil().scheduleAFixedDelayJob(this,
@@ -200,8 +200,8 @@ public class IrsProxyData {
                         error);
     }
 
-    @OnTimerMethodAnnotation("_updatingTimer_Elapsed")
-    public void _updatingTimer_Elapsed() {
+    @OnTimerMethodAnnotation("updatingTimerElapsed")
+    public void updatingTimerElapsed() {
         try {
             synchronized (syncObj) {
                 if (!_disposed) {
