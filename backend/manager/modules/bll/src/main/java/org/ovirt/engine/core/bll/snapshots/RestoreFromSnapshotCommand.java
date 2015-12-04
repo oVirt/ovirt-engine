@@ -100,8 +100,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                     getDiskImage().getStorageIds() != null && !getDiskImage().getStorageIds().isEmpty() ? getDiskImage().getStorageIds()
                             .get(0)
                             : Guid.Empty;
-            Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
-                    : Guid.Empty;
+            Guid imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId() : Guid.Empty;
 
             Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RestoreAllSnapshots);
 

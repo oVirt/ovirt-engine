@@ -160,7 +160,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
             imageParameters.setPoolId(getStoragePoolId());
             imageParameters.setDomainId(diskImage.getStorageIds().get(0));
-            imageParameters.setImageGroupId(diskImage.getimage_group_id());
+            imageParameters.setImageGroupId(diskImage.getId());
             imageParameters.setImageId(diskImage.getImageId());
 
             parameters = imageParameters;

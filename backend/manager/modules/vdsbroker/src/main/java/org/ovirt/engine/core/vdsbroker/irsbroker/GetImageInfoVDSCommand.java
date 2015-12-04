@@ -107,7 +107,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                 newImage.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(xmlRpcStruct.get("domain").toString()))));
             }
             if (xmlRpcStruct.containsKey("image")) {
-                newImage.setimage_group_id(new Guid(xmlRpcStruct.get("image").toString()));
+                newImage.setId(new Guid(xmlRpcStruct.get("image").toString()));
             }
             if (xmlRpcStruct.containsKey("type")) {
                 newImage.setVolumeType(EnumUtils.valueOf(VolumeType.class, xmlRpcStruct.get("type").toString(),

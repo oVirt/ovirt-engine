@@ -45,7 +45,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
             DiskImage image = getParameters().getImages().get(i);
             Map<String, String> imageParams = new HashMap<>();
             imageParams.put("domainID", image.getStorageIds().get(0).toString());
-            imageParams.put("imageID", image.getimage_group_id().toString());
+            imageParams.put("imageID", image.getId().toString());
             imageParams.put("baseVolumeID", image.getParentId().toString());
             imageParams.put("volumeID", image.getImageId().toString());
             result[i] = imageParams;

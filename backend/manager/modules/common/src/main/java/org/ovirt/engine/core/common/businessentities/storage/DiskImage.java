@@ -275,16 +275,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.storagesNames = storagesNames;
     }
 
-    @Deprecated
-    public Guid getimage_group_id() {
-        return getId();
-    }
-
-    @Deprecated
-    public void setimage_group_id(Guid value) {
-        setId(value);
-    }
-
     public Guid getStoragePoolId() {
         return storagePoolId;
     }
