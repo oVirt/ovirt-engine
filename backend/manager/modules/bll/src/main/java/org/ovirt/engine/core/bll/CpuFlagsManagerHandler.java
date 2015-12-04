@@ -42,7 +42,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     public String getCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
-            return cpuFlagsManager.GetVDSVerbDataByCpuName(name);
+            return cpuFlagsManager.getVDSVerbDataByCpuName(name);
         }
         return null;
     }
@@ -91,7 +91,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
-            return cpuFlagsManager.CheckIfCpusSameManufacture(cpuName1, cpuName2);
+            return cpuFlagsManager.checkIfCpusSameManufacture(cpuName1, cpuName2);
         }
         return false;
     }
@@ -99,7 +99,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     public boolean checkIfCpusExist(String cpuName, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
-            return cpuFlagsManager.CheckIfCpusExist(cpuName);
+            return cpuFlagsManager.checkIfCpusExist(cpuName);
         }
         return false;
     }
@@ -113,7 +113,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     public ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
-            return cpuFlagsManager.FindMaxServerCpuByFlags(flags);
+            return cpuFlagsManager.findMaxServerCpuByFlags(flags);
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         private final String _ibmFlag = "powernv";
 
         public CpuFlagsManager(Version ver) {
-            InitDictionaries(ver);
+            initDictionaries(ver);
         }
 
         public ArchitectureType getArchitectureByCpuName(String cpuName) {
@@ -181,7 +181,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         }
 
         @SuppressWarnings("synthetic-access")
-        public void InitDictionaries(Version ver) {
+        public void initDictionaries(Version ver) {
             // init dictionaries
             _intelCpuByNameDictionary.clear();
             _amdCpuByNameDictionary.clear();
@@ -247,7 +247,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             Collections.sort(_ibmCpuList, cpuComparator);
         }
 
-        public String GetVDSVerbDataByCpuName(String name) {
+        public String getVDSVerbDataByCpuName(String name) {
             String result = null;
             ServerCpu sc = null;
             if (name != null) {
@@ -319,7 +319,7 @@ public class CpuFlagsManagerHandler implements BackendService {
          * @param lstServerflags
          * @return
          */
-        private boolean CheckIfFlagsContainsCpuFlags(ServerCpu clusterCpu, Set<String> lstServerflags) {
+        private boolean checkIfFlagsContainsCpuFlags(ServerCpu clusterCpu, Set<String> lstServerflags) {
             return CollectionUtils.intersection(clusterCpu.getFlags(), lstServerflags).size() == clusterCpu.getFlags()
                     .size();
         }
@@ -332,7 +332,7 @@ public class CpuFlagsManagerHandler implements BackendService {
          * @param cpuName2
          * @return
          */
-        public boolean CheckIfCpusSameManufacture(String cpuName1, String cpuName2) {
+        public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2) {
             boolean result = false;
             if (cpuName1 != null && cpuName2 != null) {
                 if (_intelCpuByNameDictionary.containsKey(cpuName1)) {
@@ -347,7 +347,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             return result;
         }
 
-        public boolean CheckIfCpusExist(String cpuName) {
+        public boolean checkIfCpusExist(String cpuName) {
             return cpuName != null
                     && (_intelCpuByNameDictionary.containsKey(cpuName)
                             || _amdCpuByNameDictionary.containsKey(cpuName)
@@ -360,28 +360,28 @@ public class CpuFlagsManagerHandler implements BackendService {
          * @param flags
          * @return
          */
-        public ServerCpu FindMaxServerCpuByFlags(String flags) {
+        public ServerCpu findMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
             HashSet<String> lstFlags = (StringUtils.isEmpty(flags)) ? new HashSet<>()
                     : new HashSet<>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(_intelFlag)) {
                 for (int i = _intelCpuList.size() - 1; i >= 0; i--) {
-                    if (CheckIfFlagsContainsCpuFlags(_intelCpuList.get(i), lstFlags)) {
+                    if (checkIfFlagsContainsCpuFlags(_intelCpuList.get(i), lstFlags)) {
                         result = _intelCpuList.get(i);
                         break;
                     }
                 }
             } else if (lstFlags.contains(_amdFlag)) {
                 for (int i = _amdCpuList.size() - 1; i >= 0; i--) {
-                    if (CheckIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
+                    if (checkIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
                         result = _amdCpuList.get(i);
                         break;
                     }
                 }
             } else if (lstFlags.contains(_ibmFlag)) {
                 for (int i = _ibmCpuList.size() - 1; i >= 0; i--) {
-                    if (CheckIfFlagsContainsCpuFlags(_ibmCpuList.get(i), lstFlags)) {
+                    if (checkIfFlagsContainsCpuFlags(_ibmCpuList.get(i), lstFlags)) {
                         result = _ibmCpuList.get(i);
                         break;
                     }
