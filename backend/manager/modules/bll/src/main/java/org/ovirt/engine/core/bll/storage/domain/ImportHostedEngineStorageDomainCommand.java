@@ -146,7 +146,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                 && heStorageDomain.getStorageStaticData().getStorage() != null) {
             for (LUNs lun : (ArrayList<LUNs>) getDeviceList.getReturnValue()) {
                 // match a lun vgid to the domain vgid.
-                if (heStorageDomain.getStorage().equals(lun.getvolume_group_id())) {
+                if (heStorageDomain.getStorage().equals(lun.getVolumeGroupId())) {
                     // found a lun. Use its connection details
                     heStorageDomain.getStorageStaticData()
                             .setConnection(lun.getLunConnections().get(0));

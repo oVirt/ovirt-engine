@@ -409,7 +409,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         break;
                     case LUN:
                         LunDisk lunDisk = (LunDisk) disk;
-                        struct.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
+                        struct.put(VdsProperties.Guid, lunDisk.getLun().getLUNId());
                         struct.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
                         struct.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
                         break;

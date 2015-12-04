@@ -70,15 +70,15 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     public static LUNs parseLunFromXmlRpc(Map<String, Object> xlun) {
         LUNs lun = new LUNs();
         if (xlun.containsKey("GUID")) {
-            lun.setLUN_id(xlun.get("GUID").toString());
+            lun.setLUNId(xlun.get("GUID").toString());
         }
         if (xlun.containsKey("pvUUID")) {
-            lun.setphysical_volume_id(xlun.get("pvUUID").toString());
+            lun.setPhysicalVolumeId(xlun.get("pvUUID").toString());
         }
         if (xlun.containsKey("vgUUID")) {
-            lun.setvolume_group_id(xlun.get("vgUUID").toString());
+            lun.setVolumeGroupId(xlun.get("vgUUID").toString());
         } else {
-            lun.setvolume_group_id("");
+            lun.setVolumeGroupId("");
         }
         if (xlun.containsKey("vgName")) {
             lun.setStorageDomainId(Guid.createGuidFromString(xlun.get("vgName").toString()));

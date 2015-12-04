@@ -47,7 +47,7 @@ public class BackendHostStorageResource
 
     protected HostStorage lookupStorage(String id) {
         for (LUNs lun : getLogicalUnits()) {
-            if (lun.getLUN_id().equals(id)) {
+            if (lun.getLUNId().equals(id)) {
                 return addLinks(map(lun));
             }
         }

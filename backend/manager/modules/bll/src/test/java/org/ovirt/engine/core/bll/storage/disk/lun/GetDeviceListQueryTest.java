@@ -140,11 +140,11 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      */
     private void createInputLUNs() {
         LUNs lunWithVG = new LUNs();
-        lunWithVG.setLUN_id(Guid.newGuid().toString());
-        lunWithVG.setvolume_group_id(Guid.newGuid().toString());
+        lunWithVG.setLUNId(Guid.newGuid().toString());
+        lunWithVG.setVolumeGroupId(Guid.newGuid().toString());
 
         LUNs lunExistsInDB = new LUNs();
-        lunExistsInDB.setLUN_id(Guid.newGuid().toString());
+        lunExistsInDB.setLUNId(Guid.newGuid().toString());
 
         lunsInput = new ArrayList<>();
         lunsInput.add(lunWithVG);

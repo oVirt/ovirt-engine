@@ -210,7 +210,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
                 ArrayList<SanTargetModel> targets = createTargetModelList(a);
 
                 LunModel lunModel = new LunModel();
-                lunModel.setLunId(a.getLUN_id());
+                lunModel.setLunId(a.getLUNId());
                 lunModel.setVendorId(a.getVendorId());
                 lunModel.setProductId(a.getProductId());
                 lunModel.setSerial(a.getSerial());
@@ -602,12 +602,12 @@ public abstract class SanStorageModel extends SanStorageModelBase {
             if (lun.getStatus() == LunStatus.Used) {
                 String reason = null;
 
-                if (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty()) {
-                    reason = messages.lunUsedByVG(lun.getvolume_group_id());
+                if (lun.getVolumeGroupId() != null && !lun.getVolumeGroupId().isEmpty()) {
+                    reason = messages.lunUsedByVG(lun.getVolumeGroupId());
                 }
 
-                usedLunsMessages.add(reason == null ? lun.getLUN_id() :
-                        messages.usedLunIdReason(lun.getLUN_id(), reason));
+                usedLunsMessages.add(reason == null ? lun.getLUNId() :
+                        messages.usedLunIdReason(lun.getLUNId(), reason));
             }
         }
 

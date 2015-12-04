@@ -616,7 +616,7 @@ public class BackendStorageDomainsResourceTest
         cnx.setPort(Integer.toString(PORT));
 
         LUNs lun = new LUNs();
-        lun.setLUN_id(LUN);
+        lun.setLUNId(LUN);
         lun.setLunConnections(new ArrayList<>());
         lun.getLunConnections().add(cnx);
 

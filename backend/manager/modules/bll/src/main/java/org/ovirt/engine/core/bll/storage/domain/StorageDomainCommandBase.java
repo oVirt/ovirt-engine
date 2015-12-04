@@ -208,7 +208,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         Set<LUNs> lunsUsedByDisks = new HashSet<>();
 
         for (LUNs lun : lunsFromDb) {
-            if (lunIds.contains(lun.getLUN_id())) {
+            if (lunIds.contains(lun.getLUNId())) {
                 if (lun.getStorageDomainId() != null) {
                     // LUN is already part of a storage domain
                     lunsUsedBySDs.add(lun);
@@ -242,7 +242,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected String getFormattedLunId(LUNs lun, String usedByEntityName) {
-        return String.format("%1$s (%2$s)", lun.getLUN_id(), usedByEntityName);
+        return String.format("%1$s (%2$s)", lun.getLUNId(), usedByEntityName);
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
@@ -250,8 +250,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
-        lun.setvolume_group_id(volumeGroupId);
-        if (DbFacade.getInstance().getLunDao().get(lun.getLUN_id()) == null) {
+        lun.setVolumeGroupId(volumeGroupId);
+        if (DbFacade.getInstance().getLunDao().get(lun.getLUNId()) == null) {
             DbFacade.getInstance().getLunDao().save(lun);
         } else if (!volumeGroupId.isEmpty()) {
             DbFacade.getInstance().getLunDao().update(lun);
@@ -274,10 +274,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             }
             if (DbFacade.getInstance()
                     .getStorageServerConnectionLunMapDao()
-                    .get(new LUNStorageServerConnectionMapId(lun.getLUN_id(),
+                    .get(new LUNStorageServerConnectionMapId(lun.getLUNId(),
                             connection.getId())) == null) {
                 DbFacade.getInstance().getStorageServerConnectionLunMapDao().save(
-                        new LUNStorageServerConnectionMap(lun.getLUN_id(), connection.getId()));
+                        new LUNStorageServerConnectionMap(lun.getLUNId(), connection.getId()));
             }
         }
     }

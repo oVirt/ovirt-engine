@@ -29,9 +29,9 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
         @Override
         public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNs entity = new LUNs();
-            entity.setLUN_id(rs.getString("lun_id"));
-            entity.setphysical_volume_id(rs.getString("physical_volume_id"));
-            entity.setvolume_group_id(rs.getString("volume_group_id"));
+            entity.setLUNId(rs.getString("lun_id"));
+            entity.setPhysicalVolumeId(rs.getString("physical_volume_id"));
+            entity.setVolumeGroupId(rs.getString("volume_group_id"));
             entity.setSerial(rs.getString("serial"));
             Integer lunMapping = (Integer) rs.getObject("lun_mapping");
             if (lunMapping != null) {
@@ -92,9 +92,9 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", lun.getLUN_id())
-                .addValue("physical_volume_id", lun.getphysical_volume_id())
-                .addValue("volume_group_id", lun.getvolume_group_id())
+                .addValue("lun_id", lun.getLUNId())
+                .addValue("physical_volume_id", lun.getPhysicalVolumeId())
+                .addValue("volume_group_id", lun.getVolumeGroupId())
                 .addValue("serial", lun.getSerial())
                 .addValue("lun_mapping", lun.getLunMapping())
                 .addValue("vendor_id", lun.getVendorId())
@@ -107,9 +107,9 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     @Override
     public void update(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("lun_id", lun.getLUN_id())
-                .addValue("physical_volume_id", lun.getphysical_volume_id())
-                .addValue("volume_group_id", lun.getvolume_group_id())
+                .addValue("lun_id", lun.getLUNId())
+                .addValue("physical_volume_id", lun.getPhysicalVolumeId())
+                .addValue("volume_group_id", lun.getVolumeGroupId())
                 .addValue("serial", lun.getSerial())
                 .addValue("lun_mapping", lun.getLunMapping())
                 .addValue("vendor_id", lun.getVendorId())
@@ -130,8 +130,8 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
     @Override
     protected MapSqlParameterSource createFullParametersMapper(LUNs lun) {
         return createIdParameterMapper(lun.getId())
-                .addValue("physical_volume_id", lun.getphysical_volume_id())
-                .addValue("volume_group_id", lun.getvolume_group_id())
+                .addValue("physical_volume_id", lun.getPhysicalVolumeId())
+                .addValue("volume_group_id", lun.getVolumeGroupId())
                 .addValue("serial", lun.getSerial())
                 .addValue("lun_mapping", lun.getLunMapping())
                 .addValue("vendor_id", lun.getVendorId())

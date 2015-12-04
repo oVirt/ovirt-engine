@@ -135,12 +135,12 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         List<LUNs> luns = new ArrayList<>();
         for (String GUID : GUIDS) {
             LUNs lun = new LUNs();
-            lun.setLUN_id(GUID);
+            lun.setLUNId(GUID);
             luns.add(lun);
         }
         if (withDummyLun) {
             LUNs dummyLun = new LUNs();
-            dummyLun.setLUN_id(DUMMY_LUN_ID);
+            dummyLun.setLUNId(DUMMY_LUN_ID);
             luns.add(dummyLun);
         }
         return luns;
@@ -169,7 +169,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         for (int i = 0; i < GUIDS.length; i++) {
             LUNs lun = luns.get(i);
             assertNotNull(lun);
-            assertEquals(GUIDS[i], lun.getLUN_id());
+            assertEquals(GUIDS[i], lun.getLUNId());
             assertNotNull(lun.getLunConnections());
             assertEquals(1, lun.getLunConnections().size());
             StorageServerConnections cnx = lun.getLunConnections().get(0);

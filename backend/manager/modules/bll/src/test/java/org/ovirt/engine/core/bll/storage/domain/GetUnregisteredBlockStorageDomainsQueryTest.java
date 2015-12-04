@@ -244,12 +244,12 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     private List<LUNs> getLUNs(Guid sdId, String vgId) {
         LUNs lun1 = new LUNs();
         lun1.setStorageDomainId(sdId);
-        lun1.setvolume_group_id(vgId);
+        lun1.setVolumeGroupId(vgId);
         lun1.setLunConnections(new ArrayList<>(getConnections()));
 
         LUNs lun2 = new LUNs();
         lun2.setStorageDomainId(sdId);
-        lun2.setvolume_group_id(vgId);
+        lun2.setVolumeGroupId(vgId);
         lun2.setLunConnections(new ArrayList<>(getConnections()));
 
         return new ArrayList<>(Arrays.asList(lun1, lun2));

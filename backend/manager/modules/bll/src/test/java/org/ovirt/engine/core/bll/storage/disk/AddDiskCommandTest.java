@@ -577,7 +577,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static LunDisk createISCSILunDisk() {
         LunDisk disk = new LunDisk();
         LUNs lun = new LUNs();
-        lun.setLUN_id("lunid");
+        lun.setLUNId("lunid");
         lun.setLunType(StorageType.ISCSI);
         StorageServerConnections connection = new StorageServerConnections();
         connection.setIqn("a");
@@ -596,7 +596,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
     }
@@ -798,7 +798,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
 
         mockMaxPciSlots();
@@ -820,7 +820,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
-        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        when(diskLunMapDao.getDiskIdByLunId(disk.getLun().getLUNId())).thenReturn(null);
         VM vm = mockVm();
         mockMaxPciSlots();
 

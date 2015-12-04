@@ -76,7 +76,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         final List<LUNs> luns = getHostLuns(spmVds);
         final Map<String, LUNs> lunsMap = new HashMap<>();
         for (LUNs lun : luns) {
-            lunsMap.put(lun.getLUN_id(), lun);
+            lunsMap.put(lun.getLUNId(), lun);
         }
         final List<LUNs> processedLunsList = new ArrayList<>();
         for (String lunId : getParameters().getLunIds()) {
@@ -87,7 +87,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                 return;
             }
 
-            lun.setvolume_group_id(getStorageDomain().getStorage());
+            lun.setVolumeGroupId(getStorageDomain().getStorage());
             processedLunsList.add(lun);
         }
         // connect all vds in pool (except spm) to lun and getDeviceList
@@ -123,15 +123,15 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
                 if (!connectStorageToLunByVdsId(vds, lun)) {
-                    log.error("Could not connect host '{}' to lun '{}'", vds.getName(), lun.getLUN_id());
+                    log.error("Could not connect host '{}' to lun '{}'", vds.getName(), lun.getLUNId());
                     setVds(vds);
                     handleFailure(vds, lun);
                     return new Pair<>(Boolean.FALSE, resultMap);
                 } else {
-                    List<Guid> hosts = resultMap.get(lun.getLUN_id());
+                    List<Guid> hosts = resultMap.get(lun.getLUNId());
                     if (hosts == null) {
                         hosts = new ArrayList<>();
-                        resultMap.put(lun.getLUN_id(), hosts);
+                        resultMap.put(lun.getLUNId(), hosts);
                     }
                     hosts.add(vds.getId());
                 }

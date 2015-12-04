@@ -42,12 +42,12 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         Guid pvID = Guid.newGuid();
 
         LUNs lunFromVG = new LUNs();
-        lunFromVG.setLUN_id(Guid.newGuid().toString());
-        lunFromVG.setphysical_volume_id(pvID.toString());
+        lunFromVG.setLUNId(Guid.newGuid().toString());
+        lunFromVG.setPhysicalVolumeId(pvID.toString());
 
         LUNs lunFromDB = new LUNs();
-        lunFromDB.setLUN_id(Guid.newGuid().toString());
-        lunFromDB.setphysical_volume_id(pvID.toString());
+        lunFromDB.setLUNId(Guid.newGuid().toString());
+        lunFromDB.setPhysicalVolumeId(pvID.toString());
 
         List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
         List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
@@ -59,8 +59,8 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     @Test
     public void lunsMatch() {
         LUNs lun = new LUNs();
-        lun.setLUN_id(Guid.newGuid().toString());
-        lun.setphysical_volume_id(Guid.newGuid().toString());
+        lun.setLUNId(Guid.newGuid().toString());
+        lun.setPhysicalVolumeId(Guid.newGuid().toString());
 
         List<LUNs> lunsFromVgInfo = Arrays.asList(lun, lun);
         List<LUNs> lunsFromDb = Arrays.asList(lun, lun);
@@ -75,13 +75,13 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         Guid lunID = Guid.newGuid();
 
         LUNs lunFromVG = new LUNs();
-        lunFromVG.setLUN_id(lunID.toString());
-        lunFromVG.setphysical_volume_id(pvID.toString());
+        lunFromVG.setLUNId(lunID.toString());
+        lunFromVG.setPhysicalVolumeId(pvID.toString());
         lunFromVG.setDeviceSize(20);
 
         LUNs lunFromDB = new LUNs();
-        lunFromDB.setLUN_id(lunID.toString());
-        lunFromDB.setphysical_volume_id(pvID.toString());
+        lunFromDB.setLUNId(lunID.toString());
+        lunFromDB.setPhysicalVolumeId(pvID.toString());
         lunFromDB.setDeviceSize(10);
 
         List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);

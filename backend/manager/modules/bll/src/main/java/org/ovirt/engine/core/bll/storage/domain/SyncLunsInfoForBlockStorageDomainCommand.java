@@ -60,15 +60,15 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     protected void refreshLunsInfo(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
             // Update LUN
-            LUNs lunFromDB = getLunDao().get(lunFromVgInfo.getLUN_id());
+            LUNs lunFromDB = getLunDao().get(lunFromVgInfo.getLUNId());
             if (lunFromDB == null) {
                 getLunDao().save(lunFromVgInfo);
-                log.info("New LUN discovered, ID '{}'", lunFromVgInfo.getLUN_id());
+                log.info("New LUN discovered, ID '{}'", lunFromVgInfo.getLUNId());
             }
             else if (lunFromDB.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
                 getLunDao().update(lunFromVgInfo);
                 log.info("Updated LUN device size - ID '{}', previous size {}, new size {}.",
-                        lunFromVgInfo.getLUN_id(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
+                        lunFromVgInfo.getLUNId(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
             }
 
             // Update lun connections map
@@ -81,7 +81,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 }
 
                 LUNStorageServerConnectionMap lunConnection = new LUNStorageServerConnectionMap(
-                        lunFromVgInfo.getLUN_id(), connectionFromDb.getId());
+                        lunFromVgInfo.getLUNId(), connectionFromDb.getId());
                 if (getStorageServerConnectionLunMapDao().get(lunConnection.getId()) == null) {
                     getStorageServerConnectionLunMapDao().save(lunConnection);
                 }
@@ -91,8 +91,8 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         // Cleanup LUNs from DB
         for (LUNs lunFromDb : lunsFromDb) {
             if (!isDummyLun(lunFromDb) && !containsLun(lunsFromVgInfo, lunFromDb)) {
-                getLunDao().remove(lunFromDb.getLUN_id());
-                log.info("Removed LUN ID '{}'", lunFromDb.getLUN_id());
+                getLunDao().remove(lunFromDb.getLUNId());
+                log.info("Removed LUN ID '{}'", lunFromDb.getLUNId());
             }
         }
     }
@@ -104,12 +104,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
             for (LUNs lunFromDb : lunsFromDb) {
-                if (lunFromDb.getphysical_volume_id() == null ||
-                        !lunFromDb.getphysical_volume_id().equals(lunFromVgInfo.getphysical_volume_id())) {
+                if (lunFromDb.getPhysicalVolumeId() == null ||
+                        !lunFromDb.getPhysicalVolumeId().equals(lunFromVgInfo.getPhysicalVolumeId())) {
                     continue;
                 }
 
-                if (!lunFromDb.getLUN_id().equals(lunFromVgInfo.getLUN_id())) {
+                if (!lunFromDb.getLUNId().equals(lunFromVgInfo.getLUNId())) {
                     return true;
                 }
                 else if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
@@ -123,12 +123,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     }
 
     private boolean isDummyLun(LUNs lun) {
-        return lun.getLUN_id().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX);
+        return lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX);
     }
 
     private boolean containsLun(List<LUNs> luns, LUNs lunToFind) {
         for (LUNs lun : luns) {
-            if (lun.getLUN_id().equals(lunToFind.getLUN_id())) {
+            if (lun.getLUNId().equals(lunToFind.getLUNId())) {
                 return true;
             }
         }

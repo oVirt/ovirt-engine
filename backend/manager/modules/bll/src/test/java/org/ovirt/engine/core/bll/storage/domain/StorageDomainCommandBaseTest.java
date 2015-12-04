@@ -121,10 +121,10 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     @Test
     public void lunAlreadyPartOfStorageDomains() {
         LUNs lun1 = new LUNs();
-        lun1.setLUN_id(GUIDS[0].toString());
+        lun1.setLUNId(GUIDS[0].toString());
         lun1.setStorageDomainId(Guid.newGuid());
         LUNs lun2 = new LUNs();
-        lun2.setLUN_id(GUIDS[1].toString());
+        lun2.setLUNId(GUIDS[1].toString());
         lun2.setStorageDomainId(Guid.newGuid());
 
         doReturn(lunDao).when(cmd).getLunDao();

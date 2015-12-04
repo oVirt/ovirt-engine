@@ -343,7 +343,7 @@ public class DisksViewColumns {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
-                        ((LunDisk) object).getLun().getLUN_id() : null;
+                        ((LunDisk) object).getLun().getLUNId() : null;
             }
         };
 

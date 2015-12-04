@@ -59,7 +59,7 @@ public class DiskValidatorTest {
     private static LunDisk createLunDisk() {
         LunDisk disk = new LunDisk();
         LUNs lun = new LUNs();
-        lun.setLUN_id("lun_id");
+        lun.setLUNId("lun_id");
         lun.setLunType(StorageType.ISCSI);
         disk.setLun(lun);
         return disk;

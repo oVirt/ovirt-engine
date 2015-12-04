@@ -608,12 +608,12 @@ public final class ImagesHandler {
         LUNs lun = lunDisk.getLun();
         DbFacade.getInstance()
                 .getDiskLunMapDao()
-                .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUN_id()));
+                .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUNId()));
         DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
 
         lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
                 .getStorageServerConnectionDao()
-                .getAllForLun(lun.getLUN_id())));
+                .getAllForLun(lun.getLUNId())));
 
         if (!lun.getLunConnections().isEmpty()) {
             StorageHelperDirector.getInstance().getItem(

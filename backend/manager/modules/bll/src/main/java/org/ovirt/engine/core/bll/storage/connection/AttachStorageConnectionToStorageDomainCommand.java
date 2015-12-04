@@ -53,17 +53,17 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
         // Create storage server connection mapping
         LUNStorageServerConnectionMap connectionMapRecord =
-                new LUNStorageServerConnectionMap(dummyLun.getLUN_id(), getParameters().getStorageConnectionId());
+                new LUNStorageServerConnectionMap(dummyLun.getLUNId(), getParameters().getStorageConnectionId());
 
         List<StorageServerConnections> connectionsForDomain;
 
-        if (getLunDao().get(dummyLun.getLUN_id()) == null) {
+        if (getLunDao().get(dummyLun.getLUNId()) == null) {
             getLunDao().save(dummyLun);
 
             // Save connection maps when creating the dummy lun for the first time
             connectionsForDomain = getStorageServerConnectionDao().getAllForDomain(getStorageDomainId());
             for (StorageServerConnections connection : connectionsForDomain) {
-                saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUN_id(), connection.getId()));
+                saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUNId(), connection.getId()));
             }
         }
 
@@ -81,8 +81,8 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
     private LUNs createDummyLun() {
         final LUNs dummyLun = new LUNs();
-        dummyLun.setLUN_id(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + getStorageDomainId());
-        dummyLun.setvolume_group_id(getStorageDomain().getStorage());
+        dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + getStorageDomainId());
+        dummyLun.setVolumeGroupId(getStorageDomain().getStorage());
         return dummyLun;
     }
 

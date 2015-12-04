@@ -126,7 +126,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private void updateLUNConnectionsInfo(LUNs lun) {
         lun.setLunConnections(new ArrayList<>(getDbFacade()
                 .getStorageServerConnectionDao()
-                .getAllForLun(lun.getLUN_id())));
+                .getAllForLun(lun.getLUNId())));
     }
 
     protected boolean isDiskPassPciAndIdeLimit(Disk diskInfo) {

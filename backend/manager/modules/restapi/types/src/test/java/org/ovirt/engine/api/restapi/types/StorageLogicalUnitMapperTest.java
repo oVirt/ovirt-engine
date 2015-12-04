@@ -43,7 +43,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         model.setProductId("product_id_1");
         model.setLunMapping(5);
         model.setSerial("some_serial");
-        model.setvolume_group_id("volume_group_id_1");
+        model.setVolumeGroupId("volume_group_id_1");
         model.setStorageDomainId(Guid.Empty);
         model.setDiskId(Guid.Empty);
         model.setStatus(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Free);

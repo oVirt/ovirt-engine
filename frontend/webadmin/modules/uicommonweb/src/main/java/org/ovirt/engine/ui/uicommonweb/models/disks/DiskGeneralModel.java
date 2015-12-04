@@ -214,7 +214,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
         }
         else if (isLun()) {
             LunDisk lunDisk = (LunDisk) disk;
-            setLunId(lunDisk.getLun().getLUN_id());
+            setLunId(lunDisk.getLun().getLUNId());
         }
     }
 }

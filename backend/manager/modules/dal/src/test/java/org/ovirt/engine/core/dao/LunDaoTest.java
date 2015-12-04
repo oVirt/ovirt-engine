@@ -26,8 +26,8 @@ public class LunDaoTest extends BaseDaoTestCase {
         existingLUN = dao.get("1IET_00180001");
 
         newLUN = new LUNs();
-        newLUN.setLUN_id("oicu812");
-        newLUN.setvolume_group_id("");
+        newLUN.setLUNId("oicu812");
+        newLUN.setVolumeGroupId("");
     }
 
     /**
@@ -45,7 +45,7 @@ public class LunDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        LUNs result = dao.get(existingLUN.getLUN_id());
+        LUNs result = dao.get(existingLUN.getLUNId());
 
         assertNotNull(result);
         assertEquals(existingLUN, result);
@@ -89,12 +89,12 @@ public class LunDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForVolumeGroup() {
-        List<LUNs> result = dao.getAllForVolumeGroup(existingLUN.getvolume_group_id());
+        List<LUNs> result = dao.getAllForVolumeGroup(existingLUN.getVolumeGroupId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (LUNs lun : result) {
-            assertEquals(existingLUN.getvolume_group_id(), lun.getvolume_group_id());
+            assertEquals(existingLUN.getVolumeGroupId(), lun.getVolumeGroupId());
         }
     }
 
@@ -105,7 +105,7 @@ public class LunDaoTest extends BaseDaoTestCase {
     public void testSave() {
         dao.save(newLUN);
 
-        LUNs result = dao.get(newLUN.getLUN_id());
+        LUNs result = dao.get(newLUN.getLUNId());
 
         assertNotNull(result);
         assertEquals(newLUN, result);
@@ -116,9 +116,9 @@ public class LunDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingLUN.getLUN_id());
+        dao.remove(existingLUN.getLUNId());
 
-        LUNs result = dao.get(existingLUN.getLUN_id());
+        LUNs result = dao.get(existingLUN.getLUNId());
 
         assertNull(result);
     }
@@ -130,7 +130,7 @@ public class LunDaoTest extends BaseDaoTestCase {
     public void testUpdateLUNs() {
         dao.update(existingLUN);
 
-        LUNs result = dao.get(existingLUN.getLUN_id());
+        LUNs result = dao.get(existingLUN.getLUNId());
 
         assertNotNull(result);
         assertEquals(existingLUN, result);

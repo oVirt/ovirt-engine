@@ -82,11 +82,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public void removeLun(LUNs lun) {
-        if (lun.getvolume_group_id().isEmpty()) {
-            DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
+        if (lun.getVolumeGroupId().isEmpty()) {
+            DbFacade.getInstance().getLunDao().remove(lun.getLUNId());
             for (StorageServerConnections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
-                    lun.getLUN_id())) {
+                    lun.getLUNId())) {
                 DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
             }
         }
@@ -157,11 +157,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
         final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getStorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
-            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {
-                getLunDao().remove(lun.getLUN_id());
+            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) == null) {
+                getLunDao().remove(lun.getLUNId());
                 numOfRemovedLuns++;
             } else {
-                lun.setvolume_group_id("");
+                lun.setVolumeGroupId("");
                 getLunDao().update(lun);
             }
         }
@@ -178,7 +178,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         AuditLogableBase logable = new AuditLogableBase();
 
         String connectionField = getConnectionDescription(connections, connection) +
-                (lun == null ? "" : " (LUN " + lun.getLUN_id() + ")");
+                (lun == null ? "" : " (LUN " + lun.getLUNId() + ")");
         logable.addCustomValue("Connection", connectionField);
 
         // Get translated error by error code ,if no translation found (should not happened) ,

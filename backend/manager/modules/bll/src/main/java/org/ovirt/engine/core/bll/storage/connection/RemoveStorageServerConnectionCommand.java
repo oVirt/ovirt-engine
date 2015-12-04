@@ -63,7 +63,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
            if (!luns.isEmpty()) {
                 String volumeGroupId = null;
                 for(LUNs lun : luns) {
-                    volumeGroupId = lun.getvolume_group_id();
+                    volumeGroupId = lun.getVolumeGroupId();
                     if (StringUtils.isNotEmpty(volumeGroupId)) {
                         // non empty vg id indicates there's a storage domain using the lun
                         String domainName = lun.getStorageDomainName();

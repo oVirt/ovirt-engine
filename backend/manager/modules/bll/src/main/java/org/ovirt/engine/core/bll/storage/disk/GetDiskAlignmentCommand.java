@@ -170,7 +170,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             GetDiskLunAlignmentVDSCommandParameters lunParameters =
                     new GetDiskLunAlignmentVDSCommandParameters(getVdsIdInGroup(), vmId);
 
-            lunParameters.setLunId(lunDisk.getLun().getLUN_id());
+            lunParameters.setLunId(lunDisk.getLun().getLUNId());
 
             parameters = lunParameters;
         } else {

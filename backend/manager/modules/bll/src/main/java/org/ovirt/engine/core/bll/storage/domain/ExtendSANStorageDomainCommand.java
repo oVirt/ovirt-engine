@@ -99,7 +99,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                 getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
                         connectResult.getFailedVds().getName()));
             }
-            String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUN_id() : "";
+            String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUNId() : "";
             getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s", lunId));
             return false;
         } else {

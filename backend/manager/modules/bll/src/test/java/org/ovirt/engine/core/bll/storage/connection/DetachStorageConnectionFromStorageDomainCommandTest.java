@@ -96,15 +96,15 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
     @Test
     public void executeCommand() {
         LUNs lun1 = new LUNs();
-        lun1.setLUN_id(Guid.newGuid().toString());
+        lun1.setLUNId(Guid.newGuid().toString());
         lun1.setStorageDomainId(domain.getId());
 
         LUNs lun2 = new LUNs();
-        lun2.setLUN_id(Guid.newGuid().toString());
+        lun2.setLUNId(Guid.newGuid().toString());
         lun2.setStorageDomainId(domain.getId());
 
         LUNs lun3 = new LUNs();
-        lun3.setLUN_id(Guid.newGuid().toString());
+        lun3.setLUNId(Guid.newGuid().toString());
         lun3.setStorageDomainId(domain.getId());
 
         List<LUNs> lunsForConnection = new ArrayList<>();
@@ -118,13 +118,13 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
 
         when(lunDao.getAllForStorageServerConnection(connectionId.toString())).thenReturn(lunsForConnection);
         when(lunDao.getAllForVolumeGroup(domain.getStorage())).thenReturn(lunsForVG);
-        when(lunDao.get(lun1.getLUN_id())).thenReturn(lun1);
-        when(lunDao.get(lun2.getLUN_id())).thenReturn(lun2);
-        doNothing().when(lunDao).remove(lun1.getLUN_id());
-        doNothing().when(lunDao).remove(lun2.getLUN_id());
+        when(lunDao.get(lun1.getLUNId())).thenReturn(lun1);
+        when(lunDao.get(lun2.getLUNId())).thenReturn(lun2);
+        doNothing().when(lunDao).remove(lun1.getLUNId());
+        doNothing().when(lunDao).remove(lun2.getLUNId());
         command.executeCommand();
-        verify(lunDao, times(1)).remove(lun1.getLUN_id());
-        verify(lunDao, times(1)).remove(lun2.getLUN_id());
+        verify(lunDao, times(1)).remove(lun1.getLUNId());
+        verify(lunDao, times(1)).remove(lun2.getLUNId());
         CommandAssertUtils.checkSucceeded(command, true);
     }
 }

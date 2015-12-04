@@ -904,7 +904,7 @@ public class VmAnalyzer {
                 if (lunFromMap.getDeviceSize() != 0 && lunFromMap.getDeviceSize() != lunFromDB.getDeviceSize()) {
                     // Found a mismatch - set LUN for update
                     log.info("Updated LUN device size - ID: '{}', previous size: '{}', new size: '{}'.",
-                            lunFromDB.getLUN_id(), lunFromDB.getDeviceSize(), lunFromMap.getDeviceSize());
+                            lunFromDB.getLUNId(), lunFromDB.getDeviceSize(), lunFromMap.getDeviceSize());
 
                     lunFromDB.setDeviceSize(lunFromMap.getDeviceSize());
                     vmsMonitoring.getVmLunDisksToSave().add(lunFromDB);

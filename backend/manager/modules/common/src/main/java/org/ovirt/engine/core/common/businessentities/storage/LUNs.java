@@ -128,27 +128,27 @@ public class LUNs implements BusinessEntity<String> {
                 && Objects.equals(storageDomainName, other.storageDomainName);
     }
 
-    public String getLUN_id() {
+    public String getLUNId() {
         return this.id;
     }
 
-    public void setLUN_id(String value) {
+    public void setLUNId(String value) {
         this.id = value;
     }
 
-    public String getphysical_volume_id() {
+    public String getPhysicalVolumeId() {
         return this.physicalVolumeId;
     }
 
-    public void setphysical_volume_id(String value) {
+    public void setPhysicalVolumeId(String value) {
         this.physicalVolumeId = value;
     }
 
-    public String getvolume_group_id() {
+    public String getVolumeGroupId() {
         return this.volumeGroupId;
     }
 
-    public void setvolume_group_id(String value) {
+    public void setVolumeGroupId(String value) {
         this.volumeGroupId = value;
     }
 
@@ -312,9 +312,9 @@ public class LUNs implements BusinessEntity<String> {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("id", getLUN_id())
-                .append("physicalVolumeId", getphysical_volume_id())
-                .append("volumeGroupId", getvolume_group_id())
+                .append("id", getLUNId())
+                .append("physicalVolumeId", getPhysicalVolumeId())
+                .append("volumeGroupId", getVolumeGroupId())
                 .append("serial", getSerial())
                 .append("lunMapping", getLunMapping())
                 .append("vendorId", getVendorId())
@@ -336,11 +336,11 @@ public class LUNs implements BusinessEntity<String> {
 
     @Override
     public String getId() {
-        return getLUN_id();
+        return getLUNId();
     }
 
     @Override
     public void setId(String id) {
-        setLUN_id(id);
+        setLUNId(id);
     }
 }

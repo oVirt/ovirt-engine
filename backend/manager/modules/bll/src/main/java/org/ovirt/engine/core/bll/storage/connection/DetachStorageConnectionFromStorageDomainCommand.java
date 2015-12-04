@@ -48,8 +48,8 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
         Collection<LUNs> lunsToRemove = (Collection<LUNs>) CollectionUtils.intersection(lunsForConnection, lunsForVG);
 
         for (LUNs lun : lunsToRemove) {
-            if (getLunDao().get(lun.getLUN_id()) != null) {
-                getLunDao().remove(lun.getLUN_id());
+            if (getLunDao().get(lun.getLUNId()) != null) {
+                getLunDao().remove(lun.getLUNId());
             }
         }
 

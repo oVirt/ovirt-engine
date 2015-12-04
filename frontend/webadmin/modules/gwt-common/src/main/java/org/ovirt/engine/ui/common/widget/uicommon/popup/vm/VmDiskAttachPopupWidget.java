@@ -278,7 +278,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getLun().getLUN_id();
+                return disk.getLun().getLUNId();
             }
         };
         lunDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage(), "60px"); //$NON-NLS-1$

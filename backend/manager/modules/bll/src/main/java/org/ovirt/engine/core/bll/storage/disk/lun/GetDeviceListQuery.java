@@ -40,26 +40,26 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         List<LUNs> lunsFromDb = getDbFacade().getLunDao().getAll();
         HashMap<String, LUNs> lunsFromDbById = new HashMap<>();
         for (LUNs lun : lunsFromDb) {
-            lunsFromDbById.put(lun.getLUN_id(), lun);
+            lunsFromDbById.put(lun.getLUNId(), lun);
         }
 
         for (LUNs lun : luns) {
             // Filtering code should be deprecated once DC level 3.0 is no longer supported
             if (filteringLUNsEnabled) {
-                if (StringUtils.isNotEmpty(lun.getvolume_group_id())) {
+                if (StringUtils.isNotEmpty(lun.getVolumeGroupId())) {
                     log.debug("LUN with GUID {} already has VG ID {}, so not returning it.",
-                            lun.getLUN_id(), lun.getvolume_group_id());
-                } else if (lunsFromDbById.containsKey(lun.getLUN_id())) {
+                            lun.getLUNId(), lun.getVolumeGroupId());
+                } else if (lunsFromDbById.containsKey(lun.getLUNId())) {
                     log.debug("LUN with GUID {} already exists in the DB, so not returning it.",
-                            lun.getLUN_id());
+                            lun.getLUNId());
                 } else {
                     returnValue.add(lun);
                 }
             }
             else {
                 // if the LUN exists in DB, update its values
-                if (lunsFromDbById.containsKey(lun.getLUN_id())) {
-                    LUNs lunFromDb = lunsFromDbById.get(lun.getLUN_id());
+                if (lunsFromDbById.containsKey(lun.getLUNId())) {
+                    LUNs lunFromDb = lunsFromDbById.get(lun.getLUNId());
                     lun.setDiskId(lunFromDb.getDiskId());
                     lun.setDiskAlias(lunFromDb.getDiskAlias());
                     lun.setStorageDomainId(lunFromDb.getStorageDomainId());

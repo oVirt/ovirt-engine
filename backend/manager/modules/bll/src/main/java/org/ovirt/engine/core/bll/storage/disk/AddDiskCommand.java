@@ -189,7 +189,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             break;
         }
 
-        if (getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) != null) {
+        if (getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) != null) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
 
@@ -228,7 +228,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return the specified LUN if it's visible to the specified host, or null otherwise.
      */
     protected LUNs getLunDisk(final LUNs lun, VDS vds) {
-        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUN_id());
+        List<LUNs> luns = executeGetDeviceList(vds.getId(), lun.getLunType(), lun.getLUNId());
 
         // TODO Once we stop supporting 3.5 DCs and earlier, we can remove the filter call.
 
@@ -453,7 +453,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             public Void runInTransaction() {
                 StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
                 getBaseDiskDao().save(getParameters().getDiskInfo());
-                getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
+                getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
                 if (getVm() != null) {
                     addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
                 }

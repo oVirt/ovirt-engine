@@ -181,8 +181,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     protected List<String> getVolumeGroupIdsByLUNs(List<LUNs> luns) {
         Set<String> vgSet = new HashSet<>();
         for (LUNs lun : luns) {
-            if (!lun.getvolume_group_id().isEmpty()) {
-                vgSet.add(lun.getvolume_group_id());
+            if (!lun.getVolumeGroupId().isEmpty()) {
+                vgSet.add(lun.getVolumeGroupId());
             }
         }
         return new ArrayList<>(vgSet);

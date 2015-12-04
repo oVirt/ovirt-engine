@@ -265,7 +265,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             LUNs lun = lunDisk.getLun();
             lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
                     .getStorageServerConnectionDao()
-                    .getAllForLun(lun.getLUN_id())));
+                    .getAllForLun(lun.getLUNId())));
 
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getStorageType())

@@ -219,7 +219,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
 
     protected ArrayList<LUNs> createSdLuns() {
         LUNs lun = new LUNs();
-        lun.setvolume_group_id(VG_ID.toString());
+        lun.setVolumeGroupId(VG_ID.toString());
         lun.setStorageDomainId(HE_SD_ID);
         ArrayList<StorageServerConnections> connections = new ArrayList<>();
         StorageServerConnections connection = new StorageServerConnections();

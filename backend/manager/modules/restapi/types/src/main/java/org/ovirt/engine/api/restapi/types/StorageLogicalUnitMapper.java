@@ -16,7 +16,7 @@ public class StorageLogicalUnitMapper {
     @Mapping(from = LUNs.class, to = LogicalUnit.class)
     public static LogicalUnit map(LUNs entity, LogicalUnit template) {
         LogicalUnit model = template != null ? template : new LogicalUnit();
-        model.setId(entity.getLUN_id());
+        model.setId(entity.getLUNId());
         if (entity.getVendorId()!=null && !entity.getVendorId().isEmpty()) {
             model.setVendorId(entity.getVendorId());
         }
@@ -29,8 +29,8 @@ public class StorageLogicalUnitMapper {
         if (entity.getLunMapping()!=null) {
             model.setLunMapping(entity.getLunMapping());
         }
-        if (entity.getvolume_group_id() != null && !entity.getvolume_group_id().isEmpty()) {
-            model.setVolumeGroupId(entity.getvolume_group_id());
+        if (entity.getVolumeGroupId() != null && !entity.getVolumeGroupId().isEmpty()) {
+            model.setVolumeGroupId(entity.getVolumeGroupId());
         }
         if (entity.getStorageDomainId() != null) {
             model.setStorageDomainId(entity.getStorageDomainId().toString());
@@ -64,7 +64,7 @@ public class StorageLogicalUnitMapper {
     @Mapping(from = LUNs.class, to = HostStorage.class)
     public static HostStorage map(LUNs entity, HostStorage template) {
         HostStorage model = template != null ? template : new HostStorage();
-        model.setId(entity.getLUN_id());
+        model.setId(entity.getLUNId());
         model.setType(StorageDomainMapper.map(entity.getLunType(), null));
         model.setLogicalUnits(new LogicalUnits());
         model.getLogicalUnits().getLogicalUnits().add(map(entity, (LogicalUnit) null));
@@ -79,7 +79,7 @@ public class StorageLogicalUnitMapper {
         LUNs entity = template != null ? template : new LUNs();
         if (model.isSetLogicalUnits() && model.getLogicalUnits().isSetLogicalUnits()) {
             LogicalUnit logicalUnit = model.getLogicalUnits().getLogicalUnits().get(0);
-            entity.setLUN_id(logicalUnit.getId());
+            entity.setLUNId(logicalUnit.getId());
             ArrayList<StorageServerConnections> connections = new ArrayList<>();
             connections.add(map(logicalUnit, null));
             entity.setLunConnections(connections);

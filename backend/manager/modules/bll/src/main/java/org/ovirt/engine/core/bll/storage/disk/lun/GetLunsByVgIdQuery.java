@@ -38,18 +38,18 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
         for (LUNs lun : luns) {
             // Filter dummy luns
-            if (lun.getLUN_id().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX)) {
+            if (lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX)) {
                 continue;
             }
             nonDummyLuns.add(lun);
 
             // Update LUN's connections
-            for (LUNStorageServerConnectionMap map : getLunConnections(lun.getLUN_id())) {
+            for (LUNStorageServerConnectionMap map : getLunConnections(lun.getLUNId())) {
                 addConnection(lun, getConnection(map.getstorage_server_connection()));
             }
 
             // Update LUN's 'PathsDictionary' by 'lunsFromDeviceList'
-            LUNs lunFromDeviceList = lunsFromDeviceMap.get(lun.getLUN_id());
+            LUNs lunFromDeviceList = lunsFromDeviceMap.get(lun.getLUNId());
             if (lunFromDeviceList != null) {
                 lun.setPathsDictionary(lunFromDeviceList.getPathsDictionary());
                 lun.setPathsCapacity(lunFromDeviceList.getPathsCapacity());
@@ -65,7 +65,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
         if (!luns.isEmpty()) {
             LUNs lun = luns.get(0);
-            List<LUNStorageServerConnectionMap> lunConnections = getLunConnections(lun.getLUN_id());
+            List<LUNStorageServerConnectionMap> lunConnections = getLunConnections(lun.getLUNId());
 
             if (!lunConnections.isEmpty()) {
                 StorageServerConnections connection =
@@ -103,7 +103,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
         List<LUNs> lunsList = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
 
         for (LUNs lun : lunsList) {
-            lunsMap.put(lun.getLUN_id(), lun);
+            lunsMap.put(lun.getLUNId(), lun);
         }
 
         return lunsMap;

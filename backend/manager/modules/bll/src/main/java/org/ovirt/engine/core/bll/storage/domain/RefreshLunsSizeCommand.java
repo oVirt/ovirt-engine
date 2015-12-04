@@ -78,9 +78,9 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         Set<String> lunsSet = new HashSet<>(lunIds);
 
         for (LUNs lun : lunsFromDb) {
-            if (lunsSet.contains(lun.getLUN_id())) {
+            if (lunsSet.contains(lun.getLUNId())) {
                     // LUN is part of the storage domain
-                    lunsSet.remove(lun.getLUN_id());
+                    lunsSet.remove(lun.getLUNId());
             }
         }
         return lunsSet.isEmpty();
@@ -142,7 +142,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
             List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
             for (LUNs lun : luns) {
-                MultiValueMapUtils.addToMap(lun.getLUN_id(),
+                MultiValueMapUtils.addToMap(lun.getLUNId(),
                         new Pair<>(vds, lun.getDeviceSize()), lunToVds);
             }
         }

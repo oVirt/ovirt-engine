@@ -107,8 +107,8 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     @Test
     public void executeCommandNotFirstDummyLun() {
        LUNs dummyLun = new LUNs();
-       dummyLun.setLUN_id(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
-       when(lunDao.get(dummyLun.getLUN_id())).thenReturn(dummyLun);
+       dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
+       when(lunDao.get(dummyLun.getLUNId())).thenReturn(dummyLun);
 
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
@@ -118,7 +118,7 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connection.setConnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getId());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
        when(lunMapDao.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
@@ -130,8 +130,8 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
     @Test
     public void executeCommandFirstDummyLun() {
        LUNs dummyLun = new LUNs();
-       dummyLun.setLUN_id(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
-       when(lunDao.get(dummyLun.getLUN_id())).thenReturn(null);
+       dummyLun.setLUNId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + domain.getId());
+       when(lunDao.get(dummyLun.getLUNId())).thenReturn(null);
        doNothing().when(lunDao).save(dummyLun);
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
@@ -141,7 +141,7 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
        connection.setConnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getId());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUNId(), connection.getId());
        when(lunMapDao.get(map_id)).thenReturn(null);
        LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
        doNothing().when(lunMapDao).save(map);

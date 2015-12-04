@@ -715,7 +715,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             Model target = getWidgetModel() != null ? getWidgetModel() : sanStorageModel.getContainer();
             List<String> unkownStatusLuns = new ArrayList<>();
             for (LUNs lun : lunsMapByStatus.get(LunStatus.Unknown)) {
-                unkownStatusLuns.add(lun.getLUN_id());
+                unkownStatusLuns.add(lun.getLUNId());
             }
             Frontend.getInstance()
                     .runQuery(VdcQueryType.GetDeviceList,

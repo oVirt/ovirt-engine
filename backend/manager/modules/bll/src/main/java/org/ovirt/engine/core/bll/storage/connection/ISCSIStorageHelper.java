@@ -54,7 +54,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
         if (list.size() != 0) {
             if (VDSCommandType.forValue(type) == VDSCommandType.DisconnectStorageServer) {
-                list = filterConnectionsUsedByOthers(list, storageDomain.getStorage(), lun != null ? lun.getLUN_id()
+                list = filterConnectionsUsedByOthers(list, storageDomain.getStorage(), lun != null ? lun.getLUNId()
                         : "");
             } else if (VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
                 list = updateIfaces(list, vdsId);
@@ -147,7 +147,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                         .getLunDao()
                         .getAllForVolumeGroup(vgId)
                         .stream()
-                        .map(LUNs::getLUN_id)
+                        .map(LUNs::getLUNId)
                         .collect(Collectors.toList()) : null;
         // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
         // at that case they should left at db
@@ -170,7 +170,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                         .getLunDao()
                         .getAllForStorageServerConnection(connection.getId())
                         .stream()
-                        .map(LUNs::getLUN_id)
+                        .map(LUNs::getLUNId)
                         .collect(Collectors.toList());
 
                 if (0 < CollectionUtils.subtract(list, lunsByVgWithNoDisks).size()) {
@@ -226,14 +226,14 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     List<String> strings =
                             DbFacade.getInstance()
                                     .getStorageServerConnectionLunMapDao()
-                                    .getAll(lun.getLUN_id())
+                                    .getAll(lun.getLUNId())
                                     .stream()
                                     .map(LUNStorageServerConnectionMap::getstorage_server_connection)
                                     .collect(Collectors.toList());
                     if (CollectionUtils.subtract(strings, failedConnectionsList).size() == 0) {
                         // At case of failure the appropriate log message will be
                         // added
-                        log.info("The lun with id '{}' was reported as problematic", lun.getphysical_volume_id());
+                        log.info("The lun with id '{}' was reported as problematic", lun.getPhysicalVolumeId());
                         for (String connectionFailed : failedConnectionsList) {
                             String connectionField =
                                     addToAuditLogErrorMessage(connectionFailed,

@@ -90,10 +90,10 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
         lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
-        lun1.setLUN_id("1");
+        lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
-        lun2.setLUN_id("2");
+        lun2.setLUNId("2");
         lun2.setStorageDomainId(sdId);
         lunsFromDb.add(lun1);
         lunsFromDb.add(lun2);
@@ -168,10 +168,10 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     public void canDoActionLunsNotPartOfStorageDomain() {
         List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
-        lun1.setLUN_id("111");
+        lun1.setLUNId("111");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
-        lun2.setLUN_id("222");
+        lun2.setLUNId("222");
         lun2.setStorageDomainId(sdId);
         lunsFromDb.add(lun1);
         lunsFromDb.add(lun2);
@@ -185,10 +185,10 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     public void canDoAction() {
         List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
-        lun1.setLUN_id("1");
+        lun1.setLUNId("1");
         lun1.setStorageDomainId(sdId);
         LUNs lun2 = new LUNs();
-        lun2.setLUN_id("2");
+        lun2.setLUNId("2");
         lun2.setStorageDomainId(sdId);
         lunsFromDb.add(lun1);
         lunsFromDb.add(lun2);

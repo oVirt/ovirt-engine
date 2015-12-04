@@ -340,7 +340,7 @@ public class VdsBrokerObjectsBuilder {
                 String lunGuidString = assignStringValue(disk, VdsProperties.lun_guid);
                 if (!StringUtils.isEmpty(lunGuidString)) {
                     LUNs lun = new LUNs();
-                    lun.setLUN_id(lunGuidString);
+                    lun.setLUNId(lunGuidString);
 
                     if (disk.containsKey(VdsProperties.disk_true_size)) {
                         long sizeInBytes = assignLongValue(disk, VdsProperties.disk_true_size);
