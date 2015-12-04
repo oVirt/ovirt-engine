@@ -2,29 +2,35 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 public enum BondMode {
 
-    BOND0("0", "(Mode 0) Round-robin", false),
-    BOND1("1", "(Mode 1) Active-Backup", true),
-    BOND2("2", "(Mode 2) Load balance (balance-xor)", true),
-    BOND3("3", "(Mode 3) Broadcast", true),
-    BOND4("4", "(Mode 4) Dynamic link aggregation (802.3ad)", true),
-    BOND5("5", "(Mode 5) Adaptive transmit load balancing (balance-tlb)", false),
-    BOND6("6", "(Mode 6) Adaptive load balancing (balance-alb)", false);
+    BOND0("0", "balance-rr", "(Mode 0) Round-robin", false),
+    BOND1("1", "active-backup", "(Mode 1) Active-Backup", true),
+    BOND2("2", "balance-xor", "(Mode 2) Load balance (balance-xor)", true),
+    BOND3("3", "broadcast", "(Mode 3) Broadcast", true),
+    BOND4("4", "802.3ad", "(Mode 4) Dynamic link aggregation (802.3ad)", true),
+    BOND5("5", "balance-tlb", "(Mode 5) Adaptive transmit load balancing (balance-tlb)", false),
+    BOND6("6", "balance-alb", "(Mode 6) Adaptive load balancing (balance-alb)", false);
 
     public static final String MODE = "mode=";
     private static final String DEFAULT_MIIMON_VALUE = "100";
 
     private String value;
+    private String stringValue;
     private String description;
     private boolean isValidForVmNetwork;
 
-    BondMode(String value, String description, boolean isValidForVmNetwork){
+    BondMode(String value, String stringValue, String description, boolean isValidForVmNetwork){
         this.value = value;
+        this.stringValue = stringValue;
         this.description = description;
         this.isValidForVmNetwork = isValidForVmNetwork;
     }
 
     public String getValue(){
         return value;
+    }
+
+    public String getStringValue(){
+        return stringValue;
     }
 
     public String getDescription(){
@@ -43,18 +49,16 @@ public enum BondMode {
         return isValidForVmNetwork;
     }
 
-    static BondMode getBondMode(String bondOptions){
-        if(bondOptions == null){
+    static BondMode parseBondMode(String bondOptions){
+        return bondOptions == null ? null : getBondMode(findMode(bondOptions));
+    }
+
+    public static BondMode getBondMode(String bondModeValue){
+        if (bondModeValue == null) {
             return null;
         }
-
-        String bondModeValue = findMode(bondOptions);
-        if (bondModeValue == null){
-            return null;
-        }
-
         for (BondMode bondMode : BondMode.values()){
-            if (bondMode.getValue().equals(bondModeValue)){
+            if (bondMode.getStringValue().equals(bondModeValue) || bondMode.getValue().equals(bondModeValue)) {
                 return bondMode;
             }
         }
@@ -91,27 +95,23 @@ public enum BondMode {
         }
         index++;
 
-        //find all the digits that make up the value
-        StringBuilder bondModeBuilder = new StringBuilder();
-        while(index < length && Character.isDigit(bondOptionsChars[index])){
-            bondModeBuilder.append(bondOptionsChars[index]);
+        if (index==length || Character.isSpace(bondOptionsChars[index])) {
+            return null;
+        }
+
+        int startIndex = index;
+        while(index < length && !Character.isSpace(bondOptionsChars[index])){
             index++;
         }
 
-        // the digits must be followed by a space, if they are not the bond mode is not valid
-        if (index < length && !Character.isSpace(bondOptionsChars[index])){
-            return null;
-        }
-
-        if (bondModeBuilder.length() == 0){
-            return null;
-        }
-
-        return bondModeBuilder.toString();
+        // GWT complains about Arrays.copyOfRange, using System.arraycopy instead
+        char[] modeChars = new char[index - startIndex];
+        System.arraycopy(bondOptionsChars, startIndex, modeChars, 0, index - startIndex);
+        return new String(modeChars);
     }
 
     public static boolean isBondModeValidForVmNetwork(String bondOptions){
-        BondMode bondMode = BondMode.getBondMode(bondOptions);
+        BondMode bondMode = BondMode.parseBondMode(bondOptions);
         if (bondMode == null){
             return false;
         }
