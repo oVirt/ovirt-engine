@@ -61,7 +61,7 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testDeleteByPoolvds_spm_id_map() {
+    public void testDeleteByPoolVdsSpmIdMap() {
         dao.removeByVdsAndStoragePool(existingVdsSpmIdMap.getId(), existingVdsSpmIdMap.getStoragePoolId());
         VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
 
