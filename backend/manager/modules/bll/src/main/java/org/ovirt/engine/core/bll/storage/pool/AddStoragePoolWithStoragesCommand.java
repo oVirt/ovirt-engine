@@ -77,7 +77,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected void executeCommand() {
-        if (UpdateStorageDomainsInDb()) {
+        if (updateStorageDomainsInDb()) {
             // setting storage pool status to maintenance
             StoragePool storagePool = getStoragePool();
             getCompensationContext().snapshotEntity(storagePool);
@@ -151,11 +151,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         freeLock();
         // if create succeeded activate
         if (getSucceeded()) {
-            ActivateStorageDomains();
+            activateStorageDomains();
         }
     }
 
-    private boolean UpdateStorageDomainsInDb() {
+    private boolean updateStorageDomainsInDb() {
         boolean result  = TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
 
             @Override
@@ -234,7 +234,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                 .getMasterDomainVersion()));
     }
 
-    private boolean ActivateStorageDomains() {
+    private boolean activateStorageDomains() {
         boolean returnValue = true;
         for (final Guid storageDomainId : getParameters().getStorages()) {
             StorageDomainPoolParametersBase activateParameters = new StorageDomainPoolParametersBase(storageDomainId,
