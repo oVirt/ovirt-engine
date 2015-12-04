@@ -54,14 +54,14 @@ public class OvfDataUpdaterTest {
     @Test
     public void poolUpdateOvfStoreOnAnyDomainSupported() throws Exception {
         doReturn(true).when(ovfDataUpdater).ovfOnAnyDomainSupported(any(StoragePool.class));
-        ovfDataUpdater.ovfUpdate_timer();
+        ovfDataUpdater.ovfUpdateTimer();
         verify(Boolean.TRUE);
     }
 
     @Test
     public void poolUpdateOvfStoreOnAnyDomainUnsupported() throws Exception {
         doReturn(false).when(ovfDataUpdater).ovfOnAnyDomainSupported(any(StoragePool.class));
-        ovfDataUpdater.ovfUpdate_timer();
+        ovfDataUpdater.ovfUpdateTimer();
         verify(Boolean.FALSE);
     }
 

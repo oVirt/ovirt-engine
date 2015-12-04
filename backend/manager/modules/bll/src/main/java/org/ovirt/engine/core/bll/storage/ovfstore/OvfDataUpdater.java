@@ -41,7 +41,7 @@ public class OvfDataUpdater {
 
     public void initOvfDataUpdater() {
         SchedulerUtil scheduler = Injector.get(SchedulerUtilQuartzImpl.class);
-        scheduler.scheduleAFixedDelayJob(this, "ovfUpdate_timer", new Class[] {},
+        scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
                 new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
         log.info("Initialization of OvfDataUpdater completed successfully.");
@@ -57,8 +57,8 @@ public class OvfDataUpdater {
         return Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 
-    @OnTimerMethodAnnotation("ovfUpdate_timer")
-    public void ovfUpdate_timer() {
+    @OnTimerMethodAnnotation("ovfUpdateTimer")
+    public void ovfUpdateTimer() {
         List<StoragePool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
         updateOvfData(storagePools);
     }
