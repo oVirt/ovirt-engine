@@ -284,7 +284,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             });
         } else {
             // if for some reason template doesn't have images, remove it now and not in end action
-            HandleEndAction();
+            handleEndAction();
         }
     }
 
@@ -381,15 +381,15 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void endSuccessfully() {
-        HandleEndAction();
+        handleEndAction();
     }
 
     @Override
     protected void endWithFailure() {
-        HandleEndAction();
+        handleEndAction();
     }
 
-    private void HandleEndAction() {
+    private void handleEndAction() {
         try {
             removeTemplateFromDb();
             setSucceeded(true);
