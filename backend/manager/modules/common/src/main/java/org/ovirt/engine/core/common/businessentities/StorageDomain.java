@@ -159,7 +159,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
 
     public void setAvailableDiskSize(Integer availableDiskSize) {
         getStorageDynamicData().setAvailableDiskSize(availableDiskSize);
-        UpdateTotalDiskSize();
+        updateTotalDiskSize();
         updateOverCommitPercent();
     }
 
@@ -211,10 +211,10 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
 
     public void setUsedDiskSize(Integer usedDiskSize) {
         getStorageDynamicData().setUsedDiskSize(usedDiskSize);
-        UpdateTotalDiskSize();
+        updateTotalDiskSize();
     }
 
-    private void UpdateTotalDiskSize() {
+    private void updateTotalDiskSize() {
         Integer available = getStorageDynamicData() == null ? null : getStorageDynamicData().getAvailableDiskSize();
         Integer used = getStorageDynamicData() == null ? null : getStorageDynamicData().getUsedDiskSize();
 
@@ -228,7 +228,7 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
     private Integer totalDiskSize;
 
     public Integer getTotalDiskSize() {
-        UpdateTotalDiskSize();
+        updateTotalDiskSize();
         return totalDiskSize;
     }
 
