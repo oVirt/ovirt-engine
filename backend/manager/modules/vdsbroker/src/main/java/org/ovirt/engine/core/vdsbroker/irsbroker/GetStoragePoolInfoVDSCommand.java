@@ -36,14 +36,14 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
             masterId = new Guid(result.storagePoolInfo.get("master_uuid").toString());
         }
         sp.setId(getParameters().getStoragePoolId());
-        ArrayList<StorageDomain> domList = ParseStorageDomainList(result.domainsList, masterId);
+        ArrayList<StorageDomain> domList = parseStorageDomainList(result.domainsList, masterId);
 
         KeyValuePairCompat<StoragePool, List<StorageDomain>> list = new KeyValuePairCompat<>(sp, domList);
         setReturnValue(list);
     }
 
     @SuppressWarnings("unchecked")
-    private ArrayList<StorageDomain> ParseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
+    private ArrayList<StorageDomain> parseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
         ArrayList<StorageDomain> domainsList = new ArrayList<>(xmlRpcStruct.size());
         for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
             Map<String, Object> domainAsStruct = (Map<String, Object>) entry.getValue();
