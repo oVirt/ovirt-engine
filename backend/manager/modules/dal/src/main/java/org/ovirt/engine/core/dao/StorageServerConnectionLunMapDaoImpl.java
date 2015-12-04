@@ -33,7 +33,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
         public LUNStorageServerConnectionMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNStorageServerConnectionMap entity = new LUNStorageServerConnectionMap();
             entity.setLunId(rs.getString("lun_id"));
-            entity.setstorage_server_connection(rs.getString("storage_server_connection"));
+            entity.setStorageServerConnection(rs.getString("storage_server_connection"));
             return entity;
         }
     }
@@ -51,7 +51,7 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
     @Override
     public void save(LUNStorageServerConnectionMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", map.getLunId())
-                .addValue("storage_server_connection", map.getstorage_server_connection());
+                .addValue("storage_server_connection", map.getStorageServerConnection());
 
         getCallsHandler().executeModification("InsertLUN_storage_server_connection_map", parameterSource);
     }

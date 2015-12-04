@@ -120,7 +120,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         List<LUNStorageServerConnectionMap> ret = new ArrayList<>();
         LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
-        map.setstorage_server_connection(cnxId);
+        map.setStorageServerConnection(cnxId);
         ret.add(map);
         when(storageServerConnectionLunMapDao.getAll(lunId)).thenReturn(ret);
     }

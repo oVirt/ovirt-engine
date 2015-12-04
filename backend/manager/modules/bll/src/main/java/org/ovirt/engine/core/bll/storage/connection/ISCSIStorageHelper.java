@@ -228,7 +228,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                                     .getStorageServerConnectionLunMapDao()
                                     .getAll(lun.getLUNId())
                                     .stream()
-                                    .map(LUNStorageServerConnectionMap::getstorage_server_connection)
+                                    .map(LUNStorageServerConnectionMap::getStorageServerConnection)
                                     .collect(Collectors.toList());
                     if (CollectionUtils.subtract(strings, failedConnectionsList).size() == 0) {
                         // At case of failure the appropriate log message will be

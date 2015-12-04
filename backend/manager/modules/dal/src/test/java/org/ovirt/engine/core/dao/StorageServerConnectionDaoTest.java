@@ -213,7 +213,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     private Set<String> getLunConnections(List<LUNStorageServerConnectionMap> lunConns) {
         Set<String> conns = new HashSet<>();
         for (LUNStorageServerConnectionMap lun_storage_server_connection_map1 : lunConns) {
-            conns.add(lun_storage_server_connection_map1.getstorage_server_connection());
+            conns.add(lun_storage_server_connection_map1.getStorageServerConnection());
         }
         return conns;
     }

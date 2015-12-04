@@ -38,11 +38,11 @@ public class LUNStorageServerConnectionMap implements Serializable, BusinessEnti
         this.id.lunId = value;
     }
 
-    public String getstorage_server_connection() {
+    public String getStorageServerConnection() {
         return this.id.storageServerConnection;
     }
 
-    public void setstorage_server_connection(String value) {
+    public void setStorageServerConnection(String value) {
         this.id.storageServerConnection = value;
     }
 

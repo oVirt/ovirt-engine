@@ -45,7 +45,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
             // Update LUN's connections
             for (LUNStorageServerConnectionMap map : getLunConnections(lun.getLUNId())) {
-                addConnection(lun, getConnection(map.getstorage_server_connection()));
+                addConnection(lun, getConnection(map.getStorageServerConnection()));
             }
 
             // Update LUN's 'PathsDictionary' by 'lunsFromDeviceList'
@@ -69,7 +69,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
             if (!lunConnections.isEmpty()) {
                 StorageServerConnections connection =
-                        getConnection(lunConnections.get(0).getstorage_server_connection());
+                        getConnection(lunConnections.get(0).getStorageServerConnection());
                 storageType = connection.getStorageType();
             } else {
                 storageType = StorageType.FCP;
