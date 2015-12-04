@@ -570,7 +570,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         // Update BootSequence ListBox
         bootSequenceModel = object.getBootSequence();
-        UpdateBootSequenceListBox();
+        updateBootSequenceListBox();
 
         vmInitWidget.edit(object.getVmInitModel());
     }
@@ -626,7 +626,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         }
     }
 
-    private void UpdateBootSequenceListBox() {
+    private void updateBootSequenceListBox() {
         // Update Items
         updateBootSequenceItems();
 
