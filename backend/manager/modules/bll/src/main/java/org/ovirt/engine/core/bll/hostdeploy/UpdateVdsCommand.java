@@ -113,7 +113,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected void executeCommand() {
         updateVdsData();
-        if (NeedToUpdateVdsBroker()) {
+        if (needToUpdateVdsBroker()) {
             initializeVds();
         }
 
@@ -223,7 +223,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     }
 
-    private boolean NeedToUpdateVdsBroker() {
+    private boolean needToUpdateVdsBroker() {
         return VdsHandler.isFieldsUpdated(getParameters().getVdsStaticData(), oldHost.getStaticData(),
                 UPDATE_FIELDS_VDS_BROKER);
     }

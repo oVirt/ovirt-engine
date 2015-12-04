@@ -192,15 +192,15 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             }
             if (provisionedVds != null) {
                 // In provision don't set host on pending - isPending = false
-                getQueryReturnValue().setSucceeded(Register(provisionedVds, vdsGroupId, false));
+                getQueryReturnValue().setSucceeded(register(provisionedVds, vdsGroupId, false));
             } else {
                 // TODO: always add in pending state, and if auto approve call
                 // approve command action after registration
                 RefObject<Boolean> isPending = new RefObject<>(Boolean.FALSE);
                 getQueryReturnValue().setSucceeded(
-                        HandleOldVdssWithSameHostName(vdsByUniqueId) && HandleOldVdssWithSameName(vdsByUniqueId)
-                                && CheckAutoApprovalDefinitions(isPending)
-                                && Register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
+                        handleOldVdssWithSameHostName(vdsByUniqueId) && handleOldVdssWithSameName(vdsByUniqueId)
+                                && checkAutoApprovalDefinitions(isPending)
+                                && register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
             }
             log.debug("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is '{}'",
                     getQueryReturnValue().getSucceeded());
@@ -271,15 +271,15 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return isApprovalDispatched;
     }
 
-    private boolean Register(VDS vds, Guid vdsGroupId, boolean IsPending) {
+    private boolean register(VDS vds, Guid vdsGroupId, boolean IsPending) {
         boolean returnValue = true;
-        log.debug("RegisterVdsQuery::Register - Entering");
+        log.debug("RegisterVdsQuery::register - Entering");
         if (vds == null) {
             returnValue = registerNewHost(vdsGroupId, IsPending);
         } else {
             returnValue = updateExistingHost(vds, IsPending);
         }
-        log.debug("RegisterVdsQuery::Register - Leaving with value {}", returnValue);
+        log.debug("RegisterVdsQuery::register - Leaving with value {}", returnValue);
 
         return returnValue;
     }
@@ -289,7 +289,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         vds.setHostName(vds.getHostName());
         vds.setPort(getParameters().getVdsPort());
         log.debug(
-                "RegisterVdsQuery::Register - Will try now to update VDS with existing unique id; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}', IsPending: '{}' with force synchronize",
+                "RegisterVdsQuery::register - Will try now to update VDS with existing unique id; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}', IsPending: '{}' with force synchronize",
                 getParameters().getVdsHostName(),
                 getStrippedVdsUniqueId(),
                 getStrippedVdsUniqueId(),
@@ -308,18 +308,18 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         if (!rc.getSucceeded()) {
             error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
             log.debug(
-                    "RegisterVdsQuery::Register - Failed to update existing VDS Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}', IsPending: '{}'",
+                    "RegisterVdsQuery::register - Failed to update existing VDS Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}', IsPending: '{}'",
                     getParameters().getVdsHostName(),
                     getStrippedVdsUniqueId(),
                     getStrippedVdsUniqueId(),
                     getParameters().getVdsPort(),
                     pending);
 
-            CaptureCommandErrorsToLogger(rc, "RegisterVdsQuery::Register");
+            captureCommandErrorsToLogger(rc, "RegisterVdsQuery::register");
             returnValue = false;
         } else {
             log.info(
-                    "RegisterVdsQuery::Register - Updated a '{}' registered VDS - Name: '{}', Hostname: '{}', UniqueID: '{}'",
+                    "RegisterVdsQuery::register - Updated a '{}' registered VDS - Name: '{}', Hostname: '{}', UniqueID: '{}'",
                     vds.getStatus() == VDSStatus.PendingApproval ? "Pending " : "",
                     getParameters().getVdsName(),
                     getParameters().getVdsHostName(),
@@ -341,7 +341,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         vds.setSshKeyFingerprint(getParameters().getSSHFingerprint());
 
                 log.debug(
-                        "RegisterVdsQuery::Register - Will try now to add VDS from scratch; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}',Subnet mask: '{}', IsPending: '{}' with force synchronize",
+                        "RegisterVdsQuery::register - Will try now to add VDS from scratch; Name: '{}', Hostname: '{}', Unique: '{}', VdsPort: '{}',Subnet mask: '{}', IsPending: '{}' with force synchronize",
                         getParameters().getVdsName(),
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId(),
@@ -355,16 +355,16 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             if (!ret.getSucceeded()) {
                 log.error(
-                        "RegisterVdsQuery::Register - Registration failed for VDS - Name: '{}', Hostname: '{}', UniqueID: '{}', Subnet mask: '{}'",
+                        "RegisterVdsQuery::register - Registration failed for VDS - Name: '{}', Hostname: '{}', UniqueID: '{}', Subnet mask: '{}'",
                         getParameters().getVdsName(),
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId());
-                CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::Register");
+                captureCommandErrorsToLogger(ret, "RegisterVdsQuery::register");
                 error = AuditLogType.VDS_REGISTER_FAILED;
                 returnValue = false;
             } else {
                 log.info(
-                        "RegisterVdsQuery::Register - Registered a new VDS '{}' - Name: '{}', Hostname: '{}', UniqueID: '{}'",
+                        "RegisterVdsQuery::register - Registered a new VDS '{}' - Name: '{}', Hostname: '{}', UniqueID: '{}'",
                         pending ? "pending approval" : "automatically approved",
                         getParameters().getVdsName(),
                         getParameters().getVdsHostName(),
@@ -373,9 +373,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return returnValue;
     }
 
-    private boolean HandleOldVdssWithSameHostName(VDS vdsByUniqueId) {
+    private boolean handleOldVdssWithSameHostName(VDS vdsByUniqueId) {
         // handle old VDSs with same host_name (IP)
-        log.debug("RegisterVdsQuery::HandleOldVdssWithSameHostName - Entering");
+        log.debug("RegisterVdsQuery::handleOldVdssWithSameHostName - Entering");
 
         boolean returnValue = true;
         List<VDS> vdss_byHostName = DbFacade.getInstance().getVdsDao().getAllForHostname(
@@ -383,7 +383,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         int lastIteratedIndex = 1;
         if (vdss_byHostName.size() > 0) {
             log.debug(
-                    "RegisterVdsQuery::HandleOldVdssWithSameHostName - found '{}' VDS(s) with the same host name '{}'.  Will try to change their hostname to a different value",
+                    "RegisterVdsQuery::handleOldVdssWithSameHostName - found '{}' VDS(s) with the same host name '{}'.  Will try to change their hostname to a different value",
                     vdss_byHostName.size(),
                     getParameters().getVdsHostName());
 
@@ -436,20 +436,20 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
                             logable.addCustomValue("VdsName2", vds_byHostName.getStaticData().getName());
                             log.error(
-                                    "RegisterVdsQuery::HandleOldVdssWithSameHostName - could not update VDS '{}'",
+                                    "RegisterVdsQuery::handleOldVdssWithSameHostName - could not update VDS '{}'",
                                     vds_byHostName.getStaticData().getName());
-                            CaptureCommandErrorsToLogger(ret,
-                                    "RegisterVdsQuery::HandleOldVdssWithSameHostName");
+                            captureCommandErrorsToLogger(ret,
+                                    "RegisterVdsQuery::handleOldVdssWithSameHostName");
                             return false;
                         } else {
                             log.info(
-                                    "RegisterVdsQuery::HandleOldVdssWithSameHostName - Another VDS was using this IP '{}'. Changed to '{}'",
+                                    "RegisterVdsQuery::handleOldVdssWithSameHostName - Another VDS was using this IP '{}'. Changed to '{}'",
                                     old_host_name,
                                     try_host_name);
                         }
                     } else {
                         log.error(
-                                "Engine::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = '{}', name = '{}', management IP = '{}' , host name = '{}')",
+                                "Engine::handleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = '{}', name = '{}', management IP = '{}' , host name = '{}')",
                                 vds_byHostName.getId(),
                                 vds_byHostName.getName(),
                                 vds_byHostName.getFenceAgents().isEmpty() ? "" : vds_byHostName.getFenceAgents()
@@ -461,11 +461,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     }
                 }
                 log.info(
-                        "RegisterVdsQuery::HandleOldVdssWithSameHostName - No Change required for VDS '{}'. Since it has the same unique Id",
+                        "RegisterVdsQuery::handleOldVdssWithSameHostName - No Change required for VDS '{}'. Since it has the same unique Id",
                         vds_byHostName.getId());
             }
         }
-        log.debug("RegisterVdsQuery::HandleOldVdssWithSameHostName - Leaving with value '{}'", returnValue);
+        log.debug("RegisterVdsQuery::handleOldVdssWithSameHostName - Leaving with value '{}'", returnValue);
 
         return returnValue;
     }
@@ -476,7 +476,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
      * @param hostToRegister
      * @return
      */
-    private boolean HandleOldVdssWithSameName(VDS hostToRegister) {
+    private boolean handleOldVdssWithSameName(VDS hostToRegister) {
         log.debug("Entering");
         boolean returnValue = true;
         VdsDao vdsDao = DbFacade.getInstance().getVdsDao();
@@ -511,7 +511,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
                         logable.addCustomValue("VdsName2", newName);
                         log.error("could not update VDS '{}'", nameToRegister);
-                        CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::HandleOldVdssWithSameName");
+                        captureCommandErrorsToLogger(ret, "RegisterVdsQuery::handleOldVdssWithSameName");
                         return false;
                     } else {
                         log.info(
@@ -554,9 +554,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return val;
     }
 
-    private boolean CheckAutoApprovalDefinitions(RefObject<Boolean> isPending) {
+    private boolean checkAutoApprovalDefinitions(RefObject<Boolean> isPending) {
         // check auto approval definitions
-        log.debug("RegisterVdsQuery::CheckAutoApprovalDefinitions - Entering");
+        log.debug("RegisterVdsQuery::checkAutoApprovalDefinitions - Entering");
 
         isPending.argvalue = true;
         if (!Config.<String> getValue(ConfigValues.AutoApprovePatterns).equals("")) {
@@ -577,19 +577,19 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 } catch (RuntimeException ex) {
                     error = AuditLogType.VDS_REGISTER_AUTO_APPROVE_PATTERN;
                     log.error(
-                            "RegisterVdsQuery ::CheckAutoApprovalDefinitions(out bool) -  Error in auto approve pattern: '{}'-'{}'",
+                            "RegisterVdsQuery ::checkAutoApprovalDefinitions(out bool) -  Error in auto approve pattern: '{}'-'{}'",
                             pattern,
                             ex.getMessage());
                     return false;
                 }
             }
         }
-        log.debug("RegisterVdsQuery::CheckAutoApprovalDefinitions - Leaving - return value '{}'",
+        log.debug("RegisterVdsQuery::checkAutoApprovalDefinitions - Leaving - return value '{}'",
                     isPending.argvalue);
         return true;
     }
 
-    private void CaptureCommandErrorsToLogger(VdcReturnValueBase retValue, String prefixToMessage) {
+    private void captureCommandErrorsToLogger(VdcReturnValueBase retValue, String prefixToMessage) {
         if (retValue.getFault() != null) {
             log.error("{} - Fault - {}", prefixToMessage, retValue.getFault().getMessage());
         }

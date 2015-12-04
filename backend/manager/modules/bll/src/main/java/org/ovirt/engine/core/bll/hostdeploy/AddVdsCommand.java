@@ -109,9 +109,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                AddVdsStaticToDb();
-                AddVdsDynamicToDb();
-                AddVdsStatisticsToDb();
+                addVdsStaticToDb();
+                addVdsDynamicToDb();
+                addVdsStatisticsToDb();
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -260,7 +260,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return getSucceeded() ? AuditLogType.USER_ADD_VDS : errorType;
     }
 
-    private void AddVdsStaticToDb() {
+    private void addVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
         VdsStatic vdsStatic = getParameters().getVdsStaticData();
@@ -279,7 +279,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         setVds(null);
     }
 
-    private void AddVdsDynamicToDb() {
+    private void addVdsDynamicToDb() {
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setId(getParameters().getVdsStaticData().getId());
         // TODO: oVirt type - here oVirt behaves like power client?
@@ -296,7 +296,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         getCompensationContext().snapshotNewEntity(vdsDynamic);
     }
 
-    private void AddVdsStatisticsToDb() {
+    private void addVdsStatisticsToDb() {
         VdsStatistics vdsStatistics = new VdsStatistics();
         vdsStatistics.setId(getParameters().getVdsStaticData().getId());
         DbFacade.getInstance().getVdsStatisticsDao().save(vdsStatistics);

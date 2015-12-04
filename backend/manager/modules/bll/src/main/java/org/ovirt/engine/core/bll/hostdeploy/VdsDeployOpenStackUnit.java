@@ -39,7 +39,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
+            setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" + _messagingConfiguration.getBrokerType().getHostKey(),
                 _messagingConfiguration.getAddress()
             );
@@ -47,7 +47,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
+            setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" + _messagingConfiguration.getBrokerType().getPortKey(),
                 _messagingConfiguration.getPort()
             );
@@ -55,7 +55,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
+            setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" +
                                     _messagingConfiguration.getBrokerType().getUsernameKey(),
                 _messagingConfiguration.getUsername()
@@ -64,7 +64,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" +
+            setCliEnvironmentIfNecessary(OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/" +
                             _messagingConfiguration.getBrokerType().getPasswordKey(),
             _messagingConfiguration.getPassword()
             );
@@ -88,7 +88,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {@VdsDeployUnit.CallWhen(COND_NEUTRON_LINUX_BRIDGE_SETUP)
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
+            setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_LINUXBRIDGE_CONFIG_PREFIX + "LINUX_BRIDGE/physical_interface_mappings",
                 _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
             );
@@ -104,7 +104,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() {@VdsDeployUnit.CallWhen(COND_NEUTRON_OPEN_VSWITCH_SETUP)
         public Boolean call() throws Exception {
-            _setCliEnvironmentIfNecessary(
+            setCliEnvironmentIfNecessary(
                 OpenStackEnv.NEUTRON_OPENVSWITCH_CONFIG_PREFIX + "OVS/bridge_mappings",
                 _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
             );
@@ -116,7 +116,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
     private OpenstackNetworkProviderProperties _openStackAgentProperties = null;
     private MessagingConfiguration _messagingConfiguration = null;
 
-    private void _setCliEnvironmentIfNecessary(String name, Object value) throws IOException {
+    private void setCliEnvironmentIfNecessary(String name, Object value) throws IOException {
         if (value == null) {
             _deploy.getParser().cliNoop();
         }

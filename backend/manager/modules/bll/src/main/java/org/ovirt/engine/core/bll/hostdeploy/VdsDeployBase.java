@@ -229,7 +229,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     /**
      * Execute the next customization vector entry.
      */
-    private void _nextCustomizationEntry() throws Exception {
+    private void nextCustomizationEntry() throws Exception {
         try {
             if (_customizationShouldAbort) {
                 _parser.cliAbort();
@@ -281,7 +281,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     /**
      * Execute the next termination vector entry.
      */
-    private void _nextTerminationEntry() throws Exception {
+    private void nextTerminationEntry() throws Exception {
         try {
             if (_terminationDialog.get(_terminationIndex).call()) {
                 _terminationIndex++;
@@ -296,7 +296,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
      * Dialog implementation.
      * Handle events incoming from host.
      */
-    private void _threadMain() {
+    private void threadMain() {
         try {
             boolean terminate = false;
 
@@ -383,7 +383,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             new Runnable() {
                 @Override
                 public void run() {
-                    _threadMain();
+                    threadMain();
                 }
             },
             "VdsDeploy"
@@ -636,11 +636,11 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             Event.QueryString event = (Event.QueryString)bevent;
 
             if (Queries.CUSTOMIZATION_COMMAND.equals(event.name)) {
-                _nextCustomizationEntry();
+                nextCustomizationEntry();
                 unknown = false;
             }
             else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
-                _nextTerminationEntry();
+                nextTerminationEntry();
                 unknown = false;
             }
         }

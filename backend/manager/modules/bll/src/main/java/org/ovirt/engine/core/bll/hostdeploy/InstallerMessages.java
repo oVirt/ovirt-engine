@@ -73,7 +73,7 @@ public class InstallerMessages {
         if (StringUtils.isNotEmpty(message)) {
             if (message.charAt(0) == '<') {
                 try {
-                    error = _internalPostOldXmlFormat(message);
+                    error = internalPostOldXmlFormat(message);
                 } catch (RuntimeException e) {
                     error = true;
                     log.error(
@@ -88,7 +88,7 @@ public class InstallerMessages {
         return error;
     }
 
-    private boolean _internalPostOldXmlFormat(String message) {
+    private boolean internalPostOldXmlFormat(String message) {
         boolean error = false;
         Document doc = null;
         try {

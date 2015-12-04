@@ -35,7 +35,7 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
         public Boolean call() throws Exception {
             _deploy.getParser().cliEnvironmentSet(
                 NetEnv.IPTABLES_RULES,
-                _getIpTables().split("\n")
+                getIpTables().split("\n")
             );
             return true;
         }}
@@ -43,7 +43,7 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
 
     private VdsDeployBase _deploy;
 
-    private String _getIpTables() {
+    private String getIpTables() {
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
             _deploy.getVds().getVdsGroupId()
         );

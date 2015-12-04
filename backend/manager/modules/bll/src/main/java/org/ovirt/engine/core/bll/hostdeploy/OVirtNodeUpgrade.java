@@ -48,7 +48,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
      * Dialog implementation.
      * Handle events incoming from host.
      */
-    private void _threadMain() {
+    private void threadMain() {
         boolean error = false;
         try {
             String line;
@@ -95,7 +95,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             new Runnable() {
                 @Override
                 public void run() {
-                    _threadMain();
+                    threadMain();
                 }
             },
             "OVirtNodeUpgrade"

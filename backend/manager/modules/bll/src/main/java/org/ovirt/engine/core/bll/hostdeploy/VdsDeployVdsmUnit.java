@@ -38,12 +38,12 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                     Level.INFO,
                     "Host is hypervisor"
                 );
-                _setNode();
+                setNode();
             }
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            _setVdsmId((String)_deploy.getParser().cliEnvironmentGet(VdsmEnv.VDSM_ID));
+            setVdsmId((String) _deploy.getParser().cliEnvironmentGet(VdsmEnv.VDSM_ID));
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
@@ -125,7 +125,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
      * update the vds object.
      * @param vdsmid unique id read from host.
      */
-    private void _setVdsmId(String vdsmid) {
+    private void setVdsmId(String vdsmid) {
         if (vdsmid == null) {
             throw new SoftError("Cannot acquire node id");
         }
@@ -179,7 +179,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
     /**
      * Set host to be node.
      */
-    private void _setNode() {
+    private void setNode() {
         _isNode = true;
 
         _deploy.getVds().setVdsType(VDSType.oVirtNode);
