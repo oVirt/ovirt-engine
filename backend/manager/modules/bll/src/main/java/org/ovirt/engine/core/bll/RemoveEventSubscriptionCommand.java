@@ -27,7 +27,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
                 addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                 retValue = false;
             } else {
-                retValue = ValidateRemove(event_notification_method, getParameters().getEventSubscriber(), user);
+                retValue = validateRemove(event_notification_method, getParameters().getEventSubscriber(), user);
             }
         } else {
             addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);

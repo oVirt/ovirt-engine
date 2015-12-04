@@ -48,7 +48,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The user.
      * @return
      */
-    protected boolean ValidateNotificationMethod(EventNotificationMethod eventNotificationMethod,
+    protected boolean validateNotificationMethod(EventNotificationMethod eventNotificationMethod,
                                                  EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = true;
         EventNotificationMethod notificationMethod = eventNotificationMethod;
@@ -82,20 +82,20 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The user.
      * @return
      */
-    protected boolean ValidateAdd(EventNotificationMethod eventNotificationMethod,
+    protected boolean validateAdd(EventNotificationMethod eventNotificationMethod,
                                   EventSubscriber eventSubscriber, DbUser user) {
         String tagName = eventSubscriber.getTagName();
         // validate notification method
-        boolean retValue = ValidateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
+        boolean retValue = validateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
 
         // validate tag name if exists
         if (retValue && StringUtils.isNotEmpty(tagName)) {
-            retValue = ValidateTag(tagName);
+            retValue = validateTag(tagName);
         }
         return retValue;
     }
 
-    protected boolean ValidateRemove(EventNotificationMethod eventNotificationMethod,
+    protected boolean validateRemove(EventNotificationMethod eventNotificationMethod,
                                      EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = false;
         // check if user is subscribed to the event
@@ -105,16 +105,16 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         if (list.isEmpty()) {
             addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
         } else {
-            if (!ValidateSubscription(list, eventSubscriber)) {
+            if (!validateSubscription(list, eventSubscriber)) {
                 addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
             } else {
                 String tagName = eventSubscriber.getTagName();
                 // validate notification method
-                retValue = ValidateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
+                retValue = validateNotificationMethod(eventNotificationMethod, eventSubscriber, user);
 
                 // validate tag name if exists
                 if (retValue && StringUtils.isNotEmpty(tagName)) {
-                    retValue = ValidateTag(tagName);
+                    retValue = validateTag(tagName);
                 }
             }
         }
@@ -128,7 +128,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            Name of the tag.
      * @return
      */
-    protected boolean ValidateTag(String tagName) {
+    protected boolean validateTag(String tagName) {
         boolean retValue = true;
         Tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
         if (tag == null) {
@@ -162,7 +162,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         return valid;
     }
 
-    private static boolean ValidateSubscription(Iterable<EventSubscriber> subscriptions, EventSubscriber current) {
+    private static boolean validateSubscription(Iterable<EventSubscriber> subscriptions, EventSubscriber current) {
         boolean retValue = false;
         for (EventSubscriber eventSubscriber : subscriptions) {
             if (eventSubscriber.getSubscriberId().equals(current.getSubscriberId())

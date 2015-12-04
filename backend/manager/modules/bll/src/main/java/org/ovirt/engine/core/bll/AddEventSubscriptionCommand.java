@@ -29,7 +29,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                 getParameters().getEventSubscriber().getEventNotificationMethod();
         List<EventSubscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
-        if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
+        if (isAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
             addCanDoActionMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else if (!eventExists(eventName)) {
@@ -44,7 +44,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                     addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                     retValue = false;
                 } else {
-                    retValue = ValidateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
+                    retValue = validateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
                 }
             } else {
                 addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
@@ -74,7 +74,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
      * @return <c>true</c> if [is already subscribed] [the specified
      * subscriptions]; otherwise, <c>false</c>.
      */
-    private static boolean IsAlreadySubscribed(Iterable<EventSubscriber> subscriptions, Guid subscriberId,
+    private static boolean isAlreadySubscribed(Iterable<EventSubscriber> subscriptions, Guid subscriberId,
             String eventName, EventNotificationMethod eventNotificationMethod) {
         boolean retval = false;
         for (EventSubscriber eventSubscriber : subscriptions) {
