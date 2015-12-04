@@ -142,7 +142,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     DbFacade dbFacade;
 
     @Before
-    public void InitTest() {
+    public void initTest() {
         mockCpuFlagsManagerHandler();
         mockOsRepository();
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
