@@ -61,7 +61,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         }
     }
 
-    private void MoveVdssToGoingToMaintenanceMode() {
+    private void moveVdssToGoingToMaintenanceMode() {
         List<VDS> spms = new ArrayList<>();
         Iterator<VDS> it = vdssToMaintenance.values().iterator();
         while (it.hasNext()) {
@@ -108,7 +108,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         return result;
     }
 
-    private void MigrateAllVdss() {
+    private void migrateAllVdss() {
         for (Guid vdsId : vdssToMaintenance.keySet()) {
             // ParametersCurrentUser = CurrentUser
             MaintenanceVdsParameters tempVar = new MaintenanceVdsParameters(vdsId, getParameters().getIsInternal());
@@ -133,8 +133,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     @Override
     protected void executeCommand() {
-        MoveVdssToGoingToMaintenanceMode();
-        MigrateAllVdss();
+        moveVdssToGoingToMaintenanceMode();
+        migrateAllVdss();
 
         // find clusters for hosts that should move to maintenance
         Set<Guid> clusters = new HashSet<>();
