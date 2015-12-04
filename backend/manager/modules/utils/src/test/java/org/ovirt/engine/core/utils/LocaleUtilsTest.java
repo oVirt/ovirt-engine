@@ -18,7 +18,7 @@ public class LocaleUtilsTest {
     }
 
     @Test
-    public void testGetLocaleFromStringString_withDefault() {
+    public void testGetLocaleFromStringStringWithDefault() {
         assertEquals("The locale should be en-US", Locale.US, LocaleUtils.getLocaleFromString(null, true));
         assertEquals("The locale should be en-US", Locale.US, LocaleUtils.getLocaleFromString("notalocale", true));
         assertEquals("The locale should be en-US", Locale.US, LocaleUtils.getLocaleFromString("index.html", true));
