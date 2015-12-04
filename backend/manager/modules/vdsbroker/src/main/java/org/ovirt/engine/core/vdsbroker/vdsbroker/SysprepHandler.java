@@ -33,7 +33,7 @@ public final class SysprepHandler {
         if (vm.getVmInit() != null && !StringUtils.isEmpty(vm.getVmInit().getCustomScript())) {
             sysPrepContent = vm.getVmInit().getCustomScript();
         } else {
-            sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
+            sysPrepContent = loadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
         }
         sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));
 
@@ -160,7 +160,7 @@ public final class SysprepHandler {
         return Config.<String> getValue(ConfigValues.DataDir) + File.separator + "sysprep";
     }
 
-    private static String LoadFile(String fileName) {
+    private static String loadFile(String fileName) {
         String content = "";
         fileName = ConfigUtil.resolvePath(getSysprepDir(), fileName);
         if (new File(fileName).exists()) {

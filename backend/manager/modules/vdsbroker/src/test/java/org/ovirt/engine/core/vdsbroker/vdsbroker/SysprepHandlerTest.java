@@ -19,27 +19,27 @@ public class SysprepHandlerTest {
     }
 
     @Test
-    public void replace_emptyBuilder() {
+    public void replaceEmptyBuilder() {
         runAndCheck("", "a", "b", "");
     }
 
     @Test
-    public void replace_patternNotPresent() {
+    public void replacePatternNotPresent() {
         runAndCheck("abcd", "X", "Y", "abcd");
     }
 
     @Test
-    public void replace_valueNotContainsDollar() {
+    public void replaceValueNotContainsDollar() {
         runAndCheck("AdminPassword=$AdminPassword$", "$AdminPassword$", "AAA", "AdminPassword=AAA");
     }
 
     @Test
-    public void replace_keyNotContainsDollar() {
+    public void replaceKeyNotContainsDollar() {
         runAndCheck("AdminPassword=someKey", "someKey", "AAA", "AdminPassword=AAA");
     }
 
     @Test
-    public void replace_valueContainsDollar() {
+    public void replaceValueContainsDollar() {
         runAndCheck("AdminPassword=$AdminPassword$",
                 "$AdminPassword$",
                 "$A$AA$",
@@ -47,7 +47,7 @@ public class SysprepHandlerTest {
     }
 
     @Test
-    public void replace_callReplaceTwoTimes() {
+    public void replaceCallReplaceTwoTimes() {
         String text = "AdminName=$AdminName$ AdminPassword=$AdminPassword$";
         String firstPart =
                 runAndCheck(text,
@@ -58,7 +58,7 @@ public class SysprepHandlerTest {
     }
 
     @Test
-    public void replace_callReplaceTwoOccurrences() {
+    public void replaceCallReplaceTwoOccurrences() {
         runAndCheck("AdminName=$AdminName$ AdminPassword=$AdminName$",
                 "$AdminName$",
                 "$B$BB$",
