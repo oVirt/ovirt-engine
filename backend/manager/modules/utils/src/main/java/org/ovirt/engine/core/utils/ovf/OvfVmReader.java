@@ -169,7 +169,7 @@ public class OvfVmReader extends OvfReader {
         }
         // if no app list in VM, get it from one of the leafs
         else if(_images != null && _images.size() > 0) {
-            int root = GetFirstImage(_images, _images.get(0));
+            int root = getFirstImage(_images, _images.get(0));
             if (root != -1) {
                 for(int i=0; i<_images.size(); i++) {
                     int x = getNextImage(_images, _images.get(i));
@@ -213,7 +213,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of the image that has no parent
-    private static int GetFirstImage(ArrayList<DiskImage> images, DiskImage curr) {
+    private static int getFirstImage(ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (curr.getParentId().equals(images.get(i).getImageId())) {
                 return i;
