@@ -49,7 +49,7 @@ public class EngineEncryptionUtils {
      * Return the engine keystore.
      * @return engine key store.
      */
-    private static KeyStore _getKeyStore(String type, File file, char [] password) {
+    private static KeyStore getKeyStore(String type, File file, char[] password) {
         try (final InputStream in = new FileInputStream(file)) {
             KeyStore ks = KeyStore.getInstance(type);
             ks.load(in, password);
@@ -70,7 +70,7 @@ public class EngineEncryptionUtils {
      * @return engine key store.
      */
     public static KeyStore getKeyStore() {
-        return _getKeyStore(keystoreType, keystoreFile, keystorePassword.getPassword());
+        return getKeyStore(keystoreType, keystoreFile, keystorePassword.getPassword());
     }
 
     /**
@@ -78,7 +78,7 @@ public class EngineEncryptionUtils {
      * @return engine key store.
      */
     public static KeyStore getTrustStore() {
-        return _getKeyStore(truststoreType, truststoreFile, truststorePassword.getPassword());
+        return getKeyStore(truststoreType, truststoreFile, truststorePassword.getPassword());
     }
 
     /**
