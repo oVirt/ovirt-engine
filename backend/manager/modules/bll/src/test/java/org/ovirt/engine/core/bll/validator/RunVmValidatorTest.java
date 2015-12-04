@@ -210,7 +210,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void failRunStatelessHA_VM() {
+    public void failRunStatelessHaVm() {
         canRunVmAsStateless(true,
                 false,
                 true,
