@@ -97,11 +97,11 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             }
             if (xmlRpcStruct.containsKey("ctime")) {
                 long secsSinceEpoch = Long.parseLong(xmlRpcStruct.get("ctime").toString());
-                newImage.setCreationDate(MakeDTFromCTime(secsSinceEpoch));
+                newImage.setCreationDate(makeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.containsKey("mtime")) {
                 long secsSinceEpoch = Long.parseLong(xmlRpcStruct.get("mtime").toString());
-                newImage.setLastModifiedDate(MakeDTFromCTime(secsSinceEpoch));
+                newImage.setLastModifiedDate(makeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.containsKey("domain")) {
                 newImage.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(xmlRpcStruct.get("domain").toString()))));
@@ -127,7 +127,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         return newImage;
     }
 
-    private static Date MakeDTFromCTime(long ctime) {
+    private static Date makeDTFromCTime(long ctime) {
         return new Date(ctime * 1000L);
     }
 }
