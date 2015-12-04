@@ -20,19 +20,19 @@ public class TagsUserMap implements Serializable {
         this.userId = user_id;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.tagId = value;
     }
 
-    public Guid getuser_id() {
+    public Guid getUserId() {
         return this.userId;
     }
 
-    public void setuser_id(Guid value) {
+    public void setUserId(Guid value) {
         this.userId = value;
     }
 

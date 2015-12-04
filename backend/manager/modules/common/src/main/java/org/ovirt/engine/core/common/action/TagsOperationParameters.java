@@ -10,7 +10,7 @@ public class TagsOperationParameters extends TagsActionParametersBase {
     private Tags _tag;
 
     public TagsOperationParameters(Tags tag) {
-        super(tag.gettag_id());
+        super(tag.getTagId());
         _tag = tag;
     }
 

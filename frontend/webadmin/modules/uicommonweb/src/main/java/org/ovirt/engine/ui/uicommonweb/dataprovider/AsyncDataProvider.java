@@ -2333,11 +2333,11 @@ public class AsyncDataProvider {
                     Tags tag = (Tags) source;
 
                     Tags root =
-                            new Tags(tag.getdescription(),
-                                    tag.getparent_id(),
+                            new Tags(tag.getDescription(),
+                                    tag.getParentId(),
                                     tag.getIsReadonly(),
-                                    tag.gettag_id(),
-                                    tag.gettag_name());
+                                    tag.getTagId(),
+                                    tag.getTagName());
                     if (tag.getChildren() != null) {
                         fillTagsRecursive(root, tag.getChildren());
                     }
@@ -2358,7 +2358,7 @@ public class AsyncDataProvider {
                 if (source != null) {
                     ArrayList<Tags> ret = new ArrayList<>();
                     for (Tags tags : (ArrayList<Tags>) source) {
-                        if (tags.gettype() == TagsType.GeneralTag) {
+                        if (tags.getType() == TagsType.GeneralTag) {
                             ret.add(tags);
                         }
                     }
@@ -3225,7 +3225,7 @@ public class AsyncDataProvider {
 
         for (Tags tag : children) {
             // tags child = new tags(tag.description, tag.parent_id, tag.IsReadonly, tag.tag_id, tag.tag_name);
-            if (tag.gettype() == TagsType.GeneralTag) {
+            if (tag.getType() == TagsType.GeneralTag) {
                 list.add(tag);
                 if (tag.getChildren() != null) {
                     fillTagsRecursive(tag, tag.getChildren());

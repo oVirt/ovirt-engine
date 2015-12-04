@@ -217,7 +217,7 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
     public void testGetEntityNameByIdAndTypeForTag() {
         Tags tag = dbFacade.getTagDao().get(TAG_ID);
         assertNotNull(tag);
-        String name = tag.gettag_name();
+        String name = tag.getTagName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
     }
 

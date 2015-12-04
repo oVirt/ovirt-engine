@@ -500,11 +500,11 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             for (Tags tag : attachedTags) {
                 int count = 0;
                 for (Tags tag2 : hostListModel.allAttachedTags) {
-                    if (tag2.gettag_id().equals(tag.gettag_id())) {
+                    if (tag2.getTagId().equals(tag.getTagId())) {
                         count++;
                     }
                 }
-                hostListModel.attachedTagsToEntities.put(tag.gettag_id(), count == hostListModel.getSelectedItems()
+                hostListModel.attachedTagsToEntities.put(tag.getTagId(), count == hostListModel.getSelectedItems()
                         .size());
             }
             tagListModel.setAttachedTagsToEntities(hostListModel.attachedTagsToEntities);

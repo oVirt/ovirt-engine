@@ -7,10 +7,10 @@ import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 public class TagsEqualityComparer implements IEqualityComparer<Tags> {
     @Override
     public boolean equals(Tags x, Tags y) {
-        return x.gettag_id().equals(y.gettag_id());
+        return x.getTagId().equals(y.getTagId());
     }
 
     public int hashCode(Tags tag) {
-        return tag.gettag_id().hashCode();
+        return tag.getTagId().hashCode();
     }
 }

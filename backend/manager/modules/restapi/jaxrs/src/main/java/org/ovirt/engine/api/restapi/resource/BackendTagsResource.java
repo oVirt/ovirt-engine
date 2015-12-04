@@ -69,7 +69,7 @@ public class BackendTagsResource
     }
 
     String getParentId(Tag tag) {
-        return lookupTagByName(tag.getParent().getName()).gettag_id().toString();
+        return lookupTagByName(tag.getParent().getName()).getTagId().toString();
     }
 
     protected Tags lookupTagByName(String name) {

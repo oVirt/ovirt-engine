@@ -77,19 +77,19 @@ public class Tags implements Serializable {
                 && type == other.type;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return this.description;
     }
 
-    public void setdescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public Guid getparent_id() {
+    public Guid getParentId() {
         return this.parent;
     }
 
-    public void setparent_id(Guid parent) {
+    public void setParentId(Guid parent) {
         this.parent = parent;
     }
 
@@ -101,27 +101,27 @@ public class Tags implements Serializable {
         this.readonly = readOnly;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.id;
     }
 
-    public void settag_id(Guid id) {
+    public void setTagId(Guid id) {
         this.id = id;
     }
 
-    public String gettag_name() {
+    public String getTagName() {
         return this.name;
     }
 
-    public void settag_name(String name) {
+    public void setTagName(String name) {
         this.name = name;
     }
 
-    public TagsType gettype() {
+    public TagsType getType() {
         return this.type;
     }
 
-    public void settype(TagsType type) {
+    public void setType(TagsType type) {
         this.type = type;
     }
 
@@ -135,7 +135,7 @@ public class Tags implements Serializable {
 
     public StringBuilder getTagIdAndChildrenIds() {
         StringBuilder builder = new StringBuilder();
-        builder.append("'").append(gettag_id()).append("'");
+        builder.append("'").append(getTagId()).append("'");
 
         for (Tags tag : _children) {
             builder.append(",").append(tag.getTagIdAndChildrenIds());
@@ -145,7 +145,7 @@ public class Tags implements Serializable {
 
     public StringBuilder getTagNameAndChildrenNames() {
         StringBuilder builder = new StringBuilder();
-        builder.append("'").append(gettag_name()).append("'");
+        builder.append("'").append(getTagName()).append("'");
 
         for (Tags tag : _children) {
             builder.append("," + tag.getTagNameAndChildrenNames());
@@ -154,7 +154,7 @@ public class Tags implements Serializable {
     }
 
     public void getTagIdAndChildrenIdsAsList(HashSet<Guid> tagIds) {
-        tagIds.add(gettag_id());
+        tagIds.add(getTagId());
         for (Tags tag : _children) {
             tag.getTagIdAndChildrenIdsAsList(tagIds);
         }

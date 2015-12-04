@@ -213,12 +213,12 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
             for (Tags a : attachedTags) {
                 int count = 0;
                 for (Tags b : allAttachedTags) {
-                    if (b.gettag_id().equals(a.gettag_id())) {
+                    if (b.getTagId().equals(a.getTagId())) {
                         count++;
                     }
                 }
 
-                userListModel.attachedTagsToEntities.put(a.gettag_id(), count == userListModel.getSelectedItems()
+                userListModel.attachedTagsToEntities.put(a.getTagId(), count == userListModel.getSelectedItems()
                         .size());
             }
             tagListModel.setAttachedTagsToEntities(userListModel.attachedTagsToEntities);

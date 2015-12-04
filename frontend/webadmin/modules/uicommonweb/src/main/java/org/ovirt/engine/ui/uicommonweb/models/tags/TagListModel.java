@@ -263,10 +263,10 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
     public TagModel tagToModel(Tags tag) {
         EntityModel<String> tempVar = new EntityModel<>();
-        tempVar.setEntity(tag.gettag_name());
+        tempVar.setEntity(tag.getTagName());
         EntityModel<String> name = tempVar;
         EntityModel<String> tempVar2 = new EntityModel<>();
-        tempVar2.setEntity(tag.getdescription());
+        tempVar2.setEntity(tag.getDescription());
         EntityModel<String> description = tempVar2;
 
         ArrayList<TagModel> children = new ArrayList<>();
@@ -275,13 +275,13 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
         }
 
         TagModel model = new TagModel();
-        model.setId(tag.gettag_id());
+        model.setId(tag.getTagId());
         model.setName(name);
         model.setDescription(description);
         model.setType((tag.getIsReadonly() == null ? false : tag.getIsReadonly()) ? TagModelType.ReadOnly
                 : TagModelType.Regular);
         model.setSelection(false);
-        model.setParentId(tag.getparent_id() == null ? Guid.Empty : tag.getparent_id());
+        model.setParentId(tag.getParentId() == null ? Guid.Empty : tag.getParentId());
         model.setChildren(children);
 
         for (TagModel child : children) {
@@ -459,10 +459,10 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         Tags tempVar =
                 new Tags();
-        tempVar.settag_id(model.getIsNew() ? Guid.Empty : getSelectedItem().getId());
-        tempVar.setparent_id(model.getIsNew() ? getSelectedItem().getId() : getSelectedItem().getParentId());
-        tempVar.settag_name(model.getName().getEntity());
-        tempVar.setdescription(model.getDescription().getEntity());
+        tempVar.setTagId(model.getIsNew() ? Guid.Empty : getSelectedItem().getId());
+        tempVar.setParentId(model.getIsNew() ? getSelectedItem().getId() : getSelectedItem().getParentId());
+        tempVar.setTagName(model.getName().getEntity());
+        tempVar.setDescription(model.getDescription().getEntity());
         Tags tag = tempVar;
 
         model.startProgress();

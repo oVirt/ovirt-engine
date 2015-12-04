@@ -329,7 +329,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 Tags tag = tagsHandler.getTagByTagName(pair.getSecond());
                 if (tag != null) {
                     pair.setSecond(
-                            StringFormat.format("(%1$s)", tagsHandler.getTagNameAndChildrenNames(tag.gettag_id())));
+                            StringFormat.format("(%1$s)", tagsHandler.getTagNameAndChildrenNames(tag.getTagId())));
                 } else {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 }

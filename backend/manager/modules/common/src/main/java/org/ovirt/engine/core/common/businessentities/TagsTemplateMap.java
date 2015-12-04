@@ -23,19 +23,19 @@ public class TagsTemplateMap implements Serializable {
         this.id.templateId = template_id;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.id.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.id.tagId = value;
     }
 
-    public Guid gettemplate_id() {
+    public Guid getTemplateId() {
         return this.id.templateId;
     }
 
-    public void settemplate_id(Guid value) {
+    public void setTemplateId(Guid value) {
         this.id.templateId = value;
     }
 

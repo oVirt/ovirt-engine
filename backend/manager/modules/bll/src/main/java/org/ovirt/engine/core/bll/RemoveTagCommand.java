@@ -16,7 +16,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     protected void executeCommand() {
         if (getTagId() != null) {
             String tagIdAndChildrenIds = TagsDirector.getInstance().getTagIdAndChildrenIds(getTagId());
-            TagsDirector.getInstance().removeTag(getTag().gettag_id());
+            TagsDirector.getInstance().removeTag(getTag().getTagId());
             String[] IDsArray = tagIdAndChildrenIds.split("[,]", -1);
             for (String id : IDsArray) {
                 id = id.replace("'", "");

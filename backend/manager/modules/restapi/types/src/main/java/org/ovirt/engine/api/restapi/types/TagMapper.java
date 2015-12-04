@@ -10,15 +10,15 @@ public class TagMapper {
     @Mapping(from = Tag.class, to = Tags.class)
     public static Tags map(Tag model, Tags template) {
         Tags entity = template != null ? template : new Tags();
-        entity.setparent_id(parent(model, entity.getparent_id()));
+        entity.setParentId(parent(model, entity.getParentId()));
         if (model.isSetId()) {
-            entity.settag_id(GuidUtils.asGuid(model.getId()));
+            entity.setTagId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.settag_name(model.getName());
+            entity.setTagName(model.getName());
         }
         if (model.isSetDescription()) {
-            entity.setdescription(model.getDescription());
+            entity.setDescription(model.getDescription());
         }
         return entity;
     }
@@ -26,9 +26,9 @@ public class TagMapper {
     @Mapping(from = Tags.class, to = Tag.class)
     public static Tag map(Tags entity, Tag template) {
         Tag model = template != null ? template : new Tag();
-        model.setId(entity.gettag_id().toString());
-        model.setName(entity.gettag_name());
-        model.setDescription(entity.getdescription());
+        model.setId(entity.getTagId().toString());
+        model.setName(entity.getTagName());
+        model.setDescription(entity.getDescription());
         model.setParent(parent(entity));
         return model;
     }
@@ -42,9 +42,9 @@ public class TagMapper {
     }
 
     private static Tag parent(Tags entity) {
-        if (entity.getparent_id() != null) {
+        if (entity.getParentId() != null) {
             Tag parent = new Tag();
-            parent.setId(entity.getparent_id().toString());
+            parent.setId(entity.getParentId().toString());
             return parent;
         } else {
             return null;

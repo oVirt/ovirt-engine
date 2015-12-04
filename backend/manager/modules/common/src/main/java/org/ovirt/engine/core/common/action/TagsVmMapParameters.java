@@ -7,7 +7,7 @@ public class TagsVmMapParameters extends TagsActionParametersBase {
     private TagsVmMap _tagsVmMap;
 
     public TagsVmMapParameters(TagsVmMap tagsVmMap) {
-        super(tagsVmMap.gettag_id());
+        super(tagsVmMap.getTagId());
         _tagsVmMap = tagsVmMap;
     }
 

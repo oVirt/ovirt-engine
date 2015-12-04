@@ -17,19 +17,19 @@ public class TagsVmPoolMap implements Serializable {
         created = new Date();
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.id.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.id.tagId = value;
     }
 
-    public Guid getvm_pool_id() {
+    public Guid getVmPoolId() {
         return this.id.vmPoolId;
     }
 
-    public void setvm_pool_id(Guid value) {
+    public void setVmPoolId(Guid value) {
         this.id.vmPoolId = value;
     }
 

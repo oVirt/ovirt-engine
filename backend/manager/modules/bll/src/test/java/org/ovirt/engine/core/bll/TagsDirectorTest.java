@@ -64,11 +64,11 @@ public class TagsDirectorTest {
     protected Tags createTag(String name, String description) {
         Guid tagId = Guid.newGuid();
         Tags tag = new Tags();
-        tag.setdescription(description);
-        tag.settag_id(tagId);
-        tag.settag_name(name);
-        tag.settype(TagsType.GeneralTag);
-        tag.setparent_id(tagsDirector.getRootTag().gettag_id());
+        tag.setDescription(description);
+        tag.setTagId(tagId);
+        tag.setTagName(name);
+        tag.setType(TagsType.GeneralTag);
+        tag.setParentId(tagsDirector.getRootTag().getTagId());
         return tag;
     }
 
@@ -77,7 +77,7 @@ public class TagsDirectorTest {
         Tags tag = createTag("a", "b");
         Tags tag2 = createTag("c", "d");
         tag.getChildren().add(tag2);
-        tag2.setparent_id(tag.gettag_id());
+        tag2.setParentId(tag.getTagId());
         Transformer cloner = TransformerUtils.cloneTransformer();
         Tags newTag = (Tags) cloner.transform(tag);
         assertEquals(1, newTag.getChildren().size());
@@ -87,11 +87,11 @@ public class TagsDirectorTest {
     public void testAddTag() {
         Tags tag = createTag("tag1", "desc1");
 
-        Tags tagFromDirector = tagsDirector.getTagById(tag.gettag_id());
+        Tags tagFromDirector = tagsDirector.getTagById(tag.getTagId());
         assertNull(tagFromDirector);
 
         tagsDirector.addTag(tag);
-        tagFromDirector = tagsDirector.getTagById(tag.gettag_id());
+        tagFromDirector = tagsDirector.getTagById(tag.getTagId());
         assertNotNull(tagFromDirector);
         assertEquals(tag, tagFromDirector);
     }
@@ -100,10 +100,10 @@ public class TagsDirectorTest {
     public void testChangeValueAfterAdd() {
         Tags tag = createTag("tag1", "desc1");
         tagsDirector.addTag(tag);
-        tag.settag_name("tag2");
-        Tags tagFromDirector = tagsDirector.getTagById(tag.gettag_id());
+        tag.setTagName("tag2");
+        Tags tagFromDirector = tagsDirector.getTagById(tag.getTagId());
         assertNotNull(tagFromDirector);
-        assertEquals("tag1", tagFromDirector.gettag_name());
+        assertEquals("tag1", tagFromDirector.getTagName());
     }
 
     @Test
@@ -118,55 +118,55 @@ public class TagsDirectorTest {
         tagsDirector.addTag(tag);
         Tags tags = tagsDirector.getRootTag();
         assertNotNull(tags);
-        assertEquals(tags.gettag_id(), TagsDirector.ROOT_TAG_ID);
+        assertEquals(tags.getTagId(), TagsDirector.ROOT_TAG_ID);
         assertEquals(1, tags.getChildren().size());
-        assertEquals("tag1", tags.getChildren().get(0).gettag_name());
+        assertEquals("tag1", tags.getChildren().get(0).getTagName());
     }
 
     @Test
     public void testUpdateChildren() {
         Tags tag = createTag("tag1", "desc1");
         tagsDirector.addTag(tag);
-        tag.settag_name("booboo");
+        tag.setTagName("booboo");
         tagsDirector.updateTag(tag);
         Tags rootTag = tagsDirector.getRootTag();
         tag = rootTag.getChildren().get(0);
-        assertEquals("booboo", tag.gettag_name());
+        assertEquals("booboo", tag.getTagName());
     }
 
     @Test
     public void testMoveTag() {
         // let's have two top level tag under root
         Tags level1obj1 = createTag("level1obj1", "");
-        level1obj1.settag_id(Guid.newGuid());
-        level1obj1.setparent_id(tagsDirector.getRootTag().gettag_id());
+        level1obj1.setTagId(Guid.newGuid());
+        level1obj1.setParentId(tagsDirector.getRootTag().getTagId());
         tagsDirector.addTag(level1obj1);
         Tags level1obj2 = createTag("level1obj2", "");
-        level1obj2.settag_id(Guid.newGuid());
-        level1obj2.setparent_id(tagsDirector.getRootTag().gettag_id());
+        level1obj2.setTagId(Guid.newGuid());
+        level1obj2.setParentId(tagsDirector.getRootTag().getTagId());
         tagsDirector.addTag(level1obj2);
 
         // now none of these should have any children
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.gettag_id()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.gettag_id()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
         // now let's add a child tag o the first top level tag
         Tags level2obj1 = createTag("level2obj1", "");
-        level2obj1.settag_id(Guid.newGuid());
-        level2obj1.setparent_id(level1obj1.gettag_id());
+        level2obj1.setTagId(Guid.newGuid());
+        level2obj1.setParentId(level1obj1.getTagId());
         tagsDirector.addTag(level2obj1);
 
         // now check the number of children
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj1.gettag_id()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.gettag_id()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
         // should be all right so far.
         // now let's do the trick: move the second level tag to under the other first level tag
-        tagsDirector.moveTag(level2obj1.gettag_id(), level1obj2.gettag_id());
+        tagsDirector.moveTag(level2obj1.getTagId(), level1obj2.getTagId());
 
         // and now let's recheck, the first top level should have 0 children, the second should have 1
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.gettag_id()).getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.gettag_id()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
 
     }
 
@@ -174,25 +174,25 @@ public class TagsDirectorTest {
     public void testMoveTagRoot() {
         // let's have two top level tag under root
         Tags level1obj1 = createTag("level1obj1", "");
-        level1obj1.settag_id(Guid.newGuid());
-        level1obj1.setparent_id(tagsDirector.getRootTag().gettag_id());
+        level1obj1.setTagId(Guid.newGuid());
+        level1obj1.setParentId(tagsDirector.getRootTag().getTagId());
         tagsDirector.addTag(level1obj1);
         Tags level1obj2 = createTag("level1obj2", "");
-        level1obj2.settag_id(Guid.newGuid());
-        level1obj2.setparent_id(tagsDirector.getRootTag().gettag_id());
+        level1obj2.setTagId(Guid.newGuid());
+        level1obj2.setParentId(tagsDirector.getRootTag().getTagId());
         tagsDirector.addTag(level1obj2);
 
         // now none of these should have any children
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.gettag_id()).getChildren().size());
-        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.gettag_id()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj1.getTagId()).getChildren().size());
+        Assert.assertEquals(0, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
         Assert.assertEquals(2, tagsDirector.getRootTag().getChildren().size());
 
         // should be all right so far.
         // now let's do the trick: move the second level tag to under the other first level tag
-        tagsDirector.moveTag(level1obj1.gettag_id(), level1obj2.gettag_id());
+        tagsDirector.moveTag(level1obj1.getTagId(), level1obj2.getTagId());
 
         // and now let's recheck, the first top level should have 0 children, the second should have 1
-        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.gettag_id()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(level1obj2.getTagId()).getChildren().size());
         Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
 
     }
@@ -200,38 +200,38 @@ public class TagsDirectorTest {
     @Test
     public void testUpdateParentTag() {
         Tags tag = createTag("tag1", "desc1");
-        tag.settag_id(Guid.newGuid());
+        tag.setTagId(Guid.newGuid());
         tagsDirector.addTag(tag);
         Tags rootTag = tagsDirector.getRootTag();
         tag = rootTag.getChildren().get(0);
-        assertEquals("tag1", tag.gettag_name());
+        assertEquals("tag1", tag.getTagName());
 
         // now let's add another tag
         Tags sub = createTag("subtag1", "subdesc");
-        sub.settag_id(Guid.newGuid());
-        sub.setparent_id(tag.gettag_id());
+        sub.setTagId(Guid.newGuid());
+        sub.setParentId(tag.getTagId());
         tagsDirector.addTag(sub);
 
         // so now the root tag must have 1 child
         Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.gettag_id()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
         // get the parent, and rename it
-        tag.settag_name("subtag1_up");
+        tag.setTagName("subtag1_up");
         tagsDirector.updateTag(tag);
 
         // now let's see the number of children in the tag objects
         // this is the assertion that fails without fix for #732640
         Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.gettag_id()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
         // let's check the same thing on overwriting description
-        tag.setdescription("TEST TEST TEST TEST");
+        tag.setDescription("TEST TEST TEST TEST");
         tagsDirector.updateTag(tag);
 
         // and all the checks once again just to make sure
         Assert.assertEquals(1, tagsDirector.getRootTag().getChildren().size());
-        Assert.assertEquals(1, tagsDirector.getTagById(tag.gettag_id()).getChildren().size());
+        Assert.assertEquals(1, tagsDirector.getTagById(tag.getTagId()).getChildren().size());
 
     }
 
@@ -267,7 +267,7 @@ public class TagsDirectorTest {
     @Test
     public void testGetTagIdAndChildrenIdsNotExists() {
         Tags tag = createTag("tag1", "desc1");
-        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.gettag_id());
+        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagId());
         assertEquals(StringUtils.EMPTY, idsStr);
     }
 
@@ -276,13 +276,13 @@ public class TagsDirectorTest {
         Tags tag = createTag("tag1", "desc1");
         Tags tag2 = createTag("tag2", "desc2");
         tag.getChildren().add(tag2);
-        tag2.setparent_id(tag.getparent_id());
+        tag2.setParentId(tag.getParentId());
         tagsDirector.addTag(tag);
-        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.gettag_id());
+        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagId());
         String[] ids = idsStr.split("[,]");
         assertEquals(2, ids.length);
-        assertEquals(ids[0], "'" + tag.gettag_id().toString() + "'");
-        assertEquals(ids[1], "'" + tag2.gettag_id().toString() + "'");
+        assertEquals(ids[0], "'" + tag.getTagId().toString() + "'");
+        assertEquals(ids[1], "'" + tag2.getTagId().toString() + "'");
     }
 
     @Test
@@ -290,12 +290,12 @@ public class TagsDirectorTest {
         Tags tag = createTag("tag1", "desc1");
         Tags tag2 = createTag("tag2", "desc2");
         tag.getChildren().add(tag2);
-        tag2.setparent_id(tag.getparent_id());
+        tag2.setParentId(tag.getParentId());
         tagsDirector.addTag(tag);
         Set<Guid> idsToCheck = new HashSet<>();
-        idsToCheck.add(tag.gettag_id());
-        idsToCheck.add(tag2.gettag_id());
-        HashSet<Guid> idsFromTagsDirector = tagsDirector.getTagIdAndChildrenIdsAsSet(tag.gettag_id());
+        idsToCheck.add(tag.getTagId());
+        idsToCheck.add(tag2.getTagId());
+        HashSet<Guid> idsFromTagsDirector = tagsDirector.getTagIdAndChildrenIdsAsSet(tag.getTagId());
         assertEquals(idsToCheck, idsFromTagsDirector);
     }
 
@@ -304,13 +304,13 @@ public class TagsDirectorTest {
         Tags tag = createTag("tag1", "desc1");
         Tags tag2 = createTag("tag2", "desc2");
         tag.getChildren().add(tag2);
-        tag2.setparent_id(tag.getparent_id());
+        tag2.setParentId(tag.getParentId());
         tagsDirector.addTag(tag);
-        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.gettag_name());
+        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagName());
         String[] ids = idsStr.split("[,]");
         assertEquals(2, ids.length);
-        assertEquals(ids[0], "'" + tag.gettag_id().toString() + "'");
-        assertEquals(ids[1], "'" + tag2.gettag_id().toString() + "'");
+        assertEquals(ids[0], "'" + tag.getTagId().toString() + "'");
+        assertEquals(ids[1], "'" + tag2.getTagId().toString() + "'");
     }
 
     /**
@@ -322,10 +322,10 @@ public class TagsDirectorTest {
     public void testUpdate() {
         Tags tag = createTag("tag1", "desc1");
         tagsDirector.addTag(tag);
-        tag.settag_name("new name");
+        tag.setTagName("new name");
         tagsDirector.updateTag(tag);
-        Tags fromDirector = tagsDirector.getTagById(tag.gettag_id());
-        assertEquals(tag.gettag_name(), fromDirector.gettag_name());
+        Tags fromDirector = tagsDirector.getTagById(tag.getTagId());
+        assertEquals(tag.getTagName(), fromDirector.getTagName());
     }
 
     @Test
@@ -343,23 +343,23 @@ public class TagsDirectorTest {
         ArrayList<Tags> tags = tagsDirector.getAllTags();
         Tags tagToChange = null;
         for (Tags tag : tags) {
-            if (tag.gettag_name().equals("tag1")) {
+            if (tag.getTagName().equals("tag1")) {
                 tagToChange = tag;
                 break;
             }
         }
-        tagToChange.setparent_id(tag2.gettag_id());
+        tagToChange.setParentId(tag2.getTagId());
         tagsDirector.updateTag(tagToChange);
         // Emulates the REST API behavior of getting all the tags after updating
         tags = tagsDirector.getAllTags();
         Tags changedTag = null;
         for (Tags tag : tags) {
-            if (tag.gettag_name().equals("tag1")) {
+            if (tag.getTagName().equals("tag1")) {
                 changedTag = tag;
                 break;
             }
         }
-        assertEquals(tag2.gettag_id(), changedTag.getparent_id());
+        assertEquals(tag2.getTagId(), changedTag.getParentId());
     }
 
     public void testDirectDescetor() {
@@ -367,8 +367,8 @@ public class TagsDirectorTest {
         Tags tag2 = createTag("tag2", "desc2");
         tagsDirector.addTag(tag1);
         tagsDirector.addTag(tag2);
-        tagsDirector.moveTag(tag2.gettag_id(), tag1.gettag_id());
-        assertTrue(tagsDirector.isTagDescestorOfTag(tag1.gettag_id(), tag2.gettag_id()));
+        tagsDirector.moveTag(tag2.getTagId(), tag1.getTagId());
+        assertTrue(tagsDirector.isTagDescestorOfTag(tag1.getTagId(), tag2.getTagId()));
     }
 
     @Test
@@ -379,15 +379,15 @@ public class TagsDirectorTest {
         tagsDirector.addTag(tag1);
         tagsDirector.addTag(tag2);
         tagsDirector.addTag(tag3);
-        tagsDirector.moveTag(tag3.gettag_id(), tag1.gettag_id());
-        tagsDirector.moveTag(tag2.gettag_id(), tag3.gettag_id());
-        assertTrue(tagsDirector.isTagDescestorOfTag(tag1.gettag_id(), tag2.gettag_id()));
+        tagsDirector.moveTag(tag3.getTagId(), tag1.getTagId());
+        tagsDirector.moveTag(tag2.getTagId(), tag3.getTagId());
+        assertTrue(tagsDirector.isTagDescestorOfTag(tag1.getTagId(), tag2.getTagId()));
     }
 
     @Test
     public void testNotDescetor() {
         Tags tag1 = createTag("tag1", "desc1");
         Tags tag2 = createTag("tag2", "desc2");
-        assertFalse(tagsDirector.isTagDescestorOfTag(tag1.gettag_id(), tag2.gettag_id()));
+        assertFalse(tagsDirector.isTagDescestorOfTag(tag1.getTagId(), tag2.getTagId()));
     }
 }

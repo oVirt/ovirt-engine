@@ -91,7 +91,7 @@ public class BackendTagResourceTest
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
                                            TagsOperationParameters.class,
-                                           new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                           new String[] { "Tag.TagName", "Tag.ParentId" },
                                            new Object[] { NAMES[0], PARENT_GUID },
                                            true,
                                            true));
@@ -137,7 +137,7 @@ public class BackendTagResourceTest
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
                                            TagsOperationParameters.class,
-                                           new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                           new String[] { "Tag.TagName", "Tag.ParentId" },
                 new Object[] { NAMES[index], NEW_PARENT_ID },
                                            true,
                                            true));

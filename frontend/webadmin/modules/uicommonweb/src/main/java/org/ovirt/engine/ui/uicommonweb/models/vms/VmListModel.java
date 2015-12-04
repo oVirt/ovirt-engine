@@ -557,11 +557,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             for (Tags tag : attachedTags) {
                 int count = 0;
                 for (Tags tag2 : vmListModel.allAttachedTags) {
-                    if (tag2.gettag_id().equals(tag.gettag_id())) {
+                    if (tag2.getTagId().equals(tag.getTagId())) {
                         count++;
                     }
                 }
-                vmListModel.attachedTagsToEntities.put(tag.gettag_id(), count == vmListModel.getSelectedItems().size());
+                vmListModel.attachedTagsToEntities.put(tag.getTagId(), count == vmListModel.getSelectedItems().size());
             }
             tagListModel.setAttachedTagsToEntities(vmListModel.attachedTagsToEntities);
         }

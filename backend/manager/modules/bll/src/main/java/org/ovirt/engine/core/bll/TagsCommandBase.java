@@ -27,7 +27,7 @@ public abstract class TagsCommandBase<T extends TagsActionParametersBase> extend
     }
 
     public String getTagName() {
-        return getTag() != null ? getTag().gettag_name() : null;
+        return getTag() != null ? getTag().getTagName() : null;
     }
 
     public TagsCommandBase(T parameters) {

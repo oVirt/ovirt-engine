@@ -46,7 +46,7 @@ public class SyntaxCheckerTest {
         .thenReturn("");
         BaseConditionFieldAutoCompleter.tagsHandler = Mockito.mock(ITagsHandler.class);
         Tags tags = new Tags();
-        tags.settag_name(TAG_NAME);
+        tags.setTagName(TAG_NAME);
         Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(Mockito.anyString())).thenReturn(tags);
         Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(Mockito.anyString()))
                 .thenReturn(TAG_NAME_WITH_CHILDREN);

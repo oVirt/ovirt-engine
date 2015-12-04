@@ -20,19 +20,19 @@ public class TagsVdsMap implements Serializable {
         this.id.vdsId = vds_id;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.id.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.id.tagId = value;
     }
 
-    public Guid getvds_id() {
+    public Guid getVdsId() {
         return this.id.vdsId;
     }
 
-    public void setvds_id(Guid value) {
+    public void setVdsId(Guid value) {
         this.id.vdsId = value;
     }
 

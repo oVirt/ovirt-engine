@@ -105,8 +105,8 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
 
     private Tags setUpTagExpectations(Guid tagId) {
         Tags mock = control.createMock(Tags.class);
-        expect(mock.gettag_id()).andReturn(tagId).anyTimes();
-        expect(mock.getparent_id()).andReturn(HOST_ID).anyTimes();
+        expect(mock.getTagId()).andReturn(tagId).anyTimes();
+        expect(mock.getParentId()).andReturn(HOST_ID).anyTimes();
         return mock;
     }
 }

@@ -71,7 +71,7 @@ public abstract class AbstractBackendAssignedTagsResource
 
     protected Tag lookupTagByName(String name) {
         for (Tags tag : getBackendCollection(Tags.class, VdcQueryType.GetAllTags, new VdcQueryParametersBase())) {
-            if (tag.gettag_name().equals(name)) {
+            if (tag.getTagName().equals(name)) {
                 return map(tag);
             }
         }

@@ -35,17 +35,17 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
     public String getNewParentTagName() {
         Tags newParent = TagsDirector.getInstance().getTagById(getParameters().getNewParentId());
         if (newParent != null) {
-            return newParent.gettag_name();
+            return newParent.getTagName();
         }
 
         return "[null]";
     }
 
     private void initOldParentTagName() {
-        if (getTag() != null && getTag().getparent_id() != null) {
-            Tags parent = TagsDirector.getInstance().getTagById(new Guid(getTag().getparent_id().toString()));
+        if (getTag() != null && getTag().getParentId() != null) {
+            Tags parent = TagsDirector.getInstance().getTagById(new Guid(getTag().getParentId().toString()));
             if (parent != null) {
-                _oldParnetTagName = parent.gettag_name();
+                _oldParnetTagName = parent.getTagName();
             }
         }
     }

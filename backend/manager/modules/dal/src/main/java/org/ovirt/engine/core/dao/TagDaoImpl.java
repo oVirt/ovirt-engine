@@ -32,12 +32,12 @@ public class TagDaoImpl extends BaseDao implements TagDao {
         @Override
         public Tags mapRow(ResultSet rs, int rowNum) throws SQLException {
             Tags entity = new Tags();
-            entity.setdescription(getValueOrNull(rs, "description", ""));
-            entity.settag_id(getGuidDefaultNewGuid(rs, "tag_id"));
-            entity.settag_name(getValueOrNull(rs, "tag_name", ""));
-            entity.setparent_id(getGuidDefaultNewGuid(rs, "parent_id"));
+            entity.setDescription(getValueOrNull(rs, "description", ""));
+            entity.setTagId(getGuidDefaultNewGuid(rs, "tag_id"));
+            entity.setTagName(getValueOrNull(rs, "tag_name", ""));
+            entity.setParentId(getGuidDefaultNewGuid(rs, "parent_id"));
             entity.setIsReadonly(rs.getBoolean("readonly"));
-            entity.settype(TagsType.forValue(Integer.parseInt(getValueOrNull(rs,
+            entity.setType(TagsType.forValue(Integer.parseInt(getValueOrNull(rs,
                     "type", "0"))));
             return entity;
         }
@@ -189,19 +189,19 @@ public class TagDaoImpl extends BaseDao implements TagDao {
 
     @Override
     public void save(Tags tag) {
-        Guid id = tag.gettag_id();
+        Guid id = tag.getTagId();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.newGuid();
-            tag.settag_id(id);
+            tag.setTagId(id);
         }
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", tag.getdescription())
-                .addValue("tag_id", tag.gettag_id())
-                .addValue("tag_name", tag.gettag_name())
-                .addValue("parent_id", tag.getparent_id())
+                .addValue("description", tag.getDescription())
+                .addValue("tag_id", tag.getTagId())
+                .addValue("tag_name", tag.getTagName())
+                .addValue("parent_id", tag.getParentId())
                 .addValue("readonly", tag.getIsReadonly())
-                .addValue("type", tag.gettype());
+                .addValue("type", tag.getType());
 
         getCallsHandler().executeModification("Inserttags", parameterSource);
     }
@@ -218,12 +218,12 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void update(Tags tag) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", tag.getdescription())
-                .addValue("tag_id", tag.gettag_id())
-                .addValue("tag_name", tag.gettag_name())
-                .addValue("parent_id", tag.getparent_id())
+                .addValue("description", tag.getDescription())
+                .addValue("tag_id", tag.getTagId())
+                .addValue("tag_name", tag.getTagName())
+                .addValue("parent_id", tag.getParentId())
                 .addValue("readonly", tag.getIsReadonly())
-                .addValue("type", tag.gettype());
+                .addValue("type", tag.getType());
 
         getCallsHandler()
                 .executeModification("Updatetags", parameterSource);
@@ -238,8 +238,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserGroupMap entity = new TagsUserGroupMap();
-                entity.setgroup_id(getGuidDefaultEmpty(rs, "group_id"));
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setGroupId(getGuidDefaultEmpty(rs, "group_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
                 return entity;
             }
         };
@@ -251,7 +251,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void attachUserGroupToTag(TagsUserGroupMap tagUserGroupMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("group_id",
-                tagUserGroupMap.getgroup_id()).addValue("tag_id", tagUserGroupMap.gettag_id());
+                tagUserGroupMap.getGroupId()).addValue("tag_id", tagUserGroupMap.getTagId());
 
         getCallsHandler()
                 .executeModification("Inserttags_user_group_map", parameterSource);
@@ -275,8 +275,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsUserMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserMap entity = new TagsUserMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setuser_id(getGuidDefaultEmpty(rs, "user_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
                 return entity;
             }
         };
@@ -288,7 +288,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void attachUserToTag(TagsUserMap tagUserMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
-                tagUserMap.gettag_id()).addValue("user_id", tagUserMap.getuser_id());
+                tagUserMap.getTagId()).addValue("user_id", tagUserMap.getUserId());
 
         getCallsHandler()
                 .executeModification("Inserttags_user_map", parameterSource);
@@ -312,8 +312,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsVdsMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVdsMap entity = new TagsVdsMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setvds_id(getGuidDefaultEmpty(rs, "vds_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setVdsId(getGuidDefaultEmpty(rs, "vds_id"));
                 return entity;
             }
         };
@@ -325,7 +325,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void attachVdsToTag(TagsVdsMap tagVdsMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
-                tagVdsMap.gettag_id()).addValue("vds_id", tagVdsMap.getvds_id());
+                tagVdsMap.getTagId()).addValue("vds_id", tagVdsMap.getVdsId());
 
         getCallsHandler()
                 .executeModification("Inserttags_vds_map", parameterSource);
@@ -349,8 +349,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
                 return entity;
             }
@@ -363,7 +363,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void attachVmToTag(TagsVmMap tagVmMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
-                tagVmMap.gettag_id()).addValue("vm_id", tagVmMap.getvm_id()).addValue("DefaultDisplayType",
+                tagVmMap.getTagId()).addValue("vm_id", tagVmMap.getVmId()).addValue("DefaultDisplayType",
                 tagVmMap.getDefaultDisplayType());
 
         getCallsHandler()
@@ -373,7 +373,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void updateDefaultDisplayForVmTag(TagsVmMap tagsVmMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
-                tagsVmMap.gettag_id()).addValue("vm_id", tagsVmMap.getvm_id()).addValue("DefaultDisplayType",
+                tagsVmMap.getTagId()).addValue("vm_id", tagsVmMap.getVmId()).addValue("DefaultDisplayType",
                 tagsVmMap.getDefaultDisplayType());
 
         getCallsHandler()
@@ -397,8 +397,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
                 return entity;
             }
@@ -424,8 +424,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsTemplateMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsTemplateMap entity = new TagsTemplateMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.settemplate_id(getGuidDefaultEmpty(rs, "vm_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setTemplateId(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
                 return entity;
             }
@@ -438,7 +438,7 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     @Override
     public void attachTemplateToTag(TagsTemplateMap tagTemplateMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
-                tagTemplateMap.gettag_id()).addValue("vm_id", tagTemplateMap.gettemplate_id()).addValue("DefaultDisplayType",
+                tagTemplateMap.getTagId()).addValue("vm_id", tagTemplateMap.getTemplateId()).addValue("DefaultDisplayType",
                 tagTemplateMap.getDefaultDisplayType());
 
         getCallsHandler()
@@ -463,8 +463,8 @@ public class TagDaoImpl extends BaseDao implements TagDao {
             @Override
             public TagsVmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmPoolMap entity = new TagsVmPoolMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setvm_pool_id(getGuidDefaultEmpty(rs, "vm_pool_id"));
+                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
                 return entity;
             }
         };

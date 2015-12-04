@@ -23,7 +23,7 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     @Override
     protected boolean canDoAction() {
         Tags tag = DbFacade.getInstance().getTagDao()
-                .getByName(getParameters().getTag().gettag_name());
+                .getByName(getParameters().getTag().getTagName());
         if (tag != null) {
             addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
             return false;

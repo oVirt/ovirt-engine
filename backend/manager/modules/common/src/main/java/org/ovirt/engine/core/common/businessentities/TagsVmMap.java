@@ -23,19 +23,19 @@ public class TagsVmMap implements Serializable {
         this.id.vmId = vm_id;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.id.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.id.tagId = value;
     }
 
-    public Guid getvm_id() {
+    public Guid getVmId() {
         return this.id.vmId;
     }
 
-    public void setvm_id(Guid value) {
+    public void setVmId(Guid value) {
         this.id.vmId = value;
     }
 

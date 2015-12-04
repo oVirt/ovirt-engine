@@ -68,10 +68,10 @@ public class TagDaoTest extends BaseDaoTestCase {
 
         newTag = new Tags();
 
-        newTag.settag_name("newtagname");
+        newTag.setTagName("newtagname");
         newTag.setIsReadonly(true);
-        newTag.setdescription("newtagdescription");
-        newTag.setparent_id(parent);
+        newTag.setDescription("newtagdescription");
+        newTag.setParentId(parent);
 
         existingUserGroupTag = dao.getTagUserGroupByGroupIdAndByTagId(EXISTING_TAG_ID, EXISTING_GROUP_ID);
 
@@ -101,7 +101,7 @@ public class TagDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        Tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.getTagId());
 
         assertNotNull(result);
         assertEquals(existingTag, result);
@@ -122,7 +122,7 @@ public class TagDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByName() {
-        Tags result = dao.getByName(existingTag.gettag_name());
+        Tags result = dao.getByName(existingTag.getTagName());
 
         assertNotNull(result);
         assertEquals(existingTag, result);
@@ -157,7 +157,7 @@ public class TagDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Tags tag : result) {
-            assertEquals(parent, tag.getparent_id());
+            assertEquals(parent, tag.getParentId());
         }
     }
 
@@ -316,7 +316,7 @@ public class TagDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllVmTagsWithIds() {
-        List<Tags> result = dao.getAllVmTagsWithIds(existingTag.gettag_id().toString());
+        List<Tags> result = dao.getAllVmTagsWithIds(existingTag.getTagId().toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -340,7 +340,7 @@ public class TagDaoTest extends BaseDaoTestCase {
     public void testSave() {
         dao.save(newTag);
 
-        Tags result = dao.get(newTag.gettag_id());
+        Tags result = dao.get(newTag.getTagId());
 
         assertNotNull(result);
         assertEquals(newTag, result);
@@ -351,11 +351,11 @@ public class TagDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdate() {
-        existingTag.setdescription("this is the updated description!");
+        existingTag.setDescription("this is the updated description!");
 
         dao.update(existingTag);
 
-        Tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.getTagId());
 
         assertEquals(existingTag, result);
     }
@@ -365,17 +365,17 @@ public class TagDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingTag.gettag_id());
+        dao.remove(existingTag.getTagId());
 
-        Tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.getTagId());
 
         assertNull(result);
     }
 
     @Test
     public void testGetTagUserGroupByGroupIdAndTagId() {
-        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
-                        existingUserGroupTag.getgroup_id());
+        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.getTagId(),
+                        existingUserGroupTag.getGroupId());
 
         assertNotNull(result);
         assertEqualsTagUserGroupMap(existingUserGroupTag, result);
@@ -383,18 +383,18 @@ public class TagDaoTest extends BaseDaoTestCase {
     }
 
     private void assertEqualsTagUserGroupMap(TagsUserGroupMap existing, TagsUserGroupMap result) {
-        assertEquals("Group IDs not equal", existing.getgroup_id(), result.getgroup_id());
-        assertEquals("Tag IDs not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("Group IDs not equal", existing.getGroupId(), result.getGroupId());
+        assertEquals("Tag IDs not equal", existing.getTagId(), result.getTagId());
         assertEquals("Object equation", existing, result);
 
     }
 
     @Test
     public void testDetachUserGroupFromTag() {
-        dao.detachUserGroupFromTag(existingUserGroupTag.gettag_id(), existingUserGroupTag.getgroup_id());
+        dao.detachUserGroupFromTag(existingUserGroupTag.getTagId(), existingUserGroupTag.getGroupId());
 
-        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
-                existingUserGroupTag.getgroup_id());
+        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.getTagId(),
+                existingUserGroupTag.getGroupId());
 
         assertNull(result);
     }
@@ -402,29 +402,29 @@ public class TagDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetUserTag() {
         TagsUserMap result =
-                dao.getTagUserByTagIdAndByuserId(existingUserTag.gettag_id(), existingUserTag.getuser_id());
+                dao.getTagUserByTagIdAndByuserId(existingUserTag.getTagId(), existingUserTag.getUserId());
 
         assertNotNull(result);
         assertEqualsTagUserMap(existingUserTag, result);
     }
 
     private void assertEqualsTagUserMap(TagsUserMap existing, TagsUserMap result) {
-        assertEquals("Tag ID is not equal", existing.gettag_id(), result.gettag_id());
-        assertEquals("USER ID is not equal", existing.getuser_id(), result.getuser_id());
+        assertEquals("Tag ID is not equal", existing.getTagId(), result.getTagId());
+        assertEquals("USER ID is not equal", existing.getUserId(), result.getUserId());
         assertEquals("Object equation", existing, result);
     }
 
     @Test
     public void testGetTagVdsMap() {
-        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.getTagId(), existingVdsTag.getVdsId());
 
         assertNotNull(result);
         assertEqualsTagsVdsMap(existingVdsTag, result);
     }
 
     private void assertEqualsTagsVdsMap(TagsVdsMap existing, TagsVdsMap result) {
-        assertEquals("Tag ID is not equal", existing.gettag_id(), result.gettag_id());
-        assertEquals("VDS ID is not equal", existing.getvds_id(), result.getvds_id());
+        assertEquals("Tag ID is not equal", existing.getTagId(), result.getTagId());
+        assertEquals("VDS ID is not equal", existing.getVdsId(), result.getVdsId());
         assertEquals("Object equation", existing, result);
     }
 
@@ -432,7 +432,7 @@ public class TagDaoTest extends BaseDaoTestCase {
     public void testAttachVdsToTag() {
         dao.attachVdsToTag(newVdsTag);
 
-        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(newVdsTag.gettag_id(), newVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(newVdsTag.getTagId(), newVdsTag.getVdsId());
 
         assertNotNull(result);
         assertEqualsTagsVdsMap(newVdsTag, result);
@@ -440,16 +440,16 @@ public class TagDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testDetachVdsFromTag() {
-        dao.detachVdsFromTag(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
+        dao.detachVdsFromTag(existingVdsTag.getTagId(), existingVdsTag.getVdsId());
 
-        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.getTagId(), existingVdsTag.getVdsId());
 
         assertNull(result);
     }
 
     @Test
     public void testGetTagVmMapByTag() {
-        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.gettag_id(), existingVmTag.getvm_id());
+        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.getTagId(), existingVmTag.getVmId());
 
         assertNotNull(result);
         assertEqualsTagsVmMap(existingVmTag, result);
@@ -457,21 +457,21 @@ public class TagDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetTagTemplateMapByTag() {
-        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.getTagId(), existingTemplateTag.getTemplateId());
 
         assertNotNull(result);
         assertEqualsTagsTemplateMap(existingTemplateTag, result);
     }
 
     private void assertEqualsTagsVmMap(TagsVmMap existing, TagsVmMap result) {
-        assertEquals("TG is not equal", existing.gettag_id(), result.gettag_id());
-        assertEquals("VM id not equal ", existing.getvm_id(), result.getvm_id());
+        assertEquals("TG is not equal", existing.getTagId(), result.getTagId());
+        assertEquals("VM id not equal ", existing.getVmId(), result.getVmId());
         assertEquals("Object equation", existing, result);
     }
 
     private void assertEqualsTagsTemplateMap(TagsTemplateMap existing, TagsTemplateMap result) {
-        assertEquals("TG is not equal", existing.gettag_id(), result.gettag_id());
-        assertEquals("Template id not equal ", existing.gettemplate_id(), result.gettemplate_id());
+        assertEquals("TG is not equal", existing.getTagId(), result.getTagId());
+        assertEquals("Template id not equal ", existing.getTemplateId(), result.getTemplateId());
         assertEquals("Object equation", existing, result);
     }
 
@@ -479,7 +479,7 @@ public class TagDaoTest extends BaseDaoTestCase {
     public void testAttachVmToTag() {
         dao.attachVmToTag(newVmTag);
 
-        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(newVmTag.gettag_id(), newVmTag.getvm_id());
+        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(newVmTag.getTagId(), newVmTag.getVmId());
 
         assertNotNull(result);
         assertEqualsTagsVmMap(newVmTag, result);
@@ -489,7 +489,7 @@ public class TagDaoTest extends BaseDaoTestCase {
     public void testAttachTemplateToTag() {
         dao.attachTemplateToTag(newTemplateTag);
 
-        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(newTemplateTag.gettag_id(), newTemplateTag.gettemplate_id());
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(newTemplateTag.getTagId(), newTemplateTag.getTemplateId());
 
         assertNotNull(result);
         assertEqualsTagsTemplateMap(newTemplateTag, result);
@@ -501,7 +501,7 @@ public class TagDaoTest extends BaseDaoTestCase {
 
         dao.updateDefaultDisplayForVmTag(existingVmTag);
 
-        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.gettag_id(), existingVmTag.getvm_id());
+        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.getTagId(), existingVmTag.getVmId());
 
         assertNotNull(result);
         assertEqualsTagsVmMap(existingVmTag, result);
@@ -509,18 +509,18 @@ public class TagDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testDetachVmFromTag() {
-        dao.detachVmFromTag(existingVmTag.gettag_id(), existingVmTag.getvm_id());
+        dao.detachVmFromTag(existingVmTag.getTagId(), existingVmTag.getVmId());
 
-        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.gettag_id(), existingVmTag.getvm_id());
+        TagsVmMap result = dao.getTagVmByTagIdAndByVmId(existingVmTag.getTagId(), existingVmTag.getVmId());
 
         assertNull(result);
     }
 
     @Test
     public void testDetachTemplateFromTag() {
-        dao.detachTemplateFromTag(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
+        dao.detachTemplateFromTag(existingTemplateTag.getTagId(), existingTemplateTag.getTemplateId());
 
-        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.gettag_id(), existingTemplateTag.gettemplate_id());
+        TagsTemplateMap result = dao.getTagTemplateByTagIdAndByTemplateId(existingTemplateTag.getTagId(), existingTemplateTag.getTemplateId());
 
         assertNull(result);
     }
@@ -532,7 +532,7 @@ public class TagDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (TagsVmMap mapping : result) {
-            assertEquals(EXISTING_VM_ID, mapping.getvm_id());
+            assertEquals(EXISTING_VM_ID, mapping.getVmId());
         }
     }
 }

@@ -30,7 +30,7 @@ public class BackendHostTagResource extends AbstractBackendSubResource<Tag, Tags
             new GetTagsByVdsIdParameters(hostId.toString())
         );
         for (Tags tag : tags) {
-            if (tag.gettag_id().equals(guid)) {
+            if (tag.getTagId().equals(guid)) {
                 return addLinks(populate(map(tag, null), tag));
             }
         }

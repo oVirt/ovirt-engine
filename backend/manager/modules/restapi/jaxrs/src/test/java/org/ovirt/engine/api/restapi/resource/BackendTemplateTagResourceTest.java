@@ -107,8 +107,8 @@ public class BackendTemplateTagResourceTest
 
     private Tags setUpTagExpectations(Guid tagId) {
         Tags mock = control.createMock(Tags.class);
-        expect(mock.gettag_id()).andReturn(tagId).anyTimes();
-        expect(mock.getparent_id()).andReturn(TEMPLATE_ID).anyTimes();
+        expect(mock.getTagId()).andReturn(tagId).anyTimes();
+        expect(mock.getParentId()).andReturn(TEMPLATE_ID).anyTimes();
         return mock;
     }
 }

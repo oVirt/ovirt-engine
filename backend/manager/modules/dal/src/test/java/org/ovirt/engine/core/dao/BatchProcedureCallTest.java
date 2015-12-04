@@ -30,12 +30,12 @@ public class BatchProcedureCallTest extends BaseDaoTestCase {
     protected CustomMapSqlParameterSource getParamsSource(Tags tag) {
         CustomMapSqlParameterSource paramsSource = new CustomMapSqlParameterSource(
                 dbFacade.getDbEngineDialect());
-        paramsSource.addValue("description", tag.getdescription())
-                .addValue("tag_id", tag.gettag_id())
-                .addValue("tag_name", tag.gettag_name())
-                .addValue("parent_id", tag.getparent_id())
+        paramsSource.addValue("description", tag.getDescription())
+                .addValue("tag_id", tag.getTagId())
+                .addValue("tag_name", tag.getTagName())
+                .addValue("parent_id", tag.getParentId())
                 .addValue("readonly", tag.getIsReadonly())
-                .addValue("type", tag.gettype());
+                .addValue("type", tag.getType());
         return paramsSource;
     }
 
@@ -43,7 +43,7 @@ public class BatchProcedureCallTest extends BaseDaoTestCase {
     public void testBatch() {
         List<Tags> tags = dao.getAll();
         for (Tags tag : tags) {
-            dao.remove(tag.gettag_id());
+            dao.remove(tag.getTagId());
         }
         List<Tags> data = new ArrayList<>();
         data.add(new Tags("a", Guid.Empty, true, Guid.newGuid(), "a"));

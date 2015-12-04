@@ -21,19 +21,19 @@ public class TagsUserGroupMap implements Serializable {
         this.tagId = tag_id;
     }
 
-    public Guid getgroup_id() {
+    public Guid getGroupId() {
         return this.groupId;
     }
 
-    public void setgroup_id(Guid value) {
+    public void setGroupId(Guid value) {
         this.groupId = value;
     }
 
-    public Guid gettag_id() {
+    public Guid getTagId() {
         return this.tagId;
     }
 
-    public void settag_id(Guid value) {
+    public void setTagId(Guid value) {
         this.tagId = value;
     }
 

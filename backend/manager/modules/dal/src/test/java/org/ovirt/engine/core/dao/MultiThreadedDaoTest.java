@@ -44,7 +44,7 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
 
             @Override
             public void run() {
-                Tags result = dao.get(existing.gettag_id());
+                Tags result = dao.get(existing.getTagId());
                 assertEquals(existing, result);
             }
         }, 100);
@@ -78,10 +78,10 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
                 int val = counter.incrementAndGet();
                 Tags tag = createTag("tag" + val, "desc" + val);
                 dao.save(tag);
-                Tags fromDb = dao.get(tag.gettag_id());
+                Tags fromDb = dao.get(tag.getTagId());
                 assertEquals(tag, fromDb);
-                dao.remove(tag.gettag_id());
-                fromDb = dao.get(tag.gettag_id());
+                dao.remove(tag.getTagId());
+                fromDb = dao.get(tag.getTagId());
                 assertNull(fromDb);
             }
         }, 100);
@@ -90,11 +90,11 @@ public class MultiThreadedDaoTest extends BaseDaoTestCase {
     private Tags createTag(String name, String desc) {
         Tags tag = new Tags();
         tag.setChildren(new ArrayList<>());
-        tag.setdescription(desc);
-        tag.settag_name(name);
+        tag.setDescription(desc);
+        tag.setTagName(name);
         tag.setIsReadonly(true);
-        tag.setparent_id(Guid.Empty);
-        tag.settype(TagsType.GeneralTag);
+        tag.setParentId(Guid.Empty);
+        tag.setType(TagsType.GeneralTag);
         return tag;
     }
 

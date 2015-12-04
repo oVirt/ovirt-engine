@@ -70,7 +70,7 @@ public class BackendTagsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddTag,
                                   TagsOperationParameters.class,
-                                  new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                  new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], PARENT_GUID },
                                   true,
                                   true,
@@ -99,7 +99,7 @@ public class BackendTagsResourceTest
 
         setUpCreationExpectations(VdcActionType.AddTag,
                                   TagsOperationParameters.class,
-                                  new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                  new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], PARENT_GUID },
                                   true,
                                   true,
@@ -125,11 +125,11 @@ public class BackendTagsResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         Tags entity = getEntity(0);
-        entity.setparent_id(Guid.Empty);
+        entity.setParentId(Guid.Empty);
 
         setUpCreationExpectations(VdcActionType.AddTag,
                                   TagsOperationParameters.class,
-                                  new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                  new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], Guid.Empty },
                                   true,
                                   true,
@@ -173,7 +173,7 @@ public class BackendTagsResourceTest
     private void doTestBadAddTag(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddTag,
                                            TagsOperationParameters.class,
-                                           new String[] { "Tag.tag_name", "Tag.parent_id" },
+                                           new String[] { "Tag.TagName", "Tag.ParentId" },
                                            new Object[] { NAMES[0], PARENT_GUID },
                                            canDo,
                                            success));

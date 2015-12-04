@@ -14,8 +14,8 @@ public class UpdateTagsVmMapDefaultDisplayTypeCommand<T extends TagsVmMapParamet
     @Override
     protected boolean canDoAction() {
         TagsVmMap tagsVmMap;
-        tagsVmMap = DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getParameters().getTagsVmMap().gettag_id(),
-                getParameters().getTagsVmMap().getvm_id());
+        tagsVmMap = DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getParameters().getTagsVmMap().getTagId(),
+                getParameters().getTagsVmMap().getVmId());
         if (tagsVmMap == null) {
             addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
             return false;
