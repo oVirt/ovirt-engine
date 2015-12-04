@@ -71,7 +71,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     protected boolean canDoAction() {
         // check problematic vds status
-        if (IsLegalStatus(_problematicVds.getStatus())) {
+        if (isLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
                 if(!getStoragePool().isLocal()) {
                     if (!initializeVds()) {
@@ -129,7 +129,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
      * @return <c>true</c> if [is legal status] [the specified status];
      *         otherwise, <c>false</c>.
      */
-    private static boolean IsLegalStatus(VDSStatus status) {
+    private static boolean isLegalStatus(VDSStatus status) {
         boolean result;
         switch (status) {
         case Down:
