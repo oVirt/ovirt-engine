@@ -48,8 +48,6 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
 
     private SpmStatusResult ParseSpmStatusResult(Map<String, Object> spmStatusResult) {
         try {
-            // The parser handle an empty structure because of Mr. Frank
-            // inability create a protocol that makes sense.
             SpmStatusResult statusResult = new SpmStatusResult();
             statusResult
                     .setSpmStatus((_result.spmStatus != null && _result.spmStatus.containsKey("spmStatus")) ? EnumUtils
