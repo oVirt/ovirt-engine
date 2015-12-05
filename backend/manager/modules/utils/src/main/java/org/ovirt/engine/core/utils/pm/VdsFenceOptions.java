@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils.pm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -291,30 +290,6 @@ public class VdsFenceOptions implements Serializable {
     }
 
     /**
-     * handles agent power wait parameter mapping
-     * @param agent
-     * @param powerWait
-     * @return
-     */
-    public static String getAgentPowerWaitParam(String agent, String powerWait) {
-        String param = null;
-        // result has the format [<agent>=<power wait param name>[,]]*
-        String[] settings = powerWait.split(Pattern.quote(COMMA), -1);
-        if (settings.length > 0) {
-            for (String setting : settings) {
-                String[] pair = setting.split(Pattern.quote(EQUAL), -1);
-                if (pair.length == 2) {
-                    if (agent.equalsIgnoreCase(pair[0])) {
-                        param = pair[1];
-                        break;
-                    }
-                }
-            }
-        }
-        return param;
-    }
-
-    /**
      * handles agent default options
      *
      * @param agent
@@ -407,83 +382,13 @@ public class VdsFenceOptions implements Serializable {
     }
 
     /**
-     * Determines whether the specified current agent key is supported .
-     *
-     * @param key
-     *            The key.
-     * @return <c>true</c> if the specified key is supported; otherwise, <c>false</c>.
-     */
-
-    public boolean IsSupported(String key) {
-
-        return IsSupported(getAgent(), key);
-    }
-
-    /**
-     * Determines whether the specified agent key is supported.
-     *
-     * @param agent
-     *            The agent.
-     * @param key
-     *            The key.
-     * @return <c>true</c> if the specified agent is supported; otherwise, <c>false</c>.
-     */
-
-    public boolean IsSupported(String agent, String key) {
-        boolean result = false;
-        if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(key)
-                && fenceOptionMapping.containsKey(agent)) {
-            HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
-            result = (agentOptions == null) ? false : agentOptions.containsKey(key);
-        } else {
-            log.error(AGENT_ERROR, agent);
-        }
-
-        return result;
-    }
-
-    /**
      * Checks if the agent is supported on the version that was set in object constructor
      * @param agent
      *            The agent.
      * @return <c>true</c> if the specified agent is supported; otherwise, <c>false</c>.
      */
-
     public boolean isAgentSupported(String agent) {
         return fenceOptionMapping.containsKey(agent);
-    }
-
-    /**
-     * Gets the current agent supported options.
-     *
-     * @return
-     */
-
-    public ArrayList<String> GetSupportedOptions() {
-        return GetSupportedOptions(getAgent());
-
-    }
-
-    /**
-     * Gets the agent supported options.
-     *
-     * @param agent
-     *            The agent.
-     * @return
-     */
-
-    public ArrayList<String> GetSupportedOptions(String agent) {
-        ArrayList<String> agentOptions = new ArrayList<>();
-        if (fenceOptionMapping.containsKey(agent)) {
-            HashMap<String, String> options = fenceOptionMapping.get(agent);
-            for (Map.Entry<String, String> pair : options.entrySet()) {
-                agentOptions.add(pair.getKey());
-            }
-        } else {
-            log.error(AGENT_ERROR, agent);
-        }
-        return agentOptions;
-
     }
 
     /**
@@ -493,7 +398,6 @@ public class VdsFenceOptions implements Serializable {
      *            The key.
      * @return The key value, null if key is not exist
      */
-
     public Object Get(String key) {
         final String BOOL = "bool";
         final String INT = "int";
@@ -555,26 +459,6 @@ public class VdsFenceOptions implements Serializable {
                     .append(GetDisplayedKey(getAgent(), pair.getKey()))
                     .append(pair.getValue().length() > 0 ? EQUAL + pair.getValue() : "");
             delimiter = COMMA;
-        }
-        return value.toString();
-    }
-
-    /**
-     * Gets the unsupported options string.
-     *
-     * @return
-     */
-    public String ToUnsupportedOptionsString() {
-        String delimiter = "";
-        StringBuilder value = new StringBuilder();
-        for (Map.Entry<String, String> pair : fenceAgentInstanceOptions.entrySet()) {
-            String displayedKey = GetDisplayedKey(getAgent(), pair.getKey());
-            if (!IsSupported(displayedKey)) {
-                value.append(delimiter)
-                        .append(displayedKey)
-                        .append((pair.getValue().length() > 0 ? EQUAL + pair.getValue() : ""));
-                delimiter = COMMA;
-            }
         }
         return value.toString();
     }
