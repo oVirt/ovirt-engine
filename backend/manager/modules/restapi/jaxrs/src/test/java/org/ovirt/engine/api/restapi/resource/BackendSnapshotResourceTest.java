@@ -81,7 +81,7 @@ public class BackendSnapshotResourceTest
 
     @Test
     //empty list of snapshots returned from Backend.
-    public void testGetNotFound_1() throws Exception {
+    public void testGetNotFound1() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(new ArrayList<>());
         control.replay();
@@ -96,7 +96,7 @@ public class BackendSnapshotResourceTest
     @Test
     //non-empty list of snapshots returned from Backend,
     //but this specific snapshot is not there.
-    public void testGetNotFound_2() throws Exception {
+    public void testGetNotFound2() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(2)));
         control.replay();

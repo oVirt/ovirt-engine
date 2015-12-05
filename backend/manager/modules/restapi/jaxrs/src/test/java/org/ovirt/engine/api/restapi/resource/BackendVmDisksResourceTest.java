@@ -557,7 +557,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters_2() throws Exception {
+    public void testAddIncompleteParameters2() throws Exception {
         Disk model = getModel(0);
         model.setProvisionedSize(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -567,12 +567,12 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters_2", "provisionedSize|size");
+            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters2", "provisionedSize|size");
         }
     }
 
     @Test
-    public void testAddLunDisk_MissingType() {
+    public void testAddLunDiskMissingType() {
         Disk model = createIscsiLunDisk();
         model.getLunStorage().setType(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -582,12 +582,12 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "HostStorage", "testAddLunDisk_MissingType", "type");
+            verifyIncompleteException(wae, "HostStorage", "testAddLunDiskMissingType", "type");
         }
     }
 
     @Test
-    public void testAddLunDisk_MissingId() {
+    public void testAddLunDiskMissingId() {
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setId(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -597,12 +597,12 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddLunDisk_MissingId", "id");
+            verifyIncompleteException(wae, "LogicalUnit", "testAddLunDiskMissingId", "id");
         }
     }
 
     @Test
-    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionAddress() {
+    public void testAddIscsiLunDiskIncompleteParametersConnectionAddress() {
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setAddress(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -612,12 +612,12 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionAddress", "address");
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionAddress", "address");
         }
     }
 
     @Test
-    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionTarget() {
+    public void testAddIscsiLunDiskIncompleteParametersConnectionTarget() {
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setTarget(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -627,12 +627,12 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionTarget", "target");
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionTarget", "target");
         }
     }
 
     @Test
-    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionPort() {
+    public void testAddIscsiLunDiskIncompleteParametersConnectionPort() {
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setPort(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -642,7 +642,7 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionPort", "port");
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionPort", "port");
         }
     }
 

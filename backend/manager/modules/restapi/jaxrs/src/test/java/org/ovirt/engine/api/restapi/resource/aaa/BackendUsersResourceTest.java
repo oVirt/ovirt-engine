@@ -49,7 +49,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser_2() throws Exception {
+    public void testAddUser2() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
@@ -67,7 +67,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser_3() throws Exception {
+    public void testAddUser3() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
@@ -82,7 +82,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser_4() throws Exception {
+    public void testAddUser4() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] { },

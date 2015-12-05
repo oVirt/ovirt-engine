@@ -41,7 +41,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testList_LimitResults() throws Exception {
+    public void testListLimitResults() throws Exception {
         UriInfo uriInfo = setUpUriExpectationsWithMax(false);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
@@ -51,7 +51,7 @@ public class BackendTagsResourceTest
     }
 
     @Test(expected = WebFaultException.class)
-    public void testList_LimitResults_BadFormat() throws Exception {
+    public void testListLimitResultsBadFormat() throws Exception {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
         setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
                                      VdcQueryParametersBase.class,

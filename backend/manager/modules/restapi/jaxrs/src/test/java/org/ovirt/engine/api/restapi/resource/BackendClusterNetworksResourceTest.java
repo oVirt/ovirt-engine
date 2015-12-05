@@ -113,7 +113,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddIncompleteParameters_noName() throws Exception {
+    public void testAddIncompleteParametersNoName() throws Exception {
         Network model = new Network();
         model.setDescription(DESCRIPTIONS[0]);
         setUriInfo(setUpBasicUriExpectations());
