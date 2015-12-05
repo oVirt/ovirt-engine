@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -23,7 +21,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     protected void executeVdsBrokerCommand() {
         _result = getBroker().spmStatus(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        setReturnValue(ParseSpmStatusResult(_result.spmStatus));
+        setReturnValue(ParseSpmStatusResult());
         if (((SpmStatusResult) getReturnValue()).getSpmStatus() == SpmStatus.SPM_ERROR) {
             log.error("SPM '{}' status returned SPM_ERROR on VDS '{}'", getParameters().getStoragePoolId(),
                     getParameters().getVdsId());
@@ -46,7 +44,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
         }
     }
 
-    private SpmStatusResult ParseSpmStatusResult(Map<String, Object> spmStatusResult) {
+    private SpmStatusResult ParseSpmStatusResult() {
         try {
             SpmStatusResult statusResult = new SpmStatusResult();
             statusResult
