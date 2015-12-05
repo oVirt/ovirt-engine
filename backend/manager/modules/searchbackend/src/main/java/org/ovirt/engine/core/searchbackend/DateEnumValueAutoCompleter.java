@@ -16,11 +16,11 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
             enumValues.put(ValName, val.getValue());
             verbs.add(ValName);
         }
-        AddDaysOfWeek();
+        addDaysOfWeek();
         buildCompletions();
     }
 
-    private void AddDaysOfWeek() {
+    private void addDaysOfWeek() {
         String day;
         int dayIndex = 3;
         for (int i = -2; i > -8; i--) {

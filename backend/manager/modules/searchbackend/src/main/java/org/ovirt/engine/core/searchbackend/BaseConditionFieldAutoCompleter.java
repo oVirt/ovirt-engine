@@ -303,7 +303,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
             DateTime result;
             if (temp == null) {
-                result = DealWithDateEnum(pair.getSecond());
+                result = dealWithDateEnum(pair.getSecond());
             } else {
                 result = new DateTime(temp);
             }
@@ -348,7 +348,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     // private static final String DATE_FORMAT = "MMM dd,yyyy";
-    private static DateTime DealWithDateEnum(String value) {
+    private static DateTime dealWithDateEnum(String value) {
         DateTime formatedValue = new DateTime();
         final Integer result = IntegerCompat.tryParse(StringHelper.trim(value, '\''));
         if (result != null) {
