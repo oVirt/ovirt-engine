@@ -139,29 +139,6 @@ public class PmHealthCheckManager implements BackendService {
         handleStopAlerts(healthStatus, hostId);
     }
 
-    // private void handleAgentAlerts(Entry<FenceAgent, Boolean> entry, Guid hostId) {
-    // Guid agentId = entry.getKey().getId();
-    // boolean agentHealthy = entry.getValue();
-    // if (agentHealthy) {
-    // removeAlert(agentId, hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_FENCE_AGENT_NON_RESPONSIVE);
-    // } else {
-    // addAlert(agentId, hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_FENCE_AGENT_NON_RESPONSIVE);
-    // }
-    //
-    // }
-
-    // private void addAlert(Guid agentId, Guid hostId, AuditLogType auditMessage) {
-    // AuditLogableBase alert = new AuditLogableBase();
-    // alert.addCustomValue(AGENT_ID, agentId.toString());
-    // AlertDirector.AddVdsAlert(hostId, auditMessage, alert);
-    // }
-    //
-    // private void removeAlert(Guid agentId, Guid hostId, AuditLogType auditMessage) {
-    // AuditLogableBase alert = new AuditLogableBase();
-    // alert.addCustomValue(AGENT_ID, agentId.toString());
-    // AlertDirector.RemoveVdsAlert(hostId, auditMessage, alert);
-    // }
-
     private void handleStartAlerts(PmHealth healthStatus, Guid hostId) {
         if (healthStatus.isStartShouldWork()) {
             removeAlert(hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_START_MIGHT_FAIL);
