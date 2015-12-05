@@ -6,14 +6,14 @@ import java.util.Map;
 public class ForemanError implements Serializable {
     private static final long serialVersionUID = 468697212133957494L;
     private Map<String, String[]> errors;
-    private String[] full_messages;
+    private String[] fullMessages;
 
-    public String[] getFull_messages() {
-        return full_messages;
+    public String[] getFullMessages() {
+        return fullMessages;
     }
 
-    public void setFull_messages(String[] full_messages) {
-        this.full_messages = full_messages;
+    public void setFullMessages(String[] fullMessages) {
+        this.fullMessages = fullMessages;
     }
 
     public Map<String, String[]> getErrors() {

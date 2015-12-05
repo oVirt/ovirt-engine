@@ -157,8 +157,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             dhost.setName(host.getName());
             dhost.setIp(host.getIp());
             dhost.setMac(host.getMac());
-            dhost.setLastReport(host.getLast_report());
-            dhost.setSubnetName(host.getSubnet_name());
+            dhost.setLastReport(host.getLastReport());
+            dhost.setSubnetName(host.getSubnetName());
             hosts.add(dhost);
         }
         return hosts;
@@ -181,29 +181,29 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ExternalHostGroup hostgroup = new ExternalHostGroup();
             hostgroup.setHostgroupId(hostGroup.getId());
             hostgroup.setName(hostGroup.getName());
-            hostgroup.setOperatingsystemId(hostGroup.getOperatingsystem_id());
-            hostgroup.setEnvironmentId(hostGroup.getEnvironment_id());
-            hostgroup.setDomainId(hostGroup.getDomain_id());
-            hostgroup.setSubnetId(hostGroup.getSubnet_id());
+            hostgroup.setOperatingsystemId(hostGroup.getOperatingSystemId());
+            hostgroup.setEnvironmentId(hostGroup.getEnvironmentId());
+            hostgroup.setDomainId(hostGroup.getDomainId());
+            hostgroup.setSubnetId(hostGroup.getSubnetId());
             hostgroup.setParameters(hostGroup.getParameters());
-            hostgroup.setMediumId(hostGroup.getMedium_id());
-            hostgroup.setArchitectureId(hostGroup.getArchitecture_id());
-            hostgroup.setPtableId(hostGroup.getPtable_id());
-            hostgroup.setOperatingsystemName(hostGroup.getOperatingsystem_name());
-            hostgroup.setDomainName(hostGroup.getDomain_name());
-            hostgroup.setSubnetName(hostGroup.getSubnet_name());
-            hostgroup.setArchitectureName(hostGroup.getArchitecture_name());
+            hostgroup.setMediumId(hostGroup.getMediumId());
+            hostgroup.setArchitectureId(hostGroup.getArchitectureId());
+            hostgroup.setPtableId(hostGroup.getPtableId());
+            hostgroup.setOperatingsystemName(hostGroup.getOperatingSystemName());
+            hostgroup.setDomainName(hostGroup.getDomainName());
+            hostgroup.setSubnetName(hostGroup.getSubnetName());
+            hostgroup.setArchitectureName(hostGroup.getArchitectureName());
             hostgroup.setAncestry(hostGroup.getAncestry());
-            hostgroup.setEnvironmentName(hostGroup.getEnvironment_name());
-            hostgroup.setPtableName(hostGroup.getPtable_name());
-            hostgroup.setMediumName(hostGroup.getMedium_name());
+            hostgroup.setEnvironmentName(hostGroup.getEnvironmentName());
+            hostgroup.setPtableName(hostGroup.getPtableName());
+            hostgroup.setMediumName(hostGroup.getMediumName());
             hostGroups.put(hostGroup.getId(), hostgroup);
         }
         List<ExternalHostGroup> ret = new ArrayList<>(foremanHostGroups.size());
         for (ForemanHostGroup hostGroup : foremanHostGroups) {
             if (hostGroup.getAncestry() != null) {
                 String[] ancestries = hostGroup.getAncestry().split("/");
-                if (hostGroup.getMedium_name() == null) {
+                if (hostGroup.getMediumName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String medName = hg.getMediumName();
@@ -215,7 +215,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getEnvironment_name() == null) {
+                if (hostGroup.getEnvironmentName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String envName = hg.getEnvironmentName();
@@ -227,7 +227,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getPtable_name() == null) {
+                if (hostGroup.getPtableName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String ptableName = hg.getPtableName();
@@ -239,7 +239,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getArchitecture_name() == null) {
+                if (hostGroup.getArchitectureName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String archName = hg.getArchitectureName();
@@ -251,7 +251,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getOperatingsystem_name() == null) {
+                if (hostGroup.getOperatingSystemName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String osName = hg.getOperatingsystemName();
@@ -263,7 +263,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getDomain_name() == null) {
+                if (hostGroup.getDomainName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String domainName = hg.getDomainName();
@@ -275,7 +275,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         }
                     }
                 }
-                if (hostGroup.getSubnet_name() == null) {
+                if (hostGroup.getSubnetName() == null) {
                     for (int i = ancestries.length - 1; i >= 0; i--) {
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String subnetName = hg.getSubnetName();
@@ -391,7 +391,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
                 && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
             ForemanErrorWrapper ferr = objectMapper.readValue(response, ForemanErrorWrapper.class);
-            String err = StringUtils.join(ferr.getForemanError().getFull_messages(), ", ");
+            String err = StringUtils.join(ferr.getForemanError().getFullMessages(), ", ");
             throw new EngineException(EngineError.PROVIDER_FAILURE, err);
         }
     }

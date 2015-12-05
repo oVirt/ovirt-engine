@@ -8,23 +8,23 @@ public class ForemanHostGroup implements Serializable {
 
     private String name;
     private int id;
-    private int subnet_id;
-    private int operatingsystem_id;
-    private int domain_id;
-    private int environment_id;
-    private int ptable_id;
-    private int medium_id;
-    private int architecture_id;
-    private int[] puppetclass_ids;
+    private int subnetId;
+    private int operatingSystemId;
+    private int domainId;
+    private int environmentId;
+    private int ptableId;
+    private int mediumId;
+    private int architectureId;
+    private int[] puppetClassIds;
     private Map<String, String> parameters;
     private String ancestry;
-    private String subnet_name;
-    private String operatingsystem_name;
-    private String domain_name;
-    private String architecture_name;
-    private String environment_name;
-    private String ptable_name;
-    private String medium_name;
+    private String subnetName;
+    private String operatingSystemName;
+    private String domainName;
+    private String architectureName;
+    private String environmentName;
+    private String ptableName;
+    private String mediumName;
 
     public String getAncestry() {
         return ancestry;
@@ -34,60 +34,60 @@ public class ForemanHostGroup implements Serializable {
         this.ancestry = ancestry;
     }
 
-    public String getSubnet_name() {
-        return subnet_name;
+    public String getSubnetName() {
+        return subnetName;
     }
 
-    public void setSubnet_name(String subnet_name) {
-        this.subnet_name = subnet_name;
+    public void setSubnetName(String subnetName) {
+        this.subnetName = subnetName;
     }
 
-    public String getOperatingsystem_name() {
-        return operatingsystem_name;
+    public String getOperatingSystemName() {
+        return operatingSystemName;
     }
 
-    public void setOperatingsystem_name(String operatingsystem_name) {
-        this.operatingsystem_name = operatingsystem_name;
+    public void setOperatingSystemName(String operatingSystemName) {
+        this.operatingSystemName = operatingSystemName;
     }
 
-    public String getDomain_name() {
-        return domain_name;
+    public String getDomainName() {
+        return domainName;
     }
 
-    public void setDomain_name(String domain_name) {
-        this.domain_name = domain_name;
+    public void setDomainName(String domainName) {
+        this.domainName = domainName;
     }
 
-    public String getArchitecture_name() {
-        return architecture_name;
+    public String getArchitectureName() {
+        return architectureName;
     }
 
-    public void setArchitecture_name(String architecture_name) {
-        this.architecture_name = architecture_name;
+    public void setArchitectureName(String architectureName) {
+        this.architectureName = architectureName;
     }
 
-    public int getPtable_id() {
-        return ptable_id;
+    public int getPtableId() {
+        return ptableId;
     }
 
-    public void setPtable_id(int ptable_id) {
-        this.ptable_id = ptable_id;
+    public void setPtableId(int ptableId) {
+        this.ptableId = ptableId;
     }
 
-    public int getMedium_id() {
-        return medium_id;
+    public int getMediumId() {
+        return mediumId;
     }
 
-    public void setMedium_id(int medium_id) {
-        this.medium_id = medium_id;
+    public void setMediumId(int mediumId) {
+        this.mediumId = mediumId;
     }
 
-    public int getArchitecture_id() {
-        return architecture_id;
+    public int getArchitectureId() {
+        return architectureId;
     }
 
-    public void setArchitecture_id(int architecture_id) {
-        this.architecture_id = architecture_id;
+    public void setArchitectureId(int architectureId) {
+        this.architectureId = architectureId;
     }
 
     public int getId() {
@@ -98,28 +98,28 @@ public class ForemanHostGroup implements Serializable {
         this.id = id;
     }
 
-    public int getSubnet_id() {
-        return subnet_id;
+    public int getSubnetId() {
+        return subnetId;
     }
 
-    public void setSubnet_id(int subnet_id) {
-        this.subnet_id = subnet_id;
+    public void setSubnetId(int subnetId) {
+        this.subnetId = subnetId;
     }
 
-    public int getOperatingsystem_id() {
-        return operatingsystem_id;
+    public int getOperatingSystemId() {
+        return operatingSystemId;
     }
 
-    public void setOperatingsystem_id(int operatingsystem_id) {
-        this.operatingsystem_id = operatingsystem_id;
+    public void setOperatingSystemId(int operatingSystemId) {
+        this.operatingSystemId = operatingSystemId;
     }
 
-    public int getDomain_id() {
-        return domain_id;
+    public int getDomainId() {
+        return domainId;
     }
 
-    public void setDomain_id(int domain_id) {
-        this.domain_id = domain_id;
+    public void setDomainId(int domainId) {
+        this.domainId = domainId;
     }
 
     public Map<String, String> getParameters() {
@@ -130,12 +130,12 @@ public class ForemanHostGroup implements Serializable {
         this.parameters = parameters;
     }
 
-    public int[] getPuppetclass_ids() {
-        return puppetclass_ids;
+    public int[] getPuppetClassIds() {
+        return puppetClassIds;
     }
 
-    public void setPuppetclass_ids(int[] puppetclass_ids) {
-        this.puppetclass_ids = puppetclass_ids;
+    public void setPuppetClassIds(int[] puppetClassIds) {
+        this.puppetClassIds = puppetClassIds;
     }
 
     public String getName() {
@@ -146,35 +146,35 @@ public class ForemanHostGroup implements Serializable {
         this.name = name;
     }
 
-    public int getEnvironment_id() {
-        return environment_id;
+    public int getEnvironmentId() {
+        return environmentId;
     }
 
-    public void setEnvironment_id(int environment_id) {
-        this.environment_id = environment_id;
+    public void setEnvironmentId(int environmentId) {
+        this.environmentId = environmentId;
     }
 
-    public String getEnvironment_name() {
-        return environment_name;
+    public String getEnvironmentName() {
+        return environmentName;
     }
 
-    public void setEnvironment_name(String environment_name) {
-        this.environment_name = environment_name;
+    public void setEnvironmentName(String environmentName) {
+        this.environmentName = environmentName;
     }
 
-    public String getPtable_name() {
-        return ptable_name;
+    public String getPtableName() {
+        return ptableName;
     }
 
-    public void setPtable_name(String ptable_name) {
-        this.ptable_name = ptable_name;
+    public void setPtableName(String ptableName) {
+        this.ptableName = ptableName;
     }
 
-    public String getMedium_name() {
-        return medium_name;
+    public String getMediumName() {
+        return mediumName;
     }
 
-    public void setMedium_name(String medium_name) {
-        this.medium_name = medium_name;
+    public void setMediumName(String mediumName) {
+        this.mediumName = mediumName;
     }
 }
