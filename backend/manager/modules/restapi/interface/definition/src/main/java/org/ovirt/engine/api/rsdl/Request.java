@@ -29,8 +29,4 @@ public class Request {
     public void setBody(Body body) {
         this.body = body;
     }
-
-    public void addUrl_params(String name, ParamData value) {
-        this.urlparams.put(name, value);
-    }
 }
