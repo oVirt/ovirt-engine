@@ -61,7 +61,7 @@ public class BrandingCascadingResourceServletTest {
      * @throws URISyntaxException
      */
     @Test
-    public void testDoGet_ServeFavicon() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetServeFavicon() throws IOException, ServletException, URISyntaxException {
         when(mockBrandingManager.getBrandingRootPath()).thenReturn(
                 new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class BrandingCascadingResourceServletTest {
      * @throws URISyntaxException
      */
     @Test
-    public void testDoGet_ServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {
         when(mockBrandingManager.getBrandingRootPath()).thenReturn(
                 new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$

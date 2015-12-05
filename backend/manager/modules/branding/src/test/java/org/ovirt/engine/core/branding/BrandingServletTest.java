@@ -54,21 +54,21 @@ public class BrandingServletTest {
     }
 
     @Test
-    public void testDoGet_NotFound_InvalidPath() throws IOException, ServletException {
+    public void testDoGetNotFoundInvalidPath() throws IOException, ServletException {
         when(mockRequest.getPathInfo()).thenReturn(null); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
-    public void testDoGet_NotFound_MissingFile() throws IOException, ServletException {
+    public void testDoGetNotFoundMissingFile() throws IOException, ServletException {
         // The file should not exist, and thus return a 404.
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
-    public void testDoGet_ExistingFile() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetExistingFile() throws IOException, ServletException, URISyntaxException {
         when(mockRequest.getPathInfo())
             .thenReturn("/org/ovirt/engine/core/branding/BrandingServletTest.class"); //$NON-NLS-1$
         when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().
@@ -78,19 +78,19 @@ public class BrandingServletTest {
     }
 
     @Test
-    public void testGetFullPath_nullParameter() {
+    public void testGetFullPathNullParameter() {
         File file = testServlet.getFile(mockFile, null);
         assertNull("Path should be null", file); //$NON-NLS-1$
     }
 
     @Test
-    public void testGetFullPath_NonSaneParameter() {
+    public void testGetFullPathNonSaneParameter() {
         File file = testServlet.getFile(mockFile, "../something"); //$NON-NLS-1$
         assertNull("Path should be null", file); //$NON-NLS-1$
     }
 
     @Test
-    public void testGetFullPath_SaneParameter() {
+    public void testGetFullPathSaneParameter() {
         File file = testServlet.getFile(mockFile, "/branding/test"); //$NON-NLS-1$
         assertNotNull("Path should not be null", file); //$NON-NLS-1$
         assertEquals("Path should be '/abs/test/branding/test'", //$NON-NLS-1$

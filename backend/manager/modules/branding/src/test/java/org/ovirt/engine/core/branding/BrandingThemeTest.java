@@ -76,13 +76,13 @@ public class BrandingThemeTest {
     }
 
     @Test
-    public void testGetCascadingResource_missingKey() {
+    public void testGetCascadingResourceMissingKey() {
         assertNull("getCascadingResource not using resources.properties properly", //$NON-NLS-1$
                 testTheme.getCascadingResource("this_is_not_a_valid_key")); //$NON-NLS-1$
     }
 
     @Test
-    public void testGetCascadingResource_missingResourcesFile() throws URISyntaxException {
+    public void testGetCascadingResourceMissingResourcesFile() throws URISyntaxException {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
                 .toURI().getPath());
@@ -97,7 +97,7 @@ public class BrandingThemeTest {
     }
 
     @Test
-    public void testGetCascadingResource_missingResourcesProperty() throws URISyntaxException {
+    public void testGetCascadingResourceMissingResourcesProperty() throws URISyntaxException {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
                 .toURI().getPath());

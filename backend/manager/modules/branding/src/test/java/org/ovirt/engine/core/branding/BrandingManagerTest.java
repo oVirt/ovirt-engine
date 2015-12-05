@@ -131,7 +131,7 @@ public class BrandingManagerTest {
      * Test that looking for a not-defined (in resources.properties) resource returns null.
      */
     @Test
-    public void testGetCascadedResource_NotDefinedNotFound() {
+    public void testGetCascadedResourceNotDefinedNotFound() {
         // resources for this are hardcoded in test/resources.
         assertNull("getCascadedResource should have returned null",
                 testManager.getCascadingResource("i_am_not_in_branding_properties")); // not in any theme
@@ -141,7 +141,7 @@ public class BrandingManagerTest {
      * Test that looking for a not-defined (in resources.properties) resource returns null.
      */
     @Test
-    public void testGetCascadedResource_DefinedButNotFound() {
+    public void testGetCascadedResourceDefinedButNotFound() {
         // resources for this are hardcoded in test/resources.
         assertNull("getCascadedResource should have returned null",
                 testManager.getCascadingResource("doesnt_exist")); // exists is themes 1 and 2, but file is missing
