@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.searchbackend;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SyntaxCheckerFactoryTest {
+
+    @ClassRule
+    public static MockConfigRule mcr =
+            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.SearchResultsLimit, 100));
 
     @Test
     public void createUISyntaxChecker() {
@@ -33,13 +34,5 @@ public class SyntaxCheckerFactoryTest {
         Assert.assertNotNull(checker);
         Assert.assertEquals(checker, SyntaxCheckerFactory.createADSyntaxChecker("foo"));
         Assert.assertEquals("foo", SyntaxCheckerFactory.getConfigAuthenticationMethod());
-    }
-
-    @Before
-    public void setUp() {
-        final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Mockito.when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn(100);
-        Config.setConfigUtils(configUtils);
     }
 }
