@@ -341,7 +341,7 @@ public class AsyncDataProvider {
 
         callback.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return (source != null) ? (Map<Version, Map<String, String>>) source
                         : new HashMap<Version, Map<String, String>>();
             }
@@ -369,7 +369,7 @@ public class AsyncDataProvider {
             AsyncQuery aQuery, StoragePool storagePool, List<StorageDomain> storageDomains) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source == null ?
                         new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
             }
@@ -385,7 +385,7 @@ public class AsyncDataProvider {
             List<StorageDomain> storageDomains, StorageServerConnections storageServerConnection, Guid vdsId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source == null ?
                         new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
             }
@@ -597,7 +597,7 @@ public class AsyncDataProvider {
     public static void isFloppySupported(AsyncQuery aQuery, Integer osId, Version version) {
         aQuery.converterCallback = new IAsyncConverter<Boolean>() {
             @Override
-            public Boolean Convert(Object source, AsyncQuery _asyncQuery) {
+            public Boolean convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (Boolean) source : Boolean.FALSE;
             }
         };
@@ -609,7 +609,7 @@ public class AsyncDataProvider {
     public void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     for (StorageDomain domain : storageDomains) {
@@ -630,7 +630,7 @@ public class AsyncDataProvider {
     public void getExportDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                 for (StorageDomain domain : storageDomains) {
                     if (domain.getStorageDomainType() == StorageDomainType.ImportExport) {
@@ -727,7 +727,7 @@ public class AsyncDataProvider {
     public void getHostArchitecture(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter<ArchitectureType>() {
             @Override
-            public ArchitectureType Convert(Object source, AsyncQuery _asyncQuery) {
+            public ArchitectureType convert(Object source, AsyncQuery _asyncQuery) {
                 return (ArchitectureType) source;
             }
         };
@@ -737,7 +737,7 @@ public class AsyncDataProvider {
     public void getClusterById(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -747,7 +747,7 @@ public class AsyncDataProvider {
     public void getClusterListByName(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VDSGroup>();
                 }
@@ -762,7 +762,7 @@ public class AsyncDataProvider {
     public void getAuthzGroupsByUserId(AsyncQuery aQuery, Guid userId) {
         aQuery.converterCallback = new IAsyncConverter<List<AuthzGroup>>() {
             @Override
-            public List<AuthzGroup> Convert(Object source, AsyncQuery _asyncQuery) {
+            public List<AuthzGroup> convert(Object source, AsyncQuery _asyncQuery) {
                 return (List<AuthzGroup>) source;
             }
         };
@@ -772,7 +772,7 @@ public class AsyncDataProvider {
     public void getPoolById(AsyncQuery aQuery, Guid poolId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -782,7 +782,7 @@ public class AsyncDataProvider {
     public void getVmById(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -792,7 +792,7 @@ public class AsyncDataProvider {
     public void getVmNextRunConfiguration(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -811,7 +811,7 @@ public class AsyncDataProvider {
     public void getDataCenterList(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<StoragePool>();
                 }
@@ -827,7 +827,7 @@ public class AsyncDataProvider {
             boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<StoragePool>();
                 }
@@ -849,7 +849,7 @@ public class AsyncDataProvider {
     public void getDataCenterListByName(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<StoragePool>();
                 }
@@ -864,7 +864,7 @@ public class AsyncDataProvider {
     public void getSpiceUsbAutoShare(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Boolean) source).booleanValue() : true;
             }
         };
@@ -877,7 +877,7 @@ public class AsyncDataProvider {
     public void getWANColorDepth(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? WanColorDepth.fromInt(((Integer) source).intValue()) : WanColorDepth.depth16;
             }
         };
@@ -889,7 +889,7 @@ public class AsyncDataProvider {
     public void getWANDisableEffects(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<WanDisableEffects>();
                 }
@@ -922,7 +922,7 @@ public class AsyncDataProvider {
     public void getMaxVmsInPool(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1000;
             }
         };
@@ -934,7 +934,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfVmSockets(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -947,7 +947,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfVmCpus(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -960,7 +960,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfCPUsPerSocket(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -973,7 +973,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfThreadsPerCpu(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -986,7 +986,7 @@ public class AsyncDataProvider {
     public void getClusterList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new NameableComparator());
@@ -1026,7 +1026,7 @@ public class AsyncDataProvider {
             final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VDSGroup>();
                 }
@@ -1042,7 +1042,7 @@ public class AsyncDataProvider {
     public void isSoundcardEnabled(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return !((List<?>) source).isEmpty();
                 }
@@ -1056,7 +1056,7 @@ public class AsyncDataProvider {
     public void isVirtioScsiEnabledForVm(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return !((List<?>) source).isEmpty();
                 }
@@ -1072,7 +1072,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDSGroup> list =
                             getClusterByServiceList((ArrayList<VDSGroup>) source,
@@ -1094,7 +1094,7 @@ public class AsyncDataProvider {
     public void getClusterList(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new NameableComparator());
@@ -1110,7 +1110,7 @@ public class AsyncDataProvider {
     public void getTemplateDiskList(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<DiskImage>();
                 }
@@ -1163,7 +1163,7 @@ public class AsyncDataProvider {
     public void getTemplateListByStorage(AsyncQuery aQuery, Guid storageId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<VmTemplate> list = new ArrayList<>();
                 if (source != null) {
                     for (VmTemplate template : (ArrayList<VmTemplate>) source) {
@@ -1200,7 +1200,7 @@ public class AsyncDataProvider {
     public void getNumOfMonitorList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<Integer> nums = new ArrayList<>();
                 if (source != null) {
                     Iterable numEnumerable = (Iterable) source;
@@ -1221,7 +1221,7 @@ public class AsyncDataProvider {
     public void getStorageDomainList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<StorageDomain>();
                 }
@@ -1236,7 +1236,7 @@ public class AsyncDataProvider {
     public void getMaxVmPriority(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return 100;
                 }
@@ -1253,7 +1253,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1263,7 +1263,7 @@ public class AsyncDataProvider {
     public void getHostListByCluster(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDS> list = Linq.<VDS> cast((List<IVdcQueryable>) source);
                     return list;
@@ -1283,7 +1283,7 @@ public class AsyncDataProvider {
     public void getHostListByDataCenter(AsyncQuery aQuery, Guid spId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return Linq.<VDS> cast((List<?>) source);
                 }
@@ -1305,7 +1305,7 @@ public class AsyncDataProvider {
     public void getVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return source;
                 }
@@ -1329,7 +1329,7 @@ public class AsyncDataProvider {
     public void getAAANamespaces(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (HashMap<String, List<String>>) source : new HashMap<String, List<String>>();
             }
         };
@@ -1340,7 +1340,7 @@ public class AsyncDataProvider {
     public void getAAAProfilesEntriesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (Collection<ProfileEntry>) source : new ArrayList<ProfileEntry>();
             }
         };
@@ -1350,7 +1350,7 @@ public class AsyncDataProvider {
     public void getRoleList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Role>) source : new ArrayList<Role>();
             }
         };
@@ -1360,7 +1360,7 @@ public class AsyncDataProvider {
     public void getStorageDomainById(AsyncQuery aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (StorageDomain) source : null;
             }
         };
@@ -1372,7 +1372,7 @@ public class AsyncDataProvider {
     public void getStorageDomainByName(AsyncQuery aQuery, String storageDomainName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1415,7 +1415,7 @@ public class AsyncDataProvider {
         if (aQuery.converterCallback == null) {
             aQuery.converterCallback = new IAsyncConverter() {
                 @Override
-                public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                public Object convert(Object source, AsyncQuery _asyncQuery) {
                     if (source == null) {
                         return new ArrayList<Network>();
                     }
@@ -1431,7 +1431,7 @@ public class AsyncDataProvider {
         query.converterCallback = new IAsyncConverter<List<NetworkQoS>>() {
 
             @Override
-            public List<NetworkQoS> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public List<NetworkQoS> convert(Object returnValue, AsyncQuery asyncQuery) {
                 List<NetworkQoS> qosList = returnValue == null ? new ArrayList<NetworkQoS>() : (List<NetworkQoS>) returnValue;
                 qosList.add(0, NetworkQoSModel.EMPTY_QOS);
                 return qosList;
@@ -1444,7 +1444,7 @@ public class AsyncDataProvider {
         query.converterCallback = new IAsyncConverter<List<HostNetworkQos>>() {
 
             @Override
-            public List<HostNetworkQos> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public List<HostNetworkQos> convert(Object returnValue, AsyncQuery asyncQuery) {
                 List<HostNetworkQos> qosList =
                         (returnValue == null) ? new ArrayList<HostNetworkQos>() : (List<HostNetworkQos>) returnValue;
                 qosList.add(0, NetworkModel.EMPTY_HOST_NETWORK_QOS);
@@ -1459,7 +1459,7 @@ public class AsyncDataProvider {
     public void getDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1470,7 +1470,7 @@ public class AsyncDataProvider {
     public void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery query) {
         query.converterCallback = new IAsyncConverter<SortedSet<String>>() {
             @Override
-            public SortedSet<String> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public SortedSet<String> convert(Object returnValue, AsyncQuery asyncQuery) {
                 SortedSet<String> sortedSet = new TreeSet<>(new LexoNumericComparator());
                 sortedSet.addAll((Collection<String>) returnValue);
                 return sortedSet;
@@ -1488,7 +1488,7 @@ public class AsyncDataProvider {
     public void getTemplateById(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1498,7 +1498,7 @@ public class AsyncDataProvider {
     public void countAllTemplates(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1520,7 +1520,7 @@ public class AsyncDataProvider {
     public void getHostListByStatus(AsyncQuery aQuery, VDSStatus status, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDS> list = Linq.<VDS> cast((Iterable) source);
                     return list;
@@ -1539,7 +1539,7 @@ public class AsyncDataProvider {
     public void getHostsForStorageOperation(AsyncQuery aQuery, Guid storagePoolId, boolean localFsOnly) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return source;
                 }
@@ -1568,7 +1568,7 @@ public class AsyncDataProvider {
         }
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<GlusterVolumeEntity> list =
                             (ArrayList<GlusterVolumeEntity>) source;
@@ -1596,7 +1596,7 @@ public class AsyncDataProvider {
     public void getHostFingerprint(AsyncQuery aQuery, String hostAddress) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
@@ -1606,7 +1606,7 @@ public class AsyncDataProvider {
     public void getHostPublicKey(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
@@ -1624,7 +1624,7 @@ public class AsyncDataProvider {
     public void getClusterGlusterServices(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1647,7 +1647,7 @@ public class AsyncDataProvider {
     public void getGlusterHostsNewlyAdded(AsyncQuery aQuery, Guid clusterId, boolean isFingerprintRequired) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1659,7 +1659,7 @@ public class AsyncDataProvider {
     public void isAnyHostUpInCluster(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null && !((List<?>) source).isEmpty()) {
                     return true;
                 }
@@ -1672,7 +1672,7 @@ public class AsyncDataProvider {
     public void getGlusterHooks(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterHookEntity>();
             }
         };
@@ -1682,7 +1682,7 @@ public class AsyncDataProvider {
     public void getGlusterBricksForServer(AsyncQuery aQuery, Guid serverId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterBrickEntity>();
             }
         };
@@ -1692,7 +1692,7 @@ public class AsyncDataProvider {
     public void getGlusterVolumeGeoRepStatusForMasterVolume(AsyncQuery aQuery, Guid masterVolumeId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterGeoRepSession>();
             }
         };
@@ -1704,7 +1704,7 @@ public class AsyncDataProvider {
             Guid slaveVolumeId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
                 return returnValue == null ? new ArrayList<GlusterGeoRepNonEligibilityReason>()
                         : (List<GlusterGeoRepNonEligibilityReason>) returnValue;
             }
@@ -1717,7 +1717,7 @@ public class AsyncDataProvider {
     public void getGlusterVolumeSnapshotsForVolume(AsyncQuery aQuery, Guid volumeId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterVolumeSnapshotEntity>();
             }
         };
@@ -1727,7 +1727,7 @@ public class AsyncDataProvider {
     public void getVolumeSnapshotSchedule(AsyncQuery aQuery, Guid volumeId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 return source;
             }
         };
@@ -1739,7 +1739,7 @@ public class AsyncDataProvider {
     public void getIsGlusterVolumeSnapshotCliScheduleEnabled(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 return source;
             }
         };
@@ -1751,7 +1751,7 @@ public class AsyncDataProvider {
     public void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -1764,7 +1764,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : ""; //$NON-NLS-1$
             }
         };
@@ -1776,7 +1776,7 @@ public class AsyncDataProvider {
     public void getGlusterSwiftServices(AsyncQuery aQuery, Guid serverId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterServerService>();
             }
         };
@@ -1788,7 +1788,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     List<GlusterClusterService> serviceList = (List<GlusterClusterService>) source;
                     if (!serviceList.isEmpty()) {
@@ -1810,7 +1810,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : new ArrayList<GlusterServerService>();
             }
         };
@@ -1849,7 +1849,7 @@ public class AsyncDataProvider {
     public void getUserMessageOfTheDayViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
@@ -1862,7 +1862,7 @@ public class AsyncDataProvider {
     public void getSearchResultsLimit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 100;
             }
         };
@@ -1879,7 +1879,7 @@ public class AsyncDataProvider {
     public void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Permission>) source
                         : new ArrayList<Permission>();
             }
@@ -1892,7 +1892,7 @@ public class AsyncDataProvider {
     public void getRoleActionGroupsByRoleId(AsyncQuery aQuery, Guid roleId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<ActionGroup>) source
                         : new ArrayList<ActionGroup>();
             }
@@ -1905,7 +1905,7 @@ public class AsyncDataProvider {
     public void isTemplateNameUnique(AsyncQuery aQuery, String templateName, Guid datacenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
@@ -1919,7 +1919,7 @@ public class AsyncDataProvider {
     public void isVmNameUnique(AsyncQuery aQuery, String name, Guid datacenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
@@ -1932,7 +1932,7 @@ public class AsyncDataProvider {
             final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<StoragePool>();
                 }
@@ -1955,7 +1955,7 @@ public class AsyncDataProvider {
             final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
@@ -1973,7 +1973,7 @@ public class AsyncDataProvider {
     public void getClustersHavingHosts(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new NameableComparator());
@@ -1997,7 +1997,7 @@ public class AsyncDataProvider {
     public void getStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (StorageServerConnections) source : null;
             }
         };
@@ -2009,7 +2009,7 @@ public class AsyncDataProvider {
     public void getDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<StoragePool>) source : null;
             }
         };
@@ -2021,7 +2021,7 @@ public class AsyncDataProvider {
     public void getDataCenterVersions(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<Version>();
                 }
@@ -2039,7 +2039,7 @@ public class AsyncDataProvider {
     public void getDataCenterMaxNameLength(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -2052,7 +2052,7 @@ public class AsyncDataProvider {
     public void getClusterServerMemoryOverCommit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
@@ -2065,7 +2065,7 @@ public class AsyncDataProvider {
     public void getClusterDesktopMemoryOverCommit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
@@ -2078,7 +2078,7 @@ public class AsyncDataProvider {
     public void getAllowClusterWithVirtGlusterEnabled(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : Boolean.TRUE;
             }
         };
@@ -2091,7 +2091,7 @@ public class AsyncDataProvider {
     public void getCPUList(AsyncQuery aQuery, Version version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<ServerCpu>) source : new ArrayList<ServerCpu>();
             }
         };
@@ -2103,7 +2103,7 @@ public class AsyncDataProvider {
     public void getPmTypeList(AsyncQuery aQuery, Version version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<String> list = new ArrayList<>();
                 if (source != null) {
                     String[] array = ((String) source).split("[,]", -1); //$NON-NLS-1$
@@ -2122,7 +2122,7 @@ public class AsyncDataProvider {
     public void getPmOptions(AsyncQuery aQuery, String pmType, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 String pmtype = (String) _asyncQuery.data[0];
                 HashMap<String, ArrayList<String>> cachedPmMap = new HashMap<>();
                 HashMap<String, HashMap<String, Object>> dict =
@@ -2145,7 +2145,7 @@ public class AsyncDataProvider {
     public void getNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Network>) source : new ArrayList<Network>();
             }
         };
@@ -2156,7 +2156,7 @@ public class AsyncDataProvider {
     public void getISOStorageDomainList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<StorageDomain> allStorageDomains =
                             (ArrayList<StorageDomain>) source;
@@ -2181,7 +2181,7 @@ public class AsyncDataProvider {
     public void getStorageDomainList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<StorageDomain>) source
                         : new ArrayList<StorageDomain>();
             }
@@ -2196,7 +2196,7 @@ public class AsyncDataProvider {
     public void getLocalStorageHost(AsyncQuery aQuery, String dataCenterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     for (IVdcQueryable item : (List<IVdcQueryable>) source) {
                         return item;
@@ -2212,7 +2212,7 @@ public class AsyncDataProvider {
     public void getStorageDomainsByConnection(AsyncQuery aQuery, Guid storagePoolId, String connectionPath) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<StorageDomain>) source : null;
             }
         };
@@ -2233,7 +2233,7 @@ public class AsyncDataProvider {
             String path) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<StorageDomain>) source : null;
             }
         };
@@ -2247,7 +2247,7 @@ public class AsyncDataProvider {
     public void getStorageDomainMaxNameLength(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 1;
             }
         };
@@ -2260,7 +2260,7 @@ public class AsyncDataProvider {
     public void isStorageDomainNameUnique(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     return storageDomains.isEmpty();
@@ -2276,7 +2276,7 @@ public class AsyncDataProvider {
     public void getNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 120;
             }
         };
@@ -2289,7 +2289,7 @@ public class AsyncDataProvider {
     public void getMaxSpmPriority(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
@@ -2305,7 +2305,7 @@ public class AsyncDataProvider {
     public void getDefaultSpmPriority(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Integer) source).intValue() : 0;
             }
         };
@@ -2328,7 +2328,7 @@ public class AsyncDataProvider {
     public void getRootTag(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     Tags tag = (Tags) source;
 
@@ -2354,7 +2354,7 @@ public class AsyncDataProvider {
     private void setAttachedTagsConverter(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<Tags> ret = new ArrayList<>();
                     for (Tags tags : (ArrayList<Tags>) source) {
@@ -2397,7 +2397,7 @@ public class AsyncDataProvider {
     public void getoVirtISOsList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? new ArrayList<>((ArrayList<RpmVersion>) source) : new ArrayList<RpmVersion>();
             }
         };
@@ -2407,7 +2407,7 @@ public class AsyncDataProvider {
     public void getLunsByVgId(AsyncQuery aQuery, String vgId, Guid vdsId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<LUNs>) source : new ArrayList<LUNs>();
             }
         };
@@ -2418,7 +2418,7 @@ public class AsyncDataProvider {
     public void getAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : new HashMap<VmTemplate, ArrayList<DiskImage>>();
             }
         };
@@ -2430,7 +2430,7 @@ public class AsyncDataProvider {
     public void getUpHostListByCluster(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? source : Collections.emptyList();
             }
         };
@@ -2449,7 +2449,7 @@ public class AsyncDataProvider {
     public void getVmNicList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
                         : new ArrayList<VmNetworkInterface>();
             }
@@ -2461,7 +2461,7 @@ public class AsyncDataProvider {
     public void getTemplateNicList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? new ArrayList<>((ArrayList<VmNetworkInterface>) source)
                         : new ArrayList<VmNetworkInterface>();
             }
@@ -2473,7 +2473,7 @@ public class AsyncDataProvider {
     public void getVmSnapshotList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Snapshot>) source : new ArrayList<Snapshot>();
             }
         };
@@ -2484,7 +2484,7 @@ public class AsyncDataProvider {
     public void getVmsRunningOnOrMigratingToVds(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VM>();
                 }
@@ -2501,7 +2501,7 @@ public class AsyncDataProvider {
             String url, String username, String password) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VM>();
                 }
@@ -2525,7 +2525,7 @@ public class AsyncDataProvider {
     public void getVmDiskList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<Disk> list = new ArrayList<>();
                 if (source != null) {
                     Iterable listEnumerable = (Iterable) source;
@@ -2544,7 +2544,7 @@ public class AsyncDataProvider {
     public void getVmList(AsyncQuery aQuery, String poolName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
                 return vms;
             }
@@ -2555,7 +2555,7 @@ public class AsyncDataProvider {
     public void getVmListByClusterName(AsyncQuery aQuery, String clusterName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
                 return vms;
             }
@@ -2567,7 +2567,7 @@ public class AsyncDataProvider {
     public void getDiskList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<DiskImage>) source : new ArrayList<DiskImage>();
             }
         };
@@ -2581,7 +2581,7 @@ public class AsyncDataProvider {
     public void getNextAvailableDiskAliasNameByVMId(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -2594,7 +2594,7 @@ public class AsyncDataProvider {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     return !(Boolean) source;
                 }
@@ -2610,7 +2610,7 @@ public class AsyncDataProvider {
     public void getVmConfigurationBySnapshot(AsyncQuery aQuery, Guid snapshotSourceId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (VM) source : null;
             }
         };
@@ -2622,7 +2622,7 @@ public class AsyncDataProvider {
     public void getAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
             }
         };
@@ -2634,7 +2634,7 @@ public class AsyncDataProvider {
     public void getFilteredAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId, int os, Version compatibilityVersion) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
             }
         };
@@ -2648,7 +2648,7 @@ public class AsyncDataProvider {
     public void getAncestorImagesByImagesIds(AsyncQuery aQuery, List<Guid> imagesIds) {
         aQuery.converterCallback = new IAsyncConverter<Map<Guid, DiskImage>>() {
             @Override
-            public Map<Guid, DiskImage> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public Map<Guid, DiskImage> convert(Object returnValue, AsyncQuery asyncQuery) {
                 return (Map<Guid, DiskImage>) returnValue;
             }
         };
@@ -2661,7 +2661,7 @@ public class AsyncDataProvider {
             ActionGroup actionGroup) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new java.util.ArrayList<StorageDomain>();
                 }
@@ -2679,7 +2679,7 @@ public class AsyncDataProvider {
 
     public void getStorageDomainDefaultWipeAfterDelete(AsyncQuery aQuery, StorageType storageType) {
         aQuery.converterCallback = new IAsyncConverter<Boolean>() {
-            @Override public Boolean Convert(Object returnValue, AsyncQuery asyncQuery) {
+            @Override public Boolean convert(Object returnValue, AsyncQuery asyncQuery) {
                 return (Boolean) returnValue;
             }
         };
@@ -2705,7 +2705,7 @@ public class AsyncDataProvider {
                                                                          StorageType storageType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -2719,7 +2719,7 @@ public class AsyncDataProvider {
             final Version cluster, final Version dc) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 cachedCommandsCompatibilityVersions = (HashMap<VdcActionType, CommandVersionsInfo>) source;
                 return isCommandCompatible(vdcActionType, cluster, dc);
             }
@@ -2764,7 +2764,7 @@ public class AsyncDataProvider {
     private void cacheConfigValues(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object returnValue, AsyncQuery _asyncQuery) {
+            public Object convert(Object returnValue, AsyncQuery _asyncQuery) {
                 if (returnValue != null) {
                     cachedConfigValuesPreConvert.putAll((HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>) returnValue);
                 }
@@ -2815,7 +2815,7 @@ public class AsyncDataProvider {
 
         KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
 
-        return converter.Convert(cachedConfigValuesPreConvert.get(key), null);
+        return converter.convert(cachedConfigValuesPreConvert.get(key), null);
     }
 
     /**
@@ -2844,7 +2844,7 @@ public class AsyncDataProvider {
 
             // run converter
             if (aQuery.converterCallback != null) {
-                returnValue = aQuery.converterCallback.Convert(returnValue, aQuery);
+                returnValue = aQuery.converterCallback.convert(returnValue, aQuery);
             }
             if (returnValue != null) {
                 cachedConfigValues.put(config_key, returnValue);
@@ -2882,7 +2882,7 @@ public class AsyncDataProvider {
     private static class TemplateConverter implements IAsyncConverter {
 
         @Override
-        public Object Convert(Object source, AsyncQuery asyncQuery) {
+        public Object convert(Object source, AsyncQuery asyncQuery) {
             List<VmTemplate> list = new ArrayList<>();
             if (source != null) {
                 VmTemplate blankTemplate = null;
@@ -3024,7 +3024,7 @@ public class AsyncDataProvider {
     private void getVlanParentInterface(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -3035,7 +3035,7 @@ public class AsyncDataProvider {
     private void interfaceHasSiblingVlanInterfaces(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 ArrayList<VdsNetworkInterface> siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
                 return !siblingVlanInterfaces.isEmpty();
             }
@@ -3051,7 +3051,7 @@ public class AsyncDataProvider {
                                                    String searchFilter) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VDS>();
                 }
@@ -3070,7 +3070,7 @@ public class AsyncDataProvider {
     public void getExternalProviderDiscoveredHostList(AsyncQuery aQuery, Provider provider) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<ExternalDiscoveredHost>();
                 }
@@ -3085,7 +3085,7 @@ public class AsyncDataProvider {
     public void getExternalProviderHostGroupList(AsyncQuery aQuery, Provider provider) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<ExternalHostGroup>();
                 }
@@ -3101,7 +3101,7 @@ public class AsyncDataProvider {
     public void getExternalProviderComputeResourceList(AsyncQuery aQuery, Provider provider) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<ExternalComputeResource>();
                 }
@@ -3121,7 +3121,7 @@ public class AsyncDataProvider {
     public void getAllProviders(AsyncQuery aQuery, boolean doRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<Provider>();
                 }
@@ -3136,7 +3136,7 @@ public class AsyncDataProvider {
     public void getAllErrata(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<Erratum>();
                 }
@@ -3149,7 +3149,7 @@ public class AsyncDataProvider {
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
         query.converterCallback = new IAsyncConverter<List<Provider>>() {
             @Override
-            public List<Provider> Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public List<Provider> convert(Object returnValue, AsyncQuery asyncQuery) {
                 if (returnValue == null) {
                     return new ArrayList<>();
                 }
@@ -3169,7 +3169,7 @@ public class AsyncDataProvider {
     public void getAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<Provider>();
                 }
@@ -3182,7 +3182,7 @@ public class AsyncDataProvider {
     public void getProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return Collections.<CertificateInfo> emptyList();
                 }
@@ -3209,7 +3209,7 @@ public class AsyncDataProvider {
     public void isSupportBridgesReportByVDSM(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? ((Boolean) source).booleanValue() : true;
             }
         };
@@ -3699,7 +3699,7 @@ public class AsyncDataProvider {
     public void getVmGuestAgentInterfacesByVmId(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VmGuestAgentInterface>();
                 }
@@ -3713,7 +3713,7 @@ public class AsyncDataProvider {
     public void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VnicProfileView>();
                 }
@@ -3728,7 +3728,7 @@ public class AsyncDataProvider {
         if (aQuery.converterCallback == null) {
             aQuery.converterCallback = new IAsyncConverter() {
                 @Override
-                public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                public Object convert(Object source, AsyncQuery _asyncQuery) {
                     if (source == null) {
                         return new ArrayList<VnicProfileView>();
                     }
@@ -3744,7 +3744,7 @@ public class AsyncDataProvider {
         if (aQuery.converterCallback == null) {
             aQuery.converterCallback = new IAsyncConverter() {
                 @Override
-                public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                public Object convert(Object source, AsyncQuery _asyncQuery) {
                     if (source == null) {
                         return Integer.valueOf(0);
                     }
@@ -3809,7 +3809,7 @@ public class AsyncDataProvider {
     public void getExternalNetworkMap(AsyncQuery aQuery, Guid providerId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
                     return new HashMap<Network, Set<Guid>>();
                 }
@@ -4005,7 +4005,7 @@ public class AsyncDataProvider {
     private static void convertAAAProfilesResult(AsyncQuery aQuery, final boolean passwordBasedOnly) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 List<String> results = new ArrayList<>();
                 for (ProfileEntry profileEntry : (Collection<ProfileEntry>) source) {
                     if (!passwordBasedOnly || profileEntry.getSupportsPasswordAuthenication()) {
@@ -4021,7 +4021,7 @@ public class AsyncDataProvider {
         asyncQuery.converterCallback = new IAsyncConverter() {
 
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VdsNumaNode>();
                 }
@@ -4037,7 +4037,7 @@ public class AsyncDataProvider {
         asyncQuery.converterCallback = new IAsyncConverter() {
 
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VM>();
                 }
@@ -4060,7 +4060,7 @@ public class AsyncDataProvider {
     public void getEmulatedMachinesByClusterID(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<VDS> vdsList = Linq.<VDS> cast((List<IVdcQueryable>) source);
                     Set<String> emulatedMachineList = new HashSet<>();
@@ -4083,7 +4083,7 @@ public class AsyncDataProvider {
     public void getSupportedCpuList(AsyncQuery aQuery, String cpuName) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
                     ArrayList<ServerCpu> cpuList = Linq.<ServerCpu> cast((ArrayList<ServerCpu>) source);
                     return cpuList;
@@ -4100,7 +4100,7 @@ public class AsyncDataProvider {
     public void getStorageDevices(AsyncQuery aQuery, Guid hostId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -4115,14 +4115,14 @@ public class AsyncDataProvider {
 
     private static class AsIsAsyncConverter implements IAsyncConverter {
         @Override
-        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+        public Object convert(Object source, AsyncQuery _asyncQuery) {
             return source;
         }
     }
 
     private static class ListAsyncConverter implements IAsyncConverter {
         @Override
-        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+        public Object convert(Object source, AsyncQuery _asyncQuery) {
             return source != null ? source : new ArrayList();
         }
     }
@@ -4130,7 +4130,7 @@ public class AsyncDataProvider {
     public void getUnusedBricksFromServer(AsyncQuery asyncQuery, Guid hostId) {
         asyncQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source;
             }
         };
@@ -4141,7 +4141,7 @@ public class AsyncDataProvider {
     public void getCinderVolumeTypesList(AsyncQuery aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new IAsyncConverter<List<CinderVolumeType>>() {
             @Override
-            public List<CinderVolumeType> Convert(Object source, AsyncQuery _asyncQuery) {
+            public List<CinderVolumeType> convert(Object source, AsyncQuery _asyncQuery) {
                 return (List<CinderVolumeType>) source;
             }
         };
@@ -4151,7 +4151,7 @@ public class AsyncDataProvider {
     public void getClusterFeaturesByVersionAndCategory(AsyncQuery aQuery, Version version, ApplicationMode category) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (Set<AdditionalFeature>) source
                         : new HashSet<AdditionalFeature>();
             }
@@ -4164,7 +4164,7 @@ public class AsyncDataProvider {
     public void getClusterFeaturesByClusterId(AsyncQuery aQuery, Guid clusterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (Set<SupportedAdditionalClusterFeature>) source
                         : new HashSet<SupportedAdditionalClusterFeature>();
             }
@@ -4176,7 +4176,7 @@ public class AsyncDataProvider {
 
     private static class RepoImageToImageFileNameAsyncConverter implements IAsyncConverter {
         @Override
-        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+        public Object convert(Object source, AsyncQuery _asyncQuery) {
             if (source != null) {
                 ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                 ArrayList<String> fileNameList = new ArrayList<>();
@@ -4205,7 +4205,7 @@ public class AsyncDataProvider {
         asyncQuery.converterCallback = new IAsyncConverter() {
 
             @Override
-            public Object Convert(Object source, AsyncQuery asyncQuery) {
+            public Object convert(Object source, AsyncQuery asyncQuery) {
                 if (source == null) {
                     return new ArrayList<VmTemplate>();
                 }

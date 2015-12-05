@@ -28,7 +28,7 @@ public abstract class ProfileBehavior {
         profilesQuery.converterCallback = new IAsyncConverter() {
 
             @Override
-            public Object Convert(Object returnValue, AsyncQuery asyncQuery) {
+            public Object convert(Object returnValue, AsyncQuery asyncQuery) {
                 List<Network> clusterNetworks = (ArrayList<Network>) asyncQuery.getModel();
 
                 ProfileBehavior.this.clusterNetworks = clusterNetworks;

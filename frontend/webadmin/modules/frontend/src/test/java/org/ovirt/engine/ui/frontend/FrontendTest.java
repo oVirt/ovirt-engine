@@ -434,7 +434,7 @@ public class FrontendTest {
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setReturnValue(mockResultModel);
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
-        when(mockConverter.Convert(mockResultModel, mockAsyncQuery)).thenReturn(mockConvertedModel);
+        when(mockConverter.convert(mockResultModel, mockAsyncQuery)).thenReturn(mockConvertedModel);
         // Return value set to success
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);

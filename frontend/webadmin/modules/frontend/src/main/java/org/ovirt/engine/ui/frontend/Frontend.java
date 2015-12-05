@@ -263,7 +263,7 @@ public class Frontend implements HasHandlers {
                         callback.setOriginalReturnValue(result);
                         if (callback.getConverter() != null) {
                             callback.getDel().onSuccess(callback.getModel(),
-                                    callback.getConverter().Convert(result.getReturnValue(), callback));
+                                    callback.getConverter().convert(result.getReturnValue(), callback));
                         } else {
                             callback.getDel().onSuccess(callback.getModel(), result);
                         }
