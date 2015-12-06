@@ -12,7 +12,53 @@
     <suppress checks="UncommentedMain" files="Notifier.java"/>
     <suppress checks="UncommentedMain" files="Tar.java"/>
     <suppress checks="UncommentedMain" files="TestCommon.java"/>
+
+    <!-- X86_64 is a great name, despite not upholding the Java conventions -->
     <suppress checks="TypeName" files="X86_64Strategy.java"/>
+    <suppress checks="MethodName" files="ArchCommand.java"/>
+
+    <!-- Test method names of the format someMethod_someInput() -->
+    <suppress checks="MethodName" files="DocsServletTest.java"/>
+    <suppress checks="MethodName" files="FileServletTest.java"/>
+    <suppress checks="MethodName" files="ServletUtilsTest.java"/>
+    <suppress checks="MethodName" files="VmAnalyzerTest.java"/>
+    <suppress checks="MethodName" files="GeoRepCreateEligibilityBaseTest.java"/>
+    <suppress checks="MethodName" files="ConfigureConsoleOptionsQueryTest.java"/>
+    <suppress checks="MethodName" files="AddAffinityGroupCommandTest.java"/>
+    <suppress checks="MethodName" files="EditAffinityGroupCommandTest.java"/>
+    <suppress checks="MethodName" files="FrontendTest.java"/>
+    <suppress checks="MethodName" files="FrontendActionTest.java"/>
+    <suppress checks="MethodName" files="GWTRPCCommunicationProviderTest.java"/>
+    <suppress checks="MethodName" files="WebAdminHostPageServletTest.java"/>
+    <suppress checks="MethodName" files="OperationProcessorTest.java"/>
+    <suppress checks="MethodName" files="AbstractGwtDynamicHostPageServletTest.java"/>
+    <suppress checks="MethodName" files="GwtCachingFilterTest.java"/>
+    <suppress checks="MethodName" files="ErrorTranslatorTest.java"/>
+    <suppress checks="MethodName" files="PoolNameLengthValidationTest.java"/>
+    <suppress checks="MethodName" files="ExistingPoolNameLengthValidationTest.java"/>
+    <suppress checks="MethodName" files="ClientStorageImplTest.java"/>
+    <suppress checks="MethodName" files="AddOnlyRingBufferTest.java"/>
+    <suppress checks="MethodName" files="BaseElementIdHandlerTest.java"/>
+    <suppress checks="MethodName" files="ElementIdStatementTest.java"/>
+    <suppress checks="MethodName" files="ElementIdTypeParserTest.java"/>
+
+    <!-- Resource classes with their own conventions -->
+    <suppress checks="MethodName" files="AppErrors.java"/>
+    <suppress checks="MethodName" files="ConsoleErrors.java"/>
+    <suppress checks="MethodName" files="VdsmErrors.java"/>
+    <suppress checks="MethodName" files="CommonApplicationConstants.java"/>
+    <suppress checks="MethodName" files="ApplicationConstants.java"/>
+    <suppress checks="MethodName" files="CommonApplicationResources.java"/>
+    <suppress checks="MethodName" files="ApplicationResources.java"/>
+    <suppress checks="MethodName" files="ApplicationResourcesWithLookup.java"/>
+
+    <!-- Other GWT-related classes -->
+    <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]uicommonweb[\\/]models[\\/].*.java"/>
+    <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]common[\\/]widget[\\/].*.java"/>
+    <suppress checks="MethodName" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]webadmin[\\/]section[\\/]main[\\/]view[\\/].*.java"/>
+    <suppress checks="MethodName" files="SideTabWithDetailsViewStyle.java"/>
+
+
     <!-- Most of the classes in the authentication package aren't used in the
          GWT client, and those that are used have special versions or custom
          field serializers to overcome the GWT serialization limitations. All

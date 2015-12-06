@@ -49,5 +49,6 @@
       <property name="sortStaticImportsAlphabetically" value="true"/>
     </module>
     <module name="TypeName" />
+    <module name="MethodName" />
   </module>
 </module>
