@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -87,7 +88,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
         commandBase.getParameters().setImagesParameters(parameters);
     }
 
-    private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds) {
+    private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
         if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown
                 || !commandBase.getParameters().getShouldBeEndedByParent()) {
 
@@ -97,12 +98,14 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown) {
                 CommandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
             }
+
+            ExecutionHandler.endJob(commandBase.getExecutionContext(), succeeded);
         }
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        endAction(getCommand(cmdId), childCmdIds);
+        endAction(getCommand(cmdId), childCmdIds, true);
     }
 
     @Override
@@ -110,7 +113,7 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
         CommandBase<?> commandBase = getCommand(cmdId);
         // This should be removed as soon as infra bug will be fixed and failed execution will reach endWithFailure
         commandBase.getParameters().setTaskGroupSuccess(false);
-        endAction(commandBase, childCmdIds);
+        endAction(commandBase, childCmdIds, false);
     }
 
     protected CommandBase<?> getCommand(Guid cmdId) {

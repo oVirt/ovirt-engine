@@ -58,6 +58,8 @@ public class VdcActionParametersBase implements Serializable {
 
     private boolean shouldBeEndedByParent = true;
 
+    private boolean useCinderCommandCallback;
+
     /**
      * A cross system identifier of the executed action
      */
@@ -285,6 +287,14 @@ public class VdcActionParametersBase implements Serializable {
 
     public void setLifeInMinutes(Integer lifeInMinutes) {
         this.lifeInMinutes = lifeInMinutes;
+    }
+
+    public boolean isUseCinderCommandCallback() {
+        return useCinderCommandCallback;
+    }
+
+    public void setUseCinderCommandCallback(boolean useCinderCommandCallback) {
+        this.useCinderCommandCallback = useCinderCommandCallback;
     }
 
     /**

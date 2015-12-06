@@ -69,6 +69,10 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase implements
         return _masterVm;
     }
 
+    public void setMasterVm(VmStatic value) {
+        _masterVm = value;
+    }
+
     public String getName() {
         return _name;
     }
