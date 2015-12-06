@@ -27,6 +27,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -63,8 +65,8 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>> bondingModeEditor;
 
     @UiField
-    @Path(value = "customBondEditor.entity")
-    StringEntityModelTextBoxEditor customBondEditor;
+    @Ignore
+    StringEntityModelTextBoxEditor customEditor;
 
     @UiField(provided = true)
     EnumRadioEditor<NetworkBootProtocol> bootProtocol;
@@ -154,7 +156,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         bondEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
-        customBondEditor.setLabel(constants.customModeHostPopup() + ":"); //$NON-NLS-1$
+        customEditor.setLabel(constants.customModeHostPopup() + ":"); //$NON-NLS-1$
         bootProtocolLabel.setLabel(constants.bootProtocolHostPopup() + ":"); //$NON-NLS-1$
         bootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
@@ -201,6 +203,18 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
                 updateBondOptions(list);
             }
         });
+
+        customEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                for (Map.Entry<String, EntityModel<String>> pair : object.getBondingOptions().getItems()) {
+                    if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
+                        pair.getValue().setEntity(event.getValue());
+                    }
+                }
+            }
+        });
+
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
     }
@@ -222,11 +236,11 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     private void updateBondOptions(ListModel<Map.Entry<String, EntityModel<String>>> list) {
         Map.Entry<String, EntityModel<String>> pair = list.getSelectedItem();
         if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
-            customBondEditor.setVisible(true);
+            customEditor.setVisible(true);
             String entity = pair.getValue().getEntity();
-            customBondEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
+            customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
         } else {
-            customBondEditor.setVisible(false);
+            customEditor.setVisible(false);
         }
     }
 

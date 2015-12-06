@@ -20,15 +20,11 @@ import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class HostBondInterfaceModel extends Model {
-
-    public static final String CUSTOM_BONDING_MODE = "custom"; //$NON-NLS-1$
 
     private SortedListModel<String> privateBond;
 
@@ -154,16 +150,6 @@ public class HostBondInterfaceModel extends Model {
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
-    private EntityModel<String> customBondEditor;
-
-    public EntityModel<String> getCustomBondEditor() {
-        return customBondEditor;
-    }
-
-    private void setCustomBondEditor(EntityModel<String> customBondEditor) {
-        this.customBondEditor = customBondEditor;
-    }
-
     public HostBondInterfaceModel() {
         this(false);
     }
@@ -189,17 +175,7 @@ public class HostBondInterfaceModel extends Model {
         EntityModel<Boolean> tempVar = new EntityModel<>();
         tempVar.setEntity(false);
         setCommitChanges(tempVar);
-        setCustomBondEditor(new EntityModel<String>());
-        getCustomBondEditor().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                final String customBondValue = ((EntityModel<String>) sender).getEntity();
-                Map.Entry<String, EntityModel<String>> selectedItem = getBondingOptions().getSelectedItem();
-                if (selectedItem.getKey().equals(CUSTOM_BONDING_MODE)) {
-                    selectedItem.getValue().setEntity(customBondValue);
-                }
-            }
-        });
+
         getNetwork().getSelectedItemChangedEvent().addListener(this);
 
         // call the Network_ValueChanged method to set all
@@ -252,11 +228,7 @@ public class HostBondInterfaceModel extends Model {
             getGateway().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
         }
 
-        if (getBondingOptions().getSelectedItem().getKey().equals(CUSTOM_BONDING_MODE)) {
-            getCustomBondEditor().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        }
-
         return getBond().getIsValid() && getNetwork().getIsValid() && getAddress().getIsValid()
-                && getSubnet().getIsValid() && getGateway().getIsValid() && getCustomBondEditor().getIsValid();
+                && getSubnet().getIsValid() && getGateway().getIsValid();
     }
 }
