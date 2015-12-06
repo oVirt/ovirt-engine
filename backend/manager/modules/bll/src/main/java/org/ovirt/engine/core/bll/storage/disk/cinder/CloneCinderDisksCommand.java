@@ -81,16 +81,6 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
     }
 
     @Override
-    protected void endSuccessfully() {
-        if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-        }
-        setSucceeded(true);
-    }
-
-    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
     }

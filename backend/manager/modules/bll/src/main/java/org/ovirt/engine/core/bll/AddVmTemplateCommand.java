@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -112,6 +113,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private VmTemplate cachedBaseTemplate;
     private Guid vmSnapshotId;
+    private List<CinderDisk> cinderDisks;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -164,6 +166,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
+        parameters.setUseCinderCommandCallback(!getCinderDisks().isEmpty());
     }
 
     protected void separateCustomProperties(VmStatic parameterMasterVm) {
@@ -588,7 +591,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(images);
+            List<CinderDisk> cinderDisks = getCinderDisks();
             CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisks);
             if (!validate(cinderDisksValidator.validateCinderDiskLimits())) {
                 return false;
@@ -789,7 +792,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected boolean addVmTemplateCinderDisks(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+        List<CinderDisk> cinderDisks = getCinderDisks();
         if (cinderDisks.isEmpty()) {
             return true;
         }
@@ -1106,4 +1109,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return schedulerUtil;
     }
 
+    private List<CinderDisk> getCinderDisks() {
+        if (cinderDisks == null) {
+            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(images);
+        }
+        return cinderDisks;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
 }
