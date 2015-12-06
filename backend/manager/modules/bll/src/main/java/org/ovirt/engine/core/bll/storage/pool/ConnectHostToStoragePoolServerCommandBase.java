@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage;
+package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.FCPStorageHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;

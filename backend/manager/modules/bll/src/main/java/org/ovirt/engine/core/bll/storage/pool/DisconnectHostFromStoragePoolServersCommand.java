@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage;
+package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.HashMap;
 import java.util.List;
