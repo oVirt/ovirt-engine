@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -176,10 +176,11 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {
-        return ListUtils.firstMatch(
-                Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
-                        getParameters().getVdsGroup().getCompatibilityVersion().getValue()),
-                vds.getSupportedEmulatedMachines().split(","));
+        Set<String> emulatedMachinesLookup =
+                new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
+        return Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
+                        getParameters().getVdsGroup().getCompatibilityVersion().getValue())
+                .stream().filter(emulatedMachinesLookup::contains).findFirst().orElse(null);
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {

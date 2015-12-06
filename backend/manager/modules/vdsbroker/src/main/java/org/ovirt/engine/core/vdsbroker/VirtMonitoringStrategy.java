@@ -2,8 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -13,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -174,16 +175,19 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     private boolean hostEmulationModeMatchesTheConfigValues(VDS vds) {
         // match this host against the config flags by order
         String matchedEmulatedMachine =
-                ListUtils.firstMatch(
-                        Config.<List<String>> getValue(ConfigValues.ClusterEmulatedMachines,
-                                vds.getVdsGroupCompatibilityVersion().getValue()),
-                        vds.getSupportedEmulatedMachines().split(","));
+                Config.<List<String>> getValue(ConfigValues.ClusterEmulatedMachines,
+                        vds.getVdsGroupCompatibilityVersion().getValue())
+                .stream().filter(getSupportedEmulatedMachinesAsSet(vds)::contains).findFirst().orElse(null);
 
         if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
             setClusterEmulatedMachine(vds, matchedEmulatedMachine);
             return true;
         }
         return false;
+    }
+
+    private static Set<String> getSupportedEmulatedMachinesAsSet(VDS vds) {
+        return new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
     }
 
     private void setClusterEmulatedMachine(VDS vds, String matchedEmulatedMachine) {

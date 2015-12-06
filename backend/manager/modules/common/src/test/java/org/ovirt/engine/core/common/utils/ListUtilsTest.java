@@ -77,13 +77,4 @@ public class ListUtilsTest {
         assertTrue(addedElements.size() == 1);
         assertTrue(addedElements.contains("string4"));
     }
-
-    @Test
-    public void testFirstMatch() {
-        List<String> source = Arrays.asList("zero", "one", "two ", "three");
-
-        Assert.assertEquals("one", ListUtils.firstMatch(source, "one", "two"));
-        Assert.assertEquals("one", ListUtils.firstMatch(source, "two", "one"));
-        Assert.assertEquals(null, ListUtils.firstMatch(source, (String[]) null));
-    }
 }
