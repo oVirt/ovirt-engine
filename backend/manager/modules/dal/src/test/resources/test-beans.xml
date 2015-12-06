@@ -9,7 +9,8 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.ovirt.engine"/>
+    <context:component-scan base-package="org.ovirt.engine.core.dal"/>
+    <context:component-scan base-package="org.ovirt.engine.core.dao"/>
     <context:annotation-config/>
 
     <bean id="dbFacadeLocator" class="org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator"/>

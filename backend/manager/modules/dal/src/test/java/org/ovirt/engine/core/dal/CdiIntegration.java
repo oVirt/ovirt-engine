@@ -1,4 +1,4 @@
-package org.ovirt.engine.core;
+package org.ovirt.engine.core.dal;
 
 import java.lang.annotation.Annotation;
 import java.util.Iterator;
