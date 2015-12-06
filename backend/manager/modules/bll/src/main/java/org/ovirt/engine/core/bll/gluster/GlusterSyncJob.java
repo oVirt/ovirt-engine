@@ -651,10 +651,6 @@ public class GlusterSyncJob extends GlusterJob {
     private void updateTransportTypes(GlusterVolumeEntity existingVolume, GlusterVolumeEntity fetchedVolume) {
         Set<TransportType> existingTransportTypes = existingVolume.getTransportTypes();
         Set<TransportType> fetchedTransportTypes = fetchedVolume.getTransportTypes();
-        if (ListUtils.listsEqual(existingTransportTypes, fetchedTransportTypes)) {
-            // transport types not changed. return without updating DB.
-            return;
-        }
 
         Collection<TransportType> addedTransportTypes =
                 ListUtils.getAddedElements(existingTransportTypes, fetchedTransportTypes);
