@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -9,10 +11,15 @@ import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 @NonTransactiveCommandAttribute
 public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNetworksParameters> extends VdsCommand<T> {
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     public PersistentHostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -49,13 +56,15 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
 
         VdcReturnValueBase returnValue =
                 runInternalAction(VdcActionType.HostSetupNetworks, getParameters(), cloneContextAndDetachFromParent());
-        boolean changesDetected = checkForChanges();
-        if (returnValue.getSucceeded() && changesDetected) {
-            VdsActionParameters parameters = new VdsActionParameters(getParameters().getVdsId());
-            parameters.setShouldBeLogged(false);
-            parameters.setCorrelationId(getCorrelationId());
-            returnValue = runInternalAction(VdcActionType.CommitNetworkChanges,
-                    parameters, cloneContextAndDetachFromParent());
+        if (returnValue.getSucceeded()) {
+            boolean changesDetected = checkForChanges();
+            if (changesDetected) {
+                VdsActionParameters parameters = new VdsActionParameters(getParameters().getVdsId());
+                parameters.setShouldBeLogged(false);
+                parameters.setCorrelationId(getCorrelationId());
+                returnValue = runInternalAction(VdcActionType.CommitNetworkChanges,
+                        parameters, cloneContextAndDetachFromParent());
+            }
         }
 
         if (!returnValue.getSucceeded()) {
@@ -66,8 +75,9 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
     }
 
     private boolean checkForChanges() {
-        boolean output = getVdsDynamicDao().get(getVdsId()).getNetConfigDirty();
-        return output;
+        final VdsDynamic host = vdsDynamicDao.get(getVdsId());
+        final Boolean netConfigDirty = host.getNetConfigDirty();
+        return !Boolean.FALSE.equals(netConfigDirty);
     }
 
     @Override
