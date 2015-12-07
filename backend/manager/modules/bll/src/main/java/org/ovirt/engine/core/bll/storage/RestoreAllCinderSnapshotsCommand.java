@@ -129,20 +129,18 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
     protected void endSuccessfully() {
         removeRedundantVolumesForOrphanedDisks();
         if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            unlockSnapshot(getParameters().getSnapshot().getId());
+            super.endSuccessfully();
         }
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
         removeRedundantVolumesForOrphanedDisks();
         if (!getParameters().isParentHasTasks()) {
-            getParameters().getParentParameters().setTaskGroupSuccess(false);
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    cloneContextAndDetachFromParent());
+            unlockSnapshot(getParameters().getSnapshot().getId());
+            super.endWithFailure();
         }
         setSucceeded(true);
     }

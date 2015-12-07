@@ -594,4 +594,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected Snapshot getActiveSnapshot() {
         return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
     }
+
+    protected void unlockSnapshot(Guid snapshotId) {
+        // if we got here, the target snapshot exists for sure
+        getSnapshotDao().updateStatus(snapshotId, Snapshot.SnapshotStatus.OK);
+    }
 }

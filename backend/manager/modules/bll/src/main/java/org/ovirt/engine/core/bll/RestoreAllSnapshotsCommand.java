@@ -645,9 +645,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected void endVmCommand() {
-        // if we got here, the target snapshot exists for sure
-        getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);
-
+        unlockSnapshot(getParameters().getSnapshotId());
         super.endVmCommand();
     }
 }
