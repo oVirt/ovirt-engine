@@ -80,6 +80,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
             if (snapshot != null) {
                 setSnapshotName(snapshot.getDescription());
+                getParameters().setUseCinderCommandCallback(
+                        !ImagesHandler.filterDisksBasedOnCinder(getSourceImages()).isEmpty());
             }
         }
         setStoragePoolId(getVm().getStoragePoolId());
@@ -510,6 +512,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     public CommandCallback getCallback() {
-        return getVm().isQualifiedForLiveSnapshotMerge() ? new RemoveSnapshotCommandCallback() : null;
+        if (getVm().isQualifiedForLiveSnapshotMerge()) {
+            return new RemoveSnapshotCommandCallback();
+        } else if (getParameters().isUseCinderCommandCallback()) {
+            return new ConcurrentChildCommandsExecutionCallback();
+        }
+        return null;
     }
 }

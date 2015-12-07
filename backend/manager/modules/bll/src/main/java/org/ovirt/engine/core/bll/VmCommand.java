@@ -271,6 +271,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void endActionOnDisks() {
+        if (getParameters().isUseCinderCommandCallback()) {
+            // No need to explicitly invoke endAction as CoCo should handle it.
+            return;
+        }
         for (VdcActionParametersBase p : getParametersForChildCommand()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
