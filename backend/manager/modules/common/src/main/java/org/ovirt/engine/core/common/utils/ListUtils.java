@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,26 +32,5 @@ public class ListUtils {
         }
 
         return true;
-    }
-
-    /**
-     * Returns a collection of elements that are not present in <code>oldList</code>, but present in
-     * <code>newList</code>
-     *
-     * @param oldCollection
-     * @param newCollection
-     * @return collection of elements that are not present in <code>oldList</code>, but present in <code>newList</code>
-     */
-    public static <T> Collection<T> getAddedElements(Collection<T> oldCollection, Collection<T> newCollection) {
-        // Use set instead of the passed collection, so that complexity of contains method is o(1),
-        // reducing the overall complexity of the for loop from o(n^2) to o(n)
-        Set<T> old = oldCollection instanceof Set ? (Set<T>) oldCollection : new HashSet<>(oldCollection);
-        List<T> addedElements = new ArrayList<>();
-        for (T element : newCollection) {
-            if (!old.contains(element)) {
-                addedElements.add(element);
-            }
-        }
-        return addedElements;
     }
 }

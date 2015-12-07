@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -653,7 +653,7 @@ public class GlusterSyncJob extends GlusterJob {
         Set<TransportType> fetchedTransportTypes = fetchedVolume.getTransportTypes();
 
         Collection<TransportType> addedTransportTypes =
-                ListUtils.getAddedElements(existingTransportTypes, fetchedTransportTypes);
+                CollectionUtils.subtract(fetchedTransportTypes, existingTransportTypes);
         if (!addedTransportTypes.isEmpty()) {
             log.info("Adding transport type(s) '{}' to volume '{}'",
                     addedTransportTypes,
@@ -662,7 +662,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         Collection<TransportType> removedTransportTypes =
-                ListUtils.getAddedElements(fetchedTransportTypes, existingTransportTypes);
+                CollectionUtils.subtract(existingTransportTypes, fetchedTransportTypes);
         if (!removedTransportTypes.isEmpty()) {
             log.info("Removing transport type(s) '{}' from volume '{}'",
                     removedTransportTypes,
