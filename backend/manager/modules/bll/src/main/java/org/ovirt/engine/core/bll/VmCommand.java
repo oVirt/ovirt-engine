@@ -560,4 +560,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
     }
 
+    protected void unlockSnapshot(Guid snapshotId) {
+        // if we got here, the target snapshot exists for sure
+        getSnapshotDao().updateStatus(snapshotId, Snapshot.SnapshotStatus.OK);
+    }
 }
