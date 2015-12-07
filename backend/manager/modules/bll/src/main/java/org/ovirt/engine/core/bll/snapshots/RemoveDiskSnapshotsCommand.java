@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -89,6 +90,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         setImage(representativeImage);
         setStorageDomainId(representativeImage.getStorageIds().get(0));
+        getParameters().setUseCinderCommandCallback(!ImagesHandler.filterDisksBasedOnCinder(getImages()).isEmpty());
 
         if (!Guid.isNullOrEmpty(getParameters().getContainerId())) {
             setVmId(getParameters().getContainerId());
@@ -249,9 +251,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
         if (isLiveMerge()) {
             return new RemoveDiskSnapshotsCommandCallback();
-        } else {
-            return null;
+        } else if (getParameters().isUseCinderCommandCallback()) {
+            return new ConcurrentChildCommandsExecutionCallback();
         }
+        return null;
     }
 
     private boolean isLiveMerge() {

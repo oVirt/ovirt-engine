@@ -55,23 +55,6 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
     }
 
     @Override
-    protected void endWithFailure() {
-        // End with failure for Cinder disks will be fully compatible with RemoveSnapshotCommand, once Remove Snapshot
-        // command will be supported with coco.
-        if (!getParameters().isParentHasTasks()) {
-            getParameters().getParentParameters().setTaskGroupSuccess(false);
-            getBackend().endAction(getParameters().getParentCommand(), getParameters().getParentParameters(), null);
-        }
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        if (!getParameters().isParentHasTasks() && getParameters().isInvokeEndActionOnParent()) {
-            getBackend().endAction(getParameters().getParentCommand(), getParameters().getParentParameters(), null);
-        }
-    }
-
-    @Override
     public CommandCallback getCallback() {
         return new RemoveAllCinderDisksCommandCallBack<>();
     }
