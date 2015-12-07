@@ -345,6 +345,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public int getVramMultiplier(int osId) {
+        return getInt(getValueByVersion(idToUnameLookup.get(osId), "devices.display.vramMultiplier", null), 0);
+    }
+
+    @Override
     public Map<Integer, Map<Version, Boolean>> getBalloonSupportMap() {
         Map<Integer, Map<Version, Boolean>> balloonSupportMap = new HashMap<>();
         Set<Version> versionsWithNull = new HashSet<>(Version.ALL);

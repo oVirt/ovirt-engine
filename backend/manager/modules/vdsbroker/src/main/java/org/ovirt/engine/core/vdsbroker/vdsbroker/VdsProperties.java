@@ -213,6 +213,12 @@ public final class VdsProperties {
     public static final String iso_list = "isolist";
     public static final String file_stats = "fileStats";
 
+    // Video device properties
+    public static final String VIDEO_HEADS = "heads";
+    public static final String VIDEO_RAM = "ram";
+    public static final String VIDEO_VRAM = "vram";
+    public static final String VIDEO_VGAMEM = "vgamem";
+
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
     public static final String maxMemSize = "maxMemSize";
