@@ -196,7 +196,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private RemoveAllVmCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks) {
         RemoveAllVmCinderDisksParameters createParams = new RemoveAllVmCinderDisksParameters();
         createParams.setCinderDisks(cinderDisks);
-        createParams.setParentHasTasks(isContainImages());
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
         return createParams;

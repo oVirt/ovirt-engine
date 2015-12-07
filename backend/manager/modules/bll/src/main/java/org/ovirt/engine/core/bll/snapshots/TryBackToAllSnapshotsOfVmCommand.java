@@ -266,7 +266,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         CloneCinderDisksParameters createParams = new CloneCinderDisksParameters();
         createParams.setCinderDisks(cinderDisks);
         createParams.setVmSnapshotId(newSnapshotId);
-        createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
         return withRootCommandInfo(createParams);
     }
 
