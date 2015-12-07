@@ -347,7 +347,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         CreateCinderSnapshotParameters createParams =
                 new CreateCinderSnapshotParameters(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
-        createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
         createParams.setSnapshotType(getParameters().getSnapshotType());

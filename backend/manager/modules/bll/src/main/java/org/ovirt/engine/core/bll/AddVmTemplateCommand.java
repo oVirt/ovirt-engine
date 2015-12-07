@@ -257,7 +257,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
         CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
-        createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
         return withRootCommandInfo(createParams, getActionType());
     }
 

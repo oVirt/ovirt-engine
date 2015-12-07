@@ -14,7 +14,6 @@ public class CloneCinderDisksParameters extends VdcActionParametersBase implemen
     private List<CinderDisk> cinderDisks;
     private Guid vmSnapshotId;
     private Map<Guid, ? extends DiskImage> disksMap;
-    private boolean parentHasTasks;
 
     public CloneCinderDisksParameters() {
     }
@@ -47,13 +46,5 @@ public class CloneCinderDisksParameters extends VdcActionParametersBase implemen
 
     public void setDisksMap(Map<Guid, ? extends DiskImage> disksMap) {
         this.disksMap = disksMap;
-    }
-
-    public boolean isParentHasTasks() {
-        return parentHasTasks;
-    }
-
-    public void setParentHasTasks(boolean parentHasTasks) {
-        this.parentHasTasks = parentHasTasks;
     }
 }

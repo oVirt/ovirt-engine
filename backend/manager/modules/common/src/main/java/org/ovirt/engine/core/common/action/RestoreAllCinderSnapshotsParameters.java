@@ -9,11 +9,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RestoreAllCinderSnapshotsParameters extends VmOperationParameterBase implements Serializable {
 
-    private boolean parentHasTasks;
     private Guid imageId;
     private Snapshot snapshot;
     private Guid removedSnapshotId;
     private boolean privateForceDelete;
+    private boolean parentHasTasks;
     private List<CinderDisk> cinderDisksToRestore;
     private List<CinderDisk> cinderDisksToRemove;
     private List<CinderDisk> cinderVolumesToRemove;
@@ -64,14 +64,6 @@ public class RestoreAllCinderSnapshotsParameters extends VmOperationParameterBas
         privateForceDelete = value;
     }
 
-    public boolean isParentHasTasks() {
-        return parentHasTasks;
-    }
-
-    public void setParentHasTasks(boolean parentHasTasks) {
-        this.parentHasTasks = parentHasTasks;
-    }
-
     public Guid getImageId() {
         return imageId;
     }
@@ -94,5 +86,13 @@ public class RestoreAllCinderSnapshotsParameters extends VmOperationParameterBas
 
     public void setRemovedSnapshotId(Guid removedSnapshotId) {
         this.removedSnapshotId = removedSnapshotId;
+    }
+
+    public boolean isParentHasTasks() {
+        return parentHasTasks;
+    }
+
+    public void setParentHasTasks(boolean parentHasTasks) {
+        this.parentHasTasks = parentHasTasks;
     }
 }

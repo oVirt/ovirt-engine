@@ -8,7 +8,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveAllVmCinderDisksParameters extends VmOperationParameterBase implements Serializable {
 
-    private boolean parentHasTasks;
     private boolean invokeEndActionOnParent = true;
 
     public List<CinderDisk> cinderDisks;
@@ -30,14 +29,6 @@ public class RemoveAllVmCinderDisksParameters extends VmOperationParameterBase i
 
     public void setForceDelete(boolean value) {
         privateForceDelete = value;
-    }
-
-    public boolean isParentHasTasks() {
-        return parentHasTasks;
-    }
-
-    public void setParentHasTasks(boolean parentHasTasks) {
-        this.parentHasTasks = parentHasTasks;
     }
 
     public List<CinderDisk> getCinderDisks() {
