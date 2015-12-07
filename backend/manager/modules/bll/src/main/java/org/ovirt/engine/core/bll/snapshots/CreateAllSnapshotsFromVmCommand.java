@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -106,6 +108,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
 
+    @Override
+    public void init() {
+        getParameters().setUseCinderCommandCallback(isCinderDisksExist());
+    }
 
     @Override
     public Map<String, String> getJobMessageProperties() {
@@ -115,7 +121,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
         return jobProperties;
     }
-
 
     private List<DiskImage> getDiskImagesForVm() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
@@ -399,7 +404,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             log.info("There are still running CoCo tasks");
             return;
         }
-        Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+        Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), determineSnapshotType(), SnapshotStatus.LOCKED);
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure
         boolean taskGroupSucceeded = createdSnapshot != null && getParameters().getTaskGroupSuccess();
@@ -812,4 +817,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
 }

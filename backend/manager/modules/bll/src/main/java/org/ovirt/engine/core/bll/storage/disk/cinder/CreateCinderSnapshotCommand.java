@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -115,12 +114,6 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             getImageDao().update(getDestinationDiskImage().getImage());
         }
-        if (!getParameters().isParentHasTasks() &&
-                CommandCoordinatorUtil.getChildCommandIds(getParentParameters().getCommandId()).size() == 1) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutLock());
-        }
         setSucceeded(true);
     }
 
@@ -134,12 +127,6 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         super.endWithFailure();
         if (getParameters().getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
             updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true);
-        }
-        if (!getParameters().isParentHasTasks()) {
-            getParameters().getParentParameters().setTaskGroupSuccess(false);
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutLock());
         }
     }
 
