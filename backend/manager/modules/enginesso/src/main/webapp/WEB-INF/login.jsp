@@ -58,7 +58,7 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="username">User Name</label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="username" name="username" class="form-control" autofocus tabIndex="1">
+                                        <input type="text" id="username" name="username" placeholder="User Name" class="form-control" autofocus tabIndex="1">
                                      </div>
                                 </div>
                                 <div class="form-group">
