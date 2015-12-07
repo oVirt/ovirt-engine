@@ -78,16 +78,6 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         return removeDiskParams;
     }
 
-    @Override
-    protected void endSuccessfully() {
-        if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-        }
-        endVmCommand();
-    }
-
     private List<CinderDisk> getCinderDisksToBeRemoved() {
         List<CinderDisk> imageDisks = getParameters().cinderDisks;
         List<CinderDisk> cinderDisks = new ArrayList<>();

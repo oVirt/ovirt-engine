@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -66,6 +67,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Inject
     private VmIconDao vmIconDao;
+
+    private List<CinderDisk> cinderDisks;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -199,6 +202,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         VmHandler.updateDisksFromDb(getVm());
+        getParameters().setUseCinderCommandCallback(getParameters().isRemoveDisks() && !getCinderDisks().isEmpty());
 
         if (!getParameters().isRemoveDisks() && !canRemoveVmWithDetachDisks()) {
             return false;
@@ -355,8 +359,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private Collection<CinderDisk> removeCinderDisks() {
         Collection<CinderDisk> failedRemoveCinderDisks = null;
         if (getParameters().isRemoveDisks()) {
-            List<CinderDisk> cinderDisks =
-                    ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+            List<CinderDisk> cinderDisks = getCinderDisks();
             if (cinderDisks.isEmpty()) {
                 return Collections.emptyList();
             }
@@ -375,6 +378,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
         return failedRemoveCinderDisks;
+    }
+
+    private List<CinderDisk> getCinderDisks() {
+        if (cinderDisks == null) {
+            cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+        }
+        return cinderDisks;
     }
 
     @Override
@@ -474,4 +484,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
 }
