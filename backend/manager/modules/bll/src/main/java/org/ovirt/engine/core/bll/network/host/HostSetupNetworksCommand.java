@@ -729,7 +729,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     false,
                     userConfiguredNetworkData);
 
-                getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
+                getVdsDynamicDao().updateNetConfigDirty(updatedHost.getId(), updatedHost.getNetConfigDirty());
 
                 // Update cluster networks (i.e. check if need to activate each new network)
                 for (Network net : getModifiedNetworks()) {
