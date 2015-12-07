@@ -118,11 +118,6 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             getImageDao().update(getDestinationDiskImage().getImage());
         }
-        if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-        }
         setSucceeded(true);
     }
 

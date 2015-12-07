@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -70,6 +71,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     public TryBackToAllSnapshotsOfVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+    }
+
+    @Override
+    public void init() {
+        // No need to filter the images for partial preview as being done in the execute phase since the callback can
+        // also support no child commands, this should be changed once all commands will facilitate the CoCo
+        // infrastructure.
+        getParameters().setUseCinderCommandCallback(
+                !ImagesHandler.filterDisksBasedOnCinder(getImagesToPreview()).isEmpty());
     }
 
     @Override
@@ -409,4 +419,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return super.getSnapshotName();
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+    }
 }

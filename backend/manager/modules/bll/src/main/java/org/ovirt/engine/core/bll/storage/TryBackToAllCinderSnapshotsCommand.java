@@ -85,28 +85,7 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
 
     @Override
     public CommandCallback getCallback() {
-        return new CloneCinderDisksCommandCallback();
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        if (!getParameters().isParentHasTasks()) {
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    cloneContextAndDetachFromParent());
-        }
-        setSucceeded(true);
-    }
-
-    @Override
-    protected void endWithFailure() {
-        if (!getParameters().isParentHasTasks()) {
-            getParameters().getParentParameters().setTaskGroupSuccess(false);
-            getBackend().endAction(getParameters().getParentCommand(),
-                    getParameters().getParentParameters(),
-                    cloneContextAndDetachFromParent());
-        }
-        setSucceeded(true);
+        return new CloneCinderDisksCommandCallback<>();
     }
 
     @Override
