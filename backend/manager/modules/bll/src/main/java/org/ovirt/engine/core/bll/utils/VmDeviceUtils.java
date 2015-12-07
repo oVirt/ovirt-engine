@@ -44,9 +44,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
-    private final static String RAM = "ram";
-    private final static String VRAM = "vram";
-    private final static String HEADS = "heads";
+
     private final static String EHCI_MODEL = "ich9-ehci";
     private final static String UHCI_MODEL = "ich9-uhci";
     private final static int SLOTS_PER_CONTROLLER = 6;
@@ -551,8 +549,9 @@ public class VmDeviceUtils {
         boolean numOfMonitorsChanged = newVmBase.getDefaultDisplayType() == DisplayType.qxl &&
                 oldVmBase.getNumOfMonitors() != newVmBase.getNumOfMonitors();
         boolean singleQxlChanged = oldVmBase.getSingleQxlPci() != newVmBase.getSingleQxlPci();
+        boolean guestOsChanged = oldVmBase.getOsId() != newVmBase.getOsId();
 
-        if (displayTypeChanged || numOfMonitorsChanged || singleQxlChanged) {
+        if (displayTypeChanged || numOfMonitorsChanged || singleQxlChanged || guestOsChanged) {
             removeVideoDevices(oldVmBase.getId());
             addVideoDevices(newVmBase, getNeededNumberOfVideoDevices(newVmBase));
         }
@@ -587,28 +586,10 @@ public class VmDeviceUtils {
      * Returns video device spec params.
      *
      * @param vmBase
-     * @return
+     * @return a map of device parameters
      */
     private static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
-        return getVideoDeviceSpecParams(vmBase.getNumOfMonitors(), vmBase.getSingleQxlPci());
-    }
-
-    /**
-     * Returns video device spec params.
-     *
-     * @param numOfMonitors number of monitors
-     * @param singleQxlPci
-     * @return
-     */
-    private static Map<String, Object> getVideoDeviceSpecParams(int numOfMonitors, boolean singleQxlPci) {
-        int heads = singleQxlPci ? numOfMonitors : 1;
-        Map<String, Object> specParams = new HashMap<>();
-        specParams.put(HEADS, String.valueOf(heads));
-        specParams.put(VRAM, VmDeviceCommonUtils.singlePciVRamByHeads(heads));
-        if (singleQxlPci) {
-            specParams.put(RAM, VmDeviceCommonUtils.singlePciRamByHeads(heads));
-        }
-        return specParams;
+        return VideoDeviceSettings.getVideoDeviceSpecParams(vmBase);
     }
 
     /**

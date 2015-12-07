@@ -54,6 +54,7 @@ void devices() : {} {
     "devices" <DOT>
     (
       ("display.protocols" displayValue())
+    | ("display.vramMultiplier" intValue())
     | ("watchdog.models" watchdogValue())
     | ("network" networkValue())
     | ("network.hotplugSupport" booleanValue())

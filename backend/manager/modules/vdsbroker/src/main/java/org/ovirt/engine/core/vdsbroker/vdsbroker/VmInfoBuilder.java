@@ -12,7 +12,6 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -1014,17 +1013,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (managedDevices != null) {
             managedDevices.add(vmDevice);
         }
-    }
-
-    private static HashMap<String, Object> getNewMonitorSpecParams(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
-        HashMap<String, Object> specParams = new HashMap<String, Object>();
-        specParams.put("vram", String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM));
-        specParams.put("heads", String.valueOf(numOfMonitors));
-        specParams.put("vram", VmDeviceCommonUtils.singlePciVRamByHeads(numOfMonitors));
-        if (displayType == DisplayType.qxl && singleQxlPci) {
-            specParams.put("ram", VmDeviceCommonUtils.singlePciRamByHeads(numOfMonitors));
-        }
-        return specParams;
     }
 
     private void buildVmUsbControllers() {

@@ -24,21 +24,9 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VmDeviceCommonUtils {
 
-    public final static long LOW_VIDEO_MEM = 32768;
-    public final static long HIGH_VIDEO_MEM = 65536;
-
     final static String NETWORK_CHAR = "N";
     final static String CDROM_CHAR = "D";
     final static String DRIVE_CHAR = "C";
-
-    public static String singlePciRamByHeads(int heads) {
-        return String.valueOf(HIGH_VIDEO_MEM * heads);
-    }
-
-    public static String singlePciVRamByHeads(int heads) {
-        // for now we return the low memory for vram
-        return String.valueOf(LOW_VIDEO_MEM);
-    }
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;

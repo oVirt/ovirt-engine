@@ -100,6 +100,11 @@ public interface OsRepository {
      */
     public Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays();
 
+     /**
+      * @return Multiplier to apply in `vram' video RAM parameter computation.  0 to use default `vram' value.
+     */
+    public int getVramMultiplier(int osId);
+
     /**
      * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and
      * compatibility versions
