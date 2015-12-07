@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoveCinderDiskCommandCallback<T extends RemoveCinderDiskCommand<? extends RemoveCinderDiskParameters>> extends AbstractCinderDiskCommandCallback<T> {
+public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentCommand<? extends RemoveCinderDiskParameters>> extends AbstractCinderDiskCommandCallback<T> {
     private static final Logger log = LoggerFactory.getLogger(RemoveCinderDiskCommandCallback.class);
 
     @Override
@@ -61,7 +61,7 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderDiskCommand<?
                 int removedVolumeIndex = getCommand().getParameters().getRemovedVolumeIndex();
                 removedVolumeIndex++;
                 getCommand().getParameters().setRemovedVolumeIndex(removedVolumeIndex);
-                getCommand().removeCinderVolume(removedVolumeIndex);
+                getCommand().removeCinderVolume(removedVolumeIndex, getDisk().getStorageIds().get(0));
             }
         }
     }
