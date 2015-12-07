@@ -87,7 +87,7 @@ public class DisksAllocationModel extends EntityModel {
                 public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     DiskImage disk = (DiskImage) diskModel.getDisk();
                     if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
-                            && !disk.getStorageIds().isEmpty()) {
+                            && !disk.getStorageIds().isEmpty() && !diskModel.getStorageDomain().getItems().isEmpty()) {
                         diskModel.getStorageDomain().setSelectedItem(Linq.firstOrDefault(
                                 diskModel.getStorageDomain().getItems(),
                                 new Linq.IdsPredicate<>(disk.getStorageIds()),
