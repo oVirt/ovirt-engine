@@ -887,6 +887,10 @@ public abstract class OvfReader implements IOvfBuilder {
                 String diskStorageType = node.attributes.get("ovf:disk_storage_type").getValue();
                 if (diskStorageType != null && diskStorageType.equals(DiskStorageType.CINDER.name())) {
                     disk = new CinderDisk();
+                    if (node.attributes.get("ovf:cinder_volume_type") != null) {
+                        String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
+                        disk.setCinderVolumeType(cinderVolumeType);
+                    }
                 }
             }
             disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
