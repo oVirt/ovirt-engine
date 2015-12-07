@@ -81,20 +81,12 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
             throw new EngineException(EngineError.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
 
-        Disk defBootDisk = null;
-        for(Disk disk : getVmDisks()) {
-            if(disk.isBoot()) {
-                defBootDisk = disk;
-                break;
-            }
-        }
+        Disk defBootDisk = getVmDisks().stream().filter(Disk::isBoot).findFirst().orElse(null);
 
         if (defBootDisk != null) {
-            for (Disk disk : getVmDisks()) {
-                if (!disk.equals(defBootDisk))
-                    disk.setBoot(false);
-            }
+            getVmDisks().stream().filter(disk -> !disk.equals(defBootDisk)).forEach(disk -> disk.setBoot(false));
         }
+
         return (!disks.isEmpty()) ? concreteAddVmImages(((DiskImage) disks.get(0)).getImageId()) : true;
     }
 
