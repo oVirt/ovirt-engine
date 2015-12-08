@@ -22,12 +22,6 @@ public class AddInternalStepCommand <T extends AddStepParameters> extends AddSte
         super(parameters, cmdContext);
     }
 
-
-    @Override
-    protected boolean canDoAction() {
-        return super.canDoAction();
-    }
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.

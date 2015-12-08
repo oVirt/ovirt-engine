@@ -44,11 +44,6 @@ public class AllQosBaseDaoImpl extends QosBaseDaoImpl<QosBase> implements QosBas
         public final static AllQosBaseDaoFacadaeImplMapper MAPPER = new AllQosBaseDaoFacadaeImplMapper();
 
         @Override
-        public QosBase mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return super.mapRow(rs, rowNum);
-        }
-
-        @Override
         protected QosBase createQosEntity(ResultSet rs) throws SQLException {
             QosType qosType = QosType.forValue(rs.getInt("qos_type"));
             switch (qosType) {
