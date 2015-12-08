@@ -13,11 +13,9 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Certificate;
-import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Fault;
@@ -437,22 +435,11 @@ public class BackendVmResource extends
                 params.setDestinationVdsId(hostsGuidsSet.iterator().next());
             }
         }
-        if (vm.isSetInitialization() && vm.getInitialization().isSetCloudInit()) {
-            CloudInit cloudInit = vm.getInitialization().getCloudInit();
-            // currently only 'root' user is supported, alert the user if other user sent
-            if (cloudInit.isSetAuthorizedKeys()) {
-                for (AuthorizedKey authKey : cloudInit.getAuthorizedKeys().getAuthorizedKeys()) {
-                    if (!"root".equals(authKey.getUser().getUserName())) {
-                        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                                .entity("Currently only the user 'root' is supported for authorized keys")
-                                .build());
-                    }
-                }
+        if (vm.isSetInitialization()) {
+            if (vm.getInitialization().isSetCloudInit()) {
+                params.setInitializationType(InitializationType.CloudInit);
             }
-            params.setInitializationType(InitializationType.CloudInit);
-            params.setVmInit(
-                    getMapper(CloudInit.class, VmInit.class)
-                    .map(cloudInit, null));
+            params.setVmInit(VmMapper.map(vm.getInitialization(), new VmInit()));
         }
 
         return params;
