@@ -222,33 +222,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-    }
-
-    private void localize() {
-        aliasEditor.setLabel(constants.aliasVmDiskPopup());
-        sizeEditor.setLabel(constants.sizeVmDiskPopup());
-        sizeExtendEditor.setLabel(constants.extendImageSizeBy());
-        descriptionEditor.setLabel(constants.descriptionVmDiskPopup());
-        datacenterEditor.setLabel(constants.dcVmDiskPopup());
-        storageDomainEditor.setLabel(constants.storageDomainVmDiskPopup());
-        hostListEditor.setLabel(constants.hostVmDiskPopup());
-        quotaEditor.setLabel(constants.quotaVmDiskPopup());
-        diskProfileEditor.setLabel(constants.diskProfileVmDiskPopup());
-        interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
-        volumeTypeEditor.setLabel(constants.allocationDisk());
-        cinderVolumeTypeEditor.setLabel(constants.cinderVolumeTypeDisk());
-        storageTypeEditor.setLabel(constants.storageTypeVmDiskPopup());
-        plugDiskToVmEditor.setLabel(constants.activateVmDiskPopup());
-        wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
-        isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
-        isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
-        isReadOnlyEditor.setLabel(constants.isReadOnlyVmDiskPopup());
-        isUsingScsiReservationEditor.setLabel(constants.isUsingScsiReservationEditor());
-        isScsiPassthroughEditor.setLabel(constants.isScsiPassthroughEditor());
-        isSgIoUnfilteredEditor.setLabel(constants.isSgIoUnfilteredEditor());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

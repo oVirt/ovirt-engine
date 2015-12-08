@@ -67,40 +67,40 @@
         <g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
             <g:HorizontalPanel>
                 <g:VerticalPanel>
-                    <ge:IntegerEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
-                    <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
-                    <ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
-                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}" label="{constants.sizeVmDiskPopup}" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}" label="{constants.extendImageSizeBy}" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}" label="{constants.aliasVmDiskPopup}" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}" label="{constants.descriptionVmDiskPopup}" />
                     <g:HorizontalPanel>
-                        <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
+                        <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}" label="{constants.interfaceVmDiskPopup}" />
                         <d:InfoIcon ui:field="interfaceInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                     </g:HorizontalPanel>
-                    <e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>
-                    <e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
-                    <e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}" label="{constants.dcVmDiskPopup}" />
+                    <e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}" label="{constants.storageDomainVmDiskPopup}" />
+                    <e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}" label="{constants.allocationDisk}" />
                     <g:HorizontalPanel>
-                        <e:ListModelListBoxEditor ui:field="cinderVolumeTypeEditor" addStyleNames="{style.boxEditor}"/>
+                        <e:ListModelListBoxEditor ui:field="cinderVolumeTypeEditor" addStyleNames="{style.boxEditor}" label="{constants.cinderVolumeTypeDisk}" />
                         <d:InfoIcon ui:field="cinderVolumeTypeInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                     </g:HorizontalPanel>
-                    <e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}"/>
-                    <e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
-                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
-                    <e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>
+                    <e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}" label="{constants.diskProfileVmDiskPopup}" />
+                    <e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}" label="{constants.quotaVmDiskPopup}" />
+                    <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}" />
+                    <e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}" label="{constants.storageTypeVmDiskPopup}" />
                 </g:VerticalPanel>
                 <g:VerticalPanel>
-                    <ge:EntityModelCheckBoxEditor ui:field="plugDiskToVmEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="plugDiskToVmEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.activateVmDiskPopup}" />
                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor"
-                                                  addStyleNames="{style.checkBoxEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
-                    <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
+                                                  addStyleNames="{style.checkBoxEditor}" label="{constants.wipeAfterDeleteVmDiskPopup}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isBootableVmDiskPopup}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isShareableVmDiskPopup}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}" label="{constants.isReadOnlyVmDiskPopup}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor"
-                                                  addStyleNames="{style.checkBoxEditor}"/>
+                                                  addStyleNames="{style.checkBoxEditor}" label="{constants.isScsiPassthroughEditor}" />
                     <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor"
-                                                  addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+                                                  addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}" label="{constants.isSgIoUnfilteredEditor}" />
                     <g:HorizontalPanel>
                         <ge:EntityModelCheckBoxEditor ui:field="isUsingScsiReservationEditor"
-                                                      addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+                                                      addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}" label="{constants.isUsingScsiReservationEditor}" />
                         <d:InfoIcon ui:field="scsiReservationInfoIcon" addStyleNames="{style.infoIcon}"
                                     visible="false"/>
                     </g:HorizontalPanel>

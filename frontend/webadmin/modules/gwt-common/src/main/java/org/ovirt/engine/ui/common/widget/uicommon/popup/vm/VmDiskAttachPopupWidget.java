@@ -109,18 +109,12 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         initManualWidgets(allowMultipleSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initAttachPanelWidget();
         initDiskImagesTable();
         initLunDisksTable();
         initCinderDisksTable();
         driver.initialize(this);
-    }
-
-    private void localize() {
-        isPluggedEditor.setLabel(constants.activateVmDiskPopup());
-        isPluggedEditor.setWidgetTooltip(constants.activateVmDiskPopupToolTip());
     }
 
     private void initManualWidgets(boolean allowMultipleSelection) {

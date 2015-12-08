@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
         .messagePanel {
@@ -13,7 +14,7 @@
     </ui:style>
 
     <g:FlowPanel>
-        <ge:StringEntityModelTextBoxEditor ui:field="cloneNameEditor" />
+        <ge:StringEntityModelTextBoxEditor ui:field="cloneNameEditor" label="{constants.clonedVmName}" />
         <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
     </g:FlowPanel>
 

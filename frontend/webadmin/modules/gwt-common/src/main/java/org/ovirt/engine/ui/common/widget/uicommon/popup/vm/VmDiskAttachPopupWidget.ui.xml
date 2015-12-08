@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
         .container {
@@ -57,7 +58,7 @@
     <g:FlowPanel addStyleNames="{style.container}">
         <g:FlowPanel addStyleNames="{style.obrand_diskTypePanel}">
             <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.diskTypeSelection}"/>
-            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
+            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" label="{constants.activateVmDiskPopup}" widgetTooltip="{constants.activateVmDiskPopupToolTip}" />
         </g:FlowPanel>
         <g:FlowPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
             <w:ValidatedPanelWidget ui:field="attachDiskPanel" />

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -10,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -41,14 +40,10 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     @WithElementId("Message")
     FlowPanel messagePanel;
 
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-
     public CloneVmWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-
-        localize();
     }
 
     public void appendMessage(String message) {
@@ -57,10 +52,6 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
         }
 
         messagePanel.add(new Label(message));
-    }
-
-    private void localize() {
-        cloneNameEditor.setLabel(constants.clonedVmName());
     }
 
     @Override
