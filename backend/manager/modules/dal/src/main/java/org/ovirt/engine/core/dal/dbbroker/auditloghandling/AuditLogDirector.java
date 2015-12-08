@@ -29,7 +29,7 @@ public class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
-    static final String UNKNOWN_REASON_VALUE = "No reason was returned for this operation failure. See logs for further details.";
+    static final String UNKNOWN_REASON_VALUE = " No reason was returned for this operation failure. See logs for further details.";
     static final String REASON_TOKEN = "reason";
     private static final ResourceBundle resourceBundle = getResourceBundle();
 
