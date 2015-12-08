@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
@@ -49,7 +50,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.springframework.util.Assert;
 
 public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
@@ -279,7 +279,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty() == !isImportAsNewEntity);
+        assertTrue(validate.isEmpty() == !isImportAsNewEntity);
     }
 
     /**
@@ -303,7 +303,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty());
+        assertTrue(validate.isEmpty());
         parameters.setImportAsNewEntity(false);
         command = spy(new ImportVmTemplateCommand(parameters) {
                     @Override
@@ -314,7 +314,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty());
+        assertTrue(validate.isEmpty());
     }
 
     /**
