@@ -661,9 +661,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("User's Public Key")
     String consolePublicKeyLabel();
 
-    @DefaultStringValue("Specify public key for SSH authentication. Used to access guest serial console.")
-    String consolePublicKeyMessage();
-
     @DefaultStringValue("Type")
     String poolVmPopup();
 
@@ -1625,10 +1622,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Connect Automatically")
     String connectAutomaticallyLabel();
-
-    @DefaultStringValue("If ovirt-engine has the user's password connect automatically\n" +
-            " to the first running VM if there is one on User Portal login.")
-    String connectAutomaticallyMessage();
 
     @DefaultStringValue("High Priority Only")
     String highPriorityOnly();

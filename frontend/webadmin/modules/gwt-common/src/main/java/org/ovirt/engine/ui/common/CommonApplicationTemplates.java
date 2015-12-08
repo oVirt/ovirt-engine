@@ -119,4 +119,11 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<p><hr size=\"2\" width=\"100%\"></p>")
     SafeHtml horizontalLine();
+
+    @Template("If ovirt-engine has the user's password connect automatically "
+            + "to the first running VM if there is one on User Portal login.")
+    SafeHtml connectAutomaticallyMessage();
+
+    @Template("Specify public key for SSH authentication. Used to access guest serial console.")
+    SafeHtml consolePublicKeyMessage();
 }
