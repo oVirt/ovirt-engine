@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.pm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,14 +213,13 @@ public class PmHealthCheckManager implements BackendService {
 
     private void startHostsWithPMInReboot(List<VDS> hosts) {
         final List<VDS> hostsWithPMInReboot = hosts.stream()
-                .filter(host -> host.isPmEnabled() && host.getStatus() == VDSStatus.Reboot).collect(Collectors.toList());
+                .filter(host -> host.isPmEnabled())
+                .filter(host -> host.getStatus() == VDSStatus.Reboot)
+                .collect(Collectors.toList());
         if (hostsWithPMInReboot.size() > 0) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    waitUntilFencingAllowed();
-                    startHosts(hostsWithPMInReboot);
-                }
+            ThreadPoolUtil.execute(() -> {
+                waitUntilFencingAllowed();
+                startHosts(hostsWithPMInReboot);
             });
         }
     }
@@ -252,35 +250,25 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void recoverKdumpingHosts(List<VDS> hosts) {
-        final List<VDS> kdumpingHosts = new ArrayList<>();
-        for (VDS host : hosts) {
-            if (host.getStatus() == VDSStatus.Kdumping) {
-                kdumpingHosts.add(host);
-            }
-        }
+        final List<VDS> kdumpingHosts = hosts.stream()
+                .filter(host -> host.getStatus() == VDSStatus.Kdumping)
+                .collect(Collectors.toList());
         if (!kdumpingHosts.isEmpty()) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    waitUntilFencingAllowed();
-                    executeNotRespondingTreatment(kdumpingHosts);
-                }
+            ThreadPoolUtil.execute(() -> {
+                waitUntilFencingAllowed();
+                executeNotRespondingTreatment(kdumpingHosts);
             });
         }
     }
 
     private void executeNotRespondingTreatment(List<VDS> hosts) {
         for (VDS host : hosts) {
-            final FenceVdsActionParameters params = new FenceVdsActionParameters(host.getId());
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    Backend.getInstance().runInternalAction(
-                            VdcActionType.VdsNotRespondingTreatment,
-                            params,
-                            ExecutionHandler.createInternalJobContext()
-                    );
-                }
+            ThreadPoolUtil.execute(() -> {
+                Backend.getInstance().runInternalAction(
+                        VdcActionType.VdsNotRespondingTreatment,
+                        new FenceVdsActionParameters(host.getId()),
+                        ExecutionHandler.createInternalJobContext()
+                );
             });
         }
     }
