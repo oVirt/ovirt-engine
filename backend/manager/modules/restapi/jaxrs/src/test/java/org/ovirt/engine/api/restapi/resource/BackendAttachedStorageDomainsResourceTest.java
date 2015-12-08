@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainsResourceTest
     extends AbstractBackendCollectionResourceTest<StorageDomain,
@@ -165,21 +164,6 @@ public class BackendAttachedStorageDomainsResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations(Guid guid, int times, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
-        for (int i=0; i<times; i++) {
-            setUpGetEntityExpectations(guid, entity);
-        }
-    }
-
-    private void setUpGetEntityExpectations(Guid entityId, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
-                StorageDomainAndPoolQueryParameters.class,
-                new String[] { "StorageDomainId", "StoragePoolId" },
-                new Object[] { entityId, GUIDS[NAMES.length-1] },
-                entity);
-    }
-
-
     @Override
     @Test
     public void testList() throws Exception {
@@ -217,12 +201,6 @@ public class BackendAttachedStorageDomainsResourceTest
             entities.add(getEntity(i));
         }
         return entities;
-    }
-
-    protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getStaticEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.StorageDomainStatic entity =
-                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class);
-        return setUpEntityExpectations(entity, index, StorageType.NFS);
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomainStatic getEntityStatic(int index) {
