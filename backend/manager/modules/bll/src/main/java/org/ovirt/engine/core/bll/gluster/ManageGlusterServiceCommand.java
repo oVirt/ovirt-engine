@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -85,11 +84,6 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     protected void setActionMessageParameters() {
         addCanDoActionMessage(manageActionDetailsMap.get(getParameters().getActionType()).getCanDoActionMsg());
         addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVICE);
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     @Override

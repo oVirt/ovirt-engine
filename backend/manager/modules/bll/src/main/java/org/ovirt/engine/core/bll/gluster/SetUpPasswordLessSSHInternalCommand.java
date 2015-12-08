@@ -33,21 +33,6 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
         setVdsGroupId(getParameters().getId());
     }
 
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        return super.getAuditLogTypeValue();
-    }
-
-    @Override
-    protected void setActionMessageParameters() {
-        super.setActionMessageParameters();
-    }
-
-    @Override
-    protected boolean canDoAction() {
-        return super.canDoAction();
-    }
-
     @SuppressWarnings("unchecked")
     private List<String> readPubKey(Guid upServerId) {
         VdcQueryReturnValue readPubKeyReturnvalue =

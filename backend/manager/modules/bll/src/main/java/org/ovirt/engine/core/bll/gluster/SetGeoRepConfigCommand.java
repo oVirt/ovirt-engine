@@ -22,11 +22,6 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction();
-    }
-
-    @Override
     public Map<String, String> getCustomValues() {
         addCustomValue(GlusterConstants.OPTION_KEY, getParameters().getConfigKey());
         addCustomValue(GlusterConstants.OPTION_VALUE, getParameters().getConfigValue());
