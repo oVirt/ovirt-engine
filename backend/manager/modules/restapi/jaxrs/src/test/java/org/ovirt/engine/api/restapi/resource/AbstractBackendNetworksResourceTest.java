@@ -92,8 +92,4 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         model.setDescription(DESCRIPTIONS[index]);
         return model;
     }
-
-    protected void verifyModel(Network model, int index) {
-        super.verifyModel(model, index);
-    }
 }

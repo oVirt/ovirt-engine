@@ -174,11 +174,6 @@ public class BackendExportDomainDiskResourceTest
         return vm;
     }
 
-    @Override
-    protected void verifyModel(Disk model, int index) {
-        super.verifyModel(model, index);
-    }
-
     protected StorageDomain getStorageDomain(int idx) {
         StorageDomain dom = new StorageDomain();
         dom.setId(GUIDS[idx]);

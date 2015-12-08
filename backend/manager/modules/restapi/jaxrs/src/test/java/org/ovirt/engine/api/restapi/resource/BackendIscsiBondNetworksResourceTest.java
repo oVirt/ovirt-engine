@@ -1,12 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -32,16 +30,6 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
                 new org.ovirt.engine.core.common.businessentities.IscsiBond();
         iscsiBond.setId(ISCSI_BOND_ID);
         return iscsiBond;
-    }
-
-    @Override
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-            Class<? extends VdcActionParametersBase> clz,
-            String[] names,
-            Object[] values,
-            boolean canDo,
-            boolean success) {
-        return super.setUpActionExpectations(task, clz, names, values, canDo, success);
     }
 
     @Test

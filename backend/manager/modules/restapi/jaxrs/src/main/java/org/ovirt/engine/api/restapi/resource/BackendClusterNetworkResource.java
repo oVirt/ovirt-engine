@@ -19,16 +19,6 @@ public class BackendClusterNetworkResource
     }
 
     @Override
-    public Network addParents(Network network) {
-        return parent.addParents(network);
-    }
-
-    @Override
-    public Network get() {
-        return super.get();
-    }
-
-    @Override
     public Network update(Network incoming) {
         validateEnums(Network.class, incoming);
         org.ovirt.engine.core.common.businessentities.network.Network network = map(incoming, map(get()));
