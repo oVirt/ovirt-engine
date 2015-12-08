@@ -1603,14 +1603,14 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
     }
 
-    public void getHostPublicKey(AsyncQuery aQuery) {
+    public void getEngineSshPublicKey(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHPublicKey, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetEngineSSHPublicKey, new VdcQueryParametersBase(), aQuery);
     }
 
     public void getGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {

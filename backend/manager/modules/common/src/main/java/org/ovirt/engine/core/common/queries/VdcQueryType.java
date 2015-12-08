@@ -60,7 +60,7 @@ public enum VdcQueryType implements Serializable {
     GetDiscoveredHostListFromExternalProvider(),
     GetProviderCertificateChain,
     GetHostsForStorageOperation,
-    GetServerSSHPublicKey,
+    GetEngineSSHPublicKey,
     GetServerSSHKeyFingerprint,
     GetCpuStatisticsByVdsId,
     GetFenceAgentById,

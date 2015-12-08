@@ -150,7 +150,7 @@ public class InstallModel extends Model {
         setPublicKey(new EntityModel<String>());
         getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());
-        fetchPublicKey();
+        fetchEngineSshPublicKey();
 
         setNetworkProviderModel(new HostNetworkProviderModel());
     }
@@ -172,7 +172,7 @@ public class InstallModel extends Model {
         return getUserPassword().getIsValid() && getOVirtISO().getIsValid() && getNetworkProviderModel().getIsValid();
     }
 
-    public void fetchPublicKey() {
+    public void fetchEngineSshPublicKey() {
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
@@ -184,6 +184,6 @@ public class InstallModel extends Model {
                 }
             }
         };
-        AsyncDataProvider.getInstance().getHostPublicKey(aQuery);
+        AsyncDataProvider.getInstance().getEngineSshPublicKey(aQuery);
     }
 }

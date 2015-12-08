@@ -634,7 +634,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setSpmPriority(new ListModel<EntityModel<Integer>>());
 
         initSpmPriorities();
-        fetchPublicKey();
+        fetchEngineSshPublicKey();
 
         setNetworkProviderModel(new HostNetworkProviderModel());
         setIsDiscoveredHosts(new EntityModel<Boolean>());
@@ -653,7 +653,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getFenceAgentListModel().setHost(this);
     }
 
-    public void fetchPublicKey() {
+    public void fetchEngineSshPublicKey() {
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
@@ -665,7 +665,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 }
             }
         };
-        AsyncDataProvider.getInstance().getHostPublicKey(aQuery);
+        AsyncDataProvider.getInstance().getEngineSshPublicKey(aQuery);
     }
 
     private void fetchSSHFingerprint() {

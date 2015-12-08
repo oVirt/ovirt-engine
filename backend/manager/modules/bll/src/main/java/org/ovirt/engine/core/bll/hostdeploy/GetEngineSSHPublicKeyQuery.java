@@ -1,14 +1,15 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.hostdeploy;
 
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 /**
  * Query to fetch public key of the given server name
  */
-public class GetServerSSHPublicKeyQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetEngineSSHPublicKeyQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
-    public GetServerSSHPublicKeyQuery(P parameters) {
+    public GetEngineSSHPublicKeyQuery(P parameters) {
         super(parameters);
     }
 
