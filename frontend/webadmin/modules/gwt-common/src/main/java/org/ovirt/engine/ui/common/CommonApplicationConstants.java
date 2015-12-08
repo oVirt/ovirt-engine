@@ -646,9 +646,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("User's Public Key")
     String consolePublicKeyLabel();
 
-    @DefaultStringValue("Specify public key for SSH authentication. Used to access guest serial console.")
-    String consolePublicKeyMessage();
-
     @DefaultStringValue("Type")
     String poolVmPopup();
 

@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 
@@ -19,6 +20,7 @@ public class InfoIcon extends FocusPanel {
 
     private final static CommonApplicationResources resources = AssetProvider.getResources();
 
+    @UiConstructor
     public InfoIcon(SafeHtml text) {
         super();
 
