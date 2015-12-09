@@ -71,30 +71,20 @@ public class NotificationService implements Runnable {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         shutdownHook.addScheduledExecutorService(exec);
         shutdownHook.addServiceHandler(
-            exec.scheduleWithFixedDelay(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        mainLogic();
-                    }
-                },
-                1,
-                prop.getLong(NotificationProperties.INTERVAL_IN_SECONDS),
-                TimeUnit.SECONDS
-            )
+                exec.scheduleWithFixedDelay(
+                        () -> mainLogic(),
+                        1,
+                        prop.getLong(NotificationProperties.INTERVAL_IN_SECONDS),
+                        TimeUnit.SECONDS
+                )
         );
         shutdownHook.addServiceHandler(
-            exec.scheduleWithFixedDelay(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        idle();
-                    }
-                },
-                1,
-                prop.getLong(NotificationProperties.IDLE_INTERVAL),
-                TimeUnit.SECONDS
-            )
+                exec.scheduleWithFixedDelay(
+                        () -> idle(),
+                        1,
+                        prop.getLong(NotificationProperties.IDLE_INTERVAL),
+                        TimeUnit.SECONDS
+                )
         );
     }
 

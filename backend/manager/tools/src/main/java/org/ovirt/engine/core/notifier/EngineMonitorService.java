@@ -212,17 +212,12 @@ public class EngineMonitorService implements Runnable {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         shutdownHook.addScheduledExecutorService(exec);
         shutdownHook.addServiceHandler(
-            exec.scheduleWithFixedDelay(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        mainLogic();
-                    }
-                },
-                1,
-                prop.getLong(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS),
-                TimeUnit.SECONDS
-            )
+                exec.scheduleWithFixedDelay(
+                        () -> mainLogic(),
+                        1,
+                        prop.getLong(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS),
+                        TimeUnit.SECONDS
+                )
         );
     }
 
