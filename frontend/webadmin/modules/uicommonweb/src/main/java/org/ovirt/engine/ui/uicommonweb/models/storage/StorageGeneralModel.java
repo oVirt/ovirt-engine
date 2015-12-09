@@ -160,17 +160,20 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                         StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
 
-                        generalModel.setPath(connection == null ? null : connection.getConnection());
+                        if (connection != null) {
+                            generalModel.setPath(connection.getConnection());
+                            if (isNfs) {
+                                generalModel.setNfsVersion(connection.getNfsVersion());
+                                generalModel.setRetransmissions(connection.getNfsRetrans());
+                                generalModel.setTimeout(connection.getNfsTimeo());
+                            }
 
-                        if (isNfs) {
-                            generalModel.setNfsVersion(connection.getNfsVersion());
-                            generalModel.setRetransmissions(connection.getNfsRetrans());
-                            generalModel.setTimeout(connection.getNfsTimeo());
-                        }
-
-                        if (isPosix) {
-                            generalModel.setVfsType(connection.getVfsType());
-                            generalModel.setMountOptions(connection.getMountOptions());
+                            if (isPosix) {
+                                generalModel.setVfsType(connection.getVfsType());
+                                generalModel.setMountOptions(connection.getMountOptions());
+                            }
+                        } else {
+                            generalModel.setPath(null);
                         }
                     }
                 };
