@@ -189,15 +189,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installCtx.setStep(installStep);
             installCtx.setMonitored(true);
             installCtx.setShouldEndJob(true);
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    runInternalAction(VdcActionType.InstallVdsInternal,
-                            installVdsParameters,
-                            cloneContextAndDetachFromParent()
-                            .withExecutionContext(installCtx));
-                }
-            });
+            ThreadPoolUtil.execute(() -> runInternalAction(
+                    VdcActionType.InstallVdsInternal,
+                    installVdsParameters,
+                    cloneContextAndDetachFromParent()
+                    .withExecutionContext(installCtx)));
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);
         }
     }

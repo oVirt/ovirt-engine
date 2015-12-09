@@ -92,13 +92,8 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
         _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();
         _thread = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    threadMain();
-                }
-            },
-            "OVirtNodeUpgrade"
+                () -> threadMain(),
+                "OVirtNodeUpgrade"
         );
     }
 

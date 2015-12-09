@@ -380,13 +380,8 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         _dialog = new EngineSSHDialog();
         _parser = new MachineDialogParser();
         _thread = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    threadMain();
-                }
-            },
-            "VdsDeploy"
+                () -> threadMain(),
+                "VdsDeploy"
         );
 
         if (s_deployPackage == null) {

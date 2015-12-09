@@ -248,21 +248,17 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         params.setApprovedByRegister(true);
 
         try {
-            ThreadPoolUtil.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        VdcReturnValueBase ret =
+            ThreadPoolUtil.execute(() -> {
+                try {
+                    VdcReturnValueBase ret =
                             Backend.getInstance().runInternalAction(VdcActionType.ApproveVds, params);
-                        if (ret == null || !ret.getSucceeded()) {
-                            log.error("Approval of oVirt '{}' failed. ", params.getVdsId());
-                        } else if (ret.getSucceeded()) {
-                            log.info("Approval of oVirt '{}' ended successfully. ", params.getVdsId());
-                        }
-                    } catch (RuntimeException ex) {
-                        log.error("Failed to Approve host", ex);
+                    if (ret == null || !ret.getSucceeded()) {
+                        log.error("Approval of oVirt '{}' failed. ", params.getVdsId());
+                    } else if (ret.getSucceeded()) {
+                        log.info("Approval of oVirt '{}' ended successfully. ", params.getVdsId());
                     }
+                } catch (RuntimeException ex) {
+                    log.error("Failed to Approve host", ex);
                 }
             });
         } catch (Exception e) {
