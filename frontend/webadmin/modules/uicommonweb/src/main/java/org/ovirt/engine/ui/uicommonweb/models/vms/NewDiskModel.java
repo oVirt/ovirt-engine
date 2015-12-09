@@ -30,7 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -38,13 +37,15 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class NewDiskModel extends AbstractDiskModel {
     private boolean descriptionDerivedFromLunId;
 
-    private IEventListener lunSelectionChangedEventListener = new IEventListener() {
+    private IEventListener lunSelectionChangedEventListener = new IEventListener <ValueEventArgs<LunModel>>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends ValueEventArgs<LunModel>> ev,
+                Object sender,
+                ValueEventArgs<LunModel> args) {
             String description = getDescription().getEntity();
             if (description == null || description.isEmpty() ||
                     (!description.isEmpty() && descriptionDerivedFromLunId)) {
-                LunModel selectedLunModel = ((ValueEventArgs<LunModel>) args).getValue();
+                LunModel selectedLunModel = args.getValue();
                 if (selectedLunModel.getLunId() != null) {
                     int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
                     if (numOfChars == 0) {
