@@ -668,8 +668,8 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
-          size: xs:int #deprecated, replaced by 'provisioned_size'
-          provisioned_size: xs:int
+          disk.size: xs:int #deprecated, replaced by 'provisioned_size'
+          disk.provisioned_size: xs:int
           disk.name: xs:string
           disk.alias: xs:string
           disk.interface: xs:string
@@ -685,7 +685,7 @@ actions:
           disk.sgio: xs:string
           disk.uses_scsi_reservation: xs:boolean
           disk.read_only: xs:boolean
-          description: update the size, boot flag and other parameters of the disk attached to the virtual machine
+        description: update the size, boot flag and other parameters of the disk attached to the virtual machine
 - name: /vms/{vm:id}/disks|rel=add
   description: add a new or existing disk to the virtual machine
   request:
@@ -695,7 +695,7 @@ actions:
       - mandatoryArguments:
           disk.format: xs:string
           disk.interface: xs:string
-          provisioned_size: xs:int
+          disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
           disk.bootable: xs:boolean
@@ -1000,7 +1000,10 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments:
+          disk.format: xs:string
+          disk.interface: xs:string
+          disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
           disk.name: xs:string
@@ -3587,7 +3590,7 @@ actions:
       - mandatoryArguments:
           disk.format: xs:string
           disk.interface: xs:string
-          provisioned_size: xs:int
+          disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
           disk.bootable: xs:boolean
@@ -3668,7 +3671,7 @@ actions:
       - mandatoryArguments:
           disk.format: xs:string
           disk.interface: xs:string
-          provisioned_size: xs:int
+          disk.provisioned_size: xs:int
         optionalArguments:
           disk.alias: xs:string
           disk.bootable: xs:boolean
