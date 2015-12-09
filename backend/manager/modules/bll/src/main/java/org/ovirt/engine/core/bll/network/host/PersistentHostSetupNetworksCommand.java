@@ -56,6 +56,7 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
 
         VdcReturnValueBase returnValue =
                 runInternalAction(VdcActionType.HostSetupNetworks, getParameters(), cloneContextAndDetachFromParent());
+
         if (returnValue.getSucceeded()) {
             boolean changesDetected = checkForChanges();
             if (changesDetected) {
@@ -77,7 +78,7 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
     private boolean checkForChanges() {
         final VdsDynamic host = vdsDynamicDao.get(getVdsId());
         final Boolean netConfigDirty = host.getNetConfigDirty();
-        return !Boolean.FALSE.equals(netConfigDirty);
+        return Boolean.TRUE.equals(netConfigDirty);
     }
 
     @Override
