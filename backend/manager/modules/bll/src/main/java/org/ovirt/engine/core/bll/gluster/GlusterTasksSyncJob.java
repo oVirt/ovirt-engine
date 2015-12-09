@@ -113,25 +113,18 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private void createJobForTaskFromCLI(final VDSGroup cluster, final GlusterAsyncTask task) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                // the task may have been started from the CLI
-                // need to add job to monitor
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        ThreadPoolUtil.execute(() -> TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-                    @Override
-                    public Void runInTransaction() {
-                        try {
-                            createJobToMonitor(cluster, task);
-                        } catch (EngineException e) {
-                            log.error("Error creating job for task from CLI", e);
-                        }
-                        return null;
-                    }
-                });
+            @Override
+            public Void runInTransaction() {
+                try {
+                    createJobToMonitor(cluster, task);
+                } catch (EngineException e) {
+                    log.error("Error creating job for task from CLI", e);
+                }
+                return null;
             }
-        });
+        }));
     }
 
     private void createJobToMonitor(VDSGroup cluster, GlusterAsyncTask task) {
