@@ -192,7 +192,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
             return true;
         }
 
-        return isNetworkDeviceFree(firstChild);
+        return isNetworkDeviceFree(hostDevice);
     }
 
     private boolean isVfFree(HostDevice vf) {
@@ -204,10 +204,10 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
         return isNetworkDeviceFree(vf);
     }
 
-    private boolean isNetworkDeviceFree(HostDevice networkDevice) {
+    private boolean isNetworkDeviceFree(HostDevice pciDevice) {
         // Check that there is no macvtap device on top of the VM-
         // nics with macvtap attached are not reported via the getVdsCaps
-        VdsNetworkInterface vfNic = getNicByPciDevice(networkDevice);
+        VdsNetworkInterface vfNic = getNicByPciDevice(pciDevice);
 
         return vfNic != null && !isNetworkAttached(vfNic) && !isVlanDeviceAttached(vfNic) && !vfNic.isPartOfBond();
     }
