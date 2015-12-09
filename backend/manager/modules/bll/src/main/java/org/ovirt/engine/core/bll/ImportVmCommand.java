@@ -657,7 +657,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerId, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy memory image");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
@@ -667,7 +667,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerId, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
-                throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy metadata image");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
@@ -720,8 +720,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(disk, containerID));
             if (!vdcRetValue.getSucceeded()) {
-                throw new EngineException(vdcRetValue.getFault().getError(),
-                        "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
+                throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy disk!");
             }
 
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
@@ -1028,7 +1027,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("ImportVmCommand::EndImportCommand: Vm is null - not performing full endAction");
+            log.warn("VM is null, not performing full endAction");
         }
     }
 
