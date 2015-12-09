@@ -132,16 +132,13 @@ public class CoCoAsyncTaskHelper {
 
     public void cancelTasks(final CommandBase<?> command, final Logger log) {
         if (command.hasTasks()) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    log.info("Rollback for command '{}'", command.getClass().getName());
-                    try {
-                        getAsyncTaskManager().cancelTasks(command.getReturnValue().getVdsmTaskIdList());
-                    } catch (Exception e) {
-                        log.error("Failed to cancel tasks for command '{}'",
-                                command.getClass().getName());
-                    }
+            ThreadPoolUtil.execute(() -> {
+                log.info("Rollback for command '{}'", command.getClass().getName());
+                try {
+                    getAsyncTaskManager().cancelTasks(command.getReturnValue().getVdsmTaskIdList());
+                } catch (Exception e) {
+                    log.error("Failed to cancel tasks for command '{}'",
+                            command.getClass().getName());
                 }
             });
         }

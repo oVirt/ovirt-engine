@@ -104,13 +104,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     entityInfo.getCommandId());
 
             entityInfo.markAllWithAttemptingEndAction();
-            ThreadPoolUtil.execute(new Runnable() {
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public void run() {
-                    endCommandAction();
-                }
-            });
+            ThreadPoolUtil.execute(() -> endCommandAction());
         }
     }
 
