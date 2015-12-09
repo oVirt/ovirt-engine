@@ -613,10 +613,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void processImages() {
         processImages(!isImagesAlreadyOnTarget());
-        // if there aren't tasks - we can just perform the end
-        // vm related ops
+        // if there are no tasks, we can just unlock the VM
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-            endVmRelatedOps();
+            VmHandler.unLockVm(getVm());
         }
     }
 
@@ -947,7 +946,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void endSuccessfully() {
         checkTrustedService();
-        endImportCommand();
+        endActionOnAllImageGroups();
+        VmHandler.unLockVm(getVm());
+        setSucceeded(true);
     }
 
     private void checkTrustedService() {
@@ -1011,24 +1012,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void removeVmNetworkInterfaces() {
         new VmInterfaceManager(getMacPool()).removeAll(getVmId());
-    }
-
-    protected void endImportCommand() {
-        endActionOnAllImageGroups();
-        endVmRelatedOps();
-        setSucceeded(true);
-    }
-
-    private void endVmRelatedOps() {
-        setVm(null);
-        if (getVm() != null) {
-            VmHandler.unLockVm(getVm());
-        }
-
-        else {
-            setCommandShouldBeLogged(false);
-            log.warn("VM is null, not performing full endAction");
-        }
     }
 
     @Override
