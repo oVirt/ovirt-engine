@@ -159,15 +159,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void processVmOnDown() {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                runInternalActionWithTasksContext(
-                        VdcActionType.ProcessDownVm,
-                        new ProcessDownVmParameters(getVm().getId())
-                );
-            }
-        });
+        ThreadPoolUtil.execute(() -> runInternalActionWithTasksContext(
+                VdcActionType.ProcessDownVm,
+                new ProcessDownVmParameters(getVm().getId())
+        ));
     }
 
     /**
@@ -200,17 +195,12 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     private void notifyHostsVmFailed() {
         if (!getRunVdssList().isEmpty()) {
-            ThreadPoolUtil.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    for (Guid vdsId : getRunVdssList()) {
-                        if (!vdsId.equals(getCurrentVdsId())) {
-                            runVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
-                        }
+            ThreadPoolUtil.execute(() -> {
+                for (Guid vdsId : getRunVdssList()) {
+                    if (!vdsId.equals(getCurrentVdsId())) {
+                        runVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
                     }
                 }
-
             });
         }
     }
