@@ -181,17 +181,14 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
             // are no tasks) and the domain will remain locked.
             final CompensationContext ctx = createDefaultCompensationContext(Guid.newGuid());
             changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, ctx);
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        waitForTasksToBeCleared();
-                        executeDeactivateCommand(false);
-                        ctx.resetCompensation();
-                    } catch (Exception e) {
-                        log.error("Error when attempting to deactivate storage domain {}", getStorageDomainId(), e);
-                        compensate();
-                    }
+            ThreadPoolUtil.execute(() -> {
+                try {
+                    waitForTasksToBeCleared();
+                    executeDeactivateCommand(false);
+                    ctx.resetCompensation();
+                } catch (Exception e) {
+                    log.error("Error when attempting to deactivate storage domain {}", getStorageDomainId(), e);
+                    compensate();
                 }
             });
         } else {

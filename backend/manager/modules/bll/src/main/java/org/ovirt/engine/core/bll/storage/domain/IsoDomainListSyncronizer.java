@@ -402,12 +402,7 @@ public class IsoDomainListSyncronizer {
     public void refresheIsoDomainWhenActivateDomain(final Guid isoStorageDomainId,
             final Guid storagePoolId) {
         if (storagePoolId != null && (isoStorageDomainId != null)) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    refreshActivatedStorageDomainFromVdsm(storagePoolId, isoStorageDomainId);
-                }
-            });
+            ThreadPoolUtil.execute(() -> refreshActivatedStorageDomainFromVdsm(storagePoolId, isoStorageDomainId));
         }
     }
 
