@@ -204,8 +204,6 @@ public class SchedulingManager implements BackendService {
         Map<Guid, Pair<EngineMessage, String>> filteredOutReasons;
         Map<Guid, String> hostNames;
         PerHostMessages details;
-        String message;
-        Guid vdsSelected = null;
 
         public SchedulingResult() {
             filteredOutReasons = new HashMap<>();
