@@ -77,6 +77,29 @@ public interface VmService extends MeasurableService {
         @In Boolean async();
     }
 
+    /**
+     * Retrieves the description of the virtual machine.
+     *
+     * Note that some elements of the description of the virtual machine won't be returned unless the `All-Content`
+     * header is present in the request and has the value `true`. The elements that aren't currently returned are
+     * the following:
+     *
+     * - `console`
+     * - `initialization.configuration.data` - The OVF document describing the virtual machine.
+     * - `rng_source`
+     * - `soundcard`
+     * - `virtio_scsi`
+     *
+     * With the Python SDK the `All-Content` header can be set using the `all_content` parameter of the `get`
+     * method:
+     *
+     * ```python
+     * api.vms.get(name="myvm", all_content=True)
+     * ```
+     *
+     * Note that the reason for not including these elements is performance: they are seldom used and they require
+     * additional queries in the server. So try to use the `All-Content` header only when it is really needed.
+     */
     interface Get {
         @Out Vm vm();
 
