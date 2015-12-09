@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.compat.Version;
 
@@ -9,6 +11,8 @@ public class OS {
     private String name;
 
     private Version version;
+
+    private static final Pattern versionPattern = Pattern.compile("(^[\\d\\.]+)");
 
     public OS() {
         name = "";
@@ -59,7 +63,17 @@ public class OS {
             return new OS();
         }
         final String name = os[0].trim();
-        final Version version = new Version(os[1].trim());
+        final Matcher versionMatcher = versionPattern.matcher(os[1].trim());
+        final Version  version;
+        if (versionMatcher.find()) {
+            version = new Version(versionMatcher.group());
+        } else if (os.length == 3 && os[2].contains("el6")) {
+            version = new Version(6, -1);
+        } else if (os.length == 3 && os[2].contains("el7")) {
+            version = new Version(7, -1);
+        } else {
+            version = new Version();
+        }
         return new OS(name, version);
     }
 }
