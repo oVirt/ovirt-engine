@@ -335,7 +335,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 getTargetClusterNetworks());
         persister.persistNetworkAttachments();
 
-        if (targetClusterSupportsSetupNetworks()) {
+        if (targetClusterSupportsSetupNetworks() && VDSStatus.PendingApproval != getVds().getStatus()) {
             configureNetworks();
         }
 
