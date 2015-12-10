@@ -109,7 +109,8 @@ public class HostedEngineImporter {
     }
 
     private boolean importSupported(Version spVersion, Version vdsGroupVersion) {
-        return Version.v3_5.compareTo(spVersion) >= 0 && Version.v3_6.compareTo(vdsGroupVersion) >= 0
+        return spVersion.greaterOrEquals(Version.v3_5)
+                && vdsGroupVersion.greaterOrEquals(Version.v3_6)
                 && Config.<Boolean> getValue(ConfigValues.AutoImportHostedEngine);
     }
 
