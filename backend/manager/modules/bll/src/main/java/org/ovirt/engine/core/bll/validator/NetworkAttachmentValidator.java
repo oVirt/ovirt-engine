@@ -208,7 +208,7 @@ public class NetworkAttachmentValidator {
 
             && ipConfiguration.hasPrimaryAddressSet()
             && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
-            && !managementNetworkUtil.isManagementNetwork(getNetwork().getId())
+            && !managementNetworkUtil.isManagementNetwork(getNetwork().getId(), host.getVdsGroupId())
             && !FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion()));
     }
 

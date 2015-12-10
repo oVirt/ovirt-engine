@@ -49,6 +49,8 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
+    private static final Guid CLUSTER_ID = Guid.newGuid();
+
     @Mock
     private NetworkDao networkDaoMock;
 
@@ -84,7 +86,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         host = new VDS();
         host.getStaticData().setName("hostName");
         host.setId(Guid.newGuid());
-        host.setVdsGroupId(Guid.newGuid());
+        host.setVdsGroupId(CLUSTER_ID);
     }
 
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachment) {
@@ -552,43 +554,48 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
     }
 
     @Test
-    public void testValidateGateway() {
-        host.setVdsGroupCompatibilityVersion(Version.v3_5);
-        doTestValidateGateway("someGateway", false, failsWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY));
-    }
-
-    @Test
     public void testValidateGatewayWhenIpConfigurationIsNotSet() {
         NetworkAttachment attachment = new NetworkAttachment();
         assertThat(createNetworkAttachmentValidator(attachment).validateGateway(), isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenGatewayIsNotSpecified() {
-        doTestValidateGateway("", false, isValid());
-    }
-
-    @Test
     public void testValidateGatewayWhenGatewayIsNull() {
-        doTestValidateGateway(null, false, isValid());
+        doTestValidateGateway(null, false, true, isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenRelatedNetworkIsManagementNetwork() {
-        doTestValidateGateway("someGateway", true, isValid());
+    public void testValidateGatewayWhenGatewayIsNotSpecified() {
+        doTestValidateGateway("", false, true, isValid());
     }
 
     @Test
-    public void testValidateGatewayWhenMultipleGatewayIsSupported() {
-        host.setVdsGroupCompatibilityVersion(Version.v3_6);
-        doTestValidateGateway("someGateway", false, isValid());
+    public void testValidateGatewayIsNotManagementNetworkAndMultipleGatewaysSupported() {
+        doTestValidateGateway("someGateway", false, true, isValid());
+    }
 
+    @Test
+    public void testValidateGatewayIsManagementNetworkAndMultipleGatewaysSupported() {
+        doTestValidateGateway("someGateway", true, true, isValid());
+    }
+
+    @Test
+    public void testValidateGatewayIsNotManagementNetworkAndMultipleGatewaysNotSupported() {
+        doTestValidateGateway("someGateway", false, false,
+                failsWith(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY));
+    }
+
+    @Test
+    public void testValidateGatewayIsManagementNetworkAndMultipleGatewayIsNotSupported() {
+        doTestValidateGateway("someGateway", true, false, isValid());
     }
 
     private void doTestValidateGateway(String gatewayValue,
-        boolean managementNetwork,
-        Matcher<ValidationResult> resultMatcher) {
+            boolean managementNetwork,
+            boolean multipleGatewaysSupported,
+            Matcher<ValidationResult> resultMatcher) {
 
+        host.setVdsGroupCompatibilityVersion(multipleGatewaysSupported ? Version.v3_6 : Version.v3_5);
         Network network = createNetwork();
 
         NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
@@ -596,7 +603,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.getIpConfiguration().getPrimaryAddress().setGateway(gatewayValue);
 
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-        when(managementNetworkUtilMock.isManagementNetwork(network.getId())).thenReturn(managementNetwork);
+        when(managementNetworkUtilMock.isManagementNetwork(network.getId(), CLUSTER_ID)).thenReturn(managementNetwork);
 
         assertThat(createNetworkAttachmentValidator(attachment).validateGateway(), resultMatcher);
     }
