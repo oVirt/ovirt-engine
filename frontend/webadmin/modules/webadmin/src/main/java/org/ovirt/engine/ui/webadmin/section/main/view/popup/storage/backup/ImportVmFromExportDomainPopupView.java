@@ -100,10 +100,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     @Path(value = "clusterQuota.selectedItem")
     ListModelListBoxEditor<Quota> destClusterQuotaEditor;
 
-    @UiField(provided = true)
-    @Path(value = "storage.selectedItem")
-    ListModelListBoxEditor<Object> destStorageEditor;
-
     @UiField
     SplitLayoutPanel splitLayoutPanel;
 
@@ -670,7 +666,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     private void initListBoxEditors() {
         destClusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
         destClusterQuotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
-        destStorageEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
         cpuProfileEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
     }
@@ -678,7 +673,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     private void localize() {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destClusterQuotaEditor.setLabel(constants.importVm_destClusterQuota());
-        destStorageEditor.setLabel(constants.defaultStorage());
         cpuProfileEditor.setLabel(constants.cpuProfileLabel());
     }
 

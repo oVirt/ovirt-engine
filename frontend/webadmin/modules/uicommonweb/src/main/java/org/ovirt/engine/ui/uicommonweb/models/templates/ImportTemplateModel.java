@@ -20,14 +20,12 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
 import com.google.inject.Inject;
 
 public class ImportTemplateModel extends ImportVmFromExportDomainModel {
@@ -36,11 +34,11 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
     @Inject
     public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
-            final StorageDiskListModel storageDomain, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
+            final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final TemplateGeneralModel templateGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
-        super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, null, vmImportInterfaceListModel,
+        super(vmImportDiskListModel, cluster, clusterQuota, null, vmImportInterfaceListModel,
                 vmImportAppListModel);
         this.templateImportDiskListModel = templateImportDiskListModel;
         setDetailList(templateGeneralModel, templateImportInterfaceListModel);

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+        >
     <ui:with field='resources'
         type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
@@ -80,12 +81,10 @@
                     <g:VerticalPanel>
                         <g:HorizontalPanel>
                             <g:VerticalPanel>
-                                <e:ListModelListBoxEditor ui:field="destStorageEditor" addStyleNames="{style.listBoxEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="destClusterEditor" addStyleNames="{style.listBoxEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="cpuProfileEditor" addStyleNames="{style.listBoxEditor}"/>
                             </g:VerticalPanel>
                             <g:VerticalPanel>
-                                <e:ListModelListBoxEditor ui:field="destStorageQuotaEditor" addStyleNames="{style.destStorageQuotaEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" />
                             </g:VerticalPanel>
                         </g:HorizontalPanel>

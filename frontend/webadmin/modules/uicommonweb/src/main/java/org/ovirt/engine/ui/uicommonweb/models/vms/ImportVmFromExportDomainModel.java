@@ -40,18 +40,13 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.inject.Inject;
 
 public class ImportVmFromExportDomainModel extends ImportVmModel {
@@ -64,12 +59,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<>();
     private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<>();
 
-    private final StorageDiskListModel storageDiskListModel;
-
-    public StorageDiskListModel getStorage() {
-        return storageDiskListModel;
-    }
-
     @Override
     public void setSelectedItem(Object value) {
         super.setSelectedItem(value);
@@ -78,12 +67,11 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
     @Inject
     public ImportVmFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
-            final StorageDiskListModel storageDomain, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
+            final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final VmImportGeneralModel vmImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel) {
         super(cluster, clusterQuota);
         importDiskListModel = vmImportDiskListModel;
-        storageDiskListModel = storageDomain;
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel, vmImportAppListModel);
     }
 
@@ -122,7 +110,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                            getCluster().setSelectedItem(Linq.firstOrNull(clusters));
                        }
 
-                       getStorage().setItems(null);
                        // get storage domains
                        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
                                new INewAsyncCallback() {
@@ -139,7 +126,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                                    }
                                }
 
-                               getStorage().setItems((ArrayList) filteredStorageDomains);
                                if (getClusterQuota().getIsAvailable()) {
                                    initQuotaForStorageDomains();
                                } else {
@@ -199,16 +185,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
     private void checkIfDefaultStorageApplicableForAllDisks() {
         boolean isDefaultStorageApplicableForAllDisks = true;
-        StorageDomain defaultStorage = (StorageDomain) getStorage().getSelectedItem();
-        for (ImportDiskData importData : diskImportDataMap.values()) {
-            if (defaultStorage != null && !importData.getStorageDomains().contains(defaultStorage)) {
-                isDefaultStorageApplicableForAllDisks = false;
-                break;
-            } else {
-                importData.setSelectedStorageDomain(defaultStorage);
-            }
-        }
-
         if ((getMessage() == null || getMessage().isEmpty())
                 && !isDefaultStorageApplicableForAllDisks) {
             setMessage(ConstantsManager.getInstance().getConstants().importNotApplicableForDefaultStorage());
@@ -381,12 +357,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
         checkDestFormatCompatibility();
         stopProgress();
-        getStorage().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                onDataLoad();
-            }
-        });
     }
 
     public void onDataLoad() {
@@ -408,13 +378,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
     public ImportDiskData getDiskImportData(Guid diskId) {
-        ImportDiskData importData = diskImportDataMap.get(diskId);
-        if (importData != null) {
-            if (storageDiskListModel.getSelectedItem() != null) {
-                importData.setSelectedStorageDomain((StorageDomain) storageDiskListModel.getSelectedItem());
-            }
-        }
-        return importData;
+        return diskImportDataMap.get(diskId);
     }
 
     protected void addDiskImportData(Guid diskId,
@@ -452,13 +416,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 setMessage("");
             }
         }
-        getStorage().validateSelectedItem(
-                new IValidation[] { new NotEmptyValidation() });
         getCluster().validateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
 
         return validateNames()
-                && getStorage().getIsValid()
                 && getCluster().getIsValid()
                 && getClusterQuota().getIsValid();
     }
