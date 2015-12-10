@@ -655,6 +655,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A Template with the same identifier already exists.")
     String ACTION_TYPE_FAILED_TEMPLATE_GUID_ALREADY_EXISTS();
 
+    @DefaultStringValue("${json}")
+    String CLUSTER_UPGRADE_NOT_FINISHED();
+
+    @DefaultStringValue("${json}")
+    String CLUSTER_UPGRADE_CAN_NOT_BE_STARTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 

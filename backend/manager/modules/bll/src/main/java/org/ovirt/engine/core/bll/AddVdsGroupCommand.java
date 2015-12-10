@@ -137,7 +137,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
                 && validate(validator.mixedClusterServicesSupported())
                 && validate(validator.attestationServerConfigured())
                 && validate(validator.migrationSupported(getArchitecture()))
-                && validateClusterPolicy()
+                && validateClusterPolicy(null)
                 && validate(validator.virtIoRngSupported())
                 && validateManagementNetwork();
     }

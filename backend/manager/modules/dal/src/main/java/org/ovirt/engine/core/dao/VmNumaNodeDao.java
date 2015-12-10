@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -40,6 +41,15 @@ public interface VmNumaNodeDao extends VdsNumaNodeDao {
      * @return pair(Guid(vm uuid), VmNumaNode) list
      */
     List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByVdsGroupId(Guid vdsGroupId);
+
+     /**
+     * Get vm numa node information that in the vms which belong to the specified vds group
+     * @param vdsGroupId
+     *            the id of vds group
+     *
+     * @return Map with VM id as key and a list of numa nodes as value
+     */
+    Map<Guid, List<VmNumaNode>> getVmNumaNodeInfoByVdsGroupIdAsMap(Guid vdsGroupId);
 
     /**
      * Get last pinned vds numa node index info(used for update pin info when vm migrate)

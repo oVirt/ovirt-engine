@@ -142,6 +142,16 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
     }
 
     @Test
+    public void testGetVmNumaNodeInfoByBdsGroupIdAsMap() {
+        Guid vdsGroupId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        Guid vmId = Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4354");
+        Map<Guid, List<VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByVdsGroupIdAsMap(vdsGroupId);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(2, result.get(vmId).size());
+    }
+
+    @Test
     public void testGetPinnedNumaNodeIndex() {
         List<Pair<Guid, Integer>> result = vmNumaNodeDao.getPinnedNumaNodeIndex(existingVm.getId());
 
