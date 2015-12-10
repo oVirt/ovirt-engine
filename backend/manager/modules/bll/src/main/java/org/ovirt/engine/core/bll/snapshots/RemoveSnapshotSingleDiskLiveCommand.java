@@ -80,6 +80,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                         getParameters().getCommandStep());
                 return;
 
+            case ENDED_SUCCESSFULLY:
             case SUCCEEDED:
                 CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
                 if (cmdEntity.isCallbackEnabled() && !cmdEntity.isCallbackNotified()) {
@@ -106,6 +107,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 }
 
             case FAILED:
+            case ENDED_WITH_FAILURE:
             case FAILED_RESTARTED:
                 if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
                     // It's possible that the image was destroyed already if this is retry of Live

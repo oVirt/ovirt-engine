@@ -121,6 +121,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private boolean hasCompleted(CommandEntity entity) {
         return CommandStatus.SUCCEEDED.equals(entity.getCommandStatus()) ||
                 CommandStatus.FAILED.equals(entity.getCommandStatus()) ||
+                CommandStatus.ENDED_WITH_FAILURE.equals(entity.getCommandStatus()) ||
+                CommandStatus.ENDED_SUCCESSFULLY.equals(entity.getCommandStatus()) ||
                 CommandStatus.FAILED_RESTARTED.equals(entity.getCommandStatus());
     }
 

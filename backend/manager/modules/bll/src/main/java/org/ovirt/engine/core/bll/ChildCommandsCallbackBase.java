@@ -35,36 +35,49 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             switch (CommandCoordinatorUtil.getCommandStatus(childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
-                log.info("Waiting on child command id: '{}' type:'{}' of '{}' (id: '{}') to complete",
-                        childCmdId,
-                        child.getActionType(),
-                        command.getActionType(),
-                        cmdId);
+                logWaitingForChildCommand(child, command);
                 return;
             case FAILED:
             case FAILED_RESTARTED:
+                if (shouldWaitForEndMethodsCompletion(child, command)) {
+                    return;
+                }
+                anyFailed = true;
+                break;
+            case ENDED_WITH_FAILURE:
             case UNKNOWN:
                 anyFailed = true;
                 break;
-            default:
-                CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(childCmdId);
-                if (cmdEntity.isCallbackNotified() || !cmdEntity.isCallbackEnabled()) {
-                    ++completedChildren;
-                    break;
-                } else {
-                    // log.info("command '{}' id: '{}' is waiting for child command(s) '{}' to complete",
-                    // command.getActionType(), cmdId, childCmdIds);
-                    log.info("Waiting on child command id: '{}' type:'{}' of '{}' (id: '{}') to complete",
-                            childCmdId,
-                            child.getActionType(),
-                            command.getActionType(),
-                            cmdId);
+            case SUCCEEDED:
+                if (shouldWaitForEndMethodsCompletion(child, command)) {
                     return;
                 }
+            default:
+                ++completedChildren;
             }
         }
 
         childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
+    }
+
+    private boolean shouldWaitForEndMethodsCompletion(CommandBase<?> childCommand, CommandBase<?> parentCommand) {
+        CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(childCommand.getCommandId());
+        boolean hasNotifiedCallback = cmdEntity.isCallbackEnabled() && cmdEntity.isCallbackNotified();
+
+        if (!childCommand.getParameters().getShouldBeEndedByParent() && !hasNotifiedCallback) {
+            logWaitingForChildCommand(childCommand, parentCommand);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void logWaitingForChildCommand(CommandBase<?> childCommand, CommandBase<?> parentCommand) {
+        log.info("Command '{}' (id: '{}') waiting on child command id: '{}' type:'{}' to complete",
+                parentCommand.getActionType(),
+                parentCommand.getCommandId(),
+                childCommand.getCommandId(),
+                childCommand.getActionType());
     }
 
     protected abstract void childCommandsExecutionEnded(CommandBase<?> command,

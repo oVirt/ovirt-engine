@@ -25,6 +25,7 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentC
             case ACTIVE:
                 log.info("Waiting on RemoveCinderDiskVolumeCommandCallback child commands to complete");
                 return;
+            case ENDED_SUCCESSFULLY:
             case SUCCEEDED:
                 if (!getCommand().getParameters().getFinishedChildCmdIds().contains(childCmdId)) {
                     int removedVolumeIndex = getCommand().getParameters().getRemovedVolumeIndex();
@@ -38,6 +39,7 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentC
                 }
 
                 break;
+            case ENDED_WITH_FAILURE:
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:

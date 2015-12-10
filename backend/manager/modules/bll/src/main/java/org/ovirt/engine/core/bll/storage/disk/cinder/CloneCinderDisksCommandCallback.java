@@ -34,9 +34,11 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
             case ACTIVE:
                 log.info("Waiting on CloneCinderDisksCommandCallback child commands to complete");
                 break;
+            case ENDED_SUCCESSFULLY:
             case SUCCEEDED:
                 finishedChildren++;
                 break;
+            case ENDED_WITH_FAILURE:
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:

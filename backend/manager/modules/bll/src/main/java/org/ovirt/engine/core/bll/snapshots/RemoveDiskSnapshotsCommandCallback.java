@@ -25,6 +25,7 @@ public class RemoveDiskSnapshotsCommandCallback extends CommandCallback {
                 log.info("Waiting on Live Merge child commands to complete");
                 return;
             case FAILED:
+            case ENDED_WITH_FAILURE:
             case FAILED_RESTARTED:
             case UNKNOWN:
                 anyFailed = true;

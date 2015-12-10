@@ -22,6 +22,7 @@ public class MergeExtendCommandCallback extends CommandCallback {
             case ACTIVE:
                 log.info("Waiting on disk extension child commands to complete");
                 return;
+            case ENDED_WITH_FAILURE:
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:

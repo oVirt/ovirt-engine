@@ -21,6 +21,7 @@ public class RemoveVmPoolCommandCallback extends CommandCallback {
         for (Guid childCmdId : childCmdIds) {
             CommandEntity entity = CommandCoordinatorUtil.getCommandEntity(childCmdId);
             switch (entity.getCommandStatus()) {
+                case ENDED_WITH_FAILURE:
                 case FAILED:
                 case FAILED_RESTARTED:
                 case UNKNOWN:

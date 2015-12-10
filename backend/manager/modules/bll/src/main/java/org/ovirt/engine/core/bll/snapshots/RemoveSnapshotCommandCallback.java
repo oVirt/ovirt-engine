@@ -24,6 +24,7 @@ public class RemoveSnapshotCommandCallback extends CommandCallback {
             case ACTIVE:
                 log.info("Waiting on Live Merge child commands to complete");
                 return;
+            case ENDED_WITH_FAILURE:
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:

@@ -25,8 +25,10 @@ public class RemoveAllCinderDisksCommandCallBack<T extends CommandBase, S extend
                 case ACTIVE:
                     log.info("Waiting for child commands to complete");
                     return;
+                case ENDED_SUCCESSFULLY:
                 case SUCCEEDED:
                     break;
+                case ENDED_WITH_FAILURE:
                 case FAILED:
                 case FAILED_RESTARTED:
                 case UNKNOWN:
