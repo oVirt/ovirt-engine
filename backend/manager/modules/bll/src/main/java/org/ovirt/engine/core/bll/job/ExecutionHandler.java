@@ -182,8 +182,6 @@ public class ExecutionHandler {
      *            The action type of the command
      * @param runAsInternal
      *            Indicates if the command should be run as internal action or not
-     * @param hasCorrelationId
-     *            Indicates if the current command was executed under a correlation-ID
      */
     public static void prepareCommandForMonitoring(CommandBase<?> command,
             VdcActionType actionType,
@@ -451,7 +449,7 @@ public class ExecutionHandler {
      * running {@code Job} by setting the {@ExecutionContext.shouldEndJob()} to
      * {@code true}.
      *
-     * @param executionContext
+     * @param context
      *            The context of the execution which defines how the job should be ended
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
@@ -565,7 +563,7 @@ public class ExecutionHandler {
      * under the parent {@code StepEnum.EXECUTING} step. If the parent command is an internal command, its parent task
      * step is passed to its internal command.
      *
-     * @param parentExecutionContext
+     * @param commandContext
      *            The context of the parent command
      * @param lock
      *            The lock which should be released at child command
@@ -769,7 +767,7 @@ public class ExecutionHandler {
      * Finalizes Job with VDSM tasks, as this case requires verification that no other steps are running in order to
      * close the entire Job
      *
-     * @param executionContext
+     * @param context
      *            The context of the execution which defines how the job should be ended
      * @param exitStatus
      *            Indicates if the execution described by the job ended successfully or not.
