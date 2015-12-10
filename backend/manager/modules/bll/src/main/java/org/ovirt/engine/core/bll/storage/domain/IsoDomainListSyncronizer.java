@@ -304,6 +304,8 @@ public class IsoDomainListSyncronizer {
             return updateIsoListFromVDSM(storagePoolId, storageDomainId);
         case Floppy:
             return updateFloppyListFromVDSM(storagePoolId, storageDomainId);
+        case Unknown:
+            return updateUnknownFileListFromVDSM(storagePoolId, storageDomainId);
         default:
             log.warn("Refreshing Iso domain using unsupported imageType: {}", imageType);
             return false;
@@ -696,6 +698,24 @@ public class IsoDomainListSyncronizer {
         }
 
         return result;
+    }
+
+    private boolean updateUnknownFileListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
+        VDSReturnValue fileStatsVDSReturnValue = getFileStats(repoStoragePoolId,
+                repoStorageDomainId,
+                ALL_FILES_PATTERN,
+                null);
+
+        Map<String, Map<String, Object>> fileStats = fileStatsFromVDSReturnValue(fileStatsVDSReturnValue);
+        removeFileStatsForComplyingFileNames(fileStats, ISO_FILE_PATTERN_REGEX);
+        removeFileStatsForComplyingFileNames(fileStats, FLOPPY_FILE_PATTERN_REGEX);
+
+        // all remaining fileStats are uncategorized, of ImageFileType.Unknown type
+        return refreshVdsmFileList(repoStoragePoolId,
+                repoStorageDomainId,
+                ImageFileType.Unknown,
+                fileStats,
+                null);
     }
 
     /**
