@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -107,11 +107,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     /**
-     * All MACs of given DC are found, and all of them are {@link MacPoolManagerStrategy#freeMac(String) freed}
-     * from source {@link MacPoolManagerStrategy macPool} and are
-     * {@link MacPoolManagerStrategy#forceAddMac(String) added}
-     * to target {@link MacPoolManagerStrategy macPool}. Because source macPool may contain duplicates and/or allow
-     * duplicates, {@link MacPoolManagerStrategy#forceAddMac(String)} is used to add them override
+     * All MACs of given DC are found, and all of them are {@link MacPool#freeMac(String) freed}
+     * from source {@link MacPool macPool} and are
+     * {@link MacPool#forceAddMac(String) added}
+     * to target {@link MacPool macPool}. Because source macPool may contain duplicates and/or allow
+     * duplicates, {@link MacPool#forceAddMac(String)} is used to add them override
      * <em>allowDuplicates</em> setting of target macPool.
      * @param oldMacPoolId id of macPool before update
      * @param newMacPoolId macPool Id of updated data center.
@@ -119,8 +119,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private void moveMacsOfUpdatedDataCenter(Guid oldMacPoolId, Guid newMacPoolId, List<String> vmInterfaceMacs) {
         Objects.requireNonNull(vmInterfaceMacs);
 
-        MacPoolManagerStrategy sourcePool = poolPerDc.getPoolById(oldMacPoolId);
-        MacPoolManagerStrategy targetPool = poolPerDc.getPoolById(newMacPoolId);
+        MacPool sourcePool = poolPerDc.getPoolById(oldMacPoolId);
+        MacPool targetPool = poolPerDc.getPoolById(newMacPoolId);
 
         for (String mac : vmInterfaceMacs) {
             sourcePool.freeMac(mac);

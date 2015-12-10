@@ -30,8 +30,8 @@ import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -238,7 +238,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             }
         });
         cmd.init();
-        doReturn(mock(MacPoolManagerStrategy.class)).when(cmd).getMacPool();
+        doReturn(mock(MacPool.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(parameters));
         doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();

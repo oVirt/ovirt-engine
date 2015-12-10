@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.network.macpoolmanager;
+package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.HashMap;
 import java.util.Iterator;

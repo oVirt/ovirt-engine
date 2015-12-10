@@ -23,7 +23,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -98,7 +98,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private List<DiskImage> imageList;
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
-    private MacPoolManagerStrategy macPool;
+    private MacPool macPool;
 
     @Override
     protected void init() {
@@ -1113,5 +1113,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected List<DiskImage> getImages() {
         return getVm().getImages();
+    }
+
+    @Override
+    protected MacPool getMacPool() {
+        return super.getMacPool();
     }
 }

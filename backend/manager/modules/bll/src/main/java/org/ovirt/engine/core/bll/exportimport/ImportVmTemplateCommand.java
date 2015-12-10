@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -94,7 +94,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private VmTemplateDao vmTemplateDao;
 
     private Version effectiveCompatibilityVersion;
-    private MacPoolManagerStrategy macPool;
+    private MacPool macPool;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
 
@@ -340,7 +340,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
      * init method is not called via Postconstruct, but from constructor, meaning, that in tests we're unable
      * pro inject 'poolPerDc' soon enough.
      **/
-    protected MacPoolManagerStrategy getMacPool() {
+    protected MacPool getMacPool() {
         if (macPool == null) {
             macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
         }

@@ -13,8 +13,8 @@ import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -84,7 +84,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     private boolean vmsAdded = false;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
     private Version effectiveCompatibilityVersion;
-    private MacPoolManagerStrategy macPool;
+    private MacPool macPool;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -104,7 +104,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
        init method is not called via Postconstruct, but from constructor, meaning, that in tests
        we're unable pro inject 'poolPerDc' soon enough.
     * */
-    protected MacPoolManagerStrategy getMacPool() {
+    protected MacPool getMacPool() {
         if (macPool == null) {
             macPool = poolPerDc.poolForDataCenter(getStoragePoolId());
         }

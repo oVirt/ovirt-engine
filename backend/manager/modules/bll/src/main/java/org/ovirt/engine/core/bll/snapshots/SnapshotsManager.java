@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -636,7 +636,7 @@ public class SnapshotsManager {
         vnicProfileHelper.auditInvalidInterfaces(vm.getName());
     }
 
-    private MacPoolManagerStrategy getMacPool(Guid storagePoolId) {
+    private MacPool getMacPool(Guid storagePoolId) {
         return poolPerDc.poolForDataCenter(storagePoolId);
     }
 

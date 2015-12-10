@@ -12,7 +12,7 @@ import javax.transaction.Transaction;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -41,22 +41,22 @@ import org.slf4j.LoggerFactory;
 public class VmInterfaceManager {
 
     private Logger log = LoggerFactory.getLogger(getClass());
-    private MacPoolManagerStrategy macPool;
+    private MacPool macPool;
 
     public VmInterfaceManager() {
     }
 
-    public VmInterfaceManager(MacPoolManagerStrategy macPool) {
+    public VmInterfaceManager(MacPool macPool) {
         this.macPool = macPool;
     }
 
     /**
      * Add a {@link VmNic} to the VM. Allocates a MAC from the
-     * {@link MacPoolManagerStrategy} if necessary, otherwise, if
+     * {@link MacPool} if necessary, otherwise, if
      * {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the
-     * {@link MacPoolManagerStrategy}. If
+     * {@link MacPool}. If
      * HotPlug is not enabled tries to add the {@link VmNic}'s MAC address to the
-     * {@link MacPoolManagerStrategy}, and throws a
+     * {@link MacPool}, and throws a
      * {@link EngineException} if it fails.
      *
      * @param iface
@@ -64,7 +64,7 @@ public class VmInterfaceManager {
      * @param compensationContext
      *            Used to snapshot the saved entities.
      * @param reserveExistingMac
-     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPoolManagerStrategy}
+     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPool}
      * @param clusterCompatibilityVersion
      *            the compatibility version of the cluster
      */
@@ -117,7 +117,7 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Remove all {@link VmNic}s from the VM, and remove the Mac addresses from {@link MacPoolManagerStrategy}.
+     * Remove all {@link VmNic}s from the VM, and remove the Mac addresses from {@link MacPool}.
      *
      * @param vmId
      *            The ID of the VM to remove from.

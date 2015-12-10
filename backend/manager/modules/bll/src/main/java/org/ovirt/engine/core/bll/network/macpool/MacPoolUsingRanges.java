@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.network.macpoolmanager;
+package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,16 +16,16 @@ import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MacPoolManagerRanges implements MacPoolManagerStrategy {
+public class MacPoolUsingRanges implements MacPool {
 
-    private static final Logger log = LoggerFactory.getLogger(MacPoolManagerRanges.class);
+    private static final Logger log = LoggerFactory.getLogger(MacPoolUsingRanges.class);
 
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private final boolean allowDuplicates;
     private MacsStorage macsStorage;
     private Collection<LongRange> rangesBoundaries;
 
-    public MacPoolManagerRanges(Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
+    public MacPoolUsingRanges(Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
         this.rangesBoundaries = rangesBoundaries;
         initialize();

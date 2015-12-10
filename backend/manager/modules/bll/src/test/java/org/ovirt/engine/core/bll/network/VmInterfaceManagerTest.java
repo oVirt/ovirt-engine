@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -47,7 +47,7 @@ public class VmInterfaceManagerTest {
     private static final int OS_ID = 0;
 
     @Mock
-    private MacPoolManagerStrategy macPoolManagerStrategy;
+    private MacPool macPool;
 
     @Mock
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
@@ -72,7 +72,7 @@ public class VmInterfaceManagerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setupMocks() {
-        vmInterfaceManager = Mockito.spy(new VmInterfaceManager(macPoolManagerStrategy));
+        vmInterfaceManager = Mockito.spy(new VmInterfaceManager(macPool));
         doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNetworkInterfaceDao).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
@@ -103,9 +103,9 @@ public class VmInterfaceManagerTest {
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, osId, version);
         if (reserveExistingMac) {
-            verify(macPoolManagerStrategy, times(1)).forceAddMac(iface.getMacAddress());
+            verify(macPool, times(1)).forceAddMac(iface.getMacAddress());
         } else {
-            verifyZeroInteractions(macPoolManagerStrategy);
+            verifyZeroInteractions(macPool);
         }
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
@@ -158,27 +158,27 @@ public class VmInterfaceManagerTest {
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPoolManagerStrategy} & Daos.
+     * Verify that {@link VmInterfaceManager#add} delegated correctly to {@link MacPool} & Daos.
      *
      * @param iface
      *            The interface to check for.
      * @param addMacVerification
-     *            Mode to check (times(1), never(), etc) for {@link MacPoolManagerStrategy#addMac(String)}.
+     *            Mode to check (times(1), never(), etc) for {@link MacPool#addMac(String)}.
      */
     protected void verifyAddDelegatedCorrectly(VmNic iface, VerificationMode addMacVerification) {
-        verify(macPoolManagerStrategy, addMacVerification).forceAddMac(iface.getMacAddress());
+        verify(macPool, addMacVerification).forceAddMac(iface.getMacAddress());
         verify(vmNicDao).save(iface);
         verify(vmNetworkStatisticsDao).save(iface.getStatistics());
     }
 
     /**
-     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPoolManagerStrategy} & Daos.
+     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPool} & Daos.
      *
      * @param iface
      *            The interface to check for.
      */
     protected void verifyRemoveAllDelegatedCorrectly(VmNic iface) {
-        verify(macPoolManagerStrategy, times(1)).freeMac(iface.getMacAddress());
+        verify(macPool, times(1)).freeMac(iface.getMacAddress());
         verify(vmNicDao).remove(iface.getId());
         verify(vmNetworkStatisticsDao).remove(iface.getId());
     }
