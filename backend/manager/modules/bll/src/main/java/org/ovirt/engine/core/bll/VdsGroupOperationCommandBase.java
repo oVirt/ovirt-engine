@@ -11,12 +11,16 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -25,7 +29,10 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
         VdsGroupCommandBase<T> {
@@ -35,6 +42,18 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     @Inject
     private SchedulingManager schedulingManager;
+
+    @Inject
+    private InClusterUpgradeValidator upgradeValidator;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     public VdsGroupOperationCommandBase(T parameters) {
         this(parameters, null);
@@ -103,21 +122,42 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         return allowVirGluster;
     }
 
-    protected boolean validateClusterPolicy() {
-        ClusterPolicy clusterPolicy = null;
-        if (getVdsGroup().getClusterPolicyId() != null) {
-            clusterPolicy =
-                schedulingManager.getClusterPolicy(getVdsGroup().getClusterPolicyId());
-        }
+    protected boolean validateClusterPolicy(VDSGroup oldVdsGroup) {
+        ClusterPolicy clusterPolicy = getClusterPolicy(getVdsGroup());
         if (clusterPolicy == null) {
-            clusterPolicy = schedulingManager.getClusterPolicy(getVdsGroup().getClusterPolicyName());
-            if (clusterPolicy == null) {
+            return false;
+        }
+        ClusterPolicy oldClusterPolicy = getClusterPolicy(oldVdsGroup);
+
+        if (oldClusterPolicy != null && oldClusterPolicy.isClusterUpgradePolicy() &&
+                !clusterPolicy.isClusterUpgradePolicy()) {
+            // Check if we can safely stop the cluster upgrade
+            final List<VDS> hosts = getVdsDao().getAllForVdsGroup(getVdsGroupId());
+            if (!validate(getUpgradeValidator().isUpgradeDone(hosts))) {
                 return false;
             }
-            getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
+        } else if ((oldClusterPolicy == null || !oldClusterPolicy.isClusterUpgradePolicy()) &&
+                clusterPolicy.isClusterUpgradePolicy()) {
+            // Check if we can safely start the cluster upgrade
+            final List<VDS> hosts = getVdsDao().getAllForVdsGroup(getVdsGroupId());
+            final List<VM> vms = getVmDao().getAllForVdsGroup(getVdsGroupId());
+
+            // Populate numa nodes with a mass update
+            final Map<Guid, List<VmNumaNode>> numaNodes =
+                    getVmNumaNodeDao().getVmNumaNodeInfoByVdsGroupIdAsMap(getVdsGroupId());
+            for (final VM vm : vms) {
+                if (numaNodes.containsKey(vm.getId())) {
+                    vm.setvNumaNodeList(numaNodes.get(vm.getId()));
+                }
+            }
+            if (!validate(getUpgradeValidator().isUpgradePossible(hosts, vms))) {
+                return false;
+            }
         }
+
+        getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
         Map<String, String> customPropertiesRegexMap =
-                schedulingManager.getCustomPropertiesRegexMap(clusterPolicy);
+                getSchedulingManager().getCustomPropertiesRegexMap(clusterPolicy);
         updateClusterPolicyProperties(getVdsGroup(), clusterPolicy, customPropertiesRegexMap);
         List<ValidationError> validationErrors =
                 SimpleCustomPropertiesUtil.getInstance().validateProperties(customPropertiesRegexMap,
@@ -128,6 +168,20 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             return false;
         }
         return true;
+    }
+
+    private ClusterPolicy getClusterPolicy(final VDSGroup vdsGroup) {
+        ClusterPolicy clusterPolicy = null;
+        if (vdsGroup == null){
+            return null;
+        }
+        if (vdsGroup.getClusterPolicyId() != null) {
+            clusterPolicy = getSchedulingManager().getClusterPolicy(vdsGroup.getClusterPolicyId());
+        }
+        if (clusterPolicy == null) {
+            clusterPolicy = getSchedulingManager().getClusterPolicy(vdsGroup.getClusterPolicyName());
+        }
+        return clusterPolicy;
     }
 
     /**
@@ -176,5 +230,17 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
+    }
+
+    protected VmNumaNodeDao getVmNumaNodeDao() {
+        return vmNumaNodeDao;
+    }
+
+    protected SchedulingManager getSchedulingManager() {
+        return schedulingManager;
+    }
+
+    protected InClusterUpgradeValidator getUpgradeValidator() {
+        return upgradeValidator;
     }
 }

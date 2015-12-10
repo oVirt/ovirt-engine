@@ -470,7 +470,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         }
 
         if (result) {
-            result = validateClusterPolicy();
+            result = validateClusterPolicy(oldGroup);
         }
         // non-empty required sources list and rng-unsupported cluster version
         if (result && !getVdsGroup().getRequiredRngSources().isEmpty()
