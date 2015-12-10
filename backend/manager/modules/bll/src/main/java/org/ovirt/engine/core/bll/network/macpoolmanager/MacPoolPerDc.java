@@ -108,9 +108,8 @@ public class MacPoolPerDc {
             throw new IllegalStateException(UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
         }
 
-        MacPoolManagerStrategy poolForScope = new MacPoolManagerRanges(macPoolToRanges(macPool),
-                macPool.isAllowDuplicateMacAddresses());
-        poolForScope.initialize();
+        MacPoolManagerStrategy poolForScope =
+                new MacPoolManagerRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
         macPools.put(macPool.getId(), poolForScope);
         return poolForScope;
     }

@@ -5,11 +5,6 @@ import java.util.List;
 public interface MacPoolManagerStrategy {
 
     /**
-     * Initialize pool.
-     */
-    void initialize();
-
-    /**
      * @return free MAC from pool.
      * @throws org.ovirt.engine.core.common.errors.EngineException if mac address cannot be allocated.
      */

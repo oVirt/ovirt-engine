@@ -22,35 +22,20 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private final boolean allowDuplicates;
-    private boolean initialized;
     private MacsStorage macsStorage;
     private Collection<LongRange> rangesBoundaries;
 
     public MacPoolManagerRanges(Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
         this.rangesBoundaries = rangesBoundaries;
+        initialize();
     }
 
-    @Override
-    public void initialize() {
-        try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            if (initialized) {
-                log.error("Trying to initialize {} multiple times.", getClass().getName());
-                return;
-            }
-
-            log.info("Start initializing {}", getClass().getSimpleName());
-
-            this.macsStorage = createMacsStorage(rangesBoundaries);
-
-            initialized = true;
-            log.info("Finished initializing. Available MACs in pool: {}", macsStorage.getAvailableMacsCount());
-        } catch (Exception ex) {
-            log.error("Error in initializing MAC Addresses pool manager: {}", ex.getMessage());
-            log.debug("Exception", ex);
-        }
+    private void initialize() {
+        log.info("Start initializing {}", getClass().getSimpleName());
+        this.macsStorage = createMacsStorage(rangesBoundaries);
+        log.info("Finished initializing. Available MACs in pool: {}", macsStorage.getAvailableMacsCount());
     }
-
 
     /**
      * create and initialize internal structures to accommodate all macs specified in {@code rangesString} up to {@code
@@ -81,7 +66,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public String allocateNewMac() {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             return allocateNewMacsWithoutLocking(1).get(0);
         }
     }
@@ -97,7 +81,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public int getAvailableMacsCount() {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.readLock())) {
-            checkIfInitialized();
             int availableMacsSize = macsStorage.getAvailableMacsCount();
             log.debug("Number of available Mac addresses = {}", availableMacsSize);
             return availableMacsSize;
@@ -107,7 +90,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public void freeMac(String mac) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
         }
     }
@@ -115,7 +97,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public boolean addMac(String mac) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             boolean added = macsStorage.useMac(MacAddressRangeUtils.macToLong(mac));
             logWhenMacPoolIsEmpty();
             return added;
@@ -125,7 +106,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public void forceAddMac(String mac) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             forceAddMacWithoutLocking(mac);
         }
     }
@@ -138,7 +118,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public boolean isMacInUse(String mac) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.readLock())) {
-            checkIfInitialized();
             return macsStorage.isMacInUse(MacAddressRangeUtils.macToLong(mac));
         }
     }
@@ -146,7 +125,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public void freeMacs(List<String> macs) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             for (String mac : macs) {
                 macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
             }
@@ -156,7 +134,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public List<String> allocateMacAddresses(int numberOfAddresses) {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
-            checkIfInitialized();
             return allocateNewMacsWithoutLocking(numberOfAddresses);
         }
     }
@@ -164,13 +141,5 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     @Override
     public boolean isDuplicateMacAddressesAllowed() {
         return this.allowDuplicates;
-    }
-
-
-    private void checkIfInitialized() {
-        if (!initialized) {
-            throw new EngineException(EngineError.MAC_POOL_NOT_INITIALIZED);
-        }
-
     }
 }
