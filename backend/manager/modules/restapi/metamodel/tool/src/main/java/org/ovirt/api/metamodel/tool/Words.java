@@ -38,6 +38,7 @@ public class Words {
         plurals.put("key", "keys");
 
         // Populate the singulars exceptions:
+        singulars.put("errata", "erratum");
     }
 
     public String getSingular(String plural) {
@@ -48,6 +49,9 @@ public class Words {
             }
             else if (plural.endsWith("s")) {
                 singular = plural.substring(0, plural.length() - 1);
+            }
+            else {
+                singular = plural;
             }
         }
         return singular;
