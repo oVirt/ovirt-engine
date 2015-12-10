@@ -99,6 +99,35 @@ public class Version implements Comparable<Version>, Serializable {
         }
     }
 
+
+    /**
+     * @return true if this instance version is greater than candidate
+     */
+    public boolean greater(Version candidate) {
+        return this.compareTo(candidate) > 0;
+    }
+
+    /**
+     * @return true if this instance version is less than candidate
+     */
+    public boolean less(Version candidate) {
+        return this.compareTo(candidate) < 0;
+    }
+
+    /**
+     * @return true if this instance version is greater or equals candidate
+     */
+    public boolean greaterOrEquals(Version candidate) {
+        return this.compareTo(candidate) >= 0;
+    }
+
+    /**
+     * @return true if this instance version is less or equals to candidate
+     */
+    public boolean lessOrEquals(Version candidate) {
+        return this.compareTo(candidate) <= 0;
+    }
+
     public String toString(int i) {
         StringBuilder sb = new StringBuilder();
         switch (i) {
