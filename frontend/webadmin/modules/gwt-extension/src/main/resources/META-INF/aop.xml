@@ -4,7 +4,7 @@
 
 <aspectj>
 
-  <weaver options="-verbose">
+  <weaver options="-verbose -XmessageHandlerClass:org.ovirt.engine.ui.gwtextension.AspectJLogHandler">
     <include within="org.ovirt.engine.ui.gwtextension.DontPrune"/>
     <include within="com.google.gwt.dev.jjs.impl.ControlFlowAnalyzer"/>
   </weaver>

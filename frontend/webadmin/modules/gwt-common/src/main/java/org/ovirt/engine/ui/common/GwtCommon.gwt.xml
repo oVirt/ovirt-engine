@@ -51,4 +51,7 @@
         <when-type-assignable class="org.ovirt.engine.ui.common.idhandler.ElementIdHandler" />
     </generate-with>
 
+    <!-- Exclude non-GWT classes from GIN class loading -->
+    <extend-configuration-property name="gin.classloading.exceptedPackages" value="org.ovirt.engine.ui.gwtextension" />
+
 </module>

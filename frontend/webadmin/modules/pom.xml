@@ -48,6 +48,7 @@
     <!-- GWT compiler and Dev Mode JVM arguments, these override any Maven JVM arguments -->
     <!-- * use thread-based workers with maximum of 4 simultaneous threads, this value be lowered via gwt.compiler.localWorkers -->
     <!-- * scope Java temp directory and Java Preference subsystem files into project's build directory -->
+    <!-- * use custom Java logging configuration -->
     <!-- Do not override this property, use gwt.jvmArgs instead! -->
     <gwt-plugin.extraJvmArgs>
       -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory \
@@ -55,6 +56,7 @@
       -Djava.io.tmpdir="${project.build.directory}/tmp" \
       -Djava.util.prefs.systemRoot="${project.build.directory}/tmp" \
       -Djava.util.prefs.userRoot="${project.build.directory}/tmp" \
+      -Djava.util.logging.config.class=org.ovirt.engine.ui.gwtextension.JavaLoggingConfig \
       ${gwt.jvmArgs}
     </gwt-plugin.extraJvmArgs>
     <!-- Control target browsers for GWT compilation, maps to 'user.agent' deferred binding property in *.gwt.xml -->
@@ -184,10 +186,16 @@
             <copyWebapp>true</copyWebapp>
             <strict>true</strict>
             <compileSourcesArtifacts>
+              <!--
+                TODO adding gwt-extension source-jar to GWT compiler classpath causes
+                AspectJ Load Time Weaver to apply gwt-extension's META-INF/aop.xml twice;
+                we should extract AOP stuff out of gwt-extension into a separate project
+                to avoid that.
+              -->
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
               <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
             </compileSourcesArtifacts>
-            <!--Why asm is excluded? -->
+            <!-- Why asm is excluded? -->
             <runClasspathExcludes>
               <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
             </runClasspathExcludes>

@@ -28,6 +28,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>${aspectj.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
