@@ -61,7 +61,7 @@ public class MacPoolPerDc {
     private void initializeMacPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         List<String> macsForMacPool = macPoolDao.getAllMacsForMacPool(macPool.getId());
 
-        final MacPool pool = createPoolWithoutLocking(macPool);
+        final MacPool pool = createPoolInternal(macPool);
         for (String mac : macsForMacPool) {
             pool.forceAddMac(mac);
         }
@@ -98,18 +98,17 @@ public class MacPoolPerDc {
      */
     public void createPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            createPoolWithoutLocking(macPool);
+            createPoolInternal(macPool);
         }
     }
 
-    private MacPool createPoolWithoutLocking(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+    private MacPool createPoolInternal(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         if (macPools.containsKey(macPool.getId())) {
             throw new IllegalStateException(UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
         }
 
-        MacPool poolForScope =
-                new MacPoolUsingRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
-        macPools.put(macPool.getId(), poolForScope);
+        MacPool poolForScope = new MacPoolUsingRanges(macPoolToRanges(macPool), macPool.isAllowDuplicateMacAddresses());
+        macPools.put(macPool.getId(), new MacPoolLockingProxy(poolForScope));
         return poolForScope;
     }
 
