@@ -116,47 +116,55 @@ public class AAAServiceImpl implements ModuleService {
                 }
             }
         ),
+        CHANGE_CREDENTIALS(
+            new Logic() {
+                @Override
+                public void execute(AAAServiceImpl module) {
+                    AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
+                    if ((aaaprofile.getAuthnExtension().getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.CREDENTIALS_CHANGE) == 0 &&
+                            !(Boolean)module.argMap.get("ignore-capabilities")) {
+                        throw new IllegalArgumentException("Unsupported operation: CREDENTIALS_CHANGE");
+                    }
+
+                    String user = aaaprofile.mapUser((String)module.argMap.get("user-name"));
+                    log.info("API: -->Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' user='{}'", aaaprofile.getProfile(), user);
+                    ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
+                            new ExtMap().mput(
+                                    Base.InvokeKeys.COMMAND,
+                                    Authn.InvokeCommands.CREDENTIALS_CHANGE
+                            ).mput(
+                                    Authn.InvokeKeys.USER,
+                                    user
+                            ).mput(
+                                    Authn.InvokeKeys.CREDENTIALS,
+                                    getPassword((String)module.argMap.get("password"))
+                            ).mput(
+                                    Authn.InvokeKeys.CREDENTIALS_NEW,
+                                    getPassword((String)module.argMap.get("password-new"), "New password: ")
+                            )
+                    );
+                    log.info(
+                           "API: <--Authn.InvokeCommands.CREDENTIALS_CHANGES profile='{}' result={}",
+                            aaaprofile.getProfile(),
+                            getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
+                    );
+
+                    if (outMap.<Integer>get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
+                            outMap.<Integer>get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
+                        throw new RuntimeException(String.format("Password change failed"));
+                    }
+                    log.info("Password successfully changed");
+                }
+            }
+        ),
         LOGIN_USER(
             new Logic() {
                 @Override
                 public void execute(AAAServiceImpl module) {
-                    ExtensionProxy mappingExtension = null;
-                    ExtensionProxy authnExtension = module.getExtensionByProfile((String) module.argMap.get("profile"));
-                    String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
-                    String mappingName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
-
-                    log.info(
-                        "Profile='{}' authn='{}' authz='{}' mapping='{}'",
-                        module.argMap.get("profile"),
-                        authnExtension.getContext().get(Base.ContextKeys.INSTANCE_NAME),
-                        authzName,
-                        mappingName
-                    );
-
-                    ExtensionProxy authzExtension = module.getExtensionsManager().getExtensionByName(authzName);
-                    if(mappingName != null) {
-                        mappingExtension = module.getExtensionsManager().getExtensionByName(mappingName);
-                    }
-
-                    String user = (String)module.argMap.get("user-name");
-
-                    if(mappingExtension != null) {
-                        log.info("API: -->Mapping.InvokeCommands.MAP_USER user='{}'", user);
-                        user = mappingExtension.invoke(
-                            new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Mapping.InvokeCommands.MAP_USER
-                            ).mput(
-                                Mapping.InvokeKeys.USER,
-                                user
-                            ),
-                            true
-                        ).<String>get(Mapping.InvokeKeys.USER, user);
-                        log.info("API: <--Mapping.InvokeCommands.MAP_USER user='{}'", user);
-                    }
-
-                    log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS user='{}'", user);
-                    ExtMap outMap = authnExtension.invoke(
+                    AAAProfile aaaprofile = module.new AAAProfile((String)module.argMap.get("profile"));
+                    String user = aaaprofile.mapUser((String)module.argMap.get("user-name"));
+                    log.info("API: -->Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' user='{}'", aaaprofile.getProfile(), user);
+                    ExtMap outMap = aaaprofile.getAuthnExtension().invoke(
                         new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
                             Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS
@@ -169,7 +177,8 @@ public class AAAServiceImpl implements ModuleService {
                         )
                     );
                     log.info(
-                        "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS result={}",
+                        "API: <--Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS profile='{}' result={}",
+                        aaaprofile.getProfile(),
                         getFieldNameByValue(Authn.AuthResult.class, outMap.<Integer> get(Authn.InvokeKeys.RESULT))
                     );
 
@@ -179,7 +188,7 @@ public class AAAServiceImpl implements ModuleService {
                     if (outMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                         module.acctReport(
                             Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
-                            authzName,
+                            aaaprofile.getAuthzName(),
                             authRecord,
                             null,
                             user,
@@ -193,10 +202,10 @@ public class AAAServiceImpl implements ModuleService {
                         );
                     }
 
-                    if(mappingExtension != null) {
+                    if(aaaprofile.getMappingExtension() != null) {
                         log.info("API: -->Mapping.InvokeCommands.MAP_AUTH_RECORD");
                         Dump.AUTH_RECORD.dump(module, authRecord);
-                        authRecord = mappingExtension.invoke(
+                        authRecord = aaaprofile.getMappingExtension().invoke(
                             new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
                                 Mapping.InvokeCommands.MAP_AUTH_RECORD
@@ -217,7 +226,7 @@ public class AAAServiceImpl implements ModuleService {
                         "API: -->Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD principal='{}'",
                         (Object) authRecord.get(Authn.AuthRecord.PRINCIPAL)
                     );
-                    outMap = authzExtension.invoke(
+                    outMap = module.getExtensionsManager().getExtensionByName(aaaprofile.getAuthzName()).invoke(
                         new ExtMap().
                             mput(
                                 Base.InvokeKeys.COMMAND,
@@ -245,7 +254,7 @@ public class AAAServiceImpl implements ModuleService {
                         if (principalRecord == null) {
                             module.acctReport(
                                 Acct.ReportReason.PRINCIPAL_NOT_FOUND,
-                                authzName,
+                                aaaprofile.getAuthzName(),
                                 authRecord,
                                 null,
                                 user,
@@ -254,7 +263,7 @@ public class AAAServiceImpl implements ModuleService {
                         } else {
                             module.acctReport(
                                 Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
-                                authzName,
+                                aaaprofile.getAuthzName(),
                                 authRecord,
                                 principalRecord,
                                 user,
@@ -272,16 +281,16 @@ public class AAAServiceImpl implements ModuleService {
 
                     module.acctReport(
                         Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS,
-                        authzName,
+                        aaaprofile.getAuthzName(),
                         authRecord,
                         principalRecord,
                         user,
                         "Principal '%1$s' logged in"
                     );
 
-                    if ((authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
+                    if ((aaaprofile.getAuthnExtension().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
                         log.info("API: -->Authn.InvokeCommands.LOGOUT principal='{}'", authRecord.<String> get(Authn.AuthRecord.PRINCIPAL));
-                        authnExtension.invoke(
+                        aaaprofile.getAuthnExtension().invoke(
                             new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
                                 Authn.InvokeCommands.LOGOUT
@@ -295,7 +304,7 @@ public class AAAServiceImpl implements ModuleService {
 
                     module.acctReport(
                         Acct.ReportReason.PRINCIPAL_LOGOUT,
-                        authzName,
+                        aaaprofile.getAuthzName(),
                         authRecord,
                         principalRecord,
                         user,
@@ -589,6 +598,10 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private static String getPassword(String what) {
+        return getPassword(what, "Password: ");
+    }
+
+    private static String getPassword(String what, String prompt) {
         String keyValue[] = what.split(":", 2);
         String type = keyValue[0];
         String value = keyValue[1];
@@ -612,7 +625,7 @@ public class AAAServiceImpl implements ModuleService {
             if (System.console() == null) {
                 throw new RuntimeException("Console is not available, interactive password prompt is impossible");
             }
-            System.out.print("Password: ");
+            System.out.print(prompt);
             char passwordChars[] = System.console().readPassword();
             if (passwordChars == null) {
                 throw new RuntimeException("Cannot read password");
@@ -826,6 +839,85 @@ public class AAAServiceImpl implements ModuleService {
                 proxy.invoke(input);
                 log.info("API: <--Acct.InvokeCommands.REPORT");
             }
+        }
+    }
+
+    class AAAProfile {
+
+        private ExtensionProxy authnExtension = null;
+        private ExtensionProxy authzExtension = null;
+        private ExtensionProxy mappingExtension = null;
+        private String mappingName = null;
+        private String authzName = null;
+        private String authnName = null;
+        private String profile = null;
+
+        public AAAProfile(String profile) {
+            this.profile = profile;
+            this.authnExtension = getExtensionByProfile(profile);
+
+            this.mappingName = this.authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
+            this.authzName = this.authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
+            this.authnName = this.authnExtension.getContext().get(Base.ContextKeys.INSTANCE_NAME);
+
+            this.authzExtension = getExtensionsManager().getExtensionByName(authzName);
+            if(this.mappingName != null) {
+                this.mappingExtension = getExtensionsManager().getExtensionByName(mappingName);
+            }
+
+            log.info(
+                    "Profile='{}' authn='{}' authz='{}' mapping='{}'",
+                    getProfile(),
+                    getAuthnName(),
+                    getAuthzName(),
+                    getMappingName()
+            );
+        }
+
+        public String mapUser(String user) {
+            if(getMappingExtension()!= null) {
+                log.info("API: -->Mapping.InvokeCommands.MAP_USER profile='{}' user='{}'", getProfile(), user);
+                user = getMappingExtension().invoke(
+                        new ExtMap().mput(
+                                Base.InvokeKeys.COMMAND,
+                                Mapping.InvokeCommands.MAP_USER
+                        ).mput(
+                                Mapping.InvokeKeys.USER,
+                                user
+                        ),
+                        true
+                ).<String>get(Mapping.InvokeKeys.USER, user);
+                log.info("API: <--Mapping.InvokeCommands.MAP_USER profile='{}' user='{}'", getProfile(), user);
+            }
+            return user;
+        }
+
+        public ExtensionProxy getAuthnExtension() {
+            return authnExtension;
+        }
+
+        public ExtensionProxy getAuthzExtension() {
+            return authzExtension;
+        }
+
+        public ExtensionProxy getMappingExtension() {
+            return mappingExtension;
+        }
+
+        public String getMappingName() {
+            return mappingName;
+        }
+
+        public String getAuthzName() {
+            return authzName;
+        }
+
+        public String getAuthnName() {
+            return authnName;
+        }
+
+        public String getProfile() {
+            return profile;
         }
     }
 }
