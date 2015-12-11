@@ -31,9 +31,6 @@ import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -44,7 +41,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import org.ovirt.api.metamodel.concepts.Attribute;
 import org.ovirt.api.metamodel.concepts.Concept;
 import org.ovirt.api.metamodel.concepts.EnumType;
@@ -244,38 +240,15 @@ public class SchemaGenerator {
     private Document generateSchema() {
         Document document = parser.newDocument();
         DOMResult result = new DOMResult(document);
-        IndentingXMLStreamWriter indenter = null;
-        try {
-            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(result);
+        try (XmlWriter writer = new XmlWriter(result)) {
             writer.setPrefix(XS_PREFIX, XS_URI);
             writer.setPrefix(JAXB_PREFIX, JAXB_URI);
-            indenter = new IndentingXMLStreamWriter(writer);
-            indenter.setIndentStep("  ");
-            writeSchema(indenter);
+            writeSchema(writer);
             return document;
-        }
-        catch (XMLStreamException exception) {
-            throw new RuntimeException(
-                "Can't generate XML schema document.",
-                exception
-            );
-        }
-        finally {
-            if (indenter != null) {
-                try {
-                    indenter.close();
-                }
-                catch (XMLStreamException exception) {
-                    throw new RuntimeException(
-                        "Can't close XML writer.",
-                        exception
-                    );
-                }
-            }
         }
     }
 
-    private void writeSchema(XMLStreamWriter writer) throws XMLStreamException {
+    private void writeSchema(XmlWriter writer) {
         // Header:
         writer.writeStartElement(XS_URI, "schema");
         writer.writeAttribute("version", "1.0");
@@ -314,7 +287,7 @@ public class SchemaGenerator {
         writer.writeEndElement();
     }
 
-    private void writeEnumValues(XMLStreamWriter writer, List<EnumType> types) throws XMLStreamException {
+    private void writeEnumValues(XmlWriter writer, List<EnumType> types) {
         // Write the group used by the capabilities resource to report that contains the possible values for all the
         // enum types:
         writer.writeStartElement(XS_URI, "group");
@@ -332,7 +305,7 @@ public class SchemaGenerator {
         }
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // For each enum type write the complex type used by the capabilities resource to report the possible values
         // for that enum type:
@@ -349,11 +322,11 @@ public class SchemaGenerator {
             writer.writeEndElement();
             writer.writeEndElement();
             writer.writeEndElement();
-            writeLine(writer);
+            writer.writeLine();
         }
     }
 
-    private void writeStructType(XMLStreamWriter writer, StructType type) throws XMLStreamException {
+    private void writeStructType(XmlWriter writer, StructType type) {
         // Get the name of the type, and its plural:
         Name typeName = type.getName();
         Name typePlural = names.getPlural(typeName);
@@ -367,7 +340,7 @@ public class SchemaGenerator {
         writer.writeAttribute("name", schemaNames.getSchemaTagName(typeName));
         writer.writeAttribute("type", schemaNames.getSchemaTypeName(type));
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Determine if the complex type is an extension of other complex type:
         String baseComplexTypeName = null;
@@ -395,14 +368,14 @@ public class SchemaGenerator {
             writer.writeEndElement();
         }
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Tag for the collection:
         writer.writeStartElement(XS_URI, "element");
         writer.writeAttribute("name", schemaNames.getSchemaTagName(typePlural));
         writer.writeAttribute("type", schemaNames.getSchemaTypeName(typePlural));
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Complex type for the collection:
         writer.writeStartElement(XS_URI, "complexType");
@@ -425,10 +398,10 @@ public class SchemaGenerator {
             writer.writeEndElement();
         }
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
     }
 
-    private void writeStructMembers(XMLStreamWriter writer, StructType type) throws XMLStreamException {
+    private void writeStructMembers(XmlWriter writer, StructType type) {
         writer.writeStartElement(XS_URI, "sequence");
         for (Attribute attribute : type.getDeclaredAttributes()) {
             writeStructMember(writer, type, attribute.getType(), attribute.getName());
@@ -439,8 +412,7 @@ public class SchemaGenerator {
         writer.writeEndElement();
     }
 
-    private void writeStructMember(XMLStreamWriter writer, StructType declaringType, Type memberType, Name memberName)
-            throws XMLStreamException {
+    private void writeStructMember(XmlWriter writer, StructType declaringType, Type memberType, Name memberName) {
         // Calculate the singular of the name:
         Name singular = names.getSingular(memberName);
 
@@ -529,7 +501,7 @@ public class SchemaGenerator {
         writer.writeEndElement();
     }
 
-    private void writeEnumType(XMLStreamWriter writer, EnumType type) throws XMLStreamException {
+    private void writeEnumType(XmlWriter writer, EnumType type) {
         // Get the enum values and sort them by name:
         List<EnumValue> values = new ArrayList<>(type.getValues());
         values.sort(comparing(Concept::getName));
@@ -547,10 +519,10 @@ public class SchemaGenerator {
         }
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
     }
 
-    private void writeActionTypes(XMLStreamWriter writer) throws XMLStreamException {
+    private void writeActionTypes(XmlWriter writer) {
         // Write the "GracePeriod" complex type:
         writer.writeStartElement(XS_URI, "complexType");
         writer.writeAttribute("name", "GracePeriod");
@@ -561,14 +533,14 @@ public class SchemaGenerator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Write the "Action" element:
         writer.writeStartElement(XS_URI, "element");
         writer.writeAttribute("name", "action");
         writer.writeAttribute("type", "Action");
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Write the "Action" complex type:
         writer.writeStartElement(XS_URI, "complexType");
@@ -597,7 +569,7 @@ public class SchemaGenerator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Write the "Actions" complex type:
         writer.writeStartElement(XS_URI, "complexType");
@@ -611,7 +583,7 @@ public class SchemaGenerator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
 
         // Write the parameter groups:
         writeActionParameterGroup(writer);
@@ -621,7 +593,7 @@ public class SchemaGenerator {
     /**
      * The XML schema {@code ActionParameterGroup} group contains the parameters used by all the action methods.
      */
-    private void writeActionParameterGroup(XMLStreamWriter writer) throws XMLStreamException {
+    private void writeActionParameterGroup(XmlWriter writer) {
         // Find the distinct input parameters of all the action methods, and check that there aren't two parameters
         // with the same name but different types:
         Map<Name, Parameter> parameters = new HashMap<>();
@@ -669,13 +641,13 @@ public class SchemaGenerator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
     }
 
     /**
      * The XML schema {@code ActionResponseGroup} group contains the parameters used by all the action methods.
      */
-    private void writeActionResponseGroup(XMLStreamWriter writer) throws XMLStreamException {
+    private void writeActionResponseGroup(XmlWriter writer) {
         // Find the distinct output parameters of all the action methods, excluding those that are also input
         // parameters, and check that there aren't two parameters with the same name but different types:
         Map<Name, Parameter> parameters = new HashMap<>();
@@ -711,10 +683,10 @@ public class SchemaGenerator {
         }
         writer.writeEndElement();
         writer.writeEndElement();
-        writeLine(writer);
+        writer.writeLine();
     }
 
-    private void writeActionParameter(XMLStreamWriter writer, Parameter parameter) throws XMLStreamException {
+    private void writeActionParameter(XmlWriter writer, Parameter parameter) {
         Name name = parameter.getName();
         Type type = parameter.getType();
         writer.writeStartElement(XS_URI, "element");
@@ -766,19 +738,15 @@ public class SchemaGenerator {
         throw new IllegalArgumentException(message);
     }
 
-    private void writeJaxbClass(XMLStreamWriter writer, String value) throws XMLStreamException {
+    private void writeJaxbClass(XmlWriter writer, String value) {
         writeJaxbCustomization(writer, "class", "name", value);
     }
 
-    private void writeJaxbProperty(XMLStreamWriter writer, String value) throws XMLStreamException {
+    private void writeJaxbProperty(XmlWriter writer, String value) {
         writeJaxbCustomization(writer, "property", "name", value);
     }
 
-    private void writeLine(XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeCharacters("\n");
-    }
-
-    private void writeJaxbCustomization(XMLStreamWriter writer, String tag, String name, String value) throws XMLStreamException {
+    private void writeJaxbCustomization(XmlWriter writer, String tag, String name, String value) {
         writer.writeStartElement(XS_URI, "annotation");
         writer.writeStartElement(XS_URI, "appinfo");
         writer.writeStartElement(JAXB_URI, tag);

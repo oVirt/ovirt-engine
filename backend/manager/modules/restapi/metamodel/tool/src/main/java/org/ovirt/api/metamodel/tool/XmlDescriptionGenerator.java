@@ -17,15 +17,8 @@ limitations under the License.
 package org.ovirt.api.metamodel.tool;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import javax.enterprise.context.ApplicationScoped;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import org.ovirt.api.metamodel.concepts.Attribute;
 import org.ovirt.api.metamodel.concepts.Concept;
 import org.ovirt.api.metamodel.concepts.EnumType;
@@ -48,36 +41,28 @@ import org.ovirt.api.metamodel.concepts.Type;
 @ApplicationScoped
 public class XmlDescriptionGenerator {
     private Model model;
-    private XMLStreamWriter writer;
+    private XmlWriter writer;
 
     public void generate(Model model, File file) {
         // Save the model:
         this.model = model;
 
         // Create the XML writer:
-        try (OutputStream out = new FileOutputStream(file)) {
-            XMLOutputFactory factory = XMLOutputFactory.newFactory();
-            writer = factory.createXMLStreamWriter(out, "UTF-8");
-            IndentingXMLStreamWriter indenter = new IndentingXMLStreamWriter(writer);
-            indenter.setIndentStep("  ");
-            writer = indenter;
+        try (XmlWriter tmp = new XmlWriter(file)) {
+            writer = tmp;
             writeModel();
-            writer.close();
-        }
-        catch (IOException | XMLStreamException exception) {
-            throw new IllegalStateException("Can't generate XML representation", exception);
         }
     }
 
     private void writeModel() {
-        writeStartElement("model");
-        writeStartElement("types");
+        writer.writeStartElement("model");
+        writer.writeStartElement("types");
         model.types().forEach(this::writeType);
-        writeEndElement();
-        writeStartElement("services");
+        writer.writeEndElement();
+        writer.writeStartElement("services");
         model.services().forEach(this::writeService);
-        writeEndElement();
-        writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeType(Type type) {
@@ -93,79 +78,75 @@ public class XmlDescriptionGenerator {
     }
 
     private void writePrimitiveType(PrimitiveType type) {
-        writeStartElement("primitive");
+        writer.writeStartElement("primitive");
         writeCommon(type);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeStructType(StructType type) {
-        writeStartElement("struct");
+        writer.writeStartElement("struct");
         writeCommon(type);
         type.attributes().forEach(this::writeAttribute);
         type.links().forEach(this::writeStructLink);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeAttribute(Attribute attribute) {
-        writeStartElement("attribute");
+        writer.writeStartElement("attribute");
         writeCommon(attribute);
         writeTypeRef(attribute.getType());
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeStructLink(Link link) {
-        writeStartElement("link");
+        writer.writeStartElement("link");
         writeCommon(link);
         writeTypeRef(link.getType());
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeEnumType(EnumType type) {
-        writeStartElement("enum");
+        writer.writeStartElement("enum");
         writeCommon(type);
         type.values().forEach(this::writeEnumValue);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeEnumValue(EnumValue value) {
-        writeStartElement("value");
+        writer.writeStartElement("value");
         writeCommon(value);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeService(Service service) {
-        writeStartElement("service");
+        writer.writeStartElement("service");
         writeCommon(service);
         service.methods().forEach(this::writeServiceMethod);
         service.locators().forEach(this::writeServiceLocator);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeServiceMethod(Method method) {
-        writeStartElement("method");
+        writer.writeStartElement("method");
         writeCommon(method);
         method.parameters().forEach(this::writeParameter);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeServiceLocator(Locator locator) {
-        writeStartElement("locator");
+        writer.writeStartElement("locator");
         writeCommon(locator);
         locator.parameters().forEach(this::writeParameter);
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeParameter(Parameter parameter) {
-        writeStartElement("parameter");
+        writer.writeStartElement("parameter");
         writeCommon(parameter);
-        writeStartElement("in");
-        writeCharacters(Boolean.toString(parameter.isIn()));
-        writeEndElement();
-        writeStartElement("out");
-        writeCharacters(Boolean.toString(parameter.isIn()));
-        writeEndElement();
+        writer.writeElement("in", Boolean.toString(parameter.isIn()));
+        writer.writeElement("out", Boolean.toString(parameter.isIn()));
         writeTypeRef(parameter.getType());
-        writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeCommon(Concept concept) {
@@ -176,25 +157,19 @@ public class XmlDescriptionGenerator {
     private void writeName(Concept concept) {
         Name name = concept.getName();
         if (name != null) {
-            writeStartElement("name");
-            writeCharacters(name.toString());
-            writeEndElement();
+            writer.writeElement("name", name.toString());
         }
     }
 
     private void writeDoc(Concept concept) {
         String doc = concept.getDoc();
         if (doc != null) {
-            writeStartElement("doc");
-            writeCData(doc);
-            writeEndElement();
+            writer.writeElement("doc", doc);
         }
     }
 
     private void writeTypeRef(Type type) {
-        writeStartElement("type");
-        writeCharacters(getTypeRef(type));
-        writeEndElement();
+        writer.writeElement("type", getTypeRef(type));
     }
 
     private String getTypeRef(Type type) {
@@ -207,42 +182,6 @@ public class XmlDescriptionGenerator {
             return getTypeRef(elementType) + "[]";
         }
         return "";
-    }
-
-    private void writeStartElement(String tag) {
-        try {
-            writer.writeStartElement(tag);
-        }
-        catch (XMLStreamException exception) {
-            throw new IllegalStateException("Can't write start element for tag \"" + tag + "\"", exception);
-        }
-    }
-
-    private void writeEndElement() {
-        try {
-            writer.writeEndElement();
-        }
-        catch (XMLStreamException exception) {
-            throw new IllegalStateException("Can't write end element", exception);
-        }
-    }
-
-    private void writeCharacters(String text) {
-        try {
-            writer.writeCharacters(text);
-        }
-        catch (XMLStreamException exception) {
-            throw new IllegalStateException("Can't write text \"" + text + "\"", exception);
-        }
-    }
-
-    private void writeCData(String text) {
-        try {
-            writer.writeCData(text);
-        }
-        catch (XMLStreamException exception) {
-            throw new IllegalStateException("Can't write text \"" + text + "\"", exception);
-        }
     }
 }
 
