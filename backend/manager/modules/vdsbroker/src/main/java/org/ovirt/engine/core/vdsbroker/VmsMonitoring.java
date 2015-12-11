@@ -620,6 +620,10 @@ public class VmsMonitoring {
                 continue;
             }
 
+            if (deviceWithoutAddress(device)) {
+                continue;
+            }
+
             if (device.getIsManaged()) {
                 if (device.getIsPlugged()) {
                     device.setIsPlugged(Boolean.FALSE);
@@ -639,6 +643,13 @@ public class VmsMonitoring {
 
     private boolean devicePluggable(VmDevice device) {
         return VmDeviceCommonUtils.isDisk(device) || VmDeviceCommonUtils.isBridge(device);
+    }
+
+    /**
+     * Libvirt gives no address to some special devices, and we know it.
+     */
+    private boolean deviceWithoutAddress(VmDevice device) {
+        return VmDeviceCommonUtils.isGraphics(device);
     }
 
     /**
