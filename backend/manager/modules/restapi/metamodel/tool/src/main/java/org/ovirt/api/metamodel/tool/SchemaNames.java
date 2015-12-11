@@ -40,6 +40,9 @@ import org.ovirt.api.metamodel.concepts.Type;
  */
 @ApplicationScoped
 public class SchemaNames {
+    // Well known names:
+    private static final Name ID = NameParser.parseUsingCase("Id");
+
     // Exceptions to the rules to calculate complex type names:
     private static final Map<String, String> TYPE_NAME_EXCEPTIONS = new HashMap<>();
 
@@ -208,6 +211,18 @@ public class SchemaNames {
      */
     public boolean isSchemaEnum(Type type) {
         return SCHEMA_ENUMS.contains(type.getName());
+    }
+
+    /**
+     * Checks if the struct member with the given name should be represented in the XML schema as an attribute instead
+     * of an nested element. Currently this is necessary only for the {@code id} attribute.
+     *
+     * @param name the name to check
+     * @return {@code true} if the attribute with the given name should be represented as an XML attribute,
+     *     {@code false} otherwise
+     */
+    public boolean isRepresentedAsAttribute(Name name) {
+        return ID.equals(name);
     }
 }
 

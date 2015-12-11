@@ -41,11 +41,9 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.ovirt.api.metamodel.concepts.Attribute;
 import org.ovirt.api.metamodel.concepts.Concept;
 import org.ovirt.api.metamodel.concepts.EnumType;
 import org.ovirt.api.metamodel.concepts.EnumValue;
-import org.ovirt.api.metamodel.concepts.Link;
 import org.ovirt.api.metamodel.concepts.ListType;
 import org.ovirt.api.metamodel.concepts.Method;
 import org.ovirt.api.metamodel.concepts.Model;
@@ -407,17 +405,43 @@ public class SchemaGenerator {
     }
 
     private void writeStructMembers(StructType type) {
+        // Write the attributes and links that are represented as XML elements:
         writer.writeStartElement(XS_URI, "sequence");
-        for (Attribute attribute : type.getDeclaredAttributes()) {
-            writeStructMember(attribute);
-        }
-        for (Link link : type.getDeclaredLinks()) {
-            writeStructMember(link);
-        }
+        type.declaredAttributes()
+            .filter(x -> !schemaNames.isRepresentedAsAttribute(x.getName()))
+            .sorted()
+            .forEach(this::writeStructMemberAsElement);
+        type.declaredLinks()
+            .filter(x -> !schemaNames.isRepresentedAsAttribute(x.getName()))
+            .sorted()
+            .forEach(this::writeStructMemberAsElement);
+        writer.writeEndElement();
+
+        // Write the attributes and links that are represented as XML attributes, those need to go outside of the
+        // "sequence" that contains the XML elements:
+        type.declaredAttributes()
+            .filter(x -> schemaNames.isRepresentedAsAttribute(x.getName()))
+            .sorted()
+            .forEach(this::writeStructMemberAsAttribute);
+        type.declaredLinks()
+            .filter(x -> schemaNames.isRepresentedAsAttribute(x.getName()))
+            .sorted()
+            .forEach(this::writeStructMemberAsAttribute);
+    }
+
+    private void writeStructMemberAsAttribute(StructMember member) {
+        // Get the name and the type:
+        Name memberName = member.getName();
+        Type memberType = member.getType();
+
+        // Write the attribute definition:
+        writer.writeStartElement(XS_URI, "attribute");
+        writer.writeAttribute("name", schemaNames.getSchemaTagName(memberName));
+        writer.writeAttribute("type", getMemberSchemaTypeName(member.getDeclaringType(), memberType, memberName));
         writer.writeEndElement();
     }
 
-    private void writeStructMember(StructMember member) {
+    private void writeStructMemberAsElement(StructMember member) {
         // Get the name and the type:
         Name memberName = member.getName();
         Type memberType = member.getType();
