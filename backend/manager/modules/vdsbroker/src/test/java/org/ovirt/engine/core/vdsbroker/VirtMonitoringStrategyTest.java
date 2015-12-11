@@ -11,42 +11,31 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VirtMonitoringStrategyTest {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     private VDS vdsFromDb = new VDS();
-
-    public VirtMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup(), mockVdsDao()));
-        doNothing().when(virtStrategy)
-                .vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
-    }
-
-    private VirtMonitoringStrategy virtStrategy;
+    private VDSGroup vdsGroup;
 
     @Before
     public void setUp() {
-        mcr.mockConfigValue(ConfigValues.CheckMixedRhelVersions, Version.v3_5, true);
+        virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup(), mockVdsDao()));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),
+                any(NonOperationalReason.class),
+                any(Map.class));
     }
+
+    private VirtMonitoringStrategy virtStrategy;
 
     @Test
     public void testVirtCanMoveToMaintenance() {
@@ -107,13 +96,23 @@ public class VirtMonitoringStrategyTest {
     }
 
     @Test
-    public void testAllowsRhel6InRhel7() {
-        mcr.mockConfigValue(ConfigValues.CheckMixedRhelVersions, Version.v3_5, false);
+    public void testAllowRhel7InRhel6() {
+        VDS vds = createBaseVds();
+        vdsFromDb.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        vds.setHostOs("RHEL - 7Server - 1.el7");
+        vdsGroup.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
+    @Test
+    public void testAllowRhel6InRhel7() {
         VDS vds = createBaseVds();
         vdsFromDb.setHostOs("RHEL - 7Server - 1.el7");
         vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        vdsGroup.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
     }
 
     private VDS createBaseVds() {
@@ -147,11 +146,10 @@ public class VirtMonitoringStrategyTest {
 
     private VdsGroupDao mockVdsGroup() {
         VdsGroupDao mock = mock(VdsGroupDao.class);
-        VDSGroup value = new VDSGroup();
-        value.setCompatibilityVersion(Version.v3_5);
-        value.setEmulatedMachine("pc-1.0");
-        value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
-        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        vdsGroup = new VDSGroup();
+        vdsGroup.setEmulatedMachine("pc-1.0");
+        vdsGroup.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
+        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(vdsGroup);
         return mock;
     }
 

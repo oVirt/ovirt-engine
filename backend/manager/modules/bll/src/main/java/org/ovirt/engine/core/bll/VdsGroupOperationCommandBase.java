@@ -123,39 +123,34 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     }
 
     protected boolean validateClusterPolicy(VDSGroup oldVdsGroup) {
-        ClusterPolicy clusterPolicy = getClusterPolicy(getVdsGroup());
+        VDSGroup newVdsGroup = getVdsGroup();
+        boolean alreadyInUpgradeMode = oldVdsGroup != null && oldVdsGroup.isInUpgradeMode();
+        ClusterPolicy clusterPolicy = getClusterPolicy(newVdsGroup);
         if (clusterPolicy == null) {
             return false;
         }
-        ClusterPolicy oldClusterPolicy = getClusterPolicy(oldVdsGroup);
+        newVdsGroup.setClusterPolicyId(clusterPolicy.getId());
 
-        if (oldClusterPolicy != null && oldClusterPolicy.isClusterUpgradePolicy() &&
-                !clusterPolicy.isClusterUpgradePolicy()) {
+        if (alreadyInUpgradeMode && !newVdsGroup.isInUpgradeMode()) {
             // Check if we can safely stop the cluster upgrade
             final List<VDS> hosts = getVdsDao().getAllForVdsGroup(getVdsGroupId());
             if (!validate(getUpgradeValidator().isUpgradeDone(hosts))) {
                 return false;
             }
-        } else if ((oldClusterPolicy == null || !oldClusterPolicy.isClusterUpgradePolicy()) &&
-                clusterPolicy.isClusterUpgradePolicy()) {
+        } else if (!alreadyInUpgradeMode && newVdsGroup.isInUpgradeMode()) {
             // Check if we can safely start the cluster upgrade
+            if (!validate(getUpgradeValidator().checkClusterUpgradeIsEnabled(getVdsGroup()))) {
+                return false;
+            }
             final List<VDS> hosts = getVdsDao().getAllForVdsGroup(getVdsGroupId());
             final List<VM> vms = getVmDao().getAllForVdsGroup(getVdsGroupId());
+            populateVMNUMAInfo(vms);
 
-            // Populate numa nodes with a mass update
-            final Map<Guid, List<VmNumaNode>> numaNodes =
-                    getVmNumaNodeDao().getVmNumaNodeInfoByVdsGroupIdAsMap(getVdsGroupId());
-            for (final VM vm : vms) {
-                if (numaNodes.containsKey(vm.getId())) {
-                    vm.setvNumaNodeList(numaNodes.get(vm.getId()));
-                }
-            }
             if (!validate(getUpgradeValidator().isUpgradePossible(hosts, vms))) {
                 return false;
             }
         }
 
-        getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
         Map<String, String> customPropertiesRegexMap =
                 getSchedulingManager().getCustomPropertiesRegexMap(clusterPolicy);
         updateClusterPolicyProperties(getVdsGroup(), clusterPolicy, customPropertiesRegexMap);
@@ -182,6 +177,17 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             clusterPolicy = getSchedulingManager().getClusterPolicy(vdsGroup.getClusterPolicyName());
         }
         return clusterPolicy;
+    }
+
+    private void populateVMNUMAInfo(final List<VM> vms) {
+        // Populate numa nodes with a mass update
+        final Map<Guid, List<VmNumaNode>> numaNodes =
+                getVmNumaNodeDao().getVmNumaNodeInfoByVdsGroupIdAsMap(getVdsGroupId());
+        for (final VM vm : vms) {
+            if (numaNodes.containsKey(vm.getId())) {
+                vm.setvNumaNodeList(numaNodes.get(vm.getId()));
+            }
+        }
     }
 
     /**

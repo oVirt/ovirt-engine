@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -311,6 +312,10 @@ public class VDSGroup implements IVdcQueryable, BusinessEntity<Guid>, HasStorage
 
     public void setMaintenanceReasonRequired(boolean maintenanceReasonRequired) {
         this.maintenanceReasonRequired = maintenanceReasonRequired;
+    }
+
+    public boolean isInUpgradeMode(){
+        return ClusterPolicy.UPGRADE_POLICY_GUID.equals(clusterPolicyId);
     }
 
     public Guid getClusterPolicyId() {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +25,11 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.scheduling.OS;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NumaUtils;
@@ -46,6 +51,8 @@ public class InClusterUpgradeValidator {
     }
 
     public ValidationResult isUpgradePossible(Collection<VDS> hosts, Collection<VM> vms) {
+        requireNonNull(hosts);
+        requireNonNull(vms);
         final Map<Guid, List<UPGRADE_ERROR>> hostValidationResults = new LinkedHashMap<>();
         final Map<Guid, List<UPGRADE_ERROR>> vmValidationResults = new LinkedHashMap<>();
         for (final VDS host : hosts) {
@@ -70,6 +77,7 @@ public class InClusterUpgradeValidator {
     }
 
     public List<UPGRADE_ERROR> isVmReadyForUpgrade(final VM vm) {
+        requireNonNull(vm);
         final List<UPGRADE_ERROR> errors = new ArrayList<>();
         if (vm.getStatus().isSuspended()) {
             errors.add(UPGRADE_ERROR.VM_SUSPENDED);
@@ -94,6 +102,7 @@ public class InClusterUpgradeValidator {
     }
 
     public ValidationResult isUpgradeDone(Collection<VDS> hosts) {
+        requireNonNull(hosts);
         final Map<Guid, List<UPGRADE_ERROR>> hostValidationResults = new LinkedHashMap<>();
         final Map<String, Set<Integer>> majorVersions = new LinkedHashMap<>();
         final Map<String, Set<VDS>> osToHostIdMap = new HashMap<>();
@@ -140,6 +149,13 @@ public class InClusterUpgradeValidator {
         osToHostIdMap.get(hostOs.getName()).add(host);
     }
 
+    public ValidationResult checkClusterUpgradeIsEnabled(final VDSGroup cluster) {
+        return ValidationResult.failWith(EngineMessage.MIXED_HOST_VERSIONS_NOT_ALLOWED).when(
+                Config.<Boolean>getValue(ConfigValues.CheckMixedRhelVersions, cluster.getCompatibilityVersion()
+                        .getValue())
+        );
+    }
+
     private static class ClusterValidation {
 
         public ClusterValidation(final Map<Guid, List<UPGRADE_ERROR>> hosts, final Map<Guid, List<UPGRADE_ERROR>> vms) {
@@ -170,5 +186,4 @@ public class InClusterUpgradeValidator {
             }
         }
     }
-
 }

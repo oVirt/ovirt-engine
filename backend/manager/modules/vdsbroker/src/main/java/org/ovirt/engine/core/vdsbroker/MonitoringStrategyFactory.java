@@ -10,7 +10,9 @@ import org.ovirt.engine.core.dao.VdsGroupDao;
  * This class is responsible for returning the correct service strategy, according to the service the cluster supports
  */
 public class MonitoringStrategyFactory {
-    private static MonitoringStrategy virtMonitoringStrategy = new VirtMonitoringStrategy(DbFacade.getInstance().getVdsGroupDao(), DbFacade.getInstance().getVdsDao());
+    private static MonitoringStrategy virtMonitoringStrategy = new VirtMonitoringStrategy(
+            DbFacade.getInstance().getVdsGroupDao(),
+            DbFacade.getInstance().getVdsDao());
     private static MonitoringStrategy glusterMonitoringStrategy = new GlusterMonitoringStrategy();
     private static MultipleServicesMonitoringStrategy multipleMonitoringStrategy = new MultipleServicesMonitoringStrategy();
 
