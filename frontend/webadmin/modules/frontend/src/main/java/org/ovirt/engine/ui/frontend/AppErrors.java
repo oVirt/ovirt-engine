@@ -661,6 +661,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("${json}")
     String CLUSTER_UPGRADE_CAN_NOT_BE_STARTED();
 
+    @DefaultStringValue("The set cluster compatibility version does not allow mixed major host OS versions. Can not start the cluster upgrade.")
+    String MIXED_HOST_VERSIONS_NOT_ALLOWED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 

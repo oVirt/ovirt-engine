@@ -75,7 +75,6 @@ public class UpdateVdsGroupCommandTest {
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
     private static final Guid DEFAULT_FEATURE_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
     private static final Guid TEST_MANAGEMENT_NETWORK_ID = Guid.newGuid();
-    private static final Guid UPGRADE_POLICY_GUID = Guid.newGuid();
     private static final Guid NOT_UPGRADE_POLICY_GUID = Guid.newGuid();
 
     private static final Map<String, String> migrationMap = Collections.unmodifiableMap(
@@ -480,25 +479,42 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void shouldCheckIfClusterCanBeUpgraded() {
-        oldGroupIsDetachedDefault();
         createCommandWithDefaultVdsGroup();
         cpuExists();
         architectureIsUpdatable();
-        wantsToStartUpgrade();
-        cmd.getVdsGroup().setClusterPolicyId(UPGRADE_POLICY_GUID);
+        cmd.getVdsGroup().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(ValidationResult.VALID)
+                .when(inClusterUpgradeValidator).checkClusterUpgradeIsEnabled(any(VDSGroup.class));
+        cmd.getVdsGroup().setCompatibilityVersion(VERSION_1_1);
         assertTrue(cmd.canDoAction());
         verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(VDSGroup.class));
+    }
+
+    @Test
+    public void shouldCheckIfMixedHostOsIsAllowed() {
+        createCommandWithDefaultVdsGroup();
+        cpuExists();
+        architectureIsUpdatable();
+        cmd.getVdsGroup().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(new ValidationResult(EngineMessage.CLUSTER_UPGRADE_CAN_NOT_BE_STARTED))
+                .when(inClusterUpgradeValidator).checkClusterUpgradeIsEnabled(any(VDSGroup.class));
+        assertFalse(cmd.canDoAction());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(VDSGroup.class));
     }
 
     @Test
     public void shouldCheckIfClusterUpgradeIsDone() {
-        oldGroupIsDetachedDefault();
         createCommandWithDefaultVdsGroup();
+        VDSGroup oldVdsGroup = oldGroupFromDb();
         cpuExists();
         architectureIsUpdatable();
-        inUpgradeMode();
+        oldVdsGroup.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         cmd.getVdsGroup().setClusterPolicyId(NOT_UPGRADE_POLICY_GUID);
+        cmd.getVdsGroup().setCompatibilityVersion(VERSION_1_1);
         assertTrue(cmd.canDoAction());
         verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(1)).isUpgradeDone(anyList());
@@ -506,28 +522,16 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void shouldStayInUpgradeMode() {
-        oldGroupIsDetachedDefault();
         createCommandWithDefaultVdsGroup();
+        VDSGroup oldVdsGroup = oldGroupFromDb();
         cpuExists();
         architectureIsUpdatable();
-        inUpgradeMode();
-        cmd.getVdsGroup().setClusterPolicyId(UPGRADE_POLICY_GUID);
+        oldVdsGroup.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        cmd.getVdsGroup().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        cmd.getVdsGroup().setCompatibilityVersion(VERSION_1_1);
         assertTrue(cmd.canDoAction());
         verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
-    }
-
-    private void inUpgradeMode() {
-        ClusterPolicy clusterUpgradePolicy = spy(new ClusterPolicy());
-        doReturn(true).when(clusterUpgradePolicy).isClusterUpgradePolicy();
-        doReturn(clusterUpgradePolicy).when(schedulingManager).getClusterPolicy(any(Guid.class));
-        doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(eq(NOT_UPGRADE_POLICY_GUID));
-    }
-
-    private void wantsToStartUpgrade() {
-        ClusterPolicy clusterPolicy = spy(new ClusterPolicy());
-        doReturn(true).when(clusterPolicy).isClusterUpgradePolicy();
-        doReturn(clusterPolicy).when(schedulingManager).getClusterPolicy(eq(UPGRADE_POLICY_GUID));
     }
 
     private void createSimpleCommand() {
@@ -610,6 +614,9 @@ public class UpdateVdsGroupCommandTest {
         doReturn(vmNumaNodeDao).when(cmd).getVmNumaNodeDao();
         doReturn(inClusterUpgradeValidator).when(cmd).getUpgradeValidator();
         doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(any(Guid.class));
+        final ClusterPolicy clusterPolicy = new ClusterPolicy();
+        clusterPolicy.setId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(clusterPolicy).when(schedulingManager).getClusterPolicy(eq(ClusterPolicy.UPGRADE_POLICY_GUID));
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradeDone(anyList());
         doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradePossible(anyList(), anyList());
         doReturn(new HashMap<Guid, List<VmNumaNode>>()).when(vmNumaNodeDao)
@@ -749,6 +756,12 @@ public class UpdateVdsGroupCommandTest {
 
     private void oldGroupIsDetachedDefault() {
         when(vdsGroupDao.get(DEFAULT_VDS_GROUP_ID)).thenReturn(createDetachedDefaultVdsGroup());
+    }
+
+    private VDSGroup oldGroupFromDb() {
+        final VDSGroup vdsGroup = createDefaultVdsGroup();
+        when(vdsGroupDao.get(DEFAULT_VDS_GROUP_ID)).thenReturn(vdsGroup);
+        return vdsGroup;
     }
 
     private void storagePoolAlreadyHasCluster() {

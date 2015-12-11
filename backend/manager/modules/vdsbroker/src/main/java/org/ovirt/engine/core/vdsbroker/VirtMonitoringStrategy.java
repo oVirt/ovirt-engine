@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.dao.VdsGroupDao;
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
  */
+@Singleton
 public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private final VdsGroupDao vdsGroupDao;
@@ -72,7 +75,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         }
 
         if (vds.getStatus() != VDSStatus.NonOperational
-                && Config.<Boolean>getValue(ConfigValues.CheckMixedRhelVersions, vdsGroup.getCompatibilityVersion().getValue())) {
+                && !vdsGroup.isInUpgradeMode()) {
             checkIfNotMixingRhels(vds, vdsGroup);
         }
 

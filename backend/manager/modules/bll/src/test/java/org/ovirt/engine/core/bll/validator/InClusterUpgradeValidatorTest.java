@@ -16,11 +16,13 @@ import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UPGR
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UPGRADE_ERROR.VM_NUMA_PINNED;
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UPGRADE_ERROR.VM_SUSPENDED;
 import static org.ovirt.engine.core.common.businessentities.MigrationSupport.PINNED_TO_HOST;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,15 +31,29 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InClusterUpgradeValidatorTest {
 
+    private static final Version VERSION_1_1 = new Version(1, 1);
+    private static final Version VERSION_1_2 = new Version(1, 2);
+
     @Mock
     HostDeviceManager hostDeviceManager;
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.CheckMixedRhelVersions, VERSION_1_1.getValue(), true),
+            mockConfig(ConfigValues.CheckMixedRhelVersions, VERSION_1_2.getValue(), false)
+    );
 
     VM invalidVM;
 
@@ -125,6 +141,21 @@ public class InClusterUpgradeValidatorTest {
     public void shouldDetectPassThroughDeviceOnVM() {
         when(hostDeviceManager.checkVmNeedsDirectPassthrough(any(VM.class))).thenReturn(true);
         assertThat(validator.isVmReadyForUpgrade(invalidVM), hasItem(VM_NEEDS_PASSTHROUGH));
+    }
+
+    @Test
+    public void shouldDetectClusterUpgradeIsEnabled() {
+        final VDSGroup cluster = new VDSGroup();
+        cluster.setCompatibilityVersion(VERSION_1_1);
+        assertThat(validator.checkClusterUpgradeIsEnabled(cluster),
+                is(new ValidationResult(EngineMessage.MIXED_HOST_VERSIONS_NOT_ALLOWED)));
+    }
+
+    @Test
+    public void shouldDetectClusterUpgradeIsDisabled() {
+        final VDSGroup cluster = new VDSGroup();
+        cluster.setCompatibilityVersion(VERSION_1_2);
+        assertThat(validator.checkClusterUpgradeIsEnabled(cluster), is(ValidationResult.VALID));
     }
 
     @Test
