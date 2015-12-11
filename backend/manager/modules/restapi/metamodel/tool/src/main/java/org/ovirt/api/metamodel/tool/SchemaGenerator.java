@@ -53,6 +53,7 @@ import org.ovirt.api.metamodel.concepts.Name;
 import org.ovirt.api.metamodel.concepts.NameParser;
 import org.ovirt.api.metamodel.concepts.Parameter;
 import org.ovirt.api.metamodel.concepts.Service;
+import org.ovirt.api.metamodel.concepts.StructMember;
 import org.ovirt.api.metamodel.concepts.StructType;
 import org.ovirt.api.metamodel.concepts.Type;
 import org.w3c.dom.Document;
@@ -142,6 +143,9 @@ public class SchemaGenerator {
     private File inFile;
     private File outFile;
 
+    // The object used to write the XML document:
+    private XmlWriter writer;
+
     @PostConstruct
     private void init() {
         // Create the XML parser:
@@ -219,10 +223,10 @@ public class SchemaGenerator {
             transformer = TransformerFactory.newInstance().newTransformer();
         }
         catch (TransformerConfigurationException exception) {
-           throw new RuntimeException(
-               "Can't create XSLT transformer.",
-               exception
-           );
+            throw new RuntimeException(
+                "Can't create XSLT transformer.",
+                exception
+            );
         }
         Source transformerIn = new DOMSource(inSchema);
         Result transformerOut = new StreamResult(outFile);
@@ -240,21 +244,22 @@ public class SchemaGenerator {
     private Document generateSchema() {
         Document document = parser.newDocument();
         DOMResult result = new DOMResult(document);
-        try (XmlWriter writer = new XmlWriter(result)) {
+        try (XmlWriter tmp = new XmlWriter(result)) {
+            writer = tmp;
             writer.setPrefix(XS_PREFIX, XS_URI);
             writer.setPrefix(JAXB_PREFIX, JAXB_URI);
-            writeSchema(writer);
+            writeSchema();
             return document;
         }
     }
 
-    private void writeSchema(XmlWriter writer) {
+    private void writeSchema() {
         // Header:
         writer.writeStartElement(XS_URI, "schema");
         writer.writeAttribute("version", "1.0");
 
         // Generate the action types:
-        writeActionTypes(writer);
+        writeActionTypes();
 
         // Find the struct and enum types:
         List<StructType> structTypes = new ArrayList<>();
@@ -271,23 +276,23 @@ public class SchemaGenerator {
         // Write the XML schema group of elements that are used by the capabilities resource to list the possible
         // values of the enum types. Eventually the complete capabilities elements will be generated, but for now
         // it is written manually and int includes this group.
-        writeEnumValues(writer, enumTypes);
+        writeEnumValues(enumTypes);
 
         // Write the XML schema for the enum types:
         for (EnumType enumType : enumTypes) {
-            writeEnumType(writer, enumType);
+            writeEnumType(enumType);
         }
 
         // Write the XML schema for the struct types:
         for (StructType structType : structTypes) {
-            writeStructType(writer, structType);
+            writeStructType(structType);
         }
 
         // Footer:
         writer.writeEndElement();
     }
 
-    private void writeEnumValues(XmlWriter writer, List<EnumType> types) {
+    private void writeEnumValues(List<EnumType> types) {
         // Write the group used by the capabilities resource to report that contains the possible values for all the
         // enum types:
         writer.writeStartElement(XS_URI, "group");
@@ -326,7 +331,7 @@ public class SchemaGenerator {
         }
     }
 
-    private void writeStructType(XmlWriter writer, StructType type) {
+    private void writeStructType(StructType type) {
         // Get the name of the type, and its plural:
         Name typeName = type.getName();
         Name typePlural = names.getPlural(typeName);
@@ -349,9 +354,9 @@ public class SchemaGenerator {
             baseComplexTypeName = schemaNames.getSchemaTypeName(baseType);
         }
         else {
-           if (isRoot) {
-               baseComplexTypeName = "BaseResource";
-           }
+            if (isRoot) {
+                baseComplexTypeName = "BaseResource";
+            }
         }
 
         // Complex type for the entity:
@@ -362,7 +367,7 @@ public class SchemaGenerator {
             writer.writeStartElement(XS_URI, "extension");
             writer.writeAttribute("base", baseComplexTypeName);
         }
-        writeStructMembers(writer, type);
+        writeStructMembers(type);
         if (baseComplexTypeName != null) {
             writer.writeEndElement();
             writer.writeEndElement();
@@ -390,7 +395,7 @@ public class SchemaGenerator {
         writer.writeAttribute("ref", schemaNames.getSchemaTagName(typeName));
         writer.writeAttribute("minOccurs", "0");
         writer.writeAttribute("maxOccurs", "unbounded");
-        writeJaxbProperty(writer, schemaNames.getSchemaTypeName(typePlural));
+        writeJaxbProperty(schemaNames.getSchemaTypeName(typePlural));
         writer.writeEndElement();
         writer.writeEndElement();
         if (isRoot) {
@@ -401,18 +406,22 @@ public class SchemaGenerator {
         writer.writeLine();
     }
 
-    private void writeStructMembers(XmlWriter writer, StructType type) {
+    private void writeStructMembers(StructType type) {
         writer.writeStartElement(XS_URI, "sequence");
         for (Attribute attribute : type.getDeclaredAttributes()) {
-            writeStructMember(writer, type, attribute.getType(), attribute.getName());
+            writeStructMember(attribute);
         }
         for (Link link : type.getDeclaredLinks()) {
-            writeStructMember(writer, type, link.getType(), link.getName());
+            writeStructMember(link);
         }
         writer.writeEndElement();
     }
 
-    private void writeStructMember(XmlWriter writer, StructType declaringType, Type memberType, Name memberName) {
+    private void writeStructMember(StructMember member) {
+        // Get the name and the type:
+        Name memberName = member.getName();
+        Type memberType = member.getType();
+
         // Calculate the singular of the name:
         Name singular = names.getSingular(memberName);
 
@@ -424,7 +433,7 @@ public class SchemaGenerator {
         if (memberType instanceof ListType) {
             ListType listType = (ListType) memberType;
             Type elementType = listType.getElementType();
-            String elementTypeName = getMemberSchemaTypeName(declaringType, elementType, memberName);
+            String elementTypeName = getMemberSchemaTypeName(member.getDeclaringType(), elementType, memberName);
             if (elementTypeName.startsWith("xs:")) {
                 // Attributes that are lists of XML schema scalar types (xs:string, xs:int, etc) are represented with a
                 // wrapper element named like the attribute, and then a sequence of elements named like the attribute
@@ -457,14 +466,14 @@ public class SchemaGenerator {
                 //   </xs:complexType>
                 // </xs:element>
                 writer.writeStartElement(XS_URI, "complexType");
-                writeJaxbClass(writer, schemaNames.getSchemaTypeName(memberName) + "List");
+                writeJaxbClass(schemaNames.getSchemaTypeName(memberName) + "List");
                 writer.writeStartElement(XS_URI, "sequence");
                 writer.writeStartElement(XS_URI, "element");
                 writer.writeAttribute("name", schemaNames.getSchemaTagName(singular));
                 writer.writeAttribute("type", elementTypeName);
                 writer.writeAttribute("minOccurs", "0");
                 writer.writeAttribute("maxOccurs", "unbounded");
-                writeJaxbProperty(writer, schemaNames.getSchemaTypeName(memberName));
+                writeJaxbProperty(schemaNames.getSchemaTypeName(memberName));
                 writer.writeEndElement();
                 writer.writeEndElement();
                 writer.writeEndElement();
@@ -494,14 +503,14 @@ public class SchemaGenerator {
         }
         else {
             writer.writeAttribute("name", schemaNames.getSchemaTagName(memberName));
-            writer.writeAttribute("type", getMemberSchemaTypeName(declaringType, memberType, memberName));
+            writer.writeAttribute("type", getMemberSchemaTypeName(member.getDeclaringType(), memberType, memberName));
             writer.writeAttribute("minOccurs", "0");
             writer.writeAttribute("maxOccurs", "1");
         }
         writer.writeEndElement();
     }
 
-    private void writeEnumType(XmlWriter writer, EnumType type) {
+    private void writeEnumType(EnumType type) {
         // Get the enum values and sort them by name:
         List<EnumValue> values = new ArrayList<>(type.getValues());
         values.sort(comparing(Concept::getName));
@@ -514,7 +523,7 @@ public class SchemaGenerator {
         for (EnumValue value : values) {
             writer.writeStartElement(XS_URI, "enumeration");
             writer.writeAttribute("value", getSchemaEnumValueName(value));
-            writeJaxbProperty(writer, getJavaEnumValueName(value));
+            writeJaxbProperty(getJavaEnumValueName(value));
             writer.writeEndElement();
         }
         writer.writeEndElement();
@@ -522,7 +531,7 @@ public class SchemaGenerator {
         writer.writeLine();
     }
 
-    private void writeActionTypes(XmlWriter writer) {
+    private void writeActionTypes() {
         // Write the "GracePeriod" complex type:
         writer.writeStartElement(XS_URI, "complexType");
         writer.writeAttribute("name", "GracePeriod");
@@ -579,21 +588,21 @@ public class SchemaGenerator {
         writer.writeAttribute("ref", "link");
         writer.writeAttribute("minOccurs", "0");
         writer.writeAttribute("maxOccurs", "unbounded");
-        writeJaxbCustomization(writer, "property", "name", "Links");
+        writeJaxbCustomization("property", "name", "Links");
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeLine();
 
         // Write the parameter groups:
-        writeActionParameterGroup(writer);
-        writeActionResponseGroup(writer);
+        writeActionParameterGroup();
+        writeActionResponseGroup();
     }
 
     /**
      * The XML schema {@code ActionParameterGroup} group contains the parameters used by all the action methods.
      */
-    private void writeActionParameterGroup(XmlWriter writer) {
+    private void writeActionParameterGroup() {
         // Find the distinct input parameters of all the action methods, and check that there aren't two parameters
         // with the same name but different types:
         Map<Name, Parameter> parameters = new HashMap<>();
@@ -625,7 +634,7 @@ public class SchemaGenerator {
         List<Parameter> list = new ArrayList<>(parameters.values());
         list.sort(comparing(Parameter::getName));
         for (Parameter parameter : list) {
-            writeActionParameter(writer, parameter);
+            writeActionParameter(parameter);
         }
         writer.writeStartElement(XS_URI, "element");
         writer.writeAttribute("name", "grace_period");
@@ -647,7 +656,7 @@ public class SchemaGenerator {
     /**
      * The XML schema {@code ActionResponseGroup} group contains the parameters used by all the action methods.
      */
-    private void writeActionResponseGroup(XmlWriter writer) {
+    private void writeActionResponseGroup() {
         // Find the distinct output parameters of all the action methods, excluding those that are also input
         // parameters, and check that there aren't two parameters with the same name but different types:
         Map<Name, Parameter> parameters = new HashMap<>();
@@ -679,14 +688,14 @@ public class SchemaGenerator {
         List<Parameter> list = new ArrayList<>(parameters.values());
         list.sort(comparing(Parameter::getName));
         for (Parameter parameter : list) {
-            writeActionParameter(writer, parameter);
+            writeActionParameter(parameter);
         }
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeLine();
     }
 
-    private void writeActionParameter(XmlWriter writer, Parameter parameter) {
+    private void writeActionParameter(Parameter parameter) {
         Name name = parameter.getName();
         Type type = parameter.getType();
         writer.writeStartElement(XS_URI, "element");
@@ -699,14 +708,14 @@ public class SchemaGenerator {
             String elementTypeName = schemaNames.getSchemaTypeName(elementType);
             if (elementTypeName.startsWith("xs:")) {
                 writer.writeStartElement(XS_URI, "complexType");
-                writeJaxbClass(writer, schemaNames.getSchemaTypeName(name) + "List");
+                writeJaxbClass(schemaNames.getSchemaTypeName(name) + "List");
                 writer.writeStartElement(XS_URI, "sequence");
                 writer.writeStartElement(XS_URI, "element");
                 writer.writeAttribute("name", schemaNames.getSchemaTagName(names.getSingular(name)));
                 writer.writeAttribute("type", elementTypeName);
                 writer.writeAttribute("minOccurs", "0");
                 writer.writeAttribute("maxOccurs", "unbounded");
-                writeJaxbProperty(writer, schemaNames.getSchemaTypeName(name));
+                writeJaxbProperty(schemaNames.getSchemaTypeName(name));
                 writer.writeEndElement();
                 writer.writeEndElement();
                 writer.writeEndElement();
@@ -738,15 +747,15 @@ public class SchemaGenerator {
         throw new IllegalArgumentException(message);
     }
 
-    private void writeJaxbClass(XmlWriter writer, String value) {
-        writeJaxbCustomization(writer, "class", "name", value);
+    private void writeJaxbClass(String value) {
+        writeJaxbCustomization("class", "name", value);
     }
 
-    private void writeJaxbProperty(XmlWriter writer, String value) {
-        writeJaxbCustomization(writer, "property", "name", value);
+    private void writeJaxbProperty(String value) {
+        writeJaxbCustomization("property", "name", value);
     }
 
-    private void writeJaxbCustomization(XmlWriter writer, String tag, String name, String value) {
+    private void writeJaxbCustomization(String tag, String name, String value) {
         writer.writeStartElement(XS_URI, "annotation");
         writer.writeStartElement(XS_URI, "appinfo");
         writer.writeStartElement(JAXB_URI, tag);
