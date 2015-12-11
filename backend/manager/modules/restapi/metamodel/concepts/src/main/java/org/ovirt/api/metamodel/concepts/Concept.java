@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 /**
  * This class represents a concept of the metamodel.
  */
-public abstract class Concept {
+public abstract class Concept implements Comparable<Concept> {
     private Name name;
     private String doc;
     private String source;
@@ -99,6 +99,16 @@ public abstract class Concept {
             return name.hashCode();
         }
         return super.hashCode();
+    }
+
+    /**
+     * Compares this concept to another concept. Only the name is taken into account for this comparison, and the
+     * result is intended only for sorting concepts by name. In particular if the result is 0 it only means that
+     * both concepts have the same name, not that they are equal.
+     */
+    @Override
+    public int compareTo(Concept that) {
+        return this.getName().compareTo(that.getName());
     }
 
     /**
