@@ -318,9 +318,6 @@ class Plugin(plugin.PluginBase):
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ] and
-            not self.environment[
-                osetupcons.CoreEnv.OFFLINE_PACKAGER
-            ] and
             self._distribution in ('redhat', 'fedora', 'centos')
         ),
     )
@@ -332,11 +329,14 @@ class Plugin(plugin.PluginBase):
                 parent=self,
             )
         )
-        self._PM, self._MiniPM, self._MiniPMSinkBase = (
-            osetuputil.getPackageManager(self.logger)
-        )
 
-        self._enabled = True
+        if not self.environment[
+            osetupcons.CoreEnv.OFFLINE_PACKAGER
+        ]:
+            self._PM, self._MiniPM, self._MiniPMSinkBase = (
+                osetuputil.getPackageManager(self.logger)
+            )
+            self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
