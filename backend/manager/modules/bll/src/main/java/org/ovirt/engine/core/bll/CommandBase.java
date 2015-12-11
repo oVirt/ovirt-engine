@@ -527,9 +527,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
      */
     private void cleanUpCompensationData() {
-        if (!(getCompensationContext() instanceof NoOpCompensationContext)) {
-            getBusinessEntitySnapshotDao().removeAllForCommandId(commandId);
-        }
+        getCompensationContext().resetCompensation();
     }
 
     protected void startFinalizingStep() {

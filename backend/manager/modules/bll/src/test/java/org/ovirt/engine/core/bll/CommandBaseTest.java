@@ -23,6 +23,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -72,6 +73,7 @@ public class CommandBaseTest extends BaseCommandTest {
         /** A dummy constructor to pass parameters, since constructors aren't inherited in Java */
         protected CommandBaseDummy(VdcActionParametersBase params) {
             super(params, CommandContext.createContext(params.getSessionId()));
+            setCompensationContext(NoOpCompensationContext.getInstance());
         }
 
         @Override
