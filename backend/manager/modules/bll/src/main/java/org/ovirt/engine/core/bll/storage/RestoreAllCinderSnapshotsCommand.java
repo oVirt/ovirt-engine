@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -38,12 +39,12 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             restoreCinderDisk(cinderDisk, params);
 
             // In case we want to undo the previewed snapshot.
-            if (getParameters().getSnapshot().getType() != Snapshot.SnapshotType.REGULAR) {
-                DiskImage cinderDiskFromLastActiveSnap =
-                        getDiskImageDao().getDiskSnapshotForVmSnapshot(cinderDisk.getId(),
-                                getParameters().getSnapshot().getId());
-                cinderDiskFromLastActiveSnap.setActive(true);
-                getImageDao().update(cinderDiskFromLastActiveSnap.getImage());
+            if (getParameters().getSnapshot().getType() == Snapshot.SnapshotType.STATELESS) {
+                Guid activeSnapshotId = getSnapshotDao().get(
+                        getParameters().getVmId(), Snapshot.SnapshotType.ACTIVE).getId();
+                updateCinderDiskSnapshot(cinderDisk.getId(), activeSnapshotId, cinderDisk.getVmSnapshotId());
+            } else if (getParameters().getSnapshot().getType() != Snapshot.SnapshotType.REGULAR) {
+                updateCinderDiskSnapshot(cinderDisk.getId(), getParameters().getSnapshot().getId(), null);
             }
         }
         List<CinderDisk> cinderDisksToRemove = getParameters().getCinderDisksToRemove();
@@ -87,6 +88,16 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             }
         }
         setSucceeded(true);
+    }
+
+    private void updateCinderDiskSnapshot(Guid cinderDiskId, Guid snapshotId, Guid vmSnapshotId) {
+        DiskImage diskFromSnapshot = getDiskImageDao().getDiskSnapshotForVmSnapshot(cinderDiskId, snapshotId);
+        diskFromSnapshot.setActive(true);
+        if (!Guid.isNullOrEmpty(vmSnapshotId)) {
+            // Needed for stateless snapshot
+            diskFromSnapshot.setVmSnapshotId(vmSnapshotId);
+        }
+        getImageDao().update(diskFromSnapshot.getImage());
     }
 
     private ImagesContainterParametersBase getRestoreFromSnapshotParams(CinderDisk cinderDisk) {
