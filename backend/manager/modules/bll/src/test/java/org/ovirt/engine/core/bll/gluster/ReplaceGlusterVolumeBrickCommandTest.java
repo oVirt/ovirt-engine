@@ -44,7 +44,7 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
     @Mock
     InterfaceDao interfaceDao;
 
-    private final String serverName = "myhost";
+    private static final String serverName = "myhost";
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
     private final Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
     private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");

@@ -56,7 +56,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @Mock
     InterfaceDao interfaceDao;
 
-    private final String serverName = "myhost";
+    private static final String serverName = "myhost";
 
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
 
