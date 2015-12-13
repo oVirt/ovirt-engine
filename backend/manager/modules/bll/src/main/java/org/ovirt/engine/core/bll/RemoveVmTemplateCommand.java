@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -82,6 +83,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     @Override
+    public void init() {
+        getParameters().setUseCinderCommandCallback(
+                !ImagesHandler.filterDisksBasedOnCinder(getImageTemplates()).isEmpty());
+    }
+
+    @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Command);
     }
@@ -128,7 +135,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         if (!isInstanceType) {
-            fetchImageTemplates();
+            getImageTemplates();
         }
 
         // populate all the domains of the template
@@ -228,12 +235,13 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         return new DiskImagesValidator(imageTemplates).diskImagesHaveNoDerivedDisks(null);
     }
 
-    private void fetchImageTemplates() {
+    private List<DiskImage> getImageTemplates() {
         if (imageTemplates == null) {
             List<Disk> allImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
             imageTemplates = ImagesHandler.filterImageDisks(allImages, false, false, true);
             imageTemplates.addAll(ImagesHandler.filterDisksBasedOnCinder(allImages, true));
         }
+        return imageTemplates;
     }
 
     /**
@@ -259,19 +267,18 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         if (getVmTemplate().isBaseTemplate()) {
             shiftBaseTemplateToSuccessor();
         }
-        final List<CinderDisk> cinderDisks =
-                ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance()
-                        .getDiskDao()
-                        .getAllForVm(getVmTemplateId()));
+        List<Disk> templateImages = DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId());
+        final List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(templateImages);
+        final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(templateImages, false, false, true);
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
-        if (!imageTemplates.isEmpty() || !cinderDisks.isEmpty()) {
+        if (!diskImages.isEmpty() || !cinderDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
-                    if (!imageTemplates.isEmpty() && removeVmTemplateImages()) {
+                    if (!diskImages.isEmpty() && removeVmTemplateImages()) {
                         VmHandler.removeVmInitFromDB(getVmTemplate());
                         setSucceeded(true);
                     }
@@ -403,7 +410,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        fetchImageTemplates();
+        getImageTemplates();
         if (imageTemplates != null) {
             for (DiskImage disk : imageTemplates) {
                 if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
@@ -419,5 +426,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             }
         }
         return list;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }

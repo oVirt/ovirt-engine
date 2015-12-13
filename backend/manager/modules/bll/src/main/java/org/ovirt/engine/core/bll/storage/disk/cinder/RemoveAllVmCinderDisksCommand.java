@@ -45,6 +45,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
             }
         }
         setActionReturnValue(failedRemoving);
+        persistCommand(getParameters().getParentCommand(), true);
         setSucceeded(true);
     }
 
@@ -90,6 +91,18 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
             }
         }
         return cinderDisks;
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        // handled by parent command
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endWithFailure() {
+        // handled by parent command
+        setSucceeded(true);
     }
 
     @Override
