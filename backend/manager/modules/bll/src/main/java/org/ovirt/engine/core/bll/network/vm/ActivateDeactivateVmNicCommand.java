@@ -129,10 +129,13 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected void executeVmCommand() {
+        boolean isNicToBePlugged = getParameters().getAction() == PlugAction.PLUG;
+        if (isNicToBePlugged){
+            clearAddressIfPciSlotIsDuplicated(vmDevice);
+        }
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            boolean isPlugged = getParameters().getAction() == PlugAction.PLUG;
-            boolean externalNetworkIsPlugged = isPlugged
+            boolean externalNetworkIsPlugged = isNicToBePlugged
                     && getNetwork() != null
                     && getNetwork().isExternal();
             if (externalNetworkIsPlugged) {
@@ -140,9 +143,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             }
 
             try {
-                if (isPlugged){
-                    clearAddressIfPciSlotIsDuplicated(vmDevice);
-                }
                 runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
