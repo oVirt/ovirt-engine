@@ -101,13 +101,8 @@ public class RsdlBuilder {
 
         uniteDuplicateLinks(rsdl);
 
-        Collections.sort(rsdl.getLinks().getLinks(), new Comparator<DetailedLink>() {
-            @Override
-            public int compare(DetailedLink dl1, DetailedLink dl2) {
-                int res = dl1.getHref().compareTo(dl2.getHref());
-                return res != 0 ? res : dl1.getRel().compareTo(dl2.getRel());
-            }
-        });
+        Collections.sort(rsdl.getLinks().getLinks(),
+                Comparator.comparing(DetailedLink::getHref).thenComparing(DetailedLink::getRel));
 
         return rsdl;
     }
