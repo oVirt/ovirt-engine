@@ -185,6 +185,7 @@ class Plugin(plugin.PluginBase):
 
     def _getSink(self):
         pm = self._PM
+
         class MyPMSink(self._MiniPMSinkBase):
             def __init__(self, log):
                 super(MyPMSink, self).__init__()
