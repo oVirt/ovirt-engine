@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.collections.comparators.ComparatorChain;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainAvailableDiskSizeComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageDomainNumberOfVmDisksComparator;
 import org.ovirt.engine.core.bll.memory.sdcomparators.StorageTypeComparator;
@@ -110,13 +109,13 @@ public class MemoryStorageHandler {
     }
 
     protected void sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
-        ComparatorChain comparatorChain = new ComparatorChain();
+        Comparator<StorageDomain> comp = null;
         // When there is more than one comparator, a nested sort is performed.
         for (Comparator<StorageDomain> comparator : getStorageDomainComparators(domainsInPool, vmDisks)) {
             // A reversed sort will be performed to get the "biggest" storage domain first.
-            comparatorChain.addComparator(comparator, true);
+            comp = (comp == null) ? comparator.reversed() : comp.thenComparing(comparator.reversed());
         }
-        Collections.sort(domainsInPool, comparatorChain);
+        Collections.sort(domainsInPool, comp);
     }
 
     private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
