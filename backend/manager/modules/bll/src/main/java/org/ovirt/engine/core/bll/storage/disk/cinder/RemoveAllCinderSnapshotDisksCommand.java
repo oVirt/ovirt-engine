@@ -52,6 +52,7 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
         removeCinderSnapshotParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         removeCinderSnapshotParams.setParentCommand(getActionType());
         removeCinderSnapshotParams.setParentParameters(getParameters());
+        removeCinderSnapshotParams.setShouldBeEndedByParent(false);
         return removeCinderSnapshotParams;
     }
 

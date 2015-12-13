@@ -77,6 +77,7 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
         removeDiskParams.setParentCommand(getActionType());
         removeDiskParams.setParentParameters(getParameters());
         removeDiskParams.setShouldBeLogged(false);
+        removeDiskParams.setShouldBeEndedByParent(false);
         return removeDiskParams;
     }
 

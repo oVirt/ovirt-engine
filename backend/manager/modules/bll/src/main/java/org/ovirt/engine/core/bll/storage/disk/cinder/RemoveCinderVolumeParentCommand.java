@@ -77,6 +77,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         RemoveCinderDiskVolumeParameters childParam = new RemoveCinderDiskVolumeParameters(cinderDiskVolume);
         childParam.setParentCommand(getActionType());
         childParam.setParentParameters(getParameters());
+        childParam.setShouldBeEndedByParent(false);
         return childParam;
     }
 

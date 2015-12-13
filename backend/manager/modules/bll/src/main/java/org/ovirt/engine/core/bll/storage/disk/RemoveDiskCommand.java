@@ -313,6 +313,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 break;
             case CINDER:
                 RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
+                params.setShouldBeEndedByParent(false);
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                         VdcActionType.RemoveCinderDisk,
                         params,

@@ -354,6 +354,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 return Collections.emptyList();
             }
             RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
+            param.setShouldBeEndedByParent(false);
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveAllVmCinderDisks,
                     withRootCommandInfo(param),

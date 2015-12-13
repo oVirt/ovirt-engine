@@ -595,6 +595,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(
                 getVmId(), newCinderDisk.getId(), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
+        parameters.setShouldBeEndedByParent(false);
         return parameters;
     }
 

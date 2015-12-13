@@ -285,6 +285,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 completedChildren + 1, getParameters().getImageIds().size(), imageId);
 
         RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskLiveParameters(imageId);
+        parameters.setShouldBeEndedByParent(false);
         if (getParameters().getChildImageIds() == null) {
             getParameters().setChildImageIds(Arrays.asList(new Guid[getParameters().getImageIds().size()]));
         }
@@ -412,6 +413,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         params.setParentParameters(getParameters());
         params.setSessionId(getParameters().getSessionId());
         params.setInvokeEndActionOnParent(false);
+        params.setShouldBeEndedByParent(false);
         return params;
     }
 

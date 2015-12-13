@@ -55,6 +55,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskParam.setParentCommand(getActionType());
             removeDiskParam.setStorageDomainId(cinderDisk.getStorageIds().get(0));
             removeDiskParam.setParentParameters(getParameters());
+            removeDiskParam.setShouldBeEndedByParent(false);
 
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDisk,

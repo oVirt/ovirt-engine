@@ -314,6 +314,7 @@ implements QuotaStorageDependent {
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
+        parameters.setShouldBeEndedByParent(false);
         return parameters;
     }
 

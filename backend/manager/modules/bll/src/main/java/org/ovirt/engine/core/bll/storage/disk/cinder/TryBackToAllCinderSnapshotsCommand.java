@@ -80,6 +80,7 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
         createParams.setVmSnapshotId(getParameters().getVmSnapshotId());
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
+        createParams.setShouldBeEndedByParent(false);
         return createParams;
     }
 

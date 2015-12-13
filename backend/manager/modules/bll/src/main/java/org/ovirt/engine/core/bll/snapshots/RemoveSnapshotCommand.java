@@ -197,6 +197,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         createParams.setCinderDisks(cinderDisks);
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
+        createParams.setShouldBeEndedByParent(false);
         return createParams;
     }
 
