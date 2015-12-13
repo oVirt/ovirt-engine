@@ -109,14 +109,7 @@ public class VdsBrokerObjectsBuilder {
     private final static double NANO_SECONDS = 1000000000;
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
-    private static final Comparator<VdsNumaNode> numaNodeComparator = new Comparator<VdsNumaNode>() {
-
-        @Override
-        public int compare(VdsNumaNode arg0, VdsNumaNode arg1) {
-            return arg0.getIndex() < arg1.getIndex() ? -1 : 1;
-        }
-
-    };
+    private static final Comparator<VdsNumaNode> numaNodeComparator = Comparator.comparing(VdsNumaNode::getIndex);
 
     public static VM buildVmsDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
         VmStatic vmStatic = buildVmStaticDataFromExternalProvider(xmlRpcStruct);
