@@ -25,6 +25,7 @@ from otopi import constants as otopicons
 from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_setup_lib import hostname as osetuphostname
 
 
@@ -103,7 +104,14 @@ class Plugin(plugin.PluginBase):
                     osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
                 ],
             )
-        self.environment[osetupcons.ConfigEnv.FQDN] = self.environment[
+        self.environment[
+            osetupcons.ConfigEnv.FQDN
+        ] = self.environment[
+            osetupcons.RenameEnv.FQDN
+        ]
+        self.environment[
+            oenginecons.ConfigEnv.ENGINE_FQDN
+        ] = self.environment[
             osetupcons.RenameEnv.FQDN
         ]
 
