@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-public class TryBackToCinderSnapshotCommand<T extends ImagesContainterParametersBase> extends CreateCinderSnapshotCommand<T> {
+public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParameters> extends CreateCinderSnapshotCommand<T> {
 
     private CinderBroker cinderBroker;
     private CinderDisk oldActiveDisk;
