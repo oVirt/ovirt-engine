@@ -26,6 +26,7 @@ from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import hostname as osetuphostname
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 def _(m):
@@ -94,7 +95,14 @@ class Plugin(plugin.PluginBase):
                 supply_default=False,
                 prompttext=_('New fully qualified server name: '),
             )
-        self.environment[osetupcons.ConfigEnv.FQDN] = self.environment[
+        self.environment[
+            osetupcons.ConfigEnv.FQDN
+        ] = self.environment[
+            osetupcons.RenameEnv.FQDN
+        ]
+        self.environment[
+            oenginecons.ConfigEnv.ENGINE_FQDN
+        ] = self.environment[
             osetupcons.RenameEnv.FQDN
         ]
 
