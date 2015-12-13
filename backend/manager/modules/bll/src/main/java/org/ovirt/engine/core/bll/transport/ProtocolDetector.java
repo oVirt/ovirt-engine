@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.transport;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
@@ -13,7 +16,11 @@ import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -22,21 +29,33 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
  * We need to detect whether vdsm supports jsonrpc or only xmlrpc. It is confusing to users
  * when they have cluster 3.5+ and connect to vdsm <3.5 which supports only xmlrpc.
  * In order to present version information in such situation we need fallback to xmlrpc.
- *
+ * In cluster 3.5 we support both xmlrpc and jsonrpc. Since cluster 3.6 we support only jsonrpc.
+ * Therefore if engine fails to communicate with host >= 3.5 in cluster >= 3.6, we'll move host
+ * to non-operational, due to incompatibility protocol level.
  */
-public class ProtocolDetector {
+public class ProtocolDetector implements AutoCloseable {
 
     private Integer connectionTimeout = null;
     private Integer retryAttempts = null;
     private final ResourceManager resourceManager;
-
+    private final VdsStaticDao vdsStaticDao;
+    private final VdsDynamicDao vdsDynamicDao;
+    private final AuditLogDirector auditLogDirector;
+    private boolean fallbackTriggered;
     private VDS vds;
 
-    public ProtocolDetector(VDS vds, ResourceManager resourceManager) {
+    public ProtocolDetector(VDS vds,
+                            ResourceManager resourceManager,
+                            VdsStaticDao vdsStaticDao,
+                            VdsDynamicDao vdsDynamicDao,
+                            AuditLogDirector auditLogDirector) {
         this.vds = vds;
         this.retryAttempts = Config.<Integer> getValue(ConfigValues.ProtocolFallbackRetries);
         this.connectionTimeout = Config.<Integer> getValue(ConfigValues.ProtocolFallbackTimeoutInMilliSeconds);
         this.resourceManager = resourceManager;
+        this.vdsStaticDao = vdsStaticDao;
+        this.vdsDynamicDao = vdsDynamicDao;
+        this.auditLogDirector = auditLogDirector;
     }
 
     /**
@@ -51,10 +70,9 @@ public class ProtocolDetector {
             for (int i = 0; i < this.retryAttempts; i++) {
                 long timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
                 FutureVDSCall<VDSReturnValue> task =
-                        Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.TimeBoundPoll,
+                        resourceManager.runFutureVdsCommand(FutureVDSCommandType.TimeBoundPoll,
                                 new TimeBoundPollVDSCommandParameters(vds.getId(), timeout, TimeUnit.SECONDS));
-                VDSReturnValue returnValue =
-                        task.get(timeout, TimeUnit.SECONDS);
+                VDSReturnValue returnValue = task.get(timeout, TimeUnit.SECONDS);
                 connected = returnValue.getSucceeded();
                 if (connected) {
                     break;
@@ -88,14 +106,52 @@ public class ProtocolDetector {
      * Updates DB with fall back protocol (xmlrpc).
      */
     public void setFallbackProtocol() {
+        setFallbackProtocol(VdsProtocol.XML);
+        fallbackTriggered = true;
+    }
+
+    private void setFallbackProtocol(VdsProtocol protocol) {
         final VdsStatic vdsStatic = this.vds.getStaticData();
-        vdsStatic.setProtocol(VdsProtocol.XML);
+        vdsStatic.setProtocol(protocol);
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                DbFacade.getInstance().getVdsStaticDao().update(vdsStatic);
+                vdsStaticDao.update(vdsStatic);
                 return null;
             }
         });
+    }
+
+    /**
+     * @return {@code true} if fallback should be invoked for new host's installation, where the host capabilities are
+     *         not known yet to the engine
+     */
+    public boolean shouldCheckProtocolTofallback() {
+        return vds.getHostOs() == null && VdsProtocol.STOMP == vds.getProtocol();
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (fallbackTriggered) {
+            setFallbackProtocol(VdsProtocol.STOMP);
+            VdsDynamic host = vdsDynamicDao.get(vds.getId());
+
+            // warn if host supports jsonrpc in cluster which supports only jsonrpc, and fallback was triggered
+            if (isJsonProtocolSupported(host) && vds.getVdsGroupCompatibilityVersion().greaterOrEquals(Version.v3_6)) {
+                // Report an error for protocol incompatibility
+                AuditLogableBase event = new AuditLogableBase();
+                event.setVds(vds);
+                auditLogDirector.log(event, AuditLogType.HOST_PROTOCOL_INCOMPATIBLE_WITH_CLUSTER);
+            }
+        }
+    }
+
+    private boolean isJsonProtocolSupported(VdsDynamic host) {
+        if (host.getSupportedClusterVersionsSet().isEmpty()) {
+            return false;
+        }
+
+        Version maxSupportedVersion = Collections.max(host.getSupportedClusterVersionsSet());
+        return maxSupportedVersion != null && FeatureSupported.jsonProtocol(maxSupportedVersion);
     }
 }

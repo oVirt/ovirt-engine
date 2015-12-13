@@ -135,6 +135,8 @@ public enum AuditLogType {
     // Host Registration
     HOST_REGISTRATION_FAILED_INVALID_CLUSTER(618),
 
+    HOST_PROTOCOL_INCOMPATIBLE_WITH_CLUSTER(619, AuditLogSeverity.WARNING),
+
     // Disk alignment audit logs
     DISK_ALIGNMENT_SCAN_START(700),
     DISK_ALIGNMENT_SCAN_FAILURE(701, AuditLogSeverity.WARNING),
