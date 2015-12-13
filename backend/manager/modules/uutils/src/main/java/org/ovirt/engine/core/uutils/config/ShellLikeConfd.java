@@ -95,17 +95,7 @@ public class ShellLikeConfd {
                 }
             );
             if (varsFiles != null) {
-                Arrays.sort(
-                    varsFiles,
-                    new Comparator<File>() {
-                        @Override
-                        public int compare (File leftFile, File rightFile) {
-                            String leftName = leftFile.getName();
-                            String rightName = rightFile.getName();
-                            return leftName.compareTo(rightName);
-                        }
-                    }
-                );
+                Arrays.sort(varsFiles, Comparator.comparing(File::getName));
                 for (File file : varsFiles) {
                     configFiles.add(file);
                 }
