@@ -49,6 +49,13 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     }
 
     @Test
+    public void statusIsNull() {
+        setStorageDomainStatus(null);
+        assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Inactive));
+        assertTrue(commandHasInvalidStatusMessage());
+    }
+
+    @Test
     public void statusNotMatch() {
         setStorageDomainStatus(StorageDomainStatus.Inactive);
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Active));
