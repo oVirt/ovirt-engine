@@ -86,10 +86,14 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             CommandExecutionStatus status,
             int completedChildren);
 
-    private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
-        if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown
-                || !commandBase.getParameters().getShouldBeEndedByParent()) {
+    protected boolean shouldExecuteEndMethod(CommandBase<?> commandBase) {
+        return commandBase.getParameters().getParentCommand() == VdcActionType.Unknown
+                || !commandBase.getParameters().getShouldBeEndedByParent();
+    }
 
+
+    private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
+        if (shouldExecuteEndMethod(commandBase)) {
             commandBase.endAction();
 
             if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown) {

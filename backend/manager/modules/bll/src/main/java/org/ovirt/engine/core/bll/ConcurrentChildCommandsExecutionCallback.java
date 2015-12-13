@@ -20,9 +20,22 @@ public class ConcurrentChildCommandsExecutionCallback extends ChildCommandsCallb
             int completedChildren) {
 
         command.getParameters().setTaskGroupSuccess(!anyFailed && status == CommandExecutionStatus.EXECUTED);
-        command.setCommandStatus(command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
-                : CommandStatus.FAILED);
+        CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
+                : CommandStatus.FAILED;
         log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
-                command.getActionType(), command.getCommandId(), childCmdIds, command.getCommandStatus());
+                command.getActionType(), command.getCommandId(), childCmdIds, newStatus);
+        if (!shouldExecuteEndMethod(command)) {
+            logEndWillBeExecutedByParent(command, newStatus);
+        }
+        command.setCommandStatus(newStatus);
+    }
+
+
+    public void logEndWillBeExecutedByParent(CommandBase<?> command, CommandStatus status) {
+        log.info(
+                "Command '{}' id: '{}' Updating status to '{}', The command end method logic will be executed by one of its parent commands.",
+                command.getActionType(),
+                command.getCommandId(),
+                status);
     }
 }

@@ -543,22 +543,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     @Override
     public VdcReturnValueBase endAction() {
-        if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
-            startFinalizingStep();
-        }
-        obtainChildCommands();
-        try {
-            initiateLockEndAction();
-            setActionState();
-            handleTransactivity();
-            TransactionSupport.executeInScope(endActionScope, this);
-        } catch (TransactionRolledbackLocalException e) {
-            log.info("endAction: Transaction was aborted in {}", this.getClass().getName());
-        } finally {
-            freeLockEndAction();
-            if (getCommandShouldBeLogged()) {
-                logCommand();
+        boolean shouldEndAction = handleCommandExecutionEnded();
+        if (shouldEndAction) {
+            if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
+                startFinalizingStep();
             }
+
+            handleChildCommands();
+            try {
+                initiateLockEndAction();
+                setActionState();
+                handleTransactivity();
+                TransactionSupport.executeInScope(endActionScope, this);
+            } catch (TransactionRolledbackLocalException e) {
+                log.info("endAction: Transaction was aborted in {}", this.getClass().getName());
+            } finally {
+                freeLockEndAction();
+                if (getCommandShouldBeLogged()) {
+                    logCommand();
+                }
+            }
+        } else {
+            getReturnValue().setSucceeded(true);
         }
 
         return getReturnValue();
@@ -610,13 +616,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
     }
 
-    public void obtainChildCommands() {
+    public void handleChildCommands() {
         if (getCallback() != null) {
             List<Guid> childCommands = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
             List<VdcActionParametersBase> parameters = new LinkedList<>();
             for (Guid id : childCommands) {
                 CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(id);
                 if (command.getParameters().getShouldBeEndedByParent()) {
+                    command.getParameters().setShouldBeEndedByParent(false);
                     command.getParameters().setCommandType(command.getActionType());
                     parameters.add(command.getParameters());
                 }
@@ -631,19 +638,35 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 && getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW;
     }
 
+    private boolean handleCommandExecutionEnded() {
+        boolean shouldEndAction = parentHasCallback() ? !getParameters().getShouldBeEndedByParent() : true;
+        CommandStatus newStatus = isEndSuccessfully() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED;
+        if (getCallback() == null) {
+            setCommandStatus(newStatus);
+
+            if (!shouldEndAction) {
+                logEndWillBeExecutedByParent(newStatus);
+            }
+        }
+
+        return shouldEndAction;
+    }
+
+    public void logEndWillBeExecutedByParent(CommandStatus status) {
+        log.info("Command [id={}]: Updating status to '{}', The command end method logic will be executed by one of its parent commands.",
+                getCommandId(),
+                status);
+    }
+
     public void endActionInTransactionScope() {
         boolean exceptionOccurred = false;
         try {
             if (isEndSuccessfully()) {
-                if (getCallback() == null) {
-                    setCommandStatus(CommandStatus.SUCCEEDED);
-                }
                 internalEndSuccessfully();
+                setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
             } else {
-                if (getCallback() == null) {
-                    setCommandStatus(CommandStatus.FAILED);
-                }
                 internalEndWithFailure();
+                setCommandStatus(CommandStatus.ENDED_WITH_FAILURE);
             }
         } catch (RuntimeException e) {
             exceptionOccurred = true;
@@ -1300,12 +1323,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 compensate();
             } else {
                 // if the command is not an async task and has no custom callback
-                // set the status to SUCCEEDED if the status is ACTIVE
+                // set the status to ENDED_SUCCESSFULLY if the status is ACTIVE
                 if (getTaskType() == AsyncTaskType.notSupported &&
                         getReturnValue().getVdsmTaskIdList().isEmpty() &&
                         getCallback() == null &&
                         commandStatus == CommandStatus.ACTIVE) {
-                    setCommandStatus(CommandStatus.SUCCEEDED);
+                    setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
                 }
                 cleanUpCompensationData();
             }
