@@ -227,12 +227,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             _amdCpuList = new ArrayList<>(_amdCpuByNameDictionary.values());
             _ibmCpuList = new ArrayList<>(_ibmCpuByNameDictionary.values());
 
-            Comparator<ServerCpu> cpuComparator = new Comparator<ServerCpu>() {
-                @Override
-                public int compare(ServerCpu o1, ServerCpu o2) {
-                    return Integer.compare(o1.getLevel(), o2.getLevel());
-                }
-            };
+            Comparator<ServerCpu> cpuComparator = Comparator.comparingInt(ServerCpu::getLevel);
 
             // Sort by the highest cpu level so the highest cpu match will be
             // selected first
