@@ -91,15 +91,7 @@ public class NegotiationFilter implements Filter {
             }
         }
 
-        Collections.sort(
-            profiles,
-            new Comparator<AuthenticationProfile>() {
-                @Override
-                public int compare(AuthenticationProfile o1, AuthenticationProfile o2) {
-                    return Integer.compare(o1.getNegotiationPriority(), o2.getNegotiationPriority());
-                }
-            }
-        );
+        Collections.sort(profiles, Comparator.comparing(AuthenticationProfile::getNegotiationPriority));
     }
 
     @SuppressWarnings("unchecked")
