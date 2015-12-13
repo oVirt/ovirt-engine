@@ -25,12 +25,6 @@ public class ListUtils {
         // Use set instead of the passed collection, so that complexity of contains method is o(1),
         // reducing the overall complexity of the for loop from o(n^2) to o(n)
         Set<T> second = secondList instanceof Set ? (Set<T>) secondList : new HashSet<>(secondList);
-        for(T entity : firstList) {
-            if(!second.contains(entity)) {
-                return false;
-            }
-        }
-
-        return true;
+        return second.containsAll(firstList);
     }
 }
