@@ -81,9 +81,9 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
     )
-    def _validation(self):
+    def _customization(self):
         if self.environment[
             osetupcons.RenameEnv.FQDN
         ] is None:
