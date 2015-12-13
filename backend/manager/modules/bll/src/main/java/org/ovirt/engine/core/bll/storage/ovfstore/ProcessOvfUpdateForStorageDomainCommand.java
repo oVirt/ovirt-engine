@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -406,17 +405,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
      * 1. disks that were never ovf updated (getLastUpdated is null)
      * 2. disk id
      */
-    public static final Comparator<StorageDomainOvfInfo> OVF_INFO_COMPARATOR = new Comparator<StorageDomainOvfInfo>() {
-        @Override
-        public int compare(StorageDomainOvfInfo storageDomainOvfInfo, StorageDomainOvfInfo storageDomainOvfInfo2) {
-            int compareResult =
-                    ObjectUtils.compare(storageDomainOvfInfo.getLastUpdated(),
-                            storageDomainOvfInfo2.getLastUpdated());
-            if (compareResult != 0) {
-                return compareResult;
-            }
-            return storageDomainOvfInfo.getOvfDiskId().compareTo(storageDomainOvfInfo2.getOvfDiskId());
-        }
-    };
-
+    public static final Comparator<StorageDomainOvfInfo> OVF_INFO_COMPARATOR =
+            Comparator.comparing(StorageDomainOvfInfo::getLastUpdated,
+                    Comparator.nullsFirst(Comparator.<Date> naturalOrder())).
+                    thenComparing(StorageDomainOvfInfo::getOvfDiskId);
 }
