@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
@@ -306,7 +306,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private void createSnapshotsForDisks() {
         for (DiskImage disk : getDisksList()) {
             if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                ImagesContainterParametersBase params = buildChildCommandParameters(disk);
+                CreateCinderSnapshotParameters params = buildChildCommandParameters(disk);
                 params.setQuotaId(disk.getQuotaId());
 
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
@@ -339,9 +339,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
     }
 
-    private ImagesContainterParametersBase buildChildCommandParameters(DiskImage cinderDisk) {
-        ImagesContainterParametersBase createParams =
-                new ImagesContainterParametersBase(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
+    private CreateCinderSnapshotParameters buildChildCommandParameters(DiskImage cinderDisk) {
+        CreateCinderSnapshotParameters createParams =
+                new CreateCinderSnapshotParameters(((CinderDisk) getDiskDao().get(cinderDisk.getId())).getImageId());
         createParams.setVmSnapshotId(newActiveSnapshotId);
         createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));

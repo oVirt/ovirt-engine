@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
+import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -70,8 +71,8 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
         setSucceeded(isSucceeded);
     }
 
-    private ImagesContainterParametersBase buildChildCommandParameters(CinderDisk cinderDisk) {
-        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getImageId());
+    private CreateCinderSnapshotParameters buildChildCommandParameters(CinderDisk cinderDisk) {
+        CreateCinderSnapshotParameters createParams = new CreateCinderSnapshotParameters(cinderDisk.getImageId());
         createParams.setContainerId(cinderDisk.getId());
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setEntityInfo(getParameters().getEntityInfo());

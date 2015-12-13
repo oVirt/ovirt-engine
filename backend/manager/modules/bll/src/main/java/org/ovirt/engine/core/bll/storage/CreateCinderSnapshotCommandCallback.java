@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 
-public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskCommandCallback<CreateCinderSnapshotCommand<ImagesContainterParametersBase>> {
+public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskCommandCallback<CreateCinderSnapshotCommand<CreateCinderSnapshotParameters>> {
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
