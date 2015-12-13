@@ -239,25 +239,16 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmStop(final Collection<Guid> vmIds, final Guid hostId) {
-        processOnVmStop(vmIds, hostId, true);
-    }
-
-    @Override
-    public void processOnVmStop(final Collection<Guid> vmIds, final Guid hostId, boolean useSeparateThread) {
         if (vmIds.isEmpty()) {
             return;
         }
 
-        if (useSeparateThread) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    processOnVmStopInternal(vmIds, hostId);
-                }
-            });
-        } else {
-            processOnVmStopInternal(vmIds, hostId);
-        }
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                 processOnVmStopInternal(vmIds, hostId);
+            }
+        });
     }
 
     private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {

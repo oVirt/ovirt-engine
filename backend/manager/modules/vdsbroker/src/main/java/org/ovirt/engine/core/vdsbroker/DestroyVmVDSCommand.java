@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -73,14 +73,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
             getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
         }
-    }
-
-    private boolean isInPoolBeingDestroyed(VM vm) {
-        if (vm.getVmPoolId() == null) {
-            return false;
-        }
-        VmPool vmPool = DbFacade.getInstance().getVmPoolDao().get(vm.getVmPoolId());
-        return vmPool != null && vmPool.isBeingDestroyed();
     }
 
     private void changeStatus(DestroyVmVDSCommandParameters parameters, VM curVm) {

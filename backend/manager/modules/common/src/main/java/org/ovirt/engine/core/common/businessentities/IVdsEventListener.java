@@ -26,8 +26,6 @@ public interface IVdsEventListener {
 
     void processOnVmStop(Collection<Guid> vmIds, Guid hostId);
 
-    void processOnVmStop(Collection<Guid> vmIds, Guid hostId, boolean useSeparateThread);
-
     boolean vdsUpEvent(VDS vds);
 
     boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds);
