@@ -65,12 +65,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
          * Detach master storage domain last.
          */
         List<StorageDomain> storageDomains = getStorageDomainDao().getAllForStoragePool(getStoragePool().getId());
-        Collections.sort(storageDomains, new Comparator<StorageDomain>() {
-            @Override
-            public int compare(StorageDomain o1, StorageDomain o2) {
-                return o1.getStorageDomainType().compareTo(o2.getStorageDomainType());
-            }
-        });
+        Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getStorageDomainType));
+
         if (storageDomains.size() > 0) {
             if (!getParameters().getForceDelete() && getAllRunningVdssInPool().size() > 0) {
                 if(!regularRemoveStorageDomains(storageDomains)) {
