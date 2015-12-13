@@ -3,7 +3,6 @@
 <suppressions>
     <suppress checks="checks.NoArgConstructorCheck" files=".*Test\.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="VersionStorageFormatUtil.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="ListUtils.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="MapBackedPreferences.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="Event.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="EventResult.java"/>

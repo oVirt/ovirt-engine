@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
@@ -481,10 +481,10 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
                 && Objects.equals(stripeCount, other.stripeCount)
                 && Objects.equals(disperseCount, other.disperseCount)
                 && Objects.equals(redundancyCount, other.redundancyCount)
-                && ListUtils.listsEqual(getOptions(), other.getOptions())
-                && ListUtils.listsEqual(accessProtocols, other.accessProtocols)
-                && ListUtils.listsEqual(transportTypes, other.transportTypes)
-                && ListUtils.listsEqual(bricks, other.bricks)
+                && ObjectUtils.haveSameElements(getOptions(), other.getOptions())
+                && ObjectUtils.haveSameElements(accessProtocols, other.accessProtocols)
+                && ObjectUtils.haveSameElements(transportTypes, other.transportTypes)
+                && ObjectUtils.haveSameElements(bricks, other.bricks)
                 && Objects.equals(asyncTask, other.asyncTask)
                 && Objects.equals(advancedDetails, other.advancedDetails)
                 && Objects.equals(snapshotsCount, other.snapshotsCount)

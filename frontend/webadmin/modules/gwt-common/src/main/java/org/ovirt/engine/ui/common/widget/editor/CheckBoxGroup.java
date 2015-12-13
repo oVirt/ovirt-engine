@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -147,8 +147,7 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
     @Override
     public void setValue(List<T> value, boolean fireEvents) {
         List<T> selectedItems = getValue();
-        if (value == selectedItems
-                || (selectedItems != null && value != null && ListUtils.listsEqual(selectedItems, value))) {
+        if (value == selectedItems || ObjectUtils.haveSameElements(selectedItems, value)) {
             return;
         }
         clearAllSelections();
