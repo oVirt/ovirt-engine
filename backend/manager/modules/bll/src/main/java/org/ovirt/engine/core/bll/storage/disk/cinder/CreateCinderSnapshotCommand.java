@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -34,11 +35,17 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         super(parameters, commandContext);
     }
 
-    private CinderDisk cloneDiskForSnapshot() {
+    private CinderDisk cloneDisk() {
+        boolean isStateless = isStatelessSnapshot();
         CinderDisk cinderDependentVolume = getDisk();
         initCinderDependentVolume(cinderDependentVolume);
-        String snapshotId = getCinderBroker().createSnapshot(cinderDependentVolume, getParameters().getDescription());
-        Guid destinationImageId = Guid.createGuidFromString(snapshotId);
+        cinderDependentVolume.setActive(isStateless);
+        String volumeId = isStateless ?
+                getCinderBroker().cloneDisk(cinderDependentVolume) :
+                getCinderBroker().createSnapshot(cinderDependentVolume, getParameters().getDescription());
+        cinderDependentVolume.setVolumeClassification(isStateless ?
+                VolumeClassification.Volume : VolumeClassification.Snapshot);
+        Guid destinationImageId = Guid.createGuidFromString(volumeId);
         getParameters().setDestinationImageId(destinationImageId);
         cinderDependentVolume.setImageId(destinationImageId);
         return cinderDependentVolume;
@@ -53,7 +60,6 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         newCinderVolume.setLastModifiedDate(new Date());
         newCinderVolume.setQuotaId(getParameters().getQuotaId());
         newCinderVolume.setDiskProfileId(getParameters().getDiskProfileId());
-        newCinderVolume.setActive(Boolean.FALSE);
         newCinderVolume.setQuotaId(getParameters().getQuotaId());
 
         // Get the last snapshot to be the parent of the new volume.
@@ -69,19 +75,25 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         getParameters().setOldLastModifiedValue(getDiskImage().getLastModified());
         getDiskImage().setLastModified(new Date());
         getDiskImage().setVmSnapshotId(getParameters().getVmSnapshotId());
+        if (isStatelessSnapshot()) {
+            getDiskImage().setActive(Boolean.FALSE);
+        }
         getImageDao().update(getDiskImage().getImage());
         getCompensationContext().stateChanged();
     }
 
     @Override
     protected void executeCommand() {
-        final CinderDisk newCinderVolume = cloneDiskForSnapshot();
+        final CinderDisk newCinderVolume;
+        newCinderVolume = cloneDisk();
+        if (!isStatelessSnapshot()) {
+            getDiskImage().setVmSnapshotId(getParameters().getVmSnapshotId());
+        }
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
                 processOldImageFromDb();
-                newCinderVolume.setVolumeClassification(VolumeClassification.Snapshot);
-                addDiskImageToDb(newCinderVolume, getCompensationContext(), Boolean.FALSE);
+                addDiskImageToDb(newCinderVolume, getCompensationContext(), isStatelessSnapshot());
                 setActionReturnValue(newCinderVolume);
                 setSucceeded(true);
                 return null;
@@ -91,6 +103,10 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         getReturnValue().setActionReturnValue(newCinderVolume.getImageId());
         persistCommand(getParameters().getParentCommand(), true);
         setSucceeded(true);
+    }
+
+    private boolean isStatelessSnapshot() {
+        return getParameters().getSnapshotType() == Snapshot.SnapshotType.STATELESS;
     }
 
     @Override
@@ -116,6 +132,9 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
             updateLastModifiedInParent(getDestinationDiskImage().getParentId());
         }
         super.endWithFailure();
+        if (getParameters().getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
+            updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true);
+        }
         if (!getParameters().isParentHasTasks()) {
             getParameters().getParentParameters().setTaskGroupSuccess(false);
             getBackend().endAction(getParameters().getParentCommand(),

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -20,8 +21,13 @@ public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskComma
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         super.doPolling(cmdId, childCmdIds);
+        ImageStatus imageStatus;
+        if (getCommand().getParameters().getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
+            imageStatus = getCinderBroker().getDiskStatus(getDiskId());
+        } else {
+            imageStatus = getCinderBroker().getSnapshotStatus(getDiskId());
+        }
 
-        ImageStatus imageStatus = getCinderBroker().getSnapshotStatus(getDiskId());
         DiskImage disk = getDisk();
         if (imageStatus != null && imageStatus != disk.getImageStatus()) {
             switch (imageStatus) {
