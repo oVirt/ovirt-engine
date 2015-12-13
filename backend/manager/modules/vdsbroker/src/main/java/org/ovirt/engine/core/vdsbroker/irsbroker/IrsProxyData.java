@@ -873,7 +873,7 @@ public class IrsProxyData {
             selectedVds.argvalue = null;
             log.info(
                     "spm start treatment ended and status is not SPM!!! status: '{}' - setting selectedVds to null!",
-                    spmStatus.argvalue.getSpmStatus());
+                    spmStatus.argvalue != null ? spmStatus.argvalue.getSpmStatus() : null);
         } else {
             init(selectedVds.argvalue);
             storagePool.setLVER(spmStatus.argvalue.getSpmLVER());
