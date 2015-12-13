@@ -346,6 +346,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         createParams.setParentHasTasks(!cachedImagesDisks.isEmpty() || getMemoryImageBuilder().isCreateTasks());
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
+        createParams.setSnapshotType(getParameters().getSnapshotType());
         return withRootCommandInfo(createParams, getActionType());
     }
 
