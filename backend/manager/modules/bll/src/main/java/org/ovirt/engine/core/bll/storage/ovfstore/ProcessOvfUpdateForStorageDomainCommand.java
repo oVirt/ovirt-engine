@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -141,7 +140,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     private String generateOvfStoreDescription(Date updateDate, boolean isUpdated, Long size) {
         Map<String, Object> description = new HashMap<>();
         description.put(OvfInfoFileConstants.DiskDescription, OvfInfoFileConstants.OvfStoreDescriptionLabel);
-        description.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
+        description.put(OvfInfoFileConstants.Domains, Collections.singletonList(getParameters().getStorageDomainId()));
         description.put(OvfInfoFileConstants.IsUpdated, isUpdated);
         description.put(OvfInfoFileConstants.LastUpdated, updateDate != null ? updateDate.toString() : null);
         if (size != null) {
@@ -153,7 +152,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     private String generateInfoFileData() {
         Map<String, Object> data = new HashMap<>();
         data.put(OvfInfoFileConstants.LastUpdated, updateDate.toString());
-        data.put(OvfInfoFileConstants.Domains, Arrays.asList(getParameters().getStorageDomainId()));
+        data.put(OvfInfoFileConstants.Domains, Collections.singletonList(getParameters().getStorageDomainId()));
         return buildJson(data, true);
     }
 
