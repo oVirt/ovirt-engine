@@ -3967,6 +3967,9 @@ public class AsyncDataProvider {
         PosixStorageModel posixIsoModel = new PosixStorageModel();
         models.add(posixIsoModel);
 
+        GlusterStorageModel glusterStorageModel = new GlusterStorageModel();
+        models.add(glusterStorageModel);
+
         LocalStorageModel localIsoModel = new LocalStorageModel();
         models.add(localIsoModel);
 
