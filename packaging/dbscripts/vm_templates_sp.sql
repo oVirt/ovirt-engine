@@ -570,7 +570,8 @@ BEGIN
               SELECT 1
               FROM   user_vm_template_permissions_view
               WHERE  user_id = v_user_id
-                  AND entity_id = vmt_guid));
+                  AND entity_id = vmt_guid))
+      ORDER BY vm_templates.template_version_number DESC;
 END; $procedure$
 LANGUAGE plpgsql;
 
