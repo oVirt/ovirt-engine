@@ -196,7 +196,9 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         messagePanel.setVisible(message != null && !message.isEmpty());
         messagePanel.clear();
-        messagePanel.add(new Label(message));
+        if(message != null) {
+            messagePanel.add(new Label(message));
+        }
     }
 
     private static final class DiskAliasTextColumn extends AbstractEditTextColumn<RepoImageModel> {
