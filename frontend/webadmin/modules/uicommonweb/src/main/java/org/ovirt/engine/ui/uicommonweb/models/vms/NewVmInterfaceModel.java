@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -20,6 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVmInterfaceModel extends VmInterfaceModel {
+
+    private Collection<VmInterfaceType> supportedVnicTypes;
 
     public static NewVmInterfaceModel createInstance(VmBase vm,
             VMStatus vmStatus,
@@ -60,7 +62,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                getNicType().setItems((List<VmInterfaceType>) returnValue);
+                supportedVnicTypes = (Collection<VmInterfaceType>) returnValue;
                 postNicInit();
             }
         };
@@ -102,7 +104,16 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(getDeafultNicTypeByProfile());
+        final VmInterfaceType defaultNicType = getDeafultNicTypeByProfile();
+
+        final Collection<VmInterfaceType> vnicTypes =
+                supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
+
+        if (getNicType().getItems() == null) {
+            getNicType().setItems(vnicTypes, defaultNicType);
+        } else {
+            getNicType().setSelectedItem(defaultNicType);
+        }
     }
 
     @Override
