@@ -505,10 +505,10 @@
                             </g:FlowPanel>
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                            <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-                            <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.statelessVmPopup}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.runAndPauseVmPopup}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.deleteProtectionPopup}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" label="{constants.copyTemplatePermissions}" />
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <ii:InstanceImagesEditor ui:field="instanceImagesEditor"/>
