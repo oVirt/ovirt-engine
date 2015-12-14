@@ -94,6 +94,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
         setClientIp(vm.getClientIp());
         setConsoleUserName(vm.getConsoleCurentUserName());
         setGuestUserName(vm.getGuestCurentUserName());
+        setGuestOs(vm.getGuestOs());
         setGuestOsArch(vm.getGuestOsArch());
         setGuestOsCodename(vm.getGuestOsCodename());
         setGuestOsDistribution(vm.getGuestOsDistribution());
@@ -102,19 +103,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
         setGuestOsVersion(vm.getGuestOsVersion());
         setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
         setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
-        if (guestOsType == OsType.Linux) {
-            String optional = ""; // $NON-NLS-1$
-            if (!StringUtils.isEmpty(guestOsCodename)) {
-                optional = messages.guestOSVersionOptional(guestOsCodename);
-            }
-            guestOsNamedVersion = messages.guestOSVersionLinux(guestOsDistribution, guestOsVersion, optional);
-        } else if (guestOsType == OsType.Windows && guestOs.startsWith("Win ")) { //$NON-NLS-1$
-            if (guestOs.startsWith("Win 20")) { //$NON-NLS-1$
-                guestOsNamedVersion = messages.guestOSVersionWindowsServer(guestOs.substring(4), guestOsVersion);
-            } else {
-                guestOsNamedVersion = messages.guestOSVersionWindows(guestOs.substring(4), guestOsVersion);
-            }
-        }
+        setGuestOsNamedVersion();
 
         String hours = NumberFormat.getFormat("00").format(guestOsTimezoneOffset / 60.); //$NON-NLS-1$
         String minutes = NumberFormat.getFormat("00").format(guestOsTimezoneOffset % 60); //$NON-NLS-1$
@@ -241,5 +230,21 @@ public class VmGuestInfoModel extends EntityModel<VM> {
 
     public String getGuestOsNamedVersion() {
         return guestOsNamedVersion;
+    }
+
+    private void setGuestOsNamedVersion() {
+        if (guestOsType == OsType.Linux) {
+            String optional = ""; // $NON-NLS-1$
+            if (!StringUtils.isEmpty(guestOsCodename)) {
+                optional = messages.guestOSVersionOptional(guestOsCodename);
+            }
+            guestOsNamedVersion = messages.guestOSVersionLinux(guestOsDistribution, guestOsVersion, optional);
+        } else if (guestOsType == OsType.Windows && guestOs.startsWith("Win ")) { //$NON-NLS-1$
+            if (guestOs.startsWith("Win 20")) { //$NON-NLS-1$
+                guestOsNamedVersion = messages.guestOSVersionWindowsServer(guestOs.substring(4), guestOsVersion);
+            } else {
+                guestOsNamedVersion = messages.guestOSVersionWindows(guestOs.substring(4), guestOsVersion);
+            }
+        }
     }
 }
