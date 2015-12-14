@@ -42,8 +42,10 @@ public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusC
         ExternalStatus externalStatus = storageDomain.getExternalStatus();
         if (externalStatus != null && externalStatus != ExternalStatus.Ok) {
             ImageResource statusImage = getStatusImage(externalStatus);
-            imagesToText.put(getImageSafeHtml(statusImage),
-                    constants.ExternalStatus() + externalStatus.name());
+            if (statusImage != null) {
+                imagesToText.put(getImageSafeHtml(statusImage),
+                        constants.ExternalStatus() + externalStatus.name());
+            }
         }
         return imagesToText;
     }
