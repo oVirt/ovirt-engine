@@ -162,6 +162,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     protected boolean validate() {
         boolean result = true;
+        Map<Guid, Cluster> clusters = new HashMap<>();
         Set<Guid> clustersAsSet = new HashSet<>();
         Set<Guid> vdsWithRunningVMs = new HashSet<>();
         List<String> hostNotRespondingList = new ArrayList<>();
@@ -176,6 +177,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
                 result = false;
                 continue;
+            }
+            //TODO make a more efficient call but normally the command just loads one cluster anyway
+            if (!clusters.containsKey(vds.getClusterId())){
+                final Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
+                clusters.put(cluster.getId(), cluster);
             }
             if (!vdssToMaintenance.containsKey(vdsId)) {
                 vdssToMaintenance.put(vdsId, vds);
@@ -250,7 +256,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                                 getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
                             addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                             result = false;
-                        } else {
+                        } else if (!clusters.get(vds.getClusterId()).isInUpgradeMode()) {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
                         }
                     }

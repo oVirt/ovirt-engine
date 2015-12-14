@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -109,6 +110,15 @@ public class AffinityRulesEnforcementManagerTest {
         arem.refresh();
         verify(arem).migrateVM(vm1);
         verify(arem, times(1)).migrateVM(any(VM.class));
+    }
+
+    @Test
+    public void shouldNotMigrateVmOnClusterTwoWhileInUpgradeMode() {
+        cluster2.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        arem.refresh();
+        verify(arem).migrateVM(vm1);
+        verify(arem, times(1)).migrateVM(any(VM.class));
+        verify(arem, times(0)).migrateVM(eq(vm2));
     }
 
     @Test

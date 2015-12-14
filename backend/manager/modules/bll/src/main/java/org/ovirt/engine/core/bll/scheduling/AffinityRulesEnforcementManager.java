@@ -76,9 +76,11 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
         final List<VM> vmCandidates = new ArrayList<>();
         for (Cluster cluster : clusterDao.getWithoutMigratingVms()) {
-            final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
-            if (candidate != null) {
-                vmCandidates.add(candidate);
+            if (!cluster.isInUpgradeMode()) {
+                final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
+                if (candidate != null) {
+                    vmCandidates.add(candidate);
+                }
             }
         }
 
