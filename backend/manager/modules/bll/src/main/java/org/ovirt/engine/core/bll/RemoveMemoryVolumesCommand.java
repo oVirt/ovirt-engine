@@ -42,7 +42,8 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
         MemoryImageRemoverOnDataDomain memoryImageRemover =
                 new MemoryImageRemoverOnDataDomain(
                         getParameters().getVmId(),
-                        this);
+                        this,
+                        getParameters().isForceRemove());
 
         setSucceeded(memoryImageRemover.remove(
                 Collections.singleton(getParameters().getMemoryVolumes())));

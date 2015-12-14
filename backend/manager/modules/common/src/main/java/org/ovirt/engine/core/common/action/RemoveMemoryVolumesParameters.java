@@ -13,9 +13,16 @@ public class RemoveMemoryVolumesParameters extends VdcActionParametersBase {
      *  case we should remove the memory only if no other snapshot uses it */
     private boolean removeOnlyIfNotUsedAtAll;
 
+    private boolean forceRemove;
+
     public RemoveMemoryVolumesParameters(String memoryVolumes, Guid vmId) {
+        this(memoryVolumes, vmId, false);
+    }
+
+    public RemoveMemoryVolumesParameters(String memoryVolumes, Guid vmId, boolean forceRemove) {
         this.memoryVolumes = memoryVolumes;
         this.vmId = vmId;
+        this.forceRemove = forceRemove;
     }
 
     public RemoveMemoryVolumesParameters() {
@@ -47,4 +54,11 @@ public class RemoveMemoryVolumesParameters extends VdcActionParametersBase {
         this.removeOnlyIfNotUsedAtAll = removeOnlyIfNotUsedAtAll;
     }
 
+    public boolean isForceRemove() {
+        return forceRemove;
+    }
+
+    public void setForceRemove(boolean forceRemove) {
+        this.forceRemove = forceRemove;
+    }
 }
