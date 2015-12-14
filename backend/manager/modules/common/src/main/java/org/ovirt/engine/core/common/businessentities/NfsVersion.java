@@ -8,7 +8,8 @@ public enum NfsVersion {
     // volumes as well as a string in the database
     AUTO("auto"),
     V3("3"),
-    V4("4");
+    V4("4"),
+    V4_1("4.1");
 
     private final String version;
     private static final Map<String, NfsVersion> mappings =

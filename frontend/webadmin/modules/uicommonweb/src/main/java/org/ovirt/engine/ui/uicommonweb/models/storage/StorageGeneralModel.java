@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
@@ -94,14 +96,14 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
         }
     }
 
-    NfsVersion nfsVersion;
+    String nfsVersion;
 
     public String getNfsVersion() {
-        return nfsVersion == null ? null : nfsVersion.toString();
+        return nfsVersion;
     }
 
-    public void setNfsVersion(NfsVersion nfsVersion) {
-        if (this.nfsVersion != nfsVersion) {
+    public void setNfsVersion(String nfsVersion) {
+        if (!Objects.equals(this.nfsVersion, nfsVersion)) {
             this.nfsVersion = nfsVersion;
             onPropertyChanged(new PropertyChangedEventArgs("NfsVersion")); //$NON-NLS-1$
         }
@@ -162,7 +164,8 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                         generalModel.setPath(connection == null ? null : connection.getconnection());
 
                         if (isNfs) {
-                            generalModel.setNfsVersion(connection.getNfsVersion());
+                            EnumTranslator translator = EnumTranslator.getInstance();
+                            generalModel.setNfsVersion(translator.translate(connection.getNfsVersion()));
                             generalModel.setRetransmissions(connection.getNfsRetrans());
                             generalModel.setTimeout(connection.getNfsTimeo());
                         }
