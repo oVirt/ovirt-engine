@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 /**
@@ -57,11 +59,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> ext
 
         @Override
         public String toString() {
-            return serializeId(getFirst()) + '.' + serializeId(getSecond());
-        }
-
-        private String serializeId(Object id) {
-            return (id == null) ? null : id.toString();
+            return Objects.toString(getFirst()) + '.' + Objects.toString(getSecond());
         }
     }
 }
