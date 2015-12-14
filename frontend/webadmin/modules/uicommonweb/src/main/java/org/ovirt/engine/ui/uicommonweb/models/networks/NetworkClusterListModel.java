@@ -7,12 +7,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -41,16 +43,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
-
-        setComparator(new Comparator<PairQueryable<Cluster, NetworkCluster>>() {
-
-            @Override
-            public int compare(PairQueryable<Cluster, NetworkCluster> arg0,
-                               PairQueryable<Cluster, NetworkCluster> arg1) {
-                return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
-            }
-        });
-
+        setComparator(new PairFirstComparator<Cluster, NetworkCluster>(new NameableComparator()));
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
     }
 
