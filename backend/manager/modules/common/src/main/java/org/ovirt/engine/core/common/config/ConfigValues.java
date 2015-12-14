@@ -2168,7 +2168,7 @@ public enum ConfigValues {
     VMConsoleTicketTolerance,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
+    @DefaultValueAttribute("false")
     DataCenterWithoutSpm,
 
     @TypeConverterAttribute(Integer.class)
