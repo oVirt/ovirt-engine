@@ -5,14 +5,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.utils.NaturalOrderComparator;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -102,13 +103,7 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
     public void updateAllDiskImageDynamicWithDiskIdByVmId(Collection<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm) {
         List<Pair<Guid, DiskImageDynamic>> sortedDisks = new ArrayList<>();
         sortedDisks.addAll(diskImageDynamicForVm);
-        Collections.sort(sortedDisks, new Comparator<Pair<Guid, DiskImageDynamic>>() {
-
-            @Override
-            public int compare(Pair<Guid, DiskImageDynamic> o1, Pair<Guid, DiskImageDynamic> o2) {
-                return o1.getFirst().compareTo(o2.getFirst());
-            }
-        });
+        Collections.sort(sortedDisks, new PairFirstComparator<>(new NaturalOrderComparator<>()));
         getCallsHandler().executeStoredProcAsBatch("Updatedisk_image_dynamic_by_disk_id_and_vm_id",
                 sortedDisks, getBatchImageGroupMapper());
     }

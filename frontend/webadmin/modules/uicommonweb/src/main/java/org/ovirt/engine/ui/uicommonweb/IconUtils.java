@@ -2,13 +2,9 @@ package org.ovirt.engine.ui.uicommonweb;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
@@ -55,17 +51,5 @@ public class IconUtils {
             }
         }
         return result;
-    }
-
-    public static Comparator<Pair<? extends Nameable, ?>> getFirstComponentNameableComparator() {
-        return new Comparator<Pair<? extends Nameable, ?>>() {
-
-            private final NameableComparator firstComponentComparator =  new NameableComparator();
-
-            @Override public int compare(Pair<? extends Nameable, ?> o1, Pair<? extends Nameable, ?> o2) {
-                return firstComponentComparator.compare(
-                        o1.getFirst(), o2.getFirst());
-            }
-        };
     }
 }

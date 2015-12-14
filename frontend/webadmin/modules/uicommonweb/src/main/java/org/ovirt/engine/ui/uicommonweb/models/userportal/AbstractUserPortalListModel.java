@@ -8,11 +8,13 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -199,7 +201,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     }
 
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
-        Collections.sort((List) vmOrPoolAndPoolRepresentants, IconUtils.getFirstComponentNameableComparator());
+        Collections.sort((List) vmOrPoolAndPoolRepresentants, new PairFirstComparator<>(new NameableComparator()));
 
         ArrayList<UserPortalItemModel> items = new ArrayList<>();
         for (Pair<Object, VM> item : vmOrPoolAndPoolRepresentants) {
