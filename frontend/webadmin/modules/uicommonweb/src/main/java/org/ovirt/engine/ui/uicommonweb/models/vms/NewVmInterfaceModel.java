@@ -104,7 +104,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        final VmInterfaceType defaultNicType = getDeafultNicTypeByProfile();
+        final VmInterfaceType defaultNicType = getDefaultNicTypeByProfile();
 
         final Collection<VmInterfaceType> vnicTypes =
                 supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;

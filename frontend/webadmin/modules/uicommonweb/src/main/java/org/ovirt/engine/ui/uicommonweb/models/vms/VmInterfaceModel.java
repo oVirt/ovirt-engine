@@ -103,7 +103,7 @@ public abstract class VmInterfaceModel extends Model {
             @Override
             public void setSelectedItem(VnicProfileView value) {
                 super.setSelectedItem(value);
-                getNicType().setSelectedItem(getDeafultNicTypeByProfile());
+                getNicType().setSelectedItem(getDefaultNicTypeByProfile());
                 updateLinkChangability();
             }
         });
@@ -510,7 +510,7 @@ public abstract class VmInterfaceModel extends Model {
         return profileBehavior;
     }
 
-    protected VmInterfaceType getDeafultNicTypeByProfile() {
+    protected VmInterfaceType getDefaultNicTypeByProfile() {
         VnicProfileView profile = getProfile().getSelectedItem();
 
         ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();

@@ -106,7 +106,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
                 supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
 
         if (selectedNicType == null || !vnicTypes.contains(selectedNicType)) {
-            selectedNicType = getDeafultNicTypeByProfile();
+            selectedNicType = getDefaultNicTypeByProfile();
         }
 
         if (getNicType().getItems() == null) {
