@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,18 +42,6 @@ public class Entities {
             Map<String, E> map = new HashMap<>();
             for (E e : entities) {
                 map.put(e.getName(), e);
-            }
-            return map;
-        } else {
-            return Collections.emptyMap();
-        }
-    }
-
-    public static <E extends VmNetworkInterface> Map<String, E> vmInterfacesByNetworkName(List<E> entityList) {
-        if (entityList != null) {
-            Map<String, E> map = new HashMap<>();
-            for (E e : entityList) {
-                map.put(e.getNetworkName(), e);
             }
             return map;
         } else {

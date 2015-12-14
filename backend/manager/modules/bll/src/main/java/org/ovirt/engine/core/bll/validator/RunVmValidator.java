@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -583,7 +583,8 @@ public class RunVmValidator {
 
     private Set<String> getInterfaceNetworkNames() {
         if (cachedInterfaceNetworkNames == null) {
-            cachedInterfaceNetworkNames = Entities.vmInterfacesByNetworkName(vm.getInterfaces()).keySet();
+            cachedInterfaceNetworkNames =
+                    vm.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).collect(Collectors.toSet());
         }
 
         return cachedInterfaceNetworkNames;
@@ -599,7 +600,7 @@ public class RunVmValidator {
 
     private Set<String> getClusterNetworksNames() {
         if (cachedClusterNetworksNames == null) {
-            cachedClusterNetworksNames = Entities.objectNames(getClusterNetworks());
+            cachedClusterNetworksNames = getClusterNetworks().stream().map(Network::getName).collect(Collectors.toSet());
         }
 
         return cachedClusterNetworksNames;
