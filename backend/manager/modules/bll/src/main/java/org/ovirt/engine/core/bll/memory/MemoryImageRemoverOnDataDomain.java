@@ -16,12 +16,14 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
     protected Boolean cachedPostZero;
     private Guid vmId;
     private boolean removeOnlyIfNotUsedAtAll;
+    private boolean forceRemove;
 
     public MemoryImageRemoverOnDataDomain(Guid vmId,
-            TaskHandlerCommand<? extends RemoveMemoryVolumesParameters> enclosingCommand) {
+            TaskHandlerCommand<? extends RemoveMemoryVolumesParameters> enclosingCommand, boolean forceRemove) {
         super(enclosingCommand, false);
         this.vmId = vmId;
         removeOnlyIfNotUsedAtAll = enclosingCommand.getParameters().isRemoveOnlyIfNotUsedAtAll();
+        this.forceRemove = forceRemove;
     }
 
     public boolean remove(Set<String> memoryStates) {
@@ -54,6 +56,9 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
     protected boolean isMemoryStateRemovable(String memoryVolume) {
         if (memoryVolume.isEmpty()) {
             return false;
+        }
+        if (forceRemove) {
+            return true;
         }
 
         int numOfSnapshotsUsingThisMemory = getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume);

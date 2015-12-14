@@ -179,7 +179,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private RemoveMemoryVolumesParameters buildRemoveMemoryVolumesParameters(String memoryState, Guid vmId) {
-        RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(memoryState, vmId);
+        RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(memoryState, vmId, true);
         params.setEntityInfo(getParameters().getEntityInfo());
         return params;
     }
