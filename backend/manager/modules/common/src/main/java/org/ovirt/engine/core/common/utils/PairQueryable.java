@@ -1,50 +1,23 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.Objects;
-
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 /**
- * A Pair that extends the {@link IVdcQueryable} class, to enable returning a Pair as the return value of a Query.
+ * A Pair that implements the {@link IVdcQueryable} interface, to enable returning it as the return value of a query.
  */
-public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> implements IVdcQueryable {
+public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> extends Pair<T, K> implements IVdcQueryable {
     private static final long serialVersionUID = -8894728003078425184L;
-
-    private Pair<T, K> pair;
 
     public PairQueryable() {
     }
 
     public PairQueryable(T first, K second) {
-        pair = new Pair<>(first, second);
-    }
-
-    private Pair<T, K> getPair() {
-        if (pair == null) {
-            pair = new Pair<>(null, null);
-        }
-        return pair;
-    }
-
-    public void setFirst(T value) {
-        getPair().setFirst(value);
-    }
-
-    public T getFirst() {
-        return getPair().getFirst();
-    }
-
-    public void setSecond(K value) {
-        getPair().setSecond(value);
-    }
-
-    public K getSecond() {
-        return getPair().getSecond();
+        super(first, second);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(pair);
+        return super.hashCode();
     }
 
     @Override
@@ -55,8 +28,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> imp
         if (!(obj instanceof PairQueryable)) {
             return false;
         }
-        PairQueryable other = (PairQueryable) obj;
-        return Objects.equals(pair, other.pair);
+        return super.equals(obj);
     }
 
     @Override
