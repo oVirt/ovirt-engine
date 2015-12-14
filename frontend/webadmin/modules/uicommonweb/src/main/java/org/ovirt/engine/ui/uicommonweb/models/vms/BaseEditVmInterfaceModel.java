@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -21,7 +21,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
-    VmNetworkInterface nic;
+    private final VmNetworkInterface nic;
+    private Collection<VmInterfaceType> supportedVnicTypes;
 
     protected BaseEditVmInterfaceModel(VmBase vm,
             VMStatus vmStatus,
@@ -53,7 +54,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                getNicType().setItems((List<VmInterfaceType>) returnValue);
+                supportedVnicTypes = (Collection<VmInterfaceType>) returnValue;
                 postNicInit();
             }
         };
@@ -63,6 +64,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     private void postNicInit() {
         getName().setEntity(getNic().getName());
+
         initMAC();
 
         initLinked();
@@ -99,14 +101,19 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected void initSelectedType() {
         VmInterfaceType selectedNicType = VmInterfaceType.forValue(getNic().getType());
-        ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
-        nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
 
-        if (selectedNicType == null || !nicTypes.contains(selectedNicType)) {
+        final Collection<VmInterfaceType> vnicTypes =
+                supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
+
+        if (selectedNicType == null || !vnicTypes.contains(selectedNicType)) {
             selectedNicType = getDeafultNicTypeByProfile();
         }
 
-        getNicType().setSelectedItem(selectedNicType);
+        if (getNicType().getItems() == null) {
+            getNicType().setItems(vnicTypes, selectedNicType);
+        } else {
+            getNicType().setSelectedItem(selectedNicType);
+        }
     }
 
     @Override
