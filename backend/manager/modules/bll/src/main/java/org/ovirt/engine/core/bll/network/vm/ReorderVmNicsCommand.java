@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,12 +70,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
         }
 
         // Sorting the NICs to reorder by name
-        Collections.sort(nicsToReorder, new Comparator<VmNic>() {
-            @Override
-            public int compare(VmNic nic1, VmNic nic2) {
-                return nic1.getName().compareTo(nic2.getName());
-            }
-        });
+        Collections.sort(nicsToReorder, new NameableComparator());
 
         // Sorting the MAC addresses to reorder
         Collections.sort(macsToReorder);
