@@ -61,8 +61,8 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         // Hide table in case of message
         if (message != null && message.length() > 0) {
             table.setVisible(false);
+            messageLabel.setText(message);
         }
-        messageLabel.setText(message);
     }
 
     @Override
