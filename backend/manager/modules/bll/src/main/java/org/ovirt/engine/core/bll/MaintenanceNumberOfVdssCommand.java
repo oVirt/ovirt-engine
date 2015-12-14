@@ -167,7 +167,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     protected boolean canDoAction() {
         boolean result = true;
-        Set<Guid> clustersAsSet = new HashSet<>();
+        Map<Guid, VDSGroup> clusters = new HashMap<>();
         Set<Guid> vdsWithRunningVMs = new HashSet<>();
         List<String> hostNotRespondingList = new ArrayList<>();
         List<String> hostsWithNonMigratableVms = new ArrayList<>();
@@ -181,6 +181,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
                 result = false;
                 continue;
+            }
+            //TODO make a more efficient call but normally the command just loads one cluster anyway
+            if (!clusters.containsKey(vds.getVdsGroupId())){
+                final VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+                clusters.put(vdsGroup.getId(), vdsGroup);
             }
             if (!vdssToMaintenance.containsKey(vdsId)) {
                 vdssToMaintenance.put(vdsId, vds);
@@ -216,7 +221,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         if (vms.size() > 0) {
                             vdsWithRunningVMs.add(vdsId);
                         }
-                        clustersAsSet.add(vds.getVdsGroupId());
 
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<>();
                         for (VM vm : vms) {
@@ -256,7 +260,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                                 getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
                             addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                             result = false;
-                        } else {
+                        } else if (!clusters.get(vds.getVdsGroupId()).isInUpgradeMode()) {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
                         }
                     }
@@ -289,8 +293,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 // the client
                 List<String> problematicClusters = new ArrayList<>();
                 List<String> allHostsWithRunningVms = new ArrayList<>();
-                for (Guid clusterID : clustersAsSet) {
-                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(clusterID);
+                for (VDSGroup cluster : clusters.values()) {
+                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
                     boolean vdsForMigrationExists =
                             checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
 
@@ -305,7 +309,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         // this is indeed a problematic
                         // cluster
                         if (!candidateHostsWithRunningVms.isEmpty()) {
-                            addClusterDetails(clusterID, problematicClusters);
+                            problematicClusters.add(cluster.getName());
                             allHostsWithRunningVms.addAll(candidateHostsWithRunningVms);
                         }
                     }
@@ -427,15 +431,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         if (!hostsWithVmsWithPluggedDiskSnapshots.isEmpty()) {
             getReturnValue().getCanDoActionMessages().add((String.format("$HostsList %1$s",
                     StringUtils.join(hostsWithVmsWithPluggedDiskSnapshots, ","))));
-        }
-    }
-
-    private void addClusterDetails(Guid vdsGroupID, List<String> clustersWithRunningVms) {
-        if (vdsGroupID != null && !vdsGroupID.equals(Guid.Empty)) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().getWithRunningVms(vdsGroupID);
-            if (vdsGroup != null) {
-                clustersWithRunningVms.add(vdsGroup.getName());
-            }
         }
     }
 
