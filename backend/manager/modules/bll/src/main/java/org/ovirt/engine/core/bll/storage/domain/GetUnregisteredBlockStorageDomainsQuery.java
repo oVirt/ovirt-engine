@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -134,7 +136,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         }
 
         // For iSCSI domains, filter LUNs by the specified targets
-        final Set<String> targetIQNs = Entities.connectionsByIQN(targets).keySet();
+        final Set<String> targetIQNs = targets.stream().map(StorageServerConnections::getIqn).collect(toSet());
 
         return luns.stream()
                 .filter(lun -> lun.getLunConnections().stream().anyMatch(c -> targetIQNs.contains(c.getIqn())))
