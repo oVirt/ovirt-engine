@@ -3,7 +3,8 @@ package org.ovirt.engine.api.model;
 public enum NfsVersion {
     AUTO,
     V3,
-    V4;
+    V4,
+    V4_1;
 
     public String value() {
         return name().toLowerCase();
