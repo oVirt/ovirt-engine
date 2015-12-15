@@ -9,17 +9,23 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, String reason, boolean force, boolean gracefully, int secondsToWait) {
+        this(vdsId, vmId, reason, force, gracefully, secondsToWait, false);
+    }
+
+    public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, String reason, boolean force, boolean gracefully, int secondsToWait, boolean ignoreNoVm) {
         super(vdsId, vmId);
         this.force = force;
         this.gracefully = gracefully;
         this.secondsToWait = secondsToWait;
         this.reason = reason;
+        this.ignoreNoVm = ignoreNoVm;
     }
 
     private boolean force;
     private boolean gracefully;
     private int secondsToWait;
     private String reason;
+    private boolean ignoreNoVm;
 
     public boolean getForce() {
         return force;
@@ -37,6 +43,10 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return reason == null ? "" : reason;
     }
 
+    public boolean isIgnoreNoVm() {
+        return ignoreNoVm;
+    }
+
     public DestroyVmVDSCommandParameters() {
     }
 
@@ -46,6 +56,7 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("force", getForce())
                 .append("secondsToWait", getSecondsToWait())
                 .append("gracefully", getGracefully())
-                .append("reason", getReason());
+                .append("reason", getReason())
+                .append("ignoreNoVm", isIgnoreNoVm());
     }
 }

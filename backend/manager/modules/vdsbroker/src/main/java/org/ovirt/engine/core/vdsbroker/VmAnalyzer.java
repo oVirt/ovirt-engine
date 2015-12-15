@@ -182,9 +182,11 @@ public class VmAnalyzer {
                         new DestroyVmVDSCommandParameters(
                                 getVdsManager().getVdsId(),
                                 vdsmVm.getVmDynamic().getId(),
+                                null,
                                 false,
                                 false,
-                                0));
+                                0,
+                                true));
 
                 if (dbVm != null && prevStatus == VMStatus.SavingState) {
                     afterSuspendTreatment(vdsmVm.getVmDynamic());
