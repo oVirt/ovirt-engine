@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
@@ -27,7 +28,12 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
     protected abstract Guid getStorageDomainIdForQuery();
 
     protected List<RepoImage> getUserRequestForStorageDomainRepoFileList() {
+        Guid storageDomainId = getStorageDomainIdForQuery();
+        if (Guid.Empty.equals(storageDomainId)) {
+            return new ArrayList<>();
+        }
+
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStorageDomainRepoFileList
-                (getStorageDomainIdForQuery(), getParameters().getImageType(), getParameters().getForceRefresh());
+                (storageDomainId, getParameters().getImageType(), getParameters().getForceRefresh());
     }
 }
