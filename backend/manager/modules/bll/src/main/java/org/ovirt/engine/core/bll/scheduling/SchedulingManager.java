@@ -1047,29 +1047,4 @@ public class SchedulingManager implements BackendService {
             releaseCluster(vm.getVdsGroupId());
         }
     }
-
-
-    /**
-     * Clear pending records for a Host.
-     * This operation locks the cluster to make sure a possible scheduling operation is not under way.
-     */
-    public void clearPendingHost(VDS host) {
-        prepareClusterLock(host.getVdsGroupId());
-        try {
-            lockCluster(host.getVdsGroupId());
-            getPendingResourceManager().clearHost(host);
-        } catch (InterruptedException e) {
-            log.warn("Interrupted.. pending counters can be out of sync");
-        } finally {
-            releaseCluster(host.getVdsGroupId());
-        }
-    }
-
-    /**
-     * Get the host scheduled to receive a VM.
-     * This is best effort only.
-     */
-    public Guid getPendingHostForVm(VM vm) {
-        return PendingVM.getScheduledHost(getPendingResourceManager(), vm);
-    }
 }
