@@ -90,7 +90,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     /**
      * Set quota from the parameter
      *
-     * @param parameters
      * @return
      */
     private void setQuotaParameter() {
