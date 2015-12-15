@@ -169,28 +169,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetAsyncTasksIdsByUserId (v_user_id UUID)
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT task_id
-    FROM async_tasks
-    WHERE user_id = v_user_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetVdsmTasksIdsByUserId (v_user_id UUID)
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT vdsm_task_id
-    FROM async_tasks
-    WHERE user_id = v_user_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetAsyncTaskEntitiesByTaskId (v_task_id UUID)
 RETURNS SETOF async_tasks_entities STABLE AS $PROCEDURE$
 BEGIN

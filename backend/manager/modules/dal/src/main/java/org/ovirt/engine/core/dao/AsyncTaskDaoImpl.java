@@ -196,20 +196,6 @@ public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
     }
 
     @Override
-    public List<Guid> getAsyncTaskIdsByUser(Guid userId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", userId);
-        return getCallsHandler().executeReadList("GetAsyncTasksIdsByUserId", IdRowMapper.instance, parameterSource);
-    }
-
-    @Override
-    public List<Guid> getVdsmTaskIdsByUser(Guid userId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", userId);
-        return getCallsHandler().executeReadList("GetVdsmTasksIdsByUserId", IdRowMapper.instance, parameterSource);
-    }
-
-    @Override
     public List<Guid> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", storagePoolId);

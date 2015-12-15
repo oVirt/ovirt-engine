@@ -93,22 +93,6 @@ public interface AsyncTaskDao extends Dao {
      */
     List<AsyncTask> getTasksByEntity(Guid entityId);
 
-    /**
-     * Gets all the async task ids that are associated with a user id
-     *
-     * @param userId
-     * @return
-     */
-    public List<Guid> getAsyncTaskIdsByUser(Guid userId);
-
-    /**
-     * Gets all the vdsm task ids that are associated with a user id
-     *
-     * @param userId
-     * @return
-     */
-    public List<Guid> getVdsmTaskIdsByUser(Guid userId);
-
     void insertAsyncTaskEntities(Collection<AsyncTaskEntity> asyncTaskEntities);
 
     List<AsyncTaskEntity> getAllAsyncTaskEntitiesByTaskId(Guid taskId);
