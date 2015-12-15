@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common;
+package org.ovirt.engine.ui.uicompat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.i18n.client.Messages.DefaultMessage;
 import com.google.gwt.i18n.client.Messages.Optional;
+import com.google.gwt.i18n.client.Messages.Select;
 
 /**
  * Validates GWT {@link com.google.gwt.i18n.client.Messages Messages} sub-interfaces to detect errors early,
@@ -32,7 +33,7 @@ import com.google.gwt.i18n.client.Messages.Optional;
  */
 public class GwtMessagesValidator {
 
-    private static final String PLACE_HOLDER_STRING = "\\{(\\d+)\\}";
+    private static final String PLACE_HOLDER_STRING = "\\{(\\d+)(?:,\\s*list,\\s*\\w+)?\\}";
     private static final Pattern placeHolderPattern = Pattern.compile(PLACE_HOLDER_STRING);
 
     static class PropertiesFileInfo {
@@ -115,16 +116,19 @@ public class GwtMessagesValidator {
         Set<Integer> result = new HashSet<>();
         for (int i = 0; i < methodParamAnnotations.length; i++) {
             boolean isOptional = false;
+            boolean isSelect = false;
             Annotation[] annotations = methodParamAnnotations[i];
             if (annotations.length > 0) {
                 for (Annotation annotation : annotations) {
                     if (annotation.annotationType().equals(Optional.class)) {
                         isOptional = true;
                         break;
+                    } else if (annotation.annotationType().equals(Select.class)) {
+                        isSelect = true;
                     }
                 }
             }
-            if (!isOptional) {
+            if (!isOptional && !isSelect) {
                 result.add(i);
             }
         }

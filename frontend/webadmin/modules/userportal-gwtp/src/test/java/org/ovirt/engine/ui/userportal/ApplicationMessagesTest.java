@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.ui.common.GwtMessagesValidator;
+import org.ovirt.engine.ui.uicompat.GwtMessagesValidator;
 
 public class ApplicationMessagesTest {
 

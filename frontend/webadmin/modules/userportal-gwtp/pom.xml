@@ -85,7 +85,7 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>gwt-common</artifactId>
+      <artifactId>uicompat</artifactId>
       <version>${engine.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
