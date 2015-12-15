@@ -30,7 +30,7 @@ public class MergeExtendCommand<T extends MergeParameters>
     }
 
     public void executeCommand() {
-        if (getParameters().getBaseImage().isRawBlock()) {
+        if (getParameters().getBaseImage().hasRawBlock()) {
             if (getParameters().getTopImage().getSize() != getParameters().getBaseImage().getSize()) {
                 // Only raw base volumes on block storage need explicit extension
                 extendImageSize();
