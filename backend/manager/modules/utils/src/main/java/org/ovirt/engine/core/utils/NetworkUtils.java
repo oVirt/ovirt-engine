@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,8 +19,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,5 +275,11 @@ public final class NetworkUtils {
         ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
 
         return ipConfiguration;
+    }
+
+    public static <E extends VmNetworkInterface> Map<Guid, List<E>> vmInterfacesByVmId(List<E> vnics) {
+        return vnics == null
+                ? Collections.emptyMap()
+                : vnics.stream().collect(Collectors.groupingBy(VmNetworkInterface::getVmId));
     }
 }
