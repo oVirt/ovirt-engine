@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClustersResourceTest extends
         AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendClustersResource> {
@@ -29,14 +28,6 @@ public class BackendClustersResourceTest extends
         super(new BackendClustersResource(), SearchType.Cluster, "Clusters : ");
     }
 
-
-    private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { entityId },
-                returnNull ? null : getEntity(0));
-    }
 
     @Test
     public void testAddClusterFallbackVersion() throws Exception {

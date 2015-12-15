@@ -74,15 +74,6 @@ public class BackendHostsResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
-        VDS vds = new VDS();
-        vds.setId(GUIDS[0]);
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                vds);
-    }
     @Test
     public void testAddHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());

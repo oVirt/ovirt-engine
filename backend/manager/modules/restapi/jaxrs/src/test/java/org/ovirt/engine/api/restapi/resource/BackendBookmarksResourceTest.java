@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -9,11 +10,9 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendBookmarksResourceTest extends AbstractBackendCollectionResourceTest<Bookmark,
     org.ovirt.engine.core.common.businessentities.Bookmark, BackendBookmarksResource> {
@@ -74,12 +73,6 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
         }
-    }
-
-    private void setUpGetEntityExpectations(Guid guid,
-            org.ovirt.engine.core.common.businessentities.Bookmark entity) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetBookmarkByBookmarkId,
-                IdQueryParameters.class, new String[] { "Id" }, new Object[] { guid }, entity);
     }
 
     @Override
