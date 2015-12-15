@@ -473,11 +473,6 @@ public final class ImagesHandler {
         return result;
     }
 
-    public static boolean isDiskImageRawBlock(final DiskImage diskImage) {
-        return diskImage.getVolumeFormat() == VolumeFormat.RAW
-                && diskImage.getStorageTypes().get(0).isBlockDomain();
-    }
-
     public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
             Map<Guid, StorageDomain> storageDomains,
             Set<StorageDomainStatus> applicableStatuses) {

@@ -411,6 +411,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         return diskProfileNames.get(0);
     }
 
+    public boolean isRawBlock() {
+        return getVolumeFormat() == VolumeFormat.RAW && getStorageTypes().get(0).isBlockDomain();
+    }
+
     public static DiskImage copyOf(DiskImage diskImage) {
         DiskImage di = new DiskImage();
 

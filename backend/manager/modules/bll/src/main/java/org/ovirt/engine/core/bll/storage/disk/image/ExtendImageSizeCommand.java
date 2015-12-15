@@ -77,7 +77,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     protected void endSuccessfully() {
         if (getImage().getActive()) {
             updateRelevantVms();
-        } else if (ImagesHandler.isDiskImageRawBlock(getImage())) {
+        } else if (getImage().isRawBlock()) {
             refreshVolume();
         }
 

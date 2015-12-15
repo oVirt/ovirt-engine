@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -31,7 +30,7 @@ public class MergeExtendCommand<T extends MergeParameters>
     }
 
     public void executeCommand() {
-        if (ImagesHandler.isDiskImageRawBlock(getParameters().getBaseImage())) {
+        if (getParameters().getBaseImage().isRawBlock()) {
             if (getParameters().getTopImage().getSize() != getParameters().getBaseImage().getSize()) {
                 // Only raw base volumes on block storage need explicit extension
                 extendImageSize();
