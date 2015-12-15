@@ -37,8 +37,7 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
             switch (returnStatus) {
                 case noVM:
                     if (getParameters().isIgnoreNoVm()) {// do not log error
-                        log.info("Destroy VM '{}' failed, VM does not exist on destination after Cancel Migration. VDSM message: {}",
-                                getParameters().getVmId(), getReturnStatus().message);
+                        log.info("Failed to destroy VM '{}' because VM does not exist, ignoring", getParameters().getVmId());
                         return;
                     }
 

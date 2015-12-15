@@ -156,7 +156,6 @@ public class VmAnalyzer {
      */
     void proceedDownVms() {
         if (vdsmVm != null && vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
-            Guid migratingToVds = null;
             VMStatus prevStatus = VMStatus.Unassigned;
             if (dbVm != null) {
                 prevStatus = dbVm.getStatus();
@@ -175,7 +174,6 @@ public class VmAnalyzer {
                 VmDynamic dynamicFromDb = getDbFacade().getVmDynamicDao().get(vdsmVm.getVmDynamic().getId());
                 if (dynamicFromDb != null) {
                     prevStatus = dynamicFromDb.getStatus();
-                    migratingToVds = dynamicFromDb.getMigratingToVds();
                 }
             }
             if (prevStatus != VMStatus.Unassigned) {
@@ -188,7 +186,7 @@ public class VmAnalyzer {
                                 false,
                                 false,
                                 0,
-                                isVmMigratingToThisVds(prevStatus, migratingToVds)));
+                                true));
 
                 if (dbVm != null && prevStatus == VMStatus.SavingState) {
                     afterSuspendTreatment(vdsmVm.getVmDynamic());
@@ -608,11 +606,7 @@ public class VmAnalyzer {
     }
 
     private boolean isVmMigratingToThisVds() {
-        return isVmMigratingToThisVds(dbVm.getStatus(), dbVm.getMigratingToVds());
-    }
-
-    private boolean isVmMigratingToThisVds(VMStatus vmStatus, Guid migratingToVds) {
-        return vmStatus == VMStatus.MigratingFrom && getVdsManager().getVdsId().equals(migratingToVds);
+        return dbVm.getStatus() == VMStatus.MigratingFrom && getVdsManager().getVdsId().equals(dbVm.getMigratingToVds());
     }
 
     private AuditLogType vmPauseStatusToAuditLogType(VmPauseStatus pauseStatus) {
