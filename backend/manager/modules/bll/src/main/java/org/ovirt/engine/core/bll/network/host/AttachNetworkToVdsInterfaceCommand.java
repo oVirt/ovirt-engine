@@ -152,7 +152,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // check that the required not attached to other interface
-        iface = Entities.hostInterfacesByNetworkName(interfaces).get(logicalNetwork.getName());
+        iface = NetworkUtils.hostInterfacesByNetworkName(interfaces).get(logicalNetwork.getName());
         if (iface != null) {
             addCanDoActionMessage(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;

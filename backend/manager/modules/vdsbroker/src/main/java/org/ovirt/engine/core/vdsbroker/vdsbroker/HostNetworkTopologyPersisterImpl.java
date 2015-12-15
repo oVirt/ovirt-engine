@@ -31,6 +31,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
@@ -279,7 +280,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
 
     private String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {
         Map<String, VdsNetworkInterface> interfacesByNetworkName =
-                Entities.hostInterfacesByNetworkName(host.getInterfaces());
+                NetworkUtils.hostInterfacesByNetworkName(host.getInterfaces());
         List<String> networkNames = new ArrayList<>();
 
         for (Network net : clusterNetworks) {

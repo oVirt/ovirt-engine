@@ -510,7 +510,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
             PersistentHostSetupNetworksParameters params = createHostSetupNetworksParameters(hostId);
             Map<String, VdsNetworkInterface> nicsByNetwork =
-                    Entities.hostInterfacesByNetworkName(getNics(hostId));
+                    NetworkUtils.hostInterfacesByNetworkName(getNics(hostId));
             Map<String, List<Network>> targetNetworksByLabel = getClusterNetworksByLabel(targetClusterNetworks);
             Map<String, List<Network>> sourceNetworksByLabel =
                     getClusterNetworksByLabel(networkDao.getAllForCluster(sourceClusterId));

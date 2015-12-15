@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -125,7 +124,7 @@ public class HostInterfaceValidator {
     private List<String> validateNetworksNotAssignedToIncorrectNics(List<VdsNetworkInterface> hostInterfaces,
             List<Network> networks) {
 
-        Map<String, VdsNetworkInterface> networkNameToNicMap = Entities.hostInterfacesByNetworkName(hostInterfaces);
+        Map<String, VdsNetworkInterface> networkNameToNicMap = NetworkUtils.hostInterfacesByNetworkName(hostInterfaces);
         List<String> badlyAssignedNetworks = new ArrayList<>();
 
         for (Network network : networks) {

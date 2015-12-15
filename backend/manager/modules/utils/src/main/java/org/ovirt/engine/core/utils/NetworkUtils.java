@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -281,5 +282,13 @@ public final class NetworkUtils {
         return vnics == null
                 ? Collections.emptyMap()
                 : vnics.stream().collect(Collectors.groupingBy(VmNetworkInterface::getVmId));
+    }
+
+    public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> hostNics) {
+        return hostNics == null
+                ? Collections.emptyMap()
+                : hostNics.stream()
+                        .filter(hostNic -> hostNic.getNetworkName() != null)
+                        .collect(Collectors.toMap(VdsNetworkInterface::getNetworkName, Function.<E>identity()));
     }
 }

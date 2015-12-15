@@ -3,14 +3,12 @@ package org.ovirt.engine.core.bll.network;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -50,7 +48,7 @@ public class RemoveNetworkParametersBuilder extends HostSetupNetworksParametersB
             setupNetworkParams.setNetworkNames(network.getName());
 
             Map<String, VdsNetworkInterface> nicByNetworkName =
-                    Entities.hostInterfacesByNetworkName(getNics(nic.getVdsId()));
+                    NetworkUtils.hostInterfacesByNetworkName(getNics(nic.getVdsId()));
             VdsNetworkInterface nicToConfigure = getNicToConfigure(getNics(nic.getVdsId()), nic.getId());
 
             if (nicToConfigure == null) {

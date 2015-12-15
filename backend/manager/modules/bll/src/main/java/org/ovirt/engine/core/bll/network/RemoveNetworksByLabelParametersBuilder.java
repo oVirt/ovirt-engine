@@ -33,7 +33,7 @@ public class RemoveNetworksByLabelParametersBuilder extends HostSetupNetworksPar
     public PersistentHostSetupNetworksParameters buildParameters(Guid hostId, List<Network> networksToRemove) {
         PersistentHostSetupNetworksParameters parameters = createHostSetupNetworksParameters(hostId);
         Map<String, VdsNetworkInterface> nicByNetwork =
-                Entities.hostInterfacesByNetworkName(getNics(hostId));
+                NetworkUtils.hostInterfacesByNetworkName(getNics(hostId));
         Map<String, VdsNetworkInterface> nicByName =
                 Entities.entitiesByName(getNics(hostId));
 

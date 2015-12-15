@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,20 +60,6 @@ public class Entities {
             Map<String, E> map = new HashMap<>();
             for (E e : entityList) {
                 map.put(e.getNetworkName(), e);
-            }
-            return map;
-        } else {
-            return Collections.emptyMap();
-        }
-    }
-
-    public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> entityList) {
-        if (entityList != null) {
-            Map<String, E> map = new HashMap<>();
-            for (E e : entityList) {
-                if (e.getNetworkName() != null) {
-                    map.put(e.getNetworkName(), e);
-                }
             }
             return map;
         } else {

@@ -172,7 +172,8 @@ public class HostSetupNetworksValidator {
 
     protected ValidationResult validateBondModeVsNetworksAttachedToIt(
             Collection<NetworkAttachment> attachmentsToConfigure) {
-        Map<String, VdsNetworkInterface> hostInterfacesByNetworkName = Entities.hostInterfacesByNetworkName(existingInterfaces);
+        Map<String, VdsNetworkInterface> hostInterfacesByNetworkName =
+                NetworkUtils.hostInterfacesByNetworkName(existingInterfaces);
 
         for (NetworkAttachment attachment : attachmentsToConfigure){
             if (!mustAttachementBeCheckedForBondMode(attachment, hostInterfacesByNetworkName)){

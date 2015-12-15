@@ -173,7 +173,7 @@ public class SetupNetworksHelper {
     private void validateNotRemovingLabeledNetworks() {
         Map<String, VdsNetworkInterface> existingIfaces = getExistingIfaces();
         Map<String, VdsNetworkInterface> hostInterfacesByNetworkName =
-                Entities.hostInterfacesByNetworkName(existingIfaces.values());
+                NetworkUtils.hostInterfacesByNetworkName(existingIfaces.values());
 
         for (String network : removedNetworks) {
             VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
@@ -265,7 +265,7 @@ public class SetupNetworksHelper {
      */
     private void validateMTU() {
         Map<String, VdsNetworkInterface> ifacesByNetworkName =
-                Entities.hostInterfacesByNetworkName(params.getInterfaces());
+                NetworkUtils.hostInterfacesByNetworkName(params.getInterfaces());
         Set<String> checkedNetworks = new HashSet<>(getNetworks().size());
 
         for (Network network : getNetworks()) {

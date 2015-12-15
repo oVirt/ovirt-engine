@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddNetworksByLabelParametersBuilder extends HostSetupNetworksParametersBuilder {
 
@@ -56,7 +57,7 @@ public class AddNetworksByLabelParametersBuilder extends HostSetupNetworksParame
     }
 
     private Set<Network> getNetworksToConfigure(List<VdsNetworkInterface> nics, List<Network> labeledNetworks) {
-        Map<String, VdsNetworkInterface> nicsByNetworkName = Entities.hostInterfacesByNetworkName(nics);
+        Map<String, VdsNetworkInterface> nicsByNetworkName = NetworkUtils.hostInterfacesByNetworkName(nics);
         Set<Network> networkToAdd = new HashSet<>();
 
         for (Network network : labeledNetworks) {

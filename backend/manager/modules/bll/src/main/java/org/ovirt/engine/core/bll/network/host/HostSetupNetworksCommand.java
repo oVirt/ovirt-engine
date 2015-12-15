@@ -379,7 +379,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             NetworkAttachment existingNetworkAttachment = existingNetworkAttachmentMap.get(networkAttachment.getId());
 
             VdsNetworkInterface nic =
-                    Entities.hostInterfacesByNetworkName(getExistingNics())
+                    NetworkUtils.hostInterfacesByNetworkName(getExistingNics())
                             .get(existingNetworkAttachment.getNetworkName());
 
             NetworkImplementationDetails networkImplementationDetails = nic.getNetworkImplementationDetails();
