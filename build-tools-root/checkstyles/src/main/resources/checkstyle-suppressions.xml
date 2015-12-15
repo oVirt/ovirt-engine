@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
-    <suppress checks="checks.NoArgConstructorCheck" files=".*Test\.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="VersionStorageFormatUtil.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="MapBackedPreferences.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="Event.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="EventResult.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="LocationInfo.java"/>
-    <suppress checks="checks.NoArgConstructorCheck" files="HttpLocationInfo.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files=".*Test\.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="VersionStorageFormatUtil.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="MapBackedPreferences.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="Event.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="EventResult.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="LocationInfo.java"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="HttpLocationInfo.java"/>
     <suppress checks="UncommentedMain" files="ManageDomains.java"/>
     <suppress checks="UncommentedMain" files="Notifier.java"/>
     <suppress checks="UncommentedMain" files="Tar.java"/>
@@ -63,7 +63,7 @@
          GWT client, and those that are used have special versions or custom
          field serializers to overcome the GWT serialization limitations. All
          in all they don't need to have a no args constructor: -->
-    <suppress checks="checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]aaa[\\/].*"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]aaa[\\/].*"/>
     <!-- The customprop package only includes common logic, nothing to serialize -->
-    <suppress checks="checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]utils[\\/]customprop[\\/].*"/>
+    <suppress checks="org.ovirt.checkstyle.checks.NoArgConstructorCheck" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]utils[\\/]customprop[\\/].*"/>
 </suppressions>

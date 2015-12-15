@@ -1,4 +1,4 @@
-package checks;
+package org.ovirt.checkstyle.checks;
 
 import com.puppycrawl.tools.checkstyle.ScopeUtils;
 import com.puppycrawl.tools.checkstyle.api.Check;

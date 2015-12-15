@@ -22,14 +22,14 @@
     <module name="EqualsHashCode"/>
     <module name="UncommentedMain"/>
     <module name="LeftCurly"/>
-    <module name="checks.DiamondOperator"/>
-    <module name="checks.NlsCheck">
+    <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
+    <module name="org.ovirt.checkstyle.checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
-    <module name="checks.NoFinalMemberCheck">
+    <module name="org.ovirt.checkstyle.checks.NoFinalMemberCheck">
       <property name="run" value="${disallowFinals}" default="false"/>
     </module>
-    <module name="checks.NoMemberInitializationCheck">
+    <module name="org.ovirt.checkstyle.checks.NoMemberInitializationCheck">
       <property name="run" value="${disallowMemberInit}" default="false"/>
     </module>
     <module name="NoWhitespaceBefore">
@@ -38,7 +38,7 @@
     <module name="WhitespaceAfter">
           <property name="tokens" value="COMMA"/>
     </module>
-    <module name="checks.NoArgConstructorCheck">
+    <module name="org.ovirt.checkstyle.checks.NoArgConstructorCheck">
       <property name="run" value="${checkNoArgConstructor}" default="false"/>
     </module>
     <module name="ImportOrder">

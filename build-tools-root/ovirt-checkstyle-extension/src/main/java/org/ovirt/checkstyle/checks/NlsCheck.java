@@ -1,4 +1,4 @@
-package checks;
+package org.ovirt.checkstyle.checks;
 
 import java.util.LinkedList;
 import java.util.List;
