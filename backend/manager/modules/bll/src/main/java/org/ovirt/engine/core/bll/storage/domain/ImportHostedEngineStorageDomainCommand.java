@@ -110,9 +110,9 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
             actionType = VdcActionType.AddExistingFileStorageDomain;
             break;
         case ISCSI:
+            discoverBlockConnectionDetails();
         case FCP:
             actionType = VdcActionType.AddExistingBlockStorageDomain;
-            discoverBlockConnectionDetails();
             removeHostedEngineLunDisk();
             break;
         }
