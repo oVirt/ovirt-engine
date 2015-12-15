@@ -475,8 +475,7 @@ public final class ImagesHandler {
 
     public static boolean isDiskImageRawBlock(final DiskImage diskImage) {
         return diskImage.getVolumeFormat() == VolumeFormat.RAW
-                && DbFacade.getInstance().getStorageDomainStaticDao().get(diskImage.getStorageIds().get(0))
-                        .getStorageType().isBlockDomain();
+                && diskImage.getStorageTypes().get(0).isBlockDomain();
     }
 
     public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
