@@ -117,7 +117,7 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
         dbUser.setId(mappedUser.getId());
         String engineSessionId;
         try {
-            byte s[] = new byte[64];
+            byte[] s = new byte[64];
             SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
             engineSessionId = new Base64(0).encodeToString(s);
         } catch (NoSuchAlgorithmException e) {

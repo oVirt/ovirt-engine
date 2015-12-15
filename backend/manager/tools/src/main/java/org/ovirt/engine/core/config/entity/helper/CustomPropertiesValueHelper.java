@@ -12,7 +12,7 @@ public class CustomPropertiesValueHelper extends StringValueHelper {
         String[] keyValuePairs = value.split(";");
         for (int counter = 0; counter < keyValuePairs.length; counter++) {
            String keyValuePair = keyValuePairs[counter];
-           String parts[] = keyValuePair.split("=", 2);
+           String[] parts = keyValuePair.split("=", 2);
            if (parts.length != 2) {
                return new ValidationResult(false, "The entered value is in imporper format. " + keyValuePair + " cannot be used for custom properties definition.\nA string of key=value pair should be used instead, where the value should be a correct regex expression");
            }

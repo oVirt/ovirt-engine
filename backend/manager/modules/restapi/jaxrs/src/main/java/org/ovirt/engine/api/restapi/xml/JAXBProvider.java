@@ -143,7 +143,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
      * {@inheritDoc}
      */
     @Override
-    public Object readFrom(Class<Object> type, Type genericType, Annotation annotations[], MediaType mediaType,
+    public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType,
             MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
             throws IOException, WebApplicationException {
         XMLStreamReader reader = null;

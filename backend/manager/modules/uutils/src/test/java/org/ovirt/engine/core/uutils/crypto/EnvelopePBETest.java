@@ -16,7 +16,7 @@ public class EnvelopePBETest {
         Random random = new Random();
 
         for (int i=1;i<100;i++) {
-            byte r[] = new byte[i];
+            byte[] r = new byte[i];
             random.nextBytes(r);
             String password = new Base64(0).encodeToString(r);
             String encoded = EnvelopePBE.encode("PBKDF2WithHmacSHA1", 256, 4000, null, password);

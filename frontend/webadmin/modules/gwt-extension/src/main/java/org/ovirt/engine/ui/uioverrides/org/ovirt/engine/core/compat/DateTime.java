@@ -6,7 +6,7 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class DateTime extends Date {
 
-    private static final String dayNames[] = EnumCompat.GetNames(DayOfWeek.class);
+    private static final String[] dayNames = EnumCompat.GetNames(DayOfWeek.class);
 
     public DateTime() {
         this(getMinValue());

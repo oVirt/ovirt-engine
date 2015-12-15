@@ -43,7 +43,7 @@ public class ShellLikeConfdTest {
         InputStream in = null;
         try {
             in = new FileInputStream(URLDecoder.decode(ClassLoader.getSystemResource("config.conf.ref").getPath(), "UTF-8"));
-            byte buffer[] = new byte[2048];
+            byte[] buffer = new byte[2048];
             int size = in.read(buffer);
             reference = new String(buffer, 0, size, StandardCharsets.UTF_8);
         }

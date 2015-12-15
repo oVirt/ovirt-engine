@@ -118,7 +118,7 @@ public class SSOUtils {
     public static String generateAuthorizationToken() {
         String ssoTokenId;
         try {
-            byte s[] = new byte[64];
+            byte[] s = new byte[64];
             SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
             ssoTokenId = new Base64(0, new byte[0], true).encodeToString(s);
         } catch (NoSuchAlgorithmException e) {

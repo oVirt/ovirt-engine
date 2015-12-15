@@ -415,7 +415,7 @@ public final class FormatterJava {
             }
 
             private void layout(BigInteger intVal, int scale, BigDecimalLayoutForm form) {
-                char coeff[] = intVal.toString().toCharArray();
+                char[] coeff = intVal.toString().toCharArray();
                 this.scale = scale;
 
                 // Construct a buffer, with sufficient capacity for all cases.
@@ -1254,7 +1254,7 @@ public final class FormatterJava {
                         value.unscaledValue(),
                         value.scale(),
                         BigDecimalLayoutForm.DECIMAL_FLOAT);
-                char mant[] = bdl.mantissa();
+                char[] mant = bdl.mantissa();
                 int nzeros = (bdl.scale() < prec ? prec - bdl.scale() : 0);
 
                 // Add a decimal point if necessary. The mantissa may not

@@ -52,12 +52,12 @@ public class BackendStorageDomainsResourceTest
     protected static final String TARGET = "iqn.2009-08.org.fubar.engine:markmc.test1";
     protected static final Integer PORT = 3260;
 
-    protected static final org.ovirt.engine.core.common.businessentities.StorageDomainType TYPES_MAPPED[] = {
+    protected static final org.ovirt.engine.core.common.businessentities.StorageDomainType[] TYPES_MAPPED = {
             org.ovirt.engine.core.common.businessentities.StorageDomainType.Data,
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO,
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport };
 
-    protected static final org.ovirt.engine.core.common.businessentities.storage.StorageType STORAGE_TYPES_MAPPED[] = {
+    protected static final org.ovirt.engine.core.common.businessentities.storage.StorageType[] STORAGE_TYPES_MAPPED = {
             org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
             org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
             org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS,

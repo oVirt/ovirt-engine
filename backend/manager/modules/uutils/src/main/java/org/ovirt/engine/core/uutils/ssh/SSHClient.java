@@ -621,7 +621,7 @@ public class SSHClient implements Closeable {
         ) {
             t = new Thread(() -> {
                 try (OutputStream out = new GZIPOutputStream(pout)) {
-                    byte b[] = new byte[STREAM_BUFFER_SIZE];
+                    byte[] b = new byte[STREAM_BUFFER_SIZE];
                     int n;
                     while ((n = in.read(b)) != -1) {
                         out.write(b, 0, n);

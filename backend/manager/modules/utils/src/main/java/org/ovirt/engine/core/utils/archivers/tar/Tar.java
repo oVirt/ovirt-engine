@@ -50,7 +50,7 @@ public class Tar {
             }
             archive.putArchiveEntry(entry);
             try (InputStream is = new FileInputStream(entry.getFile())) {
-                byte buffer[] = new byte[8192];
+                byte[] buffer = new byte[8192];
                 int n;
                 while ((n = is.read(buffer)) != -1) {
                     archive.write(buffer, 0, n);
@@ -89,7 +89,7 @@ public class Tar {
         }
     }
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         try (OutputStream os = new FileOutputStream(args[0])) {
             Tar.doTar(os, new File(args[1]));
         }

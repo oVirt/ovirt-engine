@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
-    protected static final StorageType STORAGE_TYPES_MAPPED[] = {
+    protected static final StorageType[] STORAGE_TYPES_MAPPED = {
             StorageType.NFS,
             StorageType.LOCALFS,
             StorageType.POSIXFS,

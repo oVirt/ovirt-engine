@@ -83,7 +83,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             logAction(vds, AuditLogType.PM_POLICY_UP_TO_MAINTENANCE);
 
             /* Up -> Maint */
-            Guid vdsList[] = new Guid[] {vds.getId()};
+            Guid[] vdsList = new Guid[] {vds.getId()};
             MaintenanceNumberOfVdssParameters parameters =
                     new MaintenanceNumberOfVdssParameters(Arrays.asList(vdsList), true, true);
             Backend.getInstance().runInternalAction(VdcActionType.MaintenanceNumberOfVdss,

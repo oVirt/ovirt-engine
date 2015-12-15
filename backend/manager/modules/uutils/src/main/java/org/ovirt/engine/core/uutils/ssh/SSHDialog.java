@@ -280,7 +280,7 @@ public class SSHDialog implements Closeable {
     public void executeCommand(
         Sink sink,
         String command,
-        InputStream initial[]
+        InputStream[] initial
     ) throws Exception {
 
         log.info("SSH execute '{}' '{}'", _client.getDisplayHost(), command);

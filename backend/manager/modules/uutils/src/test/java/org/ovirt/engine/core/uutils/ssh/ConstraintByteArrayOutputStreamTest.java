@@ -15,7 +15,7 @@ public class ConstraintByteArrayOutputStreamTest {
     public void testLimit() throws IOException {
         int limit = 1000;
         ByteArrayOutputStream os = new ConstraintByteArrayOutputStream(limit);
-        byte buffer[] = new byte[100];
+        byte[] buffer = new byte[100];
         for (int i = 0;i<limit*5/buffer.length;i++) {
             os.write(buffer);
         }

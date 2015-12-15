@@ -49,15 +49,15 @@ public class OVirtNodeInfo {
 
     private OVirtNodeInfo() {
         final String[] path = Config.resolveOVirtISOsRepositoryPath().split(delimiter);
-        final String minimumVersion[] = Config.<String> getValue(ConfigValues.OvirtInitialSupportedIsoVersion).split(delimiter);
+        final String[] minimumVersion = Config.<String> getValue(ConfigValues.OvirtInitialSupportedIsoVersion).split(delimiter);
 
         // Node prefix is part of regex to list ISOs (OvirtIsoPrefix)
         // Regex: (ovirt-node)-(.*)\.iso (used to list ISOs)
         // Prefix Found: ovirt-node
-        final String regexISO[] = Config.<String> getValue(ConfigValues.OvirtIsoPrefix).split(delimiter);
+        final String[] regexISO = Config.<String> getValue(ConfigValues.OvirtIsoPrefix).split(delimiter);
 
         // Node OS
-        final String regexNode[] = Config.<String> getValue(ConfigValues.OvirtNodeOS).split(delimiter);
+        final String[] regexNode = Config.<String> getValue(ConfigValues.OvirtNodeOS).split(delimiter);
 
         info = new LinkedList<>();
 

@@ -178,7 +178,7 @@ public class Main {
 
     private static byte[] readStream(InputStream in) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte buf[] = new byte[1024];
+        byte[] buf = new byte[1024];
         int n;
         while ((n = in.read(buf)) != -1) {
             os.write(buf, 0, n);
@@ -187,7 +187,7 @@ public class Main {
     }
 
     private static String getPassword(String prompt, String what) throws IOException {
-        String keyValue[] = what.split(":", 2);
+        String[] keyValue = what.split(":", 2);
         String type = keyValue[0];
         String value = keyValue[1];
 
@@ -209,7 +209,7 @@ public class Main {
                 throw new RuntimeException("Console is not available, interactive password prompt is impossible");
             }
             System.console().printf("%s", prompt);
-            char passwordChars[] = System.console().readPassword();
+            char[] passwordChars = System.console().readPassword();
             if (passwordChars == null) {
                 throw new RuntimeException("Cannot read password");
             }

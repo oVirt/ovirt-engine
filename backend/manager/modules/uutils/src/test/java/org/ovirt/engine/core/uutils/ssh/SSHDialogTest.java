@@ -53,7 +53,7 @@ public class SSHDialogTest {
         private Throwable _throwable;
         private Thread _thread;
 
-        public Sink(String expect[], String send[]) {
+        public Sink(String[] expect, String[] send) {
             _expect = new LinkedList<>(Arrays.asList(expect));
             _send = new LinkedList<>(Arrays.asList(send));
             _thread = new Thread(this);

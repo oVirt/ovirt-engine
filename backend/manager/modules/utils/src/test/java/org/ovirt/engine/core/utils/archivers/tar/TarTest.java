@@ -40,7 +40,7 @@ public class TarTest {
         File fullFile = new File(base, file.getPath());
         md.update(file.getPath().getBytes("UTF-8"));
         if (fullFile.isDirectory()) {
-            String files[] = fullFile.list();
+            String[] files = fullFile.list();
             Arrays.sort(files);
             for (String f : files) {
                 digestDirectory(md, base, new File(file, f));
@@ -53,7 +53,7 @@ public class TarTest {
             try {
                 fis = new FileInputStream(fullFile);
                 is = new DigestInputStream(fis, fmd);
-                byte buf[] = new byte[1024];
+                byte[] buf = new byte[1024];
                 int n;
                 while ((n = is.read(buf)) != -1) {
                     // do nothing

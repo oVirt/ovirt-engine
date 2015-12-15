@@ -112,7 +112,7 @@ public class FiltersHelper {
             secureRandom = SecureRandom.getInstance("SHA1PRNG");
         }
 
-        byte s[] = new byte[8];
+        byte[] s = new byte[8];
         secureRandom.nextBytes(s);
         return new Base64(0, new byte[0], true).encodeToString(s);
     }
@@ -175,7 +175,7 @@ public class FiltersHelper {
     }
 
     public static String getTokenContent(String token) {
-        String s[] = token.split("\\|", 2);
+        String[] s = token.split("\\|", 2);
         if (s.length != 2) {
             throw new IllegalArgumentException("Invalid session token format");
         }

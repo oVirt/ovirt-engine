@@ -675,7 +675,7 @@ public class VmHandler {
         int max = 0;
         String numOfMonitorsStr =
                 Config.getValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
-        String values[] = numOfMonitorsStr.split(",");
+        String[] values = numOfMonitorsStr.split(",");
         for (String text : values) {
             text = text.trim();
             int val = Integer.parseInt(text);

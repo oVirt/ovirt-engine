@@ -72,7 +72,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
         // sessionKey in the form - the uuid is the gluster server uuid on master
         // <sessionKey>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2</sessionKey>
         String sessionKey = (String) innerMap.get(SESSION_KEY);
-        String sessSplit[] = sessionKey.split("([://]+)");
+        String[] sessSplit = sessionKey.split("([://]+)");
         String slaveNode = sessSplit[sessSplit.length - 2];
         if(slaveNode.contains("@")) {
             String[] hostComponents = slaveNode.split("@");

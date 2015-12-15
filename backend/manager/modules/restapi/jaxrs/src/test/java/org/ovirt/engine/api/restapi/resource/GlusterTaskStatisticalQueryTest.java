@@ -19,11 +19,11 @@ public class GlusterTaskStatisticalQueryTest {
     private static final Guid[] GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
         new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7")};
     private static final double EPSILON = 1000;
-    private static final long FILES_FAILED[] = {4576, 7890};
-    private static final long FILES_SKIPPED[] = {56, 89};
-    private static final long FILES_MOVED[] = {24576, 3679891};
-    private static final long SIZE_MOVED[] = {24576345L, 3247389L};
-    private static final double RUN_TIME[] = {14.1, 34.5};
+    private static final long[] FILES_FAILED = {4576, 7890};
+    private static final long[] FILES_SKIPPED = {56, 89};
+    private static final long[] FILES_MOVED = {24576, 3679891};
+    private static final long[] SIZE_MOVED = {24576345L, 3247389L};
+    private static final double[] RUN_TIME = {14.1, 34.5};
 
     private StepStatisticalQuery query = new StepStatisticalQuery(null, getParent());
 

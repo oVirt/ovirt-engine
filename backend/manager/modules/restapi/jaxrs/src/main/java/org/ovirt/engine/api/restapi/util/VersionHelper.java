@@ -11,7 +11,7 @@ public class VersionHelper {
      */
     public static Version parseVersion(String text) {
         Version version = new Version();
-        String parts[] = text.split("\\.", -1);
+        String[] parts = text.split("\\.", -1);
         switch (parts.length) {
         case 4:
             version.setRevision(Integer.parseInt(parts[3]));

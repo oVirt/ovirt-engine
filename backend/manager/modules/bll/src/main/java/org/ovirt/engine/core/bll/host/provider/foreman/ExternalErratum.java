@@ -14,7 +14,7 @@ public class ExternalErratum {
     private String solution;
     private String summary;
     private String type;
-    private String packages[];
+    private String[] packages;
 
     public String getId() {
         return id;

@@ -284,7 +284,7 @@ public class CustomPropertiesUtils {
     protected Map<String, String> convertProperties(String properties, Map<String, String> regExMap) {
         Map<String, String> map = new LinkedHashMap<>();
         if (!StringHelper.isNullOrEmpty(properties)) {
-            String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
+            String[] keyValuePairs = properties.split(PROPERTIES_DELIMETER);
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
                 String key = pairParts[0];

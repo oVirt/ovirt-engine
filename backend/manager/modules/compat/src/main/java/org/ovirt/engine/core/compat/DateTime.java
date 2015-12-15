@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateTime extends Date {
-    private static final String dayNames[] = new DateFormatSymbols().getWeekdays();
+    private static final String[] dayNames = new DateFormatSymbols().getWeekdays();
 
     public DateTime() {
         this(getMinValue());

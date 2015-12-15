@@ -602,7 +602,7 @@ public class AAAServiceImpl implements ModuleService {
     }
 
     private static String getPassword(String what, String prompt) {
-        String keyValue[] = what.split(":", 2);
+        String[] keyValue = what.split(":", 2);
         String type = keyValue[0];
         String value = keyValue[1];
 
@@ -626,7 +626,7 @@ public class AAAServiceImpl implements ModuleService {
                 throw new RuntimeException("Console is not available, interactive password prompt is impossible");
             }
             System.out.print(prompt);
-            char passwordChars[] = System.console().readPassword();
+            char[] passwordChars = System.console().readPassword();
             if (passwordChars == null) {
                 throw new RuntimeException("Cannot read password");
             }

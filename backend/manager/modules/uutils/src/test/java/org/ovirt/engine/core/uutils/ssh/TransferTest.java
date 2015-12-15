@@ -39,7 +39,7 @@ public class TransferTest {
             throw new RuntimeException(e);
         }
         try (InputStream is =  new FileInputStream(file)) {
-            byte buffer[] = new byte[1024];
+            byte[] buffer = new byte[1024];
             int n;
             while ((n = is.read(buffer)) != -1) {
                 digest.update(buffer, 0, n);
@@ -63,7 +63,7 @@ public class TransferTest {
             throw new RuntimeException(e);
         }
         try (OutputStream os = new FileOutputStream(local1)) {
-            byte buffer[] = new byte[1000];
+            byte[] buffer = new byte[1000];
             for (long i=0;i<TestCommon.largeTestFileSize / buffer.length;i++) {
                 random.nextBytes(buffer);
                 os.write(buffer);
