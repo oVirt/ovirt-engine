@@ -14,6 +14,8 @@
   </module>
   <module name="TreeWalker">
     <property name="cacheFile" value="${checkstyle.cache.file}"/>
+
+    <!-- Built-in checks -->
     <module name="EmptyStatement"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
@@ -22,24 +24,11 @@
     <module name="EqualsHashCode"/>
     <module name="UncommentedMain"/>
     <module name="LeftCurly"/>
-    <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
-    <module name="org.ovirt.checkstyle.checks.NlsCheck">
-      <property name="run" value="${runNlsCheck}" default="false"/>
-    </module>
-    <module name="org.ovirt.checkstyle.checks.NoFinalMemberCheck">
-      <property name="run" value="${disallowFinals}" default="false"/>
-    </module>
-    <module name="org.ovirt.checkstyle.checks.NoMemberInitializationCheck">
-      <property name="run" value="${disallowMemberInit}" default="false"/>
-    </module>
     <module name="NoWhitespaceBefore">
       <property name="tokens" value="SEMI"/>
     </module>
     <module name="WhitespaceAfter">
           <property name="tokens" value="COMMA"/>
-    </module>
-    <module name="org.ovirt.checkstyle.checks.NoArgConstructorCheck">
-      <property name="run" value="${checkNoArgConstructor}" default="false"/>
     </module>
     <module name="ImportOrder">
       <property name="groups" value="java,javax,org,com"/>
@@ -50,5 +39,20 @@
     </module>
     <module name="TypeName" />
     <module name="MethodName" />
+
+    <!-- oVirt checks -->
+    <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
+    <module name="org.ovirt.checkstyle.checks.NlsCheck">
+      <property name="run" value="${runNlsCheck}" default="false"/>
+    </module>
+    <module name="org.ovirt.checkstyle.checks.NoFinalMemberCheck">
+      <property name="run" value="${disallowFinals}" default="false"/>
+    </module>
+    <module name="org.ovirt.checkstyle.checks.NoMemberInitializationCheck">
+      <property name="run" value="${disallowMemberInit}" default="false"/>
+    </module>
+    <module name="org.ovirt.checkstyle.checks.NoArgConstructorCheck">
+      <property name="run" value="${checkNoArgConstructor}" default="false"/>
+    </module>
   </module>
 </module>
