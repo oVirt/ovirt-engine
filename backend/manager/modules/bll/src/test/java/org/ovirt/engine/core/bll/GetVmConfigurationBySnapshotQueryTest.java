@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,8 +33,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private SnapshotDao snapshotDaoMock;
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
-    private Guid existingImageId = Guid.newGuid();
-    private Guid existingImageGroupId = Guid.newGuid();
     private Snapshot existingSnapshot;
     private SnapshotsManager snapshotsManager;
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
@@ -58,25 +55,12 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         setUpDaoMocks();
     }
 
-    private VM createVm(Guid existingVmId) {
-        VM vm = new VM();
-        vm.setId(existingVmId);
-        return vm;
-    }
-
     private Snapshot createSnapshot(Guid existingSnapshotId) {
         Snapshot snapshot = new Snapshot();
         snapshot.setId(existingSnapshotId);
         snapshot.setVmId(existingVmId);
         snapshot.setVmConfiguration(EXISTING_VM_NAME);
         return snapshot;
-    }
-
-    private DiskImage createDiskImage(Guid diskImageId, Guid imageGroupId) {
-        DiskImage diskImage = new DiskImage();
-        diskImage.setImageId(diskImageId);
-        diskImage.setId(imageGroupId);
-        return diskImage;
     }
 
     private void setUpDaoMocks() {
