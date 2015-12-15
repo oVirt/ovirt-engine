@@ -99,25 +99,6 @@ public abstract class Configuration {
     public abstract String getAbsoluteKey(String key);
 
     /**
-     * Gets the value associated to a configuration parameter, searching it in this configuration and it all its
-     * parents.
-     *
-     * @param key the name of the configuration parameter
-     * @return the value of the configuration parameter or {@code null} if no such parameter exists
-     */
-    public String getInheritedString(String key) {
-        String value = getString(key);
-        if (value != null) {
-            return value;
-        }
-        Configuration parent = getParent();
-        if (parent != null) {
-            return parent.getInheritedString(key);
-        }
-        return null;
-    }
-
-    /**
      * Returns a configuration object that represents a view of the parameters that start with a given prefix. These
      * objects are cached, so if the same prefix is requested twice the same object will be returned.
      *
@@ -176,25 +157,6 @@ public abstract class Configuration {
             typedViews.put(type, view);
         }
         return (V) view;
-    }
-
-    /**
-     * Returns a configuration object that represents a view of the parameters that start with a given prefix. If this
-     * configuration is empty it will try to find it in the parent configuration object.
-     *
-     * @param prefix the prefix
-     * @return the configuration object, will never be {@code null}
-     */
-    public Configuration getInheritedView(String prefix) {
-        Configuration view = getView(prefix);
-        if (!view.isEmpty()) {
-            return view;
-        }
-        Configuration parent = getParent();
-        if (parent != null) {
-            return parent.getInheritedView(prefix);
-        }
-        return null;
     }
 
     /**
