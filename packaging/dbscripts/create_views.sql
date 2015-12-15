@@ -25,7 +25,6 @@ CREATE OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
 
 SELECT images.image_guid AS image_guid,
     storage_domain_static.storage_name AS storage_name,
-    storage_domain_static.storage AS storage_path,
     storage_pool_iso_map.storage_pool_id AS storage_pool_id,
     storage_domain_static.storage_type AS storage_type,
     images.creation_date AS creation_date,
@@ -139,7 +138,6 @@ LEFT JOIN repo_file_meta_data
 CREATE OR REPLACE VIEW storage_for_image_view AS
 
 SELECT images.image_guid AS image_id,
-    array_to_string(array_agg(storage_domain_static.storage), ',') AS storage_path,
     array_to_string(array_agg(storage_domain_static.id), ',') storage_id,
     array_to_string(array_agg(storage_domain_static.storage_type), ',') storage_type,
     array_to_string(array_agg(storage_domain_static.storage_name), ',') AS storage_name,
@@ -161,7 +159,6 @@ GROUP BY images.image_guid;
 CREATE OR REPLACE VIEW vm_images_view AS
 
 SELECT storage_for_image_view.storage_id AS storage_id,
-    storage_for_image_view.storage_path AS storage_path,
     storage_for_image_view.storage_name AS storage_name,
     storage_for_image_view.storage_type,
     images_storage_domain_view.storage_pool_id AS storage_pool_id,
@@ -236,7 +233,6 @@ SELECT storage_impl.*,
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
-        storage_for_image_view.storage_path AS storage_path,
         storage_for_image_view.storage_name AS storage_name,
         storage_for_image_view.storage_type AS storage_type,
         storage_pool_id,
@@ -288,7 +284,6 @@ FROM (
     INNER JOIN storage_for_image_view
         ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
     GROUP BY storage_for_image_view.storage_id,
-        storage_for_image_view.storage_path,
         storage_for_image_view.storage_name,
         storage_for_image_view.storage_type,
         storage_pool_id,
@@ -330,7 +325,6 @@ FROM (
 
     SELECT NULL AS storage_id,
         -- Storage domain fields
-        NULL AS storage_path,
         NULL AS storage_name,
         NULL AS storage_type,
         NULL AS storage_pool_id,
@@ -410,7 +404,6 @@ SELECT storage_impl.*,
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
-        storage_for_image_view.storage_path AS storage_path,
         storage_for_image_view.storage_name AS storage_name,
         storage_for_image_view.storage_type AS storage_type,
         storage_pool_id,
@@ -463,7 +456,6 @@ FROM (
     INNER JOIN storage_for_image_view
         ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
     GROUP BY storage_for_image_view.storage_id,
-        storage_for_image_view.storage_path,
         storage_for_image_view.storage_name,
         storage_for_image_view.storage_type,
         storage_pool_id,
@@ -506,7 +498,6 @@ FROM (
 
     SELECT NULL AS storage_id,
         -- Storage domain fields
-        NULL AS storage_path,
         NULL AS storage_name,
         NULL AS storage_type,
         NULL AS storage_pool_id,
@@ -2235,7 +2226,6 @@ LEFT JOIN vds_static
 CREATE OR REPLACE VIEW vm_images_storage_domains_view AS
 
 SELECT vm_images_view.storage_id,
-    vm_images_view.storage_path,
     vm_images_view.storage_pool_id,
     vm_images_view.image_guid,
     vm_images_view.creation_date,

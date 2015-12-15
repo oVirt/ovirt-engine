@@ -29,8 +29,6 @@ public class DiskImage extends DiskImageBase implements IImage {
     private String appList;
     // TODO from storage_domain_static
     private Guid storagePoolId;
-    // TODO from storage_domain_static
-    private ArrayList<String> storagePath;
     private int readRateKbPerSec;
     private int writeRateKbPerSec;
     private ArrayList<DiskImage> snapshots;
@@ -259,14 +257,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.vmSnapshotDescription = vmSnapshotDescription;
     }
 
-    public ArrayList<String> getStoragePath() {
-        return storagePath;
-    }
-
-    public void setStoragePath(ArrayList<String> storagePath) {
-        this.storagePath = storagePath;
-    }
-
     public ArrayList<String> getStoragesNames() {
         return storagesNames;
     }
@@ -461,7 +451,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setLastModified(new Date(diskImage.getLastModified().getTime()));
         di.storageIds = new ArrayList<>(diskImage.storageIds);
         di.setVmSnapshotId(diskImage.getVmSnapshotId());
-        di.storagePath = diskImage.storagePath;
         di.setId(diskImage.getId());
         di.setNumberOfVms(diskImage.getNumberOfVms());
         di.setDiskInterface(diskImage.getDiskInterface());
@@ -496,7 +485,6 @@ public class DiskImage extends DiskImageBase implements IImage {
                 description,
                 readRateKbPerSec,
                 writeRateKbPerSec,
-                storagePath,
                 readRateFromDiskImageDynamic,
                 storageIds,
                 storagePoolId,
@@ -527,7 +515,6 @@ public class DiskImage extends DiskImageBase implements IImage {
                 && Objects.equals(description, other.description)
                 && readRateKbPerSec == other.readRateKbPerSec
                 && writeRateKbPerSec == other.writeRateKbPerSec
-                && Objects.equals(storagePath, other.storagePath)
                 && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic
                 && Objects.equals(storageIds, other.storageIds)
                 && Objects.equals(storagePoolId, other.storagePoolId)

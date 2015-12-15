@@ -204,7 +204,6 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setvolumeFormat(VolumeFormat.forValue(rs
                     .getInt("volume_format")));
             entity.setId(getGuidDefaultEmpty(rs, "image_group_id"));
-            entity.setStoragePath(split(rs.getString("storage_path")));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setBoot(rs.getBoolean("boot"));
             entity.setReadRate(rs.getInt("read_rate"));
