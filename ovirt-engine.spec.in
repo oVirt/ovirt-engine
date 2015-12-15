@@ -1127,9 +1127,6 @@ fi
 %endif
 
 %changelog
-* Tue Dec 15 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.7-1
-- Bump version to 3.5.7
-
 * Wed Nov  4 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.5.6.2-1
 - Bump version to 3.5.6.2
 
