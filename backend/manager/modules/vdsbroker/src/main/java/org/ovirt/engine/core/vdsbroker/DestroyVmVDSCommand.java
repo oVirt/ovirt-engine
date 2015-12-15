@@ -5,11 +5,11 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -25,13 +25,12 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Override
     protected void executeVmCommand() {
-
         final DestroyVmVDSCommandParameters parameters = getParameters();
         resourceManager.removeAsyncRunningVm(parameters.getVmId());
 
         final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
         curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
-        curVm.setvNumaNodeList(DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(curVm.getId()));
+        curVm.setvNumaNodeList(getVmNumaNodeDao().getAllVmNumaNodeByVmId(curVm.getId()));
 
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.Destroy, parameters);
         if (vdsReturnValue.getSucceeded()) {
@@ -44,26 +43,17 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-
                     curVm.setStopReason(getParameters().getReason());
                     vmManager.update(curVm.getDynamicData());
                     vmManager.update(curVm.getStatisticsData());
-                    List<VmNetworkInterface> interfaces = curVm.getInterfaces();
-                    if (interfaces != null && interfaces.size() > 0) {
-                        for (VmNetworkInterface ifc : interfaces) {
-                            VmNetworkStatistics stats = ifc.getStatistics();
-                            vmManager.update(stats);
-                        }
-                    }
-                    DbFacade.getInstance()
-                    .getVmNumaNodeDao()
-                    .massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
+                    update(curVm.getInterfaces());
+                    getVmNumaNodeDao().massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                     return null;
                 }
             });
             getVDSReturnValue().setReturnValue(curVm.getStatus());
         } else if (vdsReturnValue.getExceptionObject() != null) {
-            log.error("VDS::destroy Failed destroying VM '{}' in vds = '{}' , error = '{}'",
+            log.error("Failed to destroy VM '{}' in VDS = '{}' , error = '{}'",
                     parameters.getVmId(),
                     getParameters().getVdsId(),
                     vdsReturnValue.getExceptionString());
@@ -78,6 +68,19 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         // do the state transition only if that VM is really running on SRC
         if (getParameters().getVdsId().equals(curVm.getRunOnVds())) {
             resourceManager.internalSetVmStatus(curVm, VMStatus.PoweringDown);
+        }
+    }
+
+    protected VmNumaNodeDao getVmNumaNodeDao() {
+        return DbFacade.getInstance().getVmNumaNodeDao();
+    }
+
+    private void update(List<VmNetworkInterface> interfaces) {
+        if (interfaces == null) {
+            return;
+        }
+        for (VmNetworkInterface ifc : interfaces) {
+            vmManager.update(ifc.getStatistics());
         }
     }
 }
