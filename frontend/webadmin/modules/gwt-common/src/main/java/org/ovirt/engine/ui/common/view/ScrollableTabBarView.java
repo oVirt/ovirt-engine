@@ -157,11 +157,9 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
 
     @Override
     public void removeTabWidget(IsWidget tabWidget) {
+        int widgetIndex = widgetBar.getWidgetIndex(tabWidget);
         widgetBar.remove(tabWidget);
-        Widget listWidget = copyWidgetAsDropdownItem(tabWidget);
-        if (listWidget != null) {
-            dropdownPanel.remove(listWidget);
-        }
+        dropdownPanel.remove(widgetIndex);
         recalculateWidgetBarMinWidth();
         showScrollButtons();
     }
