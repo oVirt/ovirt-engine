@@ -283,18 +283,6 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         this.id = id;
     }
 
-    /**
-     * Returns the last step on top level hierarchy.
-     *
-     * @return The last added step or <code>null</code> if list of steps is empty.
-     */
-    public Step getLastStep() {
-        if (steps.isEmpty()) {
-            return null;
-        }
-        return steps.get(steps.size() - 1);
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(
