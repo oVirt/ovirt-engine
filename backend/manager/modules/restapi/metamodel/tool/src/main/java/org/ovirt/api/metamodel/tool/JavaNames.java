@@ -16,49 +16,31 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.tool;
 
-import static java.util.stream.Collectors.joining;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.ovirt.api.metamodel.concepts.Name;
 
 /**
- * This class contains the rules used to calculate the names of generated Java concepts.
+ * This interface specifies the rules used to calculate the names of generated Java concepts. These rules may have
+ * different implementations, like rules to generate plain traditional Java names and rules to generate versioned
+ * Java names.
  */
-@ApplicationScoped
-public class JavaNames {
-    /**
-     * Reference to the object used to do computations with words.
-     */
-    @Inject private Words words;
-
+public interface JavaNames {
     /**
      * Returns a representation of the given name using the capitalization style typically used for Java classes: the
      * first letter of each word in upper case and the rest of the letters in lower case.
      */
-    public String getJavaClassStyleName(Name name) {
-        return name.words().map(words::capitalize).collect(joining());
-    }
+    String getJavaClassStyleName(Name name);
 
     /**
      * Returns a representation of the given name using the capitalization style typically used for Java members: the
      * the first word in lower case and the rest of the words with the first letter in upper case and the rest of the
      * letters in lower case.
      */
-    public String getJavaMemberStyleName(Name name) {
-        StringBuilder buffer = new StringBuilder();
-        name.words().findFirst().map(String::toLowerCase).ifPresent(buffer::append);
-        name.words().skip(1).map(words::capitalize).forEach(buffer::append);
-        return buffer.toString();
-    }
+    String getJavaMemberStyleName(Name name);
 
     /**
      * Returns a representation of the given name using the capitalization style typically used for Java constants: all
      * the words in uppercase and separated by underscores.
      */
-    public String getJavaConstantStyleName(Name name) {
-        return name.words().map(String::toUpperCase).collect(joining("_"));
-    }
+    String getJavaConstantStyleName(Name name);
 }
 

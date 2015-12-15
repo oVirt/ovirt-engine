@@ -35,7 +35,11 @@ import java.io.File;
 public class Tool {
     // References to the objects that implement the rules to generate names for Java concepts:
     @Inject private JavaPackages javaPackages;
-    @Inject private JavaNames javaNames;
+
+    // Reference to the object used to generate Java names:
+    @Inject
+    @Style("versioned")
+    private VersionedJavaNames versionedJavaNames;
 
     // References to the objects used to generate code:
     @Inject private XmlDescriptionGenerator xmlDescriptionGenerator;
@@ -51,6 +55,7 @@ public class Tool {
     private static final String XML_OPTION = "xml";
     private static final String JSON_OPTION = "json";
     private static final String JAVA_OPTION = "java";
+    private static final String VERSION_PREFIX_OPTION = "version-prefix";
 
     // Names of options for Java package names:
     private static final String JAXRS_PACKAGE_OPTION = "jaxrs-package";
@@ -141,6 +146,14 @@ public class Tool {
             .argName("PACKAGE")
             .build()
         );
+        options.addOption(Option.builder()
+            .longOpt(VERSION_PREFIX_OPTION)
+            .desc("The version prefix to add to the generated Java class names, for example V4.")
+            .required(false)
+            .hasArg(true)
+            .argName("PREFIX")
+            .build()
+        );
 
         // Parse the command line:
         CommandLineParser parser = new DefaultParser();
@@ -163,6 +176,7 @@ public class Tool {
         File outSchemaFile = (File) line.getParsedOptionValue(OUT_SCHEMA_OPTION);
         File javaDir = (File) line.getParsedOptionValue(JAVA_OPTION);
 
+
         // Analyze the model files:
         Model model = new Model();
         ModelAnalyzer modelAnalyzer = new ModelAnalyzer();
@@ -181,6 +195,12 @@ public class Tool {
             File jsonDir = jsonFile.getParentFile();
             FileUtils.forceMkdir(jsonDir);
             jsonDescriptionGenerator.generate(model, jsonFile);
+        }
+
+        // Extract the version prefix from the command line and copy it to the object that manages names:
+        String versionPrefix = line.getOptionValue(VERSION_PREFIX_OPTION);
+        if (versionPrefix != null) {
+            versionedJavaNames.setVersionPrefix(versionPrefix);
         }
 
         // Extract the names of the Java packages from the command line and copy them to the object that manages them:
@@ -202,12 +222,13 @@ public class Tool {
             schemaGenerator.generate(model);
         }
 
-        // Generate the Java code:
         if (javaDir != null) {
+            // Generate the JAX-RS interfaces:
             FileUtils.forceMkdir(javaDir);
             jaxrsGenerator.setOutDir(javaDir);
             jaxrsGenerator.generate(model);
-         // Generate the enums
+
+            // Generate the enums:
             enumGenerator.setOutDir(javaDir);
             enumGenerator.generate(model);
         }

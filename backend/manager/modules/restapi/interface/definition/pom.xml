@@ -115,6 +115,9 @@
               <arguments>
                 <argument>--model</argument>
                 <argument>${project.basedir}/target/generated-resources/model.jar</argument>
+                <argument>--version-prefix</argument>
+                <argument>V4</argument>
+                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--xml</argument>
                 <argument>${project.basedir}/target/generated-resources/model.xml</argument>
                 <argument>--json</argument>
