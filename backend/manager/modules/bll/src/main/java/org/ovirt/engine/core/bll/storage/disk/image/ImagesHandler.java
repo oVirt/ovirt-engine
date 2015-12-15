@@ -496,20 +496,6 @@ public final class ImagesHandler {
         return disksApplicableDomainsMap;
     }
 
-    /**
-     * Sum and return the size of the given disks and their snapshots
-     * Note: This method assumes that the given {@diskImages} are already loaded with their snapshots.
-     * @param the disk images for size summing
-     * @return The total size taken by the disks and their snapshots
-     */
-    public static double sumImagesTotalSizeWithSnapshotSize(Collection<DiskImage> diskImages) {
-        double sum = 0;
-        for (DiskImage diskImage : diskImages) {
-            sum += diskImage.getActualDiskWithSnapshotsSize();
-        }
-        return sum;
-    }
-
     public static List<DiskImage> getPluggedActiveImagesForVm(Guid vmId) {
         return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true), true, false, true);
     }
