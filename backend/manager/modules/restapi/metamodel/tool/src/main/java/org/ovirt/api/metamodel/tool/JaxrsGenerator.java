@@ -101,9 +101,6 @@ public class JaxrsGenerator extends JavaGenerator {
     @Inject private JavaNames javaNames;
     @Inject private JaxrsNames jaxrsNames;
 
-    // Reference tot the buffer used to generate Java code:
-    @Inject private JavaClassBuffer javaBuffer;
-
     public void generate(Model model) {
         model.getServices().forEach(this::generateInterface);
     }
@@ -113,7 +110,7 @@ public class JaxrsGenerator extends JavaGenerator {
         JavaClassName interfaceName = jaxrsNames.getInterfaceName(service);
 
         // Prepare the buffer:
-        javaBuffer.clear();
+        javaBuffer = new JavaClassBuffer();
         javaBuffer.setClassName(interfaceName);
         generateInterfaceSource(service, interfaceName);
         try {

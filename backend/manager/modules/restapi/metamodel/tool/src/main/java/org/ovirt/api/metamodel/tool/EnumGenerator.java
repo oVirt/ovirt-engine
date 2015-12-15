@@ -2,7 +2,6 @@ package org.ovirt.api.metamodel.tool;
 
 import java.io.IOException;
 import java.util.Iterator;
-
 import javax.inject.Inject;
 
 import org.ovirt.api.metamodel.concepts.EnumType;
@@ -13,13 +12,14 @@ import org.ovirt.api.metamodel.concepts.Type;
 public class EnumGenerator extends JavaGenerator {
 
     @Inject
-    private JavaClassBuffer javaBuffer;
-    @Inject
     private JavaPackages javaPackages;
     @Inject
     private JavaNames javaNames;
     @Inject
     private SchemaNames schemaNames;
+
+    // The buffer used to generate the source code:
+    private JavaClassBuffer javaBuffer;
 
     public void generate(Model model) {
         for (Type type : model.getTypes()) {
@@ -35,7 +35,7 @@ public class EnumGenerator extends JavaGenerator {
     }
 
     private void generateEnum(EnumType type) {
-        javaBuffer.clear();
+        javaBuffer = new JavaClassBuffer();
         JavaClassName enumName = getEnumName(type);
         javaBuffer.setClassName(enumName);
         generateEnumSource(type);

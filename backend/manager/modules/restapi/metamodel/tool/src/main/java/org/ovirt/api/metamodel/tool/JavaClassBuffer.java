@@ -16,12 +16,8 @@ limitations under the License.
 
 package org.ovirt.api.metamodel.tool;
 
-import org.apache.commons.io.FileUtils;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -33,12 +29,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+
 /**
  * This class is a buffer intended to simplify generation of Java source code. It stores the name of the package, the
  * list of imports and the rest of the source separately, so that imports can be added on demand while generating the
  * rest of the source.
  */
-@ApplicationScoped
 public class JavaClassBuffer {
     // The names of the package and the class:
     private JavaClassName className;
@@ -256,15 +253,5 @@ public class JavaClassBuffer {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(classFile), Charset.forName("UTF-8"))) {
             writer.write(toString());
         }
-    }
-
-    /**
-     * Clears all the state of the buffer so that it can be reused.
-     */
-    public void clear() {
-        className = null;
-        imports.clear();;
-        lines.clear();
-        level = 0;
     }
 }
