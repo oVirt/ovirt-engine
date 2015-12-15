@@ -74,18 +74,12 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
      * @return <c>true</c> if [is already subscribed] [the specified
      * subscriptions]; otherwise, <c>false</c>.
      */
-    private static boolean isAlreadySubscribed(Iterable<EventSubscriber> subscriptions, Guid subscriberId,
+    private static boolean isAlreadySubscribed(List<EventSubscriber> subscriptions, Guid subscriberId,
             String eventName, EventNotificationMethod eventNotificationMethod) {
-        boolean retval = false;
-        for (EventSubscriber eventSubscriber : subscriptions) {
-            if (subscriberId.equals(eventSubscriber.getSubscriberId())
-                    && StringUtils.equals(eventSubscriber.getEventUpName(), eventName)
-                    && eventSubscriber.getEventNotificationMethod() == eventNotificationMethod) {
-                retval = true;
-                break;
-            }
-        }
-        return retval;
+        return subscriptions.stream()
+                .anyMatch(subscription -> subscriberId.equals(subscription.getSubscriberId())
+                    && StringUtils.equals(subscription.getEventUpName(), eventName)
+                    && subscription.getEventNotificationMethod() == eventNotificationMethod);
     }
 
     @Override
