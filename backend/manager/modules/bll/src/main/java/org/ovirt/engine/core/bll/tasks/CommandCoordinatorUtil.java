@@ -192,16 +192,6 @@ public class CommandCoordinatorUtil {
     }
 
     /**
-     * Fail the command associated with the async task that has empty vdsm id and log the failure with the specified
-     * message.
-     * @param task the id of the async task in the database
-     * @param message the message to be logged for the failure
-     */
-    public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTask task, String message) {
-        getAsyncTaskManager().logAndFailPartiallySubmittedTaskOfCommand(task, message);
-    }
-
-    /**
      * Get the ids of the users executing the vdsm tasks.
      * @param tasksIDs The vdsm task ids being executed
      * @return The collection of user ids
