@@ -54,11 +54,10 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                             VmNetworkStatistics stats = ifc.getStatistics();
                             vmManager.update(stats);
                         }
-                        DbFacade.getInstance()
-                                .getVmNumaNodeDao()
-                                .massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
-                        return null;
                     }
+                    DbFacade.getInstance()
+                    .getVmNumaNodeDao()
+                    .massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
                     return null;
                 }
             });
