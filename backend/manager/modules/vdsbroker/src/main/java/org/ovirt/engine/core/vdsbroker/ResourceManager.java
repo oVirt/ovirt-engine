@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -378,13 +377,6 @@ public class ResourceManager implements BackendService {
         List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
         for (VmNumaNode node : vmNumaNodes) {
             node.getVdsNumaNodeList().clear();
-        }
-    }
-
-    public void updateVdsStatisticsData(VdsStatistics vdsStatistics) {
-        VdsManager vdsManager = getVdsManager(vdsStatistics.getId());
-        if (vdsManager != null) {
-            vdsManager.updateStatisticsData(vdsStatistics);
         }
     }
 
