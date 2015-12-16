@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
@@ -1066,11 +1067,12 @@ public enum NetworkOperation {
 
     public static IPv4Address newPrimaryAddress(VdsNetworkInterface targetNic) {
         IPv4Address primaryAddress = new IPv4Address();
-
-        primaryAddress.setGateway(targetNic.getGateway());
-        primaryAddress.setNetmask(targetNic.getSubnet());
-        primaryAddress.setAddress(targetNic.getAddress());
         primaryAddress.setBootProtocol(targetNic.getBootProtocol());
+        if (primaryAddress.getBootProtocol()  == NetworkBootProtocol.STATIC_IP){
+            primaryAddress.setGateway(targetNic.getGateway());
+            primaryAddress.setNetmask(targetNic.getSubnet());
+            primaryAddress.setAddress(targetNic.getAddress());
+        }
         return primaryAddress;
     }
 
