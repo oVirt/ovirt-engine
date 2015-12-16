@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -349,4 +351,31 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         super.updateNumaEnabled();
         updateNumaEnabledHelper();
     }
+
+    @Override
+    protected void initTemplateDisks(List<DiskImage> disks) {
+        // can not mix template disks with instance images
+        adjustInstanceImages(disks.isEmpty());
+        super.initTemplateDisks(disks);
+    }
+
+    private void adjustInstanceImages(boolean instanceImagesEnabled) {
+        getModel().getInstanceImages().setIsChangeable(instanceImagesEnabled);
+
+        // if disabling, remove all except the ghost
+        if (!instanceImagesEnabled) {
+            Collection<InstanceImageLineModel> keepImages = new ArrayList<>();
+
+            for (InstanceImageLineModel image : getModel().getInstanceImages().getItems()) {
+                if (image.isGhost()) {
+                    keepImages.add(image);
+//                    only one ghost allowed
+                    break;
+                }
+            }
+
+            getModel().getInstanceImages().setItems(keepImages);
+        }
+    }
+
 }

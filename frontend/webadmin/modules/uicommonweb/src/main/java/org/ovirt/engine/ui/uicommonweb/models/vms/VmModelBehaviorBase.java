@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -389,15 +388,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<String> images = (ArrayList<String>) returnValue;
-                        setImagesToModel(model, images);
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                UnitVmModel model = (UnitVmModel) target;
+                                ArrayList<String> images = (ArrayList<String>) returnValue;
+                                setImagesToModel(model, images);
 
-                    }
-                }),
+                            }
+                        }),
                 dataCenter.getId(),
                 forceRefresh);
 
@@ -623,45 +622,45 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
-
-                                UnitVmModel model = (UnitVmModel) target;
-                                ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
-                                Collections.sort(disks, new Linq.DiskByAliasComparer());
-                                ArrayList<DiskModel> list = new ArrayList<DiskModel>();
-
-                                for (Disk disk : disks) {
-                                    DiskModel diskModel = new DiskModel();
-                                    diskModel.getAlias().setEntity(disk.getDiskAlias());
-                                    diskModel.getVolumeType().setIsAvailable(false);
-
-                                    switch (disk.getDiskStorageType()) {
-                                        case IMAGE:
-                                            DiskImage diskImage = (DiskImage) disk;
-                                            diskModel.setSize(new EntityModel<>((int) diskImage.getSizeInGigabytes()));
-                                            ListModel volumes = new ListModel();
-                                            volumes.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                                                    : AsyncDataProvider.getInstance().getVolumeTypeList()), diskImage.getVolumeType());
-                                            diskModel.setVolumeType(volumes);
-                                            break;
-                                        case CINDER:
-                                            CinderDisk cinderDisk = (CinderDisk) disk;
-                                            diskModel.setSize(new EntityModel<>((int) cinderDisk.getSizeInGigabytes()));
-                                            ListModel volumeTypes = new ListModel();
-                                            volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
-                                            diskModel.setVolumeType(volumeTypes);
-                                            break;
-                                    }
-
-                                    diskModel.setDisk(disk);
-                                    list.add(diskModel);
-                                }
-
-                                model.setDisks(list);
-                                updateIsDisksAvailable();
-                                initStorageDomains();
+                                initTemplateDisks((List<DiskImage>) returnValue);
                             }
                         }),
                 template.getId());
+    }
+
+    protected void initTemplateDisks(List<DiskImage> disks) {
+        Collections.sort(disks, new Linq.DiskByAliasComparer());
+        ArrayList<DiskModel> list = new ArrayList<>();
+
+        for (DiskImage disk : disks) {
+            DiskModel diskModel = new DiskModel();
+            diskModel.getAlias().setEntity(disk.getDiskAlias());
+            diskModel.getVolumeType().setIsAvailable(false);
+
+            switch (disk.getDiskStorageType()) {
+                case IMAGE:
+                    diskModel.setSize(new EntityModel<>((int) disk.getSizeInGigabytes()));
+                    ListModel volumes = new ListModel();
+                    volumes.setItems((disk.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                            : AsyncDataProvider.getInstance().getVolumeTypeList()), disk.getVolumeType());
+                    diskModel.setVolumeType(volumes);
+                    break;
+                case CINDER:
+                    CinderDisk cinderDisk = (CinderDisk) disk;
+                    diskModel.setSize(new EntityModel<>((int) cinderDisk.getSizeInGigabytes()));
+                    ListModel volumeTypes = new ListModel();
+                    volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
+                    diskModel.setVolumeType(volumeTypes);
+                    break;
+            }
+
+            diskModel.setDisk(disk);
+            list.add(diskModel);
+        }
+
+        getModel().setDisks(list);
+        updateIsDisksAvailable();
+        initStorageDomains();
     }
 
     public void updateIsDisksAvailable() {
