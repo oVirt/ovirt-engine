@@ -1833,30 +1833,6 @@ public class VmDeviceUtils {
     }
 
     /**
-     * Determines whether a VM device change has been requested by the user.
-     *
-     * @param vmId
-     * @param deviceType
-     * @param deviceEnabled
-     * @return
-     */
-    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, boolean deviceEnabled) {
-        return vmDeviceChanged(vmId, deviceType, null, deviceEnabled);
-    }
-
-    /**
-     * Determines whether a VM device change has been requested by the user.
-     *
-     * @param vmId
-     * @param deviceType
-     * @param device
-     * @return
-     */
-    public static boolean vmDeviceChanged(Guid vmId, VmDeviceGeneralType deviceType, VmDevice device) {
-        return vmDeviceChanged(vmId, deviceType, null, device);
-    }
-
-    /**
      * Returns a map (device ID to VmDevice) of devices that are relevant for next run.
      *
      * The list of devices is built by examining properties that are annotated with EditableDeviceOnVmStatusField
