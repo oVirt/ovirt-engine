@@ -36,6 +36,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -146,6 +147,8 @@ public class AddVmCommandTest {
     public void InitTest() {
         mockOsRepository();
         SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
+        doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
+        VmDeviceUtils.init();
     }
 
     @Test
@@ -182,7 +185,6 @@ public class AddVmCommandTest {
         graphicsDevice.setVmId(vmId);
 
         when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
-        doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
     }
 
     private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {

@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -273,6 +274,7 @@ public class UpdateVmCommandTest {
     private void mockVmDevice(VmDevice vmDevice) {
         when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
         doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
+        VmDeviceUtils.init();
     }
 
     @Test

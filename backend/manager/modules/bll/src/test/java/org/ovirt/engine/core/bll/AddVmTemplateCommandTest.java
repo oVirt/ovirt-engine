@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -69,6 +70,8 @@ public class AddVmTemplateCommandTest {
     private MultipleStorageDomainsValidator multipleSdValidator;
     @Mock
     private DiskImagesValidator diskImagesValidator;
+    @Mock
+    private DbFacade dbFacade;
 
     @Before
     public void setUp() {
@@ -95,6 +98,7 @@ public class AddVmTemplateCommandTest {
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
         mockOsRepository();
+        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
 
         // Using the compensation constructor since the normal one contains DB access
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {

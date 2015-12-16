@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.IconUtils;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -214,9 +214,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 currVm, poolId, vmName, diskInfoDestinationMap);
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setParentCommand(VdcActionType.AddVmPoolWithVms);
-        parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled() != null
-                ? getParameters().isSoundDeviceEnabled()
-                : VmType.Desktop == getParameters().getVmStaticData().getVmType());
+        // check if device is enabled or we need to override it to true
+        parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
+                || VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
+                        getParameters().getVmStaticData(),
+                        getVdsGroup().getCompatibilityVersion()));
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
         parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
