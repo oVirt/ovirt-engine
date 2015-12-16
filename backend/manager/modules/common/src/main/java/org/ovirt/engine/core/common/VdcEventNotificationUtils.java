@@ -183,22 +183,6 @@ public final class VdcEventNotificationUtils {
     }
 
     /**
-     * Gets notification events by type.
-     *
-     * @param type
-     *            The type.
-     * @return
-     */
-    public static Map<EventNotificationEntity, HashSet<AuditLogType>> getNotificationEventsByType(
-            EventNotificationEntity type) {
-        Map<EventNotificationEntity, HashSet<AuditLogType>> map = new HashMap<>();
-        if (eventNotificationTypeMap.containsKey(type)) {
-            map.put(type, eventNotificationTypeMap.get(type));
-        }
-        return map;
-    }
-
-    /**
      * Adds an event notification entry.
      *
      * @param entity
