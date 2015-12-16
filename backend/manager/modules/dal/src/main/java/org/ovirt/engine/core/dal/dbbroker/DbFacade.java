@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
@@ -92,6 +93,7 @@ import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
@@ -243,6 +245,7 @@ public class DbFacade {
             put(VmIconDefault.class, VmIconDefaultDao.class);
             put(LibvirtSecret.class, LibvirtSecretDao.class);
             put(StorageServerConnections.class, StorageServerConnectionDao.class);
+            put(ImageTransfer.class, ImageTransferDao.class);
         }
     };
 
@@ -1332,6 +1335,10 @@ public class DbFacade {
 
     public LibvirtSecretDao getLibvirtSecretDao() {
         return getDao(LibvirtSecretDao.class);
+    }
+
+    public ImageTransferDao getImageTransferDao() {
+        return getDao(ImageTransferDao.class);
     }
 
 }
