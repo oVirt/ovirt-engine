@@ -305,7 +305,6 @@ public class DiskImage extends DiskImageBase implements IImage {
     /**
      * This method is created for SOAP serialization of primitives that are read only but sent by the client. The setter
      * implementation is empty and the field is not being changed.
-     * @param value
      */
     @Deprecated
     public void setActualDiskWithSnapshotsSize(double value) {

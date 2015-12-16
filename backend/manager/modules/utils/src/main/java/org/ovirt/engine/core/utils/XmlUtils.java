@@ -19,9 +19,6 @@ public class XmlUtils {
      * @param xmlString
      *            The xml string value
      * @return Document Return the loaded Document
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
      */
     public static Document loadXmlDoc(String xmlString) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory docBuilderFactory = SecureDocumentBuilderFactory.newDocumentBuilderFactory();
@@ -35,8 +32,6 @@ public class XmlUtils {
 
     /**
      * Get the int value
-     * @param element
-     * @param tagName
      * @return int value
      */
     public static int getIntValue(Element element, String tagName) {
@@ -45,8 +40,6 @@ public class XmlUtils {
 
     /**
      * Get the Text value
-     * @param element
-     * @param tagName
      * @return String value
      */
     public static String getTextValue(Element element, String tagName) {

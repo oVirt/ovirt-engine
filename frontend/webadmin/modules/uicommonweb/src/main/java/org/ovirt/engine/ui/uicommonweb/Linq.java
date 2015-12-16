@@ -328,9 +328,6 @@ public final class Linq {
 
     /**
      * Checks if Any StorageDomain Is Master And Active
-     *
-     * @param sdl
-     * @return
      */
     public static boolean isAnyStorageDomainIsMasterAndActive(List<StorageDomain> sdl) {
         for (StorageDomain a : sdl) {
@@ -380,10 +377,6 @@ public final class Linq {
 
     /**
      * Check if storage_domains item with specified Guid exist in List
-     *
-     * @param items
-     * @param id
-     * @return
      */
     public static boolean isSDItemExistInList(ArrayList<StorageDomain> items, Guid id) {
         for (StorageDomain b : items) {
@@ -396,10 +389,6 @@ public final class Linq {
 
     /**
      * Check if Cluster item with specified id exist in List
-     *
-     * @param items
-     * @param id
-     * @return
      */
     public static boolean isClusterItemExistInList(List<Cluster> items, Guid id) {
         for (Cluster a : items) {
@@ -560,10 +549,9 @@ public final class Linq {
      * <typeparam name="TSource"></typeparam>
      *
      * @param first
-     *            An System.Collections.Generic.IEnumerable<T> whose elements that are not also in second will be
-     *            returned.
+     *            An {@link ArrayList} whose elements that are not also in second will be returned.
      * @param second
-     *            An System.Collections.Generic.IEnumerable<T> whose elements that also occur in the first sequence will
+     *            An {@link ArrayList} whose elements that also occur in the first sequence will
      *            cause those elements to be removed from the returned sequence.
      * @return A sequence that contains the set difference of the elements of two sequences.
      */

@@ -37,10 +37,7 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
 
     /**
      * Calculate a single host weight score according to various parameters.
-     * @param vds
-     * @param vm
      * @param hostCores - threads/cores according to cluster
-     * @return
      */
     private double calcDistributeMetric(VDS vds, VM vm, int hostCores) {
         int vcpu = Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage);

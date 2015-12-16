@@ -82,10 +82,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Updates given devices boot order in accordance with default boot sequence.
-     *
-     * @param vm
-     * @param devices
-     * @param isOldCluster
      */
     public static void updateVmDevicesBootOrder(
             VM vm,
@@ -96,11 +92,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Updates given devices boot order in accordance with bootSequence given.
-     *
-     * @param vm
-     * @param bootSequence
-     * @param devices
-     * @param isOldCluster
      */
     public static void updateVmDevicesBootOrder(
             VM vm,
@@ -187,10 +178,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * updates network devices boot order
-     *
-     * @param devices
-     * @param bootOrder
-     * @return
      */
     private static int setNetworkBootOrder(VM vm, List<VmDevice> devices, int bootOrder) {
         for (VmDevice pluggedInterface : sortInterfacesByName(vm, getPluggedManagedInterfaces(devices))) {
@@ -237,10 +224,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * updates CD boot order
-     *
-     * @param devices
-     * @param bootOrder
-     * @return
      */
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
@@ -254,12 +237,6 @@ public class VmDeviceCommonUtils {
     /**
      * updates disk boot order
      * snapshot disk devices always will have lower priority than regular attached disks.
-     *
-     * @param vm
-     * @param devices
-     * @param bootOrder
-     * @param isOldCluster
-     * @return
      */
     private static int setDiskBootOrder(VM vm,
             List<VmDevice> devices,
@@ -306,9 +283,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Computes old boot sequence enum value from the given list of devices.
-     *
-     * @param devices
-     * @return
      */
     public static BootSequence getBootSequence(List<VmDevice> devices) {
         StringBuilder sb = new StringBuilder();
@@ -342,9 +316,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * "old" level is considered anything lower than 3.1 at the moment
-     *
-     * @param version
-     * @return
      */
     public static boolean isOldClusterVersion(Version version) {
         return (version.compareTo(Version.v3_1) < 0);
@@ -387,10 +358,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Find a device in the map with the given type.
-     *
-     * @param vmManagedDeviceMap
-     * @param type
-     * @return
      */
     public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
         return findVmDeviceByType(vmManagedDeviceMap, type.getName());
@@ -398,10 +365,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Find a device in the map with the given type.
-     *
-     * @param vmManagedDeviceMap
-     * @param typeName
-     * @return
      */
     public static VmDevice findVmDeviceByType(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
         for (VmDevice vmDevice : vmManagedDeviceMap.values()) {
@@ -415,10 +378,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Find a device in the map with the given general type.
-     *
-     * @param vmManagedDeviceMap
-     * @param generalType
-     * @return
      */
     public static VmDevice findVmDeviceByGeneralType(Map<Guid, VmDevice> vmManagedDeviceMap,
                                                      VmDeviceGeneralType generalType) {
@@ -433,10 +392,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Check if device with the type given exists in the map.
-     *
-     * @param vmManagedDeviceMap
-     * @param type
-     * @return
      */
     public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceType type) {
         return isVmDeviceExists(vmManagedDeviceMap, type.getName());
@@ -444,10 +399,6 @@ public class VmDeviceCommonUtils {
 
     /**
      * Check if device with the type given exists in the map.
-     *
-     * @param vmManagedDeviceMap
-     * @param typeName
-     * @return
      */
     public static boolean isVmDeviceExists(Map<Guid, VmDevice> vmManagedDeviceMap, String typeName) {
         return findVmDeviceByType(vmManagedDeviceMap, typeName) != null;
@@ -457,7 +408,6 @@ public class VmDeviceCommonUtils {
      * Check if the given collection of devices contains balloon
      *
      * @param devices - collection of VM devices to look in
-     * @return
      */
     public static boolean isBalloonDeviceExists(Collection<VmDevice> devices) {
         for (VmDevice device : devices) {

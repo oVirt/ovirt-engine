@@ -104,10 +104,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     }
 
     /**
-     * gets VM full information for the given list of VMs
-     *
-     * @param vmsToUpdate
-     * @return
+     * Gets VM full information for the given list of VMs.
      */
     protected Map<String, Object>[] getVmsInfo() {
         List<String> vmsToUpdate = getParameters().getVmIds().stream().map(id -> id.toString()).collect(Collectors.toList());

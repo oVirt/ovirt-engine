@@ -322,8 +322,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     /**
      * Returns disk's address map by specified VmDevice and DiskInterface
      * (note: for VirtIO_SCSI/SPAPR_VSCSI interfaces, the method updates the VM device's address accordingly).
-     * @param vmDevice
-     * @param diskInterface
      * @return disk's address map
      */
     public Map<String, String> getDiskAddressMap(VmDevice vmDevice, DiskInterface diskInterface) {

@@ -159,8 +159,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
     /**
      * Returns the entity representation of the given String which was passed to the suggest box.
      * @param value String from the suggest box
-     * @throws IllegalArgumentException if incorrect value has been passed
      * @return the entity representation
+     * @throws IllegalArgumentException if incorrect value has been passed
      */
     protected abstract T asEntity(String value);
 

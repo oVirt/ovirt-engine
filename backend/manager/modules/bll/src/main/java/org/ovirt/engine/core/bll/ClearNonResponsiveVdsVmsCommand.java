@@ -31,8 +31,6 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected ClearNonResponsiveVdsVmsCommand(Guid commandId) {
         super(commandId);

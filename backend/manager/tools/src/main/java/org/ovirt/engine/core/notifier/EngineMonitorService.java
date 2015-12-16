@@ -72,7 +72,6 @@ public class EngineMonitorService implements Runnable {
      * Creates {@code EngineMonitorService} by configuration element containing required properties.
      * @param notificationConf
      *            notification configuration contains service properties
-     * @throws NotificationServiceException
      */
     public EngineMonitorService(NotificationProperties prop) throws NotificationServiceException {
         this.prop = prop;
@@ -106,7 +105,6 @@ public class EngineMonitorService implements Runnable {
      * Initializes server connectivity settings:
      * <li> Resolves monitored server URL
      * <li> Sets protocol for connectivity (HTTP/HTTPS) and configures socket factories for SSL
-     * @throws NotificationServiceException
      */
     private void initServerConnectivity() throws NotificationServiceException {
         isHttpsProtocol = prop.getBoolean(NotificationProperties.IS_HTTPS_PROTOCOL);
@@ -133,7 +131,6 @@ public class EngineMonitorService implements Runnable {
      * {@code NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS}. If set to true, creates dummy socket factory which
      * accept any request. If set to false or not set, creates SSL socket factory by trusted keystore defined on
      * vdc_options.
-     * @throws NotificationServiceException
      */
     private void initHttpsSettings() throws NotificationServiceException {
         if (sslIgnoreCertErrors) {
@@ -147,7 +144,6 @@ public class EngineMonitorService implements Runnable {
      * Creates SSL Socket factory which is configured by the associated keystore which is configured the database,
      * provided by {@code ConfigValues.keystoreUrl} for its location and {@code ConfigValues.keystorePass} for its
      * password.
-     * @throws NotificationServiceException
      */
     private void createConcreteSSLSocketFactory() throws NotificationServiceException {
         try {
@@ -163,7 +159,6 @@ public class EngineMonitorService implements Runnable {
     /**
      * Creates dummy SSL Socket Factory factory which should be used by setting 'true' to
      * {@code NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS}.
-     * @throws NotificationServiceException
      */
     private void createDummySSLSocketFactory() throws NotificationServiceException {
         try {
@@ -389,8 +384,6 @@ public class EngineMonitorService implements Runnable {
      *            severity associated with eventType, values are taken from {@code AuditLogSeverity}
      * @param message
      *            a comprehensive message describing the event
-     * @throws SQLException
-     * @throws NaiveConnectionHelperException
      */
     private void insertEventIntoAuditLog(String eventType, int eventId, int severity, String message)
             throws SQLException {

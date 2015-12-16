@@ -890,8 +890,6 @@ public class IrsProxyData {
 
     /**
      * Waits for VDS if is initializing.
-     *
-     * @param curVdsId
      */
     private void waitForVdsIfIsInitializing(Guid curVdsId) {
         if (!Guid.Empty.equals(curVdsId)) {

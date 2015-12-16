@@ -44,7 +44,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      *            the image HTML
      * @param text
      *            the node text
-     * @return
      */
     @Template("<span style='position: relative; bottom: 1px;'>{0}</span>" +
             "<span id='{2}'>{1}</span>")
@@ -66,7 +65,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      *            the image HTML
      * @param text
      *            the node text
-     * @return
      */
     @Template("<span style='position: relative; border: 1px solid {3}; " +
             "bottom: 4px; padding: 0 3px; margin: 0 1px;  white-space: nowrap; background-color: {2};'>" +
@@ -78,7 +76,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      *
      * @param imageHtml
      *            the image HTML
-     * @return
      */
     @Template("<span style='position: relative; left: -2px; border: 1px solid {2}; visibility: {3};" +
             " bottom: 4px; padding: 0 3px; background-color: {1};' id='{4}'>{0}</span>")

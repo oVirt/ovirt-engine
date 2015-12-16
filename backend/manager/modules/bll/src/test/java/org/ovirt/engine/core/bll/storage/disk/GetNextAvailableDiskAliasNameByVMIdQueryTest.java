@@ -108,8 +108,6 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
 
    /**
      * Initialize Dao to be used in query.
-     *
-     * @throws Exception
      */
     private void mockDaoForQuery() throws Exception {
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDao);

@@ -504,10 +504,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(RunVmFlow.RUN, command.getFlow());
     }
 
-    /**
-     * @param disks
-     * @param guid
-     */
     protected void initDaoMocks(final List<Disk> disks) {
         final DiskDao diskDao = mock(DiskDao.class);
         when(diskDao.getAllForVm(Guid.Empty, true)).thenReturn(disks);

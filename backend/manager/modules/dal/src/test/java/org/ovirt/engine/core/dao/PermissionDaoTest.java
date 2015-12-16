@@ -277,7 +277,6 @@ public class PermissionDaoTest extends BaseDaoTestCase {
 
     /**
      * Ensures a call to {@link PermissionDao#getAllForEntity(Guid)} works properly
-     * @param result
      */
     private static void assertGetAllForEntityResult(List<Permission> result) {
         assertNotNull(result);
@@ -507,7 +506,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Tests {@link PermissionDao#getTreeForEntity(Guid, VdcObjectType, Guid, boolean))}
+     * Tests {@link PermissionDao#getTreeForEntity(Guid, VdcObjectType, long, boolean)}
      * @param entityID The object to retrieve tree for
      * @param objectType The type of {@link #entityID}
      * @param userID The user to use

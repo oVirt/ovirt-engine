@@ -14,19 +14,12 @@ public interface VfScheduler {
      * with mapping between the VM interfaces to the virtual functions.
      * If not, the problematic VM interface's names are returned.
      *
-     * @param vmId
-     * @param hostId
-     * @param vnics
      * @return the names of the problematic vm interfaces
      */
     public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> vnics);
 
     /**
      * Return the name of a free suitable vf. If there is no one, return null.
-     *
-     * @param hostId
-     * @param vnicNetwork
-     * @param vmId
      *
      * @return the name of a free suitable vf. If there is no one, return null.
      */
@@ -35,16 +28,12 @@ public interface VfScheduler {
     /**
      * Returns the mapping between the VM interfaces to the virtual functions.
      *
-     * @param vmId
-     * @param hostId
      * @return the mapping between the VM interfaces to the virtual functions.
      */
     public Map<Guid, String> getVnicToVfMap(Guid vmId, Guid hostId);
 
     /**
      * Cleans the all the <code>vnicToVf</code> maps of the specified vm.
-     *
-     * @param vmId
      */
     public void cleanVmData(Guid vmId);
 }

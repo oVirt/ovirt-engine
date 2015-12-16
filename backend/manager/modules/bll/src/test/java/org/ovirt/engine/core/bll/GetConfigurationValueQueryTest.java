@@ -45,7 +45,8 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
     }
 
     /**
-     * Mocks a call to {@link Config#GetValue(ConfigValues)) and returns the value it should return.
+     * Mocks a call to {@link org.ovirt.engine.core.common.config.Config#getValue(ConfigValues)} and returns the value
+     * it should return.
      * @return The mocked value
      */
     private static String mockConfig(Version version, ConfigurationValues configurationValues) {

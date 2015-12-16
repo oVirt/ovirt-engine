@@ -42,8 +42,6 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected FenceVdsManualyCommand(Guid commandId) {
         super(commandId);

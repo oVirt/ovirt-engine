@@ -34,7 +34,6 @@ import org.ovirt.engine.core.compat.StringHelper;
  * @see TransportType
  * @see GlusterStatus
  * @see GlusterBrickEntity
- * @see GlusterBrickStatus
  * @see GlusterVolumeOptionEntity
  * @see AccessProtocol
  */
@@ -285,8 +284,6 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
     /**
      * Sets options from a comma separated list of key value pairs separated by = <br>
      * e.g. key=val1,key2=val2,...,keyn=valn
-     *
-     * @param options
      */
     public void setOptions(String options) {
         this.options.clear();
@@ -385,8 +382,6 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
      * Replaces an existing brick in the volume with the given new brick. The new brick will have same index as the
      * existing one.
      *
-     * @param existingBrick
-     * @param newBrick
      * @return Index of the brick that was replaced. Returns -1 if the {@code existingBrick} is not found in the volume, leaving the volume unchanged.
      */
     public int replaceBrick(GlusterBrickEntity existingBrick, GlusterBrickEntity newBrick) {

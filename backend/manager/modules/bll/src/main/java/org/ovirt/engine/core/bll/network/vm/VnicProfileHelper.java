@@ -171,7 +171,6 @@ public class VnicProfileHelper {
      *            the vm which contains the nic
      * @param user
      *            the user which execute the action
-     * @return
      */
     public static ValidationResult updateNicForBackwardCompatibility(VmNic nic,
             VmNic oldNic,

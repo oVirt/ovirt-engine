@@ -42,8 +42,6 @@ public class EngineConfigCLIParser {
      * file, config file. If the argument in the currentIndex does not have a value, assumes the value is in the
      * following argument. The argsMap helps to parse the arguments which are eventually set into the engineConfigMap.
      *
-     * @param args
-     * @param currentIndex
      * @return whether or not the next argument is to be skipped
      */
     private boolean parseKeyValue(String[] args, int currentIndex) {
@@ -74,8 +72,6 @@ public class EngineConfigCLIParser {
      * Parses the second argument in case it does not start with a '-'. There are two valid scenarios for this. First,
      * when the argument has been given as the key in the 'get' action, in the format: "-g key". Second, in the 'set'
      * action. For set action, we require key=value, or parsing will fail.
-     *
-     * @param arg
      */
     private void parseSecondArgWithoutDash(String arg, boolean passFileExists) {
         int delimiterIndex = arg.indexOf("=");
@@ -102,8 +98,6 @@ public class EngineConfigCLIParser {
 
     /**
      * Parses second argument with a key and a value. Is only valid in the 'set' action.
-     *
-     * @param arg
      */
     private void parseSecondArgWithKeyValue(String arg, String key, String value) {
         if (isSetOrMergeAction()) {
@@ -152,7 +146,6 @@ public class EngineConfigCLIParser {
     /**
      * Parses the action from the given arguments.
      *
-     * @param args
      * @throws IllegalArgumentException
      *             If the first argument is not a legal action
      */
@@ -203,8 +196,6 @@ public class EngineConfigCLIParser {
 
     /**
      * Handles an action without a key.
-     *
-     * @param action
      */
     private void handleActionWithoutKey(String action) {
         engineConfigMap.setConfigAction(ConfigActionType.getActionType(action));
@@ -217,9 +208,6 @@ public class EngineConfigCLIParser {
     /**
      * Handles an action with a key. The only valid action with a key in the first argument is the 'get' action, in the
      * format: "--get=key".
-     *
-     * @param action
-     * @param key
      */
     private void handleActionWithKey(String action, String key) {
         engineConfigMap.setConfigAction(ConfigActionType.getActionType(action));
@@ -233,8 +221,6 @@ public class EngineConfigCLIParser {
 
     /**
      * Makes sure the first argument starts with a '-', since all actions do.
-     *
-     * @param arg
      */
     private void validateArgStartsWithDash(String arg) {
         if (!arg.startsWith("-")) {

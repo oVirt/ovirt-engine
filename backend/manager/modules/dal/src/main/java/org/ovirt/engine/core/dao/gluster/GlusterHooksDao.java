@@ -20,9 +20,7 @@ public interface GlusterHooksDao extends Dao, SearchDao<GlusterHookEntity>, Mass
 
     /**
      * Retrieves the GlusterHookEntity. By default the content and list of GlusterServerHooks are not loaded.
-     * Use {@link GlusterHooksDao.getById(Guid id, boolean eagerLoad)} for this.
-     * @param id
-     * @return
+     * Use {@link GlusterHooksDao#getById(Guid, boolean)} for this.
      */
     public GlusterHookEntity getById(Guid id);
 
@@ -30,9 +28,7 @@ public interface GlusterHooksDao extends Dao, SearchDao<GlusterHookEntity>, Mass
      * Retrieves the GlusterHook.
      * If eagerLoad is set to true, the content and related GlusterServerHook entities are
      * retrieved too.
-     * @param id
      * @param eagerLoad - indicates if related entities are populated too.
-     * @return
      */
     public GlusterHookEntity getById(Guid id, boolean eagerLoad);
 

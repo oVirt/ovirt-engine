@@ -63,8 +63,6 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     /**
      * Gets the I18N prefix used for value compare.
-     *
-     * @return
      */
     public static String getI18NPrefix() {
         // for tests we don't have the Config class initialized

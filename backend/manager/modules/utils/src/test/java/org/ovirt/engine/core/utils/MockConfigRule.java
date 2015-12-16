@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Version;
 /**
  * This rule is used to mock {@link Config} values in an easy fashion, without having to resort to Power Mocking.
  *
- * To use it, simple add a {@link MockConfigRule} member to your test, with the {@link @Rule} annotation.
+ * To use it, simple add a {@link MockConfigRule} member to your test, with the {@link org.junit.Rule} annotation.
  * Mocking is done by calling {@link #mockConfigValue(ConfigValues, Object)} or {@link #mockConfigValue(ConfigValues, String, Object)} with the value you need.
  */
 public class MockConfigRule extends TestWatcher {

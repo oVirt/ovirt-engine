@@ -88,7 +88,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     * @param commandId
      */
     protected CommonVmPoolWithVmsCommand(Guid commandId) {
         super(commandId);

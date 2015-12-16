@@ -102,15 +102,11 @@ public interface StoragePoolDao extends GenericDao<StoragePool, Guid>, StatusAwa
     /**
      * The following method should update only part of storage pool. It will update only name, macPoolId, description
      * and compatibility version fields
-     * @param pool
      */
     void updatePartial(StoragePool pool);
 
     /**
      * Retrieves data centers containing clusters with permissions to perform the given action.
-     *
-     * @param userId
-     * @param actionGroup
      * @return list of data centers
      */
     List<StoragePool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup, boolean supportsVirtService, boolean supportsGlusterService);
@@ -141,7 +137,6 @@ public interface StoragePoolDao extends GenericDao<StoragePool, Guid>, StatusAwa
     List<StorageType> getStorageTypesInPool(Guid storagePoolId);
 
     /**
-     * @param macPoolId
      * @return all StoragePool records bound to given macPoolId.
      */
     List<StoragePool> getAllDataCentersByMacPoolId(Guid macPoolId);

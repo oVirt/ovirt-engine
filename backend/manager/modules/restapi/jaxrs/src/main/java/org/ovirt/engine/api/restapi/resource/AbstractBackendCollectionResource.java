@@ -107,10 +107,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     /**
      * get the entities according to the filter and intersect them with those resulted from running the search query
-     * @param query
-     * @param queryParams
-     * @param searchType
-     * @return
      */
     protected List<Q> getBackendCollection(VdcQueryType query, VdcQueryParametersBase queryParams, SearchType searchType) {
         List<Q> filteredList = getBackendCollection(entityType, query, queryParams);

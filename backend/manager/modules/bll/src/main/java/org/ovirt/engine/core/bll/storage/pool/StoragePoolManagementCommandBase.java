@@ -20,10 +20,7 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
-
     protected StoragePoolManagementCommandBase(Guid commandId) {
         super(commandId);
     }

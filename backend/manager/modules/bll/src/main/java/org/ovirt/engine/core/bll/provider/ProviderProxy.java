@@ -39,7 +39,6 @@ public interface ProviderProxy<T extends ProviderValidator> {
 
     /**
      * Gets a specific validator for the provider
-     * @return
      */
     T getProviderValidator();
 

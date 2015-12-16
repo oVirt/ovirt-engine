@@ -50,8 +50,6 @@ public interface OsRepository {
 
     /**
      * OS families are basically windows,linux and other.
-     * @param osId
-     * @return
      */
     public String getOsFamily(int osId);
 
@@ -75,7 +73,6 @@ public interface OsRepository {
     /**
      * Get the architecture from OS
      * @param osId - OS id
-     * @return
      */
     public ArchitectureType getArchitectureFromOS(int osId);
 
@@ -113,16 +110,12 @@ public interface OsRepository {
 
     /**
      * Checks if is recommended enable the OS balloon.
-     * @param osId
-     * @param version
      * @return an boolean
      */
     public boolean isBalloonEnabled(int osId, Version version);
 
     /**
      * Checks if that OS network devices support hotplug.
-     * @param osId
-     * @param version
      * @return an boolean
      */
     public boolean hasNicHotplugSupport(int osId, Version version);
@@ -139,101 +132,71 @@ public interface OsRepository {
 
     /**
      * this is Windows OSs specific path to the sysprep file
-     * @param osId
-     * @param version
-     * @return
      */
     public String getSysprepPath(int osId, Version version);
 
     /**
      * this is Windows OSs specific file name sysprep in the floppy,
      * ie: sysprep.inf for xp and 2003 and Unattend.xml for the new sysprep xml files
-     * @param osId
-     * @param version
-     * @return
      */
     public String getSysprepFileName(int osId, Version version);
 
     /**
      * this Windows OSs specific product key
-     * @param osId
-     * @param version
-     * @return
      */
     public String getProductKey(int osId, Version version);
 
     /**
      * a convenience method the for  family type "linux"
-     * @param osId
-     * @return
      */
     public boolean isLinux(int osId);
 
     /**
      * a convenience method the for  family type "windows"
-     * @param osId
-     * @return
      */
     public boolean isWindows(int osId);
 
     /**
-     * @param osId
-     * @param version
      * @return list of supported disk interface devices
      */
     ArrayList<String> getDiskInterfaces(int osId, Version version);
 
     /**
-     * @param osId
      * @return list of supported network devices
      */
     ArrayList<String> getNetworkDevices(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return set of disk hotpluggable interfaces
      */
     Set<String> getDiskHotpluggableInterfaces(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return list of supported watch dog models
      */
     ArrayList<String> getWatchDogModels(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return set of supported VmWatchdogTypes
      */
     Set<VmWatchdogType> getVmWatchdogTypes(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return a specific sound device for the given os.
      */
     String getSoundDevice(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return the maximum allowed number of PCI devices
      */
     public int getMaxPciDevices(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return a specific Cd Interface for the given os.
      */
     String getCdInterface(int osId, Version version);
 
     /**
-     * @param osId
-     * @param version
      * @return if there is floppy support in the given os
      */
     boolean isFloppySupported(int osId, Version version);
@@ -241,34 +204,23 @@ public interface OsRepository {
     /**
      * early windows versions require a numeric identifier for sysprep to tell
      * the timezone. In later versions this was rectified and they use a universal name.
-     * @param osId
-     * @param version
-     * @return
      */
     boolean isTimezoneValueInteger(int osId, Version version);
 
     /**
-     * @param uniqueOsName
      * @return the os id. 0 if non found for that name.
      */
     int getOsIdByUniqueName(String uniqueOsName);
 
     /**
      * Get the default OS for given architecture
-     * @return
      */
     Map<ArchitectureType, Integer> getDefaultOSes();
 
-    /**
-     * @param osId
-     * @return
-     */
     boolean isSingleQxlDeviceEnabled(int osId);
 
     /**
      * Checks if is recommended enable the HyperV optimizations
-     * @param osId
-     * @param version
      * @return an boolean
      */
     public boolean isHypervEnabled(int osId, Version version);
@@ -276,24 +228,18 @@ public interface OsRepository {
     /**
      * Some Operating Systems don't support certain CPUs. As a result of working
      * with one,the guest OS might stop working, blue-screen, oops, or other well known red lights.
-     * @param osId
-     * @param version
      * @return unsupported cpus mapping of {osId, version}->{set of cpu ids} ; cpu id is lower-case
      */
     public Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus();
 
     /**
      * Stripped version of getUnsupportedCpus.
-     * @param osId
-     * @param version
-     * @return
      */
     public Set<String> getUnsupportedCpus(int osId, Version version);
+
     /**
      * Some Operating Systems don't support certain CPUs. As a result of working
      * with one,the guest OS might stop working, blue-screen, oops, or other well known red lights.
-     * @param osId
-     * @param version
      * @param cpuId cpu id as being specified in vdc_options, <bold>case insensitive</bold>
      * @return true if the cpu supported otherwise false
      */

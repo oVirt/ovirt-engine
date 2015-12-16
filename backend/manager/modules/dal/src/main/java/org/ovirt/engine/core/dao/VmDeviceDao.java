@@ -53,21 +53,18 @@ public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOpera
      * up, its devices map is fetched and saved to DB.
      * Use this method when the address is not used anymore or is not valid e.g when changing a disk interface type from
      * IDE to VirtIO.
-     * @param device
      */
     void clearDeviceAddress(Guid deviceId);
 
     /**
      * Runs an update for the device according to fields that were updated during
      * VdsUpdateRuntimeInfo periodic call
-     * @param vmDevice
      */
     void updateRuntimeInfo(VmDevice vmDevice);
 
     /**
      * Runs an update for the device according to fields that were updated during
      * HotPlugDisk
-     * @param vmDevice
      */
     void updateHotPlugDisk(VmDevice vmDevice);
 

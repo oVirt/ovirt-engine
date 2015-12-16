@@ -108,7 +108,7 @@ public class FenceAgentListModel extends SortedListModel<FenceAgentModel> {
 
     /**
      * Updates the available concurrent select list in all the {@code FenceAgentModel}s in this list model.
-     * @see updateConcurrentList(List<FenceAgentModel> items) for the algorithm used to update.
+     * @see #updateConcurrentList(List) for the algorithm used to update.
      */
     public void updateConcurrentList() {
         if (getItems() != null) {
@@ -342,7 +342,7 @@ public class FenceAgentListModel extends SortedListModel<FenceAgentModel> {
     }
 
     /**
-     * Create a {@code FenceAgent} from the passed in {@FenceAgentModel}
+     * Create a {@code FenceAgent} from the passed in {@code FenceAgentModel}
      * @param agentModel The model to create the {@code FenceAgent} out of.
      * @return A {@code FenceAgent} based on the passed in model.
      */

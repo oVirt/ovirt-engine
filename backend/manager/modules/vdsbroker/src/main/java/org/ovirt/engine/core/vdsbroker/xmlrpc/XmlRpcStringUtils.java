@@ -10,7 +10,6 @@ public class XmlRpcStringUtils {
     /**
      * Converting a comma delimited key=value format string to a key,value map
      * values should not contain the equal sign (=)
-     * @param str
      * @return a Map of the key/value pairs
      */
     public static Map<String, String> string2Map(String str) {

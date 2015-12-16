@@ -33,10 +33,8 @@ public class OvfHelper {
 
     /**
      * parses a given ovf to a vm, intialized with images and interfaces.
-     * @param ovf
      * @return
      *        VM that represents the given ovf data
-     * @throws OvfReaderException
      */
     public VM readVmFromOvf(String ovf) throws OvfReaderException {
         VM vm = new VM();
@@ -61,10 +59,8 @@ public class OvfHelper {
 
     /**
      * parses a given ovf to a VmTemplate, initialized with images and interfaces.
-     * @param ovf
      * @return
      *        VmTemplate that represents the given ovf data
-     * @throws OvfReaderException
      */
     public VmTemplate readVmTemplateFromOvf(String ovf) throws OvfReaderException {
         ArrayList<DiskImage> diskImages = new ArrayList<>();

@@ -46,8 +46,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected ReconstructMasterDomainCommand(Guid commandId) {
         super(commandId);
@@ -220,8 +218,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     /**
      * performs any connect related operations if needed before attempting
      * to connect/refresh pool information.
-     * @param vds
-     * @return
      */
     private boolean connectVdsToNewMaster(VDS vds) {
         StorageDomain masterDomain = getNewMasterStorageDomain();

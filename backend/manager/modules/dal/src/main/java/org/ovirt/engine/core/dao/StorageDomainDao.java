@@ -157,7 +157,6 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
     /**
      * Retrieves all domain which contains image id
      *
-     * @param imageId
      * @return List of storage domains.
      */
     List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId);

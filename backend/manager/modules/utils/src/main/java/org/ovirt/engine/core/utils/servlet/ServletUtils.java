@@ -70,7 +70,6 @@ public class ServletUtils {
      * @param response The {@code HttpServletResponse} so we can get the output stream and set response headers.
      * @param file The {@code File} to write to the response output stream.
      * @param type The MIME type of the file.
-     * @throws IOException
      */
     public static void sendFile(final HttpServletRequest request, final HttpServletResponse response, final File file, final String defaultType) throws IOException {
         sendFile(request, response, file, defaultType, true);
@@ -134,8 +133,6 @@ public class ServletUtils {
 
     /**
      * Check if the file is readable.
-     * @param file
-     * @return
      */
     public static boolean canReadFile(final File file) {
         return file != null && file.exists() && file.canRead() && !file.isDirectory();
@@ -221,11 +218,11 @@ public class ServletUtils {
      * Get a {@code File} object from the passed in path and base location. This
      * method will do a sanity check to make sure the passed in path is not try
      * to read file it should. see isSane for all checks that are done.
-     * @see #isSane
      * @param path The path to check for the file.
      * @param base The base path.
      * @return A {@code File} object pointing to the file, or null if the file
      * cannot be found.
+     * @see #isSane
      */
     public static File makeFileFromSanePath(String path, File base) {
         File file = null;

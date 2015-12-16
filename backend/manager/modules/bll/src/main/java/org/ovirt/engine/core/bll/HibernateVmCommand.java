@@ -44,8 +44,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected HibernateVmCommand(Guid commandId) {
         super(commandId);

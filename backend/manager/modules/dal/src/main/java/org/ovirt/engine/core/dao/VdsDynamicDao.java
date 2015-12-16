@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsDynamicDao</code> defines a type that performs CRUD operations on instances of {@link VDS}.
+ * <code>VdsDynamicDao</code> defines a type that performs CRUD operations on instances of {@link VdsDynamic}.
  *
  *
  */
@@ -28,15 +28,10 @@ public interface VdsDynamicDao extends GenericDao<VdsDynamic, Guid>, StatusAware
      */
     void updateVdsDynamicPowerManagementPolicyFlag(Guid id, boolean controlledByPmPolicy);
 
-    /**
-     * @param id
-     * @param cpuFlags
-     */
     void updateCpuFlags(Guid id, String cpuFlags);
 
     /**
      * Retrieves all host ids of hosts that are in given status
-     * @param status
      * @return list of host ids
      */
     List<Guid> getIdsOfHostsWithStatus(VDSStatus status);

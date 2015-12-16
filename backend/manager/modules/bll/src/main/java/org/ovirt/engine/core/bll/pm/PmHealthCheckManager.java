@@ -229,7 +229,6 @@ public class PmHealthCheckManager implements BackendService {
      * non-responding -> stop -> wait -> off -> engine restart
      * Such hosts will stay DOWN while its status will show Reboot
      * We should try to catch such hosts and attempt to restart it.
-     * @param hostWithPMInStatusReboot
      */
     public void startHosts(List<VDS> hostWithPMInStatusReboot) {
         for (VDS host : hostWithPMInStatusReboot) {

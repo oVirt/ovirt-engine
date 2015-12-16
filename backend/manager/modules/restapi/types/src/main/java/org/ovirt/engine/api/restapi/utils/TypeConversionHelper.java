@@ -18,7 +18,7 @@ public class TypeConversionHelper {
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed.";
 
     /**
-     * @pre called with class-level mutex held
+     * called with class-level mutex held
      */
     private static DatatypeFactory getDatatypeFactory() {
         if (datatypeFactory == null) {

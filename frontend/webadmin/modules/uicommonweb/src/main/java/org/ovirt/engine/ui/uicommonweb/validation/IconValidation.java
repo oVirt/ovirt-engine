@@ -127,9 +127,8 @@ public class IconValidation implements IValidation {
     /**
      * Datauri format:
      * <pre>
-     *     data:[&lt;MIME-type>][;charset=<encoding>][;base64],&lt;data>
+     *     data:[&lt;MIME-type>][;charset=&lt;encoding&gt;][;base64],&lt;data&gt;
      * </pre>
-     * @param dataUri
      * @return base46 part of datauri
      */
     private String dataUriToBase64Data(String dataUri) {

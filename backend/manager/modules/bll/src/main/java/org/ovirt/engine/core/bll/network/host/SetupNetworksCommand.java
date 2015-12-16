@@ -241,8 +241,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
      * use FutureTask to poll the vdsm (with getCapabilities) while setupNetworks task is not done. during the poll task
      * try to fetch the setupNetwork task answer with a timeout equal to getConnectitivtyTimeout defined in the command
      * parameters and stop both tasks when its done
-     *
-     * @param setupNetworksTask
      */
     private void pollInterruptively(final FutureVDSCall<VDSReturnValue> setupNetworksTask) {
         HostSetupNetworkPoller poller = new HostSetupNetworkPoller();

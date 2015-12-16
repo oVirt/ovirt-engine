@@ -134,7 +134,7 @@ public class SPMAsyncTask implements SPMTask {
     /**
      * Use this to hold unknown tasks from polling, to overcome bz673695 without a complete re-haul to the
      * AsyncTaskManager and CommandBase.
-     * @TODO remove this and re-factor {@link org.ovirt.engine.core.bll.tasks.AsyncTaskManager}
+     * TODO remove this and re-factor {@link org.ovirt.engine.core.bll.tasks.AsyncTaskManager}
      * @return true when the time passed after creating the task is bigger than
      *         <code>ConfigValues.UnknownTaskPrePollingLapse</code>
      * @see org.ovirt.engine.core.bll.tasks.AsyncTaskManager
@@ -448,9 +448,6 @@ public class SPMAsyncTask implements SPMTask {
     /**
      * Function return true if we got error 410 - which is SPM initializing and
      * we did not clear the task
-     *
-     * @param vdsReturnValue
-     * @return
      */
     private boolean isTaskStateError(VDSReturnValue vdsReturnValue) {
         if (vdsReturnValue != null && vdsReturnValue.getVdsError() != null

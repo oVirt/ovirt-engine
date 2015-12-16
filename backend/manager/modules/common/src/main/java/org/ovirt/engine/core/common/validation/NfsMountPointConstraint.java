@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.validation.annotation.ValidNFSMountPoint;
 
 /**
  * Validates, that the given string is a linux mount point in the following form:
- * <IP or FQDN>:/<linux/path/only/from/ASCII>
+ * [IP or FQDN]:/[linux/path/only/from/ASCII]
  */
 public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMountPoint, String> {
 

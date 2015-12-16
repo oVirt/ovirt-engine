@@ -314,7 +314,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     /**
      * The following method will create a disk which is not VirtIO
-     * @return
      */
     private DiskImage createNotVirtIODisk() {
         DiskImage disk = getDiskImage();
@@ -329,7 +328,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
     /**
      * The following method will create a VirtIO disk , which is marked as unplugged
-     * @return
      */
     protected void cretaeVirtIODisk() {
         DiskImage disk = getDiskImage();
@@ -355,7 +353,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     /**
       * The following method will create a VirtIO disk with provided plug option
       * @param plugged - the value which will be set to plug field
-      * @return
       */
     protected void cretaeDiskWrongPlug(boolean plugged) {
         cretaeVirtIODisk();

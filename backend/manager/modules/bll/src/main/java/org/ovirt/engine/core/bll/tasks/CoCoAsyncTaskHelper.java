@@ -53,10 +53,8 @@ public class CoCoAsyncTaskHelper {
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
-     * @param entityType
-     *            type of entities that are associated with the task
-     * @param entityIds
-     *            Ids of entities to be associated with task
+     * @param entitiesMap
+     *            Map of entities that are associated with the task
      * @return Guid of the created task.
      */
     public Guid createTask(Guid taskId,
@@ -159,7 +157,6 @@ public class CoCoAsyncTaskHelper {
 
     /**
      * This method is always called from with in a transaction
-     * @param asyncTask
      */
     public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {

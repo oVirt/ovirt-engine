@@ -45,8 +45,6 @@ class ObjectCounter<T> implements Iterable<T>{
      * decrements number of its occurrences, removing instance if possible(count reaches zero).
      *
      * @param key instance to remove.
-     *
-     * @return true if instance was removed  && count decremented.
      */
     public void decrease(T key) {
         Counter counter = map.get(key);

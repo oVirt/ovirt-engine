@@ -58,14 +58,14 @@ public interface BackendInternal extends BackendLocal {
     /**
      * Invokes multiple actions of the same action type with different parameters under a given command context which if
      * contains an execution context, determines the visibility of the action
-     * determines the visibility of the action.<br>
+     * determines the visibility of the action.<br/>
      * The context determines the monitoring of the action:
      * <ul>
      * <li>If {@code executionContext} is null, default implementation will create {@code Job} instance to monitor a
-     * command for non-internal invocations.
+     * command for non-internal invocations.</li>
      * <li>If {@code executionContext} is configured for monitoring, a {@code Job} entity will be created for each
-     * command which ends the validation successfully.
-     * <ul>
+     * command which ends the validation successfully.</li>
+     * </ul>
      *
      * @param actionType
      *            The type of the action

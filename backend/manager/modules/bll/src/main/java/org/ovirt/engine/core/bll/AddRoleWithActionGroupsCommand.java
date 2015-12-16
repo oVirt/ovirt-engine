@@ -25,8 +25,6 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     public AddRoleWithActionGroupsCommand(Guid commandId) {
         super(commandId);

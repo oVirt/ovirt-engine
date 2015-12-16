@@ -32,7 +32,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
 
     /* Getters and Setters tests */
 
-    /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean) */
+    /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean)} */
     @Test
     public void testIsInternalExecutionDefault() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));

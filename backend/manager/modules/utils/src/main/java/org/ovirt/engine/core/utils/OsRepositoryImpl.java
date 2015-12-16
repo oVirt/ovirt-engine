@@ -507,11 +507,6 @@ public enum OsRepositoryImpl implements OsRepository {
     /**
      * get the value of the key specified by its version or the default version if not exist. see
      * {@link OsRepositoryImpl#getKeyNode}
-     *
-     * @param uniqueOsName
-     * @param relativeKeyPath
-     * @param version
-     * @return
      */
     private String getValueByVersion(String uniqueOsName, String relativeKeyPath, Version version) {
         Preferences keyNode = getKeyNode(uniqueOsName, relativeKeyPath, version);
@@ -557,9 +552,7 @@ public enum OsRepositoryImpl implements OsRepository {
     /**
      *
      * @param osId unique name identifier. this is NOT the "id" attribute which is kept for backward compatibility.
-     * @param key
      * @return the node which its path is /os/$osId/path/to/key otherwise null
-     * @throws BackingStoreException
      */
     private Preferences getNodeIfExist(String osId, String key) throws BackingStoreException {
         // make a full path name of some.key to os/$osId/some/key
@@ -598,8 +591,6 @@ public enum OsRepositoryImpl implements OsRepository {
      * key.value = someval // the default value. the path returned is "value" key.value.3.1 = otherval // the 3.1
      * version val. the path returned is "value.3.1"
      *
-     *
-     * @param version
      * @return the string representation of the value path. for key.value.3.1 = otherval "value.3.1" should be returned.
      */
     private String versionedValuePath(Version version) {

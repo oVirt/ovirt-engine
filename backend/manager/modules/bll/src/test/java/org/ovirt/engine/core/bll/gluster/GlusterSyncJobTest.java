@@ -729,8 +729,6 @@ public class GlusterSyncJobTest {
      * - has two elements (bricks) <br>
      * - both have status DOWN <br>
      * - these are the same whose status was changed <br>
-     *
-     * @return
      */
     private ArgumentMatcher<List<GlusterBrickEntity>> hasBricksWithChangedStatus() {
         return new ArgumentMatcher<List<GlusterBrickEntity>>() {

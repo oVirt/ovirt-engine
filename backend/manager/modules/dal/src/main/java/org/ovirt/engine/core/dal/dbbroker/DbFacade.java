@@ -382,8 +382,6 @@ public class DbFacade {
      * permissions or their group's permissions. when Permission with the role type Admin is found, set the DbUser
      * isAdmin flag to ADMIN Type or to USER otherwise. Make the change only if the value is different to what it is
      * saved to db
-     *
-     * @param userIds
      */
     public void updateLastAdminCheckStatus(Guid... userIds) {
         MapSqlParameterSource parameterSource =

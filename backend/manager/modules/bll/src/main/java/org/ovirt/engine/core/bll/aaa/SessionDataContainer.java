@@ -81,7 +81,6 @@ public class SessionDataContainer {
      *            - the internal key
      * @param refresh
      *            - if perform refresh of session
-     * @return
      */
     public final Object getData(String sessionId, String key, boolean refresh) {
         if (sessionId == null) {

@@ -53,8 +53,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RestartVdsCommand(Guid commandId) {
         super(commandId);

@@ -80,7 +80,7 @@ public class FiltersHelperTest {
     }
 
     /**
-     * This method constructs a mocked HTTP request, populates it with values for the {@cod Prefer} header, and then
+     * This method constructs a mocked HTTP request, populates it with values for the {@code Prefer} header, and then
      * calls the method that checks if persistent authentication is enabled. It is intended to simplify other tests.
      *
      * @param values the values of the {@code Prefer} header

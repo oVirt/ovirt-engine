@@ -97,7 +97,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     /**
      * This constructor is mandatory for activation of the compensation process
      * after the server restart.
-     * @param commandId
      */
     public UpdateVmDiskCommand(Guid commandId) {
         super(commandId);

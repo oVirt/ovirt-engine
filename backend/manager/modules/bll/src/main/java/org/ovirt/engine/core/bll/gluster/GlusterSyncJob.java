@@ -135,10 +135,6 @@ public class GlusterSyncJob extends GlusterJob {
      * automatically to the engine DB, as addition of servers requires user approval from the GUI. If the cluster is a
      * gluster-only cluster, and one or more servers have been removed directly from the Gluster CLI, we remove them
      * from the engine DB, and also invoke the corresponding VDS command.
-     *
-     * @param cluster
-     * @param upServer
-     * @param existingServers
      */
     private void refreshServerData(Cluster cluster, VDS upServer, List<VDS> existingServers) {
         if (cluster.supportsVirtService()) {
@@ -315,9 +311,6 @@ public class GlusterSyncJob extends GlusterJob {
      * We need to be particularly careful about what servers we remove from the DB. A newly added (bootstrapped) server
      * gets peer probed after it's first reboot, and we don't want to accidentally remove such legitimate servers just
      * before they are probed.
-     *
-     * @param status
-     * @return
      */
     private boolean isRemovableStatus(VDSStatus status) {
         switch (status) {
@@ -331,10 +324,6 @@ public class GlusterSyncJob extends GlusterJob {
 
     /**
      * Returns the equivalent GlusterServer from the list of fetched servers.
-     *
-     * @param server
-     * @param fetchedServers
-     * @return GlusterServerInfo
      */
     private GlusterServerInfo findGlusterServer(VDS server, List<GlusterServerInfo> fetchedServers) {
         if (GlusterFeatureSupported.glusterHostUuidSupported(server.getClusterCompatibilityVersion())) {
@@ -420,10 +409,6 @@ public class GlusterSyncJob extends GlusterJob {
      * Fetches list of gluster servers by executing the gluster peer status command on the given UP server. If the
      * gluster command fails, tries on other UP servers from the list of existing Servers recursively. Returns null if
      * the command fails on all the servers.
-     *
-     * @param upServer
-     * @param existingServers
-     * @return
      */
     private List<GlusterServerInfo> fetchServers(VDS upServer, List<VDS> existingServers) {
         List<GlusterServerInfo> fetchedServers = null;
@@ -455,10 +440,6 @@ public class GlusterSyncJob extends GlusterJob {
 
     /**
      * Returns an UP server from given list of servers, provided it is not same as the given server.
-     *
-     * @param servers
-     * @param exceptServer
-     * @return
      */
     private VDS getNewUpServer(List<VDS> servers, VDS exceptServer) {
         for (VDS server : servers) {
@@ -494,10 +475,6 @@ public class GlusterSyncJob extends GlusterJob {
      * Fetches list of gluster volumes by executing the gluster volume info command on the given UP server. If the
      * gluster command fails, tries on other UP servers from the list of existing Servers recursively. Returns null if
      * the command fails on all the servers.
-     *
-     * @param upServer
-     * @param existingServers
-     * @return
      */
     private Map<Guid, GlusterVolumeEntity> fetchVolumes(VDS upServer, List<VDS> existingServers) {
         Map<Guid, GlusterVolumeEntity> fetchedVolumes = null;
@@ -602,8 +579,6 @@ public class GlusterSyncJob extends GlusterJob {
 
     /**
      * Creates a new volume in engine
-     *
-     * @param volume
      */
     private void createVolume(final GlusterVolumeEntity volume) {
         if (volume.getBricks() == null) {

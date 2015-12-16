@@ -67,9 +67,6 @@ public final class ImagesHandler {
      * The following method will find all images and storages where they located for provide template and will fill an
      * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
      * mapping of founded storage ids to storage object
-     * @param template
-     * @param diskInfoDestinationMap
-     * @param destStorages
      */
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             Map<Guid, DiskImage> diskInfoDestinationMap,
@@ -284,9 +281,7 @@ public final class ImagesHandler {
     /**
      * Adds a disk image (Adds image, disk, and relevant entities , but not VmDevice) This may be useful for Clone VMs,
      * where besides adding images it is required to copy all vm devices (VmDeviceUtils.copyVmDevices) from the source
-     * VM
-     *
-     * @param image
+     * VM.
      */
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
@@ -375,9 +370,6 @@ public final class ImagesHandler {
      * a specific VM. If there are two images mapped to same VM, it's assumed that this is a TryBackToImage case and the
      * function returns a list of snapshots of inactive images. In this case the parent of the active image appears to
      * be trybackfrom image
-     *
-     * @param imageId
-     * @return
      */
     public static List<DiskImage> getAllImageSnapshots(Guid imageId) {
         return DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForLeaf(imageId);
@@ -494,8 +486,8 @@ public final class ImagesHandler {
     }
 
     /**
-     * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
      * @param images The images to get the storage domain IDs for
+     * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
      */
     public static Set<Guid> getAllStorageIdsForImageIds(Collection<DiskImage> images) {
         Set<Guid> domainsIds = new HashSet<>();

@@ -12,7 +12,6 @@ public interface BookmarkDao extends Dao {
     /**
      * Retrieves the specified bookmark with the supplied id.
      *
-     * @param id
      * @return the bookmark
      */
     Bookmark get(Guid id);
@@ -35,15 +34,11 @@ public interface BookmarkDao extends Dao {
 
     /**
      * Saves the bookmark.
-     *
-     * @param bookmark
      */
     void save(Bookmark bookmark);
 
     /**
      * Updates the bookmark with changes.
-     *
-     * @param bookmark
      */
     void update(Bookmark bookmark);
 

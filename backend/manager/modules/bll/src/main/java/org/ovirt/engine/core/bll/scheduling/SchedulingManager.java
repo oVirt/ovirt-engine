@@ -93,11 +93,11 @@ public class SchedulingManager implements BackendService {
     private PendingResourceManager pendingResourceManager;
 
     /**
-     * <policy id, policy> map
+     * [policy id, policy] map
      */
     private final ConcurrentHashMap<Guid, ClusterPolicy> policyMap;
     /**
-     * <policy unit id, policy unit> map
+     * [policy unit id, policy unit] map
      */
     private volatile ConcurrentHashMap<Guid, PolicyUnitImpl> policyUnits;
 
@@ -447,10 +447,6 @@ public class SchedulingManager implements BackendService {
      * * More than one host (it's trivial to weigh a single host).
      * * optimize for speed is enabled for the cluster, and there are less than configurable requests pending (skip
      * weighing in a loaded setup).
-     *
-     * @param cluster
-     * @param vdsList
-     * @return
      */
     private boolean shouldWeighClusterHosts(Cluster cluster, List<VDS> vdsList) {
         Integer threshold = Config.<Integer>getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
@@ -957,7 +953,6 @@ public class SchedulingManager implements BackendService {
 
     /**
      * returns all cluster policies names containing the specific policy unit.
-     * @param policyUnitId
      * @return List of cluster policy names that use the referenced policyUnitId
      *         or null if the policy unit is not available.
      */
@@ -1012,7 +1007,6 @@ public class SchedulingManager implements BackendService {
     /**
      * update host scheduling statistics:
      * * CPU load duration interval over/under policy threshold
-     * @param vds
      */
     public void updateHostSchedulingStats(VDS vds) {
         if (vds.getUsageCpuPercent() != null) {

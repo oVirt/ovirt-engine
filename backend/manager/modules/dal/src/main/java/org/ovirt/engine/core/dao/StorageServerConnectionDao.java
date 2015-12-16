@@ -18,7 +18,6 @@ public interface StorageServerConnectionDao extends GenericDao<StorageServerConn
 
     /**
      * Get all storage connections from db
-     * @return
      */
     List<StorageServerConnections> getAll();
 
@@ -36,7 +35,6 @@ public interface StorageServerConnectionDao extends GenericDao<StorageServerConn
      *
      * @param ids
      *            the list of connection ids
-     * @return
      */
     List<StorageServerConnections> getByIds(List<String> ids);
 
@@ -127,7 +125,6 @@ public interface StorageServerConnectionDao extends GenericDao<StorageServerConn
 
     /**
      * Retrieves all connections used by the specified storage domain
-     * @param domainId
      * @return the list of connections
      */
     List<StorageServerConnections> getAllForDomain(Guid domainId);

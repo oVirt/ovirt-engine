@@ -76,8 +76,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
 
     protected AttachStorageDomainToPoolCommand(Guid commandId) {

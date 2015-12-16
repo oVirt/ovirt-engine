@@ -5,9 +5,8 @@ import java.util.Map;
 
 public enum VmInterfaceType {
     /**
-     * This needs to cleaned up. We are leaving it in place to support import of
+     * @deprecated This needs to cleaned up. We are leaving it in place to support import of
      * VMs created using previous versions.
-     * @deprecated
      */
     @Deprecated
     rtl8139_pv(0, "Dual mode rtl8139, VirtIO", "rtl8139_pv", 1000),

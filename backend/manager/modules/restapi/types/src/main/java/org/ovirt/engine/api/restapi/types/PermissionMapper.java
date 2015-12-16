@@ -105,7 +105,7 @@ public class PermissionMapper {
     }
 
     /**
-     * @pre completeness of "{entityType}.id" already validated
+     * Completeness of "{entityType}.id" already validated
      */
     private static void setObjectId(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
         String id = entity.getObjectId().toString();

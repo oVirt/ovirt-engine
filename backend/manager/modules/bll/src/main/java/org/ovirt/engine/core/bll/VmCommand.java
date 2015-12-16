@@ -85,8 +85,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected VmCommand(Guid commandId) {
         super(commandId);
@@ -130,18 +128,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /**
      * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
-     *
-     * @param osId
-     * @param clusterVersion
-     * @param monitorsNumber
-     * @param interfaces
-     * @param disks
-     * @param virtioScsiEnabled
-     * @param hasWatchdog
-     * @param isBalloonEnabled
-     * @param isSoundDeviceEnabled
-     * @param messages
-     * @return a boolean
      */
     public static <T extends Disk> boolean checkPciAndIdeLimit(
             int osId,
@@ -403,8 +389,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     /**
-     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled,
-     * @return
+     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled}
      */
     protected boolean isHotPlugSupported() {
         if (FeatureSupported.hotPlug(getVm().getClusterCompatibilityVersion())) {
@@ -416,7 +401,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /**
      * The following method should check if os of guest is supported for nic hot plug/unplug operation
-     * @return
      */
     protected boolean isNicSupportedForPlugUnPlug() {
         if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getClusterCompatibilityVersion())) {
@@ -428,8 +412,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /**
      * The following method should check if os of guest is supported for disk hot plug/unplug operation
-     * @param disk
-     * @return
      */
     protected boolean isDiskSupportedForPlugUnPlug(Disk disk) {
         if (disk.getDiskInterface() == DiskInterface.IDE) {

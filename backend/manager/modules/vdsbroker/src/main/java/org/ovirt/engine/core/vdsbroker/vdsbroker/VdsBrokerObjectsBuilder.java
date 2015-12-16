@@ -138,7 +138,6 @@ public class VdsBrokerObjectsBuilder {
      * Convert the devices map and make a list of {@linkplain DiskImage}
      * Mainly used to import the Hosted Engine Vm disks.
      *
-     * @param vmStruct
      * @return A List of Disk Images {@linkplain DiskImage}
      */
     public static ArrayList<DiskImage> buildDiskImagesFromDevices(Map<String, Object> vmStruct) {
@@ -180,7 +179,6 @@ public class VdsBrokerObjectsBuilder {
      * Convert the devices map and make a list of {@linkplain VmNetworkInterface}
      * Mainly used to import the Hosted Engine Vm disks.
      *
-     * @param vmStruct
      * @return A List of VM network interfaces {@linkplain VmNetworkInterface}
      */
     public static ArrayList<VmNetworkInterface> buildVmNetworkInterfacesFromDevices(Map<String, Object> vmStruct) {
@@ -659,7 +657,6 @@ public class VdsBrokerObjectsBuilder {
 
     /**
      * Retrieves graphics type from xml.
-     * @param xmlRpcStruct
      * @return
      *  - graphics type derived from xml on success
      *  - null on error
@@ -694,8 +691,6 @@ public class VdsBrokerObjectsBuilder {
     /**
      * Some properties were changed recently from String to Integer
      * This method checks what type is the property, and returns int
-     * @param vdsProperty
-     * @return
      */
     public static int parseIntVdsProperty(Object vdsProperty) {
         if (vdsProperty instanceof Integer) {
@@ -1686,7 +1681,6 @@ public class VdsBrokerObjectsBuilder {
     /***
      * resolve the the host's interface that is being used to communicate with engine.
      *
-     * @param host
      * @return host's interface that being used to communicate with engine, null otherwise
      */
     private static VdsNetworkInterface resolveActiveNic(VDS host, String hostIp) {
@@ -1778,9 +1772,6 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /***
-     *
-     * @param ipAddress
-     * @param bridges
      * @return the name of the bridge obtaining ipAddress, null in case no such exist
      */
     private static String findActiveBridge(String ipAddress, Map<String, Map<String, Object>> bridges) {
@@ -2160,8 +2151,6 @@ public class VdsBrokerObjectsBuilder {
 
     /**
      * Build through the received NUMA nodes information
-     * @param vds
-     * @param xmlRpcStruct
      */
     private static void updateNumaNodesData(VDS vds, Map<String, Object> xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.AUTO_NUMA)) {
@@ -2231,8 +2220,6 @@ public class VdsBrokerObjectsBuilder {
 
     /**
      * Build through the received vm NUMA nodes runtime information
-     * @param vm
-     * @param xmlRpcStruct
      */
     private static void updateVmNumaNodesRuntimeInfo(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
         Map<String, Object[]> vNodesRunInfo = (Map<String, Object[]>)xmlRpcStruct.get(

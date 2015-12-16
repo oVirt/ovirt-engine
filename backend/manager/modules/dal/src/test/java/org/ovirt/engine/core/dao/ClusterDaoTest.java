@@ -244,8 +244,6 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
     /**
      * Asserts the result of a invalid call to {@link ClusterDao#getAllForStoragePool(Guid, Guid, boolean)}
-     *
-     * @param result
      */
     private static void assertGetAllForStoragePoolInvalidResult(List<Cluster> result) {
         assertNotNull(result);
@@ -254,8 +252,6 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
     /**
      * Asserts the result of a valid call to {@link ClusterDao#getAllForStoragePool(Guid, Guid, boolean)}
-     *
-     * @param result
      */
     private void assertGetAllForStoragePoolValidResult(List<Cluster> result) {
         assertNotNull(result);
@@ -462,12 +458,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     }
 
     /**
-
-
-     /**
      * Asserts the result from {@link ClusterDao#getAll()} is correct without filtering
-     *
-     * @param result
      */
     private void assertCorrectGetAllResult(List<Cluster> result) {
         assertNotNull(result);

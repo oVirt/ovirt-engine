@@ -70,8 +70,6 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
     /**
      * Remove the volume option in DB. If the option with given key already exists for the volume, <br>
      * it will be deleted.
-     *
-     * @param option
      */
     private void removeOptionInDb(GlusterVolumeOptionEntity option) {
         getGlusterOptionDao().removeVolumeOption(option.getId());

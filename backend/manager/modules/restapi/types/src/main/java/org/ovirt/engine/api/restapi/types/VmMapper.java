@@ -1170,8 +1170,6 @@ public class VmMapper extends VmBaseMapper {
 
     /**
      * Maps the stringified CPU-pinning to the API format.
-     * @param string
-     * @return
      */
     static CpuTune stringToCpuTune(String cpuPinning) {
         if(cpuPinning == null || cpuPinning.equals("")) {

@@ -215,9 +215,6 @@ public abstract class OvfReader implements IOvfBuilder {
 
     /**
      * Reads vm device attributes from OVF and stores it in the collection
-     *
-     * @param node
-     * @param deviceId
      */
     private VmDevice readVmDevice(XmlNode node, Guid deviceId) {
         VmDevice vmDevice = new VmDevice();

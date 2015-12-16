@@ -109,8 +109,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     /**
      * Test scenario when there is a specific limitation on a vds group, and we check if there is enough resources on it.<BR/>
      * The returned value from the query, should be the specific limitation and the global usage on the storage pool.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchClusterWithUnlimitedGlobalLimitation() throws Exception {
@@ -131,8 +129,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test scenario when there is a global limitation on the storage pool, and we check if there is enough resources on a
      * specific vds group.<BR/>
      * The returned value from the query, should be the global limitation and the global usage on the storage pool.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchGlobalQuotaUsageForSpecificCluster() throws Exception {
@@ -152,8 +148,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test scenario when there is a global limitation on the storage pool, and we check limitation on the entire
      * storage pool.<BR/>
      * The value that should be returned, is the global limitation and the global usage on the storage pool.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchGlobalQuotaUsageForGlobalCluster() throws Exception {
@@ -171,8 +165,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Comparing the two previous test results.<BR/>
      * Since there is only global limitation for specific quota that is being checked, the results for fetching per vds
      * group or fetching per storage pool should be the same.
-     *
-     * @throws Exception
      */
     @Test
     public void testCompareFetchGlobalQuotaForSpecificAndForGlobalCluster() throws Exception {
@@ -189,8 +181,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test scenario when there is a specific limitation on the storage pool, and we check if there is enough resources on a
      * specific vds group.<BR/>
      * The returned value from the query, should be the specific limitation and the specific usage on the vds group.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchSpecificQuotaUsageForSpecificCluster() throws Exception {
@@ -208,8 +198,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test scenario when there is a specific limitation on the storage pool, and we check limitation on the entire
      * storage pool.<BR/>
      * The value that should be returned, is the specific limitations and the specific usage on the storage pool.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchSpecificQuotaUsageForGlobalCluster() throws Exception {
@@ -351,8 +339,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Make Quota specific to be the same as Quota general and specific.
-     *
-     * @throws Exception
      */
     @Test
     public void testUpdateQuota() throws Exception {
@@ -385,8 +371,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by Name, with name of specific Quota.
-     *
-     * @throws Exception
      */
     @Test
     public void testGetQuotaByExistingName() throws Exception {
@@ -400,8 +384,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by Name, with name of specific Quota.
-     *
-     * @throws Exception
      */
     @Test
     public void testGetQuotaByAdElementId() throws Exception {
@@ -414,8 +396,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get all Quotas in the setup
-     *
-     * @throws Exception
      */
     @Test
     public void testGetFetchAllQuotaInTheSetup() throws Exception {
@@ -425,8 +405,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by storage pool Id
-     *
-     * @throws Exception
      */
     @Test
     public void testGetFetchForSpecificStoragePool() throws Exception {
@@ -436,8 +414,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by storage pool Id, for storage pool with no quotas in it.
-     *
-     * @throws Exception
      */
     @Test
     public void testFetchStoragePoolWithNoQuota() throws Exception {
@@ -447,8 +423,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by Name, with name that does not exist for the storage pool.
-     *
-     * @throws Exception
      */
     @Test
     public void testGetQuotaByExistingNameWIthNoMatchingStoragePool() throws Exception {
@@ -458,8 +432,6 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     /**
      * Test get Quota by Name, with not existing name.
-     *
-     * @throws Exception
      */
     @Test
     public void testGetQuotaWithNoExistingName() throws Exception {

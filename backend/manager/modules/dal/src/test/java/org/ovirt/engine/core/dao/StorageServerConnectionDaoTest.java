@@ -85,9 +85,6 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         assertEquals(existingConnection, result);
     }
 
-    /**
-     * @return
-     */
     @Test
     public void testgetAllConnectableStorageSeverConnectionWithNoConnections() {
         List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(Guid.newGuid());

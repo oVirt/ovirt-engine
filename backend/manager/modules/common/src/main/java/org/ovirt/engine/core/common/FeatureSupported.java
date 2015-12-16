@@ -306,14 +306,12 @@ public class FeatureSupported {
     }
 
    /**
-     * @param version
      * Checks if migration is supported by the given CPU architecture
      *
      * @param architecture
      *            The CPU architecture
      * @param version
      *            Compatibility version to check for.
-     * @return
      */
     public static boolean isMigrationSupported(ArchitectureType architecture, Version version) {
         return supportedInConfig(ConfigValues.IsMigrationSupported, version, architecture);
@@ -326,7 +324,6 @@ public class FeatureSupported {
      *            The CPU architecture
      * @param version
      *            Compatibility version to check for.
-     * @return
      */
     public static boolean isMemorySnapshotSupportedByArchitecture(ArchitectureType architecture, Version version) {
         return supportedInConfig(ConfigValues.IsMemorySnapshotSupported, version, architecture);
@@ -339,7 +336,6 @@ public class FeatureSupported {
      *            The CPU architecture
      * @param version
      *            Compatibility version to check for.
-     * @return
      */
     public static boolean isSuspendSupportedByArchitecture(ArchitectureType architecture, Version version) {
         return supportedInConfig(ConfigValues.IsSuspendSupported, version, architecture);

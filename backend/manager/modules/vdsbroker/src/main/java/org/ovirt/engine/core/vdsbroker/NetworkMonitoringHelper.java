@@ -49,9 +49,6 @@ public class NetworkMonitoringHelper {
 
     /**
      * check if an interface implementing a required cluster network is down
-     *
-     * @param networksByName
-     * @param iface
      */
     private static boolean isRequiredInterfaceDown(Map<String, Network> networksByName,
             List<VdsNetworkInterface> interfaces,

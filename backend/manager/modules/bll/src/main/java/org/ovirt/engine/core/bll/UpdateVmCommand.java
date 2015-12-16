@@ -349,7 +349,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     /**
      * add audit log msg for failed hot set in case error was in CDA
      * otherwise internal command will audit log the result
-     * @param params
      */
     private void hotSetCpusLog(HotSetNumberOfCpusParameters params) {
         if (!setNumberOfCpusResult.isValid()) {
@@ -364,7 +363,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     /**
      * add audit log msg for failed hot set in case error was in CDA
      * otherwise internal command will audit log the result
-     * @param params
      */
     private void hotSetMemlog(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
         if (!setAmountOfMemoryResult.isValid()) {

@@ -65,8 +65,6 @@ public interface IVdsEventListener {
 
     /**
      * update host's scheduling related properties
-     *
-     * @param vds
      */
     void updateSchedulingStats(VDS vds); // BLL
 
@@ -74,9 +72,6 @@ public interface IVdsEventListener {
 
     /**
      * Updates VMs QoS
-     *
-     * @param vmIds
-     * @param vdsId
      */
     void updateSlaPolicies(List<Guid> vmIds, Guid vdsId);
 

@@ -25,7 +25,6 @@ public class ClusterUtils {
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
      * This server is chosen randomly from all the Up servers.
      *
-     * @param clusterId
      * @return One of the servers in up status
      */
     public VDS getRandomUpServer(Guid clusterId) {
@@ -40,7 +39,6 @@ public class ClusterUtils {
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
      * This server is returned as first from list of the Up servers.
      *
-     * @param clusterId
      * @return One of the servers in up status
      */
     public VDS getUpServer(Guid clusterId) {

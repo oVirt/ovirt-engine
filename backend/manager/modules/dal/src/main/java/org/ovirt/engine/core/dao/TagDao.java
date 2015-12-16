@@ -141,8 +141,6 @@ public interface TagDao extends Dao {
 
     /**
      * Removes the tag with the specified id.
-     *
-     * @param id
      */
     void remove(Guid id);
 

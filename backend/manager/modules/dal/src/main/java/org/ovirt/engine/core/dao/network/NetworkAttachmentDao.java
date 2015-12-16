@@ -39,7 +39,6 @@ public interface NetworkAttachmentDao extends GenericDao<NetworkAttachment, Guid
 
     /**
      * Removed network attachment related to given networkId.
-     * @param networkId
      */
     void removeByNetworkId(Guid networkId);
 }

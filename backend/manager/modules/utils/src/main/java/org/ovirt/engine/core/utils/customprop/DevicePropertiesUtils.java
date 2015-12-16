@@ -239,7 +239,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     }
 
     /**
-     * Returns map of device properties <property name,pattern to validate property value> for specified version and
+     * Returns map of device properties [property name, pattern to validate property value] for specified version and
      * device type
      *
      * @param version

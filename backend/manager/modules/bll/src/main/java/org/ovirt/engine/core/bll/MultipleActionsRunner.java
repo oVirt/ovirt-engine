@@ -118,8 +118,6 @@ public class MultipleActionsRunner {
     /**
      * Check Validates of all commands. We perform checks for all commands at
      * the same time the number of threads is managed by java
-     *
-     * @param returnValues
      */
     private void checkValidatesAsynchronously(
             ArrayList<VdcReturnValueBase> returnValues) {

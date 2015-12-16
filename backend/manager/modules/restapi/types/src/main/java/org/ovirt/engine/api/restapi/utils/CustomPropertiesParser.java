@@ -12,11 +12,10 @@ import org.ovirt.engine.api.model.Property;
 public class CustomPropertiesParser {
 
      /**
-     * Format of @str is <name>=<value>;<name>=<value>;..
+     * Format of @str is name=value;name=value;..
      *
      * @param str - The string to parse
      * @param isRegex - defines if CustomProperty is used for regex or value representation
-     * @return
     */
     public static List<CustomProperty> parse(String str, boolean isRegex) {
         List<CustomProperty> ret = new ArrayList<>();
@@ -51,9 +50,8 @@ public class CustomPropertiesParser {
     }
 
     /**
-     * Converts VmHooksEnv to @str as <name>=<value>;<name>=<value>;..
+     * Converts VmHooksEnv to @str as name=value;name=value;..
      *
-     * @param customProperties
      * @return String representing custom properties
      */
     public static String parse(List<CustomProperty> customProperties) {

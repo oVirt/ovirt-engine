@@ -213,7 +213,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * Executes the child command responsible for the image copying
      * @param parameters
      *            parameters for copy
-     * @return
      */
     protected VdcReturnValueBase executeChildCopyingCommand(VdcActionParametersBase parameters) {
         return runInternalActionWithTasksContext(getChildActionType(), parameters);
@@ -278,8 +277,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     /**
      * Returns collection of DiskImage objects to use for construction of the imageToDestinationDomainMap
-     *
-     * @return
      */
     protected Collection<DiskImage> getDiskImagesToBeCloned() {
         return getAdjustedDiskImagesFromConfiguration();

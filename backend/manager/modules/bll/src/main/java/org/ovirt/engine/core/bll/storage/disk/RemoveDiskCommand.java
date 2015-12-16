@@ -112,8 +112,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     /**
      * Validate that all vms containing the disk are down, except hosted engine vm
-     *
-     * @return
      */
     private boolean validateAllVmsForDiskAreDown() {
         if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {

@@ -138,7 +138,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     /**
      * Validates if the VM being imported has a valid architecture.
-     * @return
      */
     protected boolean validateVmArchitecture () {
         return getVm().getClusterArch() == ArchitectureType.undefined ?
@@ -362,8 +361,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * Space Validations are done using data extracted from the disks. The disks in question in this command
      * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
      * one is created specifically fo this validation - hence dummy.
-     * @param disksList
-     * @return
      */
     protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
         List<DiskImage> dummies = new ArrayList<>(disksList.size());

@@ -15,7 +15,6 @@ public interface NetworkDeviceHelper {
     /**
      * Retrieves the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents.
      *
-     * @param pciDevice
      * @return the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents. If the device
      *         is not parent of network interface device or doesn't exist in the VdsInterface table a <code>null</code>
      *         is returned.
@@ -26,7 +25,6 @@ public interface NetworkDeviceHelper {
      * Retrieves the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents.
      * This method uses the specified <code>devices</code> and doesn't fetch data from the DB.
      *
-     * @param pciDevice
      * @param devices collection of all the devices.
      * @return the <code>VdsNetworkInterface</code> that the specified <code>pciDevice</code> represents. If the device
      *         is not parent of network interface device or doesn't exist in the VdsInterface table a <code>null</code>
@@ -37,7 +35,6 @@ public interface NetworkDeviceHelper {
     /**
      * Retrieves whether the specified <code>device</code> is SR-IOV enabled.
      *
-     * @param device
      * @return whether the specified <code>device</code> is SR-IOV enabled
      */
     boolean isSriovDevice(HostDevice device);
@@ -45,15 +42,12 @@ public interface NetworkDeviceHelper {
     /**
      * Retrieves whether the specified <code>device</code> represents a physical nic.
      *
-     * @param device
      * @return whether the specified <code>device</code> represents a physical nic
      */
     boolean isNetworkDevice(HostDevice device);
 
     /**
      * Adds <code>maxNumOfVfs</code> and <code>numOfVfs</code> info to the <code>hostNicVfsConfig</code>
-     *
-     * @param hostNicVfsConfig
      */
     void updateHostNicVfsConfigWithNumVfsData(HostNicVfsConfig hostNicVfsConfig);
 
@@ -61,7 +55,6 @@ public interface NetworkDeviceHelper {
      * Retrieves all the HostDevices of the specified host, adds <code>maxNumOfVfs</code> and <code>numOfVfs</code> info
      * to each <code>HostDevice</code>
      *
-     * @param hostId
      * @return all the HostDevices of the specified host, adds <code>maxNumOfVfs</code> and <code>numOfVfs</code> info
      *         to each <code>HostDevice</code>
      */
@@ -100,7 +93,6 @@ public interface NetworkDeviceHelper {
     /**
      * Retrieves the pciDevice name of the specified <code>nic</code>
      *
-     * @param nic
      * @return the pciDevice name of the specified <code>nic</code>
      */
     String getPciDeviceNameByNic(VdsNetworkInterface nic);
@@ -108,17 +100,12 @@ public interface NetworkDeviceHelper {
     /**
      * This method updated the DB to reflect the specified VFs are attached the specified VM. Passing <code>null</code>
      * as <code>vmId</code> means the VF should not be attached to any VM.
-     *
-     * @param hostId
-     * @param vmId
-     * @param vfsNames
      */
     void setVmIdOnVfs(Guid hostId, Guid vmId, final Set<String> vfsNames);
 
     /**
      * Removes the <code>vmId</code> from all the VFs that were attached to the VM
      *
-     * @param vmId
      * @return the id of the affected Host or null if there were no VFs attached to the VM
      */
     Guid removeVmIdFromVfs(final Guid vmId);

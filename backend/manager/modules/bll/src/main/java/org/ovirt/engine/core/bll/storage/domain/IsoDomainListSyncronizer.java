@@ -178,9 +178,9 @@ public class IsoDomainListSyncronizer {
      *            - The imageType we want to fetch the files from the cache.
      * @param forceRefresh
      *            - Indicates if the domain should be refreshed from VDSM.
-     * @throws org.ovirt.engine.core.common.errors.EngineException
-     *             - if a problem occurs when refreshing the image repo cache.
      * @return List of RepoFilesMetaData files.
+     * @throws EngineException
+     *             - if a problem occurs when refreshing the image repo cache.
      */
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
@@ -430,7 +430,7 @@ public class IsoDomainListSyncronizer {
    /**
      * Reset the list of problematic repository files, before starting the refresh procedure.
      * uses for multy thread caching.
-     * @see #addRepoFileToProblematicList(List<RepoImage>)
+     * @see #addRepoFileToProblematicList(List)
      */
     private synchronized void resetProblematicList() {
         problematicRepoFileList.clear();
@@ -442,9 +442,9 @@ public class IsoDomainListSyncronizer {
      * Create a mock RepoImage object in a list, to use the functionality of the handleErrorLog with list.
      *
      * @param storagePoolId
-     *            - The storage domain Id.
-     * @param storagePoolId
      *            - The storage pool Id.
+     * @param storageDomainId
+     *            - The storage domain Id.
      * @param imageType
      *            - The file type extension (ISO  or Floppy).
      * @see #handleErrorLog(List)
@@ -522,7 +522,6 @@ public class IsoDomainListSyncronizer {
      * Returns String contains problematic iso domain name for audit log message.
      * @param repoImage
      *            - The problematic storage domain.
-     * @return
      */
     private static String buildDetailedAuditLogMessage(RepoImage repoImage) {
         String storageDomainName = "Repository not found";
@@ -545,7 +544,6 @@ public class IsoDomainListSyncronizer {
      * Updates the DB cache table with files fetched from VDSM.
      * The method is dedicated for multiple threads refresh.
      * If refresh from VDSM has encounter problems, we update the problematic domain list.
-     * @param repoImage
      */
     private void updateCachedIsoFileListFromVdsm(RepoImage repoImage) {
         boolean isRefreshed = false;

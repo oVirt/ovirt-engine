@@ -51,8 +51,6 @@ public class GlusterTasksService {
 
     /**
      * Gets the list of stored tasks in database where the job is not ended
-     *
-     * @return
      */
     public List<Guid> getMonitoredTaskIDsInDB() {
       List<Guid> externalIds = DbFacade.getInstance().getStepDao().

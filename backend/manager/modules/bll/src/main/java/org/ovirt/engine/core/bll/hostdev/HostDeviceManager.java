@@ -73,7 +73,6 @@ public class HostDeviceManager implements BackendService {
     /**
      * Checks whether the specified VM is pinned to a host and has host devices directly attached to it
      *
-     * @param vm
      * @return true if the specified VM is pinned to a host and has host devices directly attached to it
      */
     public boolean checkVmNeedsDirectPassthrough(VM vm) {
@@ -151,9 +150,6 @@ public class HostDeviceManager implements BackendService {
     /**
      * Calls <code>VdcActionType.RefreshHost</code> on the specified host, in case any of the specified vms contain
      * host devices (that were attached directly or via the SRIOV scheduling)
-     *
-     * @param vmIds
-     * @param hostId
      */
     public void refreshHostIfAnyVmHasHostDevices(Collection<Guid> vmIds, Guid hostId) {
         for (Guid vmId : vmIds) {

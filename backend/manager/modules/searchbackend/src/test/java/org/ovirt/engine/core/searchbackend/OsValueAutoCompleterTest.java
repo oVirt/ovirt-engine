@@ -50,7 +50,6 @@ public class OsValueAutoCompleterTest {
 
     /**
      * every auto completed input is always valid when using the auto-completer validate() method
-     * @param osCompletionEntry
      */
     @Theory
     public void autoCompletedInputIsAlwaysValid(Map.Entry<Integer, String> osCompletionEntry) {
@@ -64,8 +63,6 @@ public class OsValueAutoCompleterTest {
      * e.g
      * when auto-completing "rhel" and "rhel_x" was picked and is used as a search term, it shall
      * match its key in the completion list. i.e convertFieldEnumValueToActualValue("rhel_x") always yields -> 1
-     *
-     * @param osCompletionEntry
      */
     @Theory
     public void autoCompletedInputMatchesItsNumericKeyValue(Map.Entry<Integer, String> osCompletionEntry) {

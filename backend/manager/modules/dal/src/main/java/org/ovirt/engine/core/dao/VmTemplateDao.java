@@ -65,7 +65,6 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
      *            the ID of the user requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
-     * @return
      */
     public List<VmTemplate> getAll(Guid userID, boolean isFiltered, VmEntityType entityType);
 
@@ -121,17 +120,12 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
 
     /**
      * Get all vm templates with the given ids
-     *
-     * @param templatesIds
-     * @return
      */
     public List<VmTemplate> getVmTemplatesByIds(List<Guid> templatesIds);
 
     /**
      * Retrieves templates with permissions to perform the given action.
      *
-     * @param userId
-     * @param actionGroup
      * @return list of templates
      */
     List<VmTemplate> getTemplatesWithPermittedAction(Guid userId, ActionGroup actionGroup);

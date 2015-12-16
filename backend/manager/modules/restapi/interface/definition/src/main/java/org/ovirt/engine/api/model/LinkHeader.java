@@ -13,8 +13,6 @@ public class LinkHeader {
 
     /**
      * To write as link header
-     *
-     * @return
      */
     public static String format(Link link) {
         StringBuilder builder = new StringBuilder("<");
@@ -25,9 +23,6 @@ public class LinkHeader {
     /**
      * For unmarshalling Link Headers.
      * Its not an efficient or perfect algorithm and does make a few assumptiosn
-     *
-     * @param val
-     * @return
      */
     public static Link parse(String val) {
         Matcher matcher = pattern.matcher(val);

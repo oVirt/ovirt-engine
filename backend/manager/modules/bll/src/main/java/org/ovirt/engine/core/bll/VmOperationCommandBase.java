@@ -15,8 +15,6 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected VmOperationCommandBase(Guid commandId) {
         super(commandId);

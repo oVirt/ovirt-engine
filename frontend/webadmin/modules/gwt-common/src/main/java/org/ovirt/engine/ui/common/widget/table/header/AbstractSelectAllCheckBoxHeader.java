@@ -10,8 +10,6 @@ import com.google.gwt.view.client.SelectionModel;
 
 /**
  * AbstractSelectAllCheckBoxHeader. Does not support tooltips.
- *
- * @param <T>
  */
 public abstract class AbstractSelectAllCheckBoxHeader<T> extends Header<Boolean> {
 

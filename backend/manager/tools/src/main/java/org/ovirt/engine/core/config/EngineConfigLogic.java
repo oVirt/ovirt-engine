@@ -59,8 +59,6 @@ public class EngineConfigLogic {
 
     /**
      * Initiates the members of the class.
-     *
-     * @throws Exception
      */
     private void init() throws Exception {
         log.debug("init: beginning initiation of EngineConfigLogic");
@@ -92,8 +90,6 @@ public class EngineConfigLogic {
 
     /**
      * Executes desired action. Assumes the parser is now holding valid arguments.
-     *
-     * @throws Exception
      */
     public void execute() throws Exception {
         ConfigActionType actionType = parser.getConfigAction();
@@ -181,7 +177,6 @@ public class EngineConfigLogic {
      * Is called when user has not been given
      *
      * @return The user
-     * @throws IOException
      */
     private String startUserDialog() throws IOException {
         log.debug("starting user dialog.");
@@ -216,8 +211,6 @@ public class EngineConfigLogic {
 
     /**
      * Prints the values of the given key from the DB.
-     *
-     * @throws Exception
      */
     private void printAllValuesForKey(String key) throws Exception {
         List<ConfigKey> keysForName = getConfigDao().getKeysForName(key);
@@ -314,8 +307,6 @@ public class EngineConfigLogic {
     /**
      * If a version has been given, prints the specific value for the key and version, otherwise prints all the values
      * for the key. Is the actual execution of the 'get' action ('-g', '--get')
-     *
-     * @throws Exception
      */
     private void printKey() throws Exception {
         String key = parser.getKey();
@@ -335,10 +326,6 @@ public class EngineConfigLogic {
 
     /**
      * Fetches the given key with the given version from the DB and prints it.
-     *
-     * @param key
-     * @param version
-     * @throws Exception
      */
     private void printKeyWithSpecifiedVersion(String key, String version) throws Exception {
         ConfigKey configKey = fetchConfigKey(key, version);
@@ -457,8 +444,6 @@ public class EngineConfigLogic {
      * @param key
      *            The version needs to be found for this key
      * @return A version for the given key
-     * @throws IOException
-     * @throws SQLException
      */
     private String startVersionDialog(String key) throws IOException, SQLException {
         log.debug("starting version dialog.");
@@ -489,12 +474,6 @@ public class EngineConfigLogic {
 
     /**
      * Sets the given key with the given version to the given value. Is protected for test purposes.
-     *
-     * @param key
-     * @param value
-     * @param version
-     * @return
-     * @throws IllegalAccessException
      */
     protected boolean persist(String key, String value, String version) throws IllegalAccessException {
         ConfigKey configKey = configKeyFactory.generateByPropertiesKey(key);

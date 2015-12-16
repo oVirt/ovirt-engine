@@ -104,7 +104,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * @param params   the task parameters
      * @param action   action representation
      * @param entityResolver   backend response resolver
-     * @return
      */
     protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, EntityResolver entityResolver) {
         return doAction(task, params, action, PollingType.VDSM_TASKS, entityResolver);
@@ -118,7 +117,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * @param task     the backend task
      * @param params   the task parameters
      * @param action   action representation
-     * @return
      */
     protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action) {
         return doAction(task, params, action, PollingType.VDSM_TASKS);

@@ -175,8 +175,6 @@ public final class VdcEventNotificationUtils {
 
     /**
      * Gets all notification events.
-     *
-     * @return
      */
     public static Map<EventNotificationEntity, HashSet<AuditLogType>> getNotificationEvents() {
         return eventNotificationTypeMap;

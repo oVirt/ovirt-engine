@@ -11,7 +11,6 @@ public interface Serializer {
      * @param payload
      *            the payload to serialize
      * @return object that holds serialization
-     * @throws SerializationExeption
      */
     public Object serialize(Object payload) throws SerializationExeption;
 }

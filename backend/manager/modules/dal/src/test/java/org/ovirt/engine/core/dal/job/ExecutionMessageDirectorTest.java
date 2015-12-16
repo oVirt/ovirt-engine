@@ -25,9 +25,6 @@ public class ExecutionMessageDirectorTest {
 
     /**
      * Verifies the engine-core execution messages are aligned with the enumerators {@code VdcActionType and StepEnum}
-     *
-     * @throws IOException
-     * @throws FileNotFoundException
      */
     @Test
     public void verifyEngineMessagesSupported() throws FileNotFoundException, IOException {

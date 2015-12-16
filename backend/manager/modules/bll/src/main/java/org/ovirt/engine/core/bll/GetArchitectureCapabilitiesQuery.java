@@ -50,7 +50,6 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
      *            The CPU Architecture
      * @param version
      *            The cluster compatibility version
-     * @return
      */
     private static boolean isSupported(ArchCapabilitiesVerb archCapabilitiesVerb,
             ArchitectureType architecture,

@@ -110,8 +110,6 @@ public abstract class UiAction {
 
     /**
      * Specifying an action that will run immediately after <code>this</code> action has finished its execution.
-     *
-     * @param nextAction
      */
     public UiAction then(UiAction nextAction) {
         this.nextAction = nextAction;
@@ -121,8 +119,6 @@ public abstract class UiAction {
     /**
      * Specifying an action that will run before <code>this</code> action has finished its execution, and is not
      * dependent on <code>this</code> action's execution.
-     *
-     * @param parallelAction
      */
     public UiAction and(UiAction parallelAction) {
         this.parallelAction = parallelAction;
@@ -141,8 +137,6 @@ public abstract class UiAction {
      * the final action will be executed whether action1 succeeds or fails when the flow is completed.
      *
      * It is NOT recommended to set the final action in the middle of the flow!
-     *
-     * @param finalAction
      */
     public void onAllExecutionsFinish(SimpleAction finalAction) {
         this.finalAction = finalAction;

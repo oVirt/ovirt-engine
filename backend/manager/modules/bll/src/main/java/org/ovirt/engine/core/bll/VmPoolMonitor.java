@@ -71,7 +71,6 @@ public class VmPoolMonitor implements BackendService {
     /**
      * Checks how many prestarted vms are missing in the pool, and attempts to prestart either that amount or BATCH_SIZE
      * (the minimum between the two).
-     * @param vmPool
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
         Guid vmPoolId = vmPool.getVmPoolId();
@@ -92,8 +91,6 @@ public class VmPoolMonitor implements BackendService {
 
     /***
      * Prestarts the given amount of vmsToPrestart, in the given Vm Pool
-     * @param vmPoolId
-     * @param numOfVmsToPrestart
      */
     private void prestartVms(Guid vmPoolId, int numOfVmsToPrestart) {
         // Fetch all vms that are in status down
@@ -124,9 +121,6 @@ public class VmPoolMonitor implements BackendService {
 
     /**
      * Logs the results of the attempt to prestart Vms in a Vm Pool
-     * @param prestartedVmsCounter
-     * @param numOfVmsToPrestart
-     * @param vmPoolId
      */
     private void logResultOfPrestartVms(int prestartedVmsCounter, int numOfVmsToPrestart, Guid vmPoolId) {
         if (prestartedVmsCounter > 0) {
@@ -142,7 +136,6 @@ public class VmPoolMonitor implements BackendService {
 
     /**
      * Prestarts the given Vm
-     * @param vmGuid
      * @return whether or not succeeded to prestart the Vm
      */
     private boolean prestartVm(Guid vmGuid) {
@@ -155,8 +148,6 @@ public class VmPoolMonitor implements BackendService {
 
     /**
      * Run the given VM as stateless
-     * @param vm
-     * @return
      */
     private boolean runVmAsStateless(VM vmToRunAsStateless) {
         log.info("Running Vm '{}' as stateless", vmToRunAsStateless);

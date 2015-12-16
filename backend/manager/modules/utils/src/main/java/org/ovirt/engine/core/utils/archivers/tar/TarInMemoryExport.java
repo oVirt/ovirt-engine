@@ -26,7 +26,6 @@ public class TarInMemoryExport implements AutoCloseable {
      * as string. This function does not support tar with directories.
      *
      * @return Map with the file names as the keys, and the file content as string value.
-     * @throws IOException
      */
     public Map<String, ByteBuffer> unTar() throws IOException {
         Map<String, ByteBuffer> fileContent = new HashMap<>();

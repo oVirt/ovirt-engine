@@ -22,7 +22,6 @@ public class ResourceUtils {
      * @param name
      *            The resource file name
      * @return The Properties class
-     * @throws IOException
      */
     public static Properties loadProperties(Class<?> cls, String name) throws IOException {
         final String ERR_MSG = "Failed to locate resource file: " + name;

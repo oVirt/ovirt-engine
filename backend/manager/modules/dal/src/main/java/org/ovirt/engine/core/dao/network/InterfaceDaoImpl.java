@@ -352,7 +352,6 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                  * @param rs
                  *            The row representing the entity.
                  * @return The instance of the correct type as represented by the row.
-                 * @throws SQLException
                  */
                 private VdsNetworkInterface createInterface(ResultSet rs) throws SQLException {
                     VdsNetworkInterface iface;

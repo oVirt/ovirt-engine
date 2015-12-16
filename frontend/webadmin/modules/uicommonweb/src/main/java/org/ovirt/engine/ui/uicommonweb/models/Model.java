@@ -484,8 +484,6 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     /**
      * Assigns a new instance to the Progress property, indicating start of some operation on the model.
-     *
-     * @param operation
      */
     public void startProgress(String operation) {
         ProgressModel tempVar = new ProgressModel();

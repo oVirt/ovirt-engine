@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides methods for managing the flow objects the of the command, by the given execution context o the command.
  * <ul>
- * <li>Creates an {@code ExecutionContext} instance for {@code CommandBase}.
- * <li>Creates {@Job} entities.
- * <li>Add {@code Step} to a {@code Job}
- * <li>Add {@code Step} to a {@code Step} as a sub step.
- * <li>End step.
- * <li>End job.
- * <ul>
+ * <li>Creates an {@code ExecutionContext} instance for {@code CommandBase}.</li>
+ * <li>Creates {@code Job} entities.</li>
+ * <li>Add {@code Step} to a {@code Job}.</li>
+ * <li>Add {@code Step} to a {@code Step} as a sub step.</li>
+ * <li>End step.</li>
+ * <li>End job.</li>
+ * </ul>
  */
 public class ExecutionHandler {
 
@@ -275,7 +275,6 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @param isExternal
      *        Indicates if the step is invoked by a plug-in
-     * @return
      */
     public static Step addStep(ExecutionContext context, StepEnum stepName, String description, boolean isExternal) {
         if (context == null) {
@@ -407,7 +406,6 @@ public class ExecutionHandler {
      *            {@code stepName}.
      * @param isExternal
      *        Indicates if the step is invoked by a plug-in
-     * @return
      */
     public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description, boolean isExternal) {
         Step step = null;
@@ -446,7 +444,7 @@ public class ExecutionHandler {
      * Finalizes a {@code Job} execution by a given context in which the job was performed and by the exit status of
      * the step. If the {@code Job} execution continues beyond the scope of the command, the {@code Job.isAsyncJob()}
      * should be set to {@code true}. If {@code ExecutionMethod.AsStep} is defined, the current active step can end the
-     * running {@code Job} by setting the {@ExecutionContext.shouldEndJob()} to
+     * running {@code Job} by setting the {@link ExecutionContext#shouldEndJob()} to
      * {@code true}.
      *
      * @param context

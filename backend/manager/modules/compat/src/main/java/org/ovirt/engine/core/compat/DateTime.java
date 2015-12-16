@@ -23,7 +23,6 @@ public class DateTime extends Date {
 
     /**
      * This method resets the datetime object to 00:00:00.000 on the same date
-     * @return
      */
     public DateTime resetToMidnight() {
         Calendar cal = Calendar.getInstance();

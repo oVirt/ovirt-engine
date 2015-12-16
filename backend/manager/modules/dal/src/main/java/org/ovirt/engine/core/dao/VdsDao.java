@@ -111,7 +111,6 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**
      * Retrieves all VDS instances by vds group id (cluster ID)
      *
-     * @param cluster
      * @return the list of VDS instances
      */
     List<VDS> getAllForCluster(Guid cluster);
@@ -119,7 +118,6 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**
      * Retrieves all VDS instances by vds group id (cluster ID) with optional filtering
      *
-     * @param cluster
      * @param userID
      *            the ID of the user requesting the information
      * @param isFiltered
@@ -175,8 +173,6 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
 
     /**
      * Retrieves all VDS instances in the given Vds group, that are in given status
-     * @param clusterId
-     * @param status
      * @return list of VDS instances
      */
     List<VDS> getAllForClusterWithStatus(Guid clusterId, VDSStatus status);

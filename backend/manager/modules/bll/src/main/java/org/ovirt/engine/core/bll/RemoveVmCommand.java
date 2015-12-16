@@ -71,8 +71,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RemoveVmCommand(Guid commandId) {
         super(commandId);

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 /**
  * Enum of Gluster service types.
  *
- * @See {@link GlusterServerService}
+ * @see GlusterServerService
  *
  */
 public enum ServiceType {

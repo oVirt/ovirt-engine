@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>ClusterDao</code> defines a type that performs CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.Cluster}.
- *
+ * <code>ClusterDao</code> defines a type that performs CRUD operations on instances of {@link Cluster}.
  */
 public interface ClusterDao extends Dao, SearchDao<Cluster> {
     /**
@@ -150,8 +149,6 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
     /**
      * Retries clusters which the given users has permission to perform the given action.
      *
-     * @param userId
-     * @param actionGroup
      * @return list of clusters
      */
     List<Cluster> getClustersWithPermittedAction(Guid userId, ActionGroup actionGroup);
@@ -164,11 +161,8 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
     List<Cluster> getClustersHavingHosts();
 
     /**
-     * Sets the cluster's emulated machine value
-     * @param clusterId
-     * @param emulatedMachine
+     * Sets the cluster's emulated machine value.
      * @param detectEmulatedMachine - either the cluster emulated machine should be auto detected and set
-     *
      */
     void setEmulatedMachine(Guid clusterId, String emulatedMachine, boolean detectEmulatedMachine);
 
@@ -179,8 +173,6 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
 
     /**
      * Get all clusters attach to cluster policy
-     * @param clusterPolicyId
-     * @return
      */
     List<Cluster> getClustersByClusterPolicyId(Guid clusterPolicyId);
 
@@ -193,8 +185,6 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
 
     /**
      * Retrieves the number of the VMs in the cluster
-     * @param clusterId
-     * @return
      */
     int getVmsCountByClusterId(Guid clusterId);
 

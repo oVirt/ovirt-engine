@@ -13,38 +13,26 @@ public interface ClusterFeatureDao extends Dao {
 
     /**
      * Add the given feature as a supported for the cluster
-     *
-     * @param feature
      */
     public void addSupportedClusterFeature(SupportedAdditionalClusterFeature feature);
 
     /**
      * Update the supported cluster feature.
-     *
-     * @param feature
      */
     public void updateSupportedClusterFeature(SupportedAdditionalClusterFeature feature);
 
     /**
      * Add all the supported features in batch
-     *
-     * @param features
      */
     public void addAllSupportedClusterFeature(Collection<SupportedAdditionalClusterFeature> features);
 
     /**
      * get all the features supported by the cluster
-     *
-     * @param clusterId
-     * @return
      */
     public Set<SupportedAdditionalClusterFeature> getSupportedFeaturesByClusterId(Guid clusterId);
 
     /**
      * get all the features for the given version
-     *
-     * @param version
-     * @return
      */
     public Set<AdditionalFeature> getClusterFeaturesForVersionAndCategory(String version, ApplicationMode category);
 

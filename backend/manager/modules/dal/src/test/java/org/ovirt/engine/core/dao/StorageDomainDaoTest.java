@@ -188,7 +188,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test getting storage for not existing image id.</BR> The expected result should be an empty list.
+     * Test getting storage for not existing image id. The expected result should be an empty list.
      */
     @Test
     public void testGetAllStorageDomainsByNotExistingImageId() {
@@ -199,7 +199,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
     /**
      * Asserts the result of {@link StorageDomainDao#get(Guid)} returns the correct domain
-     * @param result
      */
     private void assertGetResult(StorageDomain result) {
         assertNotNull(result);

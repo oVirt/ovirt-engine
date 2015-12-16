@@ -21,7 +21,7 @@ public abstract class Configuration {
      * Load the configuration from a properties file.
      *
      * @param file the properties file
-     * @throws {@link java.io.IOException} if anything fails while loading the properties file
+     * @throws IOException if anything fails while loading the properties file
      */
     public static Configuration loadFile(File file) throws IOException {
         Properties properties = new Properties();
@@ -245,9 +245,6 @@ public abstract class Configuration {
 
         /**
          * Creates a configuration object that serves as the root of a hierarchy.
-         *
-         *
-         * @param sourceFile
          */
         private Root(File sourceFile, Properties properties) {
             super();

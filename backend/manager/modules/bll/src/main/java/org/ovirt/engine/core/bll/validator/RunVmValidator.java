@@ -92,15 +92,10 @@ public class RunVmValidator {
     /**
      * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
      *
-     * @param messages
-     * @param storagePool
      * @param vdsBlackList
      *            - hosts that we already tried to run on
      * @param vdsWhiteList
      *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
-     * @param destVdsList
-     * @param cluster
-     * @return
      */
     public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList, List<Guid> destVdsList, Cluster cluster) {

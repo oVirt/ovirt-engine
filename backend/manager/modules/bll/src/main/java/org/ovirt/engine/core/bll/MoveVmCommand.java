@@ -35,8 +35,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected MoveVmCommand(Guid commandId) {
         super(commandId);

@@ -31,8 +31,6 @@ public final class AlertDirector {
 
     /**
      * Adds an alert
-     * @param vdsId
-     * @param type
      */
     public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
         alert.setVdsId(vdsId);

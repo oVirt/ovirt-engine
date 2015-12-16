@@ -174,9 +174,6 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     /**
      * gets the sql injection checker class for current db vendor.
-     *
-     * @return SqlInjectionChecker
-     * @throws Exception
      */
     private SqlInjectionChecker getSqlInjectionChecker() throws Exception {
         // This can not be done with reflection like:

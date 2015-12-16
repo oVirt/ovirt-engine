@@ -111,6 +111,7 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
      * Saves or updates the user.
      *
      * @param user
+     *            the user
      */
     void saveOrUpdate(DbUser user);
 }

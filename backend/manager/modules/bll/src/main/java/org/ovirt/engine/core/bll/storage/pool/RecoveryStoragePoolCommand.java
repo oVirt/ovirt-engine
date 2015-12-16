@@ -29,8 +29,6 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RecoveryStoragePoolCommand(Guid commandId) {
         super(commandId);

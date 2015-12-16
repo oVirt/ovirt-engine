@@ -84,8 +84,6 @@ public class ResizableDialogBox extends DialogBox {
 
     /**
      * Enable/Disable dialog's resize support
-     *
-     * @param enabled
      */
     public void enableResizeSupport(boolean enabled) {
         this.resizeSupportEnabled = enabled;
@@ -103,9 +101,6 @@ public class ResizableDialogBox extends DialogBox {
 
     /**
      * Update dialog's dimensions according to the sepcified width/height
-     *
-     * @param newWidth
-     * @param newHeight
      */
     private void updateDialogDimensions(int newWidth, int newHeight) {
         if (newWidth <= minWidth) {
@@ -130,9 +125,6 @@ public class ResizableDialogBox extends DialogBox {
 
     /**
      * Detect dialog's edges and update mouse cursor according to hovered dialog edge
-     *
-     * @param event
-     * @return
      */
     private boolean updateResizeCursor(Event event) {
         int cursorX = event.getClientX();

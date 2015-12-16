@@ -32,8 +32,6 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AddVmPoolWithVmsCommand(Guid commandId) {
         super(commandId);

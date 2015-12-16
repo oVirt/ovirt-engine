@@ -234,8 +234,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     /**
      * Returns the VLAN id.
-     *
-     * @return
      */
     public Integer getVlanId() {
         return vlanId;

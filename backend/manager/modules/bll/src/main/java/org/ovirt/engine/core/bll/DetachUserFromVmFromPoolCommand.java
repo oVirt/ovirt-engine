@@ -19,7 +19,6 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     * @param commandId
      */
     protected DetachUserFromVmFromPoolCommand(Guid commandId) {
         super(commandId);

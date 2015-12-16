@@ -338,7 +338,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     /**
      * Converts a PM Options string to a map.
      *
-     * <b<Note:</b> A {@link HashMap} is used instead of the interface
+     * <b>Note:</b> A {@link HashMap} is used instead of the interface
      * {@link Map}, as this method is used by the frontend, and requires
      * GWT compilation.
      *

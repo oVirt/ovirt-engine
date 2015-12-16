@@ -10,11 +10,10 @@ public interface HostNetworkTopologyPersister {
      * Persist this host network topology to DB. Set the host to non-operational in case its networks don't comply with
      * the cluster rules:
      * <ul>
-     * <li>All mandatory networks(optional=false) should be implemented by the host.
-     * <li>All VM networks must be implemented with bridges.
+     * <li>All mandatory networks(optional=false) should be implemented by the host.</li>
+     * <li>All VM networks must be implemented with bridges.</li>
      * </ul>
      *
-     * @param host
      * @param skipManagementNetwork
      *            if <code>true</code> skip validations for the management network (existence on the host or configured
      *            properly)

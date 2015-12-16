@@ -217,7 +217,7 @@ public class BaseBackendResource {
      * @param e the exception to handle
      * @param notFoundAs404 whether to return a 404 if appropriate
      *
-     * @returns the result of the operation
+     * @return the result of the operation
      */
     protected <T> T handleError(Exception e, boolean notFoundAs404) {
         handleError(Void.class, e, notFoundAs404);
@@ -237,7 +237,7 @@ public class BaseBackendResource {
      * @param e the exception to handle
      * @param notFoundAs404 whether to return a 404 if appropriate
      *
-     * @returns the result of the operation
+     * @return the result of the operation
      */
     protected <T> T handleError(Class<T> clz, Exception e, boolean notFoundAs404) {
         if ((e instanceof EntityNotFoundException) && (notFoundAs404)) {

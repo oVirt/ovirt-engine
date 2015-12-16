@@ -90,7 +90,6 @@ public class JsonObjectDeserializer implements Deserializer {
      *
      * @param source - The object which supposed to be deserialize.
      * @return The serialized object.
-     * @throws SerializationExeption
      */
     public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationExeption {
         return readJsonString(source, type, unformattedMapper);

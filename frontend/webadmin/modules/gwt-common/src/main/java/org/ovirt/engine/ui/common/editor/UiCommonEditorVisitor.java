@@ -216,9 +216,6 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
     /**
      * Update a ListEditor according to the items in the ListModel <BR>
      * (this is required since the Editor is bound to the "selectedItem" property, and not to the "items" property).
-     *
-     * @param listEditor
-     * @param parentModel
      */
     @SuppressWarnings("unchecked")
     <O> void updateListEditor(TakesConstrainedValueEditor<O> listEditor, ListModel<O> parentModel) {

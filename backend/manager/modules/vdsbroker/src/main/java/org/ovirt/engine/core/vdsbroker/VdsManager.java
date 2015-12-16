@@ -409,8 +409,6 @@ public class VdsManager {
 
     /**
      * Save dynamic data to cache and DB.
-     *
-     * @param dynamicData
      */
     public void updateDynamicData(VdsDynamic dynamicData) {
         dbFacade.getVdsDynamicDao().updateIfNeeded(dynamicData);
@@ -425,8 +423,6 @@ public class VdsManager {
 
     /**
      * Save statistics data to cache and DB.
-     *
-     * @param statisticsData
      */
     public void updateStatisticsData(VdsStatistics statisticsData) {
         dbFacade.getVdsStatisticsDao().update(statisticsData);
@@ -449,8 +445,6 @@ public class VdsManager {
 
     /**
      * Save or update numa data to DB
-     *
-     * @param vds
      */
     public void updateNumaData(final VDS vds) {
         if (vds.getNumaNodeList() == null || vds.getNumaNodeList().isEmpty()) {
@@ -601,8 +595,6 @@ public class VdsManager {
      * This callback method notifies this cachedVds that an attempt to run a vm on it
      * failed. above a certain threshold such hosts are marked as
      * VDSStatus.Error.
-     *
-     * @param vds
      */
     public void failedToRunVm(VDS vds) {
         if (failedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
@@ -753,7 +745,6 @@ public class VdsManager {
      * Handle network exception
      *
      * @param ex exception to handle
-     * @return
      */
     public void handleNetworkException(VDSNetworkException ex) {
         boolean saveToDb = true;
@@ -1044,9 +1035,7 @@ public class VdsManager {
     }
 
     /**
-     *
      * This method is not thread safe
-     * @param lastVmsList
      */
     public void setLastVmsList(List<VM> lastVmsList) {
         this.lastVmsList = lastVmsList;

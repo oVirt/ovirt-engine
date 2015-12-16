@@ -46,7 +46,6 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The eventSubscriber.
      * @param user
      *            The user.
-     * @return
      */
     protected boolean validateNotificationMethod(EventNotificationMethod eventNotificationMethod,
                                                  EventSubscriber eventSubscriber, DbUser user) {
@@ -80,7 +79,6 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The eventSubscriber.
      * @param user
      *            The user.
-     * @return
      */
     protected boolean validateAdd(EventNotificationMethod eventNotificationMethod,
                                   EventSubscriber eventSubscriber, DbUser user) {
@@ -126,7 +124,6 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *
      * @param tagName
      *            Name of the tag.
-     * @return
      */
     protected boolean validateTag(String tagName) {
         boolean retValue = true;

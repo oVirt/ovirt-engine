@@ -84,9 +84,6 @@ public class DBConfigUtils extends ConfigUtilsBase {
 
     /**
      * Returns the typed value of the given option. returns default value if option.option_value is null
-     *
-     * @param option
-     * @return
      */
     private static Object getValue(VdcOption option) {
         Object result = option.getOptionValue();

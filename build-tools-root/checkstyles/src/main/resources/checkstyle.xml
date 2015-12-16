@@ -40,6 +40,8 @@
     <module name="TypeName" />
     <module name="MethodName" />
     <module name="ArrayTypeStyle" />
+    <module name="AtclauseOrder" />
+    <module name="NonEmptyAtclauseDescription" />
 
     <!-- oVirt checks -->
     <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>

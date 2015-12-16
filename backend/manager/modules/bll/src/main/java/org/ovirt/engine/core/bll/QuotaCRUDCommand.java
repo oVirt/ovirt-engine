@@ -61,10 +61,6 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     /**
      * Validate Quota storage restrictions.
-     *
-     * @param quota
-     * @param messages
-     * @return
      */
     private static boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;

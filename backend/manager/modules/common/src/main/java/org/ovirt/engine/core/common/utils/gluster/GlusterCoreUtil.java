@@ -31,8 +31,6 @@ public class GlusterCoreUtil {
      * Checks if given brick <code>searchBrick</code> exists in the given collection of bricks. Note that this method
      * checks only two (and most important) attributes of the brick: server id and brick directory
      *
-     * @param bricks
-     * @param searchBrick
      * @return true of the given <code>searchBrick</code> exists in the given collection of bricks, else false
      */
     public static boolean containsBrick(Collection<GlusterBrickEntity> bricks, GlusterBrickEntity searchBrick) {
@@ -43,8 +41,6 @@ public class GlusterCoreUtil {
      * Checks if given brick <code>searchBrick</code> exists in the given collection of bricks, and returns it if found. Note that this method
      * checks only two (and most important) attributes of the brick: server id and brick directory.
      *
-     * @param bricks
-     * @param searchBrick
      * @return the brick if found in the <code>bricks</code> collection, else null.
      */
     public static GlusterBrickEntity findBrick(Collection<GlusterBrickEntity> bricks, GlusterBrickEntity searchBrick) {
@@ -54,11 +50,6 @@ public class GlusterCoreUtil {
     /**
      * Checks if a brick with given server id and brick directory exists in the given collection of bricks, and returns
      * it if found.
-     *
-     * @param bricks
-     * @param serverId
-     * @param brickDir
-     * @return
      */
     public static GlusterBrickEntity findBrick(Collection<GlusterBrickEntity> bricks, Guid serverId, String brickDir) {
         for (GlusterBrickEntity brick : bricks) {

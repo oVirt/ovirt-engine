@@ -44,9 +44,7 @@ public abstract class ProfileBaseDaoImpl<T extends ProfileBase> extends DefaultG
         }
 
         /**
-         * @param rs
          * @return entity of derived mapper class
-         * @throws SQLException
          */
         protected abstract M createProfileEntity(ResultSet rs) throws SQLException;
 

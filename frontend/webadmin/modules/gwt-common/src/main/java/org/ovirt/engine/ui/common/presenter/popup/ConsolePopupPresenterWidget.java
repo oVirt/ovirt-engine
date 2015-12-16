@@ -374,7 +374,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     /**
      * Selects spice implementation.
      * Handles spice proxy availability as well.
-     * @param clientMode
      */
     private void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode clientMode) {
         getView().selectSpiceImplementation(clientMode);

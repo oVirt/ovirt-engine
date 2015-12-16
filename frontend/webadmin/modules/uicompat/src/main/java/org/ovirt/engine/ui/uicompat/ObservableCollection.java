@@ -13,8 +13,6 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
     }
 
     /** Moves a collection element from the index sourceIndex to the index destIndex
-     * @param sourceIndex
-     * @param destIndex
      */
     public void move(int sourceIndex, int destIndex) {
         if (sourceIndex == destIndex || sourceIndex > this.size() || destIndex > this.size()) {

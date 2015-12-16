@@ -146,7 +146,6 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      * policy.
      *
      * @param allHosts All hosts in the cluster regardless of their status or PM configuration
-     * @param parameters
      * @param emptyHosts Pre-initialized list that will be filled by empty hosts
      * @param maintenanceHosts Pre-initialized list that will be filled by hosts in maintenance
      *                         that have automatic power management still enabled
@@ -177,11 +176,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      * This method will investigate the current state of all hosts in cluster and return the advised
      * action that should take place to make the cluster closer to the expected balancing state.
      *
-     * @param cluster
      * @param pmDownHosts hosts that were previously powered down by the power management policy
      * @param pmMaintenanceHosts hosts that were previously powered down by the power management policy
      * @param emptyHosts hosts that are still up, but contain no Vms
-     * @param parameters
      * @return a pair of VDS to update and the desired VDSStatus to get it to
      */
     protected Pair<VDS, VDSStatus> evaluatePowerManagementSituation(Cluster cluster, List<VDS> pmDownHosts,

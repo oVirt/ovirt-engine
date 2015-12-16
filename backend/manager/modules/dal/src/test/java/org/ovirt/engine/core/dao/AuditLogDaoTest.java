@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>AuditLogDaoTest</code> performs tests against the {@link AuditLogDao} type.
- *
  */
 public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final String VM_NAME = "rhel5-pool-50";
@@ -133,8 +132,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
 
     /**
      * Test date filtering
-     *
-     * @throws Exception
      */
     @Test
     public void testGetAllAfterDate()
@@ -154,61 +151,61 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         assertEquals(0, result.size());
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMId(Guid) with a name of a VM that exists */
+    /** Tests {@link AuditLogDao#getAllByVMId(Guid)} with a name of a VM that exists */
     @Test
     public void testGetAllByVMId() {
         assertGetByNameValidResults(dao.getAllByVMId(VM_ID));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMId(Guid) with an ID of a VM that doesn't exist */
+    /** Tests {@link AuditLogDao#getAllByVMId(Guid)} with an ID of a VM that doesn't exist */
     @Test
     public void testGetAllByVMIdInvalidId() {
         assertGetByNameInvalidResults(dao.getAllByVMId(Guid.newGuid()));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean) with a user that has permissions on that VM */
+    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean)} with a user that has permissions on that VM */
     @Test
     public void testGetAllByVMIdPrivilegedUser() {
         assertGetByNameValidResults(dao.getAllByVMId(VM_ID, PRIVILEGED_USER_ID, true));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean) with a user that doesn't have permissions on that VM, but with the filtering mechanism disabled */
+    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean)} with a user that doesn't have permissions on that VM, but with the filtering mechanism disabled */
     @Test
     public void testGetAllByVMNameUnprivilegedUserNoFiltering() {
         assertGetByNameValidResults(dao.getAllByVMId(VM_ID, UNPRIVILEGED_USER_ID, false));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean) with a user that doesn't have permissions on that VM */
+    /** Tests {@link AuditLogDao#getAllByVMId(Guid, Guid, boolean)} with a user that doesn't have permissions on that VM */
     @Test
     public void testGetAllByVMNameUnprivilegedUserFiltering() {
         assertGetByNameInvalidResults(dao.getAllByVMId(VM_ID, UNPRIVILEGED_USER_ID, true));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMTemplateId(org.ovirt.engine.core.compat.Guid) with an ID of a VM Template that exists */
+    /** Tests {@link AuditLogDao#getAllByVMTemplateId(Guid)} with an ID of a VM Template that exists */
     @Test
     public void testGetAllByVMTemplateName() {
         assertGetByNameValidResults(dao.getAllByVMTemplateId(VM_TEMPLATE_ID));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMTemplateId(org.ovirt.engine.core.compat.Guid) with a an ID of a VM Template that doesn't exist */
+    /** Tests {@link AuditLogDao#getAllByVMTemplateId(Guid)} with a an ID of a VM Template that doesn't exist */
     @Test
     public void testGetAllByVMTemplateIdInvalidId() {
         assertGetByNameInvalidResults(dao.getAllByVMTemplateId(Guid.newGuid()));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMTemplateId(org.ovirt.engine.core.compat.Guid, org.ovirt.engine.core.compat.Guid, boolean) with a user that has permissions on that VM Template */
+    /** Tests {@link AuditLogDao#getAllByVMTemplateId(Guid, Guid, boolean)} with a user that has permissions on that VM Template */
     @Test
     public void testGetAllByVMTemplateIdPrivilegedUser() {
         assertGetByNameValidResults(dao.getAllByVMTemplateId(VM_TEMPLATE_ID, PRIVILEGED_USER_ID, true));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMTemplateId(org.ovirt.engine.core.compat.Guid, org.ovirt.engine.core.compat.Guid, boolean) with a user that doesn't have permissions on that VM Template, but with the filtering mechanism disabled */
+    /** Tests {@link AuditLogDao#getAllByVMTemplateId(Guid, Guid, boolean)} with a user that doesn't have permissions on that VM Template, but with the filtering mechanism disabled */
     @Test
     public void testGetAllByVMTemplateIdUnprivilegedUserNoFiltering() {
         assertGetByNameValidResults(dao.getAllByVMTemplateId(VM_TEMPLATE_ID, UNPRIVILEGED_USER_ID, false));
     }
 
-    /** Tests {@link AuditLogDao#getAllByVMTemplateId(org.ovirt.engine.core.compat.Guid, org.ovirt.engine.core.compat.Guid, boolean) with a user that doesn't have permissions on that VM Template */
+    /** Tests {@link AuditLogDao#getAllByVMTemplateId(Guid, Guid, boolean)} with a user that doesn't have permissions on that VM Template */
     @Test
     public void testGetAllByVMTemplateIdUnprivilegedUserFiltering() {
         assertGetByNameInvalidResults(dao.getAllByVMTemplateId(VM_TEMPLATE_ID, UNPRIVILEGED_USER_ID, true));

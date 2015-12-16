@@ -84,7 +84,6 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
 
     /**
      * Used by audit log to populate ${IscsiBondName} placeholder.
-     * @return
      */
     public String getIscsiBondName() {
         return getIscsiBond().getName();

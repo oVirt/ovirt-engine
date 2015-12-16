@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
- * A class that can validate a {@link vmNic} is valid from certain aspects.
+ * A class that can validate a {@link VmNic} is valid from certain aspects.
  */
 public class VmNicValidator {
 

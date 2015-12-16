@@ -74,7 +74,6 @@ public class SnapshotsManager {
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
      *
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      * @param snapshotId
      *            The ID for the snapshot.
      * @param vm
@@ -82,6 +81,7 @@ public class SnapshotsManager {
      * @param compensationContext
      *            Context for saving compensation details.
      * @return the newly created snapshot
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
@@ -98,7 +98,6 @@ public class SnapshotsManager {
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
      *
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      * @param snapshotId
      *            The ID for the snapshot.
      * @param vm
@@ -108,6 +107,7 @@ public class SnapshotsManager {
      * @param compensationContext
      *            Context for saving compensation details.
      * @return the newly created snapshot
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
@@ -125,7 +125,6 @@ public class SnapshotsManager {
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
      *
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      * @param snapshotId
      *            The ID for the snapshot.
      * @param vm
@@ -135,6 +134,7 @@ public class SnapshotsManager {
      * @param compensationContext
      *            Context for saving compensation details.
      * @return the newly created snapshot
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
@@ -512,7 +512,6 @@ public class SnapshotsManager {
     }
 
     /**
-     * @param vmDevice
      * @return true if the device can be removed (disk which allows snapshot can be removed as it is part
      * of the snapshot. Other disks shouldn't be removed as they are not part of the snapshot).
      */

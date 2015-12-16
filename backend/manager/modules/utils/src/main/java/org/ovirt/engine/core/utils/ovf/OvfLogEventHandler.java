@@ -93,8 +93,6 @@ public abstract class OvfLogEventHandler<T> {
     /**
      * Gets a map of aliases to values. Aliases replace the field names (if exist) when the field data is written to
      * OVF. Values hold the data of the fields.
-     *
-     * @return
      */
     public Map<String, String> getAliasesValuesMap() {
         HashMap<String, String> map = new HashMap<>();

@@ -315,8 +315,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
-     *
-     * @param value
      */
     @Deprecated
     public void setNumOfCpus(int value) {
@@ -1300,8 +1298,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
-     *
-     * @param value
      */
     @Deprecated
     public void setActualDiskWithSnapshotsSize(double value) {
@@ -1421,10 +1417,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     /**
      * update vm dynamic data
-     *
-     * @param vm
-     * @param vdsId
-     * @param vdsName
      */
     public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId, String vdsName) {
         setStatus(vm.getStatus());
@@ -1476,8 +1468,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     /**
      * update vm statistics data
-     *
-     * @param vm
      */
     public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {
         Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
@@ -1509,9 +1499,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     /**
      * Check if two Vms are Equal. Current equality rule is: Two Vms are equal when them points to same object or have
      * same vm_guid property
-     *
-     * @param obj
-     * @return
      */
     @Override
     public boolean equals(Object obj) {

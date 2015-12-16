@@ -85,9 +85,6 @@ public class RpmVersionUtils {
     /**
      * This method splits Rpm version (or release component) into segments. Each segment should contain only letters or
      * numbers. Characters which are not alpha numeric should be treated as delimiters
-     *
-     * @param part
-     * @return
      */
     protected static StringBuilder[] fillCompsArray(String part) {
        if (part == null) {
@@ -154,7 +151,6 @@ public class RpmVersionUtils {
     /**
      * Splits RPM into parts of Prefix, Version and Release
      *
-     * @param rpmName
      * @return array of strings filled with prefix,version,release strings (in this order)
      */
     public static String[] splitRpmToParts(String rpmName) {

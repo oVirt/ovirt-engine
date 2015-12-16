@@ -16,8 +16,8 @@ public interface EventQueue {
      * The following method is used in order to submit a synchronous event
      * The Event will submitted and a thread will be stuck until event will be
      * executed or aborted
-     * @param event
-     * @param callable
+     * @param event - description of event
+     * @param callable - a code which should be run
      */
     EventResult submitEventSync(Event event, Callable<EventResult> callable);
 

@@ -134,8 +134,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
      * Updates cluster policy parameters map to contain all default cluster properties and remove properties that
      * doesn't exist in the valid custom properties.
      *
-     * @param cluster
-     * @param clusterPolicy
      * @param customPropertiesRegexMap
      *            - custom properties for all policy unit in cluster policy
      */

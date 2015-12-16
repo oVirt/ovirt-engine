@@ -66,13 +66,11 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      * get the db generation for vm/template with the given guid
      *
      * @param id - vm/template id
-     * @return
      */
     public Long getDbGeneration(Guid id);
 
     /**
      * Increment the db version for all vms/templates in a specific storage pool.
-     * @param storagePoolId
      */
     public void incrementDbGenerationForAllInStoragePool(Guid storagePoolId);
 
@@ -80,7 +78,6 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      * increment by 1 the generation of the vm/template with the given guid.
      *
      * @param id - vm/template id
-     * @return
      */
     public void incrementDbGeneration(Guid id);
 
@@ -105,9 +102,6 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
 
     /**
      * update vm_static.cpu_profile_id for cluster
-     *
-     * @param clusterId
-     * @param cpuProfileId
      */
     void updateVmCpuProfileIdForClusterId(Guid clusterId, Guid cpuProfileId);
 

@@ -116,7 +116,7 @@ public class LocaleFilter implements Filter {
 
     /**
      * Loop over the cookies to determine if the locale is set there.
-     * @param cookies The list of {@Cookie}s.
+     * @param cookies The list of {@code Cookie}s.
      * @return The {@code Locale} if a cookie is found, null otherwise.
      */
     private Locale getLocaleFromCookies(final Cookie[] cookies) {

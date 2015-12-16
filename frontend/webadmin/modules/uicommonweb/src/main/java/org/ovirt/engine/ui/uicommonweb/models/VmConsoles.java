@@ -18,7 +18,6 @@ public interface VmConsoles {
 
     /**
      * Selects given protocol or throws IAE when the protocol cannot be used.
-     * @param protocol
      */
     void selectProtocol(ConsoleProtocol protocol) throws IllegalArgumentException;
 

@@ -27,7 +27,6 @@ public interface AuditLogDao extends Dao, SearchDao<AuditLog> {
      *            the event origin
      * @param customEventId
      *            the unique ide per origin associated with the event instance
-     * @return
      */
     AuditLog getByOriginAndCustomEventId(String origin, int customEventId);
 
@@ -37,7 +36,6 @@ public interface AuditLogDao extends Dao, SearchDao<AuditLog> {
      *            The volume id
      * @param type
      *            The entry type
-     * @return
      */
     List<AuditLog> getByVolumeIdAndType(Guid volumeId, int type);
 

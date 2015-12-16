@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.job;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
- * Factory responsible for instantiating the {@JobRepository}
+ * Factory responsible for instantiating the {@link JobRepository}
  */
 public class JobRepositoryFactory {
 

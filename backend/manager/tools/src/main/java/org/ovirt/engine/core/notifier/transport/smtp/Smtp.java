@@ -30,15 +30,20 @@ import org.slf4j.LoggerFactory;
 /**
  * The class sends e-mails to event subscribers.
  * In order to define a proper mail client, the following properties should be provided:
+ * <ul>
  * <li><code>MAIL_SERVER</code> mail server name
- * <li><code>MAIL_PORT</code> mail server port</li><br>
- * The following properties are optional: <br>
+ * <li><code>MAIL_PORT</code> mail server port</li>
+ * </ul>
+ *
+ * The following properties are optional:
+ * <ul>
  * <li><code>MAIL_USER</code> user name includes a domain (e.g. user@test.com)</li>
  * <li><code>MAIL_PASSWORD</code> user's password</li>
- * <ul>if failed to obtain or uses "localhost" if <code>MAIL_MACHINE_NAME</code> not provided</li>
+ * <li>if failed to obtain or uses "localhost" if <code>MAIL_MACHINE_NAME</code> not provided</li>
  * <li><code>MAIL_FROM</code> specifies "from" address in sent message, or uses value of property <code>MAIL_USER</code> if not provided</li>
- * <ul><li>"from" address should include a domain, same as <code>MAIL_USER</code> property
- * <li><code>MAIL_REPLY_TO</code> specifies "replyTo" address in outgoing message
+ * <li>"from" address should include a domain, same as <code>MAIL_USER</code> property</li>
+ * <li><code>MAIL_REPLY_TO</code> specifies "replyTo" address in outgoing message</li>
+ * </ul>
  */
 public class Smtp extends Transport {
 
@@ -195,7 +200,6 @@ public class Smtp extends Transport {
      *            the subject of the message
      * @param messageBody
      *            the body of the message
-     * @throws MessagingException
      */
     private void sendMail(String recipient, String messageSubject, String messageBody) throws MessagingException {
         try {

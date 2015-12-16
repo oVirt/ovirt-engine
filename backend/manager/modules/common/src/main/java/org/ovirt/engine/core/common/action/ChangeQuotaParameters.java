@@ -15,7 +15,6 @@ public class ChangeQuotaParameters extends VdcActionParametersBase {
      * @param quotaId the new quota id
      * @param entityId vm or disk
      * @param containerId in case of vm it's cluster, in case of disk it's storage
-     * @param storagePoolId
      */
     public ChangeQuotaParameters(Guid quotaId, Guid entityId, Guid containerId, Guid storagePoolId) {
         this.quotaId = quotaId;

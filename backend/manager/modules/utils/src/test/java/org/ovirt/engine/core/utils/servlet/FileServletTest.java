@@ -54,7 +54,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#init(javax.servlet.ServletConfig)}.
-     * @throws ServletException
      */
     @Test(expected=ServletException.class)
     public void testInitServletConfig_NoInitParams() throws ServletException {
@@ -64,7 +63,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#init(javax.servlet.ServletConfig)}.
-     * @throws ServletException
      */
     @Test
     public void testInitServletConfig_BaseSet() throws ServletException {
@@ -76,8 +74,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet_Empty() throws ServletException, IOException {
@@ -87,8 +83,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet1() throws ServletException, IOException {
@@ -106,8 +100,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet2() throws ServletException, IOException {
@@ -126,8 +118,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet3() throws ServletException, IOException {
@@ -146,8 +136,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#checkForIndex(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
-     * @throws URISyntaxException
      */
     @Test
     public void testCheckForIndex_BadParams() throws IOException, URISyntaxException {
@@ -157,8 +145,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#checkForIndex(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
-     * @throws URISyntaxException
      */
     @Test
     public void testCheckForIndex_Exists() throws IOException, URISyntaxException {
@@ -172,8 +158,6 @@ public class FileServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#checkForIndex(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
-     * @throws URISyntaxException
      */
     @Test
     public void testCheckForIndex_Exists2() throws IOException, URISyntaxException {

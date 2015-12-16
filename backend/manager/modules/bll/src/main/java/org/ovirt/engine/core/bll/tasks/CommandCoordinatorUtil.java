@@ -51,7 +51,6 @@ public class CommandCoordinatorUtil {
      * Checks if there are tasks of the specified type existing on the entity
      * @param id The entity id
      * @param type The action type
-     * @return
      */
     public static boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
         return getAsyncTaskManager().hasTasksForEntityIdAndAction(id, type);
@@ -60,7 +59,6 @@ public class CommandCoordinatorUtil {
     /**
      * Checks if there are tasks existing on the storage pool
      * @param storagePoolID Id of the storage pool
-     * @return
      */
     public static boolean hasTasksByStoragePoolId(Guid storagePoolID) {
         return getAsyncTaskManager().hasTasksByStoragePoolId(storagePoolID);
@@ -76,7 +74,6 @@ public class CommandCoordinatorUtil {
     /**
      * Checks if there are tasks on the entity
      * @param id The entity id
-     * @return
      */
     public static boolean entityHasTasks(Guid id) {
         return getAsyncTaskManager().entityHasTasks(id);
@@ -99,7 +96,6 @@ public class CommandCoordinatorUtil {
      * @param parentCommand The type of command issuing the task
      * @param description A message which describes the task
      * @param entitiesMap map of entities
-     * @return
      */
     public static Guid createTask(
             Guid taskId,
@@ -122,7 +118,6 @@ public class CommandCoordinatorUtil {
      * @param command the command object creating the task
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
-     * @return
      */
     public static SPMAsyncTask concreteCreateTask(
             Guid taskId,
@@ -157,7 +152,6 @@ public class CommandCoordinatorUtil {
      * @param command the command object retrieving or creating the task
      * @param asyncTaskCreationInfo Info on how to create the task if one does not exist
      * @param parentCommand The type of command issuing the task
-     * @return
      */
     public static AsyncTask getAsyncTask(
             Guid taskId,
@@ -172,7 +166,6 @@ public class CommandCoordinatorUtil {
      * @param command the command object creating the task
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
-     * @return
      */
     public static AsyncTask createAsyncTask(
             CommandBase<?> command,
@@ -210,7 +203,6 @@ public class CommandCoordinatorUtil {
 
     /**
      * Get the async task from the database identified by the asyncTaskId
-     * @param asyncTaskId
      * @return The async task to be saved
      */
     public static AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
@@ -266,7 +258,6 @@ public class CommandCoordinatorUtil {
      * @param commandId The id of the parent command
      * @param childActionType The action type of the child command
      * @param status The status of the child command, can be null
-     * @return
      */
     public static List<Guid> getChildCommandIds(Guid commandId, VdcActionType childActionType, CommandStatus status) {
         return coco.getChildCommandIds(commandId, childActionType, status);

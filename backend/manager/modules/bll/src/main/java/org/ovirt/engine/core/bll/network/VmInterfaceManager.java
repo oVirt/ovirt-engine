@@ -68,7 +68,6 @@ public class VmInterfaceManager {
      *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPoolManagerStrategy}
      * @param clusterCompatibilityVersion
      *            the compatibility version of the cluster
-     * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
     public void add(final VmNic iface,
             CompensationContext compensationContext,
@@ -230,9 +229,6 @@ public class VmInterfaceManager {
 
     /**
      * Log the given loggable & message to the {@link AuditLogDirector}.
-     *
-     * @param logable
-     * @param auditLogType
      */
     protected void log(AuditLogableBase logable, AuditLogType auditLogType) {
         new AuditLogDirector().log(logable, auditLogType);

@@ -29,10 +29,6 @@ public class NetworkOperationFactory {
     /**
      * Gets the valid Operation involving the two operands.<BR>
      * If no Operation is valid returns null operation
-     *
-     * @param op1
-     * @param op2
-     * @return
      */
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
         if (noValidOperationForFirstOperand(op1)) {
@@ -258,9 +254,6 @@ public class NetworkOperationFactory {
 
     /**
      * Create an Operation Factory with the provided list of Networks and Nics
-     *
-     * @param allNetworks
-     * @param nics
      */
     public NetworkOperationFactory(List<LogicalNetworkModel> allNetworks, List<NetworkInterfaceModel> nics) {
         this.allNetworks = allNetworks;
@@ -270,10 +263,6 @@ public class NetworkOperationFactory {
     /**
      * Calculate all possible Commands for this Item, taking into account all Network Items (Nics and Networks) this
      * Factory is aware of.
-     *
-     * @param item
-     * @param allNics
-     * @return
      */
     public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item,
             DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel) {

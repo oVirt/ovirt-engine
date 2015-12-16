@@ -58,10 +58,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
-
     protected AddStoragePoolWithStoragesCommand(Guid commandId) {
         super(commandId);
     }

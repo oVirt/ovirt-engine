@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
- * A test case for {@GetVmConfigurationBySnapshotQuery}. This test mocks away all
+ * A test case for {@link GetVmConfigurationBySnapshotQuery}. This test mocks away all
  * the Daos, and just tests the flow of the query itself.
  */
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {

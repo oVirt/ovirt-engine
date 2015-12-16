@@ -26,15 +26,11 @@ public @interface OvfExportOnlyField {
 
     /**
      * Name of field as will be written in OVF
-     *
-     * @return
      */
     String name() default "";
 
     /**
      * String representation of value to ignore for logging
-     *
-     * @return
      */
     String valueToIgnore() default "";
 

@@ -17,7 +17,6 @@ public interface StorageServerConnectionLunMapDao extends GenericDao<LUNStorageS
      *
      * @param lunId
      *            LUN id.
-     * @return
      */
     List<LUNStorageServerConnectionMap> getAll(final String lunId);
 }

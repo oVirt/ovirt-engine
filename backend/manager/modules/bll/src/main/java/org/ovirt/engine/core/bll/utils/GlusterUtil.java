@@ -428,10 +428,6 @@ public class GlusterUtil {
 
     /**
      * Checks if the given features is supported as additional feature in the cluster
-     *
-     * @param clusterId
-     * @param featureName
-     * @return
      */
     private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
         Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported =

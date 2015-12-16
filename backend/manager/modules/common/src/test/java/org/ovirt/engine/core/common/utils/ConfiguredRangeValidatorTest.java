@@ -70,11 +70,11 @@ public class ConfiguredRangeValidatorTest {
     }
 
     /**
-     * The test assures the precedence of the configuration value over the min attribute of the annotated value
-     * <p>
-     * The minimum defined by <code>minConfigValue<code> is <code>TEST_MIN_RANGE</code>.<br>
-     * The minimum defined by <code>min()</code> is <code>TEST_MIN_RANGE + 2</code>.<br>
-     * The test verifies the valid values are greater then the min value obtained from <code>minConfigValue<code><br>
+     * The test assures the precedence of the configuration value over the min attribute of the annotated value.
+     *
+     * The minimum defined by <code>minConfigValue</code> is <code>TEST_MIN_RANGE</code>.<br/>
+     * The minimum defined by <code>min()</code> is <code>TEST_MIN_RANGE + 2</code>.<br/>
+     * The test verifies the valid values are greater then the min value obtained from <code>minConfigValue</code><br/>
      */
     @Test
     public void valueLowerLimitSetByConfigValue() {

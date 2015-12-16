@@ -99,8 +99,8 @@ public enum VMStatus implements Identifiable {
     /**
      * This method reflects whether the VM is surely running or paused in this status
      *
-     * @see #isRunning()
      * @return true if this status indicates that the VM is paused or running for sure, otherwise false
+     * @see #isRunning()
      */
     public boolean isRunningOrPaused() {
         return this.isRunning() || this == Paused || this.isHibernating() || this == RestoringState;

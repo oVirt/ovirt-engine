@@ -16,8 +16,6 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RemovePermissionCommand(Guid commandId) {
         super(commandId);

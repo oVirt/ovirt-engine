@@ -84,9 +84,6 @@ public class SnapshotsValidator {
 
     /**
      * Checks if the given snapshot's type is within the given types.
-     * @param snapshot
-     * @param supportedtypes
-     * @return
      */
     public ValidationResult snapshotTypeSupported(Snapshot snapshot, Collection<Snapshot.SnapshotType> supportedtypes) {
         if (!supportedtypes.contains(snapshot.getType())) {

@@ -21,8 +21,6 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RestoreStatelessVmCommand(Guid commandId) {
         super(commandId);

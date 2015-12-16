@@ -28,8 +28,8 @@ public interface NetworkClusterDao extends Dao {
     /**
      * Retrieves all network clusters for the specified cluster.
      *
-     * @param the
-     *            network cluster
+     * @param cluster
+     *            the network cluster
      * @return the list of clusters
      */
     List<NetworkCluster> getAllForCluster(Guid cluster);
@@ -39,7 +39,6 @@ public interface NetworkClusterDao extends Dao {
      *
      * @param network
      *            the network
-     * @return
      */
     List<NetworkCluster> getAllForNetwork(Guid network);
 
@@ -78,33 +77,21 @@ public interface NetworkClusterDao extends Dao {
 
     /**
      * Sets this cluster network as the only display network on the cluster.
-     *
-     * @param clusterId
-     * @param networkId
      */
     void setNetworkExclusivelyAsDisplay(Guid clusterId, Guid networkId);
 
     /**
      * Sets this cluster network as the only migration network on the cluster.
-     *
-     * @param clusterId
-     * @param networkId
      */
     void setNetworkExclusivelyAsMigration(Guid clusterId, Guid networkId);
 
     /**
      * Sets this cluster network as the only management network on the cluster.
-     *
-     * @param clusterId
-     * @param networkId
      */
     void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId);
 
     /**
      * Sets this cluster network as the only gluster storage network on the cluster.
-     *
-     * @param clusterId
-     * @param networkId
      */
     void setNetworkExclusivelyAsGluster(Guid clusterId, Guid networkId);
 }

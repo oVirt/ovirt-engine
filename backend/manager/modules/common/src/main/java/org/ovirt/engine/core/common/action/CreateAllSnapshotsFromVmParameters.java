@@ -71,8 +71,6 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     /**
      * This method is for internal use only, disregard in API.
-     *
-     * @param snapshotType
      */
     public void setSnapshotType(SnapshotType snapshotType) {
         this.snapshotType = snapshotType;

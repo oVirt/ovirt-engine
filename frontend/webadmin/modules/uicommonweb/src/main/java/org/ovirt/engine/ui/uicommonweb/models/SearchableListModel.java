@@ -688,8 +688,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
      * <p>
      * If server-side sorting via the search query is supported by this model:
      * <ul>
-     * <li>override {@link #supportsServerSideSorting} to return {@code true}
-     * <li>make sure {@link #syncSearch} implementation uses {@link #applySortOptions}
+     * <li>override {@link #supportsServerSideSorting} to return {@code true}</li>
+     * <li>make sure {@code syncSearch} implementation uses {@link #applySortOptions}</li>
      * </ul>
      */
     protected void syncSearch() {

@@ -13,10 +13,7 @@ public abstract class StorageDomainManagementCommandBase<T extends StorageDomain
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
-
     protected StorageDomainManagementCommandBase(Guid commandId) {
         super(commandId);
     }

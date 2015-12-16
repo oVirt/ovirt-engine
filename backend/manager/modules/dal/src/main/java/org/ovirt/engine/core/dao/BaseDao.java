@@ -111,9 +111,7 @@ public abstract class BaseDao {
     /**
      * Returns a Double or a null if the column was NULL.
      * @param resultSet the ResultSet to extract the result from
-     * @param columnName
      * @return a Double or null
-     * @throws SQLException
      */
     public final static Double getDouble(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.getDouble(columnName) == 0 && resultSet.wasNull()) {
@@ -126,9 +124,7 @@ public abstract class BaseDao {
     /**
      * Returns a Long or a null if the column was NULL.
      * @param resultSet the ResultSet to extract the result from
-     * @param columnName
      * @return a Long or null
-     * @throws SQLException
      */
     public final static Long getLong(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.getLong(columnName) == 0 && resultSet.wasNull()) {
@@ -141,9 +137,7 @@ public abstract class BaseDao {
     /**
      * Returns a Integer or a null if the column was NULL.
      * @param resultSet the ResultSet to extract the result from
-     * @param columnName
      * @return a Integer or null
-     * @throws SQLException
      */
     protected final static Integer getInteger(ResultSet resultSet, String columnName) throws SQLException {
         Integer value = resultSet.getInt(columnName);

@@ -120,7 +120,6 @@ public class VdsFenceOptions implements Serializable {
      *            The agent.
      * @param displayedKey
      *            The displayed key.
-     * @return
      */
     private String getRealKey(String agent, String displayedKey) {
         String result = "";
@@ -143,7 +142,6 @@ public class VdsFenceOptions implements Serializable {
      *            The agent.
      * @param realKey
      *            The real key.
-     * @return
      */
     private String getDisplayedKey(String agent, String realKey) {
         String result = "";
@@ -174,7 +172,6 @@ public class VdsFenceOptions implements Serializable {
      *
      * @param key
      *            The key.
-     * @return
      */
     private String getOptionType(String key) {
         String result = "";
@@ -189,7 +186,6 @@ public class VdsFenceOptions implements Serializable {
      *
      * @param value
      *            The value.
-     * @return
      */
     private static String translateBoolValue(String value) {
         String result;
@@ -292,8 +288,6 @@ public class VdsFenceOptions implements Serializable {
     /**
      * handles agent default options
      *
-     * @param agent
-     * @param fenceOptions
      * @return String the options after adding default agent parameters
      */
     public static String getDefaultAgentOptions(String agent, String fenceOptions, ArchitectureType architectureType) {
@@ -465,10 +459,7 @@ public class VdsFenceOptions implements Serializable {
 
     /**
      * Gets the internal representation of the options.
-     *
-     * @return
      */
-
     public String toInternalString() {
         StringBuilder value = new StringBuilder();
         String delimiter = "";

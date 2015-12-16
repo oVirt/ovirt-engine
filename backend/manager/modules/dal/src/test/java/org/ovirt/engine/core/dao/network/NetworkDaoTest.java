@@ -212,7 +212,6 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
     /**
      * Asserts the result of {@link NetworkDao#getAllForCluster(Guid)} contains all the required networks
-     * @param result
      */
     private static void assertGetAllForClusterResult(List<Network> result) {
         assertNotNull(result);

@@ -301,7 +301,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * throttle bulk run of VMs by waiting for the update of run-time to kick in and fire <br>
      * the DecreasePendingVms event.
      * @see VdsEventListener
-     * @See HostMonitoring
+     * @see HostMonitoring
      */
     @Override
     public void delay(Guid vdsId) {
@@ -329,8 +329,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     /**
      * get the monitor object of this host. VDSs have monitors exposed by their {@link org.ovirt.engine.core.vdsbroker.VdsManager}
      *
-     * @param vdsId
-     * @return {@link org.ovirt.engine.core.vdsbroker.VdsMonitor} for signaling on thread actions
+     * @return VdsMonitor for signaling on thread actions
      */
     private VdsMonitor getMonitor(Guid vdsId) {
         return resourceManager.getVdsManager(vdsId).getVdsMonitor();

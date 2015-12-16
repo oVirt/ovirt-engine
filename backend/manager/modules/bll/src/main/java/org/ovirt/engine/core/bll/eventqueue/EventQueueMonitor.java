@@ -112,7 +112,6 @@ public class EventQueueMonitor implements EventQueue {
      * already submitted to queue
      * @param event
      *            - submitted event
-     * @return
      */
     private boolean isEventShouldBeFirst(Event event) {
         return event.getEventType() == EventType.RECOVERY;

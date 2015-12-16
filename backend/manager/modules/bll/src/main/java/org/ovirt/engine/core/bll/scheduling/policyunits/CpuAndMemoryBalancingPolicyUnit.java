@@ -256,7 +256,6 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param lowUtilization - load threshold in percent
      * @param minVmCount - minimal number of VMs on a host
      * @param cpuOverCommitDurationMinutes - time limit in minutes
-     * @return
      */
     protected List<VDS> getUnderUtilizedCPUHosts(Collection<VDS> relevantHosts,
                                                  final int lowUtilization,

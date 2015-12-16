@@ -153,7 +153,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     /**
      * The following method will perform a check for correctness of operation
      * It is allow to move only if it is image of template
-     * @return
      */
     protected boolean checkOperationIsCorrect() {
         if (getParameters().getOperation() == ImageOperation.Move
@@ -181,7 +180,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     /**
      * Check if destination storage has enough space
-     * @return
      */
     protected boolean validateSpaceRequirements() {
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
@@ -243,7 +241,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     /**
      * If a disk is attached to VM it can be moved when it is unplugged or at case that disk is plugged
      * vm should be down
-     * @return
      */
     protected boolean checkCanBeMoveInVm() {
         return validate(createDiskValidator().isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
@@ -262,7 +259,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     /**
      * The following method will check, if we can move disk to destination storage domain, when
      * it is based on template
-     * @return
      */
     protected boolean checkTemplateInDestStorageDomain() {
         if (getParameters().getOperation() == ImageOperation.Move

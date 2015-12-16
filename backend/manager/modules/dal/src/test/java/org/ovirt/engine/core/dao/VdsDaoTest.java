@@ -104,8 +104,6 @@ public class VdsDaoTest extends BaseDaoTestCase {
 
     /**
      * Asserts the result from {@link VdsDao#get(Guid)} is correct.
-     *
-     * @param result
      */
     private void assertCorrectGetResult(VDS result) {
         assertNotNull(result);
@@ -115,8 +113,6 @@ public class VdsDaoTest extends BaseDaoTestCase {
     /**
      * Asserts the result from a call to {@link VdsDao#get(Guid)}
      * that isn't supposed to return any data is indeed empty.
-     *
-     * @param result
      */
     private static void assertIncorrectGetResult(List<VDS> result) {
         assertNotNull(result);

@@ -18,8 +18,6 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     public RolesCommandBase(Guid commandId) {
         super(commandId);

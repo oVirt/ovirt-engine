@@ -133,7 +133,6 @@ public class JobRepositoryImpl implements JobRepository {
      * Gets a list of {@link Step} entities ordered by:
      * <li> parent step id, preceded by nulls
      * <li> step number
-     * @param steps
      * @return a collection of the steps.
      */
     private List<Step> buildStepsTree(List<Step> steps) {

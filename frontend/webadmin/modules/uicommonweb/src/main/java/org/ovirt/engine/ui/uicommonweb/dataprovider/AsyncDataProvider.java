@@ -461,8 +461,6 @@ public class AsyncDataProvider {
 
     /**
      * Check if memory snapshot is supported
-     * @param vm
-     * @return
      */
     public boolean isMemorySnapshotSupported(VM vm) {
         if (vm == null) {
@@ -2777,8 +2775,6 @@ public class AsyncDataProvider {
 
     /**
      * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
-     *
-     * @param version
      */
     public Object getConfigValuePreConverted(ConfigurationValues configValue, String version) {
         KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);

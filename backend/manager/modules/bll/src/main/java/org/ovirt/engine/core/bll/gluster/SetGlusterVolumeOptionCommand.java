@@ -66,8 +66,6 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
     /**
      * Updates the volume option in DB. If the option with given key already exists for the volume, <br>
      * it will be updated, else inserted.
-     *
-     * @param option
      */
     private void updateOptionInDb(final GlusterVolumeOptionEntity option) {
         // update the option value if it exists, else add it

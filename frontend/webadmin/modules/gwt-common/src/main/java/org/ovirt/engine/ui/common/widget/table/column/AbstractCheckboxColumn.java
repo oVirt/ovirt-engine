@@ -18,8 +18,6 @@ import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
  * Column that renders a checkbox. Supports tooltips.
- *
- * @param <T>
  */
 public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolean> {
 

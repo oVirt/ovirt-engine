@@ -121,7 +121,7 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
      * Read the json files from the directory.
      *
      * @param configPath directory to read
-     * @return List<JsonNode> containing each file read
+     * @return List&lt;JsonNode&gt; containing each file read
      */
     protected List<JsonNode> readJsonFiles(File configPath) {
         List<JsonNode> nodes = new ArrayList<>();
@@ -177,7 +177,6 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
      * Get List of the installed documentation locales.
      *
      * @param manualDir directory to search
-     * @return
      */
     protected List<String> getLocales(File manualDir) {
 

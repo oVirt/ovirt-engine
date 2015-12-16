@@ -13,7 +13,6 @@ public interface TooltipHeader {
      * The tooltip cell will then use this value when rendering the header.
      * </p>
      *
-     * @param object
      * @return tooltip content
      */
     public SafeHtml getTooltip();

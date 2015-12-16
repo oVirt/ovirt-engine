@@ -73,8 +73,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param numOfVfs
-     *
      * @return An error iff <code>numOfVfs</code> is bigger than the <code>vfsConfig.maxNumOfVfs</code>
      */
     public ValidationResult numOfVfsInValidRange(int numOfVfs) {
@@ -95,8 +93,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param networkId
-     *
      * @return An error iff a network with the specified id doesn't exist
      */
     public ValidationResult networkExists(Guid networkId) {
@@ -106,8 +102,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param networkId
-     *
      * @return An error iff the network is already part of the VFs configuration
      */
     public ValidationResult networkNotInVfsConfig(Guid networkId) {
@@ -118,8 +112,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param networkId
-     *
      * @return An error iff the network is not part of the VFs configuration
      */
     public ValidationResult networkInVfsConfig(Guid networkId) {
@@ -130,8 +122,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param label
-     *
      * @return An error iff the label is already part of the VFs configuration
      */
     public ValidationResult labelNotInVfsConfig(String label) {
@@ -141,8 +131,6 @@ public class VfsConfigValidator {
     }
 
     /**
-     * @param label
-     *
      * @return An error iff the label is not part of the VFs configuration
      */
     public ValidationResult labelInVfsConfig(String label) {

@@ -47,16 +47,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     /**
      * use this constructor to pass a network object that holds other 'logical' properties such as mtu, vmNetwork and so
      * on...
-     *
-     * @param vdsId
-     * @param net
-     * @param bondName
-     * @param nics
-     * @param address
-     * @param subnet
-     * @param gateway
-     * @param bondingOptions
-     * @param bootProtocol
      */
     public NetworkVdsmVDSCommandParameters(Guid vdsId,
             Network net,

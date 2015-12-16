@@ -102,10 +102,7 @@ public class TagsDirector {
 
     /**
      * Recursive tree initialization call
-     *
-     * @param tag
      */
-
     private void addChildren(Tags tag) {
         log.info("Tag '{}' added to tree", tag.getTagName());
         List<Tags> children = getTagDao().getAllForParent(tag.getTagId());
@@ -165,8 +162,6 @@ public class TagsDirector {
 
     /**
      * Update tag. We assume that the id doesn't change.
-     *
-     * @param tag
      */
     public void updateTag(Tags tag) {
         if (tagsMapByID.containsKey(tag.getTagId())) {
@@ -305,9 +300,6 @@ public class TagsDirector {
     /**
      * Get tag from in memory data structure (by ID). This tag will be with all children tree initialized as opposite to
      * tag from db.
-     *
-     * @param tagId
-     * @return
      */
     public Tags getTagById(Guid tagId) {
         if (tagsMapByID.containsKey(tagId)) {
@@ -319,9 +311,6 @@ public class TagsDirector {
 
     /**
      * Get tag from in memory data structure (by name).
-     *
-     * @param tagName
-     * @return
      */
     public Tags getTagByName(String tagName) {
         if (tagsMapByName.containsKey(tagName)) {

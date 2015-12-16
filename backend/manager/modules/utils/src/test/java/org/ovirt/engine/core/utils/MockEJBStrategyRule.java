@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
  * Since most classes that use {@link EjbUtils} rely on it for transaction management services, they are mocked by default.
  * Additional bean may be mocked either by passing the mocks during the rule's construction or by calling {@link #mockBean(BeanType, Object)}.
  *
- * To use it, simple add a {@link MockEJBStrategyRule} member to your test, with the {@link @Rule} annotation.
+ * To use it, simple add a {@link MockEJBStrategyRule} member to your test, with the {@link org.junit.Rule} annotation.
  */
 public class MockEJBStrategyRule extends TestWatcher {
 

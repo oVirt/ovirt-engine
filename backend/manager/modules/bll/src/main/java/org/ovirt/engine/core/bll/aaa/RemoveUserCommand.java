@@ -20,8 +20,6 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected RemoveUserCommand(Guid commandId) {
         super(commandId);

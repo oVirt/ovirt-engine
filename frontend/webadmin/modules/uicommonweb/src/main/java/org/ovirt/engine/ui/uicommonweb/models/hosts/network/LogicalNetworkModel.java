@@ -36,9 +36,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     /**
      * attach a network to a target nic. If the network has VLAN id, it returns the newly created vlan bridge
-     *
-     * @param targetNic
-     * @return
      */
     public VdsNetworkInterface attach(NetworkInterfaceModel targetNic, boolean createBridge) {
         attachedToNic = targetNic;

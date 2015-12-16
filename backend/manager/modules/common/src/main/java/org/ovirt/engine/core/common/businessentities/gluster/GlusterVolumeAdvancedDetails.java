@@ -46,9 +46,6 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
 
     /**
      * Note: pid, status and port are not copied as they are already populated in the 'from' object
-     *
-     * @param from
-     * @param to
      */
     private void copyBrickProperties(BrickProperties from, BrickProperties to) {
         to.setTotalSize(from.getTotalSize());

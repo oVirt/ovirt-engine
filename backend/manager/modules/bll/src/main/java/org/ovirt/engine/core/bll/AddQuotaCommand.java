@@ -82,8 +82,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     /**
      * Set quota from the parameter
-     *
-     * @return
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();

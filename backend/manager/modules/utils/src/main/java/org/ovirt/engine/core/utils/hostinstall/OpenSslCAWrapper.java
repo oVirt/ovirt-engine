@@ -150,8 +150,6 @@ public class OpenSslCAWrapper {
 
     /**
      * Runs the SignReq.sh script
-     * @param command_array
-     * @param signatureTimeout
      * @return whether or not the certificate signing was successful
      */
     private boolean runCommandArray(String[] command_array, int signatureTimeout) {
@@ -202,7 +200,6 @@ public class OpenSslCAWrapper {
 
     /**
      * Returns a formatted String from the content of the given bufferedReader
-     * @param bufferedReader
      */
     private String readAllLines(BufferedReader bufferedReader) {
         String tempString;

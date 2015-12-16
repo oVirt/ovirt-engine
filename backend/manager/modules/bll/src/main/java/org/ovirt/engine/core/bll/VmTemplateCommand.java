@@ -44,8 +44,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     private VmTemplateDao vmTemplateDao;
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected VmTemplateCommand(Guid commandId) {
         super(commandId);

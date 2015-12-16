@@ -24,8 +24,6 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected PermissionsCommandBase(Guid commandId) {
         super(commandId);
@@ -45,8 +43,8 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     /**
      * Get the object translated type (e.g Host , VM), on which the MLA operation has been executed on.
      *
-     * @see VdcObjectType
      * @return Translated object type.
+     * @see VdcObjectType
      */
     public String getVdcObjectType() {
         return getParameters().getPermission().getObjectType().getVdcObjectTranslation();

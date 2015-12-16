@@ -259,9 +259,6 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
 
         /**
          * since quota can be null, we need to preserve null in the list
-         *
-         * @param str
-         * @return
          */
         private ArrayList<String> splitPreserveAllTokens(String str) {
             if (StringUtils.isEmpty(str)) {
@@ -273,9 +270,6 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
 
         /**
          * since some disk images can contain empty quota, we need to preserve null in the list.
-         *
-         * @param str
-         * @return
          */
         private ArrayList<Guid> getGuidListFromStringPreserveAllTokens(String str) {
             ArrayList<Guid> guidList = new ArrayList<>();

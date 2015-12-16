@@ -241,8 +241,6 @@ public final class AsyncTaskManager {
     /**
      * We group the tasks by the root command id, so that we can identify the
      * commands that were partially submitted to vdsm
-     * @param tasksInDB
-     * @return
      */
     private Map<Guid, List<AsyncTask>> groupTasksByRootCommandId(List<AsyncTask> tasksInDB) {
         Map<Guid, List<AsyncTask>> rootCommandIdToCommandsMap = new HashMap<>();
@@ -265,7 +263,6 @@ public final class AsyncTaskManager {
      * If none of the tasks were submitted to vdsm, the empty place holders
      * are deleted from the database and we endAction on the command with
      * failure
-     * @param task
      */
     private void handlePartiallyExecutedTaskOfCommand(
             final AsyncTask task) {
@@ -415,7 +412,7 @@ public final class AsyncTaskManager {
     /**
      * Update task status based on asyncTaskMap.
      *
-     * @param asyncTaskMap - Task statuses Map fetched from VDSM.
+     * @param poolsAllTasksMap Task statuses Map fetched from VDSM.
      */
     private void updateTaskStatuses(
             Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
@@ -477,8 +474,8 @@ public final class AsyncTaskManager {
     /**
      * Get a Set of all the storage pool id's of tasks that should pool.
      *
-     * @see SPMAsyncTask#getShouldPoll()
      * @return - Set of active tasks.
+     * @see SPMAsyncTask#getShouldPoll()
      */
     private Set<Guid> getPoolIdsTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<>();
@@ -494,8 +491,6 @@ public final class AsyncTaskManager {
     /**
      * get list of pools that have only cleared and old tasks (which don't exist
      * anymore in the manager):
-     *
-     * @return
      */
     synchronized private void removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<>();

@@ -80,8 +80,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AddDiskCommand(Guid commandId) {
         super(commandId);
@@ -562,7 +560,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     /**
      * If disk is not allow to have snapshot no VM snapshot Id should be updated.
-     * @param parameters
      */
     private void setVmSnapshotIdForDisk(AddImageFromScratchParameters parameters) {
         if (getParameters().getDiskInfo().isAllowSnapshot()) {

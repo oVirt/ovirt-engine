@@ -227,8 +227,6 @@ public class BackendStorageDomainResource
 
     /**
      * if user added new LUNs - extend the storage domain.
-     *
-     * @param incoming
      */
     private void extendStorageDomain(StorageDomain incoming, StorageDomain storageDomain, StorageType storageType) {
         if (incoming.getStorage() == null) {

@@ -18,8 +18,6 @@ public abstract class JsonGuidMixIn extends Guid {
     /**
      * Tells Jackson that the constructor with the {@link String} argument is to be used to deserialize the entity,
      * using the "uuid" property as the argument.
-     *
-     * @param candidate
      */
     @JsonCreator
     public JsonGuidMixIn(@JsonProperty("uuid") String candidate) {

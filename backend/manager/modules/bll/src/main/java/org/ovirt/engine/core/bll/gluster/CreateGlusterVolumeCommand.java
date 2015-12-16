@@ -209,8 +209,6 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     /**
      * Sets all options of a volume by invoking the action {@link VdcActionType#SetGlusterVolumeOption} in a loop. <br>
      * Errors if any are collected and added to "executeFailedMessages"
-     *
-     * @param volume
      */
     private void setVolumeOptions(GlusterVolumeEntity volume) {
         List<String> errors = new ArrayList<>();

@@ -79,7 +79,6 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     /**
      * Exposing this to be called via BLL command in case of force sync of geo-replication session data for volume
-     * @param volume
      */
     public void refreshGeoRepDataForVolume(final GlusterVolumeEntity volume) {
         if (volume == null) {
@@ -331,9 +330,6 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     /**
      * This method updates the status depending on health of individual nodes
-     *
-     * @param volume
-     * @param session
      */
     private void updateGeoRepStatus(GlusterVolumeEntity volume, GlusterGeoRepSession session) {
 

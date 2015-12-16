@@ -50,9 +50,6 @@ public class PostableFrame extends Frame {
 
     /**
      * Set a POST parameter
-     *
-     * @param name
-     * @param value
      */
     public void setParameter(String name, String value) {
         // get from hiddens map
@@ -69,9 +66,6 @@ public class PostableFrame extends Frame {
 
     /**
      * Add a POST parameter
-     *
-     * @param name
-     * @param value
      */
     public void addParameter(String name, String value) {
         // add hidden to form

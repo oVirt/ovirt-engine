@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * An implementation of a list which operates on Builder<S, D>
+ * An implementation of a list which operates on Builder.
  * Adds operations head() and tail().
  *
  * @param <S> the source

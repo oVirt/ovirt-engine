@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.TimeSpan;
 public class DateTimeUtils {
 
     /**
-     * @param source
      * @return Object of type TimeSpan containing the time part of date.
      */
     public static TimeSpan getTimeOfDay(Date source) {

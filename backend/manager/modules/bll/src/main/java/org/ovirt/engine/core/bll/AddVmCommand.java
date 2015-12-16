@@ -395,7 +395,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     /**
      * Check if destination storage has enough space
-     * @return
      */
     protected boolean validateSpaceRequirements() {
         for (Map.Entry<Guid, List<DiskImage>> sdImageEntry : storageToDisksMap.entrySet()) {
@@ -1629,7 +1628,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      *         </li>
      *     <li>Otherwise (at least one icon id is null) both icon ids are copied from template.</li>
      * </ul>
-     * @param vmStatic
      */
     public void setIconIds(VmStatic vmStatic) {
         if (getParameters().getVmLargeIcon() != null){

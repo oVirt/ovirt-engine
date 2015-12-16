@@ -48,8 +48,7 @@ public class VmNetworkInterface extends VmNic {
     /**
      * The network name the vnic is attached to
      *
-     * @param networkName
-     * @deprecated since ovirt 3.3 the network name is replaced by {@link VmNic.getVnicProfileId()} which determines the
+     * @deprecated since ovirt 3.3 the network name is replaced by {@link VmNic#getVnicProfileId()} which determines the
      *             vnic profile used for using the network
      */
     @Deprecated

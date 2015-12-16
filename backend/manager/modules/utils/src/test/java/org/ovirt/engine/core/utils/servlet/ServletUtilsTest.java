@@ -149,7 +149,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
-     * @throws URISyntaxException
      */
     @Test
     public void testGetFileFromString_Happy() throws URISyntaxException {
@@ -171,7 +170,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_MissingFile() throws IOException {
@@ -186,7 +184,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_PNG() throws IOException {
@@ -206,7 +203,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_PNGNoMime() throws IOException {
@@ -226,7 +222,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, boolean)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_PNGNoMime_Cache() throws IOException {
@@ -248,7 +243,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, boolean)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_PNGNoMime_NoCache() throws IOException {
@@ -286,7 +280,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void test_ETag_Format() throws IOException {
@@ -298,7 +291,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_ETag_None() throws IOException {
@@ -315,7 +307,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_ETag_Same() throws IOException {
@@ -332,7 +323,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_ETag_All() throws IOException {
@@ -349,7 +339,6 @@ public class ServletUtilsTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSendFile_ETag_Different() throws IOException {

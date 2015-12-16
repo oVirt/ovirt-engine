@@ -22,7 +22,7 @@ public class DisplayHelper {
     private DisplayHelper() { }
 
     /**
-     * Returs graphics types of graphics devices of entity with given id.
+     * Returns graphics types of graphics devices of entity with given id.
      */
     public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id) {
         List<GraphicsType> graphicsTypes = new ArrayList<>();
@@ -73,7 +73,6 @@ public class DisplayHelper {
      * Sets static display info (derived from graphics device) to the Template.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
      * If there are multiple graphics, SPICE is preferred.
-     * @param template
      */
     public static void adjustDisplayData(BackendResource res, Template template) {
         adjustDisplayDataInternal(res, template);
@@ -83,7 +82,6 @@ public class DisplayHelper {
      * Sets static display info (derived from graphics device) to the VM.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
      * If there are multiple graphics, SPICE is preferred.
-     * @param vm
      */
     public static void adjustDisplayData(BackendResource res, Vm vm) {
         adjustDisplayDataInternal(res, vm);

@@ -35,7 +35,7 @@ public class PolicyUnit implements BusinessEntity<Guid>, IVdcQueryable, Nameable
      */
     private PolicyUnitType policyUnitType;
     /**
-     * policy unit acceptable custom parameters; format <parameterName, regex>
+     * policy unit acceptable custom parameters; format [parameterName, regex]
      */
     private Map<String, String> parameterRegExMap;
     /**

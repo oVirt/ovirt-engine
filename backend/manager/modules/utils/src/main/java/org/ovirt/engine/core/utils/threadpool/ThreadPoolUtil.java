@@ -118,7 +118,6 @@ public class ThreadPoolUtil {
      * Creates a completion service to allow launching of tasks (callable objects)
      * concurrently, and use a blocking queue like interface to get the tasks
      * execution results
-     * @return
      */
     public static <V> ExecutorCompletionService<V> createCompletionService() {
         return new ExecutorCompletionService<>(es);
@@ -136,7 +135,6 @@ public class ThreadPoolUtil {
      * Creates a completion service to allow launching of tasks (callable objects)
      * concurrently, and use a blocking queue like interface to get the tasks
      * @param tasks collection of tasks (callable objects) to submit
-     * @return
      */
     public static <V> ExecutorCompletionService<V> createCompletionService(Iterable<Callable<V>> tasks) {
          ExecutorCompletionService<V> ecs =  createCompletionService();
@@ -177,8 +175,6 @@ public class ThreadPoolUtil {
     /**
      * Executes the given tasks, returning a list of results
      * when all complete, in case of empty or null list a null will be return
-     * @param tasks
-     * @return
      */
     public static <T> List<T> invokeAll(Collection<? extends Callable<T>> tasks) {
         if (tasks != null && !tasks.isEmpty()) {

@@ -25,8 +25,8 @@ public class CidrValidator {
      * <li>both inclusive
      * </ul>
      * <p>
-     * <b>Note!</b> the function is not validating that IP and mask match to a network address, please see @see
-     * {@link CidrValidator#isCidrFormatValid(String)}
+     * <b>Note!</b> the function is not validating that IP and mask match to a network address, please see
+     * {@link CidrValidator#isCidrNetworkAddressValid(String)}.
      *
      * @return true if correct format, false otherwise.
      */

@@ -707,8 +707,6 @@ public class RsdlBuilder {
 
     /**
      * get the class name, without package prefix
-     * @param returnValue
-     * @return
      */
     private String getReturnTypeStr(Class<?> returnValue) {
         int lastIndexOf = returnValue.getSimpleName().lastIndexOf(".");
@@ -799,7 +797,6 @@ public class RsdlBuilder {
      *
      * This method will be called at the end of construction, and search for such duplicate links.
      * It will unite these pairs into a single link with required=false in the <body>.
-     * @param rsdl
      */
     private void uniteDuplicateLinks(Rsdl rsdl) {
         Map<String, DetailedLink> linksMap = new HashMap<>();

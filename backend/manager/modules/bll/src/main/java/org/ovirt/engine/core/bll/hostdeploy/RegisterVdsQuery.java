@@ -465,8 +465,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     /**
      * Check if another host has the same name as hostToRegister and if yes append a number to it. Eventually if the
      * host is in the db, persist the changes.
-     * @param hostToRegister
-     * @return
      */
     private boolean handleOldVdssWithSameName(VDS hostToRegister) {
         log.debug("Entering");

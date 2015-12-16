@@ -795,9 +795,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     /**
      * Mock a {@link StoragePool}.
-     *
-     * @param compatibilityVersion
-     * @return
      */
     private StoragePool mockStoragePool(Version compatibilityVersion) {
         Guid storagePoolId = Guid.newGuid();

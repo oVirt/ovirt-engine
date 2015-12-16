@@ -177,7 +177,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      *            - luns ids which we wants to check
      * @return - true if all luns are connected to the host, false otherwise
      *
-     * @throws EngineException
+     * @throws EngineException If the underlying call to VDSM fails
      */
     private boolean validateConnectedLuns(VDS vds, List<String> processedLunIds) {
         Map<String, Boolean> res;

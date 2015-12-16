@@ -19,7 +19,6 @@ public interface StorageDomainOvfInfoDao extends GenericDao<StorageDomainOvfInfo
      *            - ovf info status of the given domains
      * @param exceptStatus
      *            - ovf info status to leave as is when updating
-     * @return
      */
     public void updateOvfUpdatedInfo(Collection<Guid> ids, StorageDomainOvfInfoStatus status, StorageDomainOvfInfoStatus exceptStatus);
 

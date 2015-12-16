@@ -29,7 +29,6 @@ public enum SerialNumberPolicy {
 
     /**
      * Maps Integer value to policy.
-     * @param value
      * @return If {@code value} is null returns null specifying unset policy.
      */
     public static SerialNumberPolicy forValue(Integer value) {

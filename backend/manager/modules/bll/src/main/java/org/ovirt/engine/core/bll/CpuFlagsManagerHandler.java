@@ -75,9 +75,6 @@ public class CpuFlagsManagerHandler implements BackendService {
      * Returns missing CPU flags if any, or null if the server match the cluster
      * CPU flags
      *
-     * @param clusterCpuName
-     * @param serverFlags
-     * @param ver
      * @return list of missing CPU flags
      */
     public List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags, Version ver) {
@@ -106,9 +103,6 @@ public class CpuFlagsManagerHandler implements BackendService {
 
     /**
      * Finds max server cpu by server cpu flags only
-     *
-     * @param flags
-     * @return
      */
     public ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
@@ -281,8 +275,6 @@ public class CpuFlagsManagerHandler implements BackendService {
          * Returns missing CPU flags if any, or null if the server match the
          * cluster CPU flags
          *
-         * @param clusterCpuName
-         * @param serverFlags
          * @return list of missing CPU flags
          */
         public List<String> missingServerCpuFlags(String clusterCpuName, String serverFlags) {
@@ -314,10 +306,6 @@ public class CpuFlagsManagerHandler implements BackendService {
         /**
          * Return true if given flag list contains all flags of given ServerCpu
          * object's flags.
-         *
-         * @param clusterCpu
-         * @param lstServerflags
-         * @return
          */
         private boolean checkIfFlagsContainsCpuFlags(ServerCpu clusterCpu, Set<String> lstServerflags) {
             return CollectionUtils.intersection(clusterCpu.getFlags(), lstServerflags).size() == clusterCpu.getFlags()
@@ -327,10 +315,6 @@ public class CpuFlagsManagerHandler implements BackendService {
         /**
          * This method returns true if the given cpus are from the same
          * manufacturer (intel or amd)
-         *
-         * @param cpuName1
-         * @param cpuName2
-         * @return
          */
         public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2) {
             boolean result = false;
@@ -356,9 +340,6 @@ public class CpuFlagsManagerHandler implements BackendService {
 
         /**
          * Finds max server cpu by server cpu flags only
-         *
-         * @param flags
-         * @return
          */
         public ServerCpu findMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
@@ -396,7 +377,6 @@ public class CpuFlagsManagerHandler implements BackendService {
         /**
          * Returns a list with all CPU's which are with a lower CPU level than the given CPU.
          *
-         * @param maxCpuName
          * @return list of supported CPUs.
          */
         public List<ServerCpu> getSupportedServerCpuList(String maxCpuName) {

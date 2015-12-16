@@ -67,8 +67,6 @@ public class DisplayMapper {
 
     /**
      * For backwards compatibility. Derives graphics type (backend) from display (rest).
-     * @param vm
-     * @param params
      */
     public static void fillDisplayInParams(Vm vm, RunVmOnceParams params) {
         if (params == null) {

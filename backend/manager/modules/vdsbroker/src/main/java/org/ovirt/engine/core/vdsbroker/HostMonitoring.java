@@ -268,8 +268,6 @@ public class HostMonitoring {
 
     /**
      * check if value is less than configurable threshold , if yes , generated event list message
-     *
-     * @param stat
      */
     private void checkVdsMemoryThreshold(VdsStatistics stat) {
 
@@ -300,8 +298,6 @@ public class HostMonitoring {
 
     /**
      * check if value is less than configurable threshold , if yes , generated event list message
-     *
-     * @param stat
      */
     private void checkVdsCpuThreshold(VdsStatistics stat) {
 
@@ -318,8 +314,6 @@ public class HostMonitoring {
 
     /**
      * check if value is less than configurable threshold , if yes , generated event list message
-     *
-     * @param stat
      */
     private void checkVdsNetworkThreshold(VdsStatistics stat) {
         Integer maxUsedPercentageThreshold = Config.getValue(ConfigValues.LogMaxNetworkUsedThresholdInPercentage);
@@ -342,8 +336,6 @@ public class HostMonitoring {
 
     /**
      * check if value is less than configurable threshold , if yes , generated event list message
-     *
-     * @param stat
      */
     private void checkVdsSwapThreshold(VdsStatistics stat) {
 
@@ -732,8 +724,6 @@ public class HostMonitoring {
      * we know their provisioned memory value.
      * only vms we know their memory definition are calculated, thus
      * external VMs are added to db on the 1st cycle they appear, and then being added to this calculation
-     * @param dbToVdsmVm consume a pair of DB vms to running VMs to calculate metrics. TODO - FUTURE - get this straight from
-     *                  getVdsCaps
      */
     void refreshCommitedMemory() {
         if (!vdsManager.isTimeToRefreshStatistics()) {

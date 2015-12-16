@@ -38,7 +38,7 @@ public class IPv4AddressConverter implements IPAddressConverter {
      * @param prefix
      *            a {@link String} representation of an {@link Integer}
      * @return the corresponding IPv4 representation of <code>prefix</code>.
-     * @throws {@link NumberFormatException} in case failed to parse <code>prefix</code> to int.
+     * @throws NumberFormatException in case failed to parse <code>prefix</code> to int.
      */
     @Override
     public String convertPrefixToNetmask(String prefix) {

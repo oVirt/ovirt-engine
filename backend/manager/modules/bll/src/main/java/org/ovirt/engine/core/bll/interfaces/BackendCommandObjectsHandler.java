@@ -21,7 +21,6 @@ public interface BackendCommandObjectsHandler {
      *            the type of the command to run
      * @param parameters
      *            parameters of the command
-     * @param context
      * @return object of the created command
      */
     CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters, CommandContext context);
@@ -29,10 +28,6 @@ public interface BackendCommandObjectsHandler {
     /**
      * Executes the instance of the action. This should be used by parent/root commands in order to execute child
      * commands that place holders were created for them.
-     *
-     * @param action
-     * @param executionContext
-     * @return
      */
     VdcReturnValueBase runAction(CommandBase<?> action, ExecutionContext executionContext);
 

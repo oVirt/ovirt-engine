@@ -18,8 +18,6 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel<Logi
 
     /**
      * Create a Network item for the specified Setup Model
-     *
-     * @param setupModel
      */
     public NetworkItemModel(HostSetupNetworksModel setupModel) {
         this.setupModel = setupModel;
@@ -38,8 +36,6 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel<Logi
 
     /**
      * Get the Network Setup Model
-     *
-     * @return
      */
     public HostSetupNetworksModel getSetupModel() {
         return setupModel;

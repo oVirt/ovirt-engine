@@ -115,8 +115,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AddVmTemplateCommand(Guid commandId) {
         super(commandId);
@@ -668,8 +666,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
      * Space Validations are done using data extracted from the disks. The disks in question in this command
      * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
      * one is created specifically for this validation - hence dummy.
-     * @param disksList
-     * @return
      */
     protected List<DiskImage> createDiskDummiesForSpaceValidations(Collection<DiskImage> disksList) {
         List<DiskImage> dummies = new ArrayList<>(disksList.size());

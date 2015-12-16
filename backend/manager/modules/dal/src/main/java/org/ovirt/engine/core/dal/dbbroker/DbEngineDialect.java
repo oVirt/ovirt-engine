@@ -34,8 +34,6 @@ public interface DbEngineDialect {
 
     /**
      * Gets the engine prefix to be used for sp parameters.
-     *
-     * @return
      */
     public String getParamNamePrefix();
 
@@ -49,9 +47,6 @@ public interface DbEngineDialect {
 
     /**
      * This function create a call SQL command for a specific procedure, for a specific database
-     * @param procSchemaFromDB
-     * @param procNameFromDB
-     * @param params
      */
     public String createSqlCallCommand(String procSchemaFromDB,
             String procNameFromDB, String params);

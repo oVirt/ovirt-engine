@@ -761,8 +761,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
-     *
-     * @param value
      */
     @Deprecated
     public void setMemCommitedPercent(Integer value) {
@@ -782,8 +780,6 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
-     *
-     * @param value
      */
     @Deprecated
     public void setMemSharedPercent(Integer value) {

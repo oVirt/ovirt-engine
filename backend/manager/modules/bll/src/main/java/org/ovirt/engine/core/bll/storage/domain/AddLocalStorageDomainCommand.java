@@ -20,8 +20,6 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AddLocalStorageDomainCommand(Guid commandId) {
         super(commandId);

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  * Deserializer of payload from DB.
- * @param <T>
  */
 public interface Deserializer {
 
@@ -13,7 +12,6 @@ public interface Deserializer {
      * @param source source
      * @param type The type or the return value which is expected.
      * @return The deserialized payload
-     * @throws SerializationExeption2
      */
     public <T extends Serializable> T deserialize(Object source, Class<T> type) throws SerializationExeption;
 

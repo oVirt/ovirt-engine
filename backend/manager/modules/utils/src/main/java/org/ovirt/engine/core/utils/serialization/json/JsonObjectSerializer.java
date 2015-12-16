@@ -85,7 +85,6 @@ public class JsonObjectSerializer implements Serializer {
      * @param payload
      *            - The serialized Object.
      * @return The string value of the serialized object.
-     * @throws SerializationExeption
      */
     public String serializeUnformattedJson(Serializable payload) throws SerializationExeption {
         return writeJsonAsString(payload, unformattedMapper);

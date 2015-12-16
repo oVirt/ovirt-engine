@@ -235,8 +235,6 @@ public class BackendStorageDomainsResource
     /**
      * This is a work-around for a VDSM bug. The call to GetDeviceList causes a necessary refresh in the VDSM, without
      * which the creation will fail.
-     *
-     * @param hostId
      */
     private void refreshHostStorage(Guid hostId) {
         getBackendCollection(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId,

@@ -19,7 +19,6 @@ public class VideoDeviceSettings {
         /**
          * Returns video device spec params.
          *
-         * @param vmBase
          * @return a map of device parameters
          */
         public abstract Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase);
@@ -48,7 +47,6 @@ public class VideoDeviceSettings {
         /**
          * Returns video device spec params for QXL devices.
          *
-         * @param vmBase
          * @return a map of device parameters
          */
         private Map<String, Object> getQxlVideoDeviceSpecParams(VmBase vmBase) {
@@ -69,7 +67,6 @@ public class VideoDeviceSettings {
         /**
          * Returns video device spec params for VGA and Cirrus devices.
          *
-         * @param vmBase
          * @return a map of device parameters
          */
         private Map<String, Object> getVgaVideoDeviceSpecParams() {
@@ -114,7 +111,6 @@ public class VideoDeviceSettings {
     /**
      * Returns video device spec params.
      *
-     * @param vmBase
      * @return a map of device parameters
      */
     public static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {

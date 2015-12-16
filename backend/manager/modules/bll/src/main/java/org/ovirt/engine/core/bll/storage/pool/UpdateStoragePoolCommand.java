@@ -70,10 +70,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
-
     protected UpdateStoragePoolCommand(Guid commandId) {
         super(commandId);
     }
@@ -123,7 +120,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * <em>allowDuplicates</em> setting of target macPool.
      * @param oldMacPoolId id of macPool before update
      * @param newMacPoolId macPool Id of updated data center.
-     * @param vmInterfaceMacs
      */
     private void moveMacsOfUpdatedDataCenter(Guid oldMacPoolId, Guid newMacPoolId, List<String> vmInterfaceMacs) {
         Objects.requireNonNull(vmInterfaceMacs);
@@ -376,9 +372,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     /**
      * Copy properties from old entity which assumed not to be available in the param object.
-     *
-     * @param oldStoragePool
-     * @param newStoragePool
      */
     private static void copyUnchangedStoragePoolProperties(StoragePool newStoragePool, StoragePool oldStoragePool) {
         newStoragePool.setStoragePoolFormatType(oldStoragePool.getStoragePoolFormatType());

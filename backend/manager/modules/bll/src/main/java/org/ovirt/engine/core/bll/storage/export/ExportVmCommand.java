@@ -75,8 +75,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected ExportVmCommand(Guid commandId) {
         super(commandId);
@@ -430,7 +428,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     /**
      * Check that vm is in export domain
-     * @return
      */
     protected boolean checkVmInStorageDomain() {
         boolean retVal = true;

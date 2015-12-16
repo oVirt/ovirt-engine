@@ -39,9 +39,9 @@ public enum FenceProxySourceType {
      *
      * @param value
      *            string representation of fence proxy source type
+     * @return parsed fence proxy source type
      * @throws IllegalArgumentException
      *             if invalid value was specified
-     * @return parsed fence proxy source type
      */
     public static FenceProxySourceType forValue(String value) {
         if (value != null && value.length() > 0) {

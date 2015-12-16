@@ -131,9 +131,6 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
 
     /**
      * get the configurable delay value from the DB according to given key
-     *
-     * @param configurableDelayKeyName
-     * @return
      */
     private long getConfigurableDelay(String configurableDelayKeyName) {
         ConfigValues configDelay = ConfigValues.valueOf(configurableDelayKeyName);
@@ -298,8 +295,6 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
 
     /**
      * pauses a job with the given jobId assuming the job is in the default quartz group
-     *
-     * @param jobId
      */
     @Override
     public void pauseJob(String jobId) {
@@ -329,8 +324,6 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
 
     /**
      * resume a job with the given jobId assuming the job is in the default quartz group
-     *
-     * @param jobId
      */
     @Override
     public void resumeJob(String jobId) {

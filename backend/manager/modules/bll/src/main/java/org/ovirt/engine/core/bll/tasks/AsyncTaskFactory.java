@@ -24,7 +24,6 @@ public final class AsyncTaskFactory {
      *          Handle to command coordinator
      * @param creationInfo
      *          The Asyc Task Creation info
-     * @return
      */
     public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo) {
         AsyncTask asyncTask = coco.getByVdsmTaskId(creationInfo.getVdsmTaskId());
@@ -68,7 +67,6 @@ public final class AsyncTaskFactory {
      *            the parameters by which we construct the task.
      * @param duringInit
      *            If this method is called during initialization
-     * @return
      */
     public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         try {

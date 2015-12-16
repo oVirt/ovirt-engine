@@ -11,8 +11,6 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected VmPoolSimpleUserCommandBase(Guid commandId) {
         super(commandId);

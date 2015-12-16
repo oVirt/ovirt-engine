@@ -44,8 +44,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected ActivateVdsCommand(Guid commandId) {
         super(commandId);

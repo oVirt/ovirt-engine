@@ -94,10 +94,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
-
     protected StorageHandlingCommandBase(Guid commandId) {
         super(commandId);
     }

@@ -23,14 +23,13 @@ public class Entities {
     private final static Logger log = LoggerFactory.getLogger(Entities.class);
 
     /**
-     * Map entity's name -> entity object. A lot of logic code does filtering of data from 2 collections by quad
-     * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. given list<Parent>
-     * and
-     * List<Child> find each Child that have parents in List<Parent> <code>
+     * Map entity's name to entity object. A lot of logic code does filtering of data from 2 collections by quad
+     * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. Given
+     * List&lt;Parent&gt; and List&lt;Child&gt;, find each child that has parents in List&lt;Parent&gt;
      * <code>
-     * List<Parent> parents = ...
-     * List<Child> childs = ...
-     * Map<String, Parent> parentsByName = Entities.byName(parents)
+     * List&lt;Parent&gt; parents = ...
+     * List&lt;Child&gt; childs = ...
+     * Map&lt;String, Parent&gt; parentsByName = Entities.byName(parents)
      * for (Child c : childs) {
      * if(parents.contatinsKey(c.getParentName())) {
      * doThis();
@@ -38,10 +37,6 @@ public class Entities {
      * }
      * }
      * </code>
-     *
-     * @param entities
-     *
-     * @return
      */
     public static <E extends Nameable> Map<String, E> entitiesByName(Collection<E> entities) {
         if (entities != null) {

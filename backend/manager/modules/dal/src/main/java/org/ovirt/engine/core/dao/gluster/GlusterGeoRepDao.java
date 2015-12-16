@@ -23,8 +23,6 @@ public interface GlusterGeoRepDao extends Dao {
 
     /**
      * Retrieves the GlusterGeoRepSession.
-     * @param id
-     * @return
      */
     public GlusterGeoRepSession getById(Guid id);
 

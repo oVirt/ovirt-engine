@@ -31,8 +31,6 @@ public interface EngineSessionDao extends Dao, SearchDao<EngineSession> {
 
     /**
      * Removes the session with the specified id.
-     *
-     * @param id
      */
     int remove(long id);
 

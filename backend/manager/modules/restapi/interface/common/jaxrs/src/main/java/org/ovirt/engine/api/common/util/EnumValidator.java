@@ -53,9 +53,6 @@ public class EnumValidator {
      * @param clz the emum class
      * @param externalValues the extended list of values to validate the input upon
      * @param name the actual value to be looked up. could be the enum member or part of extended list of values
-     * @param toUppercase
-     * @param <E>
-     * @return
      */
     public static <E extends Enum<E>> String validateEnum(Class<E> clz, Set<String> externalValues, String name, boolean toUppercase) {
         return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, externalValues,  name, toUppercase);

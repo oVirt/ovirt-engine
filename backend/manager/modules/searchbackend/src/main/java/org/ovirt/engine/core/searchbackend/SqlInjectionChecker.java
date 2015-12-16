@@ -61,8 +61,6 @@ public abstract class SqlInjectionChecker {
     /**
      * Removes all values enclosed by single or double quotes from original sql
      * in order to test for injection only on sql keywords and not on values.
-     * @param sql
-     * @return
      */
     private String removeAllStringValuesFromSql(String sql) {
         boolean singleQuoteFound=false;
@@ -153,22 +151,18 @@ public abstract class SqlInjectionChecker {
     }
     /**
      * gets the database vendor specific sql command separator
-     * @return
      */
     abstract protected String getSqlCommandSeperator();
     /**
      * gets the database vendor specific sql string concatenation
-     * @return
      */
     abstract protected String getSqlConcat();
     /**
      * gets the database vendor specific sql comment begin/end definition
-     * @return
      */
     abstract protected HashSet<String> getCommentExpressions();
     /**
      * gets the database vendor specific functions that are considered as sql injection.
-     * @return
      */
     abstract protected HashSet<String> getInjectionFunctions();
 }

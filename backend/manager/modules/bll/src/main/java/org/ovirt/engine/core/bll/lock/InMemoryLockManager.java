@@ -190,8 +190,6 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     /**
      * Internal method should build a key for lock
-     * @param entry
-     * @return
      */
     private String buildHashMapKey(Entry<String, Pair<String, String>> entry) {
         return entry.getKey() + entry.getValue().getFirst();
@@ -201,8 +199,6 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
      * The following method contains a logic for acquiring a lock The method is contains two steps:
      * 1. The lock can be acquired
      * 2. If the first step successes acquire a lock
-     * @param lock
-     * @return
      */
     private Pair<Boolean, Set<String>> acquireLockInternal(EngineLock lock) {
         boolean checkOnly = true;
@@ -239,12 +235,10 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     /**
      * The following method should insert an "shared" internal lock
-     * @param key
      * @param message
      *            - error message associated with lock
      * @param isCheckOnly
      *            - is insert or check if lock can be inserted
-     * @return
      */
     private Pair<Boolean, Set<String>> insertSharedLock(String key, String message, boolean isCheckOnly) {
         InternalLockView lock = locks.get(key);

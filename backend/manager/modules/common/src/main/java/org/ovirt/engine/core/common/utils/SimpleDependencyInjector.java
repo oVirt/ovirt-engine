@@ -37,7 +37,6 @@ public class SimpleDependencyInjector {
      *
      * @param type
      *            the instance to be kept
-     * @param <T>
      */
     public <T> void bind(T type) {
         map.put(type.getClass().getName(), type);
@@ -50,7 +49,6 @@ public class SimpleDependencyInjector {
      *            the class representing the key this instance should be get on.
      * @param type
      *            the instance to be kept
-     * @param <T>
      */
     public <T> void bind(Class<? super T> clazz, T type) {
         map.put(clazz.getName(), type);
@@ -58,10 +56,6 @@ public class SimpleDependencyInjector {
 
     /**
      * get the instance associated with the Class type note: only one instance binded to a Class type
-     *
-     * @param clazz
-     * @param <T>
-     * @return
      */
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> clazz) {

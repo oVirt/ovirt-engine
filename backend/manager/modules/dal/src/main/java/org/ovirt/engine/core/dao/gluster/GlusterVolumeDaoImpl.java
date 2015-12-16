@@ -314,8 +314,6 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
 
     /**
      * Fetches and populates related entities like bricks, options, access protocols for the given volumes
-     *
-     * @param volumes
      */
     private void fetchRelatedEntities(List<GlusterVolumeEntity> volumes) {
         for (GlusterVolumeEntity volume : volumes) {
@@ -325,8 +323,6 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
 
     /**
      * Fetches and populates related entities like bricks, options, access protocols for the given volume
-     *
-     * @param volume
      */
     private void fetchRelatedEntities(GlusterVolumeEntity volume) {
         if (volume != null) {

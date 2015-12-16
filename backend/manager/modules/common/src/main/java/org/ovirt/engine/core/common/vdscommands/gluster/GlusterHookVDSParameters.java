@@ -25,12 +25,9 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
     }
 
     /**
-     *
-     * @param serverId
      * @param glusterCommand - gluster command the hook is intended for
      * @param stage - PRE/POST stage
      * @param hookName - file name
-     * @param content - non-encoded text content
      * @param content - encoded text content
      * @param checksum - checksum of content
      */
@@ -45,8 +42,6 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
     }
 
     /**
-     *
-     * @param serverId
      * @param glusterCommand - gluster command the hook is intended for
      * @param stage - PRE/POST stage
      * @param hookName - file name

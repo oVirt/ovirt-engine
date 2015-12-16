@@ -282,7 +282,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      * Check if address must be changed after change NIC type
      * @param oldType - Old nic type
      * @param newType - New nic type
-     * @return
      */
     private boolean mustChangeAddress (int oldType, int newType) {
         int spaprVlanType = VmInterfaceType.spaprVlan.getValue();

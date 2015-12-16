@@ -41,7 +41,6 @@ public class ContextSensitiveHelpManager {
     /**
      * Get the csh path for a helpTag. Called by models / dialogs to see if this dialog has help available.
      *
-     * @param helpTag
      * @return URL to csh, or null if this dialog has no csh available.
      */
     public static String getPath(String helpTag) {
@@ -73,8 +72,6 @@ public class ContextSensitiveHelpManager {
      *      },
      *      etc.
      * }
-     *
-     * @param fileContent
      */
     public static void init(String fileContent) {
 

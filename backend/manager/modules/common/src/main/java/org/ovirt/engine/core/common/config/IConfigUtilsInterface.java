@@ -18,7 +18,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            if set to <c>true</c> [default value].
-     * @return
      */
     boolean getBoolValue(String name, String defaultValue);
 
@@ -27,7 +26,6 @@ public interface IConfigUtilsInterface {
      *
      * @param name  the name of of the config value
      * @param defaultValue      default value
-     * @return
      */
     Map<String, String> getMapValue(String name, String defaultValue);
 
@@ -38,7 +36,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            The default value.
-     * @return
      */
     int getIntValue(String name, String defaultValue);
 
@@ -49,7 +46,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            The default value.
-     * @return
      */
     Date getDateTimeValue(String name, String defaultValue);
 
@@ -60,7 +56,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            The default value.
-     * @return
      */
     TimeSpan getTimeSpanValue(String name, String defaultValue);
 
@@ -71,7 +66,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            The default value.
-     * @return
      */
     Version getVersionValue(String name, String defaultValue);
 
@@ -82,7 +76,6 @@ public interface IConfigUtilsInterface {
      *            The name.
      * @param defaultValue
      *            The default value.
-     * @return
      */
     String getPathValue(String name, String defaultValue);
 

@@ -781,8 +781,6 @@ public class SetupNetworksHelper {
     /**
      * build mapping of the bond name - > list of slaves. slaves are interfaces with a pointer to the master bond by
      * bondName.
-     *
-     * @param iface
      */
     private void extractBondSlave(VdsNetworkInterface iface) {
         List<VdsNetworkInterface> slaves = bonds.get(iface.getBondName());

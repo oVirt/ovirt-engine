@@ -31,7 +31,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 /**
- * A TreeView Model for {@link TreeNodeModel<T>} Nodes
+ * A TreeView Model for {@link TreeNodeModel} Nodes
  */
 public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements TreeModelWithElementId {
 
@@ -273,8 +273,6 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
     /**
      * Set the Root list- required to sync the Model Tree correctly
-     *
-     * @param arrayList
      */
     public void setRoots(List<M> arrayList) {
         this.roots = arrayList;

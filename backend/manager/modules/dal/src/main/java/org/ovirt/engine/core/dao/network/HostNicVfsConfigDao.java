@@ -54,7 +54,6 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
      *
      * @param vfsConfigId
      *            host nic vfs config id
-     * @param label
      */
     void addLabel(Guid vfsConfigId, String label);
 
@@ -63,7 +62,6 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
      *
      * @param vfsConfigId
      *            host nic vfs config id
-     * @param label
      */
     void removeLabel(Guid vfsConfigId, String label);
 }

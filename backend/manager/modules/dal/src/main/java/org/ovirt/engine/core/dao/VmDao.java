@@ -40,8 +40,8 @@ public interface VmDao extends Dao {
     /**
      * Returns the VM with the specified name, with optional filtering.
      *
-     * @param id
-     *            the VM name
+     * @param dataCenterId
+     *            the Data Center ID
      * @param userID
      *            the ID of the user requesting the information
      * @param isFiltered
@@ -56,7 +56,6 @@ public interface VmDao extends Dao {
      *
      * @param disk
      *            the disk id
-     * @param includeVmsSnapshotAttachedTo
      * @return A {@link Map} from the image's plug status to a {@link List} of the VMs associated with it.
      */
     Map<Boolean, List<VM>> getForDisk(Guid disk, boolean includeVmsSnapshotAttachedTo);
@@ -78,7 +77,7 @@ public interface VmDao extends Dao {
     /**
      * Retrieves a list of VMs for the specified disk id.
      *
-     * @param disk
+     * @param id
      *            the disk id
      * @return A {@link List} of the VMs associated with the disk.
      */
@@ -189,18 +188,12 @@ public interface VmDao extends Dao {
 
     /**
      * Get all vms related to quota id
-     *
-     * @param quotaId
-     * @return
      */
     public List<VM> getAllVmsRelatedToQuotaId(Guid quotaId);
 
 
     /**
      * Get all vms with the given ids
-     *
-     * @param vmsIds
-     * @return
      */
     public List<VM> getVmsByIds(List<Guid> vmsIds);
 
@@ -251,8 +244,6 @@ public interface VmDao extends Dao {
 
     /**
      * Retrieves all VMS that belong to the provided vds group
-     * @param clusterId
-     * @return
      */
     List<VM> getAllForCluster(Guid clusterId);
 
@@ -260,7 +251,6 @@ public interface VmDao extends Dao {
      * Retrieves all VMS that belong to the provided vm pool
      * @param vm_pool_id
      *             the pool id
-     * @return
      */
     List<VM> getAllForVmPool(Guid vmPoolId);
 
@@ -297,9 +287,6 @@ public interface VmDao extends Dao {
 
     /**
      * get all running VMs under specified cluster
-     *
-     * @param clusterId
-     * @return
      */
     List<VM> getAllRunningByCluster(Guid clusterId);
 

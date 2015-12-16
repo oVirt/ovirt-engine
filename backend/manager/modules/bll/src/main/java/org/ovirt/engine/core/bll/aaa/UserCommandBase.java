@@ -18,8 +18,6 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected UserCommandBase(Guid commandId) {
         super(commandId);

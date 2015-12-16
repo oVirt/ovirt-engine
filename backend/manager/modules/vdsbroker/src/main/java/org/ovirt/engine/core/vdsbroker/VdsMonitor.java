@@ -13,8 +13,6 @@ public class VdsMonitor {
 
     /**
      * A synchronous queue for the enclosing VDS
-     *
-     * @return
      */
     public BlockingQueue<Boolean> getQueue() {
         return queue;

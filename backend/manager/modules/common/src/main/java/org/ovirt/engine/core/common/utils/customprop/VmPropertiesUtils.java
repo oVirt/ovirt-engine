@@ -80,9 +80,6 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * Parses a string containing user defined and predefined custom properties and returns VMCustomProperties object
      * that contains the properties separated to two strings - one for the predefined properties and one for the user
      * defined properties
-     *
-     * @param propertiesStr
-     * @return
      */
     public VMCustomProperties parseProperties(Version version, String propertiesStr) {
         HashMap<String, String> userDefinedPropertiesMap = new HashMap<>();
@@ -96,7 +93,6 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     /**
      * Validates a properties field value (checks if its format matches key1=val1;key2=val2;....)
      *
-     * @param fieldValue
      * @return a list of validation errors. if there are no errors - the list will be empty
      */
     public List<ValidationError> validateVmProperties(Version version, String properties) {
@@ -183,10 +179,6 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
 
     /**
      * Composes custom properties string from predefined properties and user defined properties strings
-     *
-     * @param predefinedProperties
-     * @param userDefinedProperties
-     * @return
      */
     public String customProperties(String predefinedProperties, String userDefinedProperties) {
         String predefined = predefinedProperties == null ? "" : predefinedProperties;

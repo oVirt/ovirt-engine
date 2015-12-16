@@ -154,10 +154,6 @@ public class CustomPropertiesUtils {
 
     /**
      * Splits the validation errors list to lists of missing keys and wrong key values
-     *
-     * @param errorsList
-     * @param missingKeysList
-     * @param wrongKeyValues
      */
     protected void separateValidationErrorsList(List<ValidationError> errorsList,
             Map<ValidationFailureReason, List<ValidationError>> resultMap) {
@@ -178,10 +174,9 @@ public class CustomPropertiesUtils {
     /**
      * validate a map of specific custom properties against provided regex map
      * @param regExMap
-     *      <key, regex> map
+     *      [key, regex] map
      * @param properties
-     *      <key, value> map, custom properties to validate
-     * @return
+     *      [key, value] map, custom properties to validate
      */
     public List<ValidationError> validateProperties(Map<String, String> regExMap,
             Map<String, String> properties) {
@@ -307,10 +302,10 @@ public class CustomPropertiesUtils {
      *
      * @param properties
      *            specified device properties
-     * @exception IllegalArgumentException
-     *                if specified properties has syntax errors
      * @return map containing all device custom properties ({@code LinkedHashMap} is used to ensure properties order is
      *         constant)
+     * @exception IllegalArgumentException
+     *                if specified properties has syntax errors
      */
     public Map<String, String> convertProperties(String properties) {
         return convertProperties(properties, null);
@@ -321,9 +316,9 @@ public class CustomPropertiesUtils {
      *
      * @param properties
      *            specified device properties
+     * @return string containing all properties in map
      * @exception IllegalArgumentException
      *                if specified properties has syntax errors
-     * @return string containing all properties in map
      */
     public String convertProperties(Map<String, String> properties) {
         StringBuilder sb = new StringBuilder();

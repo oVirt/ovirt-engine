@@ -135,10 +135,7 @@ public class HostedEngineHelper {
      * Offer a host id to the underlying agent. It is a best effort currently and the agent might use
      * a different, free one.
      *
-     * The reason it is a best effort is because 2 concurrent host deploy may run, competing on the id
-     *
-     * @param clusterId
-     * @return
+     * The reason it is a best effort is because 2 concurrent host deploy may run, competing on the id.
      */
     private String offerHostId(Guid clusterId) {
         int i = 0;

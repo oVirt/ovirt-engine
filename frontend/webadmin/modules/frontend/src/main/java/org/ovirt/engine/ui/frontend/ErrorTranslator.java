@@ -36,7 +36,6 @@ public class ErrorTranslator {
      * @param changeIfNotFound
      *            If true: if message key is not found in the resource, return a beautified key. If false, returned
      *            unfound key as is.
-     * @return
      */
     public ArrayList<String> translateErrorText(ArrayList<String> errorMsg,
             Boolean changeIfNotFound) {
@@ -52,7 +51,6 @@ public class ErrorTranslator {
      *
      * @param errorMsg
      *            messages to be translated
-     * @return
      */
     public ArrayList<String> translateErrorText(ArrayList<String> errorMsg) {
         return translateErrorText(errorMsg, true);
@@ -78,7 +76,6 @@ public class ErrorTranslator {
      * @param changeIfNotFound
      *            If true: if message key is not found in the resource, return a beautified key. If false, returned
      *            unfound key as is.
-     * @return
      */
     public String translateErrorTextSingle(String errorMsg,
             Boolean changeIfNotFound) {
@@ -126,9 +123,6 @@ public class ErrorTranslator {
     /**
      * Replacing variables ('#...') within translatedMessages with their values ('$...') that are also within
      * translatedMessages.
-     *
-     * @param translatedMessages
-     * @return
      */
     public ArrayList<String> resolveMessages(ArrayList<String> translatedMessages) {
         ArrayList<String> translatedErrors = new ArrayList<>();

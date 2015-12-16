@@ -260,7 +260,6 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
 
     /**
      * Returns a list of non-sharable disks which have been set as to attach in the new/edit VM dialog but the dialog has not yet been submitted
-     * @return
      */
     public List<Disk> getNotYetAttachedNotAttachableDisks() {
         List<Disk> res = new ArrayList<>();

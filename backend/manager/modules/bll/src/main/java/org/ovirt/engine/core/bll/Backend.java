@@ -199,7 +199,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     /**
      * Initializes internal data
-     * <exception>EngineException
      */
     @Override
     public void initialize() {

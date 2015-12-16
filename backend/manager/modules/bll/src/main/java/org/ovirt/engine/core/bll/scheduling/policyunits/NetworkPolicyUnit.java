@@ -111,9 +111,6 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
      *            the Host
      * @param vm
      *            the VM
-     * @param vmNICs
-     * @param displayNetwork
-     * @param networksByName
      * @param hostNetworks
      *            the Host network names
      * @param displayNic

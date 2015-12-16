@@ -49,7 +49,6 @@ public class MultiLevelAdministrationHandler {
      * Admin user is a user with at least one permission that contains admin
      * role
      *
-     * @param userId
      * @return True if user is admin
      */
     public static boolean isAdminUser(DbUser user) {
@@ -68,14 +67,6 @@ public class MultiLevelAdministrationHandler {
         }
     }
 
-    /**
-     * Set the user lastAdminStatusCheck flag to the value specified
-     *
-     * @param userId
-     * @param hasPermissions
-     *            will saved as {@link DbUser.lastAdminStatusCheck} value
-     * @see {@link DbUser}
-     */
     public static void setIsAdminGUIFlag(Guid userId, boolean hasPermissions) {
         DbUser user = getDbUserDao().get(userId);
         if (user.isAdmin() != hasPermissions) {
@@ -107,7 +98,7 @@ public class MultiLevelAdministrationHandler {
     /**
      * Checks if supplied group is the last (or maybe only)  with super user privileges.
      *
-     * @param group_id
+     * @param groupId
      *                the group is
      * @return true if group is the last with Super User privileges, otherwise, false
      */

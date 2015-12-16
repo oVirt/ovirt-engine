@@ -56,15 +56,13 @@ public interface InterfaceDao extends Dao {
     /**
      * Updates the given collection of vds network interface using a more efficient method to update all of them at
      * once, rather than each at a time.
-     * @param statistics
-     *            The collection of statistics to update.
+     * @param dbIfacesToBatch
+     *            The collection of interfaces to update.
      */
     void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch);
 
     /**
      * Clears the networkName from the specified nics.
-     *
-     * @param nicIds
      */
     void massClearNetworkFromNics(List<Guid> nicIds);
 
@@ -159,10 +157,6 @@ public interface InterfaceDao extends Dao {
 
     /**
      * Retrieves all interfaces with given IP address from all hosts of the given cluster
-     *
-     * @param clusterId
-     * @param ipAddress
-     * @return
      */
     List<VdsNetworkInterface> getAllInterfacesWithIpAddress(Guid clusterId, String ipAddress);
 
@@ -171,7 +165,6 @@ public interface InterfaceDao extends Dao {
      *
      * @param clusterId
      *            the cluster where the hosts reside in
-     * @return
      */
     List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId);
 
@@ -191,7 +184,6 @@ public interface InterfaceDao extends Dao {
      *            the cluster where the hosts reside in
      * @param label
      *            the label to search for
-     * @return
      */
     List<VdsNetworkInterface> getAllInterfacesByLabelForCluster(Guid clusterId, String label);
 
@@ -212,7 +204,6 @@ public interface InterfaceDao extends Dao {
      *             the host id
      * @param storageTargetId
      *             the iscsi target id
-     * @return
      */
     List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId);
 }

@@ -51,7 +51,6 @@ public class Injector {
      * meaning we Make the Singleton a managed bean but let the existing code still
      * get a reference by invoking getInstance which delegate to this method.
      * @param clazz the Runtime class representing the desired instance
-     * @param <T>
      * @return the instance of type <code><T></T></code> which is managed by the CDI container
      */
     public static <T extends Object> T get(Class<T> clazz) {
@@ -62,8 +61,6 @@ public class Injector {
      * convenience method, good for mocking and whoever holds a direct instance of Injector in hand.<br>
      * after all its a jdk "bug" to call a static method on an instance.<br>
      *{@link Injector#get(Class)} should supply the same behavior exactly
-     * @param clazz
-     * @param <T>
      * @return instance of T
      * @see #get(Class)
      */

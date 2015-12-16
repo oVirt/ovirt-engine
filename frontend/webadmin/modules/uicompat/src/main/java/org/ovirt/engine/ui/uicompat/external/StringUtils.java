@@ -73,7 +73,6 @@ public class StringUtils {
      *
      * @param array the array of Strings to join together
      * @param delimiter the separator string to use
-     * @return
      */
     public static String join(Iterable<String> list, String delimiter) {
         if (list == null) {

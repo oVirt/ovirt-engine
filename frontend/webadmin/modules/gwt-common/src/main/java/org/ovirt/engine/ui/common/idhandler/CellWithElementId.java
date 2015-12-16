@@ -6,20 +6,18 @@ import com.google.gwt.cell.client.Cell;
  * A cell that sets an ID when it renders.
  * TODO All of our custom cells should implement this.
  *
- * @param <C>
+ * @param C
  *            Cell data type.
  */
 public interface CellWithElementId<C> extends Cell<C> {
 
     /**
      * Set the element id prefix.
-     * @param elementIdPrefix
      */
     void setElementIdPrefix(String elementIdPrefix);
 
     /**
      * Set the column id.
-     * @param columnId
      */
     void setColumnId(String columnId);
 

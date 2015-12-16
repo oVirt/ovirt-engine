@@ -141,8 +141,6 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
 
     /**
      * Mark a key as being reapable, caching corresponding soft reference to corresponding value in the secondary map.
-     *
-     * @param k
      */
     public synchronized void reapable(K k) {
         V v = super.remove(k);

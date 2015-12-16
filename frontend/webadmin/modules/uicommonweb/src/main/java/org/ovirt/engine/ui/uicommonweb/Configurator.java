@@ -139,7 +139,7 @@ public abstract class Configurator {
     /**
      * Returns the base URL for serving documentation.
      * <p>
-     * Example: <code>https://<ovirt-engine>/docs/manual/en-US/html/</code>
+     * Example: <code>https://&lt;ovirt-engine&gt;/docs/manual/en-US/html/</code>
      *
      * @return Documentation base URL, including the trailing slash.
      */
@@ -150,8 +150,8 @@ public abstract class Configurator {
     /**
      * Returns the URL for serving the csh mapping file.
      * <p>
-     * Example: <code>https://<ovirt-engine>/docs/csh/webadmin.json</code>
-     *          <code>https://<ovirt-engine>/docs/csh/userportal.json</code>
+     * Example: <code>https://&lt;ovirt-engine&gt;/docs/csh/webadmin.json</code>
+     *          <code>https://&lt;ovirt-engine&gt;/docs/csh/userportal.json</code>
      *
      * @return the url
      */

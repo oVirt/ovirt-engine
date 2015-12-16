@@ -46,8 +46,6 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
      * get the return value and wait for the reply with default host connection timeout. We need to assure that this
      * thread is released after a timeout so the blocking call for get is overridden here and delegated to the get(long
      * timeout, TimeUnit unit)
-     *
-     * @return {@link VDSReturnValue}
      */
     @Override
     public VDSReturnValue get() {
@@ -61,10 +59,6 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     /**
      * Process the return value and reply back. When exceptions raises they will be logged and set a return value accordingly.
      *
-     * @param timeout
-     * @param unit
-     * @return VDSReturnValue
-     * @throws TimeoutException
      */
     @Override
     public VDSReturnValue get(long timeout, TimeUnit unit) throws TimeoutException {

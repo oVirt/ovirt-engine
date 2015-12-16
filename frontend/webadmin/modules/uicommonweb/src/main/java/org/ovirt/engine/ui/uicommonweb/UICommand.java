@@ -159,8 +159,6 @@ public class UICommand extends Model implements ICommand {
 
     /**
      * Execute Command with parameters
-     *
-     * @param parameters
      */
     public void execute(Object... parameters) {
         if (!getIsAvailable() || !getIsExecutionAllowed()) {

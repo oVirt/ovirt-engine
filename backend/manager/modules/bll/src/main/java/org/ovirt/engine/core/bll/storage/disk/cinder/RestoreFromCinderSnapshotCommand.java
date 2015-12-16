@@ -56,8 +56,6 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
     /**
      * Remove the snapshot's descendants. For example if we plan to commit snapshot A we should delete all the snapshots
      * which were created after it (like snapshot B).
-     *
-     * @param cinderDiskSnapshot
      */
     private void removeDescendentSnapshots(CinderDisk cinderDiskSnapshot) {
         initCinderDiskVolumesParametersList(cinderDiskSnapshot);

@@ -180,8 +180,8 @@ public class ShellLikeConfd {
     /**
      * Expand string using current variables.
      *
-     * @return Expanded string.
      * @param value String.
+     * @return Expanded string.
      */
     public String expandString(String value) {
         StringBuilder ret = new StringBuilder();
@@ -336,7 +336,7 @@ public class ShellLikeConfd {
 
     /**
      * Get the value of a boolean property given its name. It will take the text
-     * of the property and return <true> if it is <code>true</code> if the text
+     * of the property and return <code>true</code> if it is <code>true</code> if the text
      * of the property is <code>true</code>, <code>t</code>, <code>yes</code>,
      * <code>y</code> or <code>1</code> (ignoring case).
      *
@@ -379,7 +379,7 @@ public class ShellLikeConfd {
 
     /**
      * Get the value of a boolean property given its name. It will take the text
-     * of the property and return <true> if it is <code>true</code> if the text
+     * of the property and return <code>true</code> if it is <code>true</code> if the text
      * of the property is <code>true</code>, <code>t</code>, <code>yes</code>,
      * <code>y</code> or <code>1</code> (ignoring case).
      *

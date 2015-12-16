@@ -22,8 +22,6 @@ public class StorageServerConnectionQueryParametersBase extends VdcQueryParamete
     /**
      * Used by REST because AbstractBackendResource has id member
      * that is always assumed to be Guid
-     *
-     * @param serverConnectionId
      */
     public StorageServerConnectionQueryParametersBase(Guid serverConnectionId) {
         this(serverConnectionId.toString());

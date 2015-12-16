@@ -66,7 +66,6 @@ public class WebClientConsoleInvoker {
 
    /**
      * Creates an urlencoded json object that represent target endpoint.
-     * @params host, port, sslTarget
      * @return encoded json object that holds host, port and sslTarget information.
      */
    private static String createConnectionString(String host, String port, boolean sslTarget) {

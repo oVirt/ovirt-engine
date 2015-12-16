@@ -30,7 +30,6 @@ public interface AsyncTaskDao extends Dao {
     /**
      * Gets async task Ids by a given entity Id.
      * @param entityId the Id of the entity to return the tasks for
-     * @return
      */
     List<Guid> getAsyncTaskIdsByEntity(Guid entityId);
 
@@ -38,7 +37,6 @@ public interface AsyncTaskDao extends Dao {
      * Gets async task Ids of tasks that are running
      * on the given storage pool
      * @param storagePoolId ID of storage pool to return running tasks for
-     * @return
      */
     List<Guid> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId);
 
@@ -66,15 +64,13 @@ public interface AsyncTaskDao extends Dao {
 
     /**
      * Removes the task with the specified id.
-     *
-     * @param id
      */
     int remove(Guid id);
 
     /**
      * Saves the specified task.
      *
-     * @param task the task to save
+     * @param newAsyncTask the task to save
      */
     void save(AsyncTask newAsyncTask);
 
@@ -87,9 +83,6 @@ public interface AsyncTaskDao extends Dao {
 
     /**
      * Gets all the tasks that are associated with an entity id
-     *
-     * @param entityId
-     * @return
      */
     List<AsyncTask> getTasksByEntity(Guid entityId);
 

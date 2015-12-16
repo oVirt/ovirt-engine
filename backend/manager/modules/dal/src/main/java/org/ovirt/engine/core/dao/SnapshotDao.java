@@ -31,7 +31,6 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *            ID of the user that invoked the query
      * @param isFiltered
      *            whether the filtering will be performed
-     * @return
      */
     Snapshot get(Guid id, Guid userId, boolean isFiltered);
 

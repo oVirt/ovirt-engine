@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code.DiskImageDaoTest</code> provides unit tests to validate {@link ImageDao}.
+ * <code>DiskImageDaoTest</code> provides unit tests to validate {@link ImageDao}.
  */
 public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> {
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");

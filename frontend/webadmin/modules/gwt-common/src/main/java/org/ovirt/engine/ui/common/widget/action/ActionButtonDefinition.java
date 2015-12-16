@@ -35,7 +35,6 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
 
     /**
      * Indicates if this button is in the cascade menu or not.
-     * @return
      */
     boolean isCascaded();
 

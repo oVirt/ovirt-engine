@@ -15,9 +15,9 @@ public class FenceProxySourceTypeHelper {
      *
      * @param stringValue
      *            comma separated string of fence proxy source types
+     * @return list of parsed fence proxy source type
      * @throws IllegalArgumentException
      *             if invalid fence proxy source type string value was specified in {@code stringValue}
-     * @return list of parsed fence proxy source type
      */
     public static List<FenceProxySourceType> parseFromString(String stringValue) {
         List<FenceProxySourceType> parsedTypes = new LinkedList<>();
@@ -36,9 +36,9 @@ public class FenceProxySourceTypeHelper {
      *
      * @param fenceProxySourceTypes
      *            list of fence proxy source types
+     * @return  comma separated string of fence proxy source types
      * @throws IllegalArgumentException
      *             if {@code null} value was contained is the specified list
-     * @return  comma separated string of fence proxy source types
      */
     public static String saveAsString(List<FenceProxySourceType> fenceProxySourceTypes) {
         if (fenceProxySourceTypes == null || fenceProxySourceTypes.isEmpty()) {

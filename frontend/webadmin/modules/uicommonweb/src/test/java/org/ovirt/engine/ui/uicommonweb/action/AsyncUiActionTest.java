@@ -204,7 +204,6 @@ public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
      * Verifies that <code>Frontend.runAction(..)</code> was executed <code>exepectedNumOfRunActionExecutions</code>
      * times.
      *
-     * @param exepectedNumOfRunActionExecutions
      * @return the callbacks of all the <code>Frontend.runAction(..)</code> that were executed.
      */
     protected abstract List<C> verifyRunAction(int exepectedNumOfRunActionExecutions);

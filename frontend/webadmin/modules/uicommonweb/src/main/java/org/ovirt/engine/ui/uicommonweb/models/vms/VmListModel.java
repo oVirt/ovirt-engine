@@ -1412,7 +1412,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     /**
      * Returns the cluster id if all vms are from the same cluster else returns null.
-     * @return
      */
     private Guid getClusterIdOfSelectedVms() {
         Guid clusterId = null;

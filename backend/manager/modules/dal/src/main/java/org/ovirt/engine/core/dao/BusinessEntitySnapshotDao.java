@@ -32,7 +32,6 @@ public interface BusinessEntitySnapshotDao extends Dao {
 
     /**
      * Get all commands awaiting for compensation.
-     * @return
      */
     List<KeyValue> getAllCommands();
 }

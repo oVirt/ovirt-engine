@@ -50,7 +50,7 @@ public class CompletenessAssertor {
     /**
      * Validate presence of required parameters.
      * Note the model type is java.lang.Object as opposed to a generic
-     * <T extends BaseResource> in order to accommodate parameters types
+     * &lt;T extends BaseResource&gt; in order to accommodate parameters types
      * such as Action.
      *
      * @param model     the incoming representation
@@ -65,7 +65,7 @@ public class CompletenessAssertor {
     /**
      * Validate presence of required parameters.
      * Note the model type is java.lang.Object as opposed to a generic
-     * <T extends BaseResource> in order to accommodate parameters types
+     * &lt;T extends BaseResource&gt; in order to accommodate parameters types
      * such as Action.
      *
      * @param reason    the fault reason
@@ -82,7 +82,7 @@ public class CompletenessAssertor {
     /**
      * Validate presence of required parameters.
      * Note the model type is java.lang.Object as opposed to a generic
-     * <T extends BaseResource> in order to accommodate parameters types
+     * &lt;T extends BaseResource&gt; in order to accommodate parameters types
      * such as Action.
      *
      * @param model        the incoming representation
@@ -101,7 +101,7 @@ public class CompletenessAssertor {
     /**
      * Validate presence of required parameters.
      * Note the model type is java.lang.Object as opposed to a generic
-     * <T extends BaseResource> in order to accommodate parameters types
+     * &lt;T extends BaseResource&gt; in order to accommodate parameters types
      * such as Action.
      *
      * @param reason       the fault reason

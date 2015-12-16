@@ -88,8 +88,6 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
      * and all the selected disks quota mode != QuotaEnforcementTypeEnum.DISABLED.
      * @param allDisks - model's disks (visible in page)
      * @param selectedDisks - model's selected disks
-     * @param systemTreeSelectedItem
-     * @param changeQuotaCommand
      */
     public static void updateChangeQuotaActionAvailability(Collection<? extends Disk> allDisks,
             Collection<? extends Disk> selectedDisks,

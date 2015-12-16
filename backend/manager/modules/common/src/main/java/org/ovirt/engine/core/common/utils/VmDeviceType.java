@@ -52,9 +52,6 @@ public enum VmDeviceType {
 
     /**
      * This method maps OVF Resource Types to oVirt devices.
-     *
-     * @param resourceType
-     * @return
      */
     public static VmDeviceType getoVirtDevice(int resourceType) {
         for (VmDeviceType deviceType : values()) {
@@ -67,9 +64,6 @@ public enum VmDeviceType {
 
     /**
      * gets sound device type for a given device name
-     *
-     * @param name
-     * @return
      */
     public static VmDeviceType getSoundDeviceType(String name) {
         for (VmDeviceType deviceType : values()) {
@@ -82,9 +76,6 @@ public enum VmDeviceType {
 
     /**
      * gets device type for a given device name
-     *
-     * @param name
-     * @return
      */
     public static VmDeviceType getByName(String name) {
         for (VmDeviceType vmDeviceType : values()) {

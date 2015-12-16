@@ -128,11 +128,6 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      * Gets list of bricks of the volume from given list of brick representations. This can return null in certain cases
      * of failure e.g. if the brick representation contains an ip address which is mapped to more than servers in the
      * database.
-     *
-     * @param volumeId
-     * @param brickList
-     * @return
-     * @throws Exception
      */
     private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) throws Exception {
         List<GlusterBrickEntity> bricks = new ArrayList<>();

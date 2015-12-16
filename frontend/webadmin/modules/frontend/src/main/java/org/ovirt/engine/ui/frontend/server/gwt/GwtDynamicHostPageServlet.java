@@ -290,7 +290,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * string representation of the MD5 sum.
      * @throws NoSuchAlgorithmException If the method cannot create the digest
      * object.
-     * @throws UnsupportedEncodingException
      */
     protected MessageDigest getMd5Digest(HttpServletRequest request)
             throws NoSuchAlgorithmException, UnsupportedEncodingException {

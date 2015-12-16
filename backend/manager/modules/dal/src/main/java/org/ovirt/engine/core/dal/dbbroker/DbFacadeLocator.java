@@ -71,7 +71,7 @@ public class DbFacadeLocator {
     /**
      * Generate and sets the database engine dialect object according to configuration.
      *
-     * @throws IllegalStateException
+     * @throws IllegalStateException If one of the expected properties is not present.
      */
     public static DbEngineDialect loadDbEngineDialect() {
         final String ENGINE_DB_ENGINE_PROPERTIES = "engine-db-engine.properties";

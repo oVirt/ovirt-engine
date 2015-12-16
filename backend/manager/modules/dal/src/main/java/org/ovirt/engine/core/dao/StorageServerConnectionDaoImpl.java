@@ -22,9 +22,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * <code>StorageServerConnectionDaoImpl</code> provides an implementation of {@link StorageServerConnectionDao}
- * based on code from {@link DbFacade}.
- *
- *
+ * based on code from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 @Named
 @Singleton
@@ -194,7 +192,6 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
      * @param rs        resultset
      * @param column    column name
      * @return  the number, of null if the data in the DB is NULL
-     * @throws SQLException
      */
     static Short getShort(final ResultSet rs, final String column) throws SQLException {
         short ret = rs.getShort(column);

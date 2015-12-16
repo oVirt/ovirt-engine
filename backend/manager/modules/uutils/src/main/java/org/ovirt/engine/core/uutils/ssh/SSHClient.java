@@ -68,8 +68,6 @@ public class SSHClient implements Closeable {
 
     /**
      * Check if file is valid.
-     * @param file
-     * @throws IllegalArgumentException
      *
      * This is required as we use shell to pipe into
      * file, so no special charachters are allowed.
@@ -89,7 +87,6 @@ public class SSHClient implements Closeable {
      * Compare string disgest to digest.
      * @param digest MessageDigest.
      * @param actual String digest.
-     * @throws IOException.
      */
     private void validateDigest(
         MessageDigest digest,

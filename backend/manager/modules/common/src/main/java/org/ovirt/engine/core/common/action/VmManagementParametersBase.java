@@ -26,9 +26,10 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     /**
      * This class combines a value and update flag. If update flag is false, the value is not used to update the VM.
      * This is used to maintain backward compatibility in REST API: when null value comes from REST API it doesn't mean
-     * the value must be cleaned in the VM. REST API has separate commands to update values marked as Optional<T> here.
+     * the value must be cleaned in the VM. REST API has separate commands to update values marked as Optional&lt;T&gt;
+     * here.
      *
-     * @param <T> type of the value
+     * @param T type of the value
      */
     public static class Optional<T> implements Serializable {
 

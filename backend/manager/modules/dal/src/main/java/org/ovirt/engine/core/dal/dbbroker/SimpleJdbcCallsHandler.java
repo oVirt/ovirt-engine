@@ -62,7 +62,7 @@ public class SimpleJdbcCallsHandler {
      * Runs a set of stored procedure calls in a batch. Only useful for update procedures that return no value
      * @param procedureName the procedure name
      * @param paramValues list of objects to be converted to {@link MapSqlParameterSource}
-     * @param mapper mapper to use to convert the param value objects to {@liunk MapSqlParameterSource}
+     * @param mapper mapper to use to convert the param value objects to {@link MapSqlParameterSource}
      */
     public <T> void executeStoredProcAsBatch(final String procedureName,
             Collection<T> paramValues,

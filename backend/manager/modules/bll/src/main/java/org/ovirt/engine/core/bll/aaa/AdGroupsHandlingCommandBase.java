@@ -16,8 +16,6 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected AdGroupsHandlingCommandBase(Guid commandId) {
         super(commandId);

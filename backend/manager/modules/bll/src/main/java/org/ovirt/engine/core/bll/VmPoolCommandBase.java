@@ -64,7 +64,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     * @param commandId
      */
     protected VmPoolCommandBase(Guid commandId) {
         super(commandId);

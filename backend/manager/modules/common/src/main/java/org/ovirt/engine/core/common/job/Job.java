@@ -95,7 +95,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     private List<Step> steps;
 
     /**
-     * Define if the Job should be ended when the {@Code CommandBase.ExecuteAction()} ends
+     * Define if the Job should be ended when the {@code CommandBase.executeAction()} ends
      */
     transient private boolean isAsyncJob;
 

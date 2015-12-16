@@ -110,7 +110,6 @@ public class ElementTooltip implements HasId, HasHover {
 
     /**
      * Return the tooltip registry.
-     * @return
      */
     public static Map<String, ElementTooltipDetails> getRegistry() {
         return tooltipRegistry;
@@ -118,7 +117,6 @@ public class ElementTooltip implements HasId, HasHover {
 
     /**
      * Return a tooltip.
-     * @return
      */
     public static ElementTooltip getTooltip(String id) {
         if (isTooltipConfigured(id)) {

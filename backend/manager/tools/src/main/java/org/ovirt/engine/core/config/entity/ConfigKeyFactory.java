@@ -133,14 +133,9 @@ public class ConfigKeyFactory {
      * Create a ConfigKey from a ResultSet object. <b>Note</b>: Some fields are not represented by the DB, such as
      * decription and type.<br>
      *
-     * @TODO Consider refactoring the entity to be composed out of a real value-object which will represent the db
+     * TODO Consider refactoring the entity to be composed out of a real value-object which will represent the db
      *      entity and a view-object which will represent the user interaction (view) layer.
-     * @TODO move "option_name" and other column indexes to Enum values.
-     *
-     *
-     * @param resultSet
-     * @return
-     * @throws SQLException
+     * TODO move "option_name" and other column indexes to Enum values.
      */
     public ConfigKey fromResultSet(ResultSet resultSet) throws SQLException {
         ConfigKey configKey = generateByPropertiesKey(resultSet.getString("option_name"));

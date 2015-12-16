@@ -83,8 +83,6 @@ public class DocsServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet_NotFound() throws ServletException, IOException {
@@ -96,8 +94,6 @@ public class DocsServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet_ResponseLangOkay() throws ServletException, IOException {
@@ -111,8 +107,6 @@ public class DocsServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet_Lang_MissingFirstTimeNoDispatcher() throws ServletException, IOException {
@@ -128,8 +122,6 @@ public class DocsServletTest {
 
     /**
      * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
      */
     @Test
     public void testDoGet_Lang_MissingFirstTimeNoDispatcher_SessionFalse() throws ServletException, IOException {
@@ -186,8 +178,7 @@ public class DocsServletTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.DocsServlet#
-     * getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
+     * Test method for {@link org.ovirt.engine.core.DocsServlet#getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
      */
     @Test
     public void testGetLocaleFromRequest() {
@@ -199,8 +190,7 @@ public class DocsServletTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.DocsServlet#
-     * getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
+     * Test method for {@link org.ovirt.engine.core.DocsServlet#getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
      */
     @Test
     public void testGetLocaleFromRequest_withHash() {

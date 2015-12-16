@@ -9,7 +9,6 @@ public interface LockManagerMonitorMXBean {
 
     /**
      * The following method will return all locks currently kept in the system
-     * @return
      */
     List<String> showAllLocks();
 
@@ -20,7 +19,6 @@ public interface LockManagerMonitorMXBean {
 
     /**
      * The following method will release a lock with provided lockId
-     * @param lockId
      */
     boolean releaseLock(String lockId);
 }

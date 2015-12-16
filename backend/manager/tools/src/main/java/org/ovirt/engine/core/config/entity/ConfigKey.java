@@ -99,8 +99,6 @@ public class ConfigKey {
      *
      * @param value
      *            The value to set
-     * @throws InvalidParameterException
-     * @throws Exception
      */
     public void safeSetValue(String value) throws InvalidParameterException, Exception {
         ValidationResult validationResult = valueHelper.validate(this, value);
@@ -123,8 +121,6 @@ public class ConfigKey {
 
     /**
      * Sets the value of this ConfigKey to the given value without validation. Is meant for internal use only.
-     *
-     * @param value
      */
     public void unsafeSetValue(String value) {
         this.value = value;

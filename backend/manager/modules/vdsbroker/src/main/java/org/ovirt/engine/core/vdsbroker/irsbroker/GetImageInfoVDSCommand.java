@@ -74,9 +74,6 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         }
     }
 
-    /**
-     * <exception>VdcDAL.IrsBrokerIRSErrorException.
-     */
     public DiskImage buildImageEntity(Map<String, Object> xmlRpcStruct) {
         DiskImage newImage = new DiskImage();
         try {

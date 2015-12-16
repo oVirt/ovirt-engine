@@ -62,8 +62,6 @@ public abstract class EJBUtilsStrategy {
      *
      * @param <T>
      *            interface that the bean implements
-     * @param name
-     *            JNDI name
      * @return proxy to bean
      */
     public <T> T findResource(ContainerManagedResourceType resourceValue) {
@@ -83,11 +81,6 @@ public abstract class EJBUtilsStrategy {
 
     /**
      * Finds a bean according to the bean type and proxy type
-     *
-     * @param <T>
-     * @param aBeanType
-     * @param aType
-     * @return
      */
     public <T> T findBean(BeanType beanType, BeanProxyType proxyType) {
 

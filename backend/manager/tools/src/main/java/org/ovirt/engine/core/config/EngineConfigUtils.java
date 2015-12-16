@@ -8,9 +8,7 @@ import org.apache.commons.lang.StringUtils;
 public class EngineConfigUtils {
 
     /**
-     * @param paths
      * @return The first file found from the list
-     * @throws FileNotFoundException
      */
     public static File locateFileInPaths(String... paths) throws FileNotFoundException {
         for (String path : paths) {

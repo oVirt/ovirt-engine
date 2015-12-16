@@ -42,7 +42,7 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
      */
     private ArrayList<Guid> filters;
     /**
-     * Map of filters positions: <uuid (policy unit id), int (position)> Acceptable position values: first (-1), last
+     * Map of filters positions: [uuid (policy unit id), int (position)] Acceptable position values: first (-1), last
      * (1), no position (0)
      */
     private Map<Guid, Integer> filterPositionMap;

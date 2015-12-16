@@ -11,7 +11,6 @@ public interface ErrorTranslator {
      *
      * @param errorMsg
      *            messages to be translated
-     * @return
      */
     List<String> translateErrorText(List<String> errorMsg);
 
@@ -24,7 +23,6 @@ public interface ErrorTranslator {
      *            messages to be translated
      * @param locale
      *            the locale to translate into
-     * @return
      */
     List<String> translateErrorText(List<String> errorMsg, Locale locale);
 
@@ -45,7 +43,6 @@ public interface ErrorTranslator {
      * @param changeIfNotFound
      *            If true: if message key is not found in the resource, return a beautified key. If false, returned
      *            unfound key as is.
-     * @return
      */
     String translateErrorTextSingle(String errorMsg, boolean changeIfNotFound);
 
@@ -72,9 +69,6 @@ public interface ErrorTranslator {
     /**
      * Replacing variables ('${...}') within translatedMessages with their values ('$key value') that are also within
      * translatedMessages.
-     *
-     * @param translatedMessages
-     * @return
      */
     List<String> resolveMessages(List<String> translatedMessages);
 

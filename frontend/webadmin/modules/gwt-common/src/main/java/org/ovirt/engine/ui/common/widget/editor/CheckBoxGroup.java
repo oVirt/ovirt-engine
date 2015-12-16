@@ -119,7 +119,6 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      * Enable/disable all checkboxes
      * @param enabled
      *            boolean whether to enable/disable all checkboxes
-     * @return void
      */
     public void setEnabled(boolean enabled) {
         for(Entry<T, CheckBox> currentValue : checkBoxes.entrySet()) {
@@ -142,7 +141,6 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      *            list of checkboxes to set checked.
      * @param fireEvents
      *            whether to fire ValueChangeEvent
-     * @return void
      */
     @Override
     public void setValue(List<T> value, boolean fireEvents) {
@@ -173,7 +171,6 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      * Api to add list of CheckBoxes to the CheckBoxGroup. This is invoked by the mapped ListModel's setItems.
      * @param values
      *            list of values for which checkboxes are to be created in the group.
-     * @return void
      */
     @Override
     public void setAcceptableValues(Collection<List<T>> values) {
@@ -206,7 +203,6 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
      * corresponding to the list passed to it.
      * @param value
      *            list of checkboxes to set checked.
-     * @return void
      */
     @Override
     public void setValue(List<T> value) {

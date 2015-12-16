@@ -198,7 +198,6 @@ public class VmHandler {
      *            The reasons.
      * @param nicsCount
      *            How many vNICs need to be allocated.
-     * @return
      */
     public static boolean verifyAddVm(List<String> reasons,
             int nicsCount,
@@ -497,7 +496,6 @@ public class VmHandler {
      *            a vm|template.
      * @param clusterVersion
      *            the vm's cluster version.
-     * @return
      */
     public static void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
@@ -523,7 +521,6 @@ public class VmHandler {
      *            The architecture type.
      * @param reasons
      *            The reasons.Cluster
-     * @return
      */
     public static boolean isOsTypeSupported(int osId,
                                             ArchitectureType architectureType,
@@ -549,7 +546,6 @@ public class VmHandler {
      *            The reasons.Cluster
      * @param clusterVersion
      *            The cluster version.
-     * @return
      */
     public static boolean isGraphicsAndDisplaySupported(int osId,
                                                         Collection<GraphicsType> graphics,
@@ -578,7 +574,6 @@ public class VmHandler {
      *            Cluster's version
      * @param reasons
      *            Reasons List
-     * @return
      */
     public static boolean isOsTypeSupportedForVirtioScsi(int osId,
                                             Version clusterVersion,
@@ -622,7 +617,6 @@ public class VmHandler {
      *            Number of monitors
      * @param reasons
      *            Messages for Validate().
-     * @return
      */
     public static boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
         boolean legal = false;
@@ -659,8 +653,6 @@ public class VmHandler {
 
     /**
      * get max of allowed monitors from config config value is a comma separated list of integers
-     *
-     * @return
      */
     private static int getMaxNumberOfMonitors() {
         int max = 0;
@@ -696,11 +688,8 @@ public class VmHandler {
      * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only in case the cluster
      * level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
      *
-     * @param usbPolicy
-     * @param osId
      * @param messages
-     *            - Messages for Validate()
-     * @return
+     *            - Messages for validate()
      */
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
             int osId, Version compatibilityVersion,
@@ -957,7 +946,6 @@ public class VmHandler {
      *
      * @param vm                  - the VM to check
      * @param validationMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
-     * @return
      */
     public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> validationMessages) {
         boolean result = true;

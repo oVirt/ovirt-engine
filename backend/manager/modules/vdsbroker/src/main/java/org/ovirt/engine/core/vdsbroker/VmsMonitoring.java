@@ -90,12 +90,10 @@ public class VmsMonitoring {
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
     /**
-     *  @param vdsManager the host manager related to this cycle.
+     * @param vdsManager the host manager related to this cycle.
      * @param monitoredVms the vms we want to monitor/analyze/react on. this structure is
      *                     a pair of the persisted (db currently) VM and the running VM which was reported from vdsm.
      *                     Analysis and reactions would be taken on those VMs only.
-     * @param vmsWithChangedDevices
-     * @param auditLogDirector
      */
     public VmsMonitoring(
             VdsManager vdsManager,
@@ -147,7 +145,6 @@ public class VmsMonitoring {
 
     /**
      * lock Vms which has db entity i.e they are managed by a VmManager
-     * @param pair
      * @return true if lock acquired
      */
     private boolean tryLockVmForUpdate(Pair<VM, VmInternalData> pair) {
@@ -420,8 +417,6 @@ public class VmsMonitoring {
 
     /**
      * Update the given list of VMs properties in DB
-     *
-     * @param vmsToUpdate
      */
     protected void updateVmDevices(List<String> vmsToUpdate) {
         if (vmsToUpdate.isEmpty()) {
@@ -437,8 +432,6 @@ public class VmsMonitoring {
 
     /**
      * Actually process the VM device update in DB.
-     *
-     * @param vm
      */
     private void processVmDevices(Map vm) {
         if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
@@ -509,9 +502,6 @@ public class VmsMonitoring {
 
     /**
      * Removes unmanaged devices from DB if were removed by libvirt. Empties device address with isPlugged = false
-     *
-     * @param vmId
-     * @param processedDevices
      */
     private void handleRemovedDevices(Guid vmId, Set<Guid> processedDevices, List<VmDevice> devices) {
         for (VmDevice device : devices) {
@@ -553,9 +543,6 @@ public class VmsMonitoring {
 
     /**
      * Adds new devices recognized by libvirt
-     *
-     * @param vmId
-     * @param device
      */
     private Guid addNewVmDevice(Guid vmId, Map device, String logicalName) {
         Guid newDeviceId = Guid.Empty;
@@ -590,9 +577,6 @@ public class VmsMonitoring {
 
     /**
      * gets the device id from the structure returned by VDSM device ids are stored in specParams map
-     *
-     * @param device
-     * @return
      */
     private static Guid getDeviceId(Map device) {
         String deviceId = (String) device.get(VdsProperties.DeviceId);
@@ -601,9 +585,6 @@ public class VmsMonitoring {
 
     /**
      * gets VM full information for the given list of VMs
-     *
-     * @param vmsToUpdate
-     * @return
      */
     protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate) {
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
@@ -642,8 +623,6 @@ public class VmsMonitoring {
 
     /**
      * Add or update vmDynamic to save list
-     *
-     * @param vmDynamic
      */
     protected void addVmDynamicToList(VmDynamic vmDynamic) {
         vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
@@ -651,8 +630,6 @@ public class VmsMonitoring {
 
     /**
      * Add or update vmDynamic to save list
-     *
-     * @param vmDevice
      */
     private void addVmDeviceToList(VmDevice vmDevice) {
         vmDeviceToSave.add(vmDevice);

@@ -173,7 +173,6 @@ public class ResourceManager implements BackendService {
 
     /**
      * Initiate rerun event when vm failed to run
-     * @param vmId
      */
     public void rerunFailedCommand(Guid vmId, Guid vdsId) {
         if (asyncRunningVms.remove(vmId)) {
@@ -269,7 +268,6 @@ public class ResourceManager implements BackendService {
 
     /**
      * Set vm status to Unknown and save to DB.
-     * @param vm
      */
     public void setVmUnknown(VM vm) {
         removeAsyncRunningVm(vm.getId());
@@ -304,9 +302,6 @@ public class ResourceManager implements BackendService {
      *
      * <p> Note: Calling this method with status=down, must be only when the
      *     VM went down normally, otherwise call {@link #InternalSetVmStatus(VM, VMStatus, VmExitStatus, String)}
-     *
-     * @param vm
-     * @param status
      */
     public void internalSetVmStatus(VM vm, final VMStatus status) {
         internalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
@@ -388,9 +383,6 @@ public class ResourceManager implements BackendService {
 
     /**
      * Create the command which needs to run.
-     * @param <P>
-     * @param commandType
-     * @param parameters
      * @return The command, or null if it can't be created.
      */
     private <P extends VDSParametersBase> VDSCommandBase<P> createCommand(

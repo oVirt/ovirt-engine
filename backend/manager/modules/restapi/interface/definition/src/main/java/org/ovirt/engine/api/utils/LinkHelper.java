@@ -919,7 +919,6 @@ public class LinkHelper {
      *
      * @param uriInfo  the URI info
      * @param model    the object
-     * @return         the model, with the href attribute set
      */
     private static <R extends BaseResource> void setHref(UriInfo uriInfo, R model) {
         setHref(uriInfo, model, null);
@@ -933,7 +932,6 @@ public class LinkHelper {
      * @param uriInfo              the URI info
      * @param model                the object
      * @param suggestedParentType  the suggested parent type
-     * @return                     the model, with the href attribute set
      */
     private static <R extends BaseResource> void setHref(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
         UriBuilder uriBuilder = getUriBuilder(uriInfo, model, suggestedParentType);
@@ -948,7 +946,6 @@ public class LinkHelper {
      * @param uriInfo the URI info
      * @param model   the object
      * @param suggestedParentType  the suggested parent type
-     * @return        the object, including its set of action links
      */
     private static <R extends BaseResource> void setActions(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
         Collection collection = getCollection(model);
@@ -965,7 +962,6 @@ public class LinkHelper {
      * @param uriInfo the URI info
      * @param model the object to add actions to
      * @param collection the object to get implemented methods from
-     * @return the object, including its set of action links
      */
     public static <R extends ActionableResource> void addActions(UriInfo uriInfo, R model, Object collection) {
         if (uriInfo != null) {

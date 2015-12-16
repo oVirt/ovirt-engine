@@ -6,7 +6,7 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 @GenEvent
 public class UpdatedVnuma {
     /**
-     * The {@cod Guid} of the VM that contains the virtual NUMA node.
+     * The {@code Guid} of the VM that contains the virtual NUMA node.
      */
     Guid sourceVmGuid;
 

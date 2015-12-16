@@ -11,7 +11,7 @@ public class PermitMapper {
     private static final Logger log = LoggerFactory.getLogger(PermitMapper.class);
 
     /**
-     * @pre completeness of "name|id" already validated
+     * Completeness of "name|id" already validated
      */
     @Mapping(from = Permit.class, to = ActionGroup.class)
     public static ActionGroup map(Permit model, ActionGroup template) {

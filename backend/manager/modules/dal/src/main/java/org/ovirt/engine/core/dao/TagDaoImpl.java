@@ -139,7 +139,6 @@ public class TagDaoImpl extends BaseDao implements TagDao {
      * functions
      * @param ids
      *            the Template ids
-     * @return
      */
     @Override
     public List<Tags> getAllForTemplate(String ids) {
@@ -392,9 +391,6 @@ public class TagDaoImpl extends BaseDao implements TagDao {
 
     /**
      * In the database both Template and Vm Tags share the same tables and functions
-     * @param tagId
-     * @param vmId
-     * @return
      */
     @Override
     public TagsTemplateMap getTagTemplateByTagIdAndByTemplateId(Guid tagId, Guid vmId) {

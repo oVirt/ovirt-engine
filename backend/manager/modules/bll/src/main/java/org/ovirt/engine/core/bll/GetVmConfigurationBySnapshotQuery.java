@@ -9,8 +9,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * This class implements the logic of the query responsible for getting a VM configuration by snapshot.
- *
- * @param <P>
  */
 public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 

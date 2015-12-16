@@ -1317,8 +1317,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * Numa will use the same compatibilityVersion as cpu pinning since
      * numa may also add cpu pinning configuration and the two features
      * have almost the same libvirt version support
-     *
-     * @param compatibilityVersion
      */
     private void addNumaSetting(final String compatibilityVersion) {
         if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,

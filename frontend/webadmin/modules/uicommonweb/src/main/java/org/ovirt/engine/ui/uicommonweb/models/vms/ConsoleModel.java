@@ -147,8 +147,6 @@ public abstract class ConsoleModel extends EntityModel<VM> {
      *  - there is an active console user who is different from current portal user and has not reconnect permissions AND
      *  - current portal user has not reconnect permissions (this is to prevent extra information dialog. backend
      *    validation will not allow connecting this user and frontend will display warning message anyway)
-     *
-     * @param command
      */
     protected void executeCommandWithConsoleSafenessWarning(final UICommand command) {
         VM vm = getEntity();

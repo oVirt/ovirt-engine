@@ -17,13 +17,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * Base {@link ModelProvider} implementation. Decorates a Provider<M> that gets injected by GIN.
+ * Base {@link ModelProvider} implementation. Decorates a Provider that gets injected by GIN.
  *
  * Provides a model to something, usually preparing it along the way.
  *
  * TODO rename BaseModelProvider
  *
- * @param <M> model type being provided
+ * @param M model type being provided
  */
 public abstract class TabModelProvider<M extends HasEntity> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 

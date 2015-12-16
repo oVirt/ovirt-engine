@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VmPoolDao</code> defines a type that performs CRUD operations on instances of {@link vm_pool}.
+ * <code>VmPoolDao</code> defines a type that performs CRUD operations on instances of {@link VmPool}.
  *
  */
 public interface VmPoolDao extends Dao, SearchDao<VmPool> {
@@ -94,9 +94,6 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
 
     /**
      * Sets beingDestroyed flag of the given pool.
-     *
-     * @param vmPoolId
-     * @param beingDestroyed
      */
     void setBeingDestroyed(Guid vmPoolId, boolean beingDestroyed);
 
@@ -106,8 +103,6 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
 
     /**
      * Gets the maps of the given pool, for the Vms that are in the given status
-     * @param vmPoolId
-     * @return
      */
     List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(Guid vmPoolId, VMStatus vmStatus);
 

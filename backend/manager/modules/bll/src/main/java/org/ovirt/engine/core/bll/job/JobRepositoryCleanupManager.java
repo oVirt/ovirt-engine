@@ -48,9 +48,9 @@ public class JobRepositoryCleanupManager {
     /**
      * Removes completed jobs:
      * <ul>
-     * <li>The successful jobs will be deleted after {@code ConfigValues.SucceededJobCleanupTimeInMinutes}.</li>
-     * <li>The failed jobs will be deleted after {@code ConfigValues.FailedJobCleanupTimeInMinutes}.</li>
-     * <ul>
+     * <li>The successful jobs will be deleted after {@code ConfigValues#SucceededJobCleanupTimeInMinutes}.</li>
+     * <li>The failed jobs will be deleted after {@code ConfigValues#FailedJobCleanupTimeInMinutes}.</li>
+     * </ul>
      */
     @OnTimerMethodAnnotation("completed_jobs_cleanup")
     public void cleanCompletedJob() {

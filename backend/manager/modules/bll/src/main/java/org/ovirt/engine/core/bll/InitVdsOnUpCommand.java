@@ -239,7 +239,6 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
      * The method will perform a connect storage pool operation,
      * if operation will wail on StoragePoolWrongMaster or StoragePoolMasterNotFound errors
      * we will try to run reconstruct
-     * @return
      */
     private EventResult connectHostToPool() {
         final VDS vds = getVds();
@@ -432,8 +431,6 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
      * part of the UP server's peer list.
      * Also, acquiring a wait lock only during a gluster peer process (wait as there's periodic job that also
      * acquires lock.
-     *
-     * @return
      */
     private boolean initGlusterPeerProcess() {
        // If "gluster peer probe" and "gluster peer status" are executed simultaneously, the results

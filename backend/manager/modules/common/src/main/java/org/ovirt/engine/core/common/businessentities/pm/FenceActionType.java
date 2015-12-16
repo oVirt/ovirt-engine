@@ -29,9 +29,9 @@ public enum FenceActionType {
      *
      * @param value
      *            string representation of fence action
+     * @return parsed fence action
      * @throws IllegalArgumentException
      *             if invalid value was specified
-     * @return parsed fence action
      */
     public static FenceActionType forValue(String value) {
         if (value != null && value.length() > 0) {

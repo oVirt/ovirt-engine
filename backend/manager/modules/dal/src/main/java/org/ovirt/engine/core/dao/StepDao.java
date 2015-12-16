@@ -48,8 +48,6 @@ public interface StepDao extends GenericDao<Step, Guid> {
 
     /**
      * Retrieve all steps associated with the given external id
-     * @param externalId
-     * @return
      */
     List<Step> getStepsByExternalId(Guid externalId);
 

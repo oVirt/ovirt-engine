@@ -38,8 +38,6 @@ public final class NetworkUtils {
     /**
     * Returns the underlying interface name of a given nic
     *
-    * @param nic
-    *
     * @return Base interface name if the nic is a vlan device.
     *         Otherwise, the name of the nic
     */
@@ -102,7 +100,6 @@ public final class NetworkUtils {
      *            logical networks
      * @param networkNames
      *            target names to match non-VM networks upon
-     * @return
      */
     public static List<String> filterNonVmNetworkNames(List<Network> networks, Set<String> networkNames) {
         List<String> list = new ArrayList<>();
@@ -253,8 +250,6 @@ public final class NetworkUtils {
 
     /**
      * returns whether the network has a role in the cluster
-     *
-     * @param networkCluster
      *
      * @return whether the network has a role (display, migration or gluster) in the cluster
      */

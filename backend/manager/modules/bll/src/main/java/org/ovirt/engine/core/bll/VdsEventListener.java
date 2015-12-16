@@ -192,8 +192,6 @@ public class VdsEventListener implements IVdsEventListener {
 
     /**
      * The following method will clear a cache for problematic domains, which were reported by vds
-     *
-     * @param vds
      */
     private void clearDomainCache(final VDS vds) {
         eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
@@ -254,9 +252,6 @@ public class VdsEventListener implements IVdsEventListener {
 
     /**
      * Synchronize LUN details comprising the storage domain with the DB
-     *
-     * @param storageDomainId
-     * @param vdsId
      */
     @Override
     public void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId) {

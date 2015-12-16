@@ -35,8 +35,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected FenceVdsBaseCommand(Guid commandId) {
         super(commandId);

@@ -110,7 +110,6 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
      *            Comma separated string of dates to mark selected
      * @param fireEvents
      *            whether to fire ValueChangeEvent
-     * @return void
      */
     @Override
     public void setValue(String value, boolean fireEvents) {
@@ -133,7 +132,6 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
      * When the mapped ListModel does a setSelectedItem, this is invoked. This method sets the passed dates selected
      * @param value
      *            Comma separated string of dates to mark selected
-     * @return void
      */
     @Override
     public void setValue(String value) {

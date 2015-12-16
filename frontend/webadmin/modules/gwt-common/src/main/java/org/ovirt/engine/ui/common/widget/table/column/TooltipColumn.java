@@ -14,7 +14,6 @@ public interface TooltipColumn<T> {
      * The tooltip cell will then use this value when rendering the cell.
      * </p>
      *
-     * @param object
      * @return tooltip content
      */
     public SafeHtml getTooltip(T object);

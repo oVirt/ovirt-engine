@@ -109,9 +109,6 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     /**
      * parse the enum value by its attributes and return the type, default value, and option behaviour (if any) return
      * false if cannot find value in enum or cannot get type
-     *
-     * @param name
-     * @return
      */
     protected static EnumValue parseEnumValue(String name) {
 

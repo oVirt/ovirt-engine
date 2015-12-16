@@ -163,9 +163,6 @@ public abstract class GlusterJob {
     /**
      * Returns an {@link EngineLock} instance that represents a lock on a cluster with given id and the locking group
      * {@link LockingGroup#GLUSTER}
-     *
-     * @param clusterId
-     * @return
      */
     private EngineLock getEngineLock(Guid clusterId) {
         return new EngineLock(Collections.singletonMap(clusterId.toString(),

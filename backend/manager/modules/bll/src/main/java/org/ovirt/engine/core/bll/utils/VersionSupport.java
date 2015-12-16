@@ -39,8 +39,6 @@ public class VersionSupport implements Serializable {
     /**
      * check that cluster version included in host supported clusters
      *
-     * @param clusterCompatibilityVersion
-     * @param vds
      * @return true if the version is supported, else false
      */
     public static boolean checkClusterVersionSupported(Version clusterCompatibilityVersion, VDS vds) {

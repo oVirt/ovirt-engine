@@ -86,7 +86,6 @@ public class OvfParser {
     /**
      * Method return false if the format is not yyyy/mm/dd hh:mm:ss
      *
-     * @param str
      * @return the date or null if parse failed
      */
     public static Date utcDateStringToLocaDate(String str) {

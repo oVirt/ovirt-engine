@@ -48,7 +48,7 @@ public class DateMapper {
     }
 
     /**
-     * @pre called with class-level mutex held
+     * called with class-level mutex held
      */
     private static DatatypeFactory getDatatypeFactory() {
         if (datatypeFactory == null) {

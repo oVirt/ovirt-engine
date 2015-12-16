@@ -18,9 +18,6 @@ import java.util.Set;
  * A map decorator for providing copies of keys and values upon invocation of accessor methods. With this decorator the
  * caller will be able to safely update the retrieved objects without worrying that the objects held by the map are
  * altered (as he will get copies and not references to the objects held by the map).
- *
- * @param <K>
- * @param <V>
  */
 public class CopyOnAccessMap<K, V> implements Map<K, V> {
 

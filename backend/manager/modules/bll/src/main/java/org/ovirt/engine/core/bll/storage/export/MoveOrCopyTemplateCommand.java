@@ -73,8 +73,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected MoveOrCopyTemplateCommand(Guid commandId) {
         super(commandId);
@@ -363,8 +361,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
      * Space Validations are done using data extracted from the disks. The disks in question in this command
      * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
      * one is created specifically fo this validation - hence dummy.
-     * @param disksList
-     * @return
      */
     protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
         List<DiskImage> dummies = new ArrayList<>(disksList.size());

@@ -184,9 +184,6 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
 
     /**
      * Generate a Menu for the provided Network Item.
-     *
-     * @param item
-     * @return
      */
     private MenuBar menuFor(NetworkItemModel<?> item) {
         MenuBar menu = rootMenu(item);

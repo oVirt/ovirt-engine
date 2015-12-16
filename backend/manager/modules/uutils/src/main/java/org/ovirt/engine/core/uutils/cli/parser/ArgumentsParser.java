@@ -75,11 +75,11 @@ import org.apache.commons.lang.StringUtils;
  *  $help.header
  *
  *  Options:
- *    --<prefix>arg.argument1.name
- *      <prefix>arg.argument1.help
+ *    --&lt;prefix&gt;arg.argument1.name
+ *      &lt;prefix&gt;arg.argument1.help
  *
- *    --<prefix>arg.argument2.name
- *      <prefix>arg.argument2.help
+ *    --&lt;prefix&gt;arg.argument2.name
+ *      &lt;prefix&gt;arg.argument2.help
  *
  *  $help.footer
  * """

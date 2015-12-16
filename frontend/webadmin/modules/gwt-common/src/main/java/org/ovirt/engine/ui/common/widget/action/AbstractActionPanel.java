@@ -118,7 +118,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     private final MenuPanelPopup actionPanelPopupPanel;
 
     /**
-     * The popup panel containing the {@MenuBar} with the cascaded action buttons.
+     * The popup panel containing the {@link MenuBar} with the cascaded action buttons.
      */
     private final PopupPanel cascadePopupPanel;
     /**

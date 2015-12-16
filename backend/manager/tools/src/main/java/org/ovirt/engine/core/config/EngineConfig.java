@@ -28,8 +28,6 @@ public class EngineConfig {
      *
      * @param parser
      *            parser instance with parsed args
-     *
-     * @throws Exception
      */
     public void setUpAndExecute(EngineConfigCLIParser parser) throws Exception {
         log.debug("Arguments have been parsed: {}", parser.engineConfigMapToString());

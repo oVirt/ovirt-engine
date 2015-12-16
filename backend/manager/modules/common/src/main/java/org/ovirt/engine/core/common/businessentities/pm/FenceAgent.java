@@ -175,9 +175,6 @@ public class FenceAgent implements BusinessEntity<Guid> {
 
     /**
      * Converts a PM Options map to string
-     *
-     * @param map
-     * @return
      */
     public static String optionsMapToString(HashMap<String, String> map) {
         String result = "";
@@ -197,7 +194,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
     /**
      * Converts a PM Options string to a map.
      *
-     * <b<Note:</b> A {@link HashMap} is used instead of the interface {@link Map}, as this method is used by the
+     * <b>Note:</b> A {@link HashMap} is used instead of the interface {@link Map}, as this method is used by the
      * frontend, and requires GWT compilation.
      *
      * @param pmOptions

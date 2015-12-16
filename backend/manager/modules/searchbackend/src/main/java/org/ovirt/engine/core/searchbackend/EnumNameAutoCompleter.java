@@ -8,7 +8,6 @@ public class EnumNameAutoCompleter extends BaseAutoCompleter implements IConditi
 
     /**
      * Constructor adds all names of the enum to completion dictionary
-     * @param enumerationType
      */
     public <T extends Enum<T>> EnumNameAutoCompleter(Class<T> enumerationType) {
         for (T enumMember : enumerationType.getEnumConstants()) {

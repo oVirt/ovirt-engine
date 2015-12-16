@@ -31,7 +31,7 @@ public abstract class NumberRangeValidation<T extends Number> implements IValida
     }
 
     /***
-     * Parse a given string to type <T
+     * Parse a given string to type T
      * @param value
      *            a {@link String} representation of the required value
      * @return T initiated with value in case of success, null otherwise

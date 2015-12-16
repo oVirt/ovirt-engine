@@ -157,7 +157,6 @@ public class IconValidator {
     }
 
     /**
-     * @param dataUrlLength
      * @return size estimate in form of 'x kB'
      */
     private static String getSizeEstimateByDataUrlLength(int dataUrlLength) {

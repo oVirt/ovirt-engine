@@ -92,7 +92,6 @@ public class SSHDialog implements Closeable {
     /**
      * Get SSH Client.
      * Used for mocking.
-     * @internal
      */
     protected SSHClient getSSHClient() {
         return new SSHClient();
@@ -170,7 +169,6 @@ public class SSHDialog implements Closeable {
      * Set password to use.
      * If both password and key pair are set key pair
      * is used.
-     * @param password.
      */
     public void setPassword(String password) {
         _password = password;

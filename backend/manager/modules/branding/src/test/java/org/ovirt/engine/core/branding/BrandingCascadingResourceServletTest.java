@@ -56,9 +56,6 @@ public class BrandingCascadingResourceServletTest {
 
     /**
      * Test that serving works when the request is "/favicon".
-     * @throws IOException
-     * @throws ServletException
-     * @throws URISyntaxException
      */
     @Test
     public void testDoGetServeFavicon() throws IOException, ServletException, URISyntaxException {
@@ -80,9 +77,6 @@ public class BrandingCascadingResourceServletTest {
 
     /**
      * Test that a 404 is served when no resources are available.
-     * @throws IOException
-     * @throws ServletException
-     * @throws URISyntaxException
      */
     @Test
     public void testDoGetServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {

@@ -184,7 +184,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the disk image properties.
-     * @param search
      */
     private static String getDiskImageRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -258,7 +257,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the VM properties.
-     * @param search
      */
     private static String getVMRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -272,7 +270,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the VM Template properties.
-     * @param search
      */
     private static String getVMTemplateRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -286,7 +283,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the VDS properties.
-     * @param search
      */
     private static String getVdsRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -301,7 +297,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the Vds group properties.
-     * @param search
      */
     private static String getClusterRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -316,7 +311,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the storage pool properties.
-     * @param search
      */
     private static String getStoragePoolRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -331,7 +325,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the Gluster Volume properties.
-     * @param search
      */
     private static String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
@@ -346,7 +339,6 @@ public class SearchQueryTest extends DbDependentTestBase {
 
     /**
      * Regex string which contains all of the Network properties.
-     * @param search
      */
     private static String getNetworkRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
