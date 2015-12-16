@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
@@ -1878,6 +1880,14 @@ public class VmDeviceUtils {
         }
 
         return vmManagedDeviceMap;
+    }
+
+    public static <E extends VmDevice> Map<String, E> vmDevicesByDevice(Collection<E> deviceList) {
+        return deviceList == null
+                ? Collections.emptyMap()
+                : deviceList.stream()
+                        .filter(dev -> dev.getDevice() != null)
+                        .collect(Collectors.toMap(VmDevice::getDevice, Function.<E>identity()));
     }
 
 }

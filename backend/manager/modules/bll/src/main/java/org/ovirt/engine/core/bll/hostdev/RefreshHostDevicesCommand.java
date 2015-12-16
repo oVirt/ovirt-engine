@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RefreshHostInfoCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -80,7 +81,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
         fetchedMap = Entities.entitiesByName(fetchedDevices);
         oldMap = Entities.entitiesByName(oldDevices);
-        Map<String, VmDevice> vmDeviceMap = Entities.vmDevicesByDevice(vmDevices);
+        Map<String, VmDevice> vmDeviceMap = VmDeviceUtils.vmDevicesByDevice(vmDevices);
 
         final List<HostDevice> newDevices = new ArrayList<>();
         final List<HostDevice> changedDevices = new ArrayList<>();
