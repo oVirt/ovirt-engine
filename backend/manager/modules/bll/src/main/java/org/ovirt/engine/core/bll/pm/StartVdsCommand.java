@@ -38,17 +38,17 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean retValue = super.canDoAction();
+    protected boolean validate() {
+        boolean retValue = super.validate();
         VDS vds = getVds();
         if (vds != null) {
             VDSStatus vdsStatus = vds.getStatus();
             if (vdsStatus == VDSStatus.Connecting) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
 
             } else if (!legalStatusForStartingVds(vdsStatus)) {
-                addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_START);
+                addValidationMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_START);
                 retValue = false;
                 log.error("VDS status for vds '{}' '{}' is '{}'", vds.getId(), vds.getName(), vdsStatus);
             }
@@ -74,22 +74,22 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+        addValidationMessage(EngineMessage.VAR__ACTION__START);
     }
 
     @Override
     protected void handleError() {
-        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+        addValidationMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__START);
         log.error("Failed to run StartVdsCommand on host '{}'", getVdsName());
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+        addValidationMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__START);
 
         return getSucceeded() ? AuditLogType.USER_VDS_START : AuditLogType.USER_FAILED_VDS_START;
     }

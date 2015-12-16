@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -133,60 +133,60 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
     }
 
-    /* Tests for canDoAction() flow */
+    /* Tests for validate() flow */
 
     @Test
-    public void testCanDoActionSuccess() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void testValidateSuccess() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionImageDoesNotExist() {
+    public void testValidateImageDoesNotExist() {
         doReturn(null).when(cmd).getDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionImageIsLocked() {
+    public void testValidateImageIsLocked() {
         disk.setImageStatus(ImageStatus.LOCKED);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
-    public void testCanDoActionFloatingDisk() {
+    public void testValidateFloatingDisk() {
         when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.<VM>emptyList());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
     }
 
     @Test
-    public void testCanDoActionVmRunningFail() {
+    public void testValidateVmRunningFail() {
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
     }
 
     @Test
-    public void testCanDoActionVdsNotFound() {
+    public void testValidateVdsNotFound() {
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up))
                 .thenReturn(Collections.<VDS>emptyList());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
     }
 
     @Test
-    public void testCanDoActionStoragePoolDown() {
+    public void testValidateStoragePoolDown() {
         storagePool.setStatus(StoragePoolStatus.Maintenance);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
-    public void testCanDoActionStorageDomainIsFileStorage() {
+    public void testValidateStorageDomainIsFileStorage() {
         storageDomain.setStorageType(StorageType.NFS);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
     }
 }

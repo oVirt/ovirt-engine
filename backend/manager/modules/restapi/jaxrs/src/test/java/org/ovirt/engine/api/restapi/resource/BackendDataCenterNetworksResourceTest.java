@@ -59,12 +59,12 @@ public class BackendDataCenterNetworksResourceTest
         doTestBadAddNetwork(true, false, FAILURE);
     }
 
-    private void doTestBadAddNetwork(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { DATA_CENTER_ID },
-                                           canDo,
+                                           valid,
                                            success));
         Network model = getModel(0);
         model.setDataCenter(new DataCenter());

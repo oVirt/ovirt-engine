@@ -102,7 +102,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         doReturn(vmValidator).when(command).createVmValidator(vm);
 
         assertFalse(command.checkCanDisableVirtIoScsi());
-        CanDoActionTestUtils.assertCanDoActionMessages("Validation should prevent disabling of virtIO-scsi.",
+        ValidateTestUtils.assertValidationMessages("Validation should prevent disabling of virtIO-scsi.",
                 command,
                 EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
     }

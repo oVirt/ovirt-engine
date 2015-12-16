@@ -160,7 +160,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!isVmExist() || !isDiskExist(getOldDisk())) {
             return false;
         }
@@ -183,7 +183,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (!vmsDiskOrSnapshotPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running
             if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && updateParametersRequiringVmDownRequested()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
 
             boolean isUpdatedAsBootable = !getOldDisk().isBoot() && getNewDisk().isBoot();
@@ -217,8 +217,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
@@ -236,7 +236,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     VmDeviceUtils.hasWatchdog(vm.getId()),
                     VmDeviceUtils.hasMemoryBalloon(vm.getId()),
                     VmDeviceUtils.hasSoundDevice(vm.getId()),
-                    getReturnValue().getCanDoActionMessages())) {
+                    getReturnValue().getValidationMessages())) {
                 return false;
             }
         }
@@ -280,7 +280,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
             StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage)getNewDisk()).getStorageIds().get(0));
             if (sds.getStorageType() == StorageType.GLUSTERFS) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             }
 
             List<DiskImage> diskImageList =
@@ -289,21 +289,21 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
             if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
-                return failCanDoAction(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
+                return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
 
             if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDao().get(getVm().getStoragePoolId())
                     .getCompatibilityVersion()
                     .getValue())) {
-                return failCanDoAction(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+                return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
 
             if (!isVolumeFormatSupportedForShareable(((DiskImage) getNewDisk()).getVolumeFormat())) {
-                return failCanDoAction(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+                return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
         } else if (isUpdatedToNonShareable(getOldDisk(), getNewDisk())) {
             if (vmsDiskOrSnapshotAttachedTo.size() > 1) {
-                return failCanDoAction(EngineMessage.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
+                return failValidation(EngineMessage.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
             }
         }
         return true;
@@ -312,7 +312,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean validateCanUpdateReadOnly(DiskValidator diskValidator) {
         if (updateReadOnlyRequested()) {
             if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
             return validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface());
         }
@@ -321,7 +321,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     protected boolean validateVmPoolProperties() {
         if ((updateReadOnlyRequested() || updateWipeAfterDeleteRequested()) && getVm().getVmPoolId() != null)
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
         return true;
     }
 
@@ -331,23 +331,23 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         if (newDiskImage.getSize() != oldDiskImage.getSize()) {
             if (Boolean.TRUE.equals(getVmDeviceForVm().getIsReadOnly())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
             }
 
             if (vmDeviceForVm.getSnapshotId() != null) {
                 DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
                 if (snapshotDisk.getSize() != newDiskImage.getSize()) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
                 }
             }
 
             if (oldDiskImage.getSize() > newDiskImage.getSize()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
             }
 
             for (VM vm : getVmsDiskPluggedTo()) {
                 if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class, VdcActionType.ExtendImageSize)) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
                 }
             }
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator((DiskImage) getNewDisk());
@@ -619,7 +619,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         if (!vmsWithBoot.isEmpty()) {
-            addCanDoActionMessageVariable("VmsName", StringUtils.join(vmsWithBoot.toArray(), ", "));
+            addValidationMessageVariable("VmsName", StringUtils.join(vmsWithBoot.toArray(), ", "));
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VMS_BOOT_IN_USE);
         }
 
@@ -781,7 +781,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     /**
-     * Command's canDoAction conditions: requiring all connected VMs down.
+     * Command's validate conditions: requiring all connected VMs down.
      * @return true - if disk type is IMAGE or is CINDER, and updating quota
      */
     private boolean updateImageParametersRequiringVmDownRequested() {
@@ -918,8 +918,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         getReturnValue().getExecuteFailedMessages().clear();
         getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
         getReturnValue().setFault(internalReturnValue.getFault());
-        getReturnValue().getCanDoActionMessages().clear();
-        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
-        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+        getReturnValue().getValidationMessages().clear();
+        getReturnValue().getValidationMessages().addAll(internalReturnValue.getValidationMessages());
+        getReturnValue().setValid(internalReturnValue.isValid());
     }
 }

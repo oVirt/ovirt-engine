@@ -208,7 +208,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
                 final ArrayList<String> messages = new ArrayList<>();
                 final boolean isUserAllowed = checkSinglePermission(permissionSubject, messages);
                 if (!isUserAllowed) {
-                    getReturnValue().getCanDoActionMessages().addAll(messages);
+                    getReturnValue().getValidationMessages().addAll(messages);
                     return false;
                 }
             }
@@ -231,8 +231,8 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(validateInputForDuplication());
+    protected boolean validate() {
+        return super.validate() && validate(validateInputForDuplication());
     }
 
     private ValidationResult validateInputForDuplication() {

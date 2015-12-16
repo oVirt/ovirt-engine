@@ -82,19 +82,19 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         simulateVdsGroupExists();
         when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
         when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
-        assertCanDoActionFailure(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
+        assertValidateFailure(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
     }
 
     @Test
     public void networkDoesntExist() {
         simulateVdsGroupExists();
-        assertCanDoActionFailure(EngineMessage.NETWORK_NOT_EXISTS.toString());
+        assertValidateFailure(EngineMessage.NETWORK_NOT_EXISTS.toString());
     }
 
     @Test
     public void noVdsGroup() {
         simulateVdsGroupDoesNotExist();
-        assertCanDoActionFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
+        assertValidateFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
     }
 
     @Test
@@ -143,9 +143,9 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         return existingGroup;
     }
 
-    private void assertCanDoActionFailure(final String messageToVerify) {
-        assertFalse(underTest.canDoAction());
-        assertTrue(underTest.getReturnValue().getCanDoActionMessages().contains(messageToVerify));
+    private void assertValidateFailure(final String messageToVerify) {
+        assertFalse(underTest.validate());
+        assertTrue(underTest.getReturnValue().getValidationMessages().contains(messageToVerify));
     }
 
     private void assertExecuteActionFailure() {

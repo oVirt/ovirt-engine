@@ -51,7 +51,7 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__STOP);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 }

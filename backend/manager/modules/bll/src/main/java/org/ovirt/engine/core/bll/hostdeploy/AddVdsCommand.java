@@ -84,9 +84,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessageVariable("server", getParameters().getvds().getHostName());
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessageVariable("server", getParameters().getvds().getHostName());
     }
 
     private Provider<?> getHostProvider() {
@@ -203,7 +203,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     /**
-     * The scenario in which a host is already exists when adding new host after the canDoAction is when the existed
+     * The scenario in which a host is already exists when adding new host after the validate is when the existed
      * host type is oVirt and its status is 'Pending Approval'. In this case the old entry is removed from the DB, since
      * the oVirt node was added again, where the new host properties might be updated (e.g. cluster adjustment, data
      * center, host name, host address) and a new entry with updated properties is added.
@@ -235,8 +235,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
         if (!result.getSucceeded()) {
             String errors =
-                    result.getCanDoAction() ? result.getFault().getError().name()
-                            : StringUtils.join(result.getCanDoActionMessages(), ",");
+                    result.isValid() ? result.getFault().getError().name()
+                            : StringUtils.join(result.getValidationMessages(), ",");
             log.warn("Failed to remove Host '{}', id '{}', re-registering it as Host '{}' fails with errors {}",
                     vds.getName(),
                     vds.getId(),
@@ -301,13 +301,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected boolean validateVdsGroup() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+            return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
         return true;
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         T params = getParameters();
         setVdsGroupId(params.getVdsStaticData().getVdsGroupId());
         params.setVdsForUniqueId(null);
@@ -353,7 +353,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             // allow addition of another host if it can be peer probed to cluster.
             VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
             if (upServer == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }
         }
 
@@ -443,7 +443,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
                 String hostUUID = getInstalledVdsIdIfExists(sshclient);
                 if (hostUUID != null && getVdsDao().getAllWithUniqueId(hostUUID).size() != 0) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
                 }
 
                 return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
@@ -453,7 +453,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         vds.getName(),
                         e.getMessage());
                 log.debug("Exception", e);
-                return failCanDoAction(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+                return failValidation(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (SecurityException e) {
                 log.error(
                         "Failed to connect to host '{}', fingerprint '{}': {}",
@@ -461,9 +461,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         vds.getSshKeyFingerprint(),
                         e.getMessage());
                 log.debug("Exception", e);
-                addCanDoActionMessage(EngineMessage.VDS_SECURITY_CONNECTION_ERROR);
-                addCanDoActionMessageVariable("ErrorMessage", e.getMessage());
-                return failCanDoAction(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+                addValidationMessage(EngineMessage.VDS_SECURITY_CONNECTION_ERROR);
+                addValidationMessageVariable("ErrorMessage", e.getMessage());
+                return failValidation(EngineMessage.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
                 log.error(
                         "Failed to establish session with host '{}': {}",
@@ -471,7 +471,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e.getMessage());
                 log.debug("Exception", e);
 
-                return failCanDoAction(EngineMessage.VDS_CANNOT_CONNECT_TO_SERVER);
+                return failValidation(EngineMessage.VDS_CANNOT_CONNECT_TO_SERVER);
             }
         }
         return true;
@@ -506,7 +506,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     }
 
                     // none of the peers present in the cluster. fail with appropriate error.
-                    return failCanDoAction(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
+                    return failValidation(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
                 }
             } catch (Exception e) {
                 // This can happen if glusterd is not running on the server. Ignore it and let the server get added.
@@ -574,8 +574,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
     }
 
-    protected void addCanDoActionMessage(EngineMessage message) {
-        super.addCanDoActionMessage(message);
+    protected void addValidationMessage(EngineMessage message) {
+        super.addValidationMessage(message);
     }
 
     protected boolean validate(ValidationResult validationResult) {

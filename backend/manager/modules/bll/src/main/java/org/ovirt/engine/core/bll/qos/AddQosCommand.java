@@ -15,8 +15,8 @@ public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getQosValidator(getQos()).nameNotTakenInDc());
+    protected boolean validate() {
+        return super.validate() && validate(getQosValidator(getQos()).nameNotTakenInDc());
     }
 
     @Override
@@ -35,7 +35,7 @@ public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
 }

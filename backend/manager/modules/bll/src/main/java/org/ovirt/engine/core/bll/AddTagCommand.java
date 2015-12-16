@@ -21,11 +21,11 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Tags tag = DbFacade.getInstance().getTagDao()
                 .getByName(getParameters().getTag().getTagName());
         if (tag != null) {
-            addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
+            addValidationMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
             return false;
         }
         return true;

@@ -71,25 +71,25 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVm().getStatus() != VMStatus.Down) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
         if (!getVm().isUseLatestVersion() && getParameters().getNewTemplateVersion() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST);
         }
 
         if (getVmTemplate() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (getVmTemplateId().equals(getVm().getVmtGuid())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION);
         }
 
         getVm().setVmtGuid(getVmTemplate().getId());
@@ -99,8 +99,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE_VM_VERSION);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE_VM_VERSION);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageServerConnectionExtensionValidator;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
@@ -34,7 +34,7 @@ public class UpdateStorageServerConnectionExtensionCommandTest {
         when(storageServerConnectionExtensionValidator.isConnectionExtensionExists(conn.getId())).thenReturn(ValidationResult.VALID);
         when(storageServerConnectionExtensionValidator.isConnectionDoesNotExistForHostAndTarget(conn)).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_EXTENSION_ALREADY_EXISTS);
 
     }

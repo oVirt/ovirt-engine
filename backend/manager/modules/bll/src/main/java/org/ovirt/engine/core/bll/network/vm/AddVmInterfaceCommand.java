@@ -92,10 +92,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VmStatic vm = getVm().getStaticData();
         if (vm == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -146,7 +146,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 return false;
             }
         } else if (getMacPool().getAvailableMacsCount() <= 0) {
-            addCanDoActionMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            addValidationMessage(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }
 
@@ -165,7 +165,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override

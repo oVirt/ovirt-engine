@@ -33,7 +33,7 @@ public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
         /* get required emulated machine */
         if (StringUtils.isNotEmpty(vm.getEmulatedMachine())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster
             requiredEmulatedMachine = vm.getEmulatedMachine();
-        } else if (StringUtils.isNotEmpty(vm.getCustomEmulatedMachine())) { // static check - used only for cases where the dynamic value hasn't been updated yet(canDo validation)
+        } else if (StringUtils.isNotEmpty(vm.getCustomEmulatedMachine())) { // static check - used only for cases where the dynamic value hasn't been updated yet(validate)
             requiredEmulatedMachine = vm.getCustomEmulatedMachine();
         } else { // use cluster default - all hosts are valid
             return hosts;

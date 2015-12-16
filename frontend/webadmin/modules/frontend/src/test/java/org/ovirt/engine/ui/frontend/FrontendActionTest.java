@@ -74,7 +74,7 @@ public class FrontendActionTest {
     @Mock
     ErrorTranslator mockVdsmErrorsTranslator;
     @Mock
-    ErrorTranslator mockCanDoActionErrorsTranslator;
+    ErrorTranslator mockValidateErrorsTranslator;
     @Mock
     IFrontendMultipleActionAsyncCallback mockMultipleActionCallback;
     @Mock
@@ -120,14 +120,14 @@ public class FrontendActionTest {
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(mockEventBus, operationProcessor);
-        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
+        frontend = new Frontend(operationsManager, mockValidateErrorsTranslator, mockVdsmErrorsTranslator,
                 mockEventBus);
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
         frontend.setLoginHandler(mockLoginHandler);
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
-        when(mockConstants.noCanDoActionMessage()).thenReturn(NO_MESSAGE);
+        when(mockConstants.noValidateMessage()).thenReturn(NO_MESSAGE);
     }
 
     @After
@@ -237,8 +237,8 @@ public class FrontendActionTest {
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
-        returnValues.get(0).setCanDoAction(true);
-        returnValues.get(1).setCanDoAction(true);
+        returnValues.get(0).setValid(true);
+        returnValues.get(1).setValid(true);
         callbackMultipleActions.getValue().onSuccess(returnValues);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
@@ -274,8 +274,8 @@ public class FrontendActionTest {
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
-        returnValues.get(0).setCanDoAction(true);
-        returnValues.get(1).setCanDoAction(false);
+        returnValues.get(0).setValid(true);
+        returnValues.get(1).setValid(false);
         callbackMultipleActions.getValue().onSuccess(returnValues);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         @SuppressWarnings("rawtypes")
@@ -323,10 +323,10 @@ public class FrontendActionTest {
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
-        returnValues.get(0).setCanDoAction(true);
-        returnValues.get(1).setCanDoAction(false);
-        returnValues.get(2).setCanDoAction(true);
-        returnValues.get(3).setCanDoAction(false);
+        returnValues.get(0).setValid(true);
+        returnValues.get(1).setValid(false);
+        returnValues.get(2).setValid(true);
+        returnValues.get(3).setValid(false);
         callbackMultipleActions.getValue().onSuccess(returnValues);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         @SuppressWarnings("rawtypes")
@@ -421,7 +421,7 @@ public class FrontendActionTest {
      * Run the following test case.
      * <ol>
      *   <li>Run a single action</li>
-     *   <li>Return logical failure, canDoAction=false.</li>
+     *   <li>Return logical failure, validate=false.</li>
      *   <li>Check to make sure the failure event is fired</li>
      *   <li>Check to make sure the callback is called</li>
      * </ol>
@@ -431,7 +431,7 @@ public class FrontendActionTest {
     public void testHandleActionResult() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
+        returnValue.setValid(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -446,7 +446,7 @@ public class FrontendActionTest {
      * Run the following test case.
      * <ol>
      *   <li>Run a single action</li>
-     *   <li>Return logical failure, canDoAction=true.</li>
+     *   <li>Return logical failure, validate=true.</li>
      *   <li>Get succeeded is false.</li>
      *   <li>IsSyncronious is true.</li>
      *   <li>showDialog is true.</li>
@@ -459,7 +459,7 @@ public class FrontendActionTest {
     public void testHandleActionResult_SucceededFalse() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(true);
+        returnValue.setValid(true);
         returnValue.setIsSyncronious(true);
         returnValue.setSucceeded(false); // Yes this is the default, but to make sure.
         EngineFault testFault = new EngineFault();
@@ -479,7 +479,7 @@ public class FrontendActionTest {
      * Run the following test case.
      * <ol>
      *   <li>Run a single action</li>
-     *   <li>Return logical failure, canDoAction=false.</li>
+     *   <li>Return logical failure, validate=false.</li>
      *   <li>isRaiseErrorModalPanel returns true.</li>
      *   <li>Check to make sure the failure event is fired</li>
      *   <li>Check to make sure the callback is called</li>
@@ -494,7 +494,7 @@ public class FrontendActionTest {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
-        returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
+        returnValue.setValid(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -516,7 +516,7 @@ public class FrontendActionTest {
      * Run the following test case.
      * <ol>
      *   <li>Run a single action</li>
-     *   <li>Return logical failure, canDoAction=false.</li>
+     *   <li>Return logical failure, validate=false.</li>
      *   <li>isRaiseErrorModalPanel returns true.</li>
      *   <li>Check to make sure the failure event is fired</li>
      *   <li>Check to make sure the callback is called</li>
@@ -528,13 +528,13 @@ public class FrontendActionTest {
         EngineFault testFault = new EngineFault();
         ArrayList<String> translatedErrors = new ArrayList<>(Arrays.asList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
+        when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
-        returnValue.getCanDoActionMessages().add("Message 1"); //$NON-NLS-1$
-        returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
+        returnValue.getValidationMessages().add("Message 1"); //$NON-NLS-1$
+        returnValue.setValid(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -556,7 +556,7 @@ public class FrontendActionTest {
      * Run the following test case.
      * <ol>
      *   <li>Run a single action</li>
-     *   <li>Return logical failure, canDoAction=false.</li>
+     *   <li>Return logical failure, validate=false.</li>
      *   <li>isRaiseErrorModalPanel returns true.</li>
      *   <li>Check to make sure the failure event is fired</li>
      *   <li>Check to make sure the callback is called</li>
@@ -569,14 +569,14 @@ public class FrontendActionTest {
         ArrayList<String> translatedErrors = new ArrayList<>(Arrays.asList(
                 "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
+        when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
-        returnValue.getCanDoActionMessages().add("Message 1"); //$NON-NLS-1$
-        returnValue.getCanDoActionMessages().add("Message 2"); //$NON-NLS-1$
-        returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
+        returnValue.getValidationMessages().add("Message 1"); //$NON-NLS-1$
+        returnValue.getValidationMessages().add("Message 2"); //$NON-NLS-1$
+        returnValue.setValid(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -612,7 +612,7 @@ public class FrontendActionTest {
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(true);
+        returnValue.setValid(true);
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -644,7 +644,7 @@ public class FrontendActionTest {
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(true);
+        returnValue.setValid(true);
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -653,7 +653,7 @@ public class FrontendActionTest {
         verify(mockService).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
         returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(true);
+        returnValue.setValid(true);
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback, times(2)).executed(callbackParam.capture());
@@ -683,7 +683,7 @@ public class FrontendActionTest {
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(true);
+        returnValue.setValid(true);
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -692,7 +692,7 @@ public class FrontendActionTest {
         verify(mockService).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
         returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(false);
+        returnValue.setValid(false);
         returnValue.setSucceeded(false);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());
@@ -722,7 +722,7 @@ public class FrontendActionTest {
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(false);
+        returnValue.setValid(false);
         returnValue.setSucceeded(false);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());

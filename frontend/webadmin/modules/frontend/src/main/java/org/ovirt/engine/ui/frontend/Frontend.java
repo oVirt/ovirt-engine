@@ -95,7 +95,7 @@ public class Frontend implements HasHandlers {
     /**
      * Action error translator.
      */
-    private final ErrorTranslator canDoActionErrorsTranslator;
+    private final ErrorTranslator validateErrorsTranslator;
 
     /**
      * VDSM error translator.
@@ -171,10 +171,10 @@ public class Frontend implements HasHandlers {
      * Constructor for unit testing.
      */
     Frontend(final VdcOperationManager operationManager,
-             final ErrorTranslator canDoActionErrorsTranslator,
+             final ErrorTranslator validateErrorsTranslator,
              final ErrorTranslator vdsmErrorsTranslator, final EventBus gwtEventBus) {
         this.operationManager = operationManager;
-        this.canDoActionErrorsTranslator = canDoActionErrorsTranslator;
+        this.validateErrorsTranslator = validateErrorsTranslator;
         this.vdsmErrorsTranslator = vdsmErrorsTranslator;
         eventBus = gwtEventBus;
 
@@ -482,7 +482,7 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Identical to 5 parameter RunMultipleAction, but isRunOnlyIfAllCanDoPass is false.
+     * Identical to 5 parameter RunMultipleAction, but isRunOnlyIfAllValidationPass is false.
      * @param actionType The action type of the actions to run.
      * @param parameters The parameters to the actions.
      * @param callback The callback to call after the operation happens.
@@ -536,23 +536,23 @@ public class Frontend implements HasHandlers {
      * Run multiple without passing <code>showErrorDialog</code> and <code>waitForResult</code>
      * @param actionType The action type.
      * @param parameters The list of parameters.
-     * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
+     * @param isRunOnlyIfAllValidationPass A flag to only run the actions if all can be completed.
      * @param callback The callback to call when the operation completes.
      * @param state The state.
      */
     public void runMultipleAction(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
-            final boolean isRunOnlyIfAllCanDoPass,
+            final boolean isRunOnlyIfAllValidationPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
-        runMultipleAction(actionType, parameters, isRunOnlyIfAllCanDoPass, callback, state, true, false);
+        runMultipleAction(actionType, parameters, isRunOnlyIfAllValidationPass, callback, state, true, false);
     }
 
     /**
      * Run multiple actions using the same {@code VdcActionType}.
      * @param actionType The action type.
      * @param parameters The list of parameters.
-     * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
+     * @param isRunOnlyIfAllValidationPass A flag to only run the actions if all can be completed.
      * @param callback The callback to call when the operation completes.
      * @param state The state.
      * @param showErrorDialog Should we show an error dialog?
@@ -560,7 +560,7 @@ public class Frontend implements HasHandlers {
      */
     public void runMultipleAction(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
-            final boolean isRunOnlyIfAllCanDoPass,
+            final boolean isRunOnlyIfAllValidationPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state,
             final boolean showErrorDialog,
@@ -576,7 +576,7 @@ public class Frontend implements HasHandlers {
                 ArrayList<VdcReturnValueBase> failed = new ArrayList<>();
 
                 for (VdcReturnValueBase v : resultObject) {
-                    if (!v.getCanDoAction()) {
+                    if (!v.isValid()) {
                         failed.add(v);
                     }
                 }
@@ -808,7 +808,7 @@ public class Frontend implements HasHandlers {
                             if (callback != null) {
                                 callback.executed(result);
                             }
-                            if (aggregateErrors && returnValue != null && (!returnValue.getCanDoAction() || !returnValue.getSucceeded())) {
+                            if (aggregateErrors && returnValue != null && (!returnValue.isValid() || !returnValue.getSucceeded())) {
                                 failedActions.add(actionTypes.get(0));
                                 failedReturnValues.add(returnValue);
                             }
@@ -926,9 +926,9 @@ public class Frontend implements HasHandlers {
         logger.log(Level.FINER, "Retrieved action result from RunAction."); //$NON-NLS-1$
 
         FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, result, state);
-        boolean failedOnCanDoAction = !result.getCanDoAction();
-        if (failedOnCanDoAction) {
-            result.setCanDoActionMessages((ArrayList<String>) translateError(result));
+        boolean failedOnValidate = !result.isValid();
+        if (failedOnValidate) {
+            result.setValidationMessages((ArrayList<String>) translateError(result));
         } else if (!result.getSucceeded()) {
             EngineFault fault = result.getFault();
             String message = result.getExecuteFailedMessages().size() > 1 ?
@@ -941,12 +941,12 @@ public class Frontend implements HasHandlers {
         callback.executed(f);
 
         // 'runActionExecutionFailed' invokes an error pop-up displaying, therefore calling 'failureEventHandler' is
-        // only needed for canDoAction failure
-        if (showErrorDialog && failedOnCanDoAction && (getEventsHandler() != null)
+        // only needed for validate failure
+        if (showErrorDialog && failedOnValidate && (getEventsHandler() != null)
                 && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
-            ArrayList<String> messages = result.getCanDoActionMessages();
+            ArrayList<String> messages = result.getValidationMessages();
             failureEventHandler(result.getDescription(),
-                    messages.isEmpty() ? Collections.singletonList(getConstants().noCanDoActionMessage()) : messages); //$NON-NLS-1$
+                    messages.isEmpty() ? Collections.singletonList(getConstants().noValidateMessage()) : messages); //$NON-NLS-1$
         }
     }
 
@@ -994,7 +994,7 @@ public class Frontend implements HasHandlers {
      * @return An {@code ErrorTranslator} that can translate application errors.
      */
     public ErrorTranslator getAppErrorsTranslator() {
-        return canDoActionErrorsTranslator;
+        return validateErrorsTranslator;
     }
 
     /**
@@ -1073,8 +1073,8 @@ public class Frontend implements HasHandlers {
      */
     private void translateErrors(final Collection<VdcReturnValueBase> errors) {
         for (VdcReturnValueBase retVal : errors) {
-            if (!retVal.getCanDoAction()) {
-                retVal.setCanDoActionMessages((ArrayList<String>) translateError(retVal));
+            if (!retVal.isValid()) {
+                retVal.setValidationMessages((ArrayList<String>) translateError(retVal));
             } else if (!retVal.getSucceeded()) {
                 EngineFault fault = retVal.getFault();
                 fault.setMessage(translateEngineFault(fault));
@@ -1088,7 +1088,7 @@ public class Frontend implements HasHandlers {
      * @return A {@code List} of translated messages.
      */
     private List<String> translateError(final VdcReturnValueBase error) {
-        return getAppErrorsTranslator().translateErrorText(error.getCanDoActionMessages());
+        return getAppErrorsTranslator().translateErrorText(error.getValidationMessages());
     }
 
     /**

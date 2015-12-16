@@ -98,14 +98,14 @@ public class BackendNetworkLabelResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UnlabelNetwork,
                 UnlabelNetworkParameters.class,
                 new String[] { "NetworkId" },
                 new Object[] { NETWORK_ID },
-                canDo,
+                valid,
                 success
             )
         );

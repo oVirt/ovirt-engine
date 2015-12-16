@@ -68,25 +68,25 @@ implements QuotaStorageDependent {
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getStorageDomain() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (!getStorageDomain().getStoragePoolId().equals(getStoragePoolId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL);
         }
 
         if (getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
 
         if (getStorageDomain().getStatus() != StorageDomainStatus.Active) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
 
         if (!Guid.isNullOrEmpty(getVdsId()) && !validate(validateRequestedProxyHost())) {
@@ -134,7 +134,7 @@ implements QuotaStorageDependent {
         }
 
         if (getParameters().getVirtioIsoName() != null && getActiveIsoDomainId() == null) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+            return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
         return true;

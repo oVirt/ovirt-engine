@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -96,9 +96,9 @@ public class ImportHostedEngineStorageDomainCommandTest {
     public void failsIfImported() throws Exception {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(new StorageDomainStatic());
 
-        cmd.canDoAction();
+        cmd.validate();
 
-        CanDoActionTestUtils.assertCanDoActionMessages(
+        ValidateTestUtils.assertValidationMessages(
                 "",
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
@@ -115,7 +115,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 "",
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
@@ -135,7 +135,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 "",
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
@@ -146,7 +146,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
     }
 
     @Test
-    public void canDoPass() {
+    public void validatePass() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
         StorageDomain sd = new StorageDomain();
         int i = new Random().nextInt(SUPPORTED_DOMAIN_TYPES.length);
@@ -156,7 +156,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
 
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 .when(backend).runInternalAction(eq(VdcActionType.AttachStorageDomainToPool),
                 any(VdcActionParametersBase.class));
 
-        cmd.canDoAction();
+        cmd.validate();
         cmd.executeCommand();
 
         verify(backend, times(1)).runInternalAction(
@@ -203,7 +203,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
                 .when(backend).runInternalAction(eq(VdcActionType.AttachStorageDomainToPool),
                 any(VdcActionParametersBase.class));
 
-        cmd.canDoAction();
+        cmd.validate();
         cmd.executeCommand();
 
         verify(backend, times(1)).runInternalAction(

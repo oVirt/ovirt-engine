@@ -17,7 +17,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -89,7 +89,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
 
         command.executeCommand();
         assertTrue(command.getReturnValue().getSucceeded());
@@ -99,7 +99,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
     public void testAlreadyExistStorageDomain() {
         when(command.getStorageDomainStaticDao().get(any(Guid.class))).thenReturn(parameters.getStorageDomain());
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
     }
 
@@ -110,7 +110,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         doReturn(null).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
@@ -122,7 +122,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private static StorageDomainStatic getStorageDomain() {

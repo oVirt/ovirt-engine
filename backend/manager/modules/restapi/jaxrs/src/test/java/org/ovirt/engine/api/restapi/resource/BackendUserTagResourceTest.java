@@ -51,7 +51,7 @@ public class BackendUserTagResourceTest extends AbstractBackendSubResourceTest<T
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetTagExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -59,7 +59,7 @@ public class BackendUserTagResourceTest extends AbstractBackendSubResourceTest<T
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(USER_ID) },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

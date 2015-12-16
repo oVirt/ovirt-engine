@@ -39,7 +39,7 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__CPU_PROFILE);
+        addValidationMessage(EngineMessage.VAR__TYPE__CPU_PROFILE);
     }
 
     @Override

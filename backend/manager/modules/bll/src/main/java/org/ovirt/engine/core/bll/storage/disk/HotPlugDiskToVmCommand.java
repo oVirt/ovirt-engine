@@ -48,12 +48,12 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_PLUG);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__HOT_PLUG);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         performDbLoads();
 
         return
@@ -117,11 +117,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         }
 
         if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
-            return failCanDoAction(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
+            return failValidation(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
         }
 
         if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.getIsPlugged()) {
-            return failCanDoAction(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
+            return failValidation(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
         }
 
         return true;

@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -131,7 +131,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setVdsId(null);
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(newNFSConnection);
         parameters.setVdsId(Guid.Empty);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 createISCSIConnection("10.35.16.25", StorageType.FCP, "", "3260", "user1", "mypassword123");
         parameters.setStorageServerConnection(dummyFCPConn);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
     }
 
@@ -164,7 +164,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(oldNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
     }
 
@@ -178,7 +178,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 0);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(null);
         parameters.setStorageServerConnection(newNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
@@ -191,7 +191,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
     }
 
@@ -216,7 +216,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
         doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
 
@@ -245,7 +245,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         List<String> messages =
-                CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                ValidateTestUtils.runAndAssertValidateFailure(command,
                         EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
         assertTrue(messages.contains("$domainNames domain1,domain2"));
     }
@@ -269,7 +269,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
 
@@ -332,7 +332,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storagePoolIsoMapDao.getAllForStorage(storageDomainId)).
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
-        List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        List<String> messages = ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
         assertTrue(messages.contains("$vmNames vm1"));
         assertTrue(messages.contains("$domainNames storagedomain4"));
@@ -377,7 +377,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getId())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
-        List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        List<String> messages = ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
         assertTrue(messages.contains("$vmNames vm1,vm2"));
     }
@@ -409,7 +409,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
-                CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                ValidateTestUtils.runAndAssertValidateFailure(command,
                         EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
@@ -437,7 +437,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
         when(storageDomainDao.get(storageDomainId)).thenReturn(domain1);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -459,7 +459,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
 
@@ -475,11 +475,11 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         List<StorageDomain> domains = new ArrayList<>();
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getId());
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void succeedCanDoActionNFS() {
+    public void succeedValidateNFS() {
         StorageServerConnections newNFSConnection = createNFSConnection(
                 "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                 StorageType.NFS,
@@ -496,11 +496,11 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void succeedCanDoActionPosix() {
+    public void succeedValidatePosix() {
         StorageServerConnections newPosixConnection =
                 createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
                         StorageType.POSIXFS,
@@ -517,7 +517,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         when(storageConnDao.get(newPosixConnection.getId())).thenReturn(oldPosixConnection);
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -731,7 +731,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(domain).when(storageDomainDao).get(any(Guid.class));
 
         initDomainListForConnection(NFSConnection.getId(), domain);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
 

@@ -59,20 +59,20 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Get the identifier of the user to be removed:
         Guid id = getParameters().getId();
 
         // Check that the current user isn't trying to remove himself:
         if (getCurrentUser().getId().equals(id)) {
-            addCanDoActionMessage(EngineMessage.USER_CANNOT_REMOVE_HIMSELF);
+            addValidationMessage(EngineMessage.USER_CANNOT_REMOVE_HIMSELF);
             return false;
         }
 
         // Check that the user exists in the database:
         DbUser dbUser = getDbUserDao().get(id);
         if (dbUser == null) {
-            addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
+            addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
             return false;
         }
 
@@ -81,8 +81,8 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__USER);
     }
 
     @Override

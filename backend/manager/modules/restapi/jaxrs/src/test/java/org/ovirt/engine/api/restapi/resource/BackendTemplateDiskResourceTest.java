@@ -228,13 +228,13 @@ public class BackendTemplateDiskResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
                 RemoveDiskParameters.class,
                 new String[] { "DiskId" },
                 new Object[] { GUIDS[1] },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

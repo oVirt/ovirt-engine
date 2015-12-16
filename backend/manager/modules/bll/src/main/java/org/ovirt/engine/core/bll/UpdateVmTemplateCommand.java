@@ -87,19 +87,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean isInstanceType = isInstanceType();
         boolean isBlankTemplate = isBlankTemplate();
 
         if (getVdsGroup() == null && !(isInstanceType || isBlankTemplate)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
         boolean returnValue = false;
 
         if (oldTemplate == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (!isInstanceType && !isBlankTemplate) {
@@ -109,29 +109,29 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (!StringUtils.equals(oldTemplate.getName(), getVmTemplate().getName())) {
             if (!getVmTemplate().isBaseTemplate()) {
                 // template version should always have the name of the base template
-                return failCanDoAction(EngineMessage.VMT_CANNOT_UPDATE_VERSION_NAME);
+                return failValidation(EngineMessage.VMT_CANNOT_UPDATE_VERSION_NAME);
             } else {
                 // validate uniqueness of template name. If template is a regular template, uniqueness
                 // is considered in context of the datacenter. If template is an 'Instance-Type', name
                 // must be unique also across datacenters.
                 if (isInstanceType) {
                     if (isInstanceWithSameNameExists(getVmTemplateName())) {
-                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 } else {
                     if (isVmTemlateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
                             : getVdsGroup().getStoragePoolId())) {
-                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 }
             }
         }
 
         if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                .getCanDoActionMessages()) && checkDomain()) {
+                .getValidationMessages()) && checkDomain()) {
             returnValue = VmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
-                addCanDoActionMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
+                addValidationMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }
         }
 
@@ -174,7 +174,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private boolean doClusterRelatedChecks() {
         if (oldTemplate.getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(EngineMessage.VM_TEMPLATE_IS_LOCKED);
+            return failValidation(EngineMessage.VM_TEMPLATE_IS_LOCKED);
         }
 
         // Check that the USB policy is legal
@@ -182,14 +182,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getParameters().getVmTemplateData().getUsbPolicy(),
                 getParameters().getVmTemplateData().getOsId(),
                 getVmTemplate().getCompatibilityVersion(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
 
         // Check if the OS type is supported
         if (returnValue) {
             returnValue =
                     VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
                             getVdsGroup().getArchitecture(),
-                            getReturnValue().getCanDoActionMessages());
+                            getReturnValue().getValidationMessages());
         }
 
         // Check if the watchdog model is supported
@@ -204,7 +204,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             returnValue = VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
                     VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
-                    getReturnValue().getCanDoActionMessages(),
+                    getReturnValue().getValidationMessages(),
                     getVmTemplate().getCompatibilityVersion());
         }
 
@@ -214,13 +214,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getVmTemplateData().getCpuPerSocket(),
                     getParameters().getVmTemplateData().getThreadsPerCpu(),
                     getVmTemplate().getCompatibilityVersion().toString(),
-                    getReturnValue().getCanDoActionMessages());
+                    getReturnValue().getValidationMessages());
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
-                        getReturnValue().getCanDoActionMessages(),
+                        getReturnValue().getValidationMessages(),
                         getVmTemplate().getCompatibilityVersion())) {
             returnValue = false;
         }
@@ -239,19 +239,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
                     VmDeviceUtils.hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
                     isSoundDeviceEnabled(),
-                    getReturnValue().getCanDoActionMessages())) {
+                    getReturnValue().getValidationMessages())) {
                 returnValue = false;
             }
         }
 
         if (getParameters().getVmTemplateData().getMinAllocatedMem() > getParameters().getVmTemplateData().getMemSizeMb()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
         if (!getVmPropertiesUtils().validateVmProperties(
                 getVmTemplate().getCompatibilityVersion(),
                 getParameters().getVmTemplateData().getCustomProperties(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -259,16 +259,16 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             boolean balloonEnabled = Boolean.TRUE.equals(getParameters().isBalloonEnabled());
             if (balloonEnabled && !osRepository.isBalloonEnabled(getParameters().getVmTemplateData().getOsId(),
                     getVmTemplate().getCompatibilityVersion())) {
-                addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-                return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+                addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+                return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
             }
         }
 
         boolean soundDeviceEnabled = Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled());
         if (soundDeviceEnabled && !osRepository.isSoundDeviceEnabled(getParameters().getVmTemplateData().getOsId(),
                 getVmTemplate().getCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         return returnValue;
@@ -278,7 +278,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getParameters().getVmTemplateData().getVmInit() != null &&
                 getParameters().getVmTemplateData().getVmInit().getDomain() != null) {
             return isDomainLegal(getParameters().getVmTemplateData().getVmInit().getDomain(),
-                    getReturnValue().getCanDoActionMessages());
+                    getReturnValue().getValidationMessages());
         }
         return true;
     }
@@ -385,8 +385,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override

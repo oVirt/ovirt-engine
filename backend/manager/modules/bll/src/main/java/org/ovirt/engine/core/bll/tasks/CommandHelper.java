@@ -18,7 +18,7 @@ public class CommandHelper {
                                                  boolean isInternal) {
         CommandBase<?> command = buildCommand(actionType, parameters, executionContext, CommandStatus.NOT_STARTED);
         command.setInternalExecution(isInternal);
-        return command.canDoActionOnly();
+        return command.validateOnly();
     }
 
     public static CommandBase<?> buildCommand(VdcActionType actionType,

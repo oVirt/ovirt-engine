@@ -17,9 +17,9 @@ public class RemoveUserProfileCommand<T extends UserProfileParameters> extends U
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getUserProfile() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROFILE_NOT_EXIST);
         }
 
         return true;
@@ -32,8 +32,8 @@ public class RemoveUserProfileCommand<T extends UserProfileParameters> extends U
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
     }
 
     @Override

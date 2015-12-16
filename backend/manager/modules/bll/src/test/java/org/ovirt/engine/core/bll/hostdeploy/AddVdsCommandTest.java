@@ -100,7 +100,7 @@ public class AddVdsCommandTest {
 
     private void setupCommonMock(boolean glusterEnabled) throws Exception {
         mockHostValidator();
-        when(commandMock.canDoAction()).thenCallRealMethod();
+        when(commandMock.validate()).thenCallRealMethod();
         when(commandMock.canConnect(any(VDS.class))).thenCallRealMethod();
         when(commandMock.getParameters()).thenReturn(parameters);
 
@@ -155,7 +155,7 @@ public class AddVdsCommandTest {
 
         when(commandMock.createReturnValue()).thenCallRealMethod();
         when(commandMock.getReturnValue()).thenCallRealMethod();
-        doCallRealMethod().when(commandMock).addCanDoActionMessage(any(EngineMessage.class));
+        doCallRealMethod().when(commandMock).addValidationMessage(any(EngineMessage.class));
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
@@ -180,69 +180,69 @@ public class AddVdsCommandTest {
     }
 
     @Test
-    public void canDoActionVirtOnlySucceeds() throws Exception {
+    public void validateVirtOnlySucceeds() throws Exception {
         setupVirtMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionSucceedsOnEmptyClusterEvenWhenGlusterServerHasPeers() throws Exception {
+    public void validateSucceedsOnEmptyClusterEvenWhenGlusterServerHasPeers() throws Exception {
         setupGlusterMock(false, null, true);
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
     @Ignore("Cannot mock the log")
-    public void canDoActionSucceedsWhenHasPeersThrowsException() throws Exception {
+    public void validateSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionFailsWhenGlusterServerHasPeers() throws Exception {
+    public void validateFailsWhenGlusterServerHasPeers() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(false);
 
-        assertFalse(commandMock.canDoAction());
+        assertFalse(commandMock.validate());
         assertTrue(commandMock.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER.toString()));
     }
 
     @Test
-    public void canDoActionSucceedsWhenGlusterServerHasPeersThatExistInDB() throws Exception {
+    public void validateSucceedsWhenGlusterServerHasPeersThatExistInDB() throws Exception {
         setupGlusterMock(true, new VDS(), true);
         when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(true);
 
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionSucceedsWhenGlusterServerHasNoPeers() throws Exception {
+    public void validateSucceedsWhenGlusterServerHasNoPeers() throws Exception {
         setupGlusterMock(true, new VDS(), false);
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionSuccessForGlusterServerWhenUpServerExists() throws Exception {
+    public void validateSuccessForGlusterServerWhenUpServerExists() throws Exception {
         setupGlusterMock(true, new VDS(), false);
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionFailsForGlusterServerWhenNoUpServer() throws Exception {
+    public void validateFailsForGlusterServerWhenNoUpServer() throws Exception {
         setupGlusterMock(true, null, false);
-        assertFalse(commandMock.canDoAction());
+        assertFalse(commandMock.validate());
         assertTrue(commandMock.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE.toString()));
     }
 
     @Test
     public void provisioningValidated() throws Exception {
         setupVirtMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
         verify(validator, times(1)).provisioningComputeResourceValid(any(Boolean.class),
                 any(ExternalComputeResource.class));
         verify(validator, times(1)).provisioningHostGroupValid(any(Boolean.class), any(ExternalHostGroup.class));

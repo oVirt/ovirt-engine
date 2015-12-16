@@ -23,11 +23,11 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         AuditLog event = getAuditLogDao().get(getParameters().getAuditLogId());
 
         if (event == null) {
-            return failCanDoAction(EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
+            return failValidation(EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
         }
 
         return true;

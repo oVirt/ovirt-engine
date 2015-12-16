@@ -15,7 +15,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -125,7 +125,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
                 0);
         newNFSConnection.setId("");
         parameters.setStorageServerConnection(newNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
     }
 
@@ -133,7 +133,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
     public void checkRemoveNotExistingConnection() {
         parameters.setStorageServerConnection(NFSConnection);
         when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
@@ -153,7 +153,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         domains.add(domain1);
         domains.add(domain2);
         doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getId());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
@@ -163,7 +163,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(NFSConnection);
         List<StorageDomain> domains = new ArrayList<>();
         doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getId());
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         lun1.setVolumeGroupId("G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ");
         luns.add(lun1);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
@@ -198,7 +198,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
 
@@ -220,7 +220,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
         when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 

@@ -27,21 +27,21 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REBALANCE_STOP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__REBALANCE_STOP);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
         super.setActionMessageParameters();
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
         if (!(getGlusterTaskUtils().isTaskOfType(glusterVolume, GlusterTaskType.REBALANCE))
                 || !(getGlusterTaskUtils().isTaskStatus(glusterVolume, JobExecutionStatus.STARTED))) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED);
         }
         return true;
     }

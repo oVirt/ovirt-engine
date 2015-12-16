@@ -68,7 +68,7 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
         assertFalse("Could not connect to Storage Domain", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
                 command.getReturnValue()
-                        .getCanDoActionMessages()
+                        .getValidationMessages()
                         .contains(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO.toString()));
     }
 
@@ -78,7 +78,7 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
         assertFalse("Storage Domain already exists", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to already existing Storage Domain",
                 command.getReturnValue()
-                        .getCanDoActionMessages()
+                        .getValidationMessages()
                         .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
     }
 

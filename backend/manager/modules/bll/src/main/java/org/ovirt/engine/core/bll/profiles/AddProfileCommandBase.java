@@ -12,7 +12,7 @@ public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Q validator = getProfileValidator();
         return validate(validator.profileIsSet())
                 && validate(validator.parentEntityExists())
@@ -31,7 +31,7 @@ public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     protected abstract Q getProfileValidator();

@@ -54,7 +54,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = checkStoragePool();
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isInProcess())
@@ -64,20 +64,20 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
         if (returnValue) {
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 return false;
             } else if (getStorageDomain() != null && getStorageDomain().getStatus() != null
                     && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
                 addStorageDomainStatusIllegalMessage();
                 returnValue = false;
             } else if (electNewMaster() != null) {
-                getReturnValue().getCanDoActionMessages().add(
+                getReturnValue().getValidationMessages().add(
                         EngineMessage.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
             } else {
                 StorageDomain domain = loadTargetedMasterDomain();
                 if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
                 }
             }
@@ -92,8 +92,8 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RECOVER_POOL);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__RECOVER_POOL);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     @Override

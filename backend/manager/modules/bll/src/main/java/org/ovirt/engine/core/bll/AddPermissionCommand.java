@@ -40,10 +40,10 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Permission perm = getParameters().getPermission();
         if (perm == null) {
-            addCanDoActionMessage(EngineMessage.PERMISSION_ADD_FAILED_PERMISSION_NOT_SENT);
+            addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_PERMISSION_NOT_SENT);
             return false;
         }
 
@@ -66,7 +66,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             }
         }
         if (role == null) {
-            addCanDoActionMessage(EngineMessage.PERMISSION_ADD_FAILED_INVALID_ROLE_ID);
+            addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_INVALID_ROLE_ID);
             return false;
         }
 
@@ -74,7 +74,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
         if (perm.getObjectType() == null
                 || getVdcObjectName() == null) {
-            addCanDoActionMessage(EngineMessage.PERMISSION_ADD_FAILED_INVALID_OBJECT_ID);
+            addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_INVALID_OBJECT_ID);
             return false;
         }
 
@@ -84,13 +84,13 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 && getParameters().getGroup() == null
                 && getDbUserDao().get(adElementId) == null
                 && getAdGroupDao().get(adElementId) == null) {
-            getReturnValue().getCanDoActionMessages().add(EngineMessage.USER_MUST_EXIST_IN_DB.toString());
+            getReturnValue().getValidationMessages().add(EngineMessage.USER_MUST_EXIST_IN_DB.toString());
             return false;
         }
 
         // only system super user can give permissions with admin roles
         if (!isSystemSuperUser() && role.getType() == RoleType.ADMIN) {
-            addCanDoActionMessage(EngineMessage.PERMISSION_ADD_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_GIVE_ADMIN_ROLES);
+            addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_GIVE_ADMIN_ROLES);
             return false;
         }
 
@@ -98,7 +98,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
             VM vm = getVmDao().get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
-                addCanDoActionMessage(EngineMessage.PERMISSION_ADD_FAILED_VM_IN_POOL);
+                addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_VM_IN_POOL);
                 return false;
             }
         }

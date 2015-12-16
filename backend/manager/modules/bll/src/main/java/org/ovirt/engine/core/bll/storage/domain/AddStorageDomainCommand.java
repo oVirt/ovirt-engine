@@ -166,33 +166,33 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction() || !initializeVds() || !checkStorageDomainNameLengthValid()) {
+    protected boolean validate() {
+        if (!super.validate() || !initializeVds() || !checkStorageDomainNameLengthValid()) {
             return false;
         }
         if (isStorageWithSameNameExists()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
                 && !getStorageDomain().getStorageType().isFileDomain()) {
-            addCanDoActionMessageVariable("domainType", StorageConstants.ISO);
-            addCanDoActionMessageVariable("storageTypes", StorageConstants.FILE);
+            addValidationMessageVariable("domainType", StorageConstants.ISO);
+            addValidationMessageVariable("storageTypes", StorageConstants.FILE);
 
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
                 && getStorageDomain().getStorageType().isBlockDomain()) {
-            addCanDoActionMessageVariable("domainType", StorageConstants.EXPORT);
-            addCanDoActionMessageVariable("storageTypes", StorageConstants.FILE);
+            addValidationMessageVariable("domainType", StorageConstants.EXPORT);
+            addValidationMessageVariable("storageTypes", StorageConstants.FILE);
 
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         if (!Guid.isNullOrEmpty(getParameters().getStoragePoolId()) && getTargetStoragePool() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         ensureStorageFormatInitialized();
@@ -250,7 +250,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     public StorageDomainToPoolRelationValidator getAttachDomainValidator() {

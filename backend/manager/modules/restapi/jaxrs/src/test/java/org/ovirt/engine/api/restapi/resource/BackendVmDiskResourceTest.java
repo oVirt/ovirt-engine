@@ -310,7 +310,7 @@ public class BackendVmDiskResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         setUriInfo(
@@ -319,7 +319,7 @@ public class BackendVmDiskResourceTest
                 RemoveDiskParameters.class,
                 new String[] { "DiskId" },
                 new Object[] { DISK_ID },
-                canDo,
+                valid,
                 success
             )
         );

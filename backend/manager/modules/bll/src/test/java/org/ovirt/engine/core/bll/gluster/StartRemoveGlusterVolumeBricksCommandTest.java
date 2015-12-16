@@ -177,7 +177,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeId2, 0));
         prepareMocks(cmd);
         mockBackend(true, null);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd).startSubStep();
@@ -191,41 +191,41 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeId2, 0));
         prepareMocks(cmd);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStartFailed);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_FAILED);
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(createTestCommand(volumeId2, 0));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFails() {
+    public void validateFails() {
         cmd = spy(createTestCommand(volumeId1, 0));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null, 0));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnCompat() {
+    public void validateFailsOnCompat() {
         cmd = spy(createTestCommand(volumeId2, 0));
         prepareMocks(cmd);
         doReturn(UNSUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
 
     }

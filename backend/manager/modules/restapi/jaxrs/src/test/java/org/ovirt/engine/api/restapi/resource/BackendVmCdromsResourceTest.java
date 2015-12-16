@@ -131,7 +131,7 @@ public class BackendVmCdromsResourceTest
         doTestBadAddCdRom(true, false, FAILURE);
     }
 
-    private void doTestBadAddCdRom(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddCdRom(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
             VdcQueryType.GetVmByVmId,
             IdQueryParameters.class,
@@ -146,7 +146,7 @@ public class BackendVmCdromsResourceTest
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success
             )
         );

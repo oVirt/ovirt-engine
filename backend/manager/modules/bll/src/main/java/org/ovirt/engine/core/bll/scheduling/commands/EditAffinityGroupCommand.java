@@ -12,16 +12,16 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getAffinityGroup() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
         }
         if (!getParameters().getAffinityGroup().getClusterId().equals(getClusterId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
         }
         if (!getAffinityGroup().getName().equals(getParameters().getAffinityGroup().getName()) &&
                 getAffinityGroupDao().getByName(getParameters().getAffinityGroup().getName()) != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
         }
         return validateParameters();
     }
@@ -41,6 +41,6 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

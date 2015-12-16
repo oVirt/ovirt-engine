@@ -100,10 +100,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean isDetachAllowed(final boolean isRemoveLast) {
 
         if (getStoragePoolIsoMap() == null) {
-            return failCanDoAction(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
+            return failValidation(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
         }
         if (!isRemoveLast && isMaster()) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
+            return failValidation(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
         }
         return true;
     }
@@ -112,7 +112,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (this.getStoragePool().isLocal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
                 && !isInternal) {
-            return failCanDoAction(EngineMessage.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
+            return failValidation(EngineMessage.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
         }
         return true;
     }
@@ -136,14 +136,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     protected boolean checkStorageDomainNameLengthValid() {
         boolean result = true;
         if (getStorageDomain().getStorageName().length() > Config
                 .<Integer> getValue(ConfigValues.StorageDomainNameSizeLimit)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             result = false;
         }
         return result;
@@ -161,7 +161,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
         if (!valid) {
             if (status != null && status.isStorageDomainInProcess()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
             }
             addStorageDomainStatusIllegalMessage();
         }
@@ -185,7 +185,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                         (getStoragePool().getId(), StorageDomainType.Master, StorageDomainStatus.Active).isEmpty();
 
         if (!hasUpMaster) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
         }
         return true;
     }
@@ -221,21 +221,21 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
 
         if (!lunsUsedBySDs.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
             Set<String> formattedIds = new HashSet<>();
             for (LUNs lun : lunsUsedBySDs) {
                 formattedIds.add(getFormattedLunId(lun, lun.getStorageDomainName()));
             }
-            addCanDoActionMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
+            addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
         if (!lunsUsedByDisks.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
             Set<String> formattedIds = new HashSet<>();
             for (LUNs lun : lunsUsedByDisks) {
                 formattedIds.add(getFormattedLunId(lun, lun.getDiskAlias()));
             }
-            addCanDoActionMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
+            addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
         }
 
        return !lunsUsedBySDs.isEmpty() || !lunsUsedByDisks.isEmpty();
@@ -453,7 +453,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected void addStorageDomainStatusIllegalMessage() {
-        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
         StorageDomainStatus status = getStorageDomainStatus();
         StorageDomainSharedStatus sharedStatus = getStorageDomainSharedStatus();
         Object messageParameter = status;
@@ -461,7 +461,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             // We got more informative information than "Unknown".
             messageParameter = sharedStatus;
         }
-        addCanDoActionMessageVariable("status", messageParameter);
+        addValidationMessageVariable("status", messageParameter);
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {

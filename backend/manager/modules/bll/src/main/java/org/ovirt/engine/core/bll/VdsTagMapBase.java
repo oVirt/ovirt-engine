@@ -16,11 +16,11 @@ public abstract class VdsTagMapBase<T extends AttachEntityToTagParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getTagId() != null && !getTagId().equals(Guid.Empty)) {
             return true;
         } else {
-            addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
+            addValidationMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_NOT_EXISTS);
             return false;
         }
     }

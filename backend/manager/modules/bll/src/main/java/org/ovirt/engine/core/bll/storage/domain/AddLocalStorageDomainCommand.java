@@ -32,14 +32,14 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean retVal = super.canDoAction();
+    protected boolean validate() {
+        boolean retVal = super.validate();
 
         if (retVal) {
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
 
             if (storagePool == null) {
-                addCanDoActionMessage(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
+                addValidationMessage(EngineMessage.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
                 retVal = false;
             } else {
                 setStoragePool(storagePool);
@@ -48,7 +48,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             if (retVal &&
                     getStorageDomain().getStorageType() == StorageType.LOCALFS &&
                     !storagePool.isLocal()) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
                 retVal = false;
             }
 
@@ -65,8 +65,8 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
                 String rhevhLocalFSPath = Config.<String> getValue(ConfigValues.RhevhLocalFSPath);
                 if (!conn.getConnection().equals(rhevhLocalFSPath)) {
-                    addCanDoActionMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
-                    addCanDoActionMessageVariable("path", rhevhLocalFSPath);
+                    addValidationMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
+                    addValidationMessageVariable("path", rhevhLocalFSPath);
                     retVal = false;
                 }
             }

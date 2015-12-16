@@ -21,9 +21,9 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 public class UpdateRngDeviceTest extends BaseCommandTest {
 
     @Test
-    public void testCanDoAction() {
+    public void testValidate() {
         UpdateRngDeviceCommand command = mockCommand(Version.v3_5);
-        Assert.assertEquals(true, command.canDoAction());
+        Assert.assertEquals(true, command.validate());
     }
 
     private UpdateRngDeviceCommand mockCommand(final Version mockCompatibilityVersion) {

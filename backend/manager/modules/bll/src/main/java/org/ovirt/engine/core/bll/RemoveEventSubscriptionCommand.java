@@ -13,7 +13,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue;
         // get notification method
         EventNotificationMethod event_notification_method = getParameters().getEventSubscriber().getEventNotificationMethod();
@@ -24,13 +24,13 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
                             .getDbUserDao()
                             .get(getParameters().getEventSubscriber().getSubscriberId());
             if (user == null) {
-                addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
+                addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                 retValue = false;
             } else {
                 retValue = validateRemove(event_notification_method, getParameters().getEventSubscriber(), user);
             }
         } else {
-            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
+            addValidationMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
             retValue = false;
         }
         return retValue;

@@ -137,11 +137,11 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(dao).when(cmd).getStorageDomainDao();
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(createStorageDomain());
         doReturn(storagePool).when(cmd).getStoragePool();
-        doReturn(Boolean.TRUE).when(cmd).canDoActionAfterCloneVm(anyMap());
-        doReturn(Boolean.TRUE).when(cmd).canDoActionBeforeCloneVm(anyMap());
+        doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(anyMap());
+        doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(anyMap());
 
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(ValidationResult.VALID);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(storageDomain).when(cmd).getStorageDomain();
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
@@ -174,14 +174,14 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
     public void testImportVMFromConfigurationWhenVMDoesNotExists() {
         initCommand(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
 

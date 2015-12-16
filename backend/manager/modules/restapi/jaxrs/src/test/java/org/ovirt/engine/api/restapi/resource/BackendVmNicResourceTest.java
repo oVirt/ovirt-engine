@@ -188,7 +188,7 @@ public class BackendVmNicResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
         setGetGuestAgentQueryExpectations(1);
@@ -198,7 +198,7 @@ public class BackendVmNicResourceTest
                 RemoveVmInterfaceParameters.class,
                 new String[] { "VmId", "InterfaceId" },
                 new Object[] { VM_ID, NIC_ID },
-                canDo,
+                valid,
                 success
             )
         );

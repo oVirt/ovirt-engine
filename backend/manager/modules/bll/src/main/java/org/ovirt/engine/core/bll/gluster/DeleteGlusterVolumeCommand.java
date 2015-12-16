@@ -29,27 +29,27 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP);
+            addValidationMessageVariable("volumeName", volume.getName());
             return false;
         }
 
         if (volume.getSnapshotsCount() > 0) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
-            addCanDoActionMessageVariable("noOfSnapshots", volume.getSnapshotsCount());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_SNAPSHOTS);
+            addValidationMessageVariable("volumeName", volume.getName());
+            addValidationMessageVariable("noOfSnapshots", volume.getSnapshotsCount());
             return false;
         }
 

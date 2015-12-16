@@ -74,14 +74,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
         return true;
@@ -104,7 +104,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected boolean validateUniqueVmName() {
         return VmHandler.isVmWithSameNameExistStatic(getVm().getName(), getStoragePoolId()) ?
-                failCanDoAction(EngineMessage.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
+                failValidation(EngineMessage.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
                 : true;
     }
 
@@ -115,7 +115,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean validateNoDuplicateVm() {
         VmStatic duplicateVm = getVmStaticDao().get(getVm().getId());
         return duplicateVm == null ? true :
-            failCanDoAction(EngineMessage.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
+            failValidation(EngineMessage.VM_CANNOT_IMPORT_VM_EXISTS, String.format("$VmName %1$s", duplicateVm.getName()));
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      */
     protected boolean validateVmArchitecture () {
         return getVm().getClusterArch() == ArchitectureType.undefined ?
-            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE)
+            failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE)
             : true;
     }
 
@@ -135,9 +135,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected boolean validateVdsCluster() {
         VDSGroup vdsGroup = getVdsGroupDao().get(getVdsGroupId());
         return vdsGroup == null ?
-                failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID)
+                failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID)
                 : vdsGroup.getArchitecture() != getVm().getClusterArch() ?
-                        failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
+                        failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
                         : true;
     }
 
@@ -151,14 +151,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
                 vm.getOs(),
                 getEffectiveCompatibilityVersion(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     protected boolean validateGraphicsAndDisplay() {
         return VmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
                 getParameters().getVm().getDefaultDisplayType(),
-                getReturnValue().getCanDoActionMessages(),
+                getReturnValue().getValidationMessages(),
                 getEffectiveCompatibilityVersion());
     }
 
@@ -199,8 +199,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         return true;
@@ -213,8 +213,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (!osRepository.isSoundDeviceEnabled(getVm().getStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         return true;

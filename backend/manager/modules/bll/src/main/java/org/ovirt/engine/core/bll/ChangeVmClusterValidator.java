@@ -32,18 +32,18 @@ public class ChangeVmClusterValidator {
     protected boolean validate() {
         VM vm = parentCommand.getVm();
         if (vm == null) {
-            parentCommand.addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            parentCommand.addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
             targetCluster = DbFacade.getInstance().getVdsGroupDao().get(targetClusterId);
             if (targetCluster == null) {
-                parentCommand.addCanDoActionMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
+                parentCommand.addValidationMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
                 return false;
             }
 
             // Check that the target cluster is in the same data center.
             if (!targetCluster.getStoragePoolId().equals(vm.getStoragePoolId())) {
-                parentCommand.addCanDoActionMessage(EngineMessage.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
+                parentCommand.addValidationMessage(EngineMessage.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
                 return false;
             }
 
@@ -61,13 +61,13 @@ public class ChangeVmClusterValidator {
                     vm.getStaticData().getCpuPerSocket(),
                     vm.getStaticData().getThreadsPerCpu(),
                     clusterCompatibilityVersion.getValue(),
-                    parentCommand.getReturnValue().getCanDoActionMessages());
+                    parentCommand.getReturnValue().getValidationMessages());
             if (!isCpuSocketsValid) {
                 return false;
             }
 
             // Check that the USB policy is legal
-            if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster.getCompatibilityVersion(), parentCommand.getReturnValue().getCanDoActionMessages())) {
+            if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster.getCompatibilityVersion(), parentCommand.getReturnValue().getValidationMessages())) {
                 return false;
             }
 
@@ -75,7 +75,7 @@ public class ChangeVmClusterValidator {
             if (!VmHandler.isGraphicsAndDisplaySupported(vm.getOs(),
                     VmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),
-                    parentCommand.getReturnValue().getCanDoActionMessages(),
+                    parentCommand.getReturnValue().getValidationMessages(),
                     clusterCompatibilityVersion)) {
                 return false;
             }
@@ -83,21 +83,21 @@ public class ChangeVmClusterValidator {
             if (VmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify cluster compatibility
                 if (!FeatureSupported.virtIoScsi(targetCluster.getCompatibilityVersion())) {
-                    return parentCommand.failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                    return parentCommand.failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
                 }
 
                 // Verify OS compatibility
                 if (!VmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(), targetCluster.getCompatibilityVersion(),
-                        parentCommand.getReturnValue().getCanDoActionMessages())) {
+                        parentCommand.getReturnValue().getValidationMessages())) {
                     return false;
                 }
             }
 
             // A existing VM cannot be changed into a cluster without a defined architecture
             if (targetCluster.getArchitecture() == ArchitectureType.undefined) {
-                return parentCommand.failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
             } else if (targetCluster.getArchitecture() != vm.getClusterArch()) {
-                return parentCommand.failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
+                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
             }
         }
         return true;
@@ -133,8 +133,8 @@ public class ChangeVmClusterValidator {
             }
         }
         if (missingNets.length() > 0) {
-            parentCommand.addCanDoActionMessage(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK);
-            parentCommand.addCanDoActionMessageVariable("networks", missingNets.toString());
+            parentCommand.addValidationMessage(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK);
+            parentCommand.addValidationMessageVariable("networks", missingNets.toString());
             return false;
         }
 

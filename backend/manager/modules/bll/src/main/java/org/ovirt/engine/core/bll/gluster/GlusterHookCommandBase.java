@@ -37,18 +37,18 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (Guid.isNullOrEmpty(getParameters().getHookId())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED);
             return false;
         }
 
         if (getGlusterHooksDao().getById(getParameters().getHookId()) == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST);
             return false;
         }
 

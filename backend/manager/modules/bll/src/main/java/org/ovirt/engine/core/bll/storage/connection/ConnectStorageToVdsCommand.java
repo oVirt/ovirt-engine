@@ -83,11 +83,11 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         StorageType storageType = conn.getStorageType();
 
         if (storageType == StorageType.NFS && !new NfsMountPointConstraint().isValid(conn.getConnection(), null)) {
-            return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
+            return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
 
         if (storageType == StorageType.POSIXFS && (StringUtils.isEmpty(conn.getVfsType()))) {
-            return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+            return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
         if ((storageType == StorageType.POSIXFS || storageType == StorageType.NFS) && !validate(validateMountOptions())) {
@@ -96,10 +96,10 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
         if (storageType == StorageType.ISCSI) {
             if (StringUtils.isEmpty(conn.getIqn())) {
-                return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+                return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
             }
             if (!isValidStorageConnectionPort(conn.getPort())) {
-                return failCanDoAction(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+                return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
             }
         }
 
@@ -138,7 +138,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         optionsKeys.retainAll(disallowedOptions);
 
         if (!optionsKeys.isEmpty()) {
-            addCanDoActionMessageVariable("invalidOptions", StringUtils.join(optionsKeys, ", "));
+            addValidationMessageVariable("invalidOptions", StringUtils.join(optionsKeys, ", "));
             return new ValidationResult(EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
         }
 

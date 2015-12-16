@@ -34,23 +34,23 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REBALANCE_START);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__REBALANCE_START);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
         super.setActionMessageParameters();
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
         boolean isVolumeDistributed = glusterVolume.getVolumeType().isDistributedType();
         if (!isVolumeDistributed) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED);
         } else if (glusterVolume.getBricks().size() == 1) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();

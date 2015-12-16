@@ -151,8 +151,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
+        addValidationMessage(EngineMessage.VAR__ACTION__SETUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORKS);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VDS host = getVds();
 
         fillInUnsetBondingOptions();

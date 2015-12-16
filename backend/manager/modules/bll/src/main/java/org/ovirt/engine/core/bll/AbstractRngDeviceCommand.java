@@ -71,14 +71,14 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getRngDevice().getVmId() == null || cachedEntity == null) {
-            return failCanDoAction(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
+            return failValidation(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
                     : EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (getParameters().isVm() && getVm() != null && getVm().isRunningOrPaused()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
         return true;

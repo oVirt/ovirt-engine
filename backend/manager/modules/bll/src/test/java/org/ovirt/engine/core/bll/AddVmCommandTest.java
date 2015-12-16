@@ -172,7 +172,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockGetAllSnapshots(cmd);
         doReturn(createStoragePool()).when(cmd).getStoragePool();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -224,7 +224,7 @@ public class AddVmCommandTest extends BaseCommandTest {
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sourceSnapshotId);
         cmd.getVm().setName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
@@ -240,7 +240,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(sv).vmNotDuringSnapshot(any(Guid.class));
         doReturn(sv).when(cmd).createSnapshotsValidator();
         when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
     }
 
@@ -272,7 +272,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockGetAllSnapshots(cmd);
 
         cmd.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
@@ -322,7 +322,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testUnsupportedCpus() {
-        // prepare a command to pass canDo action
+        // prepare a command to pass validate
         VM vm = createVm();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
         vdsGroup = createVdsGroup();
@@ -352,7 +352,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 cmd,
                 EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
@@ -741,7 +741,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd.getParameters().setBalloonEnabled(true);
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
 
     @Test
@@ -750,7 +750,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd.getParameters().setSoundDeviceEnabled(true);
         when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
 
@@ -776,7 +776,7 @@ public class AddVmCommandTest extends BaseCommandTest {
 
         doReturn(null).when(cmd).getStoragePool();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 }

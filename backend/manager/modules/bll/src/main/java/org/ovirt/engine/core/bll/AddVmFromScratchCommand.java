@@ -123,17 +123,17 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVdsGroup() == null && Guid.Empty.equals(super.getStorageDomainId())) {
-            return failCanDoAction(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
+            return failValidation(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
         }
 
         if (!ImagesHandler.checkImagesConfiguration(getStorageDomainId(),
-                getParameters().getDiskInfoList(), getReturnValue().getCanDoActionMessages())) {
+                getParameters().getDiskInfoList(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override

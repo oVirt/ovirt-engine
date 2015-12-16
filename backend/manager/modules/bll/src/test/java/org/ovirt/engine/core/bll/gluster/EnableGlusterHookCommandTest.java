@@ -39,26 +39,26 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNullHookId() {
+    public void validateFailsOnNullHookId() {
         cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(null)));
         setupMocks(cmd);
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
-    public void canDoActionFailsOnNoHook() {
+    public void validateFailsOnNoHook() {
         cmd = spy(new EnableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd, false);
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
 
 }

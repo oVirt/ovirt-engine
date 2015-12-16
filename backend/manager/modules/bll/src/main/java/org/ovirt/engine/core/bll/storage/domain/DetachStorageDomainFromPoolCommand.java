@@ -122,7 +122,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
                 canDetachDomain(getParameters().getDestroyingPool(),
                         getParameters().getRemoveLast(),
@@ -131,7 +131,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__DETACH);
     }
 }

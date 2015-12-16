@@ -28,18 +28,18 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         if (getVds() == null) {
-            addCanDoActionMessage(EngineMessage.VDS_APPROVE_VDS_NOT_FOUND);
+            addValidationMessage(EngineMessage.VDS_APPROVE_VDS_NOT_FOUND);
             returnValue = false;
         } else if (getVds().getStatus() != VDSStatus.PendingApproval
                 && getVds().getStatus() != VDSStatus.InstallFailed
                 && getVds().getStatus() != VDSStatus.InstallingOS) {
-            addCanDoActionMessage(EngineMessage.VDS_APPROVE_VDS_IN_WRONG_STATUS);
+            addValidationMessage(EngineMessage.VDS_APPROVE_VDS_IN_WRONG_STATUS);
             returnValue = false;
         }
-        return returnValue ? super.canDoAction() : false;
+        return returnValue ? super.validate() : false;
     }
 
     @Override

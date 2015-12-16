@@ -207,43 +207,43 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testLongName() {
         vmStatic.setName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
-        assertFalse("canDoAction should fail for too long vm name.", command.canDoAction());
-        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+        assertFalse("validate should fail for too long vm name.", command.validate());
+        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
     public void testValidName() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         mockVmValidator();
 
         command.initEffectiveCompatibilityVersion();
-        boolean c = command.canDoAction();
-        assertTrue("canDoAction should have passed.", c);
+        boolean c = command.validate();
+        assertTrue("validate should have passed.", c);
     }
 
     @Test
     public void testChangeToExistingName() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         mockSameNameQuery(true);
 
-        assertFalse("canDoAction should have failed with vm name already in use.", command.canDoAction());
-        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        assertFalse("validate should have failed with vm name already in use.", command.validate());
+        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
     public void testNameNotChanged() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         vm.setName("vm1");
         mockSameNameQuery(true);
         mockVmValidator();
         command.initEffectiveCompatibilityVersion();
 
-        assertTrue("canDoAction should have passed.", command.canDoAction());
+        assertTrue("validate should have passed.", command.validate());
     }
 
     @Test
     public void testDedicatedHostNotExistOrNotSameCluster() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
 
         // this will cause null to return when getting vds from vdsDao
         doReturn(vdsDao).when(command).getVdsDao();
@@ -251,12 +251,12 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
-        assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
+        assertFalse("validate should have failed with invalid dedicated host.", command.validate());
     }
 
     @Test
     public void testValidDedicatedHost() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         mockVmValidator();
 
         VDS vds = new VDS();
@@ -267,16 +267,16 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         command.initEffectiveCompatibilityVersion();
-        assertTrue("canDoAction should have passed.", command.canDoAction());
+        assertTrue("validate should have passed.", command.validate());
     }
 
     @Test
     public void testInvalidNumberOfMonitors() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         vmStatic.setNumOfMonitors(99);
 
-        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
-        assertCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        assertFalse("validate should have failed with invalid number of monitors.", command.validate());
+        assertValidateMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
     }
 
     private void mockGraphicsDevice() {
@@ -311,20 +311,20 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testChangeClusterForbidden() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         VDSGroup newGroup = new VDSGroup();
         newGroup.setId(Guid.newGuid());
         newGroup.setCompatibilityVersion(Version.v3_0);
         vmStatic.setVdsGroupId(newGroup.getId());
         doReturn(vdsGroupDao).when(command).getVdsGroupDao();
 
-        assertFalse("canDoAction should have failed with can't change cluster.", command.canDoAction());
-        assertCanDoActionMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
+        assertFalse("validate should have failed with can't change cluster.", command.validate());
+        assertValidateMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
     }
 
     @Test
     public void testCannotDisableVirtioScsi() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         command.getParameters().setVirtioScsiEnabled(false);
 
         Disk disk = new DiskImage();
@@ -335,13 +335,13 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
 
         command.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
     }
 
     @Test
     public void testCanEditARunningVM() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         vm.setStatus(VMStatus.Up);
         mockDiskDaoGetAllForVm(Collections.<Disk>emptyList(), true);
         mockVmValidator();
@@ -350,12 +350,12 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
         command.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void testUnsupportedCpus() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
 
         // prepare the mock values
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
@@ -367,26 +367,26 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         command.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 command,
                 EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
     public void testCannotUpdateOSNotSupportVirtioScsi() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         group.setCompatibilityVersion(Version.v3_3);
 
         when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Arrays.asList("VirtIO")));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
     @Test
     public void testMigratoinCanBeSetWhenVMUsesScsiReservation() {
-        prepareVmToPassCanDoAction();
+        prepareVmToPassValidate();
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         VmDevice device = createVmDevice();
         device.setUsingScsiReservation(false);
@@ -395,7 +395,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
 
         command.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private void mockVmValidator() {
@@ -422,7 +422,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 true);
     }
 
-    private void prepareVmToPassCanDoAction() {
+    private void prepareVmToPassValidate() {
         vmStatic.setName("vm1");
         vmStatic.setMemSizeMb(256);
         vmStatic.setSingleQxlPci(false);
@@ -434,10 +434,10 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockGraphicsDevice();
     }
 
-    private void assertCanDoActionMessage(EngineMessage msg) {
-        assertTrue("canDoAction failed for the wrong reason",
+    private void assertValidateMessage(EngineMessage msg) {
+        assertTrue("validate failed for the wrong reason",
                 command.getReturnValue()
-                        .getCanDoActionMessages()
+                        .getValidationMessages()
                         .contains(msg.name()));
     }
 

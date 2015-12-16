@@ -25,17 +25,17 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESUME);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         parameters = getParameters();
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_RESUMED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_RESUMED);
             return false;
         }
         return true;

@@ -21,7 +21,7 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.vnicProfileExists())
@@ -44,7 +44,7 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override

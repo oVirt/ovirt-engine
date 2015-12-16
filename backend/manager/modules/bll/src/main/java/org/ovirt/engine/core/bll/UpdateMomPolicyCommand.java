@@ -40,7 +40,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         HostValidator hostValidator = new HostValidator(getVds());
 
         return validate(hostValidator.hostExists())
@@ -68,7 +68,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

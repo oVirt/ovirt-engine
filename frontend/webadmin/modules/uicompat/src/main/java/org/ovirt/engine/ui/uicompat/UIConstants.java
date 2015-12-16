@@ -1762,7 +1762,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String requestToServerFailed();
 
     @DefaultStringValue("No Message")
-    String noCanDoActionMessage();
+    String noValidateMessage();
 
     // Volume
     @DefaultStringValue("Add Bricks")

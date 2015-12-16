@@ -52,9 +52,9 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!entityExists()) {
-            return failCanDoAction(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
+            return failValidation(getParameters().isVm() ? EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND
                     : EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         return true;

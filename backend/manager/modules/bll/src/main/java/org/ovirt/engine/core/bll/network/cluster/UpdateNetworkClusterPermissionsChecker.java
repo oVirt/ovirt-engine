@@ -46,7 +46,7 @@ class UpdateNetworkClusterPermissionsChecker {
             }
         }
 
-        command.getReturnValue().getCanDoActionMessages().addAll(messages);
+        command.getReturnValue().getValidationMessages().addAll(messages);
 
         return false;
     }

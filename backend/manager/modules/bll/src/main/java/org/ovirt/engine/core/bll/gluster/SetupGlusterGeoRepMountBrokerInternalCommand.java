@@ -42,25 +42,25 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         slaveVolume =
                 getSlaveVolume();
         if (slaveVolume != null) {
             setGlusterVolumeId(slaveVolume.getId());
             setVdsGroupId(slaveVolume.getClusterId());
         } else {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
         }
         if (slaveVolume.getStatus() != GlusterStatus.UP) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GEOREP_MOUNT_BROKER);
+        addValidationMessage(EngineMessage.VAR__ACTION__SETUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__GEOREP_MOUNT_BROKER);
     }
 
     @Override

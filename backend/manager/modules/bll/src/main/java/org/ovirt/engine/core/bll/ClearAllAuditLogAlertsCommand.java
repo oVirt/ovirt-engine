@@ -18,7 +18,7 @@ public class ClearAllAuditLogAlertsCommand<T extends VdcActionParametersBase> ex
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

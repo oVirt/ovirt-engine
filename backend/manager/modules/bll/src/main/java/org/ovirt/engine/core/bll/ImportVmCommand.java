@@ -149,13 +149,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         Map<Guid, StorageDomain> domainsMap = new HashMap<>();
-        if (!canDoActionBeforeCloneVm(domainsMap)) {
+        if (!validateBeforeCloneVm(domainsMap)) {
             return false;
         }
 
@@ -163,7 +163,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             initImportClonedVm();
 
             if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
-                return failCanDoAction(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+                return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             }
         }
 
@@ -175,7 +175,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        return canDoActionAfterCloneVm(domainsMap);
+        return validateAfterCloneVm(domainsMap);
     }
 
     private void initImportClonedVm() {
@@ -190,13 +190,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
     }
 
-    protected boolean canDoActionBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
+    protected boolean validateBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
         if (getVm() != null) {
             setDescription(getVmName());
         }
 
         if (getStoragePool() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         Set<Guid> destGuids = new HashSet<>(imageToDestinationDomainMap.values());
@@ -212,13 +212,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         if (!isImagesAlreadyOnTarget() && getParameters().isImportAsNewEntity()
                 && isCopyCollapseDisabledWithSnapshots()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
                     String.format("$VmName %1$s", getVmName()));
         }
 
         // Register can never happen with copyCollapse = true since there's no copy operation involved.
         if (isImagesAlreadyOnTarget() && getParameters().getCopyCollapse()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED);
         }
 
         if (!isImagesAlreadyOnTarget()) {
@@ -226,10 +226,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
             if (validator.isDomainExistAndActive().isValid()
                     && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             }
             if (!validateAndSetVmFromExportDomain()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
             }
         }
 
@@ -262,12 +262,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected boolean validateImages(Map<Guid, StorageDomain> domainsMap) {
-        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
+        List<String> validationMessages = getReturnValue().getValidationMessages();
 
         // Iterate over all the VM images (active image and snapshots)
         for (DiskImage image : getImages()) {
             if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
             }
 
             if (getParameters().getCopyCollapse()) {
@@ -284,7 +284,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             image.setVolumeType(p.getVolumeType());
                         }
                         // Validate the configuration of the image got from the parameters.
-                        if (!validateImageConfig(canDoActionMessages, domainsMap, image)) {
+                        if (!validateImageConfig(validationMessages, domainsMap, image)) {
                             return false;
                         }
                         break;
@@ -352,16 +352,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return (List<VM>) (qRetVal.getSucceeded() ? qRetVal.getReturnValue() : Collections.emptyList());
     }
 
-    private boolean validateImageConfig(List<String> canDoActionMessages,
+    private boolean validateImageConfig(List<String> validationMessages,
             Map<Guid, StorageDomain> domainsMap,
             DiskImage image) {
         return ImagesHandler.checkImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
                 .getStorageStaticData(),
                 image,
-                canDoActionMessages);
+                validationMessages);
     }
 
-    protected boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
+    protected boolean validateAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
         VM vmFromParams = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
@@ -385,7 +385,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && getVmTemplate() != null
                 && getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 
         if (getParameters().getCopyCollapse() && vmFromParams.getDiskMap() != null) {
@@ -397,7 +397,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         if (!ImagesHandler.checkImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
                                 .getStorageStaticData(),
                                 (DiskImageBase) disk,
-                                getReturnValue().getCanDoActionMessages())) {
+                                getReturnValue().getValidationMessages())) {
                             return false;
                         }
                     }
@@ -408,7 +408,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // if collapse true we check that we have the template on source
         // (backup) domain
         if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
                     String.format("$DomainName %1$s",
                             getStorageDomainStaticDao().get(getParameters().getSourceDomainId()).getStorageName()));
         }
@@ -458,7 +458,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 // Checking space for memory volume of the active image (if there is one)
                 StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(dummiesDisksList);
                 if (storageDomain == null) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
                 }
             }
         } else { // Check space for all the snapshot's memory volumes
@@ -491,7 +491,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
             StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(disksList);
             if (storageDomain == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
             String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                     memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
@@ -526,7 +526,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
                     !FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-                return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
         }
 
@@ -573,7 +573,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             Set<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 
             if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return retValue;
@@ -581,7 +581,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private boolean templateExists() {
         if (getVmTemplate() == null && !getParameters().getCopyCollapse()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         return true;
     }
@@ -604,7 +604,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             imageGUID));
 
             if (Boolean.FALSE.equals(retValue.getReturnValue())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             }
         }
         return true;

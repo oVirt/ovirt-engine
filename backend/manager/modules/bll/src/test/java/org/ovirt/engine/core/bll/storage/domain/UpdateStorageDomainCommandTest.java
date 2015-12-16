@@ -14,7 +14,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -88,83 +88,83 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSame() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void validateSame() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
         assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
         assertTrue("redundant messages " + messages, messages.isEmpty());
     }
 
     @Test
-    public void canDoActionNoDomain() {
+    public void validateNoDomain() {
         doReturn(null).when(cmd).getStorageDomain();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
-    public void canDoActionWrongStatus() {
+    public void validateWrongStatus() {
         sd.setStatus(StorageDomainStatus.Locked);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
-    public void canDoChangeDescription() {
+    public void validateChangeDescription() {
         sd.setDescription(StringUtils.reverse(sd.getDescription()));
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoChangeComment() {
+    public void validateChangeComment() {
         sd.setComment(StringUtils.reverse(sd.getComment()));
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoChangeForbiddenField() {
+    public void validateChangeForbiddenField() {
         sd.setStorageType(StorageType.UNKNOWN);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
     }
 
     @Test
-    public void canDoActionName() {
+    public void validateName() {
         sd.setStorageName(StringUtils.reverse(sd.getStorageName()));
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoActionLongName() {
+    public void validateLongName() {
         // Generate a really long name
         String longName = StringUtils.leftPad("name", STORAGE_DOMAIN_NAME_LENGTH_LIMIT * 2, 'X');
         sd.setStorageName(longName);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
-    public void canDoChangeNamePoolNotUp() {
+    public void validateChangeNamePoolNotUp() {
         sd.setStorageName(StringUtils.reverse(sd.getStorageName()));
         sp.setStatus(StoragePoolStatus.Maintenance);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
-    public void canDoChangeNameExists() {
+    public void validateChangeNameExists() {
         String newName = StringUtils.reverse(sd.getStorageName());
         sd.setStorageName(newName);
 
         doReturn(new StorageDomainStatic()).when(sdsDao).getByName(newName);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
     }
 }

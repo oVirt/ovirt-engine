@@ -149,7 +149,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         List<DiskImage> disksToCheck = getDiskImagesToValidate();
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         if (!validate(diskImagesValidator.diskImagesNotLocked())) {
@@ -168,7 +168,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         }
 
         // Run all checks for AddVm, now that it is determined snapshot exists
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
@@ -187,7 +187,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 .get(0))
                 .getStorageStaticData(),
                 diskImage,
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     /**

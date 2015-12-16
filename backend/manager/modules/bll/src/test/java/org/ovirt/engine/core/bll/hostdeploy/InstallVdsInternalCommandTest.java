@@ -70,26 +70,26 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
-    private static void assertFailsWithCanDoActionMessage
+    private static void assertFailsWithValidateMessage
             (InstallVdsInternalCommand<InstallVdsParameters> command, EngineMessage message) {
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(message.name()));
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(message.name()));
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
         InstallVdsParameters param = createParameters();
         InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
-    public void canDoActionFailsIHostDoesNotExists() {
+    public void validateFailsIHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         InstallVdsInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        assertFailsWithValidateMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
 }

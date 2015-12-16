@@ -18,7 +18,7 @@ public class DisplayAllAuditLogEventsCommand<T extends VdcActionParametersBase> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

@@ -57,12 +57,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (Guid.isNullOrEmpty(getVdsId())) {
-            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
         if (getVds() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         return true;
     }

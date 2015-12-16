@@ -15,13 +15,13 @@ public abstract class VfsConfigLabelCommandBase extends VfsConfigCommandBase<Vfs
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().settingSpecificNetworksAllowed());
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().settingSpecificNetworksAllowed());
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_LABEL);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_LABEL);
     }
 
     public String getLabel() {

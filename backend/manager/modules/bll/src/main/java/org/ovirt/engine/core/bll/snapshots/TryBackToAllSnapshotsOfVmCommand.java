@@ -316,9 +316,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
@@ -391,8 +391,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__PREVIEW);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
+        addValidationMessage(EngineMessage.VAR__ACTION__PREVIEW);
+        addValidationMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
     }
 
     protected void updateVmDisksFromDb() {

@@ -17,14 +17,14 @@ public abstract class NetworkVfsConfigCommandBase extends VfsConfigCommandBase<V
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().settingSpecificNetworksAllowed())
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().settingSpecificNetworksAllowed())
                 && validate(getVfsConfigValidator().networkExists(getNetworkId()));
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG_NETWORK);
     }
 
     protected Guid getNetworkId() {

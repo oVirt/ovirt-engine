@@ -30,7 +30,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 

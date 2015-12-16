@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CanDoActionSupportsTransaction;
+import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-@CanDoActionSupportsTransaction
+@ValidateSupportsTransaction
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends NetworkClusterCommandBase<T> {
 
     @Inject
@@ -50,8 +50,8 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return validate(networkClusterAttachmentExists())
                && validateAttachment();
     }

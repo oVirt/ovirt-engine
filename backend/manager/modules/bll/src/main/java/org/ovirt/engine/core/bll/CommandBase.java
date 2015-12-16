@@ -373,9 +373,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         context.withCompensationContext(compensationContext);
     }
 
-    public VdcReturnValueBase canDoActionOnly() {
+    /**
+     * Validates that the pre-conditions for command execution are met.
+     * This method is called internally from the code.
+     * <p>
+     * In general, each command has its own conditions which should met, in order to expect a valid command execution.
+     * An attempt to execute a command which failed to meet all the condition will lead to unpredicted result and should
+     * be avoided.
+     * <p>
+     * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
+     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     *
+     * @return VdcReturnValueBase A container object for the operation result.
+     */
+    public VdcReturnValueBase validateOnly() {
         setActionMessageParameters();
-        getReturnValue().setCanDoAction(internalCanDoAction());
+        getReturnValue().setValid(internalValidate());
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         return _returnValue;
@@ -395,7 +408,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         try {
-            actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
+            actionAllowed = getReturnValue().isValid() || internalValidate();
             if (!isExternal) {
                 ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
             }
@@ -403,7 +416,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (actionAllowed) {
                 execute();
             } else {
-                getReturnValue().setCanDoAction(false);
+                getReturnValue().setValid(false);
             }
         } finally {
             freeLockExecute();
@@ -803,26 +816,26 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getParameters().getParentCommand() != VdcActionType.Unknown;
     }
 
-    private boolean isCanDoActionSupportsTransaction() {
-        return getClass().isAnnotationPresent(CanDoActionSupportsTransaction.class);
+    private boolean isValidateSupportsTransaction() {
+        return getClass().isAnnotationPresent(ValidateSupportsTransaction.class);
     }
 
-    private boolean internalCanDoAction() {
+    private boolean internalValidate() {
         boolean returnValue = false;
         try {
             Transaction transaction = null;
-            if (!isCanDoActionSupportsTransaction()) {
+            if (!isValidateSupportsTransaction()) {
                 transaction = TransactionSupport.suspend();
             }
             try {
                 returnValue =
                         isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
-                                && canDoAction()
+                                && validate()
                                 && internalValidateAndSetQuota();
-                if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
-                    log.warn("CanDoAction of action '{}' failed for user {}. Reasons: {}",
+                if (!returnValue && getReturnValue().getValidationMessages().size() > 0) {
+                    log.warn("Validation of action '{}' failed for user {}. Reasons: {}",
                             getActionType(), getUserName(),
-                            StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
+                            StringUtils.join(getReturnValue().getValidationMessages(), ','));
                 }
             } finally {
                 if (transaction != null) {
@@ -830,11 +843,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 }
             }
         } catch (DataAccessException dataAccessEx) {
-            log.error("Data access error during CanDoActionFailure.", dataAccessEx);
-            addCanDoActionMessage(EngineMessage.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
+            log.error("Data access error during ValidateFailure.", dataAccessEx);
+            addValidationMessage(EngineMessage.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
         } catch (RuntimeException ex) {
-            log.error("Error during CanDoActionFailure.", ex);
-            addCanDoActionMessage(EngineMessage.CAN_DO_ACTION_GENERAL_FAILURE);
+            log.error("Error during ValidateFailure.", ex);
+            addValidationMessage(EngineMessage.CAN_DO_ACTION_GENERAL_FAILURE);
         } finally {
             if (!returnValue) {
                 freeLock();
@@ -850,7 +863,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         QuotaConsumptionParametersWrapper quotaConsumptionParametersWrapper = new QuotaConsumptionParametersWrapper(this,
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
         quotaConsumptionParametersWrapper.setParameters(getQuotaConsumptionParameters());
 
         List<QuotaConsumptionParameter> quotaParams = quotaConsumptionParametersWrapper.getParameters();
@@ -899,7 +912,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean validateObject(Object value) {
         List<String> messages = ValidationUtils.validateInputs(getValidationGroups(), value);
         if (!messages.isEmpty()) {
-            getReturnValue().getCanDoActionMessages().addAll(messages);
+            getReturnValue().getValidationMessages().addAll(messages);
             return false;
         }
         return true;
@@ -908,7 +921,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * Set the parameters for bll messages (such as type and action).
      * The parameters should be initialized through the command that is called,
-     * instead set them at the canDoAction()
+     * instead set them at the validate()
      */
     protected void setActionMessageParameters() {
         // No-op method for inheritors to implement
@@ -936,7 +949,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         .getCompatibilityVersion().compareTo(
                                 new Version(actionVersionMap.getStoragePoolMinimalVersion())) < 0))) {
             result = false;
-            addCanDoActionMessage(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            addValidationMessage(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
         return result;
     }
@@ -1064,7 +1077,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // Deny the permissions if there is no logged in user:
         if (getCurrentUser() == null) {
-            addCanDoActionMessage(EngineMessage.USER_IS_NOT_LOGGED_IN);
+            addValidationMessage(EngineMessage.USER_IS_NOT_LOGGED_IN);
             return false;
         }
 
@@ -1076,7 +1089,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (log.isDebugEnabled()) {
                 log.debug("The set of objects to check is null or empty for action '{}'.", getActionType());
             }
-            addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            addValidationMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
 
             return false;
         }
@@ -1099,7 +1112,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
         for (PermissionSubject permSubject : permSubjects) {
-            if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
+            if (!checkSinglePermission(permSubject, getReturnValue().getValidationMessages())) {
                 log.info("No permission found for user '{}' or one of the groups he is member of,"
                         + " when running action '{}', Required permissions are: Action type: '{}' Action group: '{}'"
                         + " Object type: '{}'  Object ID: '{}'.",
@@ -1166,7 +1179,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected boolean canDoAction() {
+    /**
+     * Validates that the pre-conditions for command execution are met.
+     * <p>
+     * In general, each command has its own conditions which should met, in order to expect a valid command execution.
+     * An attempt to execute a command which failed to meet all the condition will lead to unpredicted result and should
+     * be avoided.
+     * <p>
+     * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
+     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     *
+     * @return {@code true} if the command can be executed, else {@code false}
+     */
+    protected boolean validate() {
         return true;
     }
 
@@ -1408,7 +1433,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
 
-        getReturnValue().setCanDoAction(true);
+        getReturnValue().setValid(true);
         getReturnValue().setIsSyncronious(true);
 
         if (getCallback() != null || parentHasCallback()) {
@@ -1905,7 +1930,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     context.withLock(lock);
                 } else {
                     log.info("Failed to Acquire Lock to object '{}'", lock);
-                    getReturnValue().getCanDoActionMessages()
+                    getReturnValue().getValidationMessages()
                     .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
                     return false;
                 }
@@ -1924,10 +1949,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * will be splited to 2 strings:
      * "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM" and "$VmName MyVm"
      */
-    protected List<String> extractVariableDeclarations(Iterable<String> appendedCanDoMsgs) {
+    protected List<String> extractVariableDeclarations(Iterable<String> appendedValidateMsgs) {
         final List<String> result = new ArrayList<>();
-        for (String appendedCanDoMsg : appendedCanDoMsgs) {
-            result.addAll(Arrays.asList(appendedCanDoMsg.split("(?=\\$)")));
+        for (String appendedValidateMsg : appendedValidateMsgs) {
+            result.addAll(Arrays.asList(appendedValidateMsg.split("(?=\\$)")));
         }
         return result;
     }
@@ -2030,10 +2055,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected boolean validate(ValidationResult validationResult) {
         if (!validationResult.isValid()) {
-            addCanDoActionMessage(validationResult.getMessage());
+            addValidationMessage(validationResult.getMessage());
 
             for (String variableReplacement : validationResult.getVariableReplacements()) {
-                addCanDoActionMessage(variableReplacement);
+                addValidationMessage(variableReplacement);
             }
         }
 
@@ -2041,28 +2066,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Add a message to the {@link CommandBase#canDoAction()}'s return value.
+     * Add a message to the {@link CommandBase#validate()}'s return value.
      * This return value will be sent to the client for the detailed information
      * of why the action can't be performed.
      *
      * @param message
      *            The message to add.
      */
-    protected void addCanDoActionMessage(EngineMessage message) {
-        getReturnValue().getCanDoActionMessages().add(message.name());
+    protected void addValidationMessage(EngineMessage message) {
+        getReturnValue().getValidationMessages().add(message.name());
     }
 
     /**
-     * Adds one or more messages to the {@link CommandBase#canDoAction()}'s return value. This return value will be sent
+     * Adds one or more messages to the {@link CommandBase#validate()}'s return value. This return value will be sent
      * to the client for the detailed information of why the action can't be performed.
      *
      * @param messages
      *            The messages to add.
      */
 
-    protected final void addCanDoActionMessages(EngineMessage... messages) {
+    protected final void addValidationMessages(EngineMessage... messages) {
         for (EngineMessage msg : messages) {
-            addCanDoActionMessage(msg);
+            addValidationMessage(msg);
         }
     }
 
@@ -2072,36 +2097,36 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param message   the message to add
      * @param variableReplacements variable replacements
      * @return  false always
-     * @see {@link #addCanDoActionMessage(String)}
+     * @see {@link #addValidationMessage(String)}
      */
-    protected final boolean failCanDoAction(EngineMessage message, String ... variableReplacements) {
-        addCanDoActionMessage(message);
+    protected final boolean failValidation(EngineMessage message, String ... variableReplacements) {
+        addValidationMessage(message);
         for (String variableReplacement : variableReplacements) {
-            addCanDoActionMessage(variableReplacement);
+            addValidationMessage(variableReplacement);
         }
         return false;
     }
 
     /**
-     * Add a message to the {@link CommandBase#canDoAction()}'s return value.
+     * Add a message to the {@link CommandBase#validate()}'s return value.
      * This return value will be sent to the client for the detailed information of why the action can't be performed.
      *
      * @param message The message to add.
      */
-    protected void addCanDoActionMessage(String message) {
-        getReturnValue().getCanDoActionMessages().add(message);
+    protected void addValidationMessage(String message) {
+        getReturnValue().getValidationMessages().add(message);
     }
 
     /**
-     * Add a variable to the {@link CommandBase#canDoAction()}'s return value.
+     * Add a variable to the {@link CommandBase#validate()}'s return value.
      * The variable will be formatted as "$varName varValue" and will be used to parse the placeholders defined
-     * in the canDo message itself
+     * in the validate message itself
      *
      * @param varName the variable name
      * @param varValue the variable value
      */
-    protected void addCanDoActionMessageVariable(String varName, Object varValue) {
-        getReturnValue().getCanDoActionMessages().add(String.format("$%s %s", varName, varValue));
+    protected void addValidationMessageVariable(String varName, Object varValue) {
+        getReturnValue().getValidationMessages().add(String.format("$%s %s", varName, varValue));
     }
 
     /**
@@ -2255,8 +2280,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected void propagateFailure(VdcReturnValueBase internalReturnValue) {
         getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
         getReturnValue().setFault(internalReturnValue.getFault());
-        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
-        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+        getReturnValue().getValidationMessages().addAll(internalReturnValue.getValidationMessages());
+        getReturnValue().setValid(internalReturnValue.isValid());
     }
 
     protected void propagateFailure(VdcQueryReturnValue internalReturnValue) {

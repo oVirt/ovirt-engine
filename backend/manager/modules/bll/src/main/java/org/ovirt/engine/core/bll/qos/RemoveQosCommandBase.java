@@ -13,12 +13,12 @@ public abstract class RemoveQosCommandBase<T extends QosBase, M extends QosValid
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!validateParameters()) {
             return false;
         }
         QosValidator<T> validator = getQosValidator(getQos());
-        return super.canDoAction() && validate(validator.qosExists()) && validate(validator.consistentDataCenter());
+        return super.validate() && validate(validator.qosExists()) && validate(validator.consistentDataCenter());
     }
 
     @Override
@@ -31,7 +31,7 @@ public abstract class RemoveQosCommandBase<T extends QosBase, M extends QosValid
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override

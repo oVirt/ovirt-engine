@@ -102,7 +102,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         initResource(resource.parent);
         List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
@@ -110,7 +110,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
                 ActionGroupsToRoleParameter.class,
                 new String[] { "RoleId", "ActionGroups" },
                 new Object[] { GUIDS[1], actionGroups },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

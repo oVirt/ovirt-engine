@@ -206,14 +206,14 @@ public class BackendTemplateNicsResourceTest
         doTestBadAddNic(true, false, FAILURE);
     }
 
-    private void doTestBadAddNic(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.AddVmTemplateInterface,
                 AddVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { VM_ID },
-                canDo,
+                valid,
                 success
             )
         );

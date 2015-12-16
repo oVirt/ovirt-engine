@@ -69,11 +69,11 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageServerConnections paramConnection = getConnection();
         // if an id was sent - it's not ok since only the backend should allocate ids
         if (StringUtils.isNotEmpty(paramConnection.getId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 
         if (!isValidConnection(paramConnection)) {
@@ -82,7 +82,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         Guid storagePoolId = Guid.isNullOrEmpty(getParameters().getVdsId()) ? null : getVds().getStoragePoolId();
         if (isConnWithSameDetailsExists(paramConnection, storagePoolId)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         // If a Guid is not supplied, we won't attempt to [dis]connect.
@@ -90,10 +90,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         // validate that it's a valid VDS ID and that the VDS is up.
         if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
             if (getVds() == null) {
-                return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
+                return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
             }
             if (getVds().getStatus() != VDSStatus.Up) {
-                return failCanDoAction(EngineMessage.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
+                return failValidation(EngineMessage.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
             }
         }
         return true;
@@ -124,7 +124,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

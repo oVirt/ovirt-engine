@@ -48,13 +48,13 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
 
         if (!FeatureSupported.refreshLunSupported(getStoragePool().getCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
         }
 
         if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
@@ -62,11 +62,11 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         }
 
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         if (!checkLunsInStorageDomain(getParameters().getLunIds())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
         }
 
         return true;
@@ -226,6 +226,6 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

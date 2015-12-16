@@ -34,17 +34,17 @@ public class RemoveAdGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFailsOnRemoveLastAdGroupWithSuperUserPrivileges() throws Exception {
+    public void validateFailsOnRemoveLastAdGroupWithSuperUserPrivileges() throws Exception {
         mockIsLastSuperUserGroup(true);
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(
                 EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString()));
     }
 
     @Test
-    public void canDoActionSucceedsOnRemoveNotLastAdGroupWithSuperUserPrivileges() throws Exception {
+    public void validateSucceedsOnRemoveNotLastAdGroupWithSuperUserPrivileges() throws Exception {
         mockIsLastSuperUserGroup(false);
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     private void mockIsLastSuperUserGroup(boolean isLast) {

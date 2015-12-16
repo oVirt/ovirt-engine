@@ -71,18 +71,18 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         oldPool = getVmPoolDao().get(getVmPool().getVmPoolId());
         if (oldPool == null) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
         }
 
         if (getParameters().getVmsCount() < 0) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL);
         }
 
         return true;
@@ -91,7 +91,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

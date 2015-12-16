@@ -418,7 +418,7 @@ public class BackendStorageDomainsResourceTest
         doTestBadAddStorageDomain(true, false, FAILURE);
     }
 
-    private void doTestBadAddStorageDomain(boolean canDo, boolean success, String detail)
+    private void doTestBadAddStorageDomain(boolean valid, boolean success, String detail)
             throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
@@ -446,7 +446,7 @@ public class BackendStorageDomainsResourceTest
                 StorageDomainManagementParameter.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success);
 
         StorageDomain model = getModel(0);
@@ -471,12 +471,12 @@ public class BackendStorageDomainsResourceTest
         doTestBadCnxAdd(true, false, FAILURE);
     }
 
-    private void doTestBadCnxAdd(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadCnxAdd(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
-                canDo,
+                valid,
                 success,
                 GUIDS[0].toString(),
                 true));

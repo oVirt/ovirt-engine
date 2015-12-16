@@ -69,8 +69,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
@@ -87,30 +87,30 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         VDSGroup cluster = getVdsGroup();
         if (cluster == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         if (!cluster.supportsGlusterService()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
             return false;
         }
 
         if (volume.getVolumeType().isDispersedType()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
 
         if (volumeNameExists(volume.getName())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
+            addValidationMessageVariable("volumeName", volume.getName());
             return false;
         }
 
@@ -225,7 +225,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                             createCommandContext(volume, option));
             if (!setOptionReturnValue.getSucceeded()) {
                 setSucceeded(false);
-                errors.addAll(setOptionReturnValue.getCanDoActionMessages());
+                errors.addAll(setOptionReturnValue.getValidationMessages());
                 errors.addAll(setOptionReturnValue.getExecuteFailedMessages());
             }
         }
@@ -265,7 +265,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     private boolean validateBricks(GlusterVolumeEntity volume) {
         List<GlusterBrickEntity> bricks = volume.getBricks();
         if (bricks.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -274,48 +274,48 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         int stripeCount = volume.getStripeCount();
 
         if (volume.getVolumeType().isReplicatedType() && replicaCount < 2) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2);
             return false;
         }
         if (volume.getVolumeType().isStripedType() && stripeCount < 4) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4);
             return false;
         }
 
         switch (volume.getVolumeType()) {
         case REPLICATE:
             if (brickCount != replicaCount) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE);
                 return false;
             }
             break;
         case DISTRIBUTED_REPLICATE:
             if (brickCount < replicaCount || Math.IEEEremainder(brickCount, replicaCount) != 0) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE);
                 return false;
             }
             break;
         case STRIPE:
             if (brickCount != stripeCount) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE);
                 return false;
             }
             break;
         case DISTRIBUTED_STRIPE:
             if (brickCount <= stripeCount || Math.IEEEremainder(brickCount, stripeCount) != 0) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE);
                 return false;
             }
             break;
         case STRIPED_REPLICATE:
             if ( Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
                 return false;
             }
             break;
         case DISTRIBUTED_STRIPED_REPLICATE:
             if ( brickCount <= stripeCount * replicaCount || Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
                 return false;
             }
             break;

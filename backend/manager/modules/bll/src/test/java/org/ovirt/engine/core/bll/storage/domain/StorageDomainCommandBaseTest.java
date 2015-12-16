@@ -113,7 +113,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     public void checkStorageDomainNotEqualWithStatusActive() {
         setStorageDomainStatus(StorageDomainStatus.Active);
         assertFalse(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertEquals(messages.size(), 2);
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
         assertEquals(messages.get(1), String.format("$status %1$s", StorageDomainStatus.Active));
@@ -139,7 +139,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         List<String> specifiedLunIds = Collections.singletonList(GUIDS[0].toString());
 
         assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertEquals(messages.size(), 2);
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
         assertEquals(messages.get(1), String.format("$lunIds %1$s", cmd.getFormattedLunId(lun1, lun1.getStorageDomainName())));
@@ -166,7 +166,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     }
 
     private boolean commandHasInvalidStatusMessage() {
-        return cmd.getReturnValue().getCanDoActionMessages().contains(
+        return cmd.getReturnValue().getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
     }
 

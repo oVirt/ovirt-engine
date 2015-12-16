@@ -34,7 +34,7 @@ public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcA
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION__EXTENSION);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION__EXTENSION);
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -62,29 +62,29 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoAction_noAffinityGroup_Test() {
+    public void validate_noAffinityGroup_Test() {
         doReturn(null).when(command).getAffinityGroup();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
     }
 
     @Test
-    public void canDoAction_changeClusterIds_Test() {
+    public void validate_changeClusterIds_Test() {
         doReturn(Guid.newGuid()).when(command).getClusterId();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID);
     }
 
     @Test
-    public void canDoAction_testNameChange_Test() {
+    public void validate_testNameChange_Test() {
         doReturn(new AffinityGroup()).when(affinityGroupDao).getByName(affinityGroup.getName());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
     }
 
     @Test
-    public void canDoAction_succeed_Test() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    public void validate_succeed_Test() {
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
         // validateParameters is tests at {@link AddAffinityGroupCommandTest}
         verify(command, times(1)).validateParameters();
     }

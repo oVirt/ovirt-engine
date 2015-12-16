@@ -30,16 +30,16 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE_BRICKS_COMMIT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE_BRICKS_COMMIT);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
         super.setActionMessageParameters();
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GlusterVolumeEntity volume = getGlusterVolume();
 
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
@@ -49,7 +49,7 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
 
         if (!(getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
                 || !(getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.FINISHED))) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED);
         }
 
         return true;

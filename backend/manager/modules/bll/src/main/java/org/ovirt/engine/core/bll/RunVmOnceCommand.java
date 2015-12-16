@@ -43,7 +43,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             loadPayload();
         }
 
-        /* if run-once was used then the dynamic vm fields must be updated before running the scheduler filters (which are called via super.CanDoAction->runVmValidator) */
+        /* if run-once was used then the dynamic vm fields must be updated before running the scheduler filters (which are called via super.Validate->runVmValidator) */
         earlyUpdateVmDynamicRunOnce();
     }
 
@@ -58,21 +58,21 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         // the condition allows to get only user and password which are both set (even with empty string) or both aren't
         // set (null), the action will fail if only one of those parameters is null.
         if (getParameters().getSysPrepUserName() == null ^ getParameters().getSysPrepPassword() == null) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
+            return failValidation(EngineMessage.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
         if (getParameters().getVmInit() != null) {
             if (!osRepository.isWindows(getVm().getOs()) &&
                     !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
             }
 
             if (getParameters().getVmInit().isPasswordAlreadyStored()) {
@@ -91,7 +91,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
      * the validation process and thus must be updated at an earlier stage than the initVm() stage.
      */
     private void earlyUpdateVmDynamicRunOnce() {
-        if(getVm() != null) { // function is called before super.canDoAction(), vm object is not safe yet
+        if(getVm() != null) { // function is called before super.validate(), vm object is not safe yet
             if (getParameters().getCustomCpuName() != null) {
                 getVm().setCpuName(getParameters().getCustomCpuName());
             }

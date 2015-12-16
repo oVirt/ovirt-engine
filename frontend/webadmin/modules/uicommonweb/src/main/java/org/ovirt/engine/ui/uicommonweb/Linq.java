@@ -983,11 +983,11 @@ public final class Linq {
         }
     }
 
-    public static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
+    public static class ValidateSucceedPredicate implements IPredicate<VdcReturnValueBase> {
 
         @Override
         public boolean match(VdcReturnValueBase source) {
-            return source.getCanDoAction();
+            return source.isValid();
         }
     }
 

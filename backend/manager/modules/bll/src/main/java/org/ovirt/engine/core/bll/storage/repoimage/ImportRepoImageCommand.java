@@ -123,8 +123,8 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -196,31 +196,31 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
 
         if (getParameters().getImportAsTemplate()) {
             if (getParameters().getClusterId() == null) {
-                addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+                addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
                 return false;
             }
 
             setVdsGroupId(getParameters().getClusterId());
             if (getVdsGroup() == null) {
-                addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+                addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
                 return false;
             }
 
             // A Template cannot be added in a cluster without a defined architecture
             if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
             }
 
             setStoragePoolId(getParameters().getStoragePoolId());
             if (!FeatureSupported.importGlanceImageAsTemplate(getStoragePool().getCompatibilityVersion())) {
-                return failCanDoAction(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+                return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
         }
 
@@ -235,16 +235,16 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             switch (e.getErrorType()) {
                 case UNSUPPORTED_CONTAINER_FORMAT:
                 case UNSUPPORTED_DISK_FORMAT:
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SUPPORTED);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SUPPORTED);
                 case UNABLE_TO_DOWNLOAD_IMAGE:
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR);
                 case UNRECOGNIZED_IMAGE_FORMAT:
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED);
             }
         }
 
         if (diskImage == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
         return validateSpaceRequirements(diskImage);

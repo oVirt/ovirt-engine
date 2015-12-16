@@ -513,7 +513,7 @@ public class BackendVmDisksResourceTest
         doTestBadAddDisk(true, false, FAILURE);
     }
 
-    private void doTestBadAddDisk(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddDisk(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
             VdcQueryType.GetStorageDomainById,
             IdQueryParameters.class,
@@ -527,7 +527,7 @@ public class BackendVmDisksResourceTest
                 AddDiskParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },
-                canDo,
+                valid,
                 success
             )
         );

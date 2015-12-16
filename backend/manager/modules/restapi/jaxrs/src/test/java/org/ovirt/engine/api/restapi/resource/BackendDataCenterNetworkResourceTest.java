@@ -103,14 +103,14 @@ public class BackendDataCenterNetworkResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { dataCenterId },
-                                           canDo,
+                                           valid,
                                            success));
 
         try {
@@ -203,7 +203,7 @@ public class BackendDataCenterNetworkResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(2);
         setUriInfo(
             setUpActionExpectations(
@@ -211,7 +211,7 @@ public class BackendDataCenterNetworkResourceTest
                 RemoveNetworkParameters.class,
                 new String[] { "Id" },
                 new Object[] { networkId },
-                canDo,
+                valid,
                 success
             )
         );

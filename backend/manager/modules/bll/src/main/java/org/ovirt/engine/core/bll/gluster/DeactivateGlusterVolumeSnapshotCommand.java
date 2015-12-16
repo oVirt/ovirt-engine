@@ -17,7 +17,7 @@ public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapsho
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DEACTIVATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__DEACTIVATE);
         super.setActionMessageParameters();
     }
 
@@ -38,13 +38,13 @@ public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapsho
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getSnapshot().getStatus() == GlusterSnapshotStatus.DEACTIVATED) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED,
                     getSnapshot().getSnapshotName());
         }
 

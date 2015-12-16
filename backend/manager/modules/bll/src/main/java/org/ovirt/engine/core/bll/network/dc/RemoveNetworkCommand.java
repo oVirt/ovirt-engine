@@ -104,11 +104,11 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         NetworkValidator validator = new NetworkValidator(vmDao, getNetworkDao().get(getNetwork().getId()));
         return validate(validator.networkIsSet())
                 && validate(validator.notRemovingManagementNetwork())

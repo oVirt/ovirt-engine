@@ -293,45 +293,45 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, true, CANT_DO);
+            boolean valid, boolean success) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, null, true, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success, String errorMessage) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, true, errorMessage);
+            boolean valid, boolean success, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, null, true, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success, boolean reply, String errorMessage) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, reply, errorMessage);
+            boolean valid, boolean success, boolean reply, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, null, reply, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success, boolean reply) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, reply, CANT_DO);
+            boolean valid, boolean success, boolean reply) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, null, reply, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success, Object taskReturn, boolean replay) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, taskReturn, null, replay, CANT_DO);
+            boolean valid, boolean success, Object taskReturn, boolean replay) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, taskReturn, null, replay, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
-            boolean canDo, boolean success, Object taskReturn, boolean replay, String errorMessage) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, taskReturn, null, replay, errorMessage);
+            boolean valid, boolean success, Object taskReturn, boolean replay, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, valid, success, taskReturn, null, replay, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
-            boolean canDo,
+            boolean valid,
             boolean success,
             Object taskReturn,
             String baseUri,
@@ -340,7 +340,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 clz,
                 names,
                 values,
-                canDo,
+                valid,
                 success,
                 taskReturn,
                 null,
@@ -356,7 +356,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
-            boolean canDo,
+            boolean valid,
             boolean success,
             Object taskReturn,
             String baseUri,
@@ -366,7 +366,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 clz,
                 names,
                 values,
-                canDo,
+                valid,
                 success,
                 taskReturn,
                 null,
@@ -382,7 +382,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
-            boolean canDo,
+            boolean valid,
             boolean success,
             Object taskReturn,
             ArrayList<Guid> asyncTasks,
@@ -395,7 +395,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 clz,
                 names,
                 values,
-                canDo,
+                valid,
                 success,
                 taskReturn,
                 asyncTasks,
@@ -412,7 +412,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
-            boolean canDo,
+            boolean valid,
             boolean success,
             Object taskReturn,
             ArrayList<Guid> asyncTasks,
@@ -423,8 +423,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
             boolean replay,
             String errorMessage) {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
-        expect(result.getCanDoAction()).andReturn(canDo).anyTimes();
-        if (canDo) {
+        expect(result.isValid()).andReturn(valid).anyTimes();
+        if (valid) {
             expect(result.getSucceeded()).andReturn(success).anyTimes();
             if (success) {
                 if (taskReturn != null) {
@@ -435,7 +435,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            expect(result.getCanDoActionMessages()).andReturn(asList(errorMessage)).anyTimes();
+            expect(result.getValidationMessages()).andReturn(asList(errorMessage)).anyTimes();
             setUpL10nExpectations(asList(errorMessage));
         }
         expect(backend.runAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);

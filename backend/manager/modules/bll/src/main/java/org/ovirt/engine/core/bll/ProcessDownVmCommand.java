@@ -81,9 +81,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         return true;
@@ -118,7 +118,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
 
             Guid hostId = cleanupVfs();
-            // Only single dedicated host allowed for host devices, verified on canDoActions
+            // Only single dedicated host allowed for host devices, verified on validates
             Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
@@ -127,11 +127,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private boolean releaseUsedHostDevices() {
         if (hostDeviceManager.checkVmNeedsDirectPassthrough(getVm())) {
             try {
-                // Only single dedicated host allowed for host devices, verified on canDoActions
+                // Only single dedicated host allowed for host devices, verified on validates
                 hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
                 hostDeviceManager.freeVmHostDevices(getVmId());
             } finally {
-                // Only single dedicated host allowed for host devices, verified on canDoActions
+                // Only single dedicated host allowed for host devices, verified on validates
                 hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
             }
             return true;

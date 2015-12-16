@@ -29,19 +29,19 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT);
-        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
-        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT);
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
         return true;

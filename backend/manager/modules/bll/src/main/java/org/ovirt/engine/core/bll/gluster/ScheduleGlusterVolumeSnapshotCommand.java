@@ -64,22 +64,22 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         GlusterVolumeSnapshotSchedule fetchedSchedule =
                 getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_SCHEDULED);
         }
 
         if (!getParameters().getForce()) {
             if (getGlusterVolumeDao().getByName(getVdsGroupId(),
                     Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)) != null
                     && getVdsGroup().isGlusterCliBasedSchedulingOn()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
             }
         }
 

@@ -143,8 +143,8 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -155,7 +155,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             if (!ImagesHandler.checkImageConfiguration(
                     destStorages.get(diskImage.getStorageIds().get(0)).getStorageStaticData(),
                     diskImage,
-                    getReturnValue().getCanDoActionMessages())) {
+                    getReturnValue().getValidationMessages())) {
                 return false;
             }
         }

@@ -28,9 +28,9 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return (checkQuotaValidationForAdd(getParameters().getQuota(),
-                getReturnValue().getCanDoActionMessages()));
+                getReturnValue().getValidationMessages()));
     }
 
     public boolean checkQuotaValidationForAdd(Quota quota, List<String> messages) {
@@ -83,8 +83,8 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 
     /**

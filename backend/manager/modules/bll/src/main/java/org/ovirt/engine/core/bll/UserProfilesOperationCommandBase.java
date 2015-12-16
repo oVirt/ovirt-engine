@@ -32,7 +32,7 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Guid userId = getParameters().getUserProfile().getUserId();
 
         if (Guid.isNullOrEmpty(userId)) {
@@ -40,7 +40,7 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
             userId = getUserId();
             getParameters().getUserProfile().setUserId(userId);
         } else if (!userId.equals(getUserId())) {
-            return failCanDoAction(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return failValidation(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
         }
 
         String sshPublicKey = getParameters().getUserProfile().getSshPublicKey();
@@ -52,7 +52,7 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
 
         // else it is either a new or replacement key. In both cases, must be a valid key.
         if (!OpenSSHUtils.arePublicKeysValid(sshPublicKey)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_PUBLIC_SSH_KEY);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_PUBLIC_SSH_KEY);
         }
 
         return true;

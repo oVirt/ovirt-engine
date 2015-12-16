@@ -41,11 +41,11 @@ public class UploadStreamCommand<T extends UploadStreamParameters> extends Image
     }
 
     @Override
-    protected boolean commandSpecificCanDoAction() {
+    protected boolean commandSpecificValidate() {
         DiskImage targetDisk = getDiskImage();
         //Currently we'd like to support only preallocated disks to avoid possible extend on vdsm side.
         if (targetDisk.getVolumeType() != VolumeType.Preallocated) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_VOLUME_TYPE_UNSUPPORTED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_VOLUME_TYPE_UNSUPPORTED,
                     String.format("$volumeType %1$s", targetDisk.getVolumeType().toString()),
                     String.format("$supportedVolumeTypes %1$s", VolumeType.Preallocated));
         }

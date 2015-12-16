@@ -20,18 +20,18 @@ public class UpdateTagCommand<T extends TagsOperationParameters> extends TagsCom
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // we fetch by new name to see if it is in use
         Tags tag = DbFacade.getInstance().getTagDao()
                 .getByName(getParameters().getTag().getTagName());
         if (tag != null && !tag.getTagId().equals(getParameters().getTag().getTagId())) {
-            addCanDoActionMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
+            addValidationMessage(EngineMessage.TAGS_SPECIFY_TAG_IS_IN_USE);
             return false;
         }
         // we fetch by id to see if the tag is realy read-only
         tag = DbFacade.getInstance().getTagDao().get(getParameters().getTag().getTagId());
         if (tag.getIsReadonly() != null && tag.getIsReadonly()) {
-            addCanDoActionMessage(EngineMessage.TAGS_CANNOT_EDIT_READONLY_TAG);
+            addValidationMessage(EngineMessage.TAGS_CANNOT_EDIT_READONLY_TAG);
             return false;
         }
         return true;

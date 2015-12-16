@@ -97,7 +97,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retVal = true;
         if (getVmTemplate() == null) {
             retVal = false;
@@ -124,7 +124,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         if (retVal && (getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
                 && !isImagesAlreadyOnTarget()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }
 
@@ -152,7 +152,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 HashMap<Guid, DiskImage> imageMap = new HashMap<>();
                 for (DiskImage image : images) {
                     if (Guid.Empty.equals(image.getVmSnapshotId())) {
-                        retVal = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                        retVal = failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
                         break;
                     }
 
@@ -167,7 +167,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     StorageDomainStatic targetDomain = storageDomain.getStorageStaticData();
                     changeRawToCowIfSparseOnBlockDevice(targetDomain.getStorageType(), image);
                     retVal = ImagesHandler.checkImageConfiguration(targetDomain, image,
-                            getReturnValue().getCanDoActionMessages());
+                            getReturnValue().getValidationMessages());
                     if (!retVal) {
                         break;
                     } else {
@@ -189,12 +189,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     .get(getParameters().getVmTemplate().getId());
             // check that the template does not exists in the target domain
             if (duplicateTemplate != null) {
-                addCanDoActionMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
-                getReturnValue().getCanDoActionMessages().add(
+                addValidationMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
+                getReturnValue().getValidationMessages().add(
                         String.format("$TemplateName %1$s", duplicateTemplate.getName()));
                 retVal = false;
             } else if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
-                addCanDoActionMessage(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
+                addValidationMessage(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
                 retVal = false;
             }
         }
@@ -218,7 +218,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             VmTemplate baseTemplate = getVmTemplateDao().get(getVmTemplate().getBaseTemplateId());
             if (baseTemplate == null) {
                 retVal = false;
-                addCanDoActionMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
+                addValidationMessage(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
         }
 
@@ -231,15 +231,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (!retVal) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+            addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+            addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
         }
         return retVal;
     }
 
     protected boolean isVDSGroupCompatible () {
         if (getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
             return false;
         }
         return true;
@@ -247,7 +247,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected boolean validateTemplateArchitecture () {
         if (getVmTemplate().getClusterArch() == ArchitectureType.undefined) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
             return false;
         }
         return true;

@@ -33,20 +33,20 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__PERMISSION);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__PERMISSION);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         Permission p = getPermissionDao().get(getParameters().getPermission().getId());
         if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
-            getReturnValue().getCanDoActionMessages()
+            getReturnValue().getValidationMessages()
                     .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;
         } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
-            addCanDoActionMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
+            addValidationMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
             returnValue = false;
         }
         return returnValue;

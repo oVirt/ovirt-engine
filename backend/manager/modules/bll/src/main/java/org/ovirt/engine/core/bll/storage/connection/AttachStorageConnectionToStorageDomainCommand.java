@@ -25,7 +25,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageConnectionValidator storageConnectionValidator = createStorageConnectionValidator();
 
         if (!validate(storageConnectionValidator.isConnectionExists())
@@ -34,7 +34,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
             return false;
         }
         if (storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS);
         }
         return true;
     }
@@ -100,8 +100,8 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__ATTACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 
     protected StorageServerConnectionLunMapDao getStorageServerConnectionLunMapDao() {

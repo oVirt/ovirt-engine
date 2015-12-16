@@ -166,14 +166,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean canDoAction = super.canDoAction();
+    protected boolean validate() {
+        boolean validate = super.validate();
 
-        if (!canDoAction) {
+        if (!validate) {
             auditLogDirector.log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
         }
 
-        return canDoAction;
+        return validate;
     }
 
     @Override

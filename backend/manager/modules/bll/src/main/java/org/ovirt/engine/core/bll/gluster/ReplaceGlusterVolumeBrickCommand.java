@@ -23,27 +23,27 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
     protected void setActionMessageParameters() {
         switch (getParameters().getAction()) {
         case START:
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+            addValidationMessage(EngineMessage.VAR__ACTION__START);
             break;
         default:
             break;
         }
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (!getGlusterVolume().isOnline()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
             return false;
         }
 
         if (getParameters().getExistingBrick() == null || getParameters().getNewBrick() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -56,7 +56,7 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         }
 
         if (!isValidVolumeBrick(getParameters().getExistingBrick())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
             return false;
         }
 

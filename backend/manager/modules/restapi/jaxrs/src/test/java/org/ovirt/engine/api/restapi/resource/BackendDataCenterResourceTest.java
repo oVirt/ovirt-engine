@@ -105,14 +105,14 @@ public class BackendDataCenterResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
 
         try {
@@ -218,7 +218,7 @@ public class BackendDataCenterResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         setUriInfo(
@@ -227,7 +227,7 @@ public class BackendDataCenterResourceTest
                 StoragePoolParametersBase.class,
                 new String[] { "StoragePoolId" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success
             )
         );

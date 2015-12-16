@@ -26,27 +26,27 @@ public class AddExternalJobCommandTest {
     }
 
     private void setupMock() throws Exception {
-        when(commandMock.canDoAction()).thenCallRealMethod();
+        when(commandMock.validate()).thenCallRealMethod();
         when(commandMock.getParameters()).thenReturn(parameters);
     }
 
     @Test
-    public void canDoActionDescriptionOkSucceeds() throws Exception {
+    public void validateDescriptionOkSucceeds() throws Exception {
         setupMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionEmptyDescriptionFails() throws Exception {
+    public void validateEmptyDescriptionFails() throws Exception {
         setupMock();
         parameters.setDescription("");
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionBlankDescriptionFails() throws Exception {
+    public void validateBlankDescriptionFails() throws Exception {
         parameters.setDescription("      ");
         setupMock();
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 }

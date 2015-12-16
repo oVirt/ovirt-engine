@@ -27,14 +27,14 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CANCEL_MIGRATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__CANCEL_MIGRATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -42,7 +42,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
         }
 
         if (getVm().getStatus() != VMStatus.MigratingFrom) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
+            return failValidation(EngineMessage.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
         }
 
         return true;

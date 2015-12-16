@@ -43,8 +43,8 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     @Override
-    protected boolean canDoAction() {
-        return isInternalExecution() ? true : failCanDoAction(EngineMessage.USER_CANNOT_RUN_ACTION_INTERNAL_COMMAND);
+    protected boolean validate() {
+        return isInternalExecution() ? true : failValidation(EngineMessage.USER_CANNOT_RUN_ACTION_INTERNAL_COMMAND);
     }
 
     @Override

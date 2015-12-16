@@ -67,7 +67,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         oldHost = getVdsDao().get(getVdsId());
         UpdateHostValidator validator =
                 new UpdateHostValidator(getDbFacade(),
@@ -106,8 +106,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override
@@ -141,23 +141,23 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             // status, therefore needed to fail the command to revert the status.
             if (!resultList.isEmpty()) {
                 VdcReturnValueBase vdcReturnValueBase = resultList.get(0);
-                if (vdcReturnValueBase != null && !vdcReturnValueBase.getCanDoAction()) {
-                    ArrayList<String> canDoActionMessages = vdcReturnValueBase.getCanDoActionMessages();
-                    if (!canDoActionMessages.isEmpty()) {
+                if (vdcReturnValueBase != null && !vdcReturnValueBase.isValid()) {
+                    ArrayList<String> validationMessages = vdcReturnValueBase.getValidationMessages();
+                    if (!validationMessages.isEmpty()) {
                         // add can do action messages to return value so error messages
                         // are returned back to the client
-                        getReturnValue().getCanDoActionMessages().addAll(canDoActionMessages);
+                        getReturnValue().getValidationMessages().addAll(validationMessages);
                         log.error("Installation/upgrade of Host '{}', '{}' failed: {}",
                                 getVdsId(),
                                 getVdsName(),
                                 StringUtils.join(Backend.getInstance()
                                         .getErrorsTranslator()
-                                        .translateErrorText(canDoActionMessages),
+                                        .translateErrorText(validationMessages),
                                         ","));
                     }
                     // set can do action to false so can do action messages are
                     // returned back to client
-                    getReturnValue().setCanDoAction(false);
+                    getReturnValue().setValid(false);
                     setSucceeded(false);
                     // add old vds dynamic data to compensation context. This
                     // way the status will revert back to what it was before

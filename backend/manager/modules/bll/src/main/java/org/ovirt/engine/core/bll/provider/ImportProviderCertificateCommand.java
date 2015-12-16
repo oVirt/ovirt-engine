@@ -74,8 +74,8 @@ public class ImportProviderCertificateCommand<P extends ImportProviderCertificat
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER_CERTIFICATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__PROVIDER_CERTIFICATE);
     }
 
     private void handleException(Throwable e) {

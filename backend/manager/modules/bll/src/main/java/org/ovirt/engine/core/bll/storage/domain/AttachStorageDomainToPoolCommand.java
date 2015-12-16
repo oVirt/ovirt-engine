@@ -274,7 +274,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // We can share only ISO or Export domain , or a data domain
         // which is not attached.
         StorageDomainToPoolRelationValidator
@@ -288,7 +288,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             returnValue = false;
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
         if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
             returnValue = checkMasterDomainIsUp();
@@ -298,8 +298,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__ATTACH);
     }
 
     @Override

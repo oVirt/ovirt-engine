@@ -50,7 +50,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (isImagesAlreadyOnTarget()) {
             ImportValidator importValidator = getImportValidator();
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData, getImages()))) {
@@ -58,7 +58,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             }
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override

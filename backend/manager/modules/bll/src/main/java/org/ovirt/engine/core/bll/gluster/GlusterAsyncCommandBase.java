@@ -36,19 +36,19 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
         if (!GlusterFeatureSupported.glusterAsyncTasks(getVdsGroup().getCompatibilityVersion())) {
-            addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
-            return failCanDoAction(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
+            addValidationMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
+            return failValidation(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
         }
 
         if (!glusterVolume.isOnline()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
 
         return true;
@@ -56,8 +56,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
-        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {

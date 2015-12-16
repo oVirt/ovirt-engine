@@ -19,7 +19,7 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageConnectionValidator storageConnectionValidator = createStorageConnectionValidator();
 
         if (!validate(storageConnectionValidator.isConnectionExists())
@@ -28,7 +28,7 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
             return false;
         }
         if(!storageConnectionValidator.isConnectionForISCSIDomainAttached(getStorageDomain())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST);
         }
         return true;
     }
@@ -58,8 +58,8 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__DETACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 
 }

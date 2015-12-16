@@ -29,7 +29,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = isVmExist();
         if (retValue) {
             retValue = canRunActionOnNonManagedVm();
@@ -48,7 +48,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
             if (vmDevice == null) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
             }
 
             if (retValue && vmDevice.getSnapshotId() != null) {
@@ -68,7 +68,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
             if (vmDevice.getSnapshotId() == null
                     && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
-                return failCanDoAction(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
+                return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
         }
         return retValue;
@@ -76,8 +76,8 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH_ACTION_TO);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__DETACH_ACTION_TO);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

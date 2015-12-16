@@ -16,18 +16,18 @@ public class GlusterMultipleActionsRunner extends MultipleActionsRunner {
     }
 
     @Override
-    protected VdcReturnValueBase runCanDoActionOnly(final int currentCanDoActionId, final int totalSize) {
+    protected VdcReturnValueBase runValidateOnly(final int currentValidateId, final int totalSize) {
         try {
-            return super.runCanDoActionOnly(currentCanDoActionId, totalSize);
+            return super.runValidateOnly(currentValidateId, totalSize);
         } finally {
-            // free the lock so that canDoActionOnly() on next command doesn't block
-            getCommands().get(currentCanDoActionId).freeLock();
+            // free the lock so that validateOnly() on next command doesn't block
+            getCommands().get(currentValidateId).freeLock();
         }
     }
 
     @Override
     protected void executeValidatedCommand(CommandBase<?> command) {
-        // Since we had released the lock at the end of CanDoAction,
+        // Since we had released the lock at the end of Validate,
         // it must be acquired back just before execution of the command
         command.acquireLock();
         super.executeValidatedCommand(command);

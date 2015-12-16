@@ -92,12 +92,12 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(0);
 
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateBookmark, BookmarksOperationParameters.class,
-                new String[] {}, new Object[] {}, canDo, success));
+                new String[] {}, new Object[] {}, valid, success));
 
         try {
             resource.update(getModel(0));
@@ -147,7 +147,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(0);
         setUriInfo(
             setUpActionExpectations(
@@ -155,7 +155,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
                 BookmarksParametersBase.class,
                 new String[] { "BookmarkId" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success
             )
         );

@@ -11,7 +11,7 @@ public class EditClusterPolicyCommand extends ClusterPolicyCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return checkRemoveEditValidations() && checkAddEditValidations();
     }
 
@@ -23,8 +23,8 @@ public class EditClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
     }
 
     @Override

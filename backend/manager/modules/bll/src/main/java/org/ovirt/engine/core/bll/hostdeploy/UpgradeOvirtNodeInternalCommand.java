@@ -56,8 +56,8 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__INSTALL);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__INSTALL);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     private boolean isISOCompatible(
@@ -104,33 +104,33 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVdsId() == null || getVdsId().equals(Guid.Empty)) {
-            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
         if (getVds() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         if (isOvirtReInstallOrUpgrade()) {
             // Block re-install on non-operational Host
             if  (getVds().getStatus() == VDSStatus.NonOperational) {
-                return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
+                return failValidation(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
             }
 
             File iso = resolveISO(getParameters().getoVirtIsoFile());
             if (iso == null) {
-                return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+                return failValidation(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
             }
 
             RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
             if (!isISOCompatible(iso, ovirtHostOsVersion)) {
-                    addCanDoActionMessage(EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
-                    addCanDoActionMessageVariable("IsoVersion", ovirtHostOsVersion.getMajor());
+                    addValidationMessage(EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
+                    addValidationMessageVariable("IsoVersion", ovirtHostOsVersion.getMajor());
                     return false;
             }
             _iso = iso;
         } else {
-            return failCanDoAction(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
+            return failValidation(EngineMessage.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
         }
         return true;
     }

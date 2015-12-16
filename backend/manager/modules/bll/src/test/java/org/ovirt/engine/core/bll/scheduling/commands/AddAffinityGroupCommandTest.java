@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -60,55 +60,55 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoAction_vmNameExists_Test() {
+    public void validate_vmNameExists_Test() {
         doReturn(new AffinityGroup()).when(affinityGroupDao).getByName(anyString());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS);
     }
 
     @Test
-    public void canDoAction_vdsGroupNull_Test() {
+    public void validate_vdsGroupNull_Test() {
         doReturn(null).when(command).getVdsGroup();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
     }
 
     @Test
-    public void canDoAction_vmNotExists_Test() {
+    public void validate_vmNotExists_Test() {
         doReturn(null).when(vmStaticDao).get(any(Guid.class));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
     }
 
     @Test
-    public void canDoAction_vmNotInCluster_Test() {
+    public void validate_vmNotInCluster_Test() {
         doReturn(Guid.newGuid()).when(command).getVdsGroupId();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
     }
 
     @Test
-    public void canDoAction_duplicateVm_Test() {
+    public void validate_duplicateVm_Test() {
         affinityGroup.getEntityIds().add(vmId);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
     }
 
     @Test
-    public void canDoAction_nonEnforcing_Test() {
+    public void validate_nonEnforcing_Test() {
         affinityGroup.setEnforcing(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoAction_emptyAffinityGroup() {
+    public void validate_emptyAffinityGroup() {
         affinityGroup.setEntityIds(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoAction_succeed_Test() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    public void validate_succeed_Test() {
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private AffinityGroup createAffinityGroup() {

@@ -504,7 +504,7 @@ public class BackendVmResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(2);
 
         setUpGetPayloadExpectations(0, 1);
@@ -514,7 +514,7 @@ public class BackendVmResourceTest
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
 
         try {
@@ -1225,7 +1225,7 @@ public class BackendVmResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
@@ -1234,7 +1234,7 @@ public class BackendVmResourceTest
                 RemoveVmParameters.class,
                 new String[] { "VmId", "Force" },
                 new Object[] { GUIDS[0], Boolean.FALSE },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

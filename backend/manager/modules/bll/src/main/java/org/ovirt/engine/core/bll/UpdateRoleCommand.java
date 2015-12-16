@@ -18,29 +18,29 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         Role oldRole = getRoleDao().get(getRole().getId());
         if (oldRole == null) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_ID);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_ID);
             returnValue = false;
         } else {
-            if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
+            if (checkIfRoleIsReadOnly(getReturnValue().getValidationMessages())) {
                 returnValue = false;
-                addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+                addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
             } else if (!StringUtils.equals(getRole().getName(), oldRole.getName())
                     && getRoleDao().getByName(getRole().getName()) != null) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
             } // changing role type isn't allowed
             else if (getRole().getType() != oldRole.getType()) {
-                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_TYPE);
+                addValidationMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_TYPE);
                 returnValue = false;
             }
         }
         if (!returnValue) {
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+            addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
+            addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
 
         }
         return returnValue;

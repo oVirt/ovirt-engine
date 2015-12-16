@@ -16,12 +16,12 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!checkRemoveEditValidations()) {
             return false;
         }
         if (getVdsGroupDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
                     String.format("$clusters %1$s", clustersListIntoTokenizedString()));
         }
         return true;
@@ -44,8 +44,8 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER_POLICY);
     }
 
     @Override

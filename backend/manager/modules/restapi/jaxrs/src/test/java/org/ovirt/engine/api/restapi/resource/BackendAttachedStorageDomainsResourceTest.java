@@ -121,12 +121,12 @@ public class BackendAttachedStorageDomainsResourceTest
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AttachStorageDomainToPool,
                                            AttachStorageDomainToPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
                                            new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
-                                           canDo,
+                                           valid,
                                            success));
 
         StorageDomain model = new StorageDomain();

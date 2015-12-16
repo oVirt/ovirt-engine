@@ -11,7 +11,7 @@ public abstract class UpdateProfileCommandBase<T extends ProfileParametersBase<P
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Q validator = getProfileValidator();
         return validate(validator.profileIsSet())
                 && validate(validator.profileExists())
@@ -30,7 +30,7 @@ public abstract class UpdateProfileCommandBase<T extends ProfileParametersBase<P
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     protected abstract Q getProfileValidator();

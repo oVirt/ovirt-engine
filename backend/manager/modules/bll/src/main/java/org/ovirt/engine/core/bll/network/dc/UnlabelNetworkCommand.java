@@ -46,12 +46,12 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__LABEL);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
         return validate(validatorNew.networkIsSet());
     }

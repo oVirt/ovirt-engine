@@ -17,7 +17,7 @@ public class LiveSnapshotValidator {
         this.vds = vds;
     }
 
-    public ValidationResult canDoSnapshot() {
+    public ValidationResult validateSnapshot() {
         if (!isLiveSnapshotEnabled(compatibilityVersion)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT);
         }

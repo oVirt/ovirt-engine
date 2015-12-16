@@ -319,7 +319,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             VdcActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
             newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newNumOfSockets : currentSockets);
-            auditLogHotSetCpusCandos(params);
+            hotSetCpusLog(params);
         }
     }
 
@@ -339,7 +339,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             VdcActionType.HotSetAmountOfMemory,
                             params, cloneContextAndDetachFromParent());
             newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
-            auditLogHotSetMemCandos(params, setAmountOfMemoryResult);
+            hotSetMemlog(params, setAmountOfMemoryResult);
         }
     }
 
@@ -348,12 +348,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * otherwise internal command will audit log the result
      * @param params
      */
-    private void auditLogHotSetCpusCandos(HotSetNumberOfCpusParameters params) {
-        if (!setNumberOfCpusResult.getCanDoAction()) {
+    private void hotSetCpusLog(HotSetNumberOfCpusParameters params) {
+        if (!setNumberOfCpusResult.isValid()) {
             AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
-            List<String> canDos = getBackend().getErrorsTranslator().
-                    translateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
-            logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
+            List<String> validationMessages = getBackend().getErrorsTranslator().
+                    translateErrorText(setNumberOfCpusResult.getValidationMessages());
+            logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }
@@ -363,12 +363,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * otherwise internal command will audit log the result
      * @param params
      */
-    private void auditLogHotSetMemCandos(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
-        if (!setAmountOfMemoryResult.getCanDoAction()) {
+    private void hotSetMemlog(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
+        if (!setAmountOfMemoryResult.isValid()) {
             AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params);
-            List<String> canDos = getBackend().getErrorsTranslator().
-                    translateErrorText(setAmountOfMemoryResult.getCanDoActionMessages());
-            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
+            List<String> validationMessages = getBackend().getErrorsTranslator().
+                    translateErrorText(setAmountOfMemoryResult.getValidationMessages());
+            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }
@@ -537,13 +537,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -561,9 +561,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VmTemplate origTemplate = getVmTemplateDao().get(vmFromDB.getVmtGuid());
             VmTemplate newTemplate = getVmTemplateDao().get(vmFromParams.getVmtGuid());
             if (newTemplate == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (origTemplate != null && !origTemplate.getBaseTemplateId().equals(newTemplate.getBaseTemplateId())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_ON_DIFFERENT_CHAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_ON_DIFFERENT_CHAIN);
 
             // check if pool vm - if not, the field is not legal and command will fail later on
             } else if (vmFromDB.getVmPoolId() != null) {
@@ -573,17 +573,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getVdsGroup() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
         if (vmFromDB.getVdsGroupId() == null) {
-            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
         if (!isVmExist()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -591,13 +591,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (StringUtils.isEmpty(vmFromParams.getName())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
         }
 
         // check that VM name is not too long
         boolean vmNameValidLength = isVmNameValidLength(vmFromParams);
         if (!vmNameValidLength) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
 
         // Checking if a desktop with same name already exists
@@ -605,16 +605,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             boolean exists = isVmWithSameNameExists(vmFromParams.getName(), getStoragePoolId());
 
             if (exists) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
 
-        if (!validateCustomProperties(vmFromParams.getStaticData(), getReturnValue().getCanDoActionMessages())) {
+        if (!validateCustomProperties(vmFromParams.getStaticData(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
         if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(),
-                getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
+                getVdsGroup().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -622,27 +622,27 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
                 getVdsGroup().getCpuName(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
         if (vmFromParams.getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
                         vmFromParams.getOs(),
-                        getReturnValue().getCanDoActionMessages(),
+                        getReturnValue().getValidationMessages(),
                         getEffectiveCompatibilityVersion())) {
             return false;
         }
 
         if (!areUpdatedFieldsLegal()) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
+            return failValidation(EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }
 
         if (!vmFromDB.getVdsGroupId().equals(vmFromParams.getVdsGroupId())) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
+            return failValidation(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
         }
 
-        if (!isDedicatedVdsExistOnSameCluster(vmFromParams.getStaticData(), getReturnValue().getCanDoActionMessages())) {
+        if (!isDedicatedVdsExistOnSameCluster(vmFromParams.getStaticData(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -650,8 +650,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!VmHandler.isNumOfMonitorsLegal(
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
                 getParameters().getVmStaticData().getNumOfMonitors(),
-                getReturnValue().getCanDoActionMessages())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+                getReturnValue().getValidationMessages())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
         }
 
         // Check PCI and IDE limits are ok
@@ -660,12 +660,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!VmTemplateCommand.isVmPriorityValueLegal(vmFromParams.getPriority(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
         if (vmFromDB.getVmPoolId() != null && vmFromParams.isStateless()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
         }
 
         if (!AddVmCommand.checkCpuSockets(
@@ -673,7 +673,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vmFromParams.getCpuPerSocket(),
                 vmFromParams.getThreadsPerCpu(),
                 getEffectiveCompatibilityVersion().toString(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -701,7 +701,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(),
                 vmFromParams.getOs(),
                 getEffectiveCompatibilityVersion(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -709,14 +709,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
-                getReturnValue().getCanDoActionMessages(),
+                getReturnValue().getValidationMessages(),
                 getEffectiveCompatibilityVersion())) {
             return false;
         }
 
         if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
 
         // check cpuPinning
@@ -724,29 +724,29 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!validatePinningAndMigration(getReturnValue().getCanDoActionMessages(),
+        if (!validatePinningAndMigration(getReturnValue().getValidationMessages(),
                 getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
             return false;
         }
 
         if (vmFromParams.isUseHostCpuFlags()
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failCanDoAction(EngineMessage.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
+            return failValidation(EngineMessage.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
         if (!isCpuSharesValid(vmFromParams)) {
-            return failCanDoAction(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
+            return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
         if (isVirtioScsiEnabled())  {
             // Verify cluster compatibility
             if (!FeatureSupported.virtIoScsi(getEffectiveCompatibilityVersion())) {
-                return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
             // Verify OS compatibility
             if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
-                    getReturnValue().getCanDoActionMessages())) {
+                    getReturnValue().getValidationMessages())) {
                 return false;
             }
         }
@@ -757,7 +757,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
         if (!setAndValidateCpuProfile()) {
@@ -766,14 +766,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
-            return failCanDoAction(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList())
@@ -804,11 +804,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (vmFromParams.getProviderId() != null) {
             Provider<?> provider = providerDao.get(vmFromParams.getProviderId());
             if (provider == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
             }
 
             if (provider.getType() != ProviderType.FOREMAN) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH);
             }
         }
 
@@ -816,8 +816,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm,
-            ArrayList<String> canDoActionMessages) {
-        return VmHandler.validateDedicatedVdsExistOnSameCluster(vm, canDoActionMessages);
+            ArrayList<String> validationMessages) {
+        return VmHandler.validateDedicatedVdsExistOnSameCluster(vm, validationMessages);
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
@@ -834,7 +834,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 hasWatchdog(),
                 isBalloonEnabled(),
                 isSoundDeviceEnabled(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     private boolean isVmExist() {

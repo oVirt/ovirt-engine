@@ -66,8 +66,8 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }
 

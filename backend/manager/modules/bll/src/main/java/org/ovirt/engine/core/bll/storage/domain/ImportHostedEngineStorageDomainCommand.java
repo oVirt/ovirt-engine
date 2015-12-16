@@ -78,19 +78,19 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // if sd imported already, fail
         if (hostedEngineHelper.getStorageDomain() != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         // fetch info on storage domain from VDSM, sets #heStorageDomain
         if (!fetchStorageDomainInfo()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (!Arrays.asList(SUPPORTED_DOMAIN_TYPES).contains(heStorageDomain.getStorageType())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
         }
         return true;
     }

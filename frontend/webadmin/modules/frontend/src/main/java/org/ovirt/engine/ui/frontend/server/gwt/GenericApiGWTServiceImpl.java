@@ -97,13 +97,13 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
 
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass) {
-        return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, false);
+            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass) {
+        return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult) {
+            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
         for (VdcActionParametersBase params : multipleParams) {
@@ -111,7 +111,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
-                getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, isWaitForResult);
+                getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, isWaitForResult);
 
         return returnValues;
     }

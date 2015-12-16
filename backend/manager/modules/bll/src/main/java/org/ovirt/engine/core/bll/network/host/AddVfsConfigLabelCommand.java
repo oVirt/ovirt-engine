@@ -24,8 +24,8 @@ public class AddVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().labelNotInVfsConfig(getLabel()));
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().labelNotInVfsConfig(getLabel()));
     }
 
     @Override
@@ -37,6 +37,6 @@ public class AddVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 }

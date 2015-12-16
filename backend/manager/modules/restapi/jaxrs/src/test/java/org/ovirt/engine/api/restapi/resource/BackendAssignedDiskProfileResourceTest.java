@@ -114,7 +114,7 @@ public class BackendAssignedDiskProfileResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
@@ -122,7 +122,7 @@ public class BackendAssignedDiskProfileResourceTest
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success
             )
         );

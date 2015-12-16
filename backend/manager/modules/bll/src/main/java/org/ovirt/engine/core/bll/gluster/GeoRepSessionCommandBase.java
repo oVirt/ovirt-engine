@@ -26,26 +26,26 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
-        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
-        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getGeoRepSession() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID);
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (!volume.isOnline()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            addValidationMessageVariable("volumeName", volume.getName());
             return false;
         }
 

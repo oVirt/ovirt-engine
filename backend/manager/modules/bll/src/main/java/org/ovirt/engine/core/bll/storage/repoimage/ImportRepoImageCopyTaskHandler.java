@@ -107,7 +107,7 @@ public class ImportRepoImageCopyTaskHandler
         getEnclosingCommand().getReturnValue().setSucceeded(true);
     }
 
-    // No need for null checks, as we already tested that the cluster exists in the canDoAction of the parent command
+    // No need for null checks, as we already tested that the cluster exists in the validate of the parent command
     public VDSGroup getVdsGroup(Guid vdsGroupId) {
         return DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
     }

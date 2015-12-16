@@ -33,19 +33,19 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getPubKeys().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_NO_PUB_KEYS_PASSED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_NO_PUB_KEYS_PASSED);
         }
         if (getParameters().getId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__WRITE_PUB_KEYS);
+        addValidationMessage(EngineMessage.VAR__ACTION__WRITE_PUB_KEYS);
     }
 
     @Override

@@ -69,11 +69,11 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         AddNetworkValidator validator = getNetworkValidator();
         return validate(validator.dataCenterExists())
                 && validate(validator.vmNetworkSetCorrectly())

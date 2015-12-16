@@ -26,7 +26,7 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters() == null
                 || getParameters().getAgent() == null
                 || getParameters().getAgent().getIp() == null
@@ -34,9 +34,9 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
                 || getParameters().getAgent().getPassword() == null
                 || getParameters().getAgent().getType() == null
                 || getParameters().getAgent().getUser() == null) {
-            return failCanDoAction(EngineMessage.VDS_ADD_FENCE_AGENT_MANDATORY_PARAMETERS_MISSING);
+            return failValidation(EngineMessage.VDS_ADD_FENCE_AGENT_MANDATORY_PARAMETERS_MISSING);
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override

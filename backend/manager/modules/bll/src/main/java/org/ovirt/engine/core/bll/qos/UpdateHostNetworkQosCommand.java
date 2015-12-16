@@ -22,9 +22,9 @@ public class UpdateHostNetworkQosCommand extends UpdateQosCommandBase<HostNetwor
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         HostNetworkQosValidator validator = getQosValidator(getQos());
-        return super.canDoAction()
+        return super.validate()
                 && validate(validator.requiredValuesPresent())
                 && validate(validator.valuesConsistent());
     }

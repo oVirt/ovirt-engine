@@ -82,27 +82,27 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(manageActionDetailsMap.get(getParameters().getActionType()).getCanDoActionMsg());
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVICE);
+        addValidationMessage(manageActionDetailsMap.get(getParameters().getActionType()).getValidateMsg());
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVICE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         clusterId = getParameters().getClusterId();
         serverId = getParameters().getServerId();
         serviceType = getParameters().getServiceType();
         actionType = getParameters().getActionType();
 
         if (!manageActionDetailsMap.keySet().contains(actionType)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_ACTION_TYPE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ACTION_TYPE);
         }
 
         if (Guid.isNullOrEmpty(clusterId) && Guid.isNullOrEmpty(serverId)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
         if (!(Guid.isNullOrEmpty(clusterId)) && getClusterUtils().getAllUpServers(clusterId).size() == 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
         return true;
@@ -247,27 +247,27 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
      * An instance of this class holds various details about the managed actions
      */
     static class ManageActionDetail {
-        private EngineMessage canDoActionMsg;
+        private EngineMessage validateMsg;
         private GlusterServiceStatus status;
         private AuditLogType actionPerformedActionLog;
         private AuditLogType actionFailedActionLog;
 
-        public ManageActionDetail(EngineMessage canDoActionMsg,
+        public ManageActionDetail(EngineMessage validateMsg,
                 GlusterServiceStatus status,
                 AuditLogType actionPerformedActionLog,
                 AuditLogType actionFailedActionLog) {
-            this.canDoActionMsg = canDoActionMsg;
+            this.validateMsg = validateMsg;
             this.status = status;
             this.actionPerformedActionLog = actionPerformedActionLog;
             this.actionFailedActionLog = actionFailedActionLog;
         }
 
-        public EngineMessage getCanDoActionMsg() {
-            return canDoActionMsg;
+        public EngineMessage getValidateMsg() {
+            return validateMsg;
         }
 
-        public void setCanDoActionMsg(EngineMessage canDoActionMsg) {
-            this.canDoActionMsg = canDoActionMsg;
+        public void setValidateMsg(EngineMessage validateMsg) {
+            this.validateMsg = validateMsg;
         }
 
         public GlusterServiceStatus getStatus() {

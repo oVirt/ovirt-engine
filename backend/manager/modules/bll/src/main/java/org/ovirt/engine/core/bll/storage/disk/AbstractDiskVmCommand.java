@@ -143,7 +143,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 hasWatchdog(getVmId()),
                 isBalloonEnabled(getVmId()),
                 isSoundDeviceEnabled(getVmId()),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
@@ -166,10 +166,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         if (!diskInfo.isDiskSnapshot() && diskInfo.isBoot()) {
             for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.isBoot() && !disk.isDiskSnapshot()) {
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
-                    getReturnValue().getCanDoActionMessages().add(
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
+                    getReturnValue().getValidationMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
-                    getReturnValue().getCanDoActionMessages().add(
+                    getReturnValue().getValidationMessages().add(
                             String.format("$VmName %1$s", vm.getName()));
                     return false;
                 }
@@ -224,7 +224,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isVmExist() {
         if (getVm() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
         return true;
@@ -232,7 +232,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isDiskExist(Disk disk) {
         if (disk == null || !isDiskExistInVm(disk)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }
         return true;
@@ -267,7 +267,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isHotPlugDiskSnapshotSupported() {
         if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
         }
 
         return true;

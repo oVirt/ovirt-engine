@@ -18,19 +18,19 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // check if SP exist
         if (getStoragePool() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
             return false;
         }
         // Check if quota exist:
         if (getQuotaId() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
         if (getDbFacade().getQuotaDao().getById(getQuotaId()) == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
         return true;
@@ -59,7 +59,7 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ASSIGN);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
+        addValidationMessage(EngineMessage.VAR__ACTION__ASSIGN);
+        addValidationMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 }

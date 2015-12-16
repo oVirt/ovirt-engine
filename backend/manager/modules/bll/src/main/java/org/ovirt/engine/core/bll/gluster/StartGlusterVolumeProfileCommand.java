@@ -20,8 +20,8 @@ public class StartGlusterVolumeProfileCommand extends GlusterVolumeCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START_PROFILE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__START_PROFILE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override

@@ -34,16 +34,16 @@ public class RemoveGlusterServerCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(new RemoveGlusterServerCommand(new RemoveGlusterServerParameters(CLUSTER_ID, SERVER_NAME, false)));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(new RemoveGlusterServerCommand(new RemoveGlusterServerParameters(CLUSTER_ID, null, false)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 }

@@ -289,7 +289,7 @@ public class BackendHostNicResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations();
         setUriInfo(
             setUpActionExpectations(
@@ -297,7 +297,7 @@ public class BackendHostNicResourceTest
                 RemoveBondParameters.class,
                 new String[] { "VdsId", "BondName" },
                 new Object[] { PARENT_GUID, NIC_NAME },
-                canDo,
+                valid,
                 success
             )
         );
@@ -421,7 +421,7 @@ public class BackendHostNicResourceTest
         doTestBadUpdate(false, true, CANT_DO);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setupGetHostExpectations(2);
@@ -431,7 +431,7 @@ public class BackendHostNicResourceTest
                                            UpdateNetworkToVdsParameters.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
 
         try {

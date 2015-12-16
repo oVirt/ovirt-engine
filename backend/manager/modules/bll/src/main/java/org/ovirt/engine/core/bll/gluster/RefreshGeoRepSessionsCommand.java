@@ -18,18 +18,18 @@ public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getVolumeId() == null || getGlusterVolume() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
 
-        return super.canDoAction();
+        return super.validate();
     }
 
     protected GlusterGeoRepSyncJob getSyncJobInstance() {

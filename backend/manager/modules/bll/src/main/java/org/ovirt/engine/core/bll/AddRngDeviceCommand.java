@@ -18,8 +18,8 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         super(parameters, commandContext);
     }
 
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -30,7 +30,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         }
 
         if (!getRngDevices().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_ALREADY_EXISTS);
         }
 
         return true;

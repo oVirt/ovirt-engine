@@ -14,7 +14,7 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result = false;
         Bookmark updated = getBookmark();
 

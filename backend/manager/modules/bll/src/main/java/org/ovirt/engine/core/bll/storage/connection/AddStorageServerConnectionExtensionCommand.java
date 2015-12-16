@@ -29,11 +29,11 @@ public class AddStorageServerConnectionExtensionCommand<T extends StorageServerC
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageServerConnectionExtension newConnExt = getParameters().getStorageServerConnectionExtension();
         return validate(getConnectionExtensionValidator().isConnectionDoesNotExistForHostAndTarget(newConnExt));
     }

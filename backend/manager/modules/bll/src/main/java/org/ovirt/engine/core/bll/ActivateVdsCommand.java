@@ -100,7 +100,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         HostValidator validator = new HostValidator(getVds());
         return validate(validator.hostExists()) &&
                 validate(validator.validateStatusForActivation()) &&
@@ -115,8 +115,8 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ACTIVATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__ACTIVATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

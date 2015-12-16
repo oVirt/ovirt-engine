@@ -94,15 +94,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(getParameters().getOperation() == ImageOperation.Copy ?
+        addValidationMessage(getParameters().getOperation() == ImageOperation.Copy ?
                         EngineMessage.VAR__ACTION__COPY
                         : EngineMessage.VAR__ACTION__MOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction()
+    protected boolean validate() {
+        return super.validate()
                 && isImageExist()
                 && checkOperationIsCorrect()
                 && isDiskUsedAsOvfStore()
@@ -121,14 +121,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean isSourceAndDestTheSame() {
         if (getParameters().getOperation() == ImageOperation.Move
                 && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
         return true;
     }
 
     protected boolean isImageExist() {
         if (getImage() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
         return true;
     }
@@ -137,10 +137,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         DiskImage diskImage = getImage();
         if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
             if (getParameters().getOperation() == ImageOperation.Move) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED,
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED,
                         String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
             } else {
-                return failCanDoAction(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
+                return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
             }
         }
         return true;
@@ -158,7 +158,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkOperationIsCorrect() {
         if (getParameters().getOperation() == ImageOperation.Move
                 && getImage().getVmEntityType() != null && getImage().getVmEntityType().isTemplateType()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
         return true;
     }
@@ -172,7 +172,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         // Validate shareable disks moving/copying
         boolean moveOrCopy = getParameters().getOperation() == ImageOperation.Move || getParameters().getOperation() == ImageOperation.Copy;
         if (moveOrCopy && getImage().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS ) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
                     String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
         }
 
@@ -219,7 +219,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getParameters().getOperation() == ImageOperation.Copy &&
                 !getParameters().getForceOverride() &&
                 getImage().getStorageIds().contains(getStorageDomain().getId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
         }
         return true;
     }
@@ -269,7 +269,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
             DiskImage templateImage = getDiskImageDao().get(getImage().getImageTemplateId());
             if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return true;

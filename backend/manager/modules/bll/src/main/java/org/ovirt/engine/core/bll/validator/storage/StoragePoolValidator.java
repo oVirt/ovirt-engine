@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
- * CanDoAction validation methods for storage pool handling
+ * Validate validation methods for storage pool handling
  */
 public class StoragePoolValidator {
     private StoragePool storagePool;

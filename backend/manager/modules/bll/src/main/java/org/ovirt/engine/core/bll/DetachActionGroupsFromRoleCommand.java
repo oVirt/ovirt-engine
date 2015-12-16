@@ -16,16 +16,16 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getRole() == null) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
             return false;
         }
 
-        List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
-        if (checkIfRoleIsReadOnly(canDoMessages)) {
-            canDoMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
-            canDoMessages.add(EngineMessage.VAR__ACTION__DETACH_ACTION_TO.toString());
+        List<String> validationMessages = getReturnValue().getValidationMessages();
+        if (checkIfRoleIsReadOnly(validationMessages)) {
+            validationMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
+            validationMessages.add(EngineMessage.VAR__ACTION__DETACH_ACTION_TO.toString());
             return false;
         }
 
@@ -36,7 +36,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
         // Check that target action group exists for this role
         for (ActionGroup group : groupsToDetach) {
             if (!allGroups.contains(group)) {
-                canDoMessages.add(
+                validationMessages.add(
                         EngineMessage.ERROR_CANNOT_DETACH_ACTION_GROUP_TO_ROLE_NOT_ATTACHED.toString());
                 return false;
             }

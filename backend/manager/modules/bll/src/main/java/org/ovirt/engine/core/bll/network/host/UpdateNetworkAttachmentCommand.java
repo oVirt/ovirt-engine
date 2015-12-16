@@ -20,15 +20,15 @@ public class UpdateNetworkAttachmentCommand<T extends NetworkAttachmentParameter
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {
 
-            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);    //TODO MM: how to identify 'null-valued' attachment? Maybe better error message?
+            return failValidation(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);    //TODO MM: how to identify 'null-valued' attachment? Maybe better error message?
         }
 
         if (networkAttachment.getId() == null) {
-            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_WHEN_UPDATING_YOU_HAVE_TO_PROVIDE_ID);
+            return failValidation(EngineMessage.NETWORK_ATTACHMENT_WHEN_UPDATING_YOU_HAVE_TO_PROVIDE_ID);
         }
 
         return true;

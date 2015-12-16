@@ -39,7 +39,7 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
         /* get required cpu name */
         if (StringUtils.isNotEmpty(vm.getCpuName())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster
             customCpu = vm.getCpuName();
-        } else if (StringUtils.isNotEmpty(vm.getCustomCpuName())) { // static check - used only for cases where the dynamic value hasn't been updated yet(canDo validation)
+        } else if (StringUtils.isNotEmpty(vm.getCustomCpuName())) { // static check - used only for cases where the dynamic value hasn't been updated yet(validate)
             customCpu = vm.getCustomCpuName();
         } else { // use cluster default - all hosts are valid
             return hosts;

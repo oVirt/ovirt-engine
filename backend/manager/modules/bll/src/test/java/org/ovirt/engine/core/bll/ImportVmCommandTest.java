@@ -111,7 +111,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -121,7 +121,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -166,9 +166,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         addBalloonToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
     }
 
@@ -179,9 +179,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         addSoundDeviceToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
 
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
     }
 
@@ -212,7 +212,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).validateImages(any(Map.class));
         when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -541,9 +541,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vdsGroup.setId(params.getVdsGroupId());
         doReturn(vdsGroup).when(cmd).getVdsGroup();
 
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID.toString()));
     }
 
@@ -617,7 +617,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
         cmd.initEffectiveCompatibilityVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
     }
 }

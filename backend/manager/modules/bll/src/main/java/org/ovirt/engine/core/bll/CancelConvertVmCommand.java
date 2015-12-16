@@ -38,14 +38,14 @@ public class CancelConvertVmCommand<T extends VmOperationParameterBase> extends 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CANCEL_CONVERSION);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__CANCEL_CONVERSION);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -53,7 +53,7 @@ public class CancelConvertVmCommand<T extends VmOperationParameterBase> extends 
         }
 
         if (Guid.isNullOrEmpty(getVdsId())) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_CANCEL_CONVERSION_WHEN_VM_IS_NOT_BEING_CONVERTED);
+            return failValidation(EngineMessage.VM_CANNOT_CANCEL_CONVERSION_WHEN_VM_IS_NOT_BEING_CONVERTED);
         }
 
         return true;

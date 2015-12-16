@@ -27,11 +27,11 @@ public class AddInternalJobCommand<T extends AddInternalJobParameters> extends A
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
 
-        boolean retValue = super.canDoAction();
+        boolean retValue = super.validate();
         if (getParameters().getActionType() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_ACTION_TYPE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_EMPTY_ACTION_TYPE);
             retValue = false;
         }
         return retValue;

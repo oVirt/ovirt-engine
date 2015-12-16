@@ -543,9 +543,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -559,7 +559,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
         if (Guid.Empty.equals(getSnapshot().getId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
         VmValidator vmValidator = createVmValidator(getVm());
 
@@ -575,7 +575,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         if (getSnapshot().getType() == SnapshotType.REGULAR
                 && getSnapshot().getStatus() != SnapshotStatus.IN_PREVIEW) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
         }
 
         return true;
@@ -583,8 +583,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REVERT_TO);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
+        addValidationMessage(EngineMessage.VAR__ACTION__REVERT_TO);
+        addValidationMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
     }
 
     protected SnapshotsValidator createSnapshotValidator() {

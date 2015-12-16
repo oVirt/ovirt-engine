@@ -46,13 +46,13 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result = true;
         if (getVds() == null) {
-            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
+            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             result = false;
         } else if (getVds().getStatus() == VDSStatus.Connecting || getVds().getStatus() == VDSStatus.NonResponsive) {
-            addCanDoActionMessage(EngineMessage.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
+            addValidationMessage(EngineMessage.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
             result = false;
         }
         return result;

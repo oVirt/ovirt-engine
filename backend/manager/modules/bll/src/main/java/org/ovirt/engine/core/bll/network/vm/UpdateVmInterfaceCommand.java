@@ -157,9 +157,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -176,7 +176,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         oldIface = interfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
 
         if (oldIface == null || oldVmDevice == null) {
-            addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
+            addValidationMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
         }
 
@@ -244,7 +244,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

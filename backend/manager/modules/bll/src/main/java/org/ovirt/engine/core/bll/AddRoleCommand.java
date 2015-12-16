@@ -18,12 +18,12 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         if (getRoleDao().getByName(getRoleName()) != null) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+            addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             returnValue = false;
 
         }

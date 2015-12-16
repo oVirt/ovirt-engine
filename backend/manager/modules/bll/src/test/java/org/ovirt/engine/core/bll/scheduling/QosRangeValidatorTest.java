@@ -49,12 +49,12 @@ public class QosRangeValidatorTest {
         CpuQos qos = new CpuQos();
         qos.setCpuLimit(OUT_OF_RANGE);
 
-        List<String> canDoMsgs = ValidationUtils.validateInputs(
+        List<String> validationMessages = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { Default.class }),
                 qos);
 
-        assertCanDoMsgCount(canDoMsgs, "$range 1-100", 1);
-        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 1);
+        assertValidateMsgCount(validationMessages, "$range 1-100", 1);
+        assertValidateMsgCount(validationMessages, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 1);
     }
 
     @Test
@@ -67,12 +67,12 @@ public class QosRangeValidatorTest {
         qos.setMaxReadIops(OUT_OF_RANGE);
         qos.setMaxWriteIops(OUT_OF_RANGE);
 
-        List<String> canDoMsgs = ValidationUtils.validateInputs(
+        List<String> validationMessages = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { Default.class }),
                 qos);
 
-        assertCanDoMsgCount(canDoMsgs, "$range 0-100", 6);
-        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
+        assertValidateMsgCount(validationMessages, "$range 0-100", 6);
+        assertValidateMsgCount(validationMessages, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
     }
 
     @Test
@@ -85,16 +85,16 @@ public class QosRangeValidatorTest {
         qos.setOutboundPeak(OUT_OF_RANGE);
         qos.setOutboundBurst(OUT_OF_RANGE);
 
-        List<String> canDoMsgs = ValidationUtils.validateInputs(
+        List<String> validationMessages = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { Default.class }),
                 qos);
 
-        assertCanDoMsgCount(canDoMsgs, "$range 0-100", 6);
-        assertCanDoMsgCount(canDoMsgs, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
+        assertValidateMsgCount(validationMessages, "$range 0-100", 6);
+        assertValidateMsgCount(validationMessages, EngineMessage.ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES.name(), 6);
     }
 
-    private void assertCanDoMsgCount(List<String> canDoMsgs, String msg, int count) {
-        assertTrue(Collections.frequency(canDoMsgs, msg) == count);
+    private void assertValidateMsgCount(List<String> validationMessages, String msg, int count) {
+        assertTrue(Collections.frequency(validationMessages, msg) == count);
     }
 
 }

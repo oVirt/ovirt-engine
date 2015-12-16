@@ -46,7 +46,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         return (ActionGroupsToRoleParameter) super.getParams();
     }
 
-    /* canDoAction related tests */
+    /* validate related tests */
 
     @Test
     public void testCheckGroupsCanBeAttachedAlreadyExists() {
@@ -54,7 +54,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>(1);
-        assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
+        assertTrue("validate should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
                 EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(),
                 messages.get(0));
@@ -67,7 +67,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>(1);
-        assertTrue("canDoAction should fail", getCommand().checkIfGroupsCanBeAttached(messages));
+        assertTrue("validate should fail", getCommand().checkIfGroupsCanBeAttached(messages));
         assertEquals("wrong messages",
                 EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(),
                 messages.get(0));
@@ -80,7 +80,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>();
-        assertFalse("canDoAction should succeed", getCommand().checkIfGroupsCanBeAttached(messages));
+        assertFalse("validate should succeed", getCommand().checkIfGroupsCanBeAttached(messages));
         assertTrue("no messages sould have been added", messages.isEmpty());
     }
 

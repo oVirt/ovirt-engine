@@ -14,8 +14,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -86,43 +86,43 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionNonExistingStorageDomain() {
+    public void testValidateNonExistingStorageDomain() {
         doReturn(null).when(storageDomainDaoMock).get(storageDomain.getId());
         doReturn(Collections.emptyList()).when(storageDomainDaoMock).getAllForStorageDomain(storageDomain.getId());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
-                "canDoAction shouldn't be possible for a non-existent storage domain",
+        ValidateTestUtils.runAndAssertValidateFailure(
+                "validate shouldn't be possible for a non-existent storage domain",
                 command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionSuccess() {
+    public void testValidateSuccess() {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void testCanDoActionWithAttachedStorageDomain() {
+    public void testValidateWithAttachedStorageDomain() {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
-                "canDoAction shouldn't be possible for an attached storage domain",
+        ValidateTestUtils.runAndAssertValidateFailure(
+                "validate shouldn't be possible for an attached storage domain",
                 command, EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
     }
 
     @Test
-    public void testCanDoActionWithAttachedStorageDomainAndNoFormat() {
+    public void testValidateWithAttachedStorageDomainAndNoFormat() {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
         command.getParameters().setDoFormat(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void testSetActionMessageParameters() {
-        CanDoActionTestUtils.runAndAssertSetActionMessageParameters(command,
+        ValidateTestUtils.runAndAssertSetActionMessageParameters(command,
                 EngineMessage.VAR__TYPE__STORAGE__DOMAIN,
                 EngineMessage.VAR__ACTION__REMOVE);
     }

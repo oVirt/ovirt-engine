@@ -19,11 +19,11 @@ public class RemoveGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<G
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GraphicsDevice dev = getParameters().getDev();
 
         if (dev.getDeviceId() == null || dev.getVmId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_REMOVE_GRAPHICS_DEV_INVALID_PARAMS);
+            return failValidation(EngineMessage.ACTION_TYPE_REMOVE_GRAPHICS_DEV_INVALID_PARAMS);
         }
 
         return true;

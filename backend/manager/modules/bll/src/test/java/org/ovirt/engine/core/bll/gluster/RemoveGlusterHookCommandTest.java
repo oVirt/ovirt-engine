@@ -116,34 +116,34 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove();
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNullHookId() {
+    public void validateFailsOnNullHookId() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(null)));
         setUpMocksForRemove();
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
     }
 
     @Test
-    public void canDoActionFailsOnNoHook() {
+    public void validateFailsOnNoHook() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove(false);
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
 
     @Test
-    public void canDoActionFailsOnServerNotUp() {
+    public void validateFailsOnServerNotUp() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove(true, getHookEntity(), VDSStatus.Down);
-        assertFalse(cmd.canDoAction());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
+        assertFalse(cmd.validate());
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));
     }
 
 }

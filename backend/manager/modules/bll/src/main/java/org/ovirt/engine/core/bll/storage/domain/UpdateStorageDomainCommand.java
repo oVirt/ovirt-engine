@@ -27,8 +27,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     private StorageDomainStatic oldDomain;
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction() || !checkStorageDomain()) {
+    protected boolean validate() {
+        if (!super.validate() || !checkStorageDomain()) {
             return false;
         }
 
@@ -59,7 +59,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         if (!props.isEmpty()) {
             log.warn("There was an attempt to update the following fields although they are not allowed to be updated: {}",
                     StringUtils.join(props, ","));
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
+            return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
         }
         return true;
     }
@@ -86,7 +86,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     private boolean validateNotTheSameName() {
         if (isStorageWithSameNameExists()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
         return true;
     }
@@ -94,7 +94,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

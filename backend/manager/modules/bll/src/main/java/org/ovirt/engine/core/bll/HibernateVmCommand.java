@@ -147,14 +147,14 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!FeatureSupported.isSuspendSupportedByArchitecture(getVm().getClusterArch(),
                 getVm().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -167,26 +167,26 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         if (vmStatus != VMStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
 
         if (CommandCoordinatorUtil.entityHasTasks(getVmId())) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
+            return failValidation(EngineMessage.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
 
         if (getVm().getVmPoolId() != null) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPEND_VM_FROM_POOL);
+            return failValidation(EngineMessage.VM_CANNOT_SUSPEND_VM_FROM_POOL);
         }
 
         // check if vm has stateless images in db in case vm was run once as stateless
         // (then isStateless is false)
         if (getVm().isStateless() ||
                 DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPEND_STATELESS_VM);
+            return failValidation(EngineMessage.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
 
         if (getStorageDomainId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
         }
 
         return true;
@@ -194,8 +194,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__HIBERNATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__HIBERNATE);
     }
 
     @Override

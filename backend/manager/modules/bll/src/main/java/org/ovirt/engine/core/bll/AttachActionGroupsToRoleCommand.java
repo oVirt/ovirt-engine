@@ -26,22 +26,22 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
     }
 
     @Override
-    protected boolean canDoAction() {
-        List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
-        if (checkIfRoleIsReadOnly(canDoMessages)) {
-            canDoMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
-            canDoMessages.add(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO.toString());
+    protected boolean validate() {
+        List<String> validationMessages = getReturnValue().getValidationMessages();
+        if (checkIfRoleIsReadOnly(validationMessages)) {
+            validationMessages.add(EngineMessage.VAR__TYPE__ROLE.toString());
+            validationMessages.add(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO.toString());
             return false;
         }
 
-        if (checkIfGroupsCanBeAttached(canDoMessages)) {
+        if (checkIfGroupsCanBeAttached(validationMessages)) {
             return false;
         }
 
         return true;
     }
 
-    protected boolean checkIfGroupsCanBeAttached(List<String> canDoMessages) {
+    protected boolean checkIfGroupsCanBeAttached(List<String> validationMessages) {
         List<ActionGroup> attachGroups = getParameters().getActionGroups();
         Guid roleId = getParameters().getRoleId();
         Role role = getRole();
@@ -51,11 +51,11 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
         for (ActionGroup group : attachGroups) {
             if (allGroups.contains(group)) {
                 // group already exist
-                canDoMessages.add(
+                validationMessages.add(
                         EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString());
                 return true;
             } else if (role.getType() != RoleType.ADMIN && group.getRoleType() == RoleType.ADMIN) {
-                canDoMessages.add(
+                validationMessages.add(
                         EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString());
                 return true;
             }

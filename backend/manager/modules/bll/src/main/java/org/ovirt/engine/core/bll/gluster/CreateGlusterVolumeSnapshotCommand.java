@@ -56,7 +56,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
         addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, getParameters().getSnapshot().getSnapshotName());
         super.setActionMessageParameters();
     }
@@ -192,36 +192,36 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.getStatus() == GlusterStatus.DOWN) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
         }
 
         if (volume.getAsyncTask() != null
                 && (volume.getAsyncTask().getType() == GlusterTaskType.REBALANCE
                 || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)
                 && volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED) {
-            addCanDoActionMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
+            addValidationMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
         if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 
         if (getDbFacade().getGlusterVolumeSnapshotDao().getByName(getGlusterVolumeId(), snapshot.getSnapshotName()) != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS);
         }
 
         List<GlusterBrickEntity> bricks = volume.getBricks();
         for (GlusterBrickEntity brick : bricks) {
             if (!brick.isOnline()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
             }
         }
 
@@ -229,7 +229,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             if (session.getSlaveNodeUuid() == null || session.getSlaveVolumeId() == null) {
                 // Slave cluster is not maintained by engine, so cannot pause geo-rep session and create snapshot for
                 // the volume
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 

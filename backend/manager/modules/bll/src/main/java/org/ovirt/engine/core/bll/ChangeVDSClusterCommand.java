@@ -104,33 +104,33 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VDS vds = getVds();
         if (vds == null) {
-            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
+            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             return false;
         }
         if (!ObjectIdentityChecker.canUpdateField(vds, "vdsGroupId", vds.getStatus())) {
-            addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE);
+            addValidationMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
 
         if (getTargetCluster() == null) {
-            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.isLocal()) {
             if (!DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
-                addCanDoActionMessage(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
+                addValidationMessage(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;
             }
         }
 
         if (getVdsGroup().supportsGlusterService()) {
             if (getGlusterUtils().hasBricks(getVdsId())) {
-                addCanDoActionMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 return false;
             }
 
@@ -149,24 +149,24 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // CPU flags are null if oVirt node cluster is changed during approve process.
         if (getTargetCluster().supportsVirtService() && !StringUtils.isEmpty(vds.getCpuFlags())) {
             if (vds.getCpuName() == null) {
-                return failCanDoAction(EngineMessage.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
+                return failValidation(EngineMessage.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
             }
 
             if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
                     getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
             }
         }
 
         if (!(VDSStatus.PendingApproval == vds.getStatus() || isDetachedSourceCluster() || isSameManagementNetwork())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
         }
 
         if (FeatureSupported.hostNetworkQos(sourceClusterCompatibilityVersion)
                 && !FeatureSupported.hostNetworkQos(targetClusterCompatibilityVersion)) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.getQos() != null) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
                             String.format("$ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST %s",
                                     iface.getNetworkName()));
                 }
@@ -180,14 +180,14 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                     Guid networkId = networkAttachment.getNetworkId();
                     Network networkById = getNetworkById(getSourceClusterNetworks(), networkId);
                     String networkName = networkById == null ? networkId.toString() : networkById.getName();
-                    return failCanDoAction(engineMessage,
+                    return failValidation(engineMessage,
                         ReplacementUtils.getVariableAssignmentStringWithMultipleValues(engineMessage, networkName));
                 }
             }
         }
 
         if (!targetClusterSupportsSetupNetworks() && hostHasLabeledNics()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_LABELS_NOT_SUPPORTED);
         }
 
         return true;
@@ -255,8 +255,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private void addNoUpServerMessage(VDSGroup cluster) {
-        addCanDoActionMessageVariable("clusterName", cluster.getName());
-        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+        addValidationMessageVariable("clusterName", cluster.getName());
+        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
     }
 
     private boolean hasUpServerInTarget(VDSGroup cluster) {
@@ -403,8 +403,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     private boolean glusterHostRemove(Guid sourceClusterId) {

@@ -24,8 +24,8 @@ public class AddNetworkQoSCommand extends AddQosCommand<NetworkQoS, NetworkQosVa
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() &&
+    protected boolean validate() {
+        return super.validate() &&
                 validate(getQosValidator(getQos()).peakConsistentWithAverage());
     }
 

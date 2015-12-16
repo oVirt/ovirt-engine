@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -120,7 +120,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
         vm.setvNumaNodeList(existingNumaNodes);
         vdsNumaNodes.remove(0);
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
     }
 
@@ -128,7 +128,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
     public void canDetectMissingVM() {
         when(vmDao.get(eq(vm.getId()))).thenReturn(null);
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
@@ -136,7 +136,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
     public void shouldRunValidation() {
         vdsNumaNodes.clear();
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
 

@@ -135,11 +135,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (onlyPermittedFieldsChanged() && allowedNetworkLabelManipulation()) {
             return true;
         }

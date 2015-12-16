@@ -69,7 +69,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // check problematic vds status
         if (isLegalStatus(problematicVds.getStatus())) {
             if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
@@ -81,11 +81,11 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 if (getStoragePool().getStatus() != StoragePoolStatus.NotOperational
                         && getStoragePool().getStatus() != StoragePoolStatus.NonResponsive
                         && getStoragePool().getStatus() != StoragePoolStatus.Maintenance) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 }
             }
         } else {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS);
         }
         return true;
     }
@@ -187,8 +187,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__MANUAL_FENCE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__MANUAL_FENCE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
      }
 
     @Override

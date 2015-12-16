@@ -52,9 +52,9 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionCommand() throws Exception {
+    public void testValidateCommand() throws Exception {
         AddQuotaCommand addQuotaCommand = createCommand();
-        addQuotaCommand.canDoAction();
+        addQuotaCommand.validate();
     }
 
     private AddQuotaCommand createCommand() {

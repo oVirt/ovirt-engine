@@ -53,7 +53,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         doTestBadAddNetwork(true, false, FAILURE);
     }
 
-    private void doTestBadAddNetwork(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
         setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
@@ -63,7 +63,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },
                 new Object[] { CLUSTER_ID },
-                canDo,
+                valid,
                 success);
         Network model = getModel(0);
 

@@ -31,8 +31,8 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESET);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_OPTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESET);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_OPTION);
     }
 
     @Override

@@ -47,15 +47,15 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         GlusterVolumeSnapshotSchedule fetchedSchedule =
                 getGlusterVolumeSnapshotScheduleDao().getByVolumeId(getGlusterVolumeId());
         if (fetchedSchedule == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_NOT_SCHEDULED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_NOT_SCHEDULED);
         }
 
         return true;

@@ -42,8 +42,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -62,7 +62,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 .filter(i -> i.getId().equals(getParameters().getInterface().getId())).findFirst().orElse(null);
 
         if (oldIface == null) {
-            addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
+            addValidationMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
         }
 
@@ -111,7 +111,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
                 VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
                 VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     @Override
@@ -126,7 +126,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

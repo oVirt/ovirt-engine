@@ -19,8 +19,8 @@ public class FreezeVmCommand<T extends VmOperationParameterBase> extends VmOpera
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__FREEZE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__FREEZE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -32,10 +32,10 @@ public class FreezeVmCommand<T extends VmOperationParameterBase> extends VmOpera
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         final VM vm = getVm();
         if (vm == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {

@@ -74,12 +74,12 @@ public class BackendMacPoolsResourceTest
         doTestBadAddMacPool(true, false, FAILURE);
     }
 
-    private void doTestBadAddMacPool(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddMacPool(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         MacPool model = getModel(0);
 

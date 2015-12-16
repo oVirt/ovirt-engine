@@ -85,7 +85,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(vds).when(command).getSlaveHost();
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     private void prepareMocks() {
@@ -117,7 +117,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(vds).when(command).getSlaveHost();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(Guid.class),
                 any(Guid.class),
                 any(String.class));
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(NOT_SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -172,6 +172,6 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(null).when(command).getSlaveHost();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 }

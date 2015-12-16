@@ -36,9 +36,9 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
     }
 
     @Test
-    public void validateCanDoAction() {
+    public void validate() {
         setupForStorageTests();
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test

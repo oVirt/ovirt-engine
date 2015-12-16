@@ -191,7 +191,7 @@ public class BackendHostsResourceTest
         doTestBadAddHost(true, false, FAILURE);
     }
 
-    private void doTestBadAddHost(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddHost(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -202,7 +202,7 @@ public class BackendHostsResourceTest
                                            AddVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { ROOT_PASSWORD },
-                                           canDo,
+                                           valid,
                                            success));
         Host model = getModel(0);
 

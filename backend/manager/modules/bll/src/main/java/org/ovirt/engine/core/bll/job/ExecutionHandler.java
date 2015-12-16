@@ -755,8 +755,8 @@ public class ExecutionHandler {
             List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
             if (!messages.isEmpty()) {
                 VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
-                returnErrorValue.setCanDoAction(false);
-                returnErrorValue.getCanDoActionMessages().addAll(messages);
+                returnErrorValue.setValid(false);
+                returnErrorValue.getValidationMessages().addAll(messages);
                 return returnErrorValue;
             }
         }

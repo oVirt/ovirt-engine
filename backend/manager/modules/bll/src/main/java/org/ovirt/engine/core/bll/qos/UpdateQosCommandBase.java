@@ -14,9 +14,9 @@ public abstract class UpdateQosCommandBase<T extends QosBase, M extends QosValid
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         M qosValidator = getQosValidator(getQos());
-        return super.canDoAction()
+        return super.validate()
                 && validate(qosValidator.qosExists())
                 && validate(qosValidator.consistentDataCenter())
                 && validate(qosValidator.nameNotChangedOrNotTaken());
@@ -32,7 +32,7 @@ public abstract class UpdateQosCommandBase<T extends QosBase, M extends QosValid
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override

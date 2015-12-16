@@ -59,12 +59,12 @@ public class BackendNetworkLabelsResourceTest
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.LabelNetwork,
                 LabelNetworkParameters.class,
                 new String[] { "NetworkId", "Label" },
                 new Object[] {NETWORK_ID, LABELS[0] },
-                canDo,
+                valid,
                 success));
         try {
             collection.add(getModel(0));

@@ -107,7 +107,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!isVmExist()) {
             return false;
         }
@@ -133,7 +133,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             }
         }
         else if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm())) {
-            return failCanDoAction(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
+            return failValidation(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
         DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
@@ -172,16 +172,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         switch (lun.getLunType()) {
         case UNKNOWN:
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
         case ISCSI:
             if (lun.getLunConnections() == null || lun.getLunConnections().isEmpty()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
             }
 
             for (StorageServerConnections conn : lun.getLunConnections()) {
                 if (StringUtils.isEmpty(conn.getIqn()) || StringUtils.isEmpty(conn.getConnection())
                         || StringUtils.isEmpty(conn.getPort())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
                 }
             }
             break;
@@ -190,7 +190,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
 
         if (getVm() != null && !(isVmNotLocked() && isVmNotInPreviewSnapshot())) {
@@ -208,7 +208,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getVds() != null) {
             lunFromStorage = getLunDisk(lun, getVds());
             if (lunFromStorage == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
             }
         }
 
@@ -244,7 +244,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
         if (Guid.Empty.equals(getStorageDomainId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
         }
 
         boolean returnValue;
@@ -275,7 +275,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean isShareableDiskOnGlusterDomain() {
         if (getParameters().getDiskInfo().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             return true;
         }
 
@@ -286,9 +286,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getParameters().getDiskInfo().isShareable()) {
             if (!Config.<Boolean> getValue(ConfigValues.ShareableDiskEnabled,
                     getStoragePool().getCompatibilityVersion().getValue())) {
-                return failCanDoAction(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+                return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             } else if (!isVolumeFormatSupportedForShareable(((DiskImage) getParameters().getDiskInfo()).getVolumeFormat())) {
-                return failCanDoAction(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+                return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
         }
         return true;
@@ -296,8 +296,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean checkExceedingMaxBlockDiskSize() {
         if (isExceedMaxBlockDiskSize()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
-            getReturnValue().getCanDoActionMessages().add(
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
+            getReturnValue().getValidationMessages().add(
                     String.format("$max_disk_size %1$s", Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize)));
             return false;
         }
@@ -307,7 +307,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private boolean isStoragePoolMatching(VM vm) {
         if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
             getStorageDomainId(), vm.getStoragePoolId())) == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
         return true;
     }
@@ -318,7 +318,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return ImagesHandler.checkImageConfiguration(
                 getStorageDomain().getStorageStaticData(),
                 getDiskImageInfo(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     private double getRequestDiskSpace() {
@@ -419,8 +419,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

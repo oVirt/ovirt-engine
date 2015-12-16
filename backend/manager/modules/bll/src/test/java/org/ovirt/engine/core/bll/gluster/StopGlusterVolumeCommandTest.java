@@ -63,24 +63,24 @@ public class StopGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(new StopGlusterVolumeCommand(new GlusterVolumeActionParameters(startedVolumeId, false)));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFails() {
+    public void validateFails() {
         cmd = spy(new StopGlusterVolumeCommand(new GlusterVolumeActionParameters(stoppedVolumeId, false)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(new StopGlusterVolumeCommand(new GlusterVolumeActionParameters(null, false)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
 }

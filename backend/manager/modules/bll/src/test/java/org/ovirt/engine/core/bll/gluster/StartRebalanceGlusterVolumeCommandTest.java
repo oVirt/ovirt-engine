@@ -125,48 +125,48 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceedsOnUpVolume() {
+    public void validateSucceedsOnUpVolume() {
         cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionSucceedsOnDistributedVolume() {
+    public void validateSucceedsOnDistributedVolume() {
         cmd = spy(createTestCommand(volumeId4));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailesOnDownVolume() {
+    public void validateFailesOnDownVolume() {
         cmd = spy(createTestCommand(volumeId2));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNoDistribution() {
+    public void validateFailsOnNoDistribution() {
         cmd = spy(createTestCommand(volumeId3));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnCompat() {
+    public void validateFailsOnCompat() {
         cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
         doReturn(UNSUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
     }
 

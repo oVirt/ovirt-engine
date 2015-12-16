@@ -70,7 +70,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, getDeletedProvider());
         return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed())
                 && validateRemoveProvider();
@@ -97,8 +97,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override

@@ -54,17 +54,17 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     @Override
     protected boolean canAddDomain() {
         if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
         if (lunsOnStorage.isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
         }
         if (CollectionUtils.containsAny(Entities.getIds(lunsOnStorage), Entities.getIds(getAllLuns()))) {
             log.info("There are existing luns in the system which are part of VG id '{}'",
                     getStorageDomain().getStorage());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
         }
 
         return true;

@@ -25,7 +25,7 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         GlusterVolumeGeoRepSessionParameters param = new GlusterVolumeGeoRepSessionParameters();
         param.setForce(false);
         param.setGeoRepSessionId(geoRepSessionId);
@@ -34,11 +34,11 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.ACTIVE, startedVolumeId)).when(geoRepDao)
                 .getById(geoRepSessionId);
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFails() {
+    public void validateFails() {
         GlusterVolumeGeoRepSessionParameters param = new GlusterVolumeGeoRepSessionParameters();
         param.setForce(false);
         param.setVolumeId(startedVolumeId);
@@ -47,13 +47,13 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
         prepareMocks(cmd);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.PASSIVE, startedVolumeId)).when(geoRepDao)
                 .getById(geoRepSessionId);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters()));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 }

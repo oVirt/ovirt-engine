@@ -43,28 +43,28 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Currently this only supports importing DiskImages or CinderDisks and does not work with LunDisks.
         if (getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.IMAGE &&
                 getParameters().getDiskImage().getDiskStorageType() != DiskStorageType.CINDER) {
-            addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
-            addCanDoActionMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
+            addValidationMessageVariable("diskId", getParameters().getDiskImage().getId());
+            addValidationMessageVariable("storageType", getParameters().getDiskImage().getDiskStorageType());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
             return false;
         }
 
         if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExist())) {
-            addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
-            addCanDoActionMessageVariable("domainId", getStorageDomainId());
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
+            addValidationMessageVariable("diskId", getParameters().getDiskImage().getId());
+            addValidationMessageVariable("domainId", getStorageDomainId());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
             return false;
         }
 
         if (!getStorageDomain().getStorageDomainType().isDataDomain() &&
                 !(getStorageDomain().getStorageDomainType() == StorageDomainType.Volume)) {
-            addCanDoActionMessageVariable("domainId", getParameters().getStorageDomainId());
-            addCanDoActionMessageVariable("domainType", getStorageDomain().getStorageDomainType());
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
+            addValidationMessageVariable("domainId", getParameters().getStorageDomainId());
+            addValidationMessageVariable("domainType", getStorageDomain().getStorageDomainType());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
             return false;
         }
 
@@ -101,8 +101,8 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__IMPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected boolean setAndValidateDiskProfiles() {

@@ -172,7 +172,7 @@ public class BackendStorageDomainResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1, getEntity(0));
         setUpGetStorageServerConnectionExpectations(1);
 
@@ -180,7 +180,7 @@ public class BackendStorageDomainResourceTest
                                            StorageDomainManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
 
         try {
@@ -315,14 +315,14 @@ public class BackendStorageDomainResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
             VdcActionType.RemoveStorageDomain,
             RemoveStorageDomainParameters.class,
             new String[] { "StorageDomainId", "VdsId", "DoFormat" },
             new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
-            canDo,
+            valid,
             success,
             false
         );

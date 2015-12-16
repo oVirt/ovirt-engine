@@ -388,11 +388,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean doClusterRelatedChecks() {
         // A Template cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
         if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
-                getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
+                getVdsGroup().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -400,7 +400,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
                 getParameters().getVm().getOs(),
                 getVm().getCompatibilityVersion(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -410,7 +410,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId),
                         getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
-                getReturnValue().getCanDoActionMessages(),
+                getReturnValue().getValidationMessages(),
                 getVm().getCompatibilityVersion())) {
             return false;
         }
@@ -418,14 +418,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getVm().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
-                        getReturnValue().getCanDoActionMessages(),
+                        getReturnValue().getValidationMessages(),
                         getVm().getCompatibilityVersion())) {
             return false;
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !FeatureSupported.virtIoScsi(getVm().getCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+            return failValidation(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         // Check if the watchdog model is supported
@@ -439,36 +439,36 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // Disallow cross-DC template creation
         if (!getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
-            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
+            addValidationMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
             return false;
         }
 
         if (!VmPropertiesUtils.getInstance().validateVmProperties(
                 getVm().getCompatibilityVersion(),
                 getParameters().getMasterVm().getCustomProperties(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getParameters().getMasterVm().getThreadsPerCpu(),
-                getVm().getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
+                getVm().getCompatibilityVersion().toString(), getReturnValue().getValidationMessages());
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean isInstanceType = getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE;
         if (getVdsGroup() == null && !isInstanceType) {
-            return failCanDoAction(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+            return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
         if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
-                .getCanDoActionMessages())) {
+                .getValidationMessages())) {
             return false;
         }
 
         if (isVmInDb && !isVmStatusValid(getVm().getStatus())) {
-            return failCanDoAction(EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+            return failValidation(EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
         }
         // validate uniqueness of template name. If template is a regular template, uniqueness
         // is considered in context of the datacenter. If template is an 'Instance' name must
@@ -476,11 +476,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (!isTemplateVersion()) {
             if (isInstanceType) {
                 if (isInstanceWithSameNameExists(getVmTemplateName())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             } else {
                 if (isVmTemlateWithSameNameExist(getVmTemplateName(), getVdsGroup().getStoragePoolId())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             }
         }
@@ -488,16 +488,16 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (isTemplateVersion()) {
             VmTemplate userSelectedBaseTemplate = getBaseTemplate();
             if (userSelectedBaseTemplate == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             } else if (!userSelectedBaseTemplate.isBaseTemplate()) {
                 // currently template version cannot be base template
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE);
 
             }
         }
 
         if (isTemplateVersion() && getBaseTemplate().isBlank()) {
-            return failCanDoAction(EngineMessage.BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES);
+            return failValidation(EngineMessage.BLANK_TEMPLATE_CANT_HAVE_SUBTEMPLATES);
         }
 
         if (!setAndValidateDiskProfiles()) {
@@ -552,7 +552,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Check that all the template's allocated disk's aliases are not an empty string.
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             if (StringUtils.isEmpty(diskImage.getDiskAlias())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS);
             }
         }
         return true;
@@ -623,20 +623,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     // if storage is null then we need to check if it doesn't exist or
                     // domain is not in the same storage pool as the vm
                     if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
-                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
                     } else {
-                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
+                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
                     }
                     return false;
                 }
                 if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     return false;
                 }
 
                 if (storage.getStorageDomainType().isIsoOrImportExportDomain()) {
 
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     return false;
                 }
             }
@@ -1035,8 +1035,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     private Guid getQuotaIdForDisk(DiskImage diskImage) {

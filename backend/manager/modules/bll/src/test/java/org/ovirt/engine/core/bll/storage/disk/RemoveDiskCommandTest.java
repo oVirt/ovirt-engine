@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -92,25 +92,25 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         disk.setVmEntityType(VmEntityType.VM);
     }
 
-    /* Tests for canDoAction() flow */
+    /* Tests for validate() flow */
 
     @Test
-    public void testCanDoActionFlowImageDoesNotExist() {
+    public void testValidateFlowImageDoesNotExist() {
         doReturn(null).when(cmd).getDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionVmUp() {
+    public void testValidateVmUp() {
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
 
     @Test
-    public void testCanDoActionTemplateEntity() {
+    public void testValidateTemplateEntity() {
         disk.setVmEntityType(VmEntityType.TEMPLATE);
 
         StorageDomain domain = new StorageDomain();
@@ -129,21 +129,21 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         doReturn(disk).when(diskImageDao).get(any(Guid.class));
         doReturn(diskImageDao).when(cmd).getDiskImageDao();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionTemplateWithNoDomain() {
+    public void testValidateTemplateWithNoDomain() {
         disk.setVmEntityType(VmEntityType.TEMPLATE);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN);
     }
 
     @Test
-    public void testCanDoActionOvfDiskNotIllegal() {
+    public void testValidateOvfDiskNotIllegal() {
         ((DiskImage)disk).setImageStatus(ImageStatus.OK);
         disk.setContentType(DiskContentType.OVF_STORE);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS);
     }
 
@@ -153,7 +153,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         setupDisk();
         disk.setDiskAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
         doReturn(disk).when(cmd).getDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         setupDisk();
         disk.setDiskAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
         doReturn(disk).when(cmd).getDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
         vm.setStatus(VMStatus.Up);
         doReturn(disk).when(cmd).getDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
     }

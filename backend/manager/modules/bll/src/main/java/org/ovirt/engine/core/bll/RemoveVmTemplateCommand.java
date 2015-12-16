@@ -95,23 +95,23 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Guid vmTemplateId = getVmTemplateId();
         VmTemplate template = getVmTemplate();
 
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
         boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
 
         if (getVdsGroup() == null && !isInstanceType) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
@@ -121,7 +121,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
         // check not blank template
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmTemplateId)) {
-            return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
+            return failValidation(EngineMessage.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
         }
 
         // check storage pool valid
@@ -131,7 +131,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         // check if delete protected
         if (template.isDeleteProtected()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
         if (!isInstanceType) {
@@ -143,11 +143,11 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         getParameters().setStorageDomainsList(new ArrayList<>(allDomainsList));
 
         // check template images for selected domains
-        ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
+        ArrayList<String> validationMessages = getReturnValue().getValidationMessages();
         for (Guid domainId : getParameters().getStorageDomainsList()) {
             if (!isVmTemplateImagesReady(getVmTemplate(),
                     domainId,
-                    canDoActionMessages,
+                    validationMessages,
                     getParameters().getCheckDisksExists(),
                     true,
                     false,
@@ -165,7 +165,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         if (!problematicVmNames.isEmpty()) {
-            return failCanDoAction(EngineMessage.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
+            return failValidation(EngineMessage.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
                     String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
         }
 
@@ -198,7 +198,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
         if (getVmTemplateDao().get(baseTemplateSuccessor.getId()) == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED,
                     String.format("$subVersionId %s", baseTemplateSuccessor.getId().toString()));
         }
         return true;
@@ -207,7 +207,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     /**
      * To prevent concurrent deletion.
      * @return first: true ~ successfully locked, false otherwise; second: fail reasons in form suitable for
-     *         canDoActionMessages
+     *         validationMessages
      */
     private boolean acquireBaseTemplateSuccessorLock() {
         final Map<String, Pair<String, String>> lockSharedMap = Collections.singletonMap(
@@ -220,7 +220,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return true;
         }
         baseTemplateSuccessorLock = null;
-        getReturnValue().getCanDoActionMessages().addAll(extractVariableDeclarations(isLockedAndFailReason.getSecond()));
+        getReturnValue().getValidationMessages().addAll(extractVariableDeclarations(isLockedAndFailReason.getSecond()));
         return false;
     }
 

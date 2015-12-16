@@ -155,7 +155,7 @@ public class BackendTagResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
@@ -163,7 +163,7 @@ public class BackendTagResourceTest
                                            TagsOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
 
         try {
@@ -230,13 +230,13 @@ public class BackendTagResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExcpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveTag,
                 TagsActionParametersBase.class,
                 new String[] { "TagId" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

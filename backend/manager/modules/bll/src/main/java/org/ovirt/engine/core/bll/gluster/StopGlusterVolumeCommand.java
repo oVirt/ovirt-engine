@@ -38,33 +38,33 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
-        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
-        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessage(EngineMessage.VAR__ACTION__STOP);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     @Override
-    protected boolean canDoAction() {
-        if(! super.canDoAction()) {
+    protected boolean validate() {
+        if(! super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (!volume.isOnline()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED);
+            addValidationMessageVariable("volumeName", volume.getName());
             return false;
         }
 
         if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REBALANCE)
                 && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS);
         }
 
         if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK)
                 && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS);
         }
 
         return true;

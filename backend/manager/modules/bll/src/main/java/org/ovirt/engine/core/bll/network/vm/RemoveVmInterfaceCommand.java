@@ -62,9 +62,9 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -76,7 +76,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
                 && getDbFacade().getVmDeviceDao()
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
                         .getIsPlugged()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
             return false;
         }
         return true;
@@ -90,7 +90,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 }

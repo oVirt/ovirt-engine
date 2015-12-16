@@ -236,11 +236,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!checkStoragePool()) {
             return false;
         }
@@ -248,7 +248,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         // Name related validations
         if (!StringUtils.equals(getOldStoragePool().getName(), getStoragePool().getName())
                 && !isStoragePoolUnique(getStoragePool().getName())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (!checkStoragePoolNameLengthValid()) {
             return false;
@@ -256,12 +256,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         List<StorageDomainStatic> poolDomains = getStorageDomainStaticDao().getAllForStoragePool(getStoragePool().getId());
         if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+            return failValidation(EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
         }
         if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
                 .getCompatibilityVersion())) {
             if (!isStoragePoolVersionSupported()) {
-                return failCanDoAction(VersionSupport.getUnsupportedVersionMessage());
+                return failValidation(VersionSupport.getUnsupportedVersionMessage());
             }
             // decreasing of compatibility version is allowed under conditions
             else if (getStoragePool().getCompatibilityVersion().compareTo(getOldStoragePool().getCompatibilityVersion()) < 0) {
@@ -274,7 +274,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     validator.setDataCenter(getStoragePool());
                     if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
                             || !validator.canNetworkCompatabilityBeDecreased()) {
-                        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                     }
                 }
             } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.
@@ -312,15 +312,15 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private boolean manageCompatibilityVersionChangeCheckResult(boolean failOnSupportedTypeMixing, List<String> formatProblematicDomains, List<String> typeProblematicDomains) {
         if (failOnSupportedTypeMixing) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
         }
         if (!formatProblematicDomains.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
-            getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains, "," , formatProblematicDomains.size()));
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+            getReturnValue().getValidationMessages().addAll(ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains, "," , formatProblematicDomains.size()));
         }
         if (!typeProblematicDomains.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
-            getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("unsupportedVersionDomains", typeProblematicDomains , ",", typeProblematicDomains.size()));
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+            getReturnValue().getValidationMessages().addAll(ReplacementUtils.replaceWith("unsupportedVersionDomains", typeProblematicDomains , ",", typeProblematicDomains.size()));
         }
 
         return typeProblematicDomains.isEmpty() && formatProblematicDomains.isEmpty() && !failOnSupportedTypeMixing;
@@ -341,10 +341,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
         if (!lowLevelClusters.isEmpty()) {
             returnValue = false;
-            getReturnValue().getCanDoActionMessages().add(String.format("$ClustersList %1$s",
+            getReturnValue().getValidationMessages().add(String.format("$ClustersList %1$s",
                     StringUtils.join(lowLevelClusters, ",")));
             getReturnValue()
-                    .getCanDoActionMessages()
+                    .getValidationMessages()
                     .add(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
                             .toString());
         }

@@ -61,13 +61,13 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     private static final Object _lockObject = new Object();
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
 
         synchronized (_lockObject) {
             // no available VMs:
             if (Guid.Empty.equals(getVmToAttach(getParameters().getVmPoolId()))) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
                 returnValue = false;
             }
         }
@@ -85,7 +85,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
             int limit = getVmPool().getMaxAssignedVmsPerUser();
             if (vmCount >= limit) {
-                addCanDoActionMessage(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
+                addValidationMessage(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
                 returnValue = false;
             }
         }
@@ -97,8 +97,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ALLOCATE_AND_RUN);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_FROM_VM_POOL);
+        addValidationMessage(EngineMessage.VAR__ACTION__ALLOCATE_AND_RUN);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_FROM_VM_POOL);
     };
 
     private Guid getVmToAttach(Guid poolId) {
@@ -116,7 +116,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getVmId(), getReturnValue().getCanDoActionMessages())) {
+                if (canAttachPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
                     return map.getVmId();
                 }
             }
@@ -128,7 +128,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         List<VmPoolMap> vmPoolMaps = getVmPoolDao().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getCanDoActionMessages())) {
+                if (canAttachNonPrestartedVmToUser(map.getVmId(), getReturnValue().getValidationMessages())) {
                     return map.getVmId();
                 }
             }

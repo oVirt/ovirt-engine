@@ -93,14 +93,14 @@ public class BackendMacPoolResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
 
         try {
@@ -178,14 +178,14 @@ public class BackendMacPoolResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(false);
 
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveMacPool,
                 RemoveMacPoolByIdParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

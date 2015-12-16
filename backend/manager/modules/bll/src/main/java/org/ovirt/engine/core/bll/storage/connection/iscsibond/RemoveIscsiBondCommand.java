@@ -16,7 +16,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         IscsiBondValidator validator = new IscsiBondValidator();
         return validate(validator.isIscsiBondExist(getIscsiBond()));
     }
@@ -58,7 +58,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
     }
 }

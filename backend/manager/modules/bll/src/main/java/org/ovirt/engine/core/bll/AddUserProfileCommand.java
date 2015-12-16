@@ -20,13 +20,13 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getUserProfile() != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROFILE_ALREADY_EXISTS);
         }
 
         return true;
@@ -39,8 +39,8 @@ public class AddUserProfileCommand<T extends UserProfileParameters> extends User
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__USER_PROFILE);
     }
 
     @Override

@@ -71,7 +71,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         List<VdsNetworkInterface> vdsInterfaces =
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
@@ -79,19 +79,19 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         final VdsNetworkInterface bond = vdsInterfaces.stream().filter
                 (i -> i.getName().equals(getParameters().getBondName())).findFirst().orElse(null);
         if (bond == null) {
-            addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
             return false;
         }
 
         if (bond.getBonded() != null && bond.getBonded().equals(false)) {
-            addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_BOND_NOT_EXISTS);
             return false;
         }
 
         network = bond.getNetworkName();
 
         if (StringUtils.isEmpty(network)) {
-            addCanDoActionMessage(EngineMessage.NETWORK_BOND_HAVE_ATTACHED_VLANS);
+            addValidationMessage(EngineMessage.NETWORK_BOND_HAVE_ATTACHED_VLANS);
             return false;
         }
 
@@ -103,7 +103,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         if (vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing) {
             List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
             if (networks.stream().anyMatch(n -> n.getName().equals(bond.getName()))) {
-                addCanDoActionMessage(EngineMessage.NETWORK_CLUSTER_NETWORK_IN_USE);
+                addValidationMessage(EngineMessage.NETWORK_CLUSTER_NETWORK_IN_USE);
                 return false;
             }
         }
@@ -116,7 +116,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 if (vmInterfaces.stream().anyMatch
                         (i -> i.getNetworkName() != null && i.getNetworkName().equals(bond.getNetworkName()))) {
 
-                    addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_IN_USE_BY_VM);
+                    addValidationMessage(EngineMessage.NETWORK_INTERFACE_IN_USE_BY_VM);
                     return false;
                 }
             }

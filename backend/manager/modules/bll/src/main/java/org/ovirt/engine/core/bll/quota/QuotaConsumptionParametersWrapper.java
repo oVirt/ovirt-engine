@@ -12,19 +12,19 @@ public class QuotaConsumptionParametersWrapper implements Cloneable {
     private List<QuotaConsumptionParameter> parameters;
 
     private AuditLogableBase auditLogable;
-    private List<String> canDoActionMessages;
+    private List<String> validationMessages;
 
-    public QuotaConsumptionParametersWrapper(AuditLogableBase auditLogable, List<String> canDoActionMessages) {
+    public QuotaConsumptionParametersWrapper(AuditLogableBase auditLogable, List<String> validationMessages) {
         this.auditLogable = auditLogable;
-        this.canDoActionMessages = canDoActionMessages;
+        this.validationMessages = validationMessages;
     }
 
-    public List<String> getCanDoActionMessages() {
-        return canDoActionMessages;
+    public List<String> getValidationMessages() {
+        return validationMessages;
     }
 
-    public void setCanDoActionMessages(List<String> canDoActionMessages) {
-        this.canDoActionMessages = canDoActionMessages;
+    public void setValidationMessages(List<String> validationMessages) {
+        this.validationMessages = validationMessages;
     }
 
     public StoragePool getStoragePool() {
@@ -55,7 +55,7 @@ public class QuotaConsumptionParametersWrapper implements Cloneable {
     public QuotaConsumptionParametersWrapper clone() throws CloneNotSupportedException {
         super.clone();
         QuotaConsumptionParametersWrapper cloneWrapper = new QuotaConsumptionParametersWrapper(getAuditLogable(),
-                canDoActionMessages);
+                validationMessages);
 
         if (getParameters() != null) {
             cloneWrapper.setParameters(new ArrayList<>());

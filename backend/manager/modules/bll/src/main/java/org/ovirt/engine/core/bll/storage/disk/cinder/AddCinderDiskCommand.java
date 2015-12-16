@@ -118,7 +118,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
     }
 
     @Override
-    public boolean canDoAction() {
+    public boolean validate() {
         return true;
     }
 

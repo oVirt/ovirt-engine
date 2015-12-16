@@ -33,7 +33,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -158,21 +158,21 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFailedVMNotFound() throws Exception {
+    public void validateFailedVMNotFound() throws Exception {
         initializeCommand(createParameters());
         mockNullVm();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
-    public void canDoActionFailedVMHasNotDisk() throws Exception {
+    public void validateFailedVMHasNotDisk() throws Exception {
         initializeCommand(createParameters());
         createNullDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void canDoActionFailedShareableDiskVolumeFormatUnsupported() throws Exception {
+    public void validateFailedShareableDiskVolumeFormatUnsupported() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.COW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
@@ -182,22 +182,22 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
     }
 
     @Test
-    public void canDoActionFailedUpdateReadOnly() {
+    public void validateFailedUpdateReadOnly() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(true);
         initializeCommand(parameters, Collections.singletonList(createVm(VMStatus.Up)));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
     @Test
-    public void canDoActionFailedROVmAttachedToPool() {
+    public void validateFailedROVmAttachedToPool() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(true);
@@ -206,16 +206,16 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(parameters, Collections.singletonList(vm));
 
         VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId); // Default RO is false
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         vmDevice.setIsReadOnly(true);
         parameters.getDiskInfo().setReadOnly(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
 
     @Test
-    public void canDoActionFailedWipeVmAttachedToPool() {
+    public void validateFailedWipeVmAttachedToPool() {
         Disk oldDisk = createDiskImage();
         oldDisk.setWipeAfterDelete(true);
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
@@ -226,17 +226,17 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         vm.setVmPoolId(Guid.newGuid());
         initializeCommand(parameters, Collections.singletonList(vm));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         oldDisk.setWipeAfterDelete(false);
         parameters.getDiskInfo().setWipeAfterDelete(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
 
     @Test
-    public void canDoActionFailedShareableDiskOnGlusterDomain() throws Exception {
+    public void validateFailedShareableDiskOnGlusterDomain() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.GLUSTERFS);
@@ -246,7 +246,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
@@ -269,22 +269,22 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockVdsCommandSetVolumeDescription();
         mockInterfaceList();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
         command.executeVmCommand();
         assertTrue(oldDisk.getVmSnapshotId() == null);
     }
 
     @Test
-    public void canDoActionMakeDiskBootableSuccess() {
-        canDoActionMakeDiskBootable(false);
+    public void validateMakeDiskBootableSuccess() {
+        validateMakeDiskBootable(false);
     }
 
     @Test
-    public void canDoActionMakeDiskBootableFail() {
-        canDoActionMakeDiskBootable(true);
+    public void validateMakeDiskBootableFail() {
+        validateMakeDiskBootable(true);
     }
 
-    private void canDoActionMakeDiskBootable(boolean boot) {
+    private void validateMakeDiskBootable(boolean boot) {
         UpdateVmDiskParameters parameters = createParameters();
         Disk newDisk = parameters.getDiskInfo();
         newDisk.setBoot(true);
@@ -303,20 +303,20 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         // The command should only succeed if there is no other bootable disk
-        assertEquals(!boot, command.canDoAction());
+        assertEquals(!boot, command.validate());
     }
 
     @Test
-    public void canDoActionMakeDiskBootableOnOtherVmSuccess() {
-        canDoActionMakeDiskBootableOnOtherVm(false);
+    public void validateMakeDiskBootableOnOtherVmSuccess() {
+        validateMakeDiskBootableOnOtherVm(false);
     }
 
     @Test
-    public void canDoActionMakeDiskBootableOnOtherVmFail() {
-        canDoActionMakeDiskBootableOnOtherVm(true);
+    public void validateMakeDiskBootableOnOtherVmFail() {
+        validateMakeDiskBootableOnOtherVm(true);
     }
 
-    private void canDoActionMakeDiskBootableOnOtherVm(boolean boot) {
+    private void validateMakeDiskBootableOnOtherVm(boolean boot) {
         UpdateVmDiskParameters parameters = createParameters();
         Disk newDisk = parameters.getDiskInfo();
         newDisk.setBoot(true);
@@ -339,20 +339,20 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         // The command should only succeed if there is no other bootable disk
-        assertEquals(!boot, command.canDoAction());
+        assertEquals(!boot, command.validate());
     }
 
     @Test
-    public void canDoActionUpdateWipeAfterDeleteVmDown() {
-        canDoActionUpdateWipeAfterDelete(VMStatus.Down);
+    public void validateUpdateWipeAfterDeleteVmDown() {
+        validateUpdateWipeAfterDelete(VMStatus.Down);
     }
 
     @Test
-    public void canDoActionUpdateWipeAfterDeleteVmUp() {
-        canDoActionUpdateWipeAfterDelete(VMStatus.Up);
+    public void validateUpdateWipeAfterDeleteVmUp() {
+        validateUpdateWipeAfterDelete(VMStatus.Up);
     }
 
-    private void canDoActionUpdateWipeAfterDelete(VMStatus status) {
+    private void validateUpdateWipeAfterDelete(VMStatus status) {
         DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
@@ -361,20 +361,20 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         parameters.getDiskInfo().setWipeAfterDelete(true);
         initializeCommand(parameters, Collections.singletonList(createVm(status)));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoActionUpdateDescriptionVmDown() {
-        canDoActionUpdateDescription(VMStatus.Down);
+    public void validateUpdateDescriptionVmDown() {
+        validateUpdateDescription(VMStatus.Down);
     }
 
     @Test
-    public void canDoActionUpdateDescriptionVmUp() {
-        canDoActionUpdateDescription(VMStatus.Up);
+    public void validateUpdateDescriptionVmUp() {
+        validateUpdateDescription(VMStatus.Up);
     }
 
-    private void canDoActionUpdateDescription(VMStatus status) {
+    private void validateUpdateDescription(VMStatus status) {
         DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
@@ -383,7 +383,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         disk.setDescription(RandomUtils.instance().nextString(10));
         initializeCommand(parameters, Collections.singletonList(createVm(status)));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -454,7 +454,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test
@@ -508,7 +508,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskValidator.isDiskUsedAsOvfStore()).thenCallRealMethod();
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
     }
 
@@ -533,7 +533,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand(parameters);
 
         assertFalse(command.validateCanResizeDisk());
-        CanDoActionTestUtils.assertCanDoActionMessages
+        ValidateTestUtils.assertValidationMessages
                 ("wrong failure", command, EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
     }
 
@@ -555,7 +555,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         vmDevice.setIsReadOnly(true);
 
         assertFalse(command.validateCanResizeDisk());
-        CanDoActionTestUtils.assertCanDoActionMessages
+        ValidateTestUtils.assertValidationMessages
                 ("wrong failure", command, EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
     }
 

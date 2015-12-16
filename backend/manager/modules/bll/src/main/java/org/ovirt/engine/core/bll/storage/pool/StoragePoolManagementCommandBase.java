@@ -39,7 +39,7 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__POOL);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__POOL);
     }
 
     @Override

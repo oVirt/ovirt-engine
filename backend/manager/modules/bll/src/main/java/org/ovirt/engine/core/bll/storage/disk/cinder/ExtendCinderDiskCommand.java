@@ -49,7 +49,7 @@ public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends U
     }
 
     @Override
-    public boolean canDoAction() {
+    public boolean validate() {
         return true;
     }
 

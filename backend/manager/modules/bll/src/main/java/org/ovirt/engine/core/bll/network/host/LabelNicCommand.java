@@ -52,12 +52,12 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__LABEL);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         HostInterfaceValidator validator = new HostInterfaceValidator(getNic());
 
         return validate(validator.interfaceExists()) &&

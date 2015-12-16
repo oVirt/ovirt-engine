@@ -103,8 +103,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean isValid = super.canDoAction();
+    protected boolean validate() {
+        boolean isValid = super.validate();
         if (isValid && wasNumOfVfsChanged()) {
             isValid = validate(getVfsConfigValidator().allVfsAreFree(networkDeviceHelper))
                     && validate(getVfsConfigValidator().numOfVfsInValidRange(getNumOfVfs()));
@@ -125,8 +125,8 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_NIC_VFS_CONFIG);
     }
 
     private int getNumOfVfs() {

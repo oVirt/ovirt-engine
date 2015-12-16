@@ -45,7 +45,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
         doReturn(vds).when(command).getUpServer();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(GlusterStatus.UP).when(volume).getStatus();
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
                         null)));
         doReturn(vds).when(command).getUpServer();
         doReturn(null).when(command).getSlaveVolume();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -70,6 +70,6 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
         doReturn(vds).when(command).getUpServer();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(GlusterStatus.DOWN).when(volume).getStatus();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 }

@@ -29,7 +29,7 @@ public class RegisterCinderDiskCommand<T extends RegisterCinderDiskParameters> e
     }
 
     @Override
-    public boolean canDoAction() {
+    public boolean validate() {
         CinderDisk cinderDisk = getCinderDisk();
         cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
         CinderDisksValidator cinderDiskValidator = getCinderDisksValidator(cinderDisk);
@@ -66,8 +66,8 @@ public class RegisterCinderDiskCommand<T extends RegisterCinderDiskParameters> e
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REGISTER);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REGISTER);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected CinderDisk getCinderDisk() {

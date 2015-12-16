@@ -25,8 +25,8 @@ public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, Ne
 
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() &&
+    protected boolean validate() {
+        return super.validate() &&
                 validate(getQosValidator(getQos()).peakConsistentWithAverage());
     }
 

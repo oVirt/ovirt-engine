@@ -77,12 +77,12 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
         doTestBadAddVnicProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddVnicProfile(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddVnicProfile(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         VnicProfile model = getModel(0);
         model.setNetwork(new Network());

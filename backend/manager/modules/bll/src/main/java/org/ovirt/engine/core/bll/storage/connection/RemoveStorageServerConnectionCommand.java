@@ -33,15 +33,15 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         String connectionId = getConnection().getId();
         List<StorageDomain> domains = null;
         if (StringUtils.isEmpty(connectionId) ) {
-           return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
+           return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
         StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
         if(connection == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
         // if user passed only the connection id for removal, vdsm still needs few more details in order to disconnect, so
         // bringing them from db and repopulating them in the connection object received in input parameters
@@ -142,19 +142,19 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {
-        addCanDoActionMessageVariable("domainNames", domainNames);
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+        addValidationMessageVariable("domainNames", domainNames);
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     protected boolean prepareFailureMessageForDisks(String diskNames) {
-        addCanDoActionMessageVariable("diskNames", diskNames);
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
+        addValidationMessageVariable("diskNames", diskNames);
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 
     protected boolean prepareFailureMessageForDomainsAndDisks(String domainNames, String diskNames) {
-        addCanDoActionMessageVariable("domainNames", domainNames);
-        addCanDoActionMessageVariable("diskNames", diskNames);
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
+        addValidationMessageVariable("domainNames", domainNames);
+        addValidationMessageVariable("diskNames", diskNames);
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
 
     protected String createDomainNamesListFromStorageDomains(List<StorageDomain> domains) {
@@ -185,7 +185,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

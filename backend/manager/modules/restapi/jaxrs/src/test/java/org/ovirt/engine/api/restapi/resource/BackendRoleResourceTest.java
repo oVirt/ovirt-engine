@@ -74,13 +74,13 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveRole,
                                            RolesParameterBase.class,
                                            new String[] { "RoleId" },
                                            new Object[] { GUIDS[0] },
-                                           canDo,
+                                           valid,
                                            success));
         try {
             resource.remove();

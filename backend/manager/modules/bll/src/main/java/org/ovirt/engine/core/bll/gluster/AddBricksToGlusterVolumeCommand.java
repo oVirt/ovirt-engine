@@ -49,18 +49,18 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getParameters().getBricks() == null || getParameters().getBricks().size() == 0) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
 
@@ -71,20 +71,20 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isStripedType()) {
             if (getParameters().getStripeCount() > getGlusterVolume().getStripeCount() + 1) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getStripeCount() < getGlusterVolume().getStripeCount()) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
             }
         }
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED);
             return false;
         }
 

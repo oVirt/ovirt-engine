@@ -86,9 +86,9 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue =
-                super.canDoAction()
+                super.validate()
                         && checkStorageDomain()
                         && (getStorageDomain().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
 
@@ -96,15 +96,15 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 && getStoragePool() != null) {
             if (electNewMaster() == null) {
                 returnValue = false;
-                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
+                addValidationMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
             } else if (!initializeVds()) {
                 returnValue = false;
-                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
+                addValidationMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
             }
         }
 
         if (returnValue && getStorageDomain().getStorageType() == StorageType.GLANCE) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
             returnValue = false;
         }
 
@@ -120,6 +120,6 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DESTROY_DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__DESTROY_DOMAIN);
     }
 }

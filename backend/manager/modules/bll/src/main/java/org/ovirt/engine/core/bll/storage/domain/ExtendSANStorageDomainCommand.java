@@ -67,13 +67,13 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXTEND);
+        addValidationMessage(EngineMessage.VAR__ACTION__EXTEND);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean canDoAction() {
-        super.canDoAction();
+    protected boolean validate() {
+        super.validate();
 
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {
             return false;
@@ -84,7 +84,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         }
 
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             return false;
         }
 
@@ -94,13 +94,13 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                         new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(), getParameters()
                                 .getLunIds()));
         if (!connectResult.getSucceeded()) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
             if (connectResult.getFailedVds() != null) {
-                getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
+                getReturnValue().getValidationMessages().add(String.format("$hostName %1s",
                         connectResult.getFailedVds().getName()));
             }
             String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUNId() : "";
-            getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s", lunId));
+            getReturnValue().getValidationMessages().add(String.format("$lun %1s", lunId));
             return false;
         } else {
             // use luns list from connect command

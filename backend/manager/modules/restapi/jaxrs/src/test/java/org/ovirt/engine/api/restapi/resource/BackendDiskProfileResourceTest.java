@@ -89,14 +89,14 @@ public class BackendDiskProfileResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
 
         try {
@@ -181,7 +181,7 @@ public class BackendDiskProfileResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
@@ -189,7 +189,7 @@ public class BackendDiskProfileResourceTest
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success
             )
         );

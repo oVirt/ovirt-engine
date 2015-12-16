@@ -97,25 +97,25 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFailsOnSnapshotNotExists() {
+    public void validateFailsOnSnapshotNotExists() {
         when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(false);
-        assertFalse(spyCommand.canDoAction());
+        assertFalse(spyCommand.validate());
         assertTrue(spyCommand.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
     }
 
     @Test
-    public void canDoActionFailsOnSnapshotTypeRegularNotInPreview() {
+    public void validateFailsOnSnapshotTypeRegularNotInPreview() {
         mockSnapshotExists();
         mockSnapshot = new Snapshot();
         when(snapshotDao.exists(any(Guid.class), any(Guid.class))).thenReturn(true);
         mockSnapshotFromDb();
         mockSnapshot.setType(SnapshotType.REGULAR);
         mockSnapshot.setStatus(SnapshotStatus.OK);
-        assertFalse(spyCommand.canDoAction());
+        assertFalse(spyCommand.validate());
         assertTrue(spyCommand.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW.toString()));
     }
 

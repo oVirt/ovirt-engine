@@ -22,19 +22,19 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Disk disk = getDbFacade().getDiskDao().get(getParameters().getObjectId());
         if (disk == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }
         if (!disk.getDiskStorageType().isInternal()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             return false;
         }
         this.disk = (DiskImage) disk;
 
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override

@@ -29,11 +29,11 @@ public class RemoveStorageServerConnectionExtensionCommand<T extends IdParameter
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return validate(getConnectionExtensionValidator().isConnectionExtensionExists(getParameters().getId()));
     }
 

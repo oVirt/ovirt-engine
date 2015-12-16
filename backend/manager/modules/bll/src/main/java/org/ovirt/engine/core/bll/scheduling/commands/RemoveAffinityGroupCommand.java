@@ -12,9 +12,9 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getAffinityGroup() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID);
         }
         return true;
     }
@@ -34,6 +34,6 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

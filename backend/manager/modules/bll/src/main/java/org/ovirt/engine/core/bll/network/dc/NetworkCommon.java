@@ -43,7 +43,7 @@ public abstract class NetworkCommon<T extends VdcActionParametersBase> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 
     @Override

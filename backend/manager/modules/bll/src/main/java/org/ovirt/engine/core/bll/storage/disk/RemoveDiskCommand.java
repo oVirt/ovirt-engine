@@ -85,14 +85,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getDisk() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
         return (validateHostedEngineDisks() && validateAllVmsForDiskAreDown())
@@ -122,7 +122,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 if (vm.getStatus() != VMStatus.Down && !vm.isHostedEngine()) {
                     VmDevice vmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
-                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;
                     }
                 }
@@ -160,7 +160,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         if (Guid.isNullOrEmpty(getParameters().getStorageDomainId())) {
             if (isVmTemplateType) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_DELETE_TEMPLATE_DISK_WITHOUT_SPECIFYING_DOMAIN);
             }
             getParameters().setStorageDomainId(diskImage.getStorageIds().get(0));
             setStorageDomainId(diskImage.getStorageIds().get(0));
@@ -172,7 +172,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         if (!diskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_IS_WRONG);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_IS_WRONG);
         }
 
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
@@ -182,7 +182,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         if (retValue && diskImage.getImageStatus() == ImageStatus.LOCKED) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }
         if (retValue && getDisk().getVmEntityType() != null) {
             if (getDisk().getVmEntityType().isVmType()) {
@@ -221,13 +221,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveTemplateDisk() {
         if (getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 
         DiskImage diskImage = getDiskImage();
 
         if (diskImage.getStorageIds().size() == 1) {
-            return failCanDoAction(EngineMessage.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
+            return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
 
         if (!checkDerivedVmFromTemplateExists(diskImage) || !checkDerivedDisksFromDiskNotExist(diskImage)){
@@ -240,8 +240,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean checkDerivedVmFromTemplateExists(DiskImage diskImage) {
         List<String> vmNames = getNamesOfDerivedVmsFromTemplate(diskImage);
         if (!vmNames.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
-            addCanDoActionMessageVariable("vmsList", StringUtils.join(vmNames, ","));
+            addValidationMessage(EngineMessage.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
+            addValidationMessageVariable("vmsList", StringUtils.join(vmNames, ","));
             return false;
         }
         return true;

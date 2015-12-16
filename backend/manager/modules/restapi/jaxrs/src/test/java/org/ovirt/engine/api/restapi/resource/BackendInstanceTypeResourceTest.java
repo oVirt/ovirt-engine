@@ -164,13 +164,13 @@ public class BackendInstanceTypeResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    protected void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[]{},
                 new Object[]{},
-                canDo,
+                valid,
                 success));
 
         try {

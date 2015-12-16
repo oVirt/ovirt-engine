@@ -24,8 +24,8 @@ public class RemoveVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().networkInVfsConfig(getNetworkId()));
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().networkInVfsConfig(getNetworkId()));
     }
 
     @Override
@@ -37,6 +37,6 @@ public class RemoveVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

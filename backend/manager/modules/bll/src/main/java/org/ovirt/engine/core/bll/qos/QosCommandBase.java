@@ -29,7 +29,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         M validator = getQosValidator(getQos());
         return (validateParameters()
                 && validate(validator.requiredValuesPresent()));
@@ -69,7 +69,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     protected boolean validateParameters() {
         if (getQos() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
         }
         return true;
     }
@@ -84,7 +84,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__QOS);
+        addValidationMessage(EngineMessage.VAR__TYPE__QOS);
     }
 
     protected abstract M getQosValidator(T qosBase);

@@ -44,13 +44,13 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
         }
 
         if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
@@ -84,7 +84,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override

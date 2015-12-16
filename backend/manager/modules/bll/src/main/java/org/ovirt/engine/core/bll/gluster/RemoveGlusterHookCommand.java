@@ -42,8 +42,8 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     private List<VDS> getServersInCluster() {
@@ -54,16 +54,16 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
        for (VDS vds: getServersInCluster()) {
            if (vds.getStatus() != VDSStatus.Up) {
                 setVdsName(vds.getName());
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
-                addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vds.getName()));
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addValidationMessage(String.format("$%1$s %2$s", "VdsName", vds.getName()));
                 return false;
             }
         }

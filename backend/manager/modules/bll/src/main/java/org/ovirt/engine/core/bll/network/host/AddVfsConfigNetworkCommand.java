@@ -24,8 +24,8 @@ public class AddVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().networkNotInVfsConfig(getNetworkId()));
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().networkNotInVfsConfig(getNetworkId()));
     }
 
     @Override
@@ -37,6 +37,6 @@ public class AddVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 }

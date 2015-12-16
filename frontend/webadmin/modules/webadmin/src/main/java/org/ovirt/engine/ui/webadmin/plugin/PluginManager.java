@@ -300,7 +300,7 @@ public class PluginManager {
      * function), or {@linkplain PluginState#IN_USE in use} (actions performed from other event handler functions)
      * </ul>
      */
-    boolean canDoPluginAction(String pluginName) {
+    boolean validatePluginAction(String pluginName) {
         Plugin plugin = getPlugin(pluginName);
         boolean pluginInitializingOrInUse = plugin != null
                 ? plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE) : false;
@@ -413,8 +413,8 @@ public class PluginManager {
         var uiFunctions = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::uiFunctions;
         var user = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::user;
 
-        var canDoPluginAction = function(pluginName) {
-            return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::canDoPluginAction(Ljava/lang/String;)(pluginName);
+        var validatePluginAction = function(pluginName) {
+            return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::validatePluginAction(Ljava/lang/String;)(pluginName);
         };
 
         var getEntityType = function(entityTypeName) {
@@ -463,67 +463,67 @@ public class PluginManager {
 
             // TODO(vszocs) inject API functions into "pluginApi.fn" dynamically using EventBus
             addMainTab: function(label, historyToken, contentUrl, options) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,historyToken,contentUrl,sanitizeObject(options));
                 }
             },
             addSubTab: function(entityTypeName, label, historyToken, contentUrl, options) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTab(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(getEntityType(entityTypeName),label,historyToken,contentUrl,sanitizeObject(options));
                 }
             },
             setTabContentUrl: function(historyToken, contentUrl) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabContentUrl(Ljava/lang/String;Ljava/lang/String;)(historyToken,contentUrl);
                 }
             },
             setTabAccessible: function(historyToken, tabAccessible) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabAccessible(Ljava/lang/String;Z)(historyToken,tabAccessible);
                 }
             },
             addMainTabActionButton: function(entityTypeName, label, actionButtonInterface) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,sanitizeObject(actionButtonInterface));
                 }
             },
             addSubTabActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainTabEntityTypeName),getEntityType(subTabEntityTypeName),label,sanitizeObject(actionButtonInterface));
                 }
             },
             showDialog: function(title, dialogToken, contentUrl, width, height, options) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showDialog(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/DialogOptions;)(title,dialogToken,contentUrl,width,height,sanitizeObject(options));
                 }
             },
             setDialogContentUrl: function(dialogToken, contentUrl) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setDialogContentUrl(Ljava/lang/String;Ljava/lang/String;)(dialogToken,contentUrl);
                 }
             },
             closeDialog: function(dialogToken) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::closeDialog(Ljava/lang/String;)(dialogToken);
                 }
             },
             revealPlace: function(historyToken) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::revealPlace(Ljava/lang/String;)(historyToken);
                 }
             },
             setSearchString: function(searchString) {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setSearchString(Ljava/lang/String;)(searchString);
                 }
             },
             loginUserName: function() {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getFullUserName()();
                 }
             },
             loginUserId: function() {
-                if (canDoPluginAction(this.pluginName)) {
+                if (validatePluginAction(this.pluginName)) {
                     return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserId()();
                 }
             }

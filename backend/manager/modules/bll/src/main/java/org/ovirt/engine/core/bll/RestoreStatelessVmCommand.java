@@ -41,9 +41,9 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
                         getLock()
                 );
 
-        // if it fail because of canDoAction, its safe to restore the snapshot
+        // if it fail because of validate, its safe to restore the snapshot
         // and the vm will still be usable with previous version
-        if (!result.getSucceeded() && !result.getCanDoAction()) {
+        if (!result.getSucceeded() && !result.isValid()) {
             log.warn("Couldn't update VM '{}' ({}) version from it's template, continue with restoring stateless snapshot.",
                     getVm().getName(),
                     getVmId());

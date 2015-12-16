@@ -122,7 +122,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
                         getBricks(volumeWithRemoveBricksTask))));
         prepareMocks(cmd);
         mockBackend(true, null);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd, times(1)).endStepJobAborted(any(String.class));
@@ -137,7 +137,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
                         getBricks(volumeWithRemoveBricksTask))));
         prepareMocks(cmd);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStopFailed);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd, never()).endStepJobAborted(any(String.class));
@@ -146,75 +146,75 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     }
 
     @Test
-    public void canDoActionSucceedsOnVolumeWithRemoveBricksTask() {
+    public void validateSucceedsOnVolumeWithRemoveBricksTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
                         getBricks(volumeWithRemoveBricksTask))));
 
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     // This happens in retain bricks scenario, where user can call stop remove brick after migrating the data
     @Test
-    public void canDoActionSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
+    public void validateSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
                         getBricks(volumeWithRemoveBricksTaskCompleted))));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnVolumeWithoutAsyncTask() {
+    public void validateFailsOnVolumeWithoutAsyncTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutAsyncTask,
                         getBricks(volumeWithoutAsyncTask))));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnVolumeWithoutRemoveBricksTask() {
+    public void validateFailsOnVolumeWithoutRemoveBricksTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
                         getBricks(volumeWithoutRemoveBricksTask))));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(null,
                         getBricks(volumeWithRemoveBricksTaskCompleted))));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsWithEmptyBricksList() {
+    public void validateFailsWithEmptyBricksList() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
                         new ArrayList<>())));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsWithInvalidBricks() {
+    public void validateFailsWithInvalidBricks() {
         List<GlusterBrickEntity> paramBricks1 = getInvalidNoOfBricks(volumeWithRemoveBricksTask);
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
                         paramBricks1)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         List<GlusterBrickEntity> paramBricks2 = getInvalidBricks(volumeWithRemoveBricksTask);
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
                         paramBricks2)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 }

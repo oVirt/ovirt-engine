@@ -60,44 +60,44 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     @Test
     public void nicNotExist() {
         nicExists(false);
-        assertCanDoActionFailure(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST.toString());
+        assertValidateFailure(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST.toString());
     }
 
     @Test
     public void sriovFeatureIsNotSupported() {
         sriovFeatureSupported(false);
-        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED.toString());
+        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED.toString());
     }
 
     @Test
     public void nicNotSriovEnabled() {
         nicSriovEnabled(false);
-        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
+        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NIC_IS_NOT_SRIOV_ENABLED.toString());
     }
 
     @Test
     public void notAllVfsAreFree() {
         allVfsAreFree(false);
-        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED.toString());
+        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_CANNOT_BE_CHANGED.toString());
     }
 
     @Test
     public void numOfVfsIsNotInRange() {
         numOfVfsInValidRange(false);
-        assertCanDoActionFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE.toString());
+        assertValidateFailure(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE.toString());
     }
 
     @Test
-    public void canDoActionSuccessNumOfVfsNotChanged() {
+    public void validateSuccessNumOfVfsNotChanged() {
         doReturn(false).when(command).wasNumOfVfsChanged();
         allVfsAreFree(false);
         numOfVfsInValidRange(false);
-        assertCanDoActionSuccess();
+        assertValidateSuccess();
     }
 
     @Test
-    public void canDoActionSuccessNumOfVfsChanged() {
-        assertCanDoActionSuccess();
+    public void validateSuccessNumOfVfsChanged() {
+        assertValidateSuccess();
     }
 
     @Test
@@ -141,14 +141,14 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NUM_OF_VFS_NOT_IN_VALID_RANGE));
     }
 
-    private void assertCanDoActionFailure(final String messageToVerify) {
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(messageToVerify));
+    private void assertValidateFailure(final String messageToVerify) {
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(messageToVerify));
     }
 
-    private void assertCanDoActionSuccess() {
-        assertTrue(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+    private void assertValidateSuccess() {
+        assertTrue(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
 
     private void assertExecuteActionFailure() {

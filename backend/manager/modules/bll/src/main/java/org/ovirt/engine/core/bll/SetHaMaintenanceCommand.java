@@ -42,7 +42,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         HostValidator hostValidator = new HostValidator(getVds());
 
         if (!validate(hostValidator.hostExists())
@@ -50,10 +50,10 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
             return false;
         }
         if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_4) < 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED);
         }
         if (!getVds().getHighlyAvailableIsConfigured()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED);
         }
         return true;
     }
@@ -72,7 +72,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM__CLUSTER);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM__CLUSTER);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 }

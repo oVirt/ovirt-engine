@@ -28,8 +28,8 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
     }
 
     @Override
-    protected boolean canDoAction() {
-        return getVds().getStatus() == VDSStatus.Maintenance && super.canDoAction();
+    protected boolean validate() {
+        return getVds().getStatus() == VDSStatus.Maintenance && super.validate();
     }
 
     /**

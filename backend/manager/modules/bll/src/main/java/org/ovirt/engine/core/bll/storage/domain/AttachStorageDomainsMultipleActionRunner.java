@@ -67,7 +67,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
         sortCommands();
 
         for (final CommandBase<?> command : getCommands()) {
-            if (command.getReturnValue().getCanDoAction()) {
+            if (command.getReturnValue().isValid()) {
                 ThreadPoolUtil.execute(() -> executeValidatedCommand(command));
             }
         }

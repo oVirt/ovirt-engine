@@ -65,7 +65,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
     }
 
     @Override
-    protected boolean canDoAction() {
-        return canPauseVm(getParameters().getVmId(), getReturnValue().getCanDoActionMessages());
+    protected boolean validate() {
+        return canPauseVm(getParameters().getVmId(), getReturnValue().getValidationMessages());
     }
 }

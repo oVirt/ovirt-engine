@@ -298,7 +298,7 @@ public class BackendVmCdromResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
             VdcQueryType.GetVmByVmId,
             IdQueryParameters.class,
@@ -312,7 +312,7 @@ public class BackendVmCdromResourceTest
                 VmManagementParametersBase.class,
                 new String[] { "VmStaticData.IsoPath" },
                 new Object[] { null },
-                canDo,
+                valid,
                 success
             )
         );

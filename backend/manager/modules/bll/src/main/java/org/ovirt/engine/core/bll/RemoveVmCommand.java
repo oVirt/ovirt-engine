@@ -188,9 +188,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -198,7 +198,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         if (getVm().isDeleteProtected()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
         VmHandler.updateDisksFromDb(getVm());
@@ -215,13 +215,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             case ImageLocked:
                 break;
             case Suspended:
-                return failCanDoAction(EngineMessage.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
+                return failValidation(EngineMessage.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
             default:
-                return (getVm().isHostedEngine() && isInternalExecution()) || failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                return (getVm().isHostedEngine() && isInternalExecution()) || failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
         if (getVm().getVmPoolId() != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
         }
 
         // enable to remove vms without images
@@ -260,12 +260,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (!vmLockedValidatorResult.isValid()) {
             // without force remove, we can't remove the VM
             if (!getParameters().getForce()) {
-                return failCanDoAction(vmLockedValidatorResult.getMessage());
+                return failValidation(vmLockedValidatorResult.getMessage());
             }
 
             // If it is force, we cannot remove if there are task
             if (CommandCoordinatorUtil.hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
-                return failCanDoAction(EngineMessage.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
+                return failValidation(EngineMessage.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
             }
         }
 
@@ -278,19 +278,19 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     private boolean canRemoveVmWithDetachDisks() {
         if (!Guid.Empty.equals(getVm().getVmtGuid())) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_BASED_ON_TEMPLATE);
+            return failValidation(EngineMessage.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_BASED_ON_TEMPLATE);
         }
 
         for (Disk disk : getVm().getDiskList()) {
             List<DiskImage> diskImageList = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
             if (diskImageList.size() > 1) {
-                return failCanDoAction(EngineMessage.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
+                return failValidation(EngineMessage.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
             }
         }
 

@@ -77,12 +77,12 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
         doTestBadAddDiskProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddDiskProfile(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddDiskProfile(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         DiskProfile model = getModel(0);
         model.setStorageDomain(new StorageDomain());

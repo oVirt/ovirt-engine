@@ -21,17 +21,17 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVmPoolId() == null) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL);
         }
 
         if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL);
         }
 
         return true;

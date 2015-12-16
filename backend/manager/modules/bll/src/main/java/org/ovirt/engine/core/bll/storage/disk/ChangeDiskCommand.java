@@ -30,21 +30,21 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     protected void setActionMessageParameters() {
         // An empty 'cdImagePath' means eject CD
         if (!StringUtils.isEmpty(cdImagePath)) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__CHANGE_CD);
+            addValidationMessage(EngineMessage.VAR__ACTION__CHANGE_CD);
         } else {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__EJECT_CD);
+            addValidationMessage(EngineMessage.VAR__ACTION__EJECT_CD);
         }
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (shouldSkipCommandExecutionCached()) {
             return true;
         }
 
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -57,11 +57,11 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
         if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(cdImagePath)) {
-            return failCanDoAction(EngineMessage.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+            return failValidation(EngineMessage.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         if (StringUtils.isNotEmpty(cdImagePath) && !StringUtils.endsWithIgnoreCase(cdImagePath, ValidationUtils.ISO_SUFFIX)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
         }
 
         return true;

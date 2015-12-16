@@ -28,7 +28,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue=true;
         job = getJobDao().get(getParameters().getParentId());
         if (job == null) {
@@ -36,11 +36,11 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         }
         if (job == null && parentStep == null) {
             retValue=false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_PARENT);
+            addValidationMessage(EngineMessage.ACTION_TYPE_NO_PARENT);
         }
         if (StringUtils.isBlank(getParameters().getDescription())) {
             retValue=false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
+            addValidationMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
         }
 
         return retValue;

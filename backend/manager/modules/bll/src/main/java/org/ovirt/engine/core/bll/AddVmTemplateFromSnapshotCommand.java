@@ -76,7 +76,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))) {
@@ -84,16 +84,16 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         }
 
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
                     String.format("$VmName %1$s", getVmName()),
                     String.format("$SnapshotName %1$s", getSnapshotName()));
         }
 
         if (getVdsGroup() == null) {
-            return failCanDoAction(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
+            return failValidation(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
         }
 
-        return super.canDoAction();
+        return super.validate();
     }
 
 
@@ -181,7 +181,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
 
             @Override
             public Void runInTransaction() {
-                // Assumption - a snapshot can be locked only if in status OK, so if canDoAction passed
+                // Assumption - a snapshot can be locked only if in status OK, so if validate passed
                 // this is the status of the snapshot. In addition the newly added VM is in down status
                 getCompensationContext().snapshotEntityStatus(getSnapshot());
                 getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);

@@ -136,7 +136,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
 
         // If snapshot does not exist, there is not point in checking any of the VM related checks
@@ -147,14 +147,14 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         vmFromConfiguration = getVmFromConfiguration();
         if (vmFromConfiguration == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
-            addCanDoActionMessageVariable("VmName", getVmName());
-            addCanDoActionMessageVariable("SnapshotName", getSnapshotName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION);
+            addValidationMessageVariable("VmName", getVmName());
+            addValidationMessageVariable("SnapshotName", getSnapshotName());
 
             return false;
         }
 
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
@@ -197,7 +197,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
             @Override
             public Void runInTransaction() {
-                // Assumption - a snapshot can be locked only if in status OK, so if canDoAction passed
+                // Assumption - a snapshot can be locked only if in status OK, so if validate passed
                 // this is the status of the snapshot. In addition the newly added VM is in down status
                 getCompensationContext().snapshotEntityStatus(getSnapshot());
                 getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);

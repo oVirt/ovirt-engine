@@ -208,7 +208,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected boolean isFenceAgentValid(FenceAgent agent) {
         if (StringUtils.isEmpty(agent.getUser()) ||
                 StringUtils.isEmpty(agent.getPassword())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
             return false;
         } else {
             return true;
@@ -220,14 +220,14 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             String clusterCompatibilityVersion) {
         if (pmEnabled) {
             if (fenceAgents == null || fenceAgents.isEmpty()) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 return false;
             }
             FenceValidator fenceValidator = new FenceValidator();
             for (FenceAgent agent : fenceAgents) {
                 if (!fenceValidator.isFenceAgentVersionCompatible(agent,
                         clusterCompatibilityVersion,
-                        getReturnValue().getCanDoActionMessages())
+                        getReturnValue().getValidationMessages())
                         || !isFenceAgentValid(agent)) {
                     return false;
                 }

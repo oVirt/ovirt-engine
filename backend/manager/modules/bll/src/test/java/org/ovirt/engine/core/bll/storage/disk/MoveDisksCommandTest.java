@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -68,15 +68,15 @@ public class MoveDisksCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionNoDisksSpecified() {
-        assertFalse(command.canDoAction());
+    public void validateNoDisksSpecified() {
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED.toString()));
     }
 
     @Test
-    public void canDoActionInvalidVmStatus() {
+    public void validateInvalidVmStatus() {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImage(diskImageId);
@@ -84,7 +84,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
 
         command.updateParameters();
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP.toString()));
     }
 
@@ -187,25 +187,25 @@ public class MoveDisksCommandTest extends BaseCommandTest {
 
         command.updateParameters();
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS.toString()));
     }
 
     @Test
-    public void canDoActionFailureOnMovingLunDisk() {
+    public void validateFailureOnMovingLunDisk() {
         MoveDiskParameters moveDiskParameters1 = new MoveDiskParameters(Guid.newGuid(), srcStorageId, dstStorageId);
         command.getParameters().setParametersList(Collections.singletonList(moveDiskParameters1));
         initLunDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void canDoActionFailureOnMovingCinderDisk() {
+    public void validateFailureOnMovingCinderDisk() {
         MoveDiskParameters moveDiskParameters = new MoveDiskParameters(Guid.newGuid(), srcStorageId, dstStorageId);
         command.getParameters().setParametersList(Collections.singletonList(moveDiskParameters));
         initCinderDisk();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 

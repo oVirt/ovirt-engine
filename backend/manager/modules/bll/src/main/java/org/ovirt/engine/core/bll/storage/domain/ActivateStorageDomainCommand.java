@@ -68,7 +68,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = checkStoragePool()
                 && checkStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
@@ -211,8 +211,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ACTIVATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__ACTIVATE);
     }
 
     private boolean storageDomainStatusIsValid() {

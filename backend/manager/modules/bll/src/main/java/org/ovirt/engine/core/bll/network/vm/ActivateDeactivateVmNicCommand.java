@@ -79,10 +79,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
 
         if (getVm() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
@@ -91,7 +91,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         if (!activateDeactivateVmNicAllowed(getVm().getStatus())) {
-            addCanDoActionMessage(EngineMessage.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
+            addValidationMessage(EngineMessage.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
             return false;
         }
 
@@ -107,7 +107,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     && !getNetwork().isExternal()
                     && !isPassthrough()
                     && !networkAttachedToVds(getNetwork().getName(), getVdsId())) {
-                addCanDoActionMessage(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
+                addValidationMessage(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
 
@@ -121,7 +121,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
         vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
         if (vmDevice == null) {
-            addCanDoActionMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
+            addValidationMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
             return false;
         }
 
@@ -136,7 +136,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         String vfToUse = vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork());
 
         if (vfToUse == null) {
-            failCanDoAction(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
+            failValidation(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
                     String.format("$vnicName %1$s", getInterfaceName()));
         }
 
@@ -306,9 +306,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage((getParameters().getAction() == PlugAction.PLUG) ?
+        addValidationMessage((getParameters().getAction() == PlugAction.PLUG) ?
                 EngineMessage.VAR__ACTION__ACTIVATE : EngineMessage.VAR__ACTION__DEACTIVATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
+        addValidationMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 
     @Override

@@ -18,22 +18,22 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters() == null || (getParameters().getQuotaId() == null)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
 
         Quota quota = getQuota();
 
         if (quota == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
 
         // If the quota is in use by ether VM or image - return false
         if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDao().isQuotaInUse(quota)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
 
@@ -56,8 +56,8 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 
     @Override

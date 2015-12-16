@@ -63,10 +63,10 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
      * Helpers.
      *************************************************************************************/
 
-    private void doTestBadAddBookmark(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddBookmark(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
-                new Object[] { NAMES[0], VALUES[0] }, canDo, success));
+                new Object[] { NAMES[0], VALUES[0] }, valid, success));
         try {
             collection.add(getModel(0));
             fail("expected WebApplicationException");

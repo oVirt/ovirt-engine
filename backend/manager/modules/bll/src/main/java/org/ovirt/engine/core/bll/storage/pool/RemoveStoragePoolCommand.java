@@ -291,8 +291,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction() ||
+    protected boolean validate() {
+        if (!super.validate() ||
                 !checkStoragePool() ||
                 !checkStoragePoolStatusNotEqual(StoragePoolStatus.Up,
                         EngineMessage.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
@@ -309,11 +309,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+            return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
         }
         if (!getParameters().getForceDelete()) {
             if(poolDomains.size() > 1) {
-                return failCanDoAction(EngineMessage.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
+                return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
             if (!poolDomains.isEmpty() && !canDetachStorageDomainWithVmsAndDisks(poolDomains.get(0))) {
                 return false;
@@ -330,7 +330,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             if (!poolHosts.isEmpty() && acquireLockInternal()) {
                 for (VDS host : poolHosts) {
                     if (host.getStatus() != VDSStatus.Maintenance) {
-                        return failCanDoAction(EngineMessage.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
+                        return failValidation(EngineMessage.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
                     }
                 }
             }
@@ -340,8 +340,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__POOL);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__POOL);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     protected List<StorageDomain> getActiveOrLockedDomainList(List<StorageDomain> domainsList) {

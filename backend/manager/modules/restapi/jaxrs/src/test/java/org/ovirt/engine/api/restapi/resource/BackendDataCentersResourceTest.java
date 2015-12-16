@@ -98,13 +98,13 @@ public class BackendDataCentersResourceTest
         doTestBadAddDataCenter(true, false, FAILURE);
     }
 
-    private void doTestBadAddDataCenter(boolean canDo, boolean success, String detail)
+    private void doTestBadAddDataCenter(boolean valid, boolean success, String detail)
             throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddEmptyStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
 
         DataCenter model = getModel(0);

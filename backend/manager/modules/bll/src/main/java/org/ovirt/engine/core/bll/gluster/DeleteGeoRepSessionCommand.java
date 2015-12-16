@@ -27,10 +27,10 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
-        addCanDoActionMessageVariable("volumeName", getGlusterVolumeName());
-        addCanDoActionMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addValidationMessageVariable("volumeName", getGlusterVolumeName());
+        addValidationMessageVariable("vdsGroup", getVdsGroupName());
     }
 
     @Override

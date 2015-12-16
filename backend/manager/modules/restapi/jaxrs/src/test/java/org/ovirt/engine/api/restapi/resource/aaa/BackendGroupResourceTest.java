@@ -101,14 +101,14 @@ public class BackendGroupResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 VdcActionType.RemoveGroup,
                 IdParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

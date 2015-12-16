@@ -72,7 +72,7 @@ public class FrontendTest {
     @Mock
     ErrorTranslator mockVdsmErrorsTranslator;
     @Mock
-    ErrorTranslator mockCanDoActionErrorsTranslator;
+    ErrorTranslator mockValidateErrorsTranslator;
     @Mock
     Event<EventArgs> mockFrontendNotLoggedInEvent;
     @Mock
@@ -108,7 +108,7 @@ public class FrontendTest {
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(mockEventBus, operationProcessor);
-        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
+        frontend = new Frontend(operationsManager, mockValidateErrorsTranslator, mockVdsmErrorsTranslator,
                 mockEventBus);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
         frontend.frontendNotLoggedInEvent = mockFrontendNotLoggedInEvent;

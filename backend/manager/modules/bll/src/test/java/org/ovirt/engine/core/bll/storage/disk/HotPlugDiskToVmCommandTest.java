@@ -95,11 +95,11 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> command;
 
     @Test
-    public void canDoActionFailedVMNotFound() throws Exception {
+    public void validateFailedVMNotFound() throws Exception {
         mockNullVm();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
     }
 
@@ -134,52 +134,52 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFailedVMHasNotDisk() throws Exception {
+    public void validateFailedVMHasNotDisk() throws Exception {
         mockVmStatusUp();
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(null);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
     @Test
-    public void canDoActionFailedVirtIODisk() throws Exception {
+    public void validateFailedVirtIODisk() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED.toString()));
     }
 
     @Test
-    public void canDoActionChecksIfHotPlugDiskSnapshotIsSupported() throws Exception {
+    public void validateChecksIfHotPlugDiskSnapshotIsSupported() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeVirtIODisk();
         initStorageDomain();
         command.getParameters().setSnapshotId(Guid.newGuid());
-        command.canDoAction();
+        command.validate();
         verify(command, times(1)).isHotPlugDiskSnapshotSupported();
     }
 
     @Test
-    public void canDoActionFailedWrongPlugStatus() throws Exception {
+    public void validateFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeDiskWrongPlug(true);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.HOT_PLUG_DISK_IS_NOT_UNPLUGGED.toString()));
     }
 
     @Test
-    public void canDoActionFailedGuestOsIsNotSupported() {
+    public void validateFailedGuestOsIsNotSupported() {
         mockInterfaceList();
         VM vm = mockVmStatusUp();
         vm.setVmOs(15); // rhel3x64
@@ -187,32 +187,32 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
                 any(Version.class))).thenReturn(Collections.<String>emptySet());
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
     }
 
     @Test
-    public void canDoActionSuccess() {
+    public void validateSuccess() {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeVirtIODisk();
         initStorageDomain();
-        assertTrue(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+        assertTrue(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
 
     @Test
-    public void canDoActionSuccessFailedDiskInterfaceUnsupported() {
+    public void validateSuccessFailedDiskInterfaceUnsupported() {
         mockVmStatusUp();
         cretaeVirtIODisk();
         initStorageDomain();
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
     }
 

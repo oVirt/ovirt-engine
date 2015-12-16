@@ -35,7 +35,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
                         pubKeys)));
         doReturn(vds).when(command).getUpServer();
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
                         pubKeys)));
         doReturn(vds).when(command).getUpServer();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -58,6 +58,6 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
         doReturn(null).when(command).getUpServer();
         command.setVdsGroupId(Guid.newGuid());
         doReturn(new VDSGroup()).when(command).getVdsGroup();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 }

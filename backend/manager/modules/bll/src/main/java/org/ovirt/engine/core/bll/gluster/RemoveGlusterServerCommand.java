@@ -30,15 +30,15 @@ public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGluster
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVER);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_SERVER);
     }
 
     @Override
-    protected boolean canDoAction() {
-        super.canDoAction();
+    protected boolean validate() {
+        super.validate();
         if (StringUtils.isEmpty(getParameters().getHostnameOrIp())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_NAME_REQUIRED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_NAME_REQUIRED);
             return false;
         }
         return true;

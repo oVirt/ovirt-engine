@@ -142,7 +142,7 @@ public class BackendSnapshotResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUriInfo(
             setUpActionExpectations(
@@ -150,7 +150,7 @@ public class BackendSnapshotResourceTest
                 RemoveSnapshotParameters.class,
                 new String[] { "SnapshotId", "VmId"},
                 new Object[] { SNAPSHOT_ID, VM_ID },
-                canDo,
+                valid,
                 success
             )
         );

@@ -123,7 +123,7 @@ public class BackendClusterNetworkResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpVDSGroupExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false);
         setUriInfo(
@@ -132,7 +132,7 @@ public class BackendClusterNetworkResourceTest
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },
                 new Object[] { CLUSTER_ID },
-                canDo,
+                valid,
                 success
             )
         );

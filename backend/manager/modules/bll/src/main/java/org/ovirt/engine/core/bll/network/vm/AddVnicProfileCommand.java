@@ -26,7 +26,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VnicProfileValidator validator = new VnicProfileValidator(vmDao, getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
@@ -34,7 +34,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
                 && validate(validator.vnicProfileForVmNetworkOnly())
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
-                && validator.validateCustomProperties(getReturnValue().getCanDoActionMessages())
+                && validator.validateCustomProperties(getReturnValue().getValidationMessages())
                 && validate(validator.passthroughProfileContainsSupportedProperties());
     }
 
@@ -58,7 +58,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override

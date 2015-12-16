@@ -94,38 +94,38 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionOkSucceeds() throws Exception {
+    public void validateOkSucceeds() throws Exception {
         setupMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() throws Exception {
         setupMock();
         parameters.setId(nonExistingStepId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() throws Exception {
         setupMock();
         parameters.setId(nonExternalStepId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExistingStepFails() throws Exception {
+    public void validateNonExistingStepFails() throws Exception {
         setupMock();
         parameters.setJobId(jobId);
         parameters.setId(nonExistingStepId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExternalStepFails() throws Exception {
+    public void validateNonExternalStepFails() throws Exception {
         setupMock();
         parameters.setJobId(jobId);
         parameters.setId(nonExternalStepId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 }

@@ -45,10 +45,10 @@ public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
     }
 
      @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
 }

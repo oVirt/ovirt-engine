@@ -122,11 +122,11 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         final ClusterValidator validator = new ClusterValidator(
                 getDbFacade(), getVdsGroup(), getCpuFlagsManagerHandler());
 
@@ -159,7 +159,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
         managementNetwork =
                 defaultManagementNetworkFinder.findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
         if (managementNetwork == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
             return false;
         }
         return true;
@@ -168,7 +168,7 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     private boolean validateInputManagementNetwork() {
         managementNetwork = getManagementNetworkById();
         if (managementNetwork == null) {
-            addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
         final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();

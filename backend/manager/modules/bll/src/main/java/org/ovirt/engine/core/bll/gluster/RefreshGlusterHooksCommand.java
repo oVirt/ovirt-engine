@@ -25,18 +25,18 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getClusterId() == null || getVdsGroup() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
-        if(!super.canDoAction()) {
+        if(!super.validate()) {
             return false;
         }
 

@@ -27,7 +27,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         List<StorageDomain> domains = null;
         StorageServerConnections connection = getStorageServerConnectionDao().get(storageDomainConnection);
         if (connection == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
         if (connection.getStorageType().isFileDomain()) {
             domains = getStorageDomainsByConnId(connection.getId());
@@ -56,8 +56,8 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {
-        addCanDoActionMessageVariable("domainNames", domainNames);
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+        addValidationMessageVariable("domainNames", domainNames);
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 
     @Override

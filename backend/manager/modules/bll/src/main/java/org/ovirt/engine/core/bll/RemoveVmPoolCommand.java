@@ -68,9 +68,9 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVmPool() == null) {
-            return failCanDoAction(EngineMessage.VM_POOL_NOT_FOUND);
+            return failValidation(EngineMessage.VM_POOL_NOT_FOUND);
         }
         return true;
     }

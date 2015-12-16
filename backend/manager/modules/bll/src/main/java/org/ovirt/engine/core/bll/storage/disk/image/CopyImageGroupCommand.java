@@ -61,7 +61,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Not relevant for import VM/VMTemplate
         if (getParameters().isImportEntity()) {
             return true;

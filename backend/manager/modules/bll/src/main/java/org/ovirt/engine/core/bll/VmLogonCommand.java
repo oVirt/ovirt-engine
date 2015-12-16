@@ -26,16 +26,16 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
 
     @Override
     protected void setActionMessageParameters () {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__LOGON);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__LOGON);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

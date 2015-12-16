@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -43,21 +43,21 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     }
 
     @Test
-    public void testCanDoActionSuccess() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void testValidateSuccess() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionImageDoesNotExist() {
+    public void testValidateImageDoesNotExist() {
         when(getProviderProxy().getImageAsDiskImage(getRepoImageId())).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionPoolInMaintenance() {
+    public void testValidatePoolInMaintenance() {
         getStoragePool().setStatus(StoragePoolStatus.Maintenance);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 }

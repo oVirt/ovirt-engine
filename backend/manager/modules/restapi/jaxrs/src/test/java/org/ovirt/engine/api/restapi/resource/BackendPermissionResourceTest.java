@@ -142,7 +142,7 @@ public class BackendPermissionResourceTest
         }
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(2);
         setUriInfo(
             setUpActionExpectations(
@@ -150,7 +150,7 @@ public class BackendPermissionResourceTest
                 PermissionsOperationsParameters.class,
                 new String[] { "Permission.Id" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success
             )
         );

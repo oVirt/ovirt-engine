@@ -68,7 +68,7 @@ public class BackendTemplateNicResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetNicsExpectations();
         setUriInfo(
             setUpActionExpectations(
@@ -76,7 +76,7 @@ public class BackendTemplateNicResourceTest
                 RemoveVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId", "InterfaceId" },
                 new Object[] { TEMPLATE_ID, NIC_ID },
-                canDo,
+                valid,
                 success
             )
         );

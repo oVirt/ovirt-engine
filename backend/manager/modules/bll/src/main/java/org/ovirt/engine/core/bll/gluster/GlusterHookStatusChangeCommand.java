@@ -47,13 +47,13 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getAllUpServers() == null || getAllUpServers().isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
 

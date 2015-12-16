@@ -22,7 +22,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -146,16 +146,16 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionNoDisksSpecified() {
+    public void validateNoDisksSpecified() {
         initVm(VMStatus.Up, Guid.newGuid(), null);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED.toString()));
     }
 
     @Test
-    public void canDoActionVmShareableDisk() {
+    public void validateVmShareableDisk() {
         createParameters();
 
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
@@ -163,14 +163,14 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED.toString()));
     }
 
     @Test
-    public void canDoActionMissingTemplateDisk() {
+    public void validateMissingTemplateDisk() {
         createParameters();
 
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
@@ -180,14 +180,14 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(Guid.newGuid(), templateImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN.toString()));
     }
 
     @Test
-    public void canDoActionInvalidSourceDomain() {
+    public void validateInvalidSourceDomain() {
         createParameters();
 
         StorageDomain storageDomain = initStorageDomain(srcStorageId);
@@ -196,14 +196,14 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     @Test
-    public void canDoActionInvalidDestinationDomain() {
+    public void validateInvalidDestinationDomain() {
         createParameters();
 
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
@@ -216,14 +216,14 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
     }
 
     @Test
-    public void canDoActionSameSourceAndDest() throws Exception {
+    public void validateSameSourceAndDest() throws Exception {
         createParameters(srcStorageId, srcStorageId);
 
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
@@ -232,40 +232,40 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.name()));
     }
 
     @Test
-    public void canDoActionInvalidFileToBlock() {
-        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, false);
+    public void validateInvalidFileToBlock() {
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, false);
     }
 
     @Test
-    public void canDoActionInvalidBlockToFile() {
-        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, false);
+    public void validateInvalidBlockToFile() {
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, false);
     }
 
     @Test
-    public void canDoActionFileToBlockSupported() {
+    public void validateFileToBlockSupported() {
         storagePool.setCompatibilityVersion(Version.v3_6);
-        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, true);
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI, true);
     }
 
     @Test
-    public void canDoActionBlockToFileSupported() {
+    public void validateBlockToFileSupported() {
         storagePool.setCompatibilityVersion(Version.v3_6);
-        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, true);
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS, true);
     }
 
     @Test
-    public void canDoActionBlockToBlock() {
-        canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI, true);
+    public void validateBlockToBlock() {
+        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI, true);
     }
 
-    private void canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType, boolean shouldSucceed) {
+    private void validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType, boolean shouldSucceed) {
         createParameters();
 
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
@@ -279,16 +279,16 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertEquals(shouldSucceed, command.canDoAction());
+        assertEquals(shouldSucceed, command.validate());
         if (!shouldSucceed) {
             assertTrue(command.getReturnValue()
-                    .getCanDoActionMessages()
+                    .getValidationMessages()
                     .contains(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT.toString()));
         }
     }
 
     @Test
-    public void canDoActionVmRunningStateless() {
+    public void validateVmRunningStateless() {
         createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
@@ -296,14 +296,14 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
     }
 
     @Test
-    public void canDoActionVmInPreview() {
+    public void validateVmInPreview() {
         createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, null, diskImageId);
@@ -312,12 +312,12 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
                 .vmNotInPreview(any(Guid.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     @Test
-    public void canDoActionVmDuringSnapshot() {
+    public void validateVmDuringSnapshot() {
         createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, null, diskImageId);
@@ -326,12 +326,12 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
                 .vmNotDuringSnapshot(any(Guid.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
-    public void canDoActionVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
+    public void validateVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
         createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
@@ -339,9 +339,9 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
                 .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.name()));
     }
 

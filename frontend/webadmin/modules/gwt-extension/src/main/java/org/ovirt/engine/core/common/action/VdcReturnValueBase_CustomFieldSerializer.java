@@ -11,9 +11,9 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 
     public static void deserialize(SerializationStreamReader streamReader,
             VdcReturnValueBase instance) throws SerializationException {
-        instance.setCanDoAction(streamReader.readBoolean());
-        java.util.ArrayList<String> canDoActionMessages = (java.util.ArrayList<String>) streamReader.readObject();
-        instance.setCanDoActionMessages(canDoActionMessages);
+        instance.setValid(streamReader.readBoolean());
+        java.util.ArrayList<String> validationMessages = (java.util.ArrayList<String>) streamReader.readObject();
+        instance.setValidationMessages(validationMessages);
         java.util.ArrayList<String> executeFailedMessages = (java.util.ArrayList<String>) streamReader.readObject();
         instance.setExecuteFailedMessages(executeFailedMessages);
         instance.setSucceeded(streamReader.readBoolean());
@@ -36,8 +36,8 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 
     public static void serialize(SerializationStreamWriter streamWriter,
             VdcReturnValueBase instance) throws SerializationException {
-        streamWriter.writeBoolean(instance.getCanDoAction());
-        streamWriter.writeObject(instance.getCanDoActionMessages());
+        streamWriter.writeBoolean(instance.isValid());
+        streamWriter.writeObject(instance.getValidationMessages());
         streamWriter.writeObject(instance.getExecuteFailedMessages());
         streamWriter.writeBoolean(instance.getSucceeded());
         streamWriter.writeBoolean(instance.getIsSyncronious());

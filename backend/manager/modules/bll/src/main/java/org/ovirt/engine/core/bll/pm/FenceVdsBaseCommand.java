@@ -53,19 +53,19 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     @Override
-    protected boolean canDoAction() {
-        List<String> messages = getReturnValue().getCanDoActionMessages();
-        boolean canDo =
+    protected boolean validate() {
+        List<String> messages = getReturnValue().getValidationMessages();
+        boolean valid =
                 fenceValidator.isHostExists(getVds(), messages)
                         && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getVdsGroup(), messages)
                         && fenceValidator.isStartupTimeoutPassed(messages)
                         && isQuietTimeFromLastActionPassed()
                         && fenceValidator.isProxyHostAvailable(getVds(), messages);
-        if (!canDo) {
+        if (!valid) {
             handleError();
         }
-        getReturnValue().setSucceeded(canDo);
-        return canDo;
+        getReturnValue().setSucceeded(valid);
+        return valid;
     }
 
     private boolean isQuietTimeFromLastActionPassed() {
@@ -80,8 +80,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                                 .getAuditLogDao()
                                 .getTimeToWaitForNextPmOp(getVds().getName(), getRequestedAuditEvent());
         if (secondsLeftToNextPmOp > 0) {
-            addCanDoActionMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
-            addCanDoActionMessageVariable("seconds", secondsLeftToNextPmOp);
+            addValidationMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
+            addValidationMessageVariable("seconds", secondsLeftToNextPmOp);
             return false;
         } else {
             return true;
@@ -190,7 +190,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     /**
-     * get the event to look for in canDoAction() , if we requested to start Host then we should look when we stopped it
+     * get the event to look for in validate() , if we requested to start Host then we should look when we stopped it
      * and vice
      */
     protected abstract String getRequestedAuditEvent();

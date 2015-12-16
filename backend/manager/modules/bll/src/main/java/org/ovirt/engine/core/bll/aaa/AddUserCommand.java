@@ -30,7 +30,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         addCustomValue("NewUserName", getParameters().getUserToAdd().getLoginName());
         return true;
 

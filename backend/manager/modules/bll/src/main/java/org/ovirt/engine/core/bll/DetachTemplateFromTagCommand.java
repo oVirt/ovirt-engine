@@ -14,9 +14,9 @@ public class DetachTemplateFromTagCommand<T extends AttachEntityToTagParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getTagId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TAG_ID_REQUIRED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TAG_ID_REQUIRED);
         }
         return true;
     }

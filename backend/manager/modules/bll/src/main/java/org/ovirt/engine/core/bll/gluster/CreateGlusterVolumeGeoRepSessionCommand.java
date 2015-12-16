@@ -44,37 +44,37 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!getGlusterUtil().isGlusterGeoReplicationSupported(getVdsGroup().getCompatibilityVersion(),
                 getVdsGroup().getId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
         }
         slaveHost = getSlaveHost();
         if (slaveHost == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
         if (slaveHost.getStatus() != VDSStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP,
                     String.format("$%1$s %2$s", "VdsName", slaveHost.getName()));
         }
         slaveVolume = getSlaveVolume();
         if (slaveVolume == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
         }
         if (slaveVolume.getStatus() != GlusterStatus.UP) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
         if (!areAllRemoteServersUp()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE);
         }
         GlusterGeoRepSession geoRepSession =
                 getGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
                         slaveHost.getId(),
                         getParameters().getSlaveVolumeName());
         if (geoRepSession != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED);
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     protected GlusterGeoRepDao getGeoRepDao() {
@@ -111,8 +111,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
     }
 
     @Override

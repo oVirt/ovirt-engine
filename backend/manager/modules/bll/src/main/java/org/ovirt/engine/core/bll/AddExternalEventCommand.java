@@ -29,15 +29,15 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result=true;
         if (getParameters().getEvent() == null || getParameters().getEvent().getOrigin().equalsIgnoreCase(OVIRT)){
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
             result = false;
         }
         if (!result) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_EVENT);
+            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+            addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_EVENT);
         }
         return result;
     }

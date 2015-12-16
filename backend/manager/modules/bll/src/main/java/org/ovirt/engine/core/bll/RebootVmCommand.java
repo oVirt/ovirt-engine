@@ -27,8 +27,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESTART);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESTART);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -48,9 +48,9 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {

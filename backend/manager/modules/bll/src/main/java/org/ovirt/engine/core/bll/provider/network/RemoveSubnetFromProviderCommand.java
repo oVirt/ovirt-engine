@@ -49,7 +49,7 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         ProviderValidator validator = new ProviderValidator(getProvider());
 
         return validate(validator.providerIsSet());
@@ -70,8 +70,8 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__SUBNET);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__SUBNET);
     }
 
     @Override

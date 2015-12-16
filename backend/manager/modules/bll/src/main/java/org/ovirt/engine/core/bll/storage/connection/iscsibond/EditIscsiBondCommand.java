@@ -36,7 +36,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         IscsiBondValidator validator = new IscsiBondValidator();
 
         if (!validate(validator.isIscsiBondExist(getExistingIscsiBond()))) {
@@ -166,8 +166,8 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
     }
 
     private boolean isNameChanged() {

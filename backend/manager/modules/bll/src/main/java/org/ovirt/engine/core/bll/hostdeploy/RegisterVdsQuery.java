@@ -589,10 +589,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         if (retValue.getFault() != null) {
             log.error("{} - Fault - {}", prefixToMessage, retValue.getFault().getMessage());
         }
-        if (retValue.getCanDoActionMessages().size() > 0) {
-            List<String> msgs = retValue.getCanDoActionMessages();
+        if (retValue.getValidationMessages().size() > 0) {
+            List<String> msgs = retValue.getValidationMessages();
             for (String s : msgs) {
-                log.error("{} - CanDoAction Fault - {}", prefixToMessage, s);
+                log.error("{} - Validate Fault - {}", prefixToMessage, s);
             }
         }
         if (retValue.getExecuteFailedMessages().size() > 0) {

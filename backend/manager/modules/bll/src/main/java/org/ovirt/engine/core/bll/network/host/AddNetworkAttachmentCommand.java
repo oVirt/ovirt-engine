@@ -38,7 +38,7 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getHostInterfaces());
         completer.completeNetworkAttachment(getParameters().getNetworkAttachment());
 
@@ -46,11 +46,11 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
 
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {
-            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);
+            return failValidation(EngineMessage.NETWORK_ATTACHMENT_NOT_SPECIFIED);
         }
 
         if (networkAttachment.getId() != null) {
-            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID,
+            return failValidation(EngineMessage.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID,
                 ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID_ENTITY",
                     networkAttachment.getId()));
         }

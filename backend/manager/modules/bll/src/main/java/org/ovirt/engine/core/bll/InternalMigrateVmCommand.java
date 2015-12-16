@@ -38,13 +38,13 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
      * the internal migration command should fail
      */
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getVm().getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
         }
 
         return true;

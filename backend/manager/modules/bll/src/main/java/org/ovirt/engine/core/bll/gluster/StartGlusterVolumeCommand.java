@@ -35,20 +35,20 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__START);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if(! super.canDoAction()) {
+    protected boolean validate() {
+        if(! super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume.isOnline() && !getParameters().isForceAction()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED);
-            addCanDoActionMessageVariable("volumeName", volume.getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED);
+            addValidationMessageVariable("volumeName", volume.getName());
             return false;
         }
         return true;

@@ -20,23 +20,23 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVm().isRunningOrPaused() || getVm().getStatus() == VMStatus.Unknown) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL);
         }
 
         if (getVm().getVmPoolId() != null) {
-            return failCanDoAction(EngineMessage.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL);
+            return failValidation(EngineMessage.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL);
         }
 
         if (getParameters().getVmPoolId() != null) {
             VmPool pool = getVmPoolDao().get(getParameters().getVmPoolId());
             if (pool != null && !pool.getVdsGroupId().equals(getVm().getVdsGroupId())) {
-                return failCanDoAction(EngineMessage.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER);
+                return failValidation(EngineMessage.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER);
             }
         }
 

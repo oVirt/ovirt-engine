@@ -25,12 +25,12 @@ public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         setSucceeded(true);
     }
 
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
         if (getWatchdogs().isEmpty()) {
-            return failCanDoAction(EngineMessage.WATCHDOG_NOT_FOUND);
+            return failValidation(EngineMessage.WATCHDOG_NOT_FOUND);
         }
         return true;
     }

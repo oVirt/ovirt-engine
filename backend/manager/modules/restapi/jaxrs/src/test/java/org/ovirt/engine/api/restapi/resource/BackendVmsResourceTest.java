@@ -315,7 +315,7 @@ public class BackendVmsResourceTest
         doTestBadAddFromScratch(true, false, FAILURE);
     }
 
-    private void doTestBadAddFromScratch(boolean canDo, boolean success, String detail)
+    private void doTestBadAddFromScratch(boolean valid, boolean success, String detail)
             throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -335,7 +335,7 @@ public class BackendVmsResourceTest
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { Guid.Empty },
-                                           canDo,
+                                           valid,
                                            success));
         Vm model = getModel(0);
         model.setCluster(new Cluster());
@@ -747,7 +747,7 @@ public class BackendVmsResourceTest
         testBadAddFromConfiguration(true, false, FAILURE);
     }
 
-    private void testBadAddFromConfiguration(boolean canDo, boolean success, String detail)
+    private void testBadAddFromConfiguration(boolean valid, boolean success, String detail)
             throws Exception {
         Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
@@ -764,7 +764,7 @@ public class BackendVmsResourceTest
                 ImportVmParameters.class,
                 new String[] { "Vm", "VdsGroupId" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
-                canDo,
+                valid,
                 success));
         try {
             collection.add(model);
@@ -1235,7 +1235,7 @@ public class BackendVmsResourceTest
         verifyCollection(getCollection());
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail)
+    private void doTestBadAdd(boolean valid, boolean success, String detail)
             throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -1254,7 +1254,7 @@ public class BackendVmsResourceTest
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { GUIDS[0] },
-                                           canDo,
+                                           valid,
                                            success));
 
         try {

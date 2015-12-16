@@ -55,9 +55,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
     protected abstract void doInit();
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         return validate(NumaValidator.checkVmNumaNodesIntegrity(getVm(), getVmNumaNodesForValidation()));
     }

@@ -61,12 +61,12 @@ public class BackendHostNicLabelsResourceTest
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.LabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { nicId, LABELS[0] },
-                canDo,
+                valid,
                 success));
         try {
             collection.add(getModel(0));

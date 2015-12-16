@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
@@ -230,47 +230,47 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0, false));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFails() {
+    public void validateFails() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsWithForceNotSupported() {
+    public void validateFailsWithForceNotSupported() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, true));
         prepareMocks(cmd);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test
-    public void canDoActionFailsWithDuplicateBricks() {
+    public void validateFailsWithDuplicateBricks() {
         cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsDiffInterface() {
+    public void validateFailsDiffInterface() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
         prepareMocks(cmd);
         prepareInterfaceMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null, null, 0, 0, false));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
 }

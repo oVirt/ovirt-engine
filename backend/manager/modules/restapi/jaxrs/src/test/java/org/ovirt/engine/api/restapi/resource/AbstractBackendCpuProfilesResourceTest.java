@@ -77,12 +77,12 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
         doTestBadAddCpuProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddCpuProfile(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddCpuProfile(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         CpuProfile model = getModel(0);
         model.setCluster(new Cluster());

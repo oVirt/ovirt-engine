@@ -128,24 +128,24 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFailesOnDownVolume() {
+    public void validateFailesOnDownVolume() {
         cmd = spy(createTestCommand(volumeId2));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionSucceedsOnUpVolume() {
+    public void validateSucceedsOnUpVolume() {
         cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test

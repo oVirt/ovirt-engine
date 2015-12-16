@@ -30,10 +30,10 @@ public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTe
     }
 
     @Test
-    public void validateCanDoAction() {
+    public void validate() {
         mockVMPoolDao();
         setupForStorageTests();
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     private void mockVMPoolDao() {

@@ -22,7 +22,7 @@ public class ErrorMessageHelper {
 
     /**
      * Returns the most severe error status out of the given errors. This methos exists to handle cases where multiple
-     * CanDoAction messages were returned from Backend, which is quite rare.
+     * Validate messages were returned from Backend, which is quite rare.
      */
     public static Response.Status getErrorStatus(List<String> errors) {
         Status status = Status.BAD_REQUEST; // default

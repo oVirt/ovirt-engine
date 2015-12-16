@@ -131,13 +131,13 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     ///////////////////
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVds() != null && getVds().getStatus() != VDSStatus.Up) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         if (getVds() == null && !selectProxyHost()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
         return true;

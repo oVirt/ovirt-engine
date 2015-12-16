@@ -32,25 +32,25 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVds() == null) {
-            return failCanDoAction(EngineMessage.VDS_NOT_EXIST);
+            return failValidation(EngineMessage.VDS_NOT_EXIST);
         }
 
         if (getVds().getStatus() != VDSStatus.Up) {
-            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
         }
 
         if (getStoragePoolForVds() == null) {
-            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
         }
 
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM);
         }
 
         if (getVds().getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
-            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
         }
 
         if (!validate(new StoragePoolValidator(getStoragePoolForVds()).isUp())) {
@@ -58,7 +58,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
         }
 
         if (isAsyncTasksRunningOnPool(getStoragePoolForVds().getId())) {
-            return failCanDoAction(EngineMessage.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
+            return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
         }
 
         return true;
@@ -81,9 +81,9 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__FORCE_SELECT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__SPM);
-        addCanDoActionMessageVariable("VdsName", getVds().getName());
+        addValidationMessage(EngineMessage.VAR__ACTION__FORCE_SELECT);
+        addValidationMessage(EngineMessage.VAR__TYPE__SPM);
+        addValidationMessageVariable("VdsName", getVds().getName());
     }
 
     private boolean isAsyncTasksRunningOnPool(Guid storagePoolId) {

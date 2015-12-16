@@ -53,7 +53,7 @@ public class BackendTemplateTagResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -61,7 +61,7 @@ public class BackendTemplateTagResourceTest
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(TEMPLATE_ID) },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

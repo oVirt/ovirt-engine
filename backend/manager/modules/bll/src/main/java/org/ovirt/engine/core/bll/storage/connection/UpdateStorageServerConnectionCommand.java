@@ -50,11 +50,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageServerConnections newConnectionDetails = getConnection();
         StorageType storageType = newConnectionDetails.getStorageType();
         if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
         if (!isValidConnection(newConnectionDetails)) {
@@ -67,30 +67,30 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
 
         if (oldConnection == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
 
         if (!newConnectionDetails.getStorageType().equals(oldConnection.getStorageType())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
         Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getId());
         if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         if (doDomainsUseConnection(newConnectionDetails) || doLunsUseConnection()) {
             if (storageType.isFileDomain() && domains.size() > 1) {
                 String domainNames = createDomainNamesList(domains);
-                addCanDoActionMessageVariable("domainNames", domainNames);
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+                addValidationMessageVariable("domainNames", domainNames);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
             }
             // Check that the storage domain is in proper state to be edited
             if (!isConnectionEditable(newConnectionDetails)) {
                 return false;
             }
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     protected String createDomainNamesList(List<StorageDomain> domains) {
@@ -116,8 +116,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         if (connection.getStorageType().isFileDomain()) {
             boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
-                addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                addValidationMessageVariable("domainNames", domains.get(0).getStorageName());
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
             }
             return isConnectionEditable;
         }
@@ -158,19 +158,19 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             }
             if (!problematicVMNames.isEmpty()) {
                 if (problematicDomainNames.isEmpty()) {
-                    addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
+                    addValidationMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
                 } else {
-                    addCanDoActionMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
-                    addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
+                    addValidationMessageVariable("vmNames", prepareEntityNamesForMessage(problematicVMNames));
+                    addValidationMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
                 }
                 return false;
             }
 
             if (!problematicDomainNames.isEmpty()) {
-                addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+                addValidationMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
                 return false;
             }
         }
@@ -374,7 +374,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

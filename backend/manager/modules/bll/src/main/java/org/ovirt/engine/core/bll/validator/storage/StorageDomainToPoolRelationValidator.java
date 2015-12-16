@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 /**
- * CanDoAction validation methods for attaching a storage domain to a DC (pool).
+ * Validate validation methods for attaching a storage domain to a DC (pool).
  */
 public class StorageDomainToPoolRelationValidator {
     private final StorageDomainStatic storageDomainStatic;
@@ -54,7 +54,7 @@ public class StorageDomainToPoolRelationValidator {
 
     /**
      * Checks that the DC compatibility version supports Posix domains.
-     * In case there is mismatch, a proper canDoAction message will be added
+     * In case there is mismatch, a proper validate message will be added
      *
      * @return The result of the validation
      */
@@ -68,7 +68,7 @@ public class StorageDomainToPoolRelationValidator {
 
     /**
      * Checks that the DC compatibility version supports Gluster domains.
-     * In case there is mismatch, a proper canDoAction message will be added
+     * In case there is mismatch, a proper validate message will be added
      *
      * @return true if the version matches
      */

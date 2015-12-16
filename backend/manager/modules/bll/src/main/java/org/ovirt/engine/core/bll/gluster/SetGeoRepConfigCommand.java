@@ -69,11 +69,11 @@ public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolu
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SET);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
-        addCanDoActionMessageVariable("configName", getParameters().getConfigKey());
-        addCanDoActionMessageVariable("geoRepSessionKey", getGeoRepSession().getSessionKey());
-        addCanDoActionMessageVariable("configValue", getParameters().getConfigValue());
+        addValidationMessage(EngineMessage.VAR__ACTION__SET);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
+        addValidationMessageVariable("configName", getParameters().getConfigKey());
+        addValidationMessageVariable("geoRepSessionKey", getGeoRepSession().getSessionKey());
+        addValidationMessageVariable("configValue", getParameters().getConfigValue());
     }
 
     @Override

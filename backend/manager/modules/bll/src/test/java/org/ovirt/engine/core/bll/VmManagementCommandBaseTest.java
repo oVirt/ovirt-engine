@@ -28,7 +28,7 @@ public class VmManagementCommandBaseTest {
         vmStatic.setDedicatedVmForVdsList(new LinkedList<>());
         Assert.assertFalse(test.isCpuPinningValid("0#0", vmStatic));
         Assert.assertFalse(test.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST));
     }
 
@@ -114,24 +114,24 @@ public class VmManagementCommandBaseTest {
                 test.isCpuPinningValid("0#1_1#2...", vmStatic));
 
         // negative logical validation
-        ArrayList<String> canDoActionMessages = test.getReturnValue().getCanDoActionMessages();
-        canDoActionMessages.clear();
+        ArrayList<String> validationMessages = test.getReturnValue().getValidationMessages();
+        validationMessages.clear();
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_10#1-4,^3", vmStatic));
-        Assert.assertTrue(canDoActionMessages.size() > 0);
-        if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION.toString(), canDoActionMessages.get(0));
+        Assert.assertTrue(validationMessages.size() > 0);
+        if (validationMessages.size() > 0) {
+            Assert.assertEquals(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION.toString(), validationMessages.get(0));
         }
-        canDoActionMessages.clear();
+        validationMessages.clear();
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,^1,^2", vmStatic));
-        Assert.assertTrue(canDoActionMessages.size() > 0);
-        if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU.toString(), canDoActionMessages.get(0));
+        Assert.assertTrue(validationMessages.size() > 0);
+        if (validationMessages.size() > 0) {
+            Assert.assertEquals(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU.toString(), validationMessages.get(0));
         }
-        canDoActionMessages.clear();
+        validationMessages.clear();
         Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_20#1-4,^3", vmStatic));
-        Assert.assertTrue(canDoActionMessages.size() > 0);
-        if (canDoActionMessages.size() > 0) {
-            Assert.assertEquals(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
+        Assert.assertTrue(validationMessages.size() > 0);
+        if (validationMessages.size() > 0) {
+            Assert.assertEquals(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), validationMessages.get(0));
         }
         // making sure cluster < 3.2 does not get validated on pCPU as we can't tell the number for sure
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_1);

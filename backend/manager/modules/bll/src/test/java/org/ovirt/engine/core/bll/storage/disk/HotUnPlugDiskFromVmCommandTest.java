@@ -20,13 +20,13 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     @Override
     @Test
-    public void canDoActionFailedWrongPlugStatus() throws Exception {
+    public void validateFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
         mockInterfaceList();
         cretaeDiskWrongPlug(false);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.HOT_UNPLUG_DISK_IS_NOT_PLUGGED.toString()));
     }
 

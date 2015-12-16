@@ -31,8 +31,8 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -41,7 +41,7 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
             List<GraphicsDevice> devices = res.getReturnValue();
             for (GraphicsDevice device : devices) {
                 if (device.getGraphicsType().equals(getParameters().getDev().getGraphicsType())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_DEVICE_WITH_THIS_GRAPHICS_ALLOWED);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_DEVICE_WITH_THIS_GRAPHICS_ALLOWED);
                 }
             }
 
@@ -54,7 +54,7 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
                 }
 
                 if (!FeatureSupported.multipleGraphicsSupported(cluster.getCompatibilityVersion())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_GRAPHICS_SUPPORTED_IN_THIS_CLUSTER_LEVEL);
                 }
             }
 

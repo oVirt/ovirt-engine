@@ -51,7 +51,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         UpgradeHostValidator validator = new UpgradeHostValidator(getVds());
 
         return validate(validator.hostExists())
@@ -118,8 +118,8 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPGRADE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPGRADE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

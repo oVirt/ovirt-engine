@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -172,17 +172,17 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionVmUpLiveMergeNotSupported() {
+    public void testValidateVmUpLiveMergeNotSupported() {
         prepareForVmValidatorTests();
 
         cmd.getVm().setStatus(VMStatus.Up);
         doReturn(true).when(cmd).isDiskPlugged();
         doReturn(false).when(cmd).isLiveMergeSupported();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
     @Test
-    public void testCanDoActionVmUpLiveMergeSupported() {
+    public void testValidateVmUpLiveMergeSupported() {
         prepareForVmValidatorTests();
 
         cmd.getVm().setStatus(VMStatus.Up);
@@ -191,6 +191,6 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(vmValidator).vmQualifiedForSnapshotMerge();
         doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
         doReturn(true).when(cmd).validateStorageDomainAvailableSpace();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 }

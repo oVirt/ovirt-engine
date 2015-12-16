@@ -21,23 +21,23 @@ public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         GraphicsDevice dev = getParameters().getDev();
 
         if (dev == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
         }
 
         if (getParameters().isVm() && getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!getParameters().isVm() && getVmTemplate() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
         if (dev.getGraphicsType() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GRAPHIC_TYPE_MUST_BE_SPECIFIED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GRAPHIC_TYPE_MUST_BE_SPECIFIED);
         }
 
         return true;

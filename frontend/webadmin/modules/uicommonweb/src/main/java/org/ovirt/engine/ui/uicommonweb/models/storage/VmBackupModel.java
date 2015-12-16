@@ -217,7 +217,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                             boolean toShowConfirmWindow = false;
                             for (VM vm : getSelectedItems()) {
                                 if (retVals.get(counter) != null
-                                        && retVals.get(counter).getCanDoAction()) {
+                                        && retVals.get(counter).isValid()) {
                                     importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }

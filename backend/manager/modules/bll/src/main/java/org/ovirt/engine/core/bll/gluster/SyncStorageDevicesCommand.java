@@ -27,12 +27,12 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VDSGroup cluster = getVdsGroup();
         if (!cluster.supportsGlusterService()
                 || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
                         getVdsGroup().getId()))) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 
         //Host status will not checked in case of force. Storage devices will be synced as part of host install/activation
@@ -48,9 +48,9 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SYNC);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE_DEVICE);
-        addCanDoActionMessageVariable("VdsName", getVds().getName());
+        addValidationMessage(EngineMessage.VAR__ACTION__SYNC);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE_DEVICE);
+        addValidationMessageVariable("VdsName", getVds().getName());
     }
 
     @Override

@@ -26,7 +26,7 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VNIC_PROFILE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VNIC_PROFILE);
     }
 
     @Override

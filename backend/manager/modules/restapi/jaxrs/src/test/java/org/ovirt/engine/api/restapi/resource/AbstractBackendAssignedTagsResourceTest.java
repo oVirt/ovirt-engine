@@ -127,12 +127,12 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         doTestBadAddTag(true, false, FAILURE);
     }
 
-    private void doTestBadAddTag(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddTag(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(attachAction,
                                            attachParams,
                                            new String[] { "TagId", "EntitiesId" },
                                            new Object[] { GUIDS[0], asList(PARENT_GUID) },
-                                           canDo,
+                                           valid,
                                            success));
         Tag model = new Tag();
         model.setId(GUIDS[0].toString());

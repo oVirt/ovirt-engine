@@ -28,9 +28,9 @@ public class MultipleActionsRunner {
     private boolean isWaitForResult = false;
 
     /**
-     * Execute the actions only if CanDo of all the requests returns true
+     * Execute the actions only if Validate of all the requests returns true
      */
-    protected boolean isRunOnlyIfAllCanDoPass = false;
+    protected boolean isRunOnlyIfAllValidationPass = false;
 
     protected CommandContext commandContext;
 
@@ -100,14 +100,14 @@ public class MultipleActionsRunner {
     private boolean canRunActions(ArrayList<VdcReturnValueBase> returnValues) {
         if (getCommands().size() == 1) {
             CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
-            returnValues.add(getCommands().get(0).canDoActionOnly());
+            returnValues.add(getCommands().get(0).validateOnly());
         } else {
-            checkCanDoActionsAsynchronously(returnValues);
+            checkValidatesAsynchronously(returnValues);
         }
 
-        if (isRunOnlyIfAllCanDoPass) {
+        if (isRunOnlyIfAllValidationPass) {
             for (VdcReturnValueBase value : returnValues) {
-                if (!value.getCanDoAction()) {
+                if (!value.isValid()) {
                     return false;
                 }
             }
@@ -116,49 +116,49 @@ public class MultipleActionsRunner {
     }
 
     /**
-     * Check CanDoActions of all commands. We perform checks for all commands at
+     * Check Validates of all commands. We perform checks for all commands at
      * the same time the number of threads is managed by java
      *
      * @param returnValues
      */
-    private void checkCanDoActionsAsynchronously(
+    private void checkValidatesAsynchronously(
             ArrayList<VdcReturnValueBase> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
 
             int fixedSize = i + handleSize;
-            List<Callable<VdcReturnValueBase>> canDoActionTasks = new ArrayList<>();
+            List<Callable<VdcReturnValueBase>> validateTasks = new ArrayList<>();
             for (int j = i; j < fixedSize; j++) {
-                canDoActionTasks.add(buildCanDoActionAsynchronously(j, fixedSize));
+                validateTasks.add(buildValidateAsynchronously(j, fixedSize));
             }
-            returnValues.addAll(ThreadPoolUtil.invokeAll(canDoActionTasks));
+            returnValues.addAll(ThreadPoolUtil.invokeAll(validateTasks));
         }
     }
 
-    private Callable<VdcReturnValueBase> buildCanDoActionAsynchronously(
-            final int currentCanDoActionId, final int totalSize) {
+    private Callable<VdcReturnValueBase> buildValidateAsynchronously(
+            final int currentValidateId, final int totalSize) {
         return new Callable<VdcReturnValueBase>() {
 
             @Override
             public VdcReturnValueBase call() {
-                return runCanDoActionOnly(currentCanDoActionId, totalSize);
+                return runValidateOnly(currentValidateId, totalSize);
             }
         };
     }
 
-    protected VdcReturnValueBase runCanDoActionOnly(final int currentCanDoActionId, final int totalSize) {
-        CommandBase<?> command = getCommands().get(currentCanDoActionId);
+    protected VdcReturnValueBase runValidateOnly(final int currentValidateId, final int totalSize) {
+        CommandBase<?> command = getCommands().get(currentValidateId);
         String actionType = command.getActionType().toString();
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         try {
-            log.info("Start running CanDoAction for command number {}/{} (Command type '{}')",
-                    currentCanDoActionId + 1,
+            log.info("Start running Validate for command number {}/{} (Command type '{}')",
+                    currentValidateId + 1,
                     totalSize,
                     actionType);
-            return command.canDoActionOnly();
+            return command.validateOnly();
         } finally {
-            log.info("Finish handling CanDoAction for command number {}/{} (Command type '{}')",
-                    currentCanDoActionId + 1,
+            log.info("Finish handling Validate for command number {}/{} (Command type '{}')",
+                    currentValidateId + 1,
                     totalSize,
                     actionType);
         }
@@ -166,7 +166,7 @@ public class MultipleActionsRunner {
 
     protected void runCommands() {
         for (CommandBase<?> command : getCommands()) {
-            if (command.getReturnValue().getCanDoAction()) {
+            if (command.getReturnValue().isValid()) {
                 executeValidatedCommand(command);
             }
         }
@@ -197,8 +197,8 @@ public class MultipleActionsRunner {
         command.executeAction();
     }
 
-    public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {
-        this.isRunOnlyIfAllCanDoPass = isRunOnlyIfAllCanDoPass;
+    public void setIsRunOnlyIfAllValidatePass(boolean isRunOnlyIfAllValidationPass) {
+        this.isRunOnlyIfAllValidationPass = isRunOnlyIfAllValidationPass;
     }
 
     public void setIsWaitForResult(boolean waitForResult) {

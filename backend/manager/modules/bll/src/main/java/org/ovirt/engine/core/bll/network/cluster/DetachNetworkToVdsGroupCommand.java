@@ -64,8 +64,8 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addValidationMessage(EngineMessage.VAR__ACTION__DETACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 
     @Override

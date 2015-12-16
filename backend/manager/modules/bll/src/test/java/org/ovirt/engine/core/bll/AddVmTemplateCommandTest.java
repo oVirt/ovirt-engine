@@ -144,25 +144,25 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoAction() {
+    public void testValidate() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
     }
 
     @Test
     // When Template by the same name already exists in the datacenter - fail.
-    public void testCanDoActionDuplicateTemplateName() {
+    public void testValidateDuplicateTemplateName() {
         doReturn(true).when(cmd).isVmTemlateWithSameNameExist("templateName", spId);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test
     // When Instance by same name exists - fail (regardless of datacenter).
-    public void testCanDoActionInstanceNameDuplicate() {
+    public void testValidateInstanceNameDuplicate() {
         cmd.getParameters().setTemplateType(VmEntityType.INSTANCE_TYPE);
         doReturn(true).when(cmd).isInstanceWithSameNameExists("templateName");
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test

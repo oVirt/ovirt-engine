@@ -41,7 +41,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

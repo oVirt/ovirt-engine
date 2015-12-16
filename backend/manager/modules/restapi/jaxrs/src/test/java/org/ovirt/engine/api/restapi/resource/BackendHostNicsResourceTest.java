@@ -129,14 +129,14 @@ public class BackendHostNicsResourceTest
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
         setUpNetworkQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddBond,
                                            AddBondParameters.class,
                                            new String[] { "VdsId", "BondName" },
                                            new Object[] { PARENT_GUID, MASTER_NAME },
-                                           canDo,
+                                           valid,
                                            success));
 
         HostNic model = getBondEntity();

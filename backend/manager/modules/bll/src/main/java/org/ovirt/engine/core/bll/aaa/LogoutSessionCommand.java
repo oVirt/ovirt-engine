@@ -34,7 +34,7 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return sessionDataContainer.isSessionExists(getParameters().getSessionId());
     }
 

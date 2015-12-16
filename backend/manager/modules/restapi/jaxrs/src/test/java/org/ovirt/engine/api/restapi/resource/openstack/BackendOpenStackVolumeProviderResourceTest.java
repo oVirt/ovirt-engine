@@ -119,7 +119,7 @@ public class BackendOpenStackVolumeProviderResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -127,7 +127,7 @@ public class BackendOpenStackVolumeProviderResourceTest
                 ProviderParameters.class,
                 new String[] { "Provider.Id" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success
             )
         );

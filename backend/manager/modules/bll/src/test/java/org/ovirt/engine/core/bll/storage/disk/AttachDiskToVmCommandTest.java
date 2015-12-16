@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -112,22 +112,22 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
     private AttachDiskToVmCommand<AttachDetachVmDiskParameters> command;
 
     @Test
-    public void testCanDoSucceed() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    public void testValidateSucceed() {
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void testCanDoSucceedReadOnlyWithInterface() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    public void testValidateSucceedReadOnlyWithInterface() {
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
         verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
     }
 
     @Test
-    public void testCanDoFailReadOnlyOnInterface() {
+    public void testValidateFailReadOnlyOnInterface() {
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
         verify(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
     }

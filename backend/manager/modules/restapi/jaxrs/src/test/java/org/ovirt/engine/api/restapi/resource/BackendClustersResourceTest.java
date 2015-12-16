@@ -116,7 +116,7 @@ public class BackendClustersResourceTest extends
         doTestBadAddCluster(true, false, FAILURE);
     }
 
-    private void doTestBadAddCluster(boolean canDo, boolean success, String detail)
+    private void doTestBadAddCluster(boolean valid, boolean success, String detail)
             throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
@@ -128,7 +128,7 @@ public class BackendClustersResourceTest extends
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
         Cluster model = getModel(0);
         model.getDataCenter().setId(GUIDS[1].toString());
@@ -189,7 +189,7 @@ public class BackendClustersResourceTest extends
         doTestBadAddClusterNamedDataCenter(true, false, FAILURE);
     }
 
-    private void doTestBadAddClusterNamedDataCenter(boolean canDo, boolean success, String detail)
+    private void doTestBadAddClusterNamedDataCenter(boolean valid, boolean success, String detail)
             throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
                 NameQueryParameters.class,
@@ -201,7 +201,7 @@ public class BackendClustersResourceTest extends
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
-                                           canDo,
+                                           valid,
                                            success));
         Cluster model = getModel(0);
         model.getDataCenter().setName(NAMES[1]);

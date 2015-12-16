@@ -149,7 +149,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
         for (IFrontendMultipleActionAsyncCallback callback : callbacks) {
             assertNotAllDone(flowState);
             VdcReturnValueBase result = new VdcReturnValueBase();
-            result.setCanDoAction(waitForResult ? true : success);
+            result.setValid(waitForResult ? true : success);
             result.setSucceeded(waitForResult ? success : false);
             callback.executed(new FrontendMultipleActionAsyncResult(ACTION_TYPE,
                     null,

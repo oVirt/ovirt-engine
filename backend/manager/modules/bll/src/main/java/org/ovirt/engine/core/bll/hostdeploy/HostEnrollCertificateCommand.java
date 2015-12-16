@@ -17,7 +17,7 @@ public class HostEnrollCertificateCommand extends VdsCommand<VdsActionParameters
     }
 
     @Override
-    public boolean canDoAction() {
+    public boolean validate() {
         HostValidator hostValidator = new HostValidator(getVds());
         return validate(hostValidator.hostExists())
                 && validate(hostValidator.validateStatusForEnrollCertificate());
@@ -33,8 +33,8 @@ public class HostEnrollCertificateCommand extends VdsCommand<VdsActionParameters
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ENROLL_CERTIFICATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__ENROLL_CERTIFICATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

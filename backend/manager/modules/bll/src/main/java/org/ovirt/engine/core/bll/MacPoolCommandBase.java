@@ -12,7 +12,7 @@ public abstract class MacPoolCommandBase<T extends VdcActionParametersBase> exte
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__MAC__POOL);
+        addValidationMessage(EngineMessage.VAR__TYPE__MAC__POOL);
     }
 
     public MacPoolDao getMacPoolDao() {

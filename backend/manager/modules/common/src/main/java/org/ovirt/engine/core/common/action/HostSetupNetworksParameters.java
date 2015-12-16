@@ -21,7 +21,7 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
     /*
      * This field cannot be validated via bean validation due to validation conflict: {@link NetworkAttachment} in this
      * class is present as new entity and entity to be updated, both requiring different conflicting validations. So
-     * {@link NetworkAttachment} will be validated manually in {@link org.ovirt.engine.core.bll.CommandBase#canDoAction}
+     * {@link NetworkAttachment} will be validated manually in {@link org.ovirt.engine.core.bll.CommandBase#validate}
      */
     private List<NetworkAttachment> networkAttachments;
 

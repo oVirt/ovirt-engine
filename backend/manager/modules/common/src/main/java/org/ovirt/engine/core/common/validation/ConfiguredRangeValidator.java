@@ -23,7 +23,7 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
         }
 
         max = Config.<Integer> getValue(constraintAnnotation.maxConfigValue(), ConfigCommon.defaultConfigurationVersion);
-        /* this is to interpolate "${range}" in CanDoActions */
+        /* this is to interpolate "${range}" in Validates */
         rangeMessage = "$range " + min + "-" + max;
 
     }

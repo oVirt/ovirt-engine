@@ -19,7 +19,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue;
         // check if user is not already subscribed to this event with same
         // method and address
@@ -30,10 +30,10 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         List<EventSubscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
         if (isAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
-            addCanDoActionMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
+            addValidationMessage(EngineMessage.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else if (!eventExists(eventName)) {
-            addCanDoActionMessage(EngineMessage.EN_UNSUPPORTED_NOTIFICATION_EVENT);
+            addValidationMessage(EngineMessage.EN_UNSUPPORTED_NOTIFICATION_EVENT);
             retValue = false;
         } else {
             // get notification method
@@ -41,13 +41,13 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                 // Validate user
                 DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
                 if (user == null) {
-                    addCanDoActionMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
+                    addValidationMessage(EngineMessage.USER_MUST_EXIST_IN_DB);
                     retValue = false;
                 } else {
                     retValue = validateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
                 }
             } else {
-                addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
+                addValidationMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
                 retValue = false;
             }
         }

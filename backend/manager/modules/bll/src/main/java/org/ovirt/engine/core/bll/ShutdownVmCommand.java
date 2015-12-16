@@ -46,8 +46,8 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SHUTDOWN);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__SHUTDOWN);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override

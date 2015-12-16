@@ -9,11 +9,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class RemoveFenceAgentCommand<T extends FenceAgentCommandParameterBase> extends FenceAgentCommandBase {
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters() == null || getParameters().getAgent() == null || getParameters().getAgent().getId() == null) {
-            return failCanDoAction(EngineMessage.VDS_REMOVE_FENCE_AGENT_ID_REQUIRED);
+            return failValidation(EngineMessage.VDS_REMOVE_FENCE_AGENT_ID_REQUIRED);
         }
-        return super.canDoAction();
+        return super.validate();
     }
 
     @Override

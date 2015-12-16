@@ -24,10 +24,10 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VM vm = getVm();
         if (vm == null || vm.getStaticData() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

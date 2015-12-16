@@ -226,8 +226,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     protected boolean setAndValidateDiskProfiles() {
@@ -267,11 +267,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         setStoragePoolId(getVm().getStoragePoolId());
 
         LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getCompatibilityVersion(), getVds());
-        if (!validate(validator.canDoSnapshot())) {
+        if (!validate(validator.validateSnapshot())) {
             return false;
         }
 
@@ -281,13 +281,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
+            getReturnValue().setValid(isDiskNotShareable(parameters.getImageId())
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getTargetStorageDomainId())
                     && performStorageDomainsChecks(parameters)
                     && isSameSourceAndDest(parameters));
 
-            if (!getReturnValue().getCanDoAction()) {
+            if (!getReturnValue().isValid()) {
                 return false;
             }
         }
@@ -321,14 +321,14 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean validateDestStorageAndSourceStorageOfSameTypes(StorageDomain destDomain, StorageDomain sourceDomain) {
         if (destDomain.getStorageType().getStorageSubtype() != sourceDomain.getStorageType().getStorageSubtype()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT);
         }
         return true;
     }
 
     private boolean isValidParametersList() {
         if (getParameters().getParametersList().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
         return true;
@@ -342,7 +342,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
         if (parameters.getSourceStorageDomainId().equals(parameters.getTargetStorageDomainId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
 
         return true;
@@ -352,8 +352,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         DiskImage diskImage = getDiskImageByImageId(imageId);
 
         if (diskImage.isShareable()) {
-            addCanDoActionMessageVariable("diskAliases", diskImage.getDiskAlias());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
+            addValidationMessageVariable("diskAliases", diskImage.getDiskAlias());
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
         }
 
         return true;
@@ -365,7 +365,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         if (!Guid.Empty.equals(templateId)) {
             DiskImage templateImage = getDiskImageDao().get(templateId);
             if (!templateImage.getStorageIds().contains(sourceDomainId)) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
 

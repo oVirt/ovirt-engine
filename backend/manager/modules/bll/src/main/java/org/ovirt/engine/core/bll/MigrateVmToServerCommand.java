@@ -31,30 +31,30 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getDestinationVds() == null) {
-            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
 
         if (getDestinationVds().getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP);
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addValidationMessage(EngineMessage.VAR__HOST_STATUS__UP);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
-        if (!super.canDoAction()) {
+        if (!super.validate()) {
             return false;
         }
 
         if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
         }
 
         if (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(getDestinationVdsId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
         }
 
         if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId()) && getParameters().getTargetVdsGroupId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 
         return true;

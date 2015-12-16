@@ -54,7 +54,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
             );
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
@@ -62,36 +62,36 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 null,
                 null, Arrays.asList(getStorageDevice("sda", null)))));
         prepareMocks(cmd, VDSStatus.Up);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsForCluster() {
+    public void validateFailsForCluster() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters()));
         prepareMocks(cmd, VDSStatus.Up);
         mockIsGlusterEnabled(false);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         mockIsGlusterEnabled(true);
         mockCompatibilityVersion(Version.v3_5);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsForVdsNonUp() {
+    public void validateFailsForVdsNonUp() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters()));
         prepareMocks(cmd, VDSStatus.Down);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         doReturn(VDSStatus.Error).when(vds).getStatus();
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         doReturn(VDSStatus.Maintenance).when(vds).getStatus();
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsForNoStorageDevice() {
+    public void validateFailsForNoStorageDevice() {
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
                 "brick1",
                 "/gluster-bricks/brick1",
@@ -99,11 +99,11 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 null,
                 null, Collections.<StorageDevice> emptyList())));
         prepareMocks(cmd, VDSStatus.Up);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsForDeviceAlreadyInUse() {
+    public void validateFailsForDeviceAlreadyInUse() {
         StorageDevice storageDevice = getStorageDevice("sda", null);
         storageDevice.setCanCreateBrick(false);
         cmd = spy(new CreateBrickCommand(new CreateBrickParameters(HOST_ID,
@@ -113,11 +113,11 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 null,
                 null, Arrays.asList(storageDevice))));
         prepareMocks(cmd, VDSStatus.Up);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsForDifferentStorageDevice() {
+    public void validateFailsForDifferentStorageDevice() {
         StorageDevice storageDevice1 = getStorageDevice("sda", null);
         StorageDevice storageDevice2 = getStorageDevice("sdb", null);
         storageDevice2.setDevType("SDA");
@@ -129,7 +129,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 null,
                 null, Arrays.asList(storageDevice1, storageDevice2))));
         prepareMocks(cmd, VDSStatus.Up);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     protected <T extends CreateBrickCommand> void prepareMocks(T command, VDSStatus status) {

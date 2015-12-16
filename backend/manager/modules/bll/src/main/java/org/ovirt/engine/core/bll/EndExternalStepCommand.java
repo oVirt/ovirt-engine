@@ -30,26 +30,26 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = true;
         step = getStepDao().get(getParameters().getId());
         if (step == null) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_STEP);
+            addValidationMessage(EngineMessage.ACTION_TYPE_NO_STEP);
         }
         else if (!step.isExternal()) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
+            addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
         }
         else {
             job = getJobDao().get(step.getJobId());
             if (job == null) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
+                addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
             }
             if (!retValue) {
-                addCanDoActionMessage(EngineMessage.VAR__ACTION__END);
-                addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_STEP);
+                addValidationMessage(EngineMessage.VAR__ACTION__END);
+                addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_STEP);
             }
         }
         return retValue;

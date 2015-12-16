@@ -118,17 +118,17 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     runInternalAction(VdcActionType.MaintenanceVds,
                             tempVar,
                             ExecutionHandler.createInternalJobContext(getContext()));
-            if (!result.getCanDoAction()) {
-                getReturnValue().getCanDoActionMessages().addAll(result.getCanDoActionMessages());
-                getReturnValue().setCanDoAction(false);
+            if (!result.isValid()) {
+                getReturnValue().getValidationMessages().addAll(result.getValidationMessages());
+                getReturnValue().setValid(false);
             }
         }
     }
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__MAINTENANCE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__MAINTENANCE);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result = true;
         Set<Guid> clustersAsSet = new HashSet<>();
         Set<Guid> vdsWithRunningVMs = new HashSet<>();
@@ -175,7 +175,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
                 log.error("ResourceManager::vdsMaintenance could not find VDS '{}'", vdsId);
-                addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
+                addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
                 result = false;
                 continue;
             }
@@ -201,7 +201,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             && (vds.getStatus() != VDSStatus.NonOperational
                             && (vds.getStatus() != VDSStatus.InstallFailed))) {
                         result = false;
-                        addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
+                        addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
                     }
                     else {
                         if (vms.size() > 0) {
@@ -231,10 +231,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             hostsWithVmsWithPluggedDiskSnapshots.add(vds.getName());
                             result = false;
                         } else if (vds.getStatus() == VDSStatus.Maintenance) {
-                            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
+                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
                             result = false;
                         } else if (vds.getSpmStatus() == VdsSpmStatus.Contending) {
-                            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
+                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
                             result = false;
                         } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
                             result = false;
@@ -242,10 +242,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         } else if (vds.getStatus() == VDSStatus.NonResponsive
                                 && vds.getSpmStatus() != VdsSpmStatus.None) {
                             result = false;
-                            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
+                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
                         } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
                                 getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
-                            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
+                            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                             result = false;
                         } else {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
@@ -254,10 +254,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 }
             }
 
-            // If one of the host is non responsive with running VM's, add a CanDoAction message.
+            // If one of the host is non responsive with running VM's, add a Validate message.
             handleNonResponsiveHosts(hostNotRespondingList);
 
-            // If one of the vms is non migratable, add a CanDoAction message.
+            // If one of the vms is non migratable, add a Validate message.
             handleNonMigratableVms(hostsWithNonMigratableVms, nonMigratableVms);
 
             handleHostsWithVmsWithPluggedDiskSnapshots(hostsWithVmsWithPluggedDiskSnapshots);
@@ -304,11 +304,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 // If there are problematic clusters
                 result = problematicClusters.isEmpty();
                 if (!result) {
-                    addCanDoActionMessage(EngineMessage.CANNOT_MAINTENANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS);
+                    addValidationMessage(EngineMessage.CANNOT_MAINTENANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS);
                     String commaDelimitedClusters = StringUtils.join(problematicClusters, ",");
-                    getReturnValue().getCanDoActionMessages().add(String.format("$ClustersList %1$s",
+                    getReturnValue().getValidationMessages().add(String.format("$ClustersList %1$s",
                             commaDelimitedClusters));
-                    getReturnValue().getCanDoActionMessages().add(String.format("$HostsList %1$s",
+                    getReturnValue().getValidationMessages().add(String.format("$HostsList %1$s",
                             StringUtils.join(allHostsWithRunningVms, ",")));
                 }
             }
@@ -344,8 +344,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     }
                 }
                 if (!items.isEmpty()) {
-                    addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS);
-                    getReturnValue().getCanDoActionMessages()
+                    addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS);
+                    getReturnValue().getValidationMessages()
                             .addAll(ReplacementUtils.replaceWith("AFFINITY_GROUPS_VMS", items));
                     return false;
                 }
@@ -371,10 +371,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
      */
     private void handleNonMigratableVms(List<String> hostsWithNonMigratableVms, List<String> nonMigratableVms) {
         if (!nonMigratableVms.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
-            getReturnValue().getCanDoActionMessages().add((String.format("$VmsList %1$s",
+            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
+            getReturnValue().getValidationMessages().add((String.format("$VmsList %1$s",
                     StringUtils.join(nonMigratableVms, " , "))));
-            getReturnValue().getCanDoActionMessages().add((String.format("$HostsList %1$s",
+            getReturnValue().getValidationMessages().add((String.format("$HostsList %1$s",
                     StringUtils.join(hostsWithNonMigratableVms, " , "))));
         }
     }
@@ -408,15 +408,15 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
      */
     private void handleNonResponsiveHosts(List<String> hostNotRespondingList) {
         if (!hostNotRespondingList.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS);
-            getReturnValue().getCanDoActionMessages().add(String.format("$HostNotResponding %1$s",
+            addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS);
+            getReturnValue().getValidationMessages().add(String.format("$HostNotResponding %1$s",
                     StringUtils.join(hostNotRespondingList, ",")));
         }
     }
 
     private void handleHostsWithVmsWithPluggedDiskSnapshots(List<String> hostsWithVmsWithPluggedDiskSnapshots) {
         if (!hostsWithVmsWithPluggedDiskSnapshots.isEmpty()) {
-            getReturnValue().getCanDoActionMessages().add((String.format("$HostsList %1$s",
+            getReturnValue().getValidationMessages().add((String.format("$HostsList %1$s",
                     StringUtils.join(hostsWithVmsWithPluggedDiskSnapshots, ","))));
         }
     }

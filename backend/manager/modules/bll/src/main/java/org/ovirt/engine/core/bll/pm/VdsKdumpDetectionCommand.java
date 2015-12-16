@@ -160,15 +160,15 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
-            addCanDoActionMessage(EngineMessage.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
+            addValidationMessage(EngineMessage.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
             return false;
         }
 
         boolean detectionEnabled = getVds().isPmKdumpDetection();
         if (!detectionEnabled) {
-            addCanDoActionMessage(EngineMessage.KDUMP_DETECTION_NOT_ENABLED_FOR_VDS);
+            addValidationMessage(EngineMessage.KDUMP_DETECTION_NOT_ENABLED_FOR_VDS);
         }
         return detectionEnabled;
     }

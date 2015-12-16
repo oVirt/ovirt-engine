@@ -41,13 +41,13 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getGlusterVolume() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
-        // super class canDoAction expects cluster id (VdsGroupId).
-        if (!super.canDoAction()) {
+        // super class validate expects cluster id (VdsGroupId).
+        if (!super.validate()) {
             return false;
         }
 

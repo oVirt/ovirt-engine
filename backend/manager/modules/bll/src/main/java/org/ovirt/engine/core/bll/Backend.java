@@ -454,8 +454,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // If non-monitored command is invoked with JobId or ActionId as parameters, reject this command on can do action.
         if (!actionType.isActionMonitored() && !isActionExternal(actionType) && (parameters.getJobId() != null || parameters.getStepId() != null)) {
             result = new VdcReturnValueBase();
-            result.getCanDoActionMessages().add(EngineMessage.ACTION_TYPE_NON_MONITORED.toString());
-            result.setCanDoAction(false);
+            result.getValidationMessages().add(EngineMessage.ACTION_TYPE_NON_MONITORED.toString());
+            result.setValid(false);
             result.setSucceeded(false);
         }
         else {
@@ -490,8 +490,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
         returnValue = ExecutionHandler.evaluateCorrelationId(commandBase.getParameters());
         if (returnValue != null) {
-            log.warn("CanDoAction of action '{}' failed. Reasons: {}", commandBase.getActionType(),
-                    StringUtils.join(returnValue.getCanDoActionMessages(), ','));
+            log.warn("Validation of action '{}' failed. Reasons: {}", commandBase.getActionType(),
+                    StringUtils.join(returnValue.getValidationMessages(), ','));
 
         }
         // Set the correlation-id on the command
@@ -552,20 +552,20 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
-        return runMultipleActions(actionType, parameters, isRunOnlyIfAllCanDoPass, false);
+            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
+        return runMultipleActions(actionType, parameters, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass, boolean waitForResult) {
+            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             ArrayList<VdcReturnValueBase> list = new ArrayList<>();
             list.add(returnValue);
             return list;
         } else {
-            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass, waitForResult, null);
+            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllValidationPass, waitForResult, null);
         }
     }
 
@@ -588,12 +588,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal,
-            boolean isRunOnlyIfAllCanDoPass,
+            boolean isRunOnlyIfAllValidationPass,
             boolean isWaitForResult,
             CommandContext commandContext) {
         MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
                 parameters, isInternal, commandContext);
-        runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
+        runner.setIsRunOnlyIfAllValidatePass(isRunOnlyIfAllValidationPass);
         runner.setIsWaitForResult(isWaitForResult);
         return runner.execute();
     }
@@ -657,8 +657,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private VdcReturnValueBase getErrorCommandReturnValue(EngineMessage message) {
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(false);
-        returnValue.getCanDoActionMessages().add(message.toString());
+        returnValue.setValid(false);
+        returnValue.getValidationMessages().add(message.toString());
         return returnValue;
     }
 

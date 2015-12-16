@@ -124,7 +124,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(vmStaticDao).when(cmd).getVmStaticDao();
         when(vmStaticDao.getAllByStoragePoolId(any(Guid.class))).thenReturn(Collections.<VmStatic>emptyList());
         assertTrue(cmd.isRunningVmsWithIsoAttached());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
+        assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(Collections.singletonList(vmStatic)).when(cmd).getVmsWithAttachedISO();
         assertFalse(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
     }
 

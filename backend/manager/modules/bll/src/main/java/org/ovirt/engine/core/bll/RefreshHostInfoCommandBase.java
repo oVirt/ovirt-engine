@@ -16,7 +16,7 @@ public abstract class RefreshHostInfoCommandBase<T extends VdsActionParameters> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // don't check status on internal executions
         return validate(hostExists()) && (isInternalExecution() || validate(hostStatusValid()));
     }

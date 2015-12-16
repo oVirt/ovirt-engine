@@ -59,22 +59,22 @@ public class EndExternalJobCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionOkSucceeds() throws Exception {
+    public void validateOkSucceeds() throws Exception {
         setupMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() throws Exception {
         setupMock();
         parameters.setJobId(nonExistingJobId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() throws Exception {
         setupMock();
         parameters.setJobId(nonExternalJobId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 }

@@ -28,13 +28,13 @@ public abstract class GlusterVolumeSnapshotCommandBase<T extends GlusterVolumeSn
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getSnapshot() == null) {
-            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_DOES_NOT_EXIST,
+            failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_DOES_NOT_EXIST,
                     getParameters().getSnapshotName());
         }
 

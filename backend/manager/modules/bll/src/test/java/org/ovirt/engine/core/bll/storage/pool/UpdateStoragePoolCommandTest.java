@@ -22,7 +22,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -122,33 +122,33 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void happyPath() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
     public void nameExists() {
         newPoolNameIsAlreadyTaken();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
     }
 
     @Test
     public void hasDomains() {
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn
                 (Collections.singletonList(new StorageDomainStatic()));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
     }
 
     @Test
     public void unsupportedVersion() {
         storagePoolWithInvalidVersion();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VersionSupport.getUnsupportedVersionMessage());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, VersionSupport.getUnsupportedVersionMessage());
     }
 
     @Test
     public void lowerVersionNoHostsNoNetwork() {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addHostsToCluster();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
         addNonManagementNetworkToPool();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -201,13 +201,13 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         addNonDefaultClusterToPool();
         addManagementNetworksToPool(2);
         setupNetworkValidator(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
     @Test
     public void versionHigherThanCluster() {
         storagePoolWithVersionHigherThanCluster();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS);
     }
 
     @Test
@@ -229,7 +229,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         // Test upgrade
         when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
         assertFalse(cmd.checkAllClustersLevel());
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue(messages.contains(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
         assertTrue(messages.get(0).contains("firstCluster"));
         assertFalse(messages.get(0).contains("secondCluster"));
@@ -244,7 +244,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
     @Test
@@ -258,7 +258,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, StorageType.UNKNOWN);
         setAttachedDomains(sd);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
     }
 
     @Test
@@ -279,7 +279,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         StorageDomain sd = createStorageDomain(StorageFormatType.V3, storageType);
         setAttachedDomains(sd);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
     }
 
     @Test
@@ -292,7 +292,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         StorageDomain sdNFS = createStorageDomain(StorageFormatType.V3, StorageType.NFS);
         setAttachedDomains(sdISCI, sdNFS);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
     }
 
     private StorageDomain createStorageDomain(StorageFormatType formatType, StorageType storageType) {

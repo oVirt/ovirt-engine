@@ -57,12 +57,12 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VmValidator vmValidator = new VmValidator(getVm());
         SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         boolean retValue =
@@ -96,11 +96,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                         .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getVm().getStoragePoolId())) == null) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
 
         if (retValue && getVm().getDiskMap().size() == 0) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
             retValue = false;
         }
 
@@ -127,7 +127,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                             .getStorageIds()
                             .contains(getParameters().getStorageDomainId())) {
                         retValue = false;
-                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                         break;
                     }
                 }

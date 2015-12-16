@@ -24,11 +24,11 @@ public class UpdateStorageServerConnectionExtensionCommand <T extends StorageSer
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         StorageServerConnectionExtension conn = getParameters().getStorageServerConnectionExtension();
         return validate(getConnectionExtensionValidator().isConnectionExtensionExists(conn.getId())) &&
                 validate(getConnectionExtensionValidator().isConnectionDoesNotExistForHostAndTarget(conn));

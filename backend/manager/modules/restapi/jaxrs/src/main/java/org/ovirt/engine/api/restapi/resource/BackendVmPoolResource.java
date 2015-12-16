@@ -101,7 +101,7 @@ public class BackendVmPoolResource
 
             int size = 0;
             if (incoming.isSetSize()) {
-                // in case the value is negative, the backend command will fail on canDoAction
+                // in case the value is negative, the backend command will fail on validate
                 size = incoming.getSize() - currentVmCount;
             }
 

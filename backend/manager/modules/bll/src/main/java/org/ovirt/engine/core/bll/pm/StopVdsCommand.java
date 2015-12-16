@@ -50,16 +50,16 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = true;
         if (getParameters().getParentCommand() == VdcActionType.Unknown) {
-            retValue = super.canDoAction();
+            retValue = super.validate();
             if (getVds() != null && getVds().getStatus() != VDSStatus.Maintenance) {
-                addCanDoActionMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_STOP);
+                addValidationMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_STOP);
                 retValue = false;
             }
         }
-        getReturnValue().setCanDoAction(retValue);
+        getReturnValue().setValid(retValue);
         return retValue;
     }
 
@@ -82,14 +82,14 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VAR__ACTION__STOP);
+        addValidationMessage(VAR__ACTION__STOP);
     }
 
     @Override
     protected void handleError() {
-        addCanDoActionMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
+        addValidationMessage(EngineMessage.VDS_FENCE_OPERATION_FAILED);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__STOP);
         log.error("Failed to run StopVdsCommand on vds '{}'", getVdsName());
     }
 

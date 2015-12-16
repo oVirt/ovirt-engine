@@ -43,27 +43,27 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
 
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getActionGroups().isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_LIST_CANNOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_LIST_CANNOT_BE_EMPTY);
             return false;
         }
         if (getRoleDao().getByName(getRoleName()) != null) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+            addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
         RoleType roleType = getRole().getType();
         if (roleType == null) {
-            addCanDoActionMessage(EngineMessage.ROLE_TYPE_CANNOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ROLE_TYPE_CANNOT_BE_EMPTY);
             return false;
         }
         if (roleType != RoleType.ADMIN) {
             List<ActionGroup> actionGroups = getParameters().getActionGroups();
             for (ActionGroup group : actionGroups) {
                 if (group.getRoleType() == RoleType.ADMIN) {
-                    addCanDoActionMessage(EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE);
+                    addValidationMessage(EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE);
                     return false;
                 }
             }
@@ -87,9 +87,9 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         VdcReturnValueBase attachAction = runInternalAction(
                 VdcActionType.AttachActionGroupsToRole,
                 new ActionGroupsToRoleParameter(getRole().getId(), getParameters().getActionGroups()));
-        if (!attachAction.getCanDoAction() || !attachAction.getSucceeded()) {
+        if (!attachAction.isValid() || !attachAction.getSucceeded()) {
             List<String> failedMsgs = getReturnValue().getExecuteFailedMessages();
-            for (String msg : attachAction.getCanDoActionMessages()) {
+            for (String msg : attachAction.getValidationMessages()) {
                 failedMsgs.add(msg);
             }
             setSucceeded(false);

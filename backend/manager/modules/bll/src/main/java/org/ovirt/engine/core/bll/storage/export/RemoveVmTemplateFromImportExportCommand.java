@@ -50,7 +50,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retVal = validate(templateExists());
         if (retVal) {
             List<DiskImage> images = templatesFromExport.get(templatesFromExport.keySet().stream().filter(
@@ -60,7 +60,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                 getParameters().setImages(images);
             } else {
                 retVal = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             }
         }
 
@@ -69,7 +69,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             retVal = validate(validator.isDomainExistAndActive());
         }
         if (retVal && getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }
         if (retVal) {
@@ -79,7 +79,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             if (tmpl != null) {
                 retVal = (tmpl.getStatus() != VmTemplateStatus.Locked);
                 if (!retVal) {
-                    getReturnValue().getCanDoActionMessages()
+                    getReturnValue().getValidationMessages()
                             .add(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
                 }
             }
@@ -89,8 +89,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override

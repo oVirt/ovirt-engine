@@ -25,7 +25,7 @@ class AttachNetworkClusterPermissionsChecker {
             }
         }
 
-        command.getReturnValue().getCanDoActionMessages().addAll(messages);
+        command.getReturnValue().getValidationMessages().addAll(messages);
         return false;
     }
 

@@ -82,7 +82,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         loadStorageDomain();
         if (!getParameters().isSkipDomainChecks()) {
             StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);

@@ -24,14 +24,14 @@ public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalP
     private SchedulingManager schedulingManager;
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if(!schedulingManager.getPolicyUnitsMap().containsKey(getPolicyUnitId())){
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
         }
         List<String> clusterPoliciesNames =
                 schedulingManager.getClusterPoliciesNamesByPolicyUnitId(getPolicyUnitId());
         if (clusterPoliciesNames != null && clusterPoliciesNames.size() > 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY,
                     String.format("$cpNames %1$s", StringUtils.join(clusterPoliciesNames, ',')));
         }
         return true;
@@ -45,8 +45,8 @@ public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalP
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__POLICY_UNIT);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__POLICY_UNIT);
     }
 
     @Override

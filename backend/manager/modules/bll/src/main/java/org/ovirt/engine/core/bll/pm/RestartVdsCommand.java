@@ -71,20 +71,20 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         FenceValidator fenceValidator = new FenceValidator();
-        List<String> messages = getReturnValue().getCanDoActionMessages();
-        boolean canDo =
+        List<String> messages = getReturnValue().getValidationMessages();
+        boolean valid =
                 fenceValidator.isHostExists(getVds(), messages)
                         && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getVdsGroup(), messages)
                         && fenceValidator.isStartupTimeoutPassed(messages)
                         && isQuietTimeFromLastActionPassed()
                         && fenceValidator.isProxyHostAvailable(getVds(), messages);
-        if (!canDo) {
+        if (!valid) {
             handleError();
         }
-        getReturnValue().setSucceeded(canDo);
-        return canDo;
+        getReturnValue().setSucceeded(valid);
+        return valid;
     }
 
     protected boolean isQuietTimeFromLastActionPassed() {
@@ -94,8 +94,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
                         .getAuditLogDao()
                         .getTimeToWaitForNextPmOp(getVds().getName(), AuditLogType.USER_VDS_RESTART.name());
         if (secondsLeftToNextPmOp > 0) {
-            addCanDoActionMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
-            addCanDoActionMessageVariable("seconds", secondsLeftToNextPmOp);
+            addValidationMessage(EngineMessage.VDS_FENCE_DISABLED_AT_QUIET_TIME);
+            addValidationMessageVariable("seconds", secondsLeftToNextPmOp);
             return false;
         } else {
             return true;
@@ -175,13 +175,13 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESTART);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESTART);
     }
 
     protected void handleError() {
-        addCanDoActionMessage(VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(VAR__TYPE__HOST);
-        addCanDoActionMessage(VAR__ACTION__RESTART);
+        addValidationMessage(VDS_FENCE_OPERATION_FAILED);
+        addValidationMessage(VAR__TYPE__HOST);
+        addValidationMessage(VAR__ACTION__RESTART);
         log.error("Failed to run RestartVdsCommand on vds '{}'", getVdsName());
     }
 

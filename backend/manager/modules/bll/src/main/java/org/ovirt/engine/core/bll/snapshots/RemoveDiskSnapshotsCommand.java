@@ -82,7 +82,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         super.init(parameters);
 
         // Images must be specified in parameters and belong to a single Disk;
-        // Otherwise, we'll fail on canDoAction.
+        // Otherwise, we'll fail on validate.
         DiskImage representativeImage = getRepresentativeImage();
         if (representativeImage == null) {
             return;
@@ -116,7 +116,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             images = new ArrayList<>();
             for (Guid imageId : getParameters().getImageIds()) {
                 if (imageId == null) {
-                    // Disks existence is validated in canDoAction
+                    // Disks existence is validated in validate
                     continue;
                 }
 
@@ -151,9 +151,9 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         DiskSnapshotsValidator diskSnapshotsValidator = createDiskSnapshotsValidator(getImages());
@@ -208,8 +208,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__DISK__SNAPSHOT);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK__SNAPSHOT);
     }
 
     @Override
@@ -454,7 +454,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected boolean canRunActionOnNonManagedVm() {
         ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
         if (!nonManagedVmValidationResult.isValid()) {
-            return failCanDoAction(nonManagedVmValidationResult.getMessage());
+            return failValidation(nonManagedVmValidationResult.getMessage());
         }
         return true;
     }

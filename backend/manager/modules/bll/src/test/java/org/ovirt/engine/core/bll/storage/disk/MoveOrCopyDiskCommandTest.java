@@ -15,7 +15,7 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -72,23 +72,23 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command;
 
     @Test
-    public void canDoActionImageNotFound() throws Exception {
+    public void validateImageNotFound() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         when(diskImageDao.get(any(Guid.class))).thenReturn(null);
         when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(null);
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
     @Test
-    public void canDoActionWrongDiskImageTypeTemplate() throws Exception {
+    public void validateWrongDiskImageTypeTemplate() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initTemplateDiskImage();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK.toString()));
     }
 
@@ -99,9 +99,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(true);
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS.toString()));
     }
 
@@ -112,7 +112,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         initVmDiskImage(true);
 
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
@@ -122,24 +122,24 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(false);
 
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
-    public void canDoActionSameSourceAndDest() throws Exception {
+    public void validateSameSourceAndDest() throws Exception {
         destStorageId = srcStorageId;
         initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.toString()));
     }
 
     @Test
-    public void canDoActionVmIsNotDown() throws Exception {
+    public void validateVmIsNotDown() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmDiskImage(false);
@@ -148,59 +148,59 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
 
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString()));
     }
 
     @Test
-    public void canDoActionDiskIsLocked() throws Exception {
+    public void validateDiskIsLocked() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(vmDeviceDao).when(command).getVmDeviceDao();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
     }
 
     @Test
-    public void canDoActionDiskIsOvfStore() throws Exception {
+    public void validateDiskIsOvfStore() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initVmDiskImage(false);
         command.getImage().setContentType(DiskContentType.OVF_STORE);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
     }
 
     @Test
-    public void canDoActionTemplateImageIsLocked() throws Exception {
+    public void validateTemplateImageIsLocked() throws Exception {
         initializeCommand(ImageOperation.Copy, new DiskImage());
         initTemplateDiskImage();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(new VmTemplate()).when(command).getTemplateForImage();
 
         command.defineVmTemplate();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(
                 EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
     }
 
     @Test
-    public void canDoActionNotEnoughSpace() throws Exception {
+    public void validateNotEnoughSpace() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initVmForSpace();
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
-    public void canDoActionEnoughSpace() throws Exception {
+    public void validateEnoughSpace() throws Exception {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
@@ -208,7 +208,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -220,11 +220,11 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         vmDevice.setSnapshotId(Guid.newGuid());
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoActionVmInPreview() {
+    public void validateVmInPreview() {
         initializeCommand(ImageOperation.Move, new DiskImage());
         initSnapshotValidator();
         initVmForSpace();
@@ -232,42 +232,42 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     @Test
-    public void canDoActionFailureOnMovingLunDisk() {
+    public void validateFailureOnMovingLunDisk() {
         initializeCommand(ImageOperation.Move, new LunDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void canDoActionFailureOnCopyingLunDisk() {
+    public void validateFailureOnCopyingLunDisk() {
         initializeCommand(ImageOperation.Copy, new LunDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void canDoActionFailureOnMovingVmLunDisk() {
+    public void validateFailureOnMovingVmLunDisk() {
         initializeCommand(ImageOperation.Move, new LunDisk());
         vmDevice.setSnapshotId(Guid.newGuid());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void canDoActionFailureOnMovingCinderDisk() {
+    public void validateFailureOnMovingCinderDisk() {
         initializeCommand(ImageOperation.Move, new CinderDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void canDoActionFailureOnCopyingCinderDisk() {
+    public void validateFailureOnCopyingCinderDisk() {
         initializeCommand(ImageOperation.Copy, new CinderDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 

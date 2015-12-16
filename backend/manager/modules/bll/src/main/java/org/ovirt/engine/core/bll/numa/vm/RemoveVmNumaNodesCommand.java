@@ -52,9 +52,9 @@ public class RemoveVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         return true;
     }

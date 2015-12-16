@@ -43,18 +43,18 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getGlusterVolume().getVolumeType().isDispersedType()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();

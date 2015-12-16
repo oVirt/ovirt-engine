@@ -24,8 +24,8 @@ public class RemoveVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
     }
 
     @Override
-    protected boolean canDoAction() {
-        return super.canDoAction() && validate(getVfsConfigValidator().labelInVfsConfig(getLabel()));
+    protected boolean validate() {
+        return super.validate() && validate(getVfsConfigValidator().labelInVfsConfig(getLabel()));
     }
 
     @Override
@@ -37,6 +37,6 @@ public class RemoveVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

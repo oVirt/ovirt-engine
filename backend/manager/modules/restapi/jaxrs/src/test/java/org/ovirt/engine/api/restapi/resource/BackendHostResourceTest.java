@@ -239,13 +239,13 @@ public class BackendHostResourceTest
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { ROOT_PASSWORD },
-                                           canDo,
+                                           valid,
                                            success));
 
         try {
@@ -655,14 +655,14 @@ public class BackendHostResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.RemoveVds,
                 RemoveVdsParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
-                canDo,
+                valid,
                 success
             )
         );

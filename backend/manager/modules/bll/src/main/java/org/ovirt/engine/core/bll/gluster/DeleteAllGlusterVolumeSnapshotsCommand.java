@@ -33,7 +33,7 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
         super.setActionMessageParameters();
     }
 
@@ -99,19 +99,19 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         for (GlusterGeoRepSession session : georepSessions) {
             if (session.getSlaveVolumeId() == null || session.getSlaveNodeUuid() == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 
         if (snapshots == null || snapshots.isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST,
                     getGlusterVolumeName());
         }
 

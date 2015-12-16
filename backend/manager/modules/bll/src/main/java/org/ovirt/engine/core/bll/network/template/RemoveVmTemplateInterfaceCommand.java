@@ -27,7 +27,7 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

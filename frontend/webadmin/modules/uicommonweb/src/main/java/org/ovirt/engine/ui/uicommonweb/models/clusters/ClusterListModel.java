@@ -940,14 +940,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.stopProgress();
-                        boolean isAllCanDoPassed = true;
+                        boolean isAllValidatePassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
-                            isAllCanDoPassed = isAllCanDoPassed && returnValueBase.getCanDoAction();
-                            if (!isAllCanDoPassed) {
+                            isAllValidatePassed = isAllValidatePassed && returnValueBase.isValid();
+                            if (!isAllValidatePassed) {
                                 break;
                             }
                         }
-                        if (isAllCanDoPassed) {
+                        if (isAllValidatePassed) {
                             cancel();
                         }
                     }

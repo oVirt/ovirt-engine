@@ -51,7 +51,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -59,7 +59,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(VM_ID) },
-                canDo,
+                valid,
                 success
             )
         );

@@ -147,7 +147,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testRemoveCanDoFail() throws Exception {
+    public void testRemoveValidateFail() throws Exception {
         setUpGetEntityExpectations();
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -178,7 +178,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         }
     }
 
-    protected void update(boolean canDo, boolean executeCommandResult, int getConnectionExecTimes) throws Exception {
+    protected void update(boolean valid, boolean executeCommandResult, int getConnectionExecTimes) throws Exception {
         // the below method is called several times because
         // the mocked behavior must be recorded twice
         // since the getConnectionById query is executed
@@ -187,13 +187,13 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         for (int i = 0; i < getConnectionExecTimes; i++) {
             setUpGetEntityExpectations();
         }
-        // not passing parameters to update action is OK because the canDo and execute results
+        // not passing parameters to update action is OK because validate and execute results
         // are mocked anyway, and the real command is not called, so parameters are meaningless.
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 executeCommandResult));
         verifyModel(resource.update(getModel(3)), 3);
     }

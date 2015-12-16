@@ -49,16 +49,16 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_SET_MEMORY);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-        addCanDoActionMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
-        addCanDoActionMessageVariable("architecture", getVm().getClusterArch());
+        addValidationMessage(EngineMessage.VAR__ACTION__HOT_SET_MEMORY);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
+        addValidationMessageVariable("architecture", getVm().getClusterArch());
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (getVm().getStatus() != VMStatus.Up) {
@@ -67,21 +67,21 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugMemory(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-                return failCanDoAction(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
+                return failValidation(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
             }
             // check max slots
             List<VmDevice> memDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.MEMORY);
             if (memDevices.size() == Config.<Integer>getValue(ConfigValues.MaxMemorySlots)) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS,
                         "$maxMemSlots " + Config.getValue(ConfigValues.MaxMemorySlots).toString());
             }
             // plugged memory should be multiply of 256mb
             if (memoryToConsume > 0 && memoryToConsume % Config.<Integer>getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb) != 0) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION,
                         "$multiplicationSize " + Config.getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb).toString());
             }
         } else if (!FeatureSupported.hotUnplugMemory(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-            return failCanDoAction(EngineMessage.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED);
         }
 
         return true;

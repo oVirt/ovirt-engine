@@ -44,8 +44,8 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     private List<GlusterServerHook> getMissingServerHooks() {
@@ -62,13 +62,13 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getMissingServerHooks().isEmpty()) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS);
             return false;
         }
 
@@ -77,8 +77,8 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
                 String vdsName = vds != null ? vds.getName() : GlusterConstants.NO_SERVER;
                 setVdsName(vdsName);
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
-                addCanDoActionMessage(String.format("$%1$s %2$s", "VdsName", vdsName));
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
+                addValidationMessage(String.format("$%1$s %2$s", "VdsName", vdsName));
                 return false;
             }
         }

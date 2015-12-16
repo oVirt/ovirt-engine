@@ -14,7 +14,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -114,15 +114,15 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionWrongVersion() {
+    public void validateWrongVersion() {
         sp.setCompatibilityVersion(Version.v3_0);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_REFRESH_LUNS_UNSUPPORTED_ACTION);
         sp.setCompatibilityVersion(Version.v3_6);
     }
 
     @Test
-    public void canDoActionWrongStorage() {
+    public void validateWrongStorage() {
         StorageDomainStatic nfsStatic = createStorageDomain();
         nfsStatic.setStorageType(StorageType.NFS);
         StorageDomain sd = new StorageDomain();
@@ -130,42 +130,42 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStoragePoolId(spId);
         doReturn(sd).when(cmd).getStorageDomain();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
-    public void canDoActionWrongStatus() {
+    public void validateWrongStatus() {
         sd.setStatus(StorageDomainStatus.Maintenance);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
-    public void canDoActionStatusLocked() {
+    public void validateStatusLocked() {
         sd.setStatus(StorageDomainStatus.Locked);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
     }
 
     @Test
-    public void canDoActionNoDomain() {
+    public void validateNoDomain() {
         doReturn(null).when(cmd).getStorageDomain();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
         assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
         assertTrue("redundant messages " + messages, messages.isEmpty());
     }
 
     @Test
-    public void canDoActionLunsNotPartOfStorageDomain() {
+    public void validateLunsNotPartOfStorageDomain() {
         List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("111");
@@ -177,12 +177,12 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         lunsFromDb.add(lun2);
         when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(lunsFromDb);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_LUNS_NOT_PART_OF_STORAGE_DOMAIN);
     }
 
     @Test
-    public void canDoAction() {
+    public void validate() {
         List lunsFromDb = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUNId("1");
@@ -193,6 +193,6 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         lunsFromDb.add(lun1);
         lunsFromDb.add(lun2);
         when(lunsDao.getAllForVolumeGroup(STORAGE)).thenReturn(lunsFromDb);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 }

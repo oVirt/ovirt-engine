@@ -29,7 +29,7 @@ public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

@@ -98,7 +98,7 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }

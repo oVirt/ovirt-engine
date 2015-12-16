@@ -223,14 +223,14 @@ public class BackendStorageDomainTemplateResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpQueryExpectations("", null, StorageDomainType.ImportExport, false);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
                 VmTemplateImportExportParameters.class,
                 new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

@@ -275,7 +275,7 @@ public class CommandExecutor {
                                final VdcReturnValueBase result) {
         CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
         cmdEntity.setReturnValue(result);
-        if (!result.getCanDoAction()) {
+        if (!result.isValid()) {
             cmdEntity.setCommandStatus(CommandStatus.FAILED);
         }
         coco.persistCommand(cmdEntity);

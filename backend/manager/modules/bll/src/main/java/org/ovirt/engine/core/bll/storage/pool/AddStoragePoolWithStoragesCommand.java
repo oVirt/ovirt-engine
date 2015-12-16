@@ -290,8 +290,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
     }
 
     private boolean checkStorageDomainsInPool() {
@@ -309,7 +309,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         if (storageFormat == null) {
                             storageFormat = domain.getStorageFormat();
                         } else if (storageFormat != domain.getStorageFormat()) {
-                            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT);
+                            addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT);
                             return false;
                         }
                     }
@@ -318,7 +318,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 }
             }
             if (!hasData) {
-                addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS);
+                addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS);
                 return false;
             }
         }
@@ -332,8 +332,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && checkStoragePool()
+    protected boolean validate() {
+        boolean returnValue = super.validate() && checkStoragePool()
                 && checkStoragePoolStatus(StoragePoolStatus.Uninitialized) && initializeVds()
                 && checkStorageDomainsInPool() && isDomainAttachedToDifferentStoragePool();
         return returnValue;
@@ -350,7 +350,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = getStorageDomainDao().get(storageDomainId);
                 if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
-                    return failCanDoAction(EngineMessage.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+                    return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
                 }
             }
         }

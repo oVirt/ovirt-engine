@@ -29,7 +29,7 @@ public class TerminateSessionsForTokenCommand<T extends TerminateSessionsForToke
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

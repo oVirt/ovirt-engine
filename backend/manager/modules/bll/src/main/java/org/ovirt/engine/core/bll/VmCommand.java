@@ -465,7 +465,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return failCanDoAction(EngineMessage.HOT_PLUG_IS_NOT_SUPPORTED);
+        return failValidation(EngineMessage.HOT_PLUG_IS_NOT_SUPPORTED);
     }
 
     /**
@@ -477,7 +477,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return true;
         }
 
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
     }
 
     /**
@@ -487,16 +487,16 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected boolean isDiskSupportedForPlugUnPlug(Disk disk) {
         if (disk.getDiskInterface() == DiskInterface.IDE) {
-            addCanDoActionMessageVariable("diskAlias", disk.getDiskAlias());
-            addCanDoActionMessageVariable("vmName", getVm().getName());
-            return failCanDoAction(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
+            addValidationMessageVariable("diskAlias", disk.getDiskAlias());
+            addValidationMessageVariable("vmName", getVm().getName());
+            return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
         }
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
                 getVm().getVdsGroupCompatibilityVersion());
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
                 || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
 
         return true;
@@ -505,15 +505,15 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean checkPayload(VmPayload payload, String isoPath) {
         boolean returnValue = true;
         if (payload.getDeviceType() != VmDeviceType.CDROM && payload.getDeviceType() != VmDeviceType.FLOPPY) {
-            addCanDoActionMessage(EngineMessage.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
+            addValidationMessage(EngineMessage.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
             returnValue = false;
         } else {
             for (String content : payload.getFiles().values()) {
                 // Check each file individually, no constraint on total size
                 if (!VmPayload.isPayloadSizeLegal(content)) {
                     Integer lengthInKb = 2 * Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
-                    addCanDoActionMessage(EngineMessage.VMPAYLOAD_SIZE_EXCEEDED);
-                    addCanDoActionMessageVariable("size", lengthInKb.toString());
+                    addValidationMessage(EngineMessage.VMPAYLOAD_SIZE_EXCEEDED);
+                    addValidationMessageVariable("size", lengthInKb.toString());
                     returnValue = false;
                     break;
                 }
@@ -525,7 +525,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean canRunActionOnNonManagedVm() {
         ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
         if (!nonManagedVmValidationResult.isValid()) {
-            return failCanDoAction(nonManagedVmValidationResult.getMessage());
+            return failValidation(nonManagedVmValidationResult.getMessage());
         }
         return true;
     }
@@ -542,7 +542,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     /**
-     * check for special conditions that will cause the command to skip its canDoAction and execution
+     * check for special conditions that will cause the command to skip its validate and execution
      * this method should be overridden with specific logic for each command
      * using the result should be done with shouldSkipCommandExecutionCached method that cache the result in the command
      * @return true if the command should not execute any logic and should not return errors to the user
@@ -555,9 +555,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 
-    /** Helper method for failing canDoAction on invalid VM status */
+    /** Helper method for failing validate on invalid VM status */
     protected boolean failVmStatusIllegal() {
-        return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
+        return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
     }
 
     protected void unlockSnapshot(Guid snapshotId) {

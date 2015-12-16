@@ -105,7 +105,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
      * </ul>
      */
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         T params = getParameters();
         List<VdsNetworkInterface> interfaces =
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
@@ -113,14 +113,14 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check that interface exists
         VdsNetworkInterface iface = Entities.entitiesByName(interfaces).get(params.getInterface().getName());
         if (iface == null) {
-            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
 
         // check if the parameters interface is part of a bond
         if (StringUtils.isNotEmpty(params.getInterface().getBondName())) {
-            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND);
-            addCanDoActionMessage(ReplacementUtils.createSetVariableString("NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY",
+            addValidationMessage(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND);
+            addValidationMessage(ReplacementUtils.createSetVariableString("NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY",
                 params.getInterface().getName()));
             return false;
         }
@@ -130,38 +130,38 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check that the network exists in current cluster
         if (!networksByName.containsKey(params.getNetwork().getName())) {
-            addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
+            addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
             return false;
         } else {
             logicalNetwork = networksByName.get(params.getNetwork().getName());
         }
 
         if (logicalNetwork.isExternal()) {
-            return failCanDoAction(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
+            return failValidation(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         if (!networkConfigurationSupported(iface, networksByName)) {
-            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
+            addValidationMessage(EngineMessage.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
             return false;
         }
 
         if (!managementNetworkUtil.isManagementNetwork(logicalNetwork.getName(), getVdsGroupId())
                 && StringUtils.isNotEmpty(params.getGateway())) {
-            addCanDoActionMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+            addValidationMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }
 
         // check that the required not attached to other interface
         iface = NetworkUtils.hostInterfacesByNetworkName(interfaces).get(logicalNetwork.getName());
         if (iface != null) {
-            addCanDoActionMessage(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
+            addValidationMessage(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
         // check address exists in static ip
         if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             if (StringUtils.isEmpty(params.getAddress())) {
-                addCanDoActionMessage(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
+                addValidationMessage(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }
@@ -174,7 +174,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                             .getInterface()));
             ArrayList<VdsNetworkInterface> vlanIfaces = ret.getReturnValue();
             if (vlanIfaces.size() > 0) {
-                addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_CONNECT_TO_VLAN);
+                addValidationMessage(EngineMessage.NETWORK_INTERFACE_CONNECT_TO_VLAN);
                 return false;
             }
         }

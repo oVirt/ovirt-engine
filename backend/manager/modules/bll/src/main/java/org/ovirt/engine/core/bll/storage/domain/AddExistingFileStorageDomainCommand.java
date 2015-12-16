@@ -52,14 +52,14 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
 
     protected boolean checkExistingStorageDomain() {
         if (getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         Pair<StorageDomainStatic, Guid> domainFromIrs = executeHSMGetStorageDomainInfo(
                 new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId()));
 
         if (domainFromIrs == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         return concreteCheckExistingStorageDomain(domainFromIrs);
@@ -83,7 +83,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                     .getStorage()));
         }
         if (!returnValue) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
         }
         return returnValue;
     }

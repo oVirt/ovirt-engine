@@ -24,37 +24,37 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         List<VmPool> list = null;
         boolean returnValue = true;
         if (getVdsGroup() == null) {
-            addCanDoActionMessage(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
         } else {
             if (getVdsGroup().getId().equals(Config.getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
-                addCanDoActionMessage(EngineMessage.VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP);
+                addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP);
                 returnValue = false;
             }
 
             if (DbFacade.getInstance().getVdsStaticDao()
                     .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
-                addCanDoActionMessage(EngineMessage.VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED);
+                addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED);
                 returnValue = false;
             }
             if (DbFacade.getInstance().getVmStaticDao()
                     .getAllByVdsGroup(getVdsGroup().getId()).size() != 0) {
-                addCanDoActionMessage(EngineMessage.VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED);
+                addValidationMessage(EngineMessage.VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED);
                 returnValue = false;
             }
             if (DbFacade.getInstance().getVmTemplateDao()
                     .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
-                addCanDoActionMessage(EngineMessage.VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED);
+                addValidationMessage(EngineMessage.VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED);
                 returnValue = false;
             }
             if ((list = DbFacade.getInstance().getVmPoolDao().getAll()).size() > 0) {
                 for (VmPool pool : list) {
                     if (pool.getVdsGroupId().equals(getVdsGroup().getId())) {
-                        addCanDoActionMessage(EngineMessage.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);
+                        addValidationMessage(EngineMessage.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);
                         returnValue = false;
                         break;
                     }
@@ -67,8 +67,8 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override

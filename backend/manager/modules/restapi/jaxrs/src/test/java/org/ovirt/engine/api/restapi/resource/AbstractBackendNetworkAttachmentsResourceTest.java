@@ -233,13 +233,13 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     protected void setUpEntityExpectations(NetworkAttachment entity) {
     }
 
-    private void doTestBadAddNetworkAttachment(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetworkAttachment(boolean valid, boolean success, String detail) throws Exception {
         setUpVerifyHostExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
 
         try {

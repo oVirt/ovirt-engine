@@ -67,14 +67,14 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
-                canDo,
+                valid,
                 success));
         try {
             resource.remove();

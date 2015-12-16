@@ -161,7 +161,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         String ifaceGateway = null;
         interfaces = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
@@ -170,7 +170,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             VdsNetworkInterface iface =
                     interfaces.stream().filter(x -> x.getName().equals(i.getName())).findFirst().orElse(null);
             if (iface == null) {
-                addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
+                addValidationMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
             }
             ifaceGateway = iface.getGateway();
@@ -178,7 +178,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that the old network name is not null
         if (StringUtils.isEmpty(getParameters().getOldNetworkName())) {
-            addCanDoActionMessage(EngineMessage.NETWORK_OLD_NETWORK_NOT_SPECIFIED);
+            addValidationMessage(EngineMessage.NETWORK_OLD_NETWORK_NOT_SPECIFIED);
             return false;
         }
 
@@ -188,7 +188,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             boolean ifaceFound = interfaces.stream()
                     .anyMatch(i -> i.getNetworkName() != null && i.getNetworkName().equals(getParameters().getNetwork().getName()));
             if (ifaceFound) {
-                addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
+                addValidationMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -197,23 +197,23 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         boolean ifacenetNotFound = interfaces.stream()
                 .noneMatch(i -> i.getNetworkName() != null && i.getNetworkName().equals(getParameters().getOldNetworkName()));
         if (ifacenetNotFound) {
-            addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
 
         final Guid clusterId = getVdsGroupId();
         if (!managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getName(), clusterId)) {
             if (managementNetworkUtil.isManagementNetwork(getParameters().getOldNetworkName(), clusterId)) {
-                getReturnValue().getCanDoActionMessages()
+                getReturnValue().getValidationMessages()
                         .add(EngineMessage.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
-                getReturnValue().getCanDoActionMessages()
+                getReturnValue().getValidationMessages()
                         .add(String.format("$NetworkName %1$s", getParameters().getOldNetworkName()));
                 return false;
             }
 
             if (StringUtils.isNotEmpty(getParameters().getGateway())) {
                 if (!getParameters().getGateway().equals(ifaceGateway)) {
-                    addCanDoActionMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+                    addValidationMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
                     return false;
                 }
                 // if the gateway didn't change we don't want the vdsm to set it.
@@ -224,7 +224,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
             // check connectivity
             if (getParameters().getCheckConnectivity()) {
-                addCanDoActionMessage(EngineMessage.NETWORK_CHECK_CONNECTIVITY);
+                addValidationMessage(EngineMessage.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }
         }
@@ -232,14 +232,14 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         // check address exists in static ip
         if (getParameters().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             if (StringUtils.isEmpty(getParameters().getAddress())) {
-                addCanDoActionMessage(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
+                addValidationMessage(EngineMessage.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }
 
         Network network = getNetworkDao().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
         if (network != null && network.isExternal()) {
-            return failCanDoAction(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
+            return failValidation(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         return true;

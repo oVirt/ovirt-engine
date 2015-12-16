@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -57,49 +57,49 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     }
 
     @Test
-    public void testCanDoActionSuccess() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void testValidateSuccess() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionLunDisk() {
+    public void testValidateLunDisk() {
         when(getDiskDao().get(getDiskImageGroupId())).thenReturn(new LunDisk());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
-    public void testCanDoActionImageDoesNotExist() {
+    public void testValidateImageDoesNotExist() {
         when(getDiskDao().get(getDiskImageGroupId())).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionDomainInMaintenance() {
+    public void testValidateDomainInMaintenance() {
         getDiskStorageDomain().setStatus(StorageDomainStatus.Maintenance);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 
     @Test
-    public void testCanDoActionImageHasParent() {
+    public void testValidateImageHasParent() {
         getDiskImage().setParentId(Guid.newGuid());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
     @Test
-    public void testCanDoActionVmRunning() {
+    public void testValidateVmRunning() {
         vm.setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
     @Test
-    public void testCanDoActionImageLocked() {
+    public void testValidateImageLocked() {
         getDiskImage().setImageStatus(ImageStatus.LOCKED);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 }

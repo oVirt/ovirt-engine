@@ -13,7 +13,7 @@ public interface QuotaVdsDependent {
     /**
      * Get a list of the vds consumption parameters.
      * Override this method in order to set the vds consumption parameters for the quota check.
-     * This method is called by CommandBase during the canDoAction check in order to make sure the
+     * This method is called by CommandBase during the validate check in order to make sure the
      * command has sufficient quota resources in order to run.
      *
      * return null if the command does not consume any vds resources.

@@ -87,8 +87,8 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SCAN_ALIGNMENT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__SCAN_ALIGNMENT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -101,14 +101,14 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getDisk() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
         if (getVm() == null) {
-            addCanDoActionMessageVariable("diskAliases", getDiskAlias());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+            addValidationMessageVariable("diskAliases", getDiskAlias());
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
 
         if (getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -120,17 +120,17 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
             StorageDomainStatic sds = getStorageDomainStaticDao().get(((DiskImage) getDisk()).getStorageIds().get(0));
             if (!sds.getStorageType().isBlockDomain()) {
-                addCanDoActionMessageVariable("diskAlias", getDiskAlias());
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
+                addValidationMessageVariable("diskAlias", getDiskAlias());
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
             }
         }
 
         if (isImageExclusiveLockNeeded() && getVm().isRunningOrPaused()) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
+            return failValidation(EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
         }
 
         if (getVdsIdInGroup() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
         StoragePool sp = getStoragePoolDao().get(getStoragePoolId());

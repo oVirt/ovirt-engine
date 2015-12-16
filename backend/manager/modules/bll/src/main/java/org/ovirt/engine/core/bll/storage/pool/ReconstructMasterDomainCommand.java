@@ -97,7 +97,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // This check is done here to handle a race in which the returned domain from
         // getStorageDomains() is with LOCKED status. Having this domain with LOCKED status might
         // cause to the command to apply the compensation data and leave the domain as LOCKED.
@@ -114,8 +114,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RECONSTRUCT_MASTER);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+        addValidationMessage(EngineMessage.VAR__ACTION__RECONSTRUCT_MASTER);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     protected boolean reconstructMaster() {

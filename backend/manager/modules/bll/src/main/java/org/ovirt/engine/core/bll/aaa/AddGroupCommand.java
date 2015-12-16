@@ -31,7 +31,7 @@ public class AddGroupCommand<T extends AddGroupParameters>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         addCustomValue("NewUserName", getParameters().getGroupToAdd().getName());
 
         return true;

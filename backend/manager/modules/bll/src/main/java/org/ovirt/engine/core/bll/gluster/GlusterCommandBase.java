@@ -104,15 +104,15 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         upServer = getUpServer();
         if (upServer == null) {
-            addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            addValidationMessageVariable("clusterName", getVdsGroup().getName());
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
         return true;
@@ -141,9 +141,9 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected boolean evaluateReturnValue(AuditLogType auditLogType, VdcReturnValueBase returnValue) {
-        boolean succeeded = returnValue.getCanDoAction();
+        boolean succeeded = returnValue.isValid();
         if (!succeeded) {
-            handleVdsErrors(auditLogType, returnValue.getCanDoActionMessages());
+            handleVdsErrors(auditLogType, returnValue.getValidationMessages());
         }
         succeeded = succeeded && returnValue.getSucceeded();
         if (!succeeded) {
@@ -161,20 +161,20 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return succeeded;
     }
 
-    protected boolean updateBrickServerAndInterfaceNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {
+    protected boolean updateBrickServerAndInterfaceNames(List<GlusterBrickEntity> bricks, boolean addValidationMessage) {
         for (GlusterBrickEntity brick : bricks) {
-            if (!updateBrickServerAndInterfaceName(brick, addCanDoActionMessage)) {
+            if (!updateBrickServerAndInterfaceName(brick, addValidationMessage)) {
                 return false;
             }
         }
         return true;
     }
 
-    protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
+    protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addValidationMessage) {
         VdsStatic server = getVdsStaticDao().get(brick.getServerId());
         if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
-            if (addCanDoActionMessage) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
+            if (addValidationMessage) {
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
             }
             return false;
         }
@@ -228,8 +228,8 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         Set<String> bricks = new HashSet<>();
         for (GlusterBrickEntity brick : newBricks) {
             if (bricks.contains(brick.getQualifiedName())) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
-                addCanDoActionMessageVariable("brick", brick.getQualifiedName());
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+                addValidationMessageVariable("brick", brick.getQualifiedName());
                 return false;
             }
             bricks.add(brick.getQualifiedName());
@@ -237,9 +237,9 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             GlusterBrickEntity existingBrick =
                     getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
             if (existingBrick != null) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
-                addCanDoActionMessageVariable("brick", brick.getQualifiedName());
-                addCanDoActionMessageVariable("volumeName",
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
+                addValidationMessageVariable("brick", brick.getQualifiedName());
+                addValidationMessageVariable("volumeName",
                         getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName());
                 return false;
             }

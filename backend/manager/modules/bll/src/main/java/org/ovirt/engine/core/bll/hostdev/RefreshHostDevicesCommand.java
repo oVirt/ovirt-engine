@@ -210,7 +210,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
+        addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
     }
 }

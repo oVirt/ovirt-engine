@@ -85,7 +85,7 @@ public class UiVdcMultipleAction extends UiAction {
                 boolean hasError = false;
 
                 for (VdcReturnValueBase singleResult : result.getReturnValue()) {
-                    if (!singleResult.getCanDoAction() || (waitForResult && !singleResult.getSucceeded())) {
+                    if (!singleResult.isValid() || (waitForResult && !singleResult.getSucceeded())) {
                         hasError = true;
                         getActionFlowState().addFailure(actionType, singleResult);
                     }

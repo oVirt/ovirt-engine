@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
@@ -87,46 +87,46 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
     }
 
-    private void validateCanDoActionDomainInProcess(StorageDomainStatus masterStatus, StorageDomainStatus regularStatus,
+    private void validateDomainInProcess(StorageDomainStatus masterStatus, StorageDomainStatus regularStatus,
                                                     StorageDomainStatus expectedStatus) {
         masterDomainIsoMap.setStatus(masterStatus);
         regularDomainIsoMap.setStatus(regularStatus);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
 
-        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        List<String> messages = cmd.getReturnValue().getValidationMessages();
 
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
         assertEquals(messages.get(1), String.format("$status %1$s", expectedStatus));
     }
 
     @Test
-    public void testCanDoActionMasterLocked() {
-        validateCanDoActionDomainInProcess(StorageDomainStatus.Locked, StorageDomainStatus.Active,
+    public void testValidateMasterLocked() {
+        validateDomainInProcess(StorageDomainStatus.Locked, StorageDomainStatus.Active,
                 StorageDomainStatus.Locked);
     }
 
     @Test
-    public void testCanDoActionMasterPreparingForMaintenance() {
-        validateCanDoActionDomainInProcess(StorageDomainStatus.PreparingForMaintenance, StorageDomainStatus.Active,
+    public void testValidateMasterPreparingForMaintenance() {
+        validateDomainInProcess(StorageDomainStatus.PreparingForMaintenance, StorageDomainStatus.Active,
                 StorageDomainStatus.PreparingForMaintenance);
     }
 
     @Test
-    public void testCanDoActionRegularLocked() {
-        validateCanDoActionDomainInProcess(StorageDomainStatus.Active, StorageDomainStatus.Locked,
+    public void testValidateRegularLocked() {
+        validateDomainInProcess(StorageDomainStatus.Active, StorageDomainStatus.Locked,
                 StorageDomainStatus.Locked);
     }
 
     @Test
-    public void testCanDoActionRegularPreparingForMaintenance() {
-        validateCanDoActionDomainInProcess(StorageDomainStatus.Active, StorageDomainStatus.PreparingForMaintenance,
+    public void testValidateRegularPreparingForMaintenance() {
+        validateDomainInProcess(StorageDomainStatus.Active, StorageDomainStatus.PreparingForMaintenance,
                 StorageDomainStatus.PreparingForMaintenance);
     }
 
     @Test
-    public void testCanDoActionSuccess() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void testValidateSuccess() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 }

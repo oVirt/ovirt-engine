@@ -66,37 +66,37 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionOkSucceeds() throws Exception {
+    public void validateOkSucceeds() throws Exception {
         setupMock();
-        assertTrue(commandMock.canDoAction());
+        assertTrue(commandMock.validate());
     }
 
     @Test
-    public void canDoActionEmptyDescriptionFails() throws Exception {
+    public void validateEmptyDescriptionFails() throws Exception {
         setupMock();
         parameters.setDescription("");
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionBlankDescriptionFails() throws Exception {
+    public void validateBlankDescriptionFails() throws Exception {
         setupMock();
         parameters.setDescription("      ");
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() throws Exception {
         setupMock();
         parameters.setParentId(nonExistingJobId);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void canDoActionNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() throws Exception {
         setupMock();
         parameters.setParentId(nonExternalJobId);
         parameters.setStepId(null);
-        assertTrue(! commandMock.canDoAction());
+        assertTrue(! commandMock.validate());
     }
 }

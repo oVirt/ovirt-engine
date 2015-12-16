@@ -11,7 +11,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (DbFacade.getInstance().getBookmarkDao()
                 .getByName(getBookmark().getName()) != null) {
             addErrorMessages(

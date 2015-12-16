@@ -25,15 +25,15 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!checkQuotaValidationCommon(getParameters().getQuota(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         } else if (getParameters().getQuota().getId() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         } else if (getQuotaDao().getById(getParameters().getQuota().getId()) == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
         return true;
@@ -61,8 +61,8 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__QUOTA);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__QUOTA);
     }
 
     @Override

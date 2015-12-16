@@ -45,8 +45,8 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -76,7 +76,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                     VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
                     VmDeviceUtils.hasMemoryBalloon(getVmTemplate().getId()),
                     VmDeviceUtils.hasSoundDevice(getVmTemplate().getId()),
-                    getReturnValue().getCanDoActionMessages())) {
+                    getReturnValue().getValidationMessages())) {
                 return false;
             }
 
@@ -106,7 +106,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override

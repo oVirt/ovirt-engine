@@ -287,7 +287,7 @@ public class BackendStorageDomainVmResourceTest
             ImportVmParameters.class,
             new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse", "ImportAsNewEntity" },
             new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity },
-            true, // canDo,
+            true, // valid,
             true, // success
             null, // taskReturn
             null, // baseUri

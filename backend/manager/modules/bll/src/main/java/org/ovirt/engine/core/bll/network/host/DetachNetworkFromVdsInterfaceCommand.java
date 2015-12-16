@@ -73,13 +73,13 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId());
         iface = interfaces.stream().filter(i -> i.getName().equals(getParameters().getInterface().getName()))
                 .findFirst().orElse(null);
         if (iface == null) {
-            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
+            addValidationMessage(EngineMessage.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
         if (StringUtils.isEmpty(getParameters().getInterface().getNetworkName())) {
@@ -99,14 +99,14 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
         if (StringUtils.isEmpty(iface.getNetworkName())) {
             if (iface.getBonded() != null && iface.getBonded() == true) {
-                addCanDoActionMessage(EngineMessage.NETWORK_BOND_NOT_ATTACH_TO_NETWORK);
+                addValidationMessage(EngineMessage.NETWORK_BOND_NOT_ATTACH_TO_NETWORK);
             } else {
-                addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
+                addValidationMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             }
             return false;
         } else if (!StringUtils.equals(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
                 .getName())) {
-            addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
+            addValidationMessage(EngineMessage.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             return false;
         }
 
@@ -118,7 +118,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                 && getParameters().getNetwork().getCluster().getStatus() == NetworkStatus.OPERATIONAL) {
             List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId());
             if (networks.stream().anyMatch(network -> network.getName().equals(getParameters().getNetwork().getName()))) {
-                addCanDoActionMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
+                addValidationMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -128,9 +128,9 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                         Collections.singletonList(getParameters().getNetwork().getName()));
 
         if (!vmNames.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
-            addCanDoActionMessageVariable("networkNames", getParameters().getNetwork().getName());
-            addCanDoActionMessageVariable(String.format("$%s_LIST",
+            addValidationMessage(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
+            addValidationMessageVariable("networkNames", getParameters().getNetwork().getName());
+            addValidationMessageVariable(String.format("$%s_LIST",
                     EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS.name()),
                     StringUtils.join(vmNames, ","));
             return false;
@@ -147,7 +147,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__DETACH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addValidationMessage(EngineMessage.VAR__ACTION__DETACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
 }

@@ -201,7 +201,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              Class<? extends VdcActionParametersBase> taskClass,
                                              String[] taskNames,
                                              Object[] taskValues,
-                                             boolean canDo,
+                                             boolean valid,
                                              boolean success,
                                              Object taskReturn,
                                              VdcQueryType query,
@@ -213,7 +213,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                   taskClass,
                                   taskNames,
                                   taskValues,
-                                  canDo,
+                                  valid,
                                   success,
                                   taskReturn,
                                   null,
@@ -229,7 +229,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              Class<? extends VdcActionParametersBase> taskClass,
                                              String[] taskNames,
                                              Object[] taskValues,
-                                             boolean canDo,
+                                             boolean valid,
                                              boolean success,
                                              Object taskReturn,
                                              ArrayList<Guid> asyncTasks,
@@ -240,8 +240,8 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              Object[] queryValues,
                                              Object queryReturn) {
         VdcReturnValueBase taskResult = control.createMock(VdcReturnValueBase.class);
-        expect(taskResult.getCanDoAction()).andReturn(canDo).anyTimes();
-        if (canDo) {
+        expect(taskResult.isValid()).andReturn(valid).anyTimes();
+        if (valid) {
             expect(taskResult.getSucceeded()).andReturn(success).anyTimes();
             if (success) {
                 expect(taskResult.getActionReturnValue()).andReturn(taskReturn).anyTimes();
@@ -250,7 +250,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            expect(taskResult.getCanDoActionMessages()).andReturn(asList(CANT_DO)).anyTimes();
+            expect(taskResult.getValidationMessages()).andReturn(asList(CANT_DO)).anyTimes();
             setUpL10nExpectations(asList(CANT_DO));
         }
         expect(taskResult.getHasAsyncTasks()).andReturn(asyncTasks != null).anyTimes();
@@ -267,7 +267,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         expect(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
                 .andReturn(taskResult);
 
-        if (canDo && success && query != null) {
+        if (valid && success && query != null) {
             setUpEntityQueryExpectations(query, queryClass, queryNames, queryValues, queryReturn);
         }
         control.replay();

@@ -23,16 +23,16 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__PAUSE);
+        addValidationMessage(EngineMessage.VAR__ACTION__PAUSE);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
         if (getGeoRepSession().getStatus() == GeoRepSessionStatus.PASSIVE) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_PAUSED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_PAUSED);
         }
         return true;
     }

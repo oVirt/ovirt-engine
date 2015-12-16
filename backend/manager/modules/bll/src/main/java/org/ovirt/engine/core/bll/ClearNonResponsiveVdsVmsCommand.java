@@ -79,9 +79,9 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVds() == null) {
-            return failCanDoAction(EngineMessage.VDS_INVALID_SERVER_ID);
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
 
         }
 
@@ -89,7 +89,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 && getVds().getStatus() != VDSStatus.NonResponsive
                 && getVds().getStatus() != VDSStatus.Reboot
                 && getVds().getStatus() != VDSStatus.Kdumping) {
-            return failCanDoAction(EngineMessage.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
+            return failValidation(EngineMessage.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
         }
 
         return true;

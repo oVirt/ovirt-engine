@@ -33,17 +33,17 @@ public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP);
+        addValidationMessage(EngineMessage.VAR__ACTION__STOP);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.STOPPED)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_STOPPED);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_STOPPED);
         }
 
         return true;

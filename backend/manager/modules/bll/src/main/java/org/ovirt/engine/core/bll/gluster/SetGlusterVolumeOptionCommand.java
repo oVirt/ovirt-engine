@@ -45,8 +45,8 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SET);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_OPTION);
+        addValidationMessage(EngineMessage.VAR__ACTION__SET);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_OPTION);
     }
 
     @Override

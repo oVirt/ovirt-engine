@@ -17,7 +17,7 @@ public class RemoveNetworkAttachmentCommand<T extends RemoveNetworkAttachmentPar
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return true;
     }
 

@@ -129,7 +129,7 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     private void checkStoragePoolFails() {
         assertFalse(cmd.checkStoragePool());
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage
                 .ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }
 

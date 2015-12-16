@@ -84,11 +84,11 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result = true;
         // set version to latest supported version if not given
         if (getStoragePool().getCompatibilityVersion().isNotValid()) {
@@ -96,11 +96,11 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         }
         if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
             result = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {
             result = false;
         } else if (!VersionSupport.checkVersionSupported(getStoragePool().getCompatibilityVersion())) {
-            addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
+            addValidationMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         }
         return result;

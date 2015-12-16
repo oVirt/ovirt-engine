@@ -138,7 +138,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
 
     @Test
-    public void canDoActionSucceeds() throws Exception {
+    public void validateSucceeds() throws Exception {
         command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -147,11 +147,11 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
         mockIsGlusterEnabled(false);
         mockHasVolumeOnServer(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
+    public void validateFailsWhenGlusterHostHasVolumes() throws Exception {
         command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -161,12 +161,12 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
     }
 
     @Test
-    public void canDoActionFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
+    public void validateFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
         command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -174,12 +174,12 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
     }
 
     @Test
-    public void canDoActionSucceedsWithForceOption() throws Exception {
+    public void validateSucceedsWithForceOption() throws Exception {
         command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -188,11 +188,11 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
+    public void validateFailsWhenVMsPinnedToHost() throws Exception {
         command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -204,11 +204,11 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         String vmName = "abc";
         mockVmsPinnedToHost(Arrays.asList(vmName));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);
 
         boolean foundMessage = false;
-        for (String message : command.getReturnValue().getCanDoActionMessages()) {
+        for (String message : command.getReturnValue().getValidationMessages()) {
             foundMessage |= message.contains(vmName);
         }
 

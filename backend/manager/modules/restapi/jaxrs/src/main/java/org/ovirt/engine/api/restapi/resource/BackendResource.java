@@ -290,8 +290,8 @@ public class BackendResource extends BaseBackendResource {
         setJobOrStepId(params);
         setCorrelationId(params);
         VdcReturnValueBase result = backend.runAction(task, sessionize(params));
-        if (result != null && !result.getCanDoAction()) {
-            backendFailure(result.getCanDoActionMessages());
+        if (result != null && !result.isValid()) {
+            backendFailure(result.getValidationMessages());
         } else if (result != null && !result.getSucceeded()) {
             backendFailure(result.getExecuteFailedMessages());
         }

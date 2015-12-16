@@ -64,15 +64,15 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     private void handleChildReturnValue() {
         for (VdcReturnValueBase vdcReturnValue : vdcReturnValues) {
-            getReturnValue().getCanDoActionMessages().addAll(vdcReturnValue.getCanDoActionMessages());
-            getReturnValue().setCanDoAction(getReturnValue().getCanDoAction() && vdcReturnValue.getCanDoAction());
+            getReturnValue().getValidationMessages().addAll(vdcReturnValue.getValidationMessages());
+            getReturnValue().setValid(getReturnValue().isValid() && vdcReturnValue.isValid());
         }
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getParametersList().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
         return verifyUnsupportedDisks();
@@ -92,22 +92,22 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     private void addDisksDeactivatedMessage(List<MoveDiskParameters> moveDiskParamsList) {
         setActionMessageParameters();
-        addCanDoActionMessageVariable("diskAliases", StringUtils.join(getDisksAliases(moveDiskParamsList), ", "));
-        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
-        getReturnValue().setCanDoAction(false);
+        addValidationMessageVariable("diskAliases", StringUtils.join(getDisksAliases(moveDiskParamsList), ", "));
+        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
+        getReturnValue().setValid(false);
     }
 
     private void addInvalidVmStateMessage(VM vm){
         setActionMessageParameters();
-        addCanDoActionMessageVariable("VmName", vm.getName());
-        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
-        getReturnValue().setCanDoAction(false);
+        addValidationMessageVariable("VmName", vm.getName());
+        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+        getReturnValue().setValid(false);
     }
 
     /**

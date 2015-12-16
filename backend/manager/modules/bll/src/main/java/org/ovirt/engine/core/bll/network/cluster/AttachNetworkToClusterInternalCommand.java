@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CanDoActionSupportsTransaction;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister;
 
 @InternalCommandAttribute
-@CanDoActionSupportsTransaction
+@ValidateSupportsTransaction
 public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter>
     extends NetworkClusterCommandBase<T> {
 
@@ -65,7 +65,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         return networkNotAttachedToCluster()
                 && vdsGroupExists()
                 && changesAreClusterCompatible()
@@ -93,14 +93,14 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
             return true;
         }
 
-        addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
+        addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
         return false;
     }
 
     private boolean changesAreClusterCompatible() {
         if (!getParameters().getNetwork().isVmNetwork()) {
             if (!FeatureSupported.nonVmNetwork(getVdsGroup().getCompatibilityVersion())) {
-                addCanDoActionMessage(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+                addValidationMessage(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
                 return false;
             }
         }
@@ -109,7 +109,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean networkNotAttachedToCluster() {
         if (networkExists()) {
-            return failCanDoAction(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
+            return failValidation(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
         }
 
         return true;
@@ -121,7 +121,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean vdsGroupExists() {
         if (!vdsGroupInDb()) {
-            addCanDoActionMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
         return true;
@@ -182,8 +182,8 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORK);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ATTACH);
     }
 
     @Override

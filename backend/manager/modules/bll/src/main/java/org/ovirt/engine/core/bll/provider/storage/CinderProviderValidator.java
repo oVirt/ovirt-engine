@@ -101,7 +101,7 @@ public class CinderProviderValidator extends ProviderValidator {
 
     /**
      * Checks that the DC compatibility version supports Cinder domains and it is not local.
-     * In case there is a mismatch, a proper canDoAction message will be added
+     * In case there is a mismatch, a proper validate message will be added
      *
      * @return The result of the validation
      */

@@ -26,7 +26,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
+        addValidationMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 
     public String getInterfaceName() {
@@ -40,7 +40,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
         return VmHandler.isNotDuplicateInterfaceName(interfaces,
                 getInterfaceName(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     protected ValidationResult linkedToTemplate() {
@@ -66,13 +66,13 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getVdsGroup() == null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 

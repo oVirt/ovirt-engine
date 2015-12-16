@@ -53,8 +53,8 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST_CAPABILITIES);
+        addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST_CAPABILITIES);
     }
 
     @Override

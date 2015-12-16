@@ -48,18 +48,18 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__LABEL);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getNic() == null) {
-            return failCanDoAction(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
+            return failValidation(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
         }
 
         if (!NetworkUtils.isLabeled(getNic()) || !getNic().getLabels().contains(getLabel())) {
-            return failCanDoAction(EngineMessage.INTERFACE_NOT_LABELED);
+            return failValidation(EngineMessage.INTERFACE_NOT_LABELED);
         }
 
         return true;

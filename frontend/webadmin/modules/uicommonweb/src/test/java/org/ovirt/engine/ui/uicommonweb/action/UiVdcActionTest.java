@@ -105,7 +105,7 @@ public class UiVdcActionTest extends AsyncUiActionTest<IFrontendActionAsyncCallb
         for (IFrontendActionAsyncCallback callback : callbacks) {
             assertNotAllDone(flowState);
             VdcReturnValueBase result = new VdcReturnValueBase();
-            result.setCanDoAction(true);
+            result.setValid(true);
             result.setSucceeded(success);
             callback.executed(new FrontendActionAsyncResult(ACTION_TYPE, null, result));
 

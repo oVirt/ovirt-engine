@@ -49,20 +49,20 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Get the identifier of the group from the parameters:
         Guid id = getParameters().getId();
 
         // Check that the group being removed isn't the last remaining group
         // of super users:
         if (isLastSuperUserGroup(id)) {
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE);
             return false;
         }
 
         // Check that the group being removed isn't the everyone group:
         if (MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID.equals(id)) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_BUILTIN_GROUP_EVERYONE);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_BUILTIN_GROUP_EVERYONE);
             return false;
         }
 

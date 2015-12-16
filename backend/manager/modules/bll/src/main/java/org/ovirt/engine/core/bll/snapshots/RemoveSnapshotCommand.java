@@ -209,7 +209,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 continue;
             }
 
-            // The following is ok because we have tested in the candoaction that the vm
+            // The following is ok because we have tested in the validate that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
             List<DiskImage> images = getDiskImageDao().getAllSnapshotsForParent(source.getImageId());
@@ -346,11 +346,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         initializeObjectState();
 
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -379,7 +379,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             // check that we are not deleting the template
             if (!validateImageNotInTemplate()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
             }
 
             if (!validateStorageDomains()) {
@@ -422,8 +422,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__SNAPSHOT);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     protected boolean validateVmNotDuringSnapshot() {

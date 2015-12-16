@@ -27,10 +27,10 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         if (getTagId() == null || DbFacade.getInstance().getTagDao().get(getTagId()) == null) {
-            addCanDoActionMessage(EngineMessage.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
+            addValidationMessage(EngineMessage.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
             returnValue = false;
         }
         return returnValue;

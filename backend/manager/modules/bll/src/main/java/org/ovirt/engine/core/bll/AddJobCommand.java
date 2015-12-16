@@ -24,10 +24,10 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
 
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = true;
         if (StringUtils.isBlank(getParameters().getDescription())) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
+            addValidationMessage(EngineMessage.ACTION_TYPE_EMPTY_DESCRIPTION);
             retValue = false;
         }
         return retValue;

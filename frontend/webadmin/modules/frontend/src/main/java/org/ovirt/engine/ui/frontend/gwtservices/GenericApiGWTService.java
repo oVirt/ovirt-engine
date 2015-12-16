@@ -32,12 +32,12 @@ public interface GenericApiGWTService extends XsrfProtectedRpcService {
     public ArrayList<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
-            boolean isRunOnlyIfAllCanDoPass);
+            boolean isRunOnlyIfAllValidationPass);
 
     public ArrayList<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
-            boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult);
+            boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult);
 
     public DbUser getLoggedInUser();
 

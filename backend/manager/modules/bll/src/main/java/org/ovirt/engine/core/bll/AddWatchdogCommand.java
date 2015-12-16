@@ -40,8 +40,8 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
         VdcQueryReturnValue returnValue =
@@ -49,7 +49,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
                         new IdQueryParameters(getParameters().getId()));
         Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
         if (!watchdogs.isEmpty()) {
-            return failCanDoAction(EngineMessage.WATCHDOG_ALREADY_EXISTS);
+            return failValidation(EngineMessage.WATCHDOG_ALREADY_EXISTS);
         }
 
         if (!validate(validateWatchdog())) {

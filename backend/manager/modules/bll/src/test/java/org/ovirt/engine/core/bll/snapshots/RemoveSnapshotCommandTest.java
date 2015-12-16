@@ -23,7 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -156,18 +156,18 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionEnoughSpace() {
+    public void testValidateEnoughSpace() {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
         doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
 
         mockDisksList(4);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionNotEnoughSpace() {
+    public void testValidateNotEnoughSpace() {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
@@ -176,7 +176,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         List<DiskImage> imagesDisks = mockDisksList(4);
         when(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(imagesDisks)).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private void prepareForVmValidatorTests() {
@@ -194,34 +194,34 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionVmUpHostCapable() {
+    public void testValidateVmUpHostCapable() {
         prepareForVmValidatorTests();
         doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
         cmd.getVm().setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionVmUpHostNotCapable() {
+    public void testValidateVmUpHostNotCapable() {
         prepareForVmValidatorTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE))
                 .when(vmValidator).vmHostCanLiveMerge();
         cmd.getVm().setStatus(VMStatus.Up);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
     }
 
     @Test
-    public void testCanDoActionVmDown() {
+    public void testValidateVmDown() {
         prepareForVmValidatorTests();
         cmd.getVm().setStatus(VMStatus.Down);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void testCanDoActionVmMigrating() {
+    public void testValidateVmMigrating() {
         prepareForVmValidatorTests();
         cmd.getVm().setStatus(VMStatus.MigratingTo);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
     }
 
@@ -230,7 +230,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         prepareForVmValidatorTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM)).when(vmValidator)
                 .vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM);
     }
 

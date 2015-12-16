@@ -21,7 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -111,7 +111,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     public void canDetectMissingVM() {
         when(vmDao.get(eq(vm.getId()))).thenReturn(null);
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
@@ -119,7 +119,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     public void canDetectZeroHostNodesWithVmFromParams() {
         vdsNumaNodes.clear();
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
 
@@ -128,7 +128,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         existingNumaNodes.set(0, createVmNumaNode(1, vdsNumaNodes));
         vdsNumaNodes.remove(0);
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
     }
 
@@ -136,15 +136,15 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
     public void canDetectZeroHostNodesWithVmFromDb() {
         vdsNumaNodes.clear();
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
 
     @Test
-    public void canDoWithPinnedHostOnVm() {
+    public void validateWithPinnedHostOnVm() {
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
 
-        assertThat(command.canDoAction()).isTrue();
+        assertThat(command.validate()).isTrue();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
     }
 
@@ -163,7 +163,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
     }
 
@@ -172,7 +172,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromDb();
 
         vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
     }
 
@@ -182,7 +182,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(4);
-        assertThat(command.canDoAction()).isTrue();
+        assertThat(command.validate()).isTrue();
     }
 
     @Test
@@ -191,7 +191,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(5);
-        assertThat(command.canDoAction()).isTrue();
+        assertThat(command.validate()).isTrue();
     }
 
     @Test
@@ -200,7 +200,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(3);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
     }
 
     @Test
@@ -208,7 +208,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(3);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
     }
 
     private AddVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {

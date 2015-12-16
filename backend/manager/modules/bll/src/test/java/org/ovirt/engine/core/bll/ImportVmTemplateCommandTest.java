@@ -59,7 +59,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         // Full test for the scenarios is done in the inherited class.
         final ImportVmTemplateCommand command = setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         doReturn(false).when(command).validateSpaceRequirements(anyList());
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         ImportVmTemplateCommand command =
                 setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         doReturn(true).when(command).isVmTemplateWithSameNameExist();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+        ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
 
     }
@@ -112,14 +112,14 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private void assertValidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(
+        ValidateTestUtils.runAndAssertValidateSuccess(
                 setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType));
     }
 
     private void assertInvalidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+        ValidateTestUtils.runAndAssertValidateFailure(
                 setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType),
                 EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }

@@ -320,7 +320,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
                             for (VmTemplate template : templateBackupModel.getSelectedItems()) {
-                                if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
+                                if (retVals.get(counter) != null && retVals.get(counter).isValid()) {
                                     importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }

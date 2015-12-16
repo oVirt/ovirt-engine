@@ -251,7 +251,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 acquireHostDevicesLock();
                 if (connectLunDisks(getVdsId()) && updateCinderDisksConnections()) {
                     if (!checkRequiredHostDevicesAvailability()) {
-                        // if between canDoAction and execute the host-devices were stolen by another VM
+                        // if between validate and execute the host-devices were stolen by another VM
                         // (while the host-device lock wasn't being held) we need to bail here
                         throw new EngineException(EngineError.HOST_DEVICES_TAKEN_BY_OTHER_VM);
                     } else {
@@ -311,7 +311,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (!needsHostDevices) {
             return true;
         }
-        // Only single dedicated host allowed for host devices, verified on canDoActions
+        // Only single dedicated host allowed for host devices, verified on validates
         return hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVdsList().get(0));
     }
 
@@ -323,14 +323,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void acquireHostDevicesLock() {
         if (needsHostDevices) {
-            // Only single dedicated host allowed for host devices, verified on canDoActions
+            // Only single dedicated host allowed for host devices, verified on validates
             hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
 
     private void releaseHostDevicesLock() {
         if (needsHostDevices) {
-            // Only single dedicated host allowed for host devices, verified on canDoActions
+            // Only single dedicated host allowed for host devices, verified on validates
             hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
@@ -536,7 +536,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
-        return vdcReturnValue.getCanDoActionMessages().contains(
+        return vdcReturnValue.getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name());
     }
 
@@ -952,11 +952,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VM vm = getVm();
 
         if (vm == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!validateObject(vm.getStaticData())) {
@@ -970,7 +970,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         RunVmValidator runVmValidator = getRunVmValidator();
 
         if (!runVmValidator.canRunVm(
-                getReturnValue().getCanDoActionMessages(),
+                getReturnValue().getValidationMessages(),
                 getStoragePool(),
                 getRunVdssList(),
                 getVdsWhiteList(),
@@ -989,14 +989,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (checkPayload(getParameters().getVmPayload(), getParameters().getDiskPath()) &&
                     !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
                     getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-                return failCanDoAction(EngineMessage.VMPAYLOAD_FLOPPY_EXCEEDED);
+                return failValidation(EngineMessage.VMPAYLOAD_FLOPPY_EXCEEDED);
             }
 
             getVm().setVmPayload(getParameters().getVmPayload());
         }
 
         if (!checkRngDeviceClusterCompatibility()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
         boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
@@ -1008,7 +1008,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM;
 
         if ((hasCdromPayload || isCloudInitEnabled) && hasMaximumNumberOfDisks()) {
-            return failCanDoAction(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
+            return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
         }
 
         // Note: that we are setting the payload from database in the ctor.
@@ -1018,10 +1018,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getParameters().getInitializationType() != null) {
            if (getParameters().getInitializationType() == InitializationType.Sysprep && getParameters().getVmPayload() != null &&
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-               return failCanDoAction(EngineMessage.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
+               return failValidation(EngineMessage.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
            } else if (getParameters().getInitializationType() == InitializationType.CloudInit && getParameters().getVmPayload() != null &&
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
-               return failCanDoAction(EngineMessage.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
+               return failValidation(EngineMessage.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
         }
 
@@ -1029,14 +1029,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().getVmOsId(),
                 getVdsGroup().getCompatibilityVersion(),
                 getVdsGroup().getCpuName(),
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
         try {
             acquireHostDevicesLock();
             if (!checkRequiredHostDevicesAvailability()) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
             }
         } finally {
             releaseHostDevicesLock();
@@ -1096,8 +1096,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RUN);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__RUN);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override

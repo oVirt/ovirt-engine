@@ -17,19 +17,19 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean retValue=super.canDoAction();
+    protected boolean validate() {
+        boolean retValue=super.validate();
 
         if (job != null) {
             if (!job.isExternal()) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
+                addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
             }
         }
 
         if (!retValue) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
+            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+            addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
         }
         return retValue;
     }

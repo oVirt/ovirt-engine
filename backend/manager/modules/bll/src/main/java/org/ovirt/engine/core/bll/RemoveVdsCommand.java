@@ -89,13 +89,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getCanDoActionMessages());
+    protected boolean validate() {
+        boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getValidationMessages());
         StoragePool storagePool = getStoragePoolDao().getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
             if (!getStorageDomainDao().getAllForStoragePool(storagePool.getId()).isEmpty()) {
-                returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
+                returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }
         }
 
@@ -105,17 +105,17 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             if (!getParameters().isForceAction()) {
                 // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
-                    returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                    returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 } else if (upServer == null && clusterHasMultipleHosts()) {
                     // fail if there is no up server in cluster, and if host being removed is not
                     // the last server in cluster
-                    addCanDoActionMessageVariable("clusterName", getVdsGroup().getName());
-                    returnValue = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+                    addValidationMessageVariable("clusterName", getVdsGroup().getName());
+                    returnValue = failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
                 }
             } else {
                 // if force, cannot remove only if there are bricks on server and there is an up server.
                 if (hasVolumeBricksOnServer() && upServer != null) {
-                    returnValue = failCanDoAction(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                    returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 }
             }
         }
@@ -125,8 +125,8 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__HOST);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
     }
 
     @Override

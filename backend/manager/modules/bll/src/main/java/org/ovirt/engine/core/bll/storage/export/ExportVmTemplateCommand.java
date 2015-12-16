@@ -129,9 +129,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVmTemplate() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         boolean retVal = validate(storageDomainValidator.isDomainExistAndActive());
@@ -139,19 +139,19 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         if (retVal) {
             // export must be to export domain
             if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
                 retVal = false;
             }
         }
 
-        retVal = retVal && super.canDoAction();
+        retVal = retVal && super.validate();
 
         // check if template (with no override option)
         if (retVal && !getParameters().getForceOverride()) {
             retVal = !ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
                     getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext());
             if (!retVal) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
 
@@ -160,8 +160,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override

@@ -28,26 +28,26 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = true;
         if (getParameters().getJobId() != null) {
             job = getJobDao().get((Guid) getParameters().getJobId());
             if (job == null) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
+                addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
             }
             else if (! job.isExternal()) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
+                addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
             }
         }
         else {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_NO_JOB);
+            addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
         }
         if (!retValue) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__CLEAR);
-            addCanDoActionMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
+            addValidationMessage(EngineMessage.VAR__ACTION__CLEAR);
+            addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_JOB);
         }
         return retValue;
     }

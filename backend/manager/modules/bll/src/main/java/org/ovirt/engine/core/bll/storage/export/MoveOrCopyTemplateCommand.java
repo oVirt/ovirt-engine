@@ -113,11 +113,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean retValue = true;
         if (getVmTemplate() == null) {
             retValue = false;
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         } else if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
@@ -127,12 +127,12 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
                 log.error("Can not found any default active domain for one of the disks of template with id '{}'",
                         getVmTemplate().getId());
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
                 retValue = false;
             }
             retValue = retValue
                     && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
-                            getReturnValue().getCanDoActionMessages(), true, true, true, false, getTemplateDisks());
+                            getReturnValue().getValidationMessages(), true, true, true, false, getTemplateDisks());
             if (retValue) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
                 StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
@@ -147,7 +147,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                     getVmTemplate().getStoragePoolId())) == null) {
                 retValue = false;
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
         }
         return retValue;
@@ -159,10 +159,10 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !getParameters().isImportAsNewEntity()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
         }
         if (entityFromConfiguration == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
         for (DiskImage image : getImages()) {
@@ -173,7 +173,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
                     String.format("$domainId %1$s", getParameters().getStorageDomainId()),
                     String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
         }
@@ -191,11 +191,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     @Override
     protected void setActionMessageParameters() {
         if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__MOVE);
+            addValidationMessage(EngineMessage.VAR__ACTION__MOVE);
         } else {
-            addCanDoActionMessage(EngineMessage.VAR__ACTION__COPY);
+            addValidationMessage(EngineMessage.VAR__ACTION__COPY);
         }
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
     }
 
     private boolean validateFreeSpaceOnDestinationDomain(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
@@ -277,13 +277,13 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
                     alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
                 } else {
-                    return failCanDoAction(EngineMessage.ERROR_GET_IMAGE_LIST,
+                    return failValidation(EngineMessage.ERROR_GET_IMAGE_LIST,
                             String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
                 }
             }
 
             if (imagesOnStorageDomain.contains(disk.getId())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
             }
         }
         return true;
@@ -414,7 +414,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID,
                             String.format("$IfaceName %1$s", iface.getName()),
                             String.format("$MacAddress %1$s", iface.getMacAddress()));
                 }
@@ -424,7 +424,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
-            return failCanDoAction(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
         return true;
     }

@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -140,58 +140,58 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsWithClusterDoesNotSupportGluster() {
+    public void validateFailsWithClusterDoesNotSupportGluster() {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
         doReturn(getVdsGroup(false)).when(vdsGroupDao).get(Mockito.any(Guid.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
     }
 
     @Test
-    public void canDoActionFailsWithDuplicateVolumeName() {
+    public void validateFailsWithDuplicateVolumeName() {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
         doReturn(getVolume(2, false)).when(volumeDao).getByName(clusterId, "vol1");
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
     }
 
     @Test
-    public void canDoActionFailsWithEmptyBricks() {
+    public void validateFailsWithEmptyBricks() {
         cmd = spy(createTestCommand(getVolume(0, false)));
         prepareMocks(cmd);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
     }
 
     @Test
-    public void canDoActionFailsWithForceNotSupported() {
+    public void validateFailsWithForceNotSupported() {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(getVolume(2, true), true);
         CreateGlusterVolumeCommand command = new CreateGlusterVolumeCommand(parameters);
         cmd = spy(command);
         prepareMocks(cmd);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test
-    public void canDoActionFailsWithDuplicateBricks() {
+    public void validateFailsWithDuplicateBricks() {
         cmd = spy(createTestCommand(getVolume(2, true)));
         prepareMocks(cmd);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
     }
 }

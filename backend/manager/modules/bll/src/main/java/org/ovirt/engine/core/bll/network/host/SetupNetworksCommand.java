@@ -84,8 +84,8 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
+        addValidationMessage(EngineMessage.VAR__ACTION__SETUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORKS);
     }
 
     @Override
@@ -101,17 +101,17 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         VDS vds = getVds();
 
         if (vds == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             return false;
         }
 
         if (!(SUPPORTED_HOST_STATUSES.contains(vds.getStatus()) || (vds.getStatus() == VDSStatus.Installing && isInternalExecution()))) {
-            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addValidationMessage(EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
             return false;
         }
 
@@ -125,7 +125,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
         if (!validationMessages.isEmpty()) {
             for (String msg : validationMessages) {
-                addCanDoActionMessage(msg);
+                addValidationMessage(msg);
             }
             return false;
         }

@@ -67,7 +67,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
         if (isSystemSuperUserPredicate.test(getCurrentUser().getId())) {
             return true;
         } else {
-            addCanDoActionMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            addValidationMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
             return false;
         }
     }

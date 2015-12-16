@@ -50,7 +50,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__INTERFACE);
+        addValidationMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
 
     protected boolean addMacToPool(String macAddress) {
@@ -67,7 +67,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     protected boolean uniqueInterfaceName(List<VmNic> interfaces) {
         return VmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName(),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     protected boolean pciAndIdeWithinLimit(VM vm, List<VmNic> allInterfaces) {
@@ -80,7 +80,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 VmDeviceUtils.hasWatchdog(getVmId()),
                 VmDeviceUtils.hasMemoryBalloon(getVmId()),
                 VmDeviceUtils.hasSoundDevice(getVmId()),
-                getReturnValue().getCanDoActionMessages());
+                getReturnValue().getValidationMessages());
     }
 
     protected ValidationResult vmTemplateEmpty() {

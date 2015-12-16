@@ -39,7 +39,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__AUTHENTICATION_KEY);
+        addValidationMessage(EngineMessage.VAR__TYPE__AUTHENTICATION_KEY);
     }
 
     @Override

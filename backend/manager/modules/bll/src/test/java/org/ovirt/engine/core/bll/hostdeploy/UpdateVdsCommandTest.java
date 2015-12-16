@@ -35,7 +35,7 @@ public class UpdateVdsCommandTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void canDoActionSameName() {
+    public void validateSameName() {
         UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
         Guid vdsId = Guid.newGuid();
         VDS newVdsData = makeTestVds(vdsId);
@@ -46,7 +46,7 @@ public class UpdateVdsCommandTest {
 
         UpdateVdsCommand<UpdateVdsActionParameters> commandMock = Mockito.mock(UpdateVdsCommand.class);
         Mockito.when(commandMock.getVdsId()).thenReturn(vdsId);
-        Mockito.when(commandMock.canDoAction()).thenCallRealMethod();
+        Mockito.when(commandMock.validate()).thenCallRealMethod();
         Mockito.when(commandMock.getParameters()).thenReturn(parameters);
         Version version = new Version("1.2.3");
         VDSGroup vdsGroup = new VDSGroup();
@@ -65,7 +65,7 @@ public class UpdateVdsCommandTest {
         Mockito.when(commandMock.getDbFacade()).thenReturn(Mockito.mock(DbFacade.class));
         VdsHandler.init();
 
-        Assert.assertFalse(commandMock.canDoAction());
+        Assert.assertFalse(commandMock.validate());
     }
 
 }

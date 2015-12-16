@@ -142,9 +142,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
         verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));
@@ -155,9 +155,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(multipleSdValidator).allDomainsWithinThresholds();
-        assertFalse(command.canDoAction());
+        assertFalse(command.validate());
         assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
+                .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyListOf(DiskImage.class));

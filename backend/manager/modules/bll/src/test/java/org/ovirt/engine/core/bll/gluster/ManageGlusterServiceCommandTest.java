@@ -198,55 +198,55 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionFails() {
+    public void validateFails() {
         GlusterServiceParameters params = new GlusterServiceParameters();
         params.setActionType("InvalidActionType");
         cmd = spy(new ManageGlusterServiceCommand(params));
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         params.setClusterId(null);
         params.setServerId(null);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionSucceedsWithValidActionTypes() {
+    public void validateSucceedsWithValidActionTypes() {
         GlusterServiceParameters params = new GlusterServiceParameters();
         params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START);
         cmd = spy(new ManageGlusterServiceCommand(params));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         params.setActionType(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP);
         cmd = spy(new ManageGlusterServiceCommand(params));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
 
         params.setClusterId(Guid.newGuid());
         cmd = spy(new ManageGlusterServiceCommand(params));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
 
         params.setServerId(Guid.newGuid());
         cmd = spy(new ManageGlusterServiceCommand(params));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
 
         params.setClusterId(Guid.newGuid());
         params.setServerId(Guid.newGuid());
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd =
                 spy(new ManageGlusterServiceCommand(new GlusterServiceParameters(null,
                         null,
                         ServiceType.NFS,
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START)));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     private void setUpMockUpForStart() {

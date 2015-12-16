@@ -37,36 +37,36 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getPoolSpmId() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NO_SPM);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SPM);
         }
 
         setStoragePool(null);
         if (getStoragePool() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         if (!getPoolSpmId().equals(getStoragePool().getSpmVdsId())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SPM_CHANGED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SPM_CHANGED);
         }
 
         VdsDynamic vdsDynamic = getVdsDynamicDao().get(getPoolSpmId());
         if (vdsDynamic == null || vdsDynamic.getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(EngineMessage.VAR__HOST_STATUS__UP);
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+            addValidationMessage(EngineMessage.VAR__HOST_STATUS__UP);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         setVdsId(vdsDynamic.getId());
 
-        if (!commandSpecificCanDoAction()) {
+        if (!commandSpecificValidate()) {
             return false;
         }
 
         return true;
     }
 
-    protected boolean commandSpecificCanDoAction() {
+    protected boolean commandSpecificValidate() {
         return true;
     }
 

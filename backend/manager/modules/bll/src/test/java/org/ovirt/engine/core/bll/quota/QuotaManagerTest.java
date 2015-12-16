@@ -86,7 +86,7 @@ public class QuotaManagerTest {
     private QuotaManagerAuditLogger quotaManagerAuditLogger = quotaManager.getQuotaManagerAuditLogger();
 
     private StoragePool storage_pool = new StoragePool();
-    private ArrayList<String> canDoActionMessages = new ArrayList<>();
+    private ArrayList<String> validationMessages = new ArrayList<>();
     private QuotaConsumptionParametersWrapper parametersWrapper;
     private boolean hardEnforcement = true;
     private boolean auditLogWritten = false;
@@ -112,7 +112,7 @@ public class QuotaManagerTest {
 
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setStoragePool(storage_pool);
-        parametersWrapper = new QuotaConsumptionParametersWrapper(auditLogable, canDoActionMessages);
+        parametersWrapper = new QuotaConsumptionParametersWrapper(auditLogable, validationMessages);
         parametersWrapper.setParameters(new ArrayList<>());
     }
 
@@ -172,13 +172,13 @@ public class QuotaManagerTest {
         storage_pool.setId(new Guid("00000000-0000-0000-0000-000000001111"));
     }
 
-    private void assertNotEmptyCanDoActionMessage() {
-        assertTrue(EXPECTED_CAN_DO_MESSAGE, !canDoActionMessages.isEmpty());
-        canDoActionMessages.clear();
+    private void assertNotEmptyValidateMessage() {
+        assertTrue(EXPECTED_CAN_DO_MESSAGE, !validationMessages.isEmpty());
+        validationMessages.clear();
     }
 
-    private void assertEmptyCanDoActionMessage() {
-        assertTrue(EXPECTED_EMPTY_CAN_DO_MESSAGE, canDoActionMessages.isEmpty());
+    private void assertEmptyValidateMessage() {
+        assertTrue(EXPECTED_EMPTY_CAN_DO_MESSAGE, validationMessages.isEmpty());
     }
 
     private void assertAuditLogWritten() {
@@ -218,56 +218,56 @@ public class QuotaManagerTest {
     @Test
     public void testValidateAndSetStorageQuotaGlobalNotExceeded() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaGlobalOverThreshold() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaGlobalInGrace() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaGlobalOverGrace() throws Exception {
         assertFalse(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaSpecificNotExceeded() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaSpecificOverThreshold() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaSpecificInGrace() throws Exception {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetStorageQuotaSpecificOverGrace() throws Exception {
         assertFalse(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
@@ -293,119 +293,119 @@ public class QuotaManagerTest {
                 DESTINATION_GUID,
                 1d));
         assertTrue(quotaManager.consume(parameters));
-        assertEmptyCanDoActionMessage();
-        canDoActionMessages.clear();
+        assertEmptyValidateMessage();
+        validationMessages.clear();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUGlobalNotExceeded() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUGlobalOverThreshold() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUGlobalInGrace() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUGlobalOverGrace() throws Exception {
         assertFalse(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUSpecificNotExceeded() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUSpecificOverThreshold() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUSpecificInGrace() throws Exception {
         assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForVCPUSpecificOverGrace() throws Exception {
         assertFalse(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemGlobalNotExceeded() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemGlobalOverThreshold() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemGlobalInGrace() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemGlobalOverGrace() throws Exception {
         assertFalse(consumeForVdsQuota(MEM_QUOTA_GLOBAL_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemSpecificNotExceeded() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemSpecificOverThreshold() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemSpecificInGrace() throws Exception {
         assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_IN_GRACE));
-        assertEmptyCanDoActionMessage();
+        assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
     public void testValidateAndSetClusterQuotaForMemSpecificOverGrace() throws Exception {
         assertFalse(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_OVER_GRACE));
-        assertNotEmptyCanDoActionMessage();
+        assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 

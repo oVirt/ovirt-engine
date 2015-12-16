@@ -20,8 +20,8 @@ public class EnableGlusterHookCommand<T extends GlusterHookParameters> extends G
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ENABLE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ENABLE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_HOOK);
     }
 
     @Override

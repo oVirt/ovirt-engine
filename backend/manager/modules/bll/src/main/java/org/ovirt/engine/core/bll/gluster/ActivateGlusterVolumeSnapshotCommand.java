@@ -17,7 +17,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ACTIVATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__ACTIVATE);
         super.setActionMessageParameters();
     }
 
@@ -39,13 +39,13 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getSnapshot().getStatus() == GlusterSnapshotStatus.ACTIVATED) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED,
                     getSnapshot().getSnapshotName());
         }
 

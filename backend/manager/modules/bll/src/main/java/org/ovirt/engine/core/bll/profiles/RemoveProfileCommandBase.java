@@ -11,7 +11,7 @@ public abstract class RemoveProfileCommandBase<T extends ProfileParametersBase<P
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         Q validator = getProfileValidator();
         return validate(validator.profileIsSet())
                 && validate(validator.profileExists())
@@ -27,7 +27,7 @@ public abstract class RemoveProfileCommandBase<T extends ProfileParametersBase<P
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     protected abstract Q getProfileValidator();

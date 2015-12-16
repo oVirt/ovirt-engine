@@ -48,13 +48,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (shouldSkipCommandExecutionCached()) {
             return true;
         }
 
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -63,7 +63,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         if (!getVm().isRunning() && getVm().getStatus() != VMStatus.Paused
                 && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
-            return failCanDoAction(
+            return failValidation(
                     (getVm().getStatus().isHibernating() || getVm().getStatus() == VMStatus.RestoringState) ?
                             EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING
                             : EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);

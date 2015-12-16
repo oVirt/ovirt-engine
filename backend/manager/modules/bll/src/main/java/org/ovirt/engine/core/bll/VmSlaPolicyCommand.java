@@ -29,15 +29,15 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
             return failVmStatusIllegal();
         }
         if (!FeatureSupported.vmSlaPolicy(getVm().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);
+            return failValidation(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);
         }
 
         return true;
@@ -64,7 +64,7 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE_SLA_POLICY);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE_SLA_POLICY);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 }

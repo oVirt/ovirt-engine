@@ -170,12 +170,12 @@ public class BackendTagsResourceTest
         doTestBadAddTag(true, false, FAILURE);
     }
 
-    private void doTestBadAddTag(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadAddTag(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.TagName", "Tag.ParentId" },
                                            new Object[] { NAMES[0], PARENT_GUID },
-                                           canDo,
+                                           valid,
                                            success));
         try {
             collection.add(getModel(0));

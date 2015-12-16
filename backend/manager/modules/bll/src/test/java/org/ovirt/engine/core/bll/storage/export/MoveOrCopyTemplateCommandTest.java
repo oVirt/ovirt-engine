@@ -70,7 +70,7 @@ public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
         assertFalse(cmd.checkIfDisksExist(createImageList()));
         // verify that call to VDSM is executed only once because the first disk is found on the target storage domain.
         verify(cmd, times(1)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK.name()));
     }
 
@@ -82,8 +82,8 @@ public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
         MoveOrCopyTemplateCommand cmd = createCommand(params, returnValue);
 
         assertFalse(cmd.checkIfDisksExist(createImageList()));
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(EngineMessage.ERROR_GET_IMAGE_LIST.name()));
-        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains("$sdName SD"));
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ERROR_GET_IMAGE_LIST.name()));
+        assertTrue(cmd.getReturnValue().getValidationMessages().contains("$sdName SD"));
         verify(cmd, times(1)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
     }
 

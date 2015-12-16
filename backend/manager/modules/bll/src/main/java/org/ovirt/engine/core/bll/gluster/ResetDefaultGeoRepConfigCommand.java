@@ -48,8 +48,8 @@ public class ResetDefaultGeoRepConfigCommand extends GeoRepSessionCommandBase<Gl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESET);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESET);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_CONFIG);
     }
 
     @Override

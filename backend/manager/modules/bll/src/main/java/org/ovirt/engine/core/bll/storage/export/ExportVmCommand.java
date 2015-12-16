@@ -95,9 +95,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         setDescription(getVmName());
         setStoragePoolId(getVm().getStoragePoolId());
@@ -124,7 +124,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             return false;
         }
 
@@ -132,7 +132,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getParameters().getTemplateMustExists()) {
             if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
                     getVm().getVmtGuid(), getContext().getEngineContext())) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
             }
         }
@@ -140,7 +140,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // check that the images requested format are valid (COW+Sparse)
         if (!ImagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
                 disksForExport,
-                getReturnValue().getCanDoActionMessages())) {
+                getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -151,7 +151,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     // check that no RAW format exists (we are in collapse mode)
                     if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
                             && img.getVolumeFormat() != VolumeFormat.RAW) {
-                        addCanDoActionMessage(EngineMessage.VM_CANNOT_EXPORT_RAW_FORMAT);
+                        addValidationMessage(EngineMessage.VM_CANNOT_EXPORT_RAW_FORMAT);
                         return false;
                     }
                 }
@@ -160,7 +160,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check destination storage is Export domain
         if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN,
                     String.format("$storageDomainName %1$s", getStorageDomainName()));
         }
 
@@ -225,8 +225,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
     @Override
@@ -449,12 +449,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
-                        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
+                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
                         retVal = false;
                         break;
                     }
                 } else if (vm.getName().equals(getVm().getName())) {
-                    addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     retVal = false;
                     break;
                 }

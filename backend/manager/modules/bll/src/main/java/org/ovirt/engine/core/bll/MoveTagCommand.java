@@ -14,15 +14,15 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         if (getParameters().getNewParentId().equals(getParameters().getTagId())) {
-            addCanDoActionMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
+            addValidationMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
             returnValue = false;
         }
         if (TagsDirector.getInstance()
                 .isTagDescestorOfTag(getParameters().getTagId(), getParameters().getNewParentId())) {
-            addCanDoActionMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
+            addValidationMessage(EngineMessage.TAGS_SPECIFIED_TAG_CANNOT_BE_THE_PARENT_OF_ITSELF);
             returnValue = false;
         }
         return returnValue;

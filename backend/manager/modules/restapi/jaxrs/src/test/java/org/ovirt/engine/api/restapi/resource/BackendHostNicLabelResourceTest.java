@@ -104,14 +104,14 @@ public class BackendHostNicLabelResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UnlabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { NIC_ID, LABELS[0] },
-                canDo,
+                valid,
                 success
             )
         );

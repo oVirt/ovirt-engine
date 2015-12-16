@@ -39,13 +39,13 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getParameters().getDeviceNames() == null || getParameters().getDeviceNames().isEmpty()) {
-            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
+            failValidation(EngineMessage.ACTION_TYPE_FAILED_DEVICE_MUST_BE_SPECIFIED);
         }
 
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         // hot(un)plug not supported (yet)
@@ -54,15 +54,15 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         }
 
         if (getVm().getDedicatedVmForVdsList().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
         }
 
         if (getVm().getDedicatedVmForVdsList().size() > 1) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
         }
 
         if (getHostDevices() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND);
         }
 
         return true;

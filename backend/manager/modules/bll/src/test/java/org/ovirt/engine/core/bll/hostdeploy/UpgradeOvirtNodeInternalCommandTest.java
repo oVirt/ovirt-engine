@@ -70,54 +70,54 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
     }
 
-    private static void assertFailsWithCanDoActionMessage
+    private static void assertFailsWithValidateMessage
             (UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command, EngineMessage message) {
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(message.name()));
+        assertFalse(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().contains(message.name()));
     }
 
     @Test
-    public void canDoActionSucceeds() {
+    public void validateSucceeds() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertTrue(command.canDoAction());
+        assertTrue(command.validate());
     }
 
     @Test
-    public void canDoActionFailsNullParameterForIsoFile() {
+    public void validateFailsNullParameterForIsoFile() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(null);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+        assertFailsWithValidateMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
-    public void canDoActionFailsMissingIsoFile() {
+    public void validateFailsMissingIsoFile() {
         mockVdsWithOsVersion(VALID_OVIRT_VERSION);
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(INVALID_VERSION_OVIRT_ISO_FILENAME);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+        assertFailsWithValidateMessage(command, EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
     }
 
     @Test
-    public void canDoActionFailsIsoVersionNotCompatible() {
+    public void validateFailsIsoVersionNotCompatible() {
         mockVdsWithOsVersion(INVALID_OVIRT_VERSION);
         InstallVdsParameters param = createParameters();
         param.setoVirtIsoFile(VALID_VERSION_OVIRT_ISO_FILENAME);
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
+        assertFailsWithValidateMessage(command, EngineMessage.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
     }
 
     @Test
-    public void canDoActionFailsIHostDoesNotExists() {
+    public void validateFailsIHostDoesNotExists() {
         when(vdsDao.get(any(Guid.class))).thenReturn(null);
         InstallVdsParameters param = createParameters();
         UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = createCommand(param);
-        assertFailsWithCanDoActionMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        assertFailsWithValidateMessage(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 
 }

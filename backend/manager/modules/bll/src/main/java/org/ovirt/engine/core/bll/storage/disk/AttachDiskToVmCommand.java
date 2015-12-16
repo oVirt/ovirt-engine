@@ -60,9 +60,9 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (disk == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
         DiskValidator oldDiskValidator = new DiskValidator(disk);
@@ -92,12 +92,12 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             Disk activeDisk = loadActiveDisk(disk.getId());
 
             if (((DiskImage) activeDisk).getImageStatus() == ImageStatus.ILLEGAL) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             }
 
             if (((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
-                addCanDoActionMessageVariable("diskAliases", disk.getDiskAlias());
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                addValidationMessageVariable("diskAliases", disk.getDiskAlias());
                 return false;
             }
         }
@@ -116,23 +116,23 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
 
         if (disk.isShareable()
                 && !isVersionSupportedForShareable(disk, getStoragePoolDao().get(getVm().getStoragePoolId())
                         .getCompatibilityVersion()
                         .getValue())) {
-            return failCanDoAction(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            return failValidation(EngineMessage.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
         if (!isOperationPerformedOnDiskSnapshot() && !disk.isShareable() && disk.getNumberOfVms() > 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
 
         if (isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         if (isImageDisk) {
             StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(
@@ -236,8 +236,8 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__ATTACH_ACTION_TO);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

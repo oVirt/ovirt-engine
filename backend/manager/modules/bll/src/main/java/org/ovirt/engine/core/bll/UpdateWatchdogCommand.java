@@ -28,13 +28,13 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
         List<VmDevice> watchdogs = getWatchdogs();
         if (watchdogs.isEmpty()) {
-            return failCanDoAction(EngineMessage.WATCHDOG_NOT_FOUND);
+            return failValidation(EngineMessage.WATCHDOG_NOT_FOUND);
         }
 
         if (!validate(validateWatchdog())) {

@@ -42,34 +42,34 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT_CONFIG);
+        addValidationMessage(EngineMessage.VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getParameters().getClusterId() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
         if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
-            failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
+            failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
         if (getParameters().getConfigParams() == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY);
             return false;
         }
 
         for (GlusterVolumeSnapshotConfig param : getParameters().getConfigParams()) {
             if (StringUtils.isEmpty(param.getParamValue())) {
                 addCustomValue("snapshotConfigParam", param.getParamName());
-                addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY);
+                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY);
                 return false;
             }
         }

@@ -40,8 +40,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
     @Override
     protected void setActionMessageParameters () {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SET);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_TICKET);
+        addValidationMessage(EngineMessage.VAR__ACTION__SET);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_TICKET);
     }
 
     @Override
@@ -99,11 +99,11 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
 
             return false;
         }
@@ -181,7 +181,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                 vm.getId(), user.getId());
 
         // Set the result messages indicating that the operation failed:
-        addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
+        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
 
         // The command failed:
         setSucceeded(false);

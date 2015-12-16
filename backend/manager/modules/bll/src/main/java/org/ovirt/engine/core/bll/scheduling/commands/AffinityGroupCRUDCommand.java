@@ -33,7 +33,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     protected boolean validateParameters() {
         if (getVdsGroup() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
         }
         if (getParameters().getAffinityGroup().getEntityIds() != null) {
             VmStatic vmStatic = null;
@@ -41,13 +41,13 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
             for (Guid vmId : getParameters().getAffinityGroup().getEntityIds()) {
                 vmStatic = getVmStaticDao().get(vmId);
                 if (vmStatic == null) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
                 }
                 if (!Objects.equals(vmStatic.getVdsGroupId(), getVdsGroupId())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
                 }
                 if (vmSet.contains(vmStatic.getId())) {
-                    return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP);
                 } else {
                     vmSet.add(vmStatic.getId());
                 }
@@ -78,7 +78,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         if (result == null) {
             return true;
         } else {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
                     String.format("$UnifiedAffinityGroups %s", result.getPositiveVms().toString()),
                     String.format("$negativeAR %s", result.getNegativeVms().toString()));
         }
@@ -108,6 +108,6 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__AFFINITY_GROUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__AFFINITY_GROUP);
     }
 }

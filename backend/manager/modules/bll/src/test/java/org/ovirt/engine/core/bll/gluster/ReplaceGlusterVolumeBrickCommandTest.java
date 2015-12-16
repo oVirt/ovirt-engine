@@ -155,38 +155,38 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceedsOnUpVolume() {
+    public void validateSucceedsOnUpVolume() {
         cmd = spy(createTestCommand1(volumeId1));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailesOnDownVolume() {
+    public void validateFailesOnDownVolume() {
         cmd = spy(createTestCommand1(volumeId2));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnInvalidBrick() {
+    public void validateFailsOnInvalidBrick() {
         cmd = spy(createTestCommand1(volumeId3));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand1(null));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNoBrick() {
+    public void validateFailsOnNoBrick() {
         cmd = spy(createTestCommand2(volumeId4));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
 }

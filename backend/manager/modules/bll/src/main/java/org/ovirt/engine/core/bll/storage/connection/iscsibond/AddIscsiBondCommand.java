@@ -26,9 +26,9 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!FeatureSupported.isIscsiMultipathingSupported(getStoragePool().getCompatibilityVersion())) {
-            return failCanDoAction(EngineMessage.ISCSI_BOND_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ISCSI_BOND_NOT_SUPPORTED);
         }
 
         IscsiBondValidator validator = new IscsiBondValidator();
@@ -85,8 +85,8 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
     }
 
     protected IscsiBond getIscsiBond() {

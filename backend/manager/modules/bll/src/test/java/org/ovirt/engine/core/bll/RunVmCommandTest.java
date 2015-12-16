@@ -378,7 +378,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoAction() {
+    public void testValidate() {
         final ArrayList<Disk> disks = new ArrayList<>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
@@ -390,8 +390,8 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
         doReturn(new VDSGroup()).when(command).getVdsGroup();
-        assertTrue(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+        assertTrue(command.validate());
+        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
 
     @DataPoints
@@ -413,7 +413,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     @Theory
-    public void testCanDoActionUnsupportedRng(VmRngDevice.Source vmRngSource, Set<VmRngDevice.Source> clusterReqSources) {
+    public void testValidateUnsupportedRng(VmRngDevice.Source vmRngSource, Set<VmRngDevice.Source> clusterReqSources) {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(vm).when(command).getVm();
@@ -431,7 +431,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
         doReturn(deviceDao).when(command).getVmDeviceDao();
 
-        Assert.assertThat(command.canDoAction(), is(clusterReqSources.contains(vmRngSource)));
+        Assert.assertThat(command.validate(), is(clusterReqSources.contains(vmRngSource)));
     }
 
     @Test

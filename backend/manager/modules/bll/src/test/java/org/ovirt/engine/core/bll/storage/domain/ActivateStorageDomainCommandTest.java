@@ -11,7 +11,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -43,7 +43,7 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void nonInternalLockedDisallowed() {
         testExecution(StorageDomainStatus.Locked);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED);
     }
 
     @Test
@@ -101,15 +101,15 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void nonActiveVdsDisallowed() {
         testNonActiveVdsExecution(StorageDomainStatus.Maintenance);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
     }
 
     private void testActionAllowed() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     private void testActionDisallowed() {
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
 

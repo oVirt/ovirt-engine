@@ -22,13 +22,13 @@ public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         if (getRngDevices().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_NOT_FOUND);
         }
 
         return true;

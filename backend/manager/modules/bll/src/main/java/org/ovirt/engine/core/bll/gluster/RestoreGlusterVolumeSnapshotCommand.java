@@ -45,7 +45,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__RESTORE);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESTORE);
         super.setActionMessageParameters();
     }
 
@@ -323,8 +323,8 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
@@ -333,13 +333,13 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
                 && (volume.getAsyncTask().getType() == GlusterTaskType.REBALANCE
                 || volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK)
                 && volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED) {
-            addCanDoActionMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
+            addValidationMessageVariable("asyncTask", volume.getAsyncTask().getType().name().toLowerCase());
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS);
         }
 
         for (GlusterGeoRepSession session : georepSessions) {
             if (session.getSlaveVolumeId() == null || session.getSlaveNodeUuid() == null) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
             }
         }
 

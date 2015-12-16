@@ -101,23 +101,23 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         StorageDomain dom = getStorageDomain();
         if (dom == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         boolean localFs = isLocalFs(dom);
         if (getParameters().getDoFormat() && !localFs && isStorageDomainAttached(dom)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
         }
 
         VDS vds = getVds();
@@ -142,12 +142,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                     return false;
                 }
             } else {
-                return failCanDoAction(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
+                return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
             }
         }
 
         if (dom.getStorageType().isOpenStackDomain()) {
-            return failCanDoAction(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            return failValidation(EngineMessage.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
         }
 
         return true;

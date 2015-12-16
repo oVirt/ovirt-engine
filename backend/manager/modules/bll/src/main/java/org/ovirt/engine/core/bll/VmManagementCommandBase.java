@@ -91,7 +91,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                     "(_\\d+#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*)*");
 
     /**
-     * Checks that a given CPU pinning string is valid Adds an appropriate message to CanDoAction messages if validation
+     * Checks that a given CPU pinning string is valid Adds an appropriate message to Validate messages if validation
      * fails
      *
      * @param cpuPinning String to validate
@@ -106,7 +106,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         if (!cpuPinningPattern.matcher(cpuPinning).matches()) {
             // ERROR bad syntax
-            addCanDoActionMessage(EngineMessage.VM_PINNING_FORMAT_INVALID);
+            addValidationMessage(EngineMessage.VM_PINNING_FORMAT_INVALID);
             return false;
         }
 
@@ -117,7 +117,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         // can not check if no dedicated vds was configured
         if (vmStatic.getDedicatedVmForVdsList().isEmpty()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
 
         // check if vcpu rules are valid
@@ -127,21 +127,21 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             int currVcpu = Integer.parseInt(splitRule[0]);
             if (currVcpu >= maxvCPU) {
                 // ERROR maps to a non existent vcpu
-                return failCanDoAction(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST);
+                return failValidation(EngineMessage.VM_PINNING_VCPU_DOES_NOT_EXIST);
             }
             if (!vcpus.add(currVcpu)) {
                 // ERROR contains more than one definition for the same vcpu
-                return failCanDoAction(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION);
+                return failValidation(EngineMessage.VM_PINNING_DUPLICATE_DEFINITION);
             }
 
             Collection<Integer> currPcpus = parsePCpuPinningNumbers(splitRule[1]);
             if (currPcpus == null) {
-                return failCanDoAction(EngineMessage.VM_PINNING_FORMAT_INVALID);
+                return failValidation(EngineMessage.VM_PINNING_FORMAT_INVALID);
             }
 
             if (currPcpus.size() == 0) {
                 // definition of pcpus is no cpu, e.g 0#1,^1
-                return failCanDoAction(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU);
+                return failValidation(EngineMessage.VM_PINNING_PINNED_TO_NO_CPU);
             }
         }
 

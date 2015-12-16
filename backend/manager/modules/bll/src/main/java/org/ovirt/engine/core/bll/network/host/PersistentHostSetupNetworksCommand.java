@@ -44,8 +44,8 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__SETUP);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__NETWORKS);
+        addValidationMessage(EngineMessage.VAR__ACTION__SETUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__NETWORKS);
     }
 
     @Override

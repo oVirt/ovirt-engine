@@ -23,7 +23,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__START);
+        addValidationMessage(EngineMessage.VAR__ACTION__START);
     }
 
     @Override
@@ -48,12 +48,12 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
         if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE) && !(getParameters().isForce())) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
         }
         return true;
     }

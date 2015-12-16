@@ -69,12 +69,12 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         doTestBadAdd(true, false, FAILURE);
     }
 
-    protected void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[]{"Name", "Description"},
                 new Object[]{NAMES[0], DESCRIPTIONS[0]},
-                canDo,
+                valid,
                 success));
         try {
             doAdd(getRestModel(0));

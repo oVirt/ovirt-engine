@@ -42,13 +42,13 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getProvider() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
         }
         ProviderProxy providerProxy = getProviderProxy();
         if (providerProxy == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED,
                     String.format("$providerType %1$s", getProvider().getType()));
         }
         ProviderValidator validator = getProviderProxy().getProviderValidator();
@@ -78,8 +78,8 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override

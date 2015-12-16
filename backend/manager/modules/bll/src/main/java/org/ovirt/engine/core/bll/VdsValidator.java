@@ -33,7 +33,7 @@ public class VdsValidator {
      */
     public boolean shouldVdsBeFenced() {
         boolean result = false;
-        // Not using exists() here in order not to add canDoAction message
+        // Not using exists() here in order not to add validate message
         if (vds == null) {
             return false;
         }

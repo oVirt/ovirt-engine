@@ -234,7 +234,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
         mockBackend(true, JobExecutionStatus.ABORTED, false, null);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd).endStepJob(argThat(jobExecutionStatus(JobExecutionStatus.ABORTED)),
@@ -249,7 +249,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
         mockBackend(true, JobExecutionStatus.FINISHED, true, null);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd).endStepJob(argThat(jobExecutionStatus(JobExecutionStatus.FINISHED)),
@@ -264,7 +264,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
         mockBackend(false, JobExecutionStatus.FAILED, false, EngineError.GlusterVolumeRebalanceStopFailed);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
         cmd.executeCommand();
 
         verify(cmd, never()).endStepJob(any(JobExecutionStatus.class),
@@ -275,38 +275,38 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceedsOnVolumeWithRebalanceTask() {
+    public void validateSucceedsOnVolumeWithRebalanceTask() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnVolumeWithoutAsyncTask() {
+    public void validateFailsOnVolumeWithoutAsyncTask() {
         cmd = spy(createTestCommand(volumeWithoutAsyncTask));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnVolumeWithoutRebalanceTask() {
+    public void validateFailsOnVolumeWithoutRebalanceTask() {
         cmd = spy(createTestCommand(volumeWithoutRebalanceTask));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailesOnVolumeWithRebalanceTaskCompleted() {
+    public void validateFailesOnVolumeWithRebalanceTaskCompleted() {
         cmd = spy(createTestCommand(volumeWithRebalanceTaskCompleted));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
     @Test
-    public void canDoActionFailsOnNull() {
+    public void validateFailsOnNull() {
         cmd = spy(createTestCommand(null));
         prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
+        assertFalse(cmd.validate());
     }
 
 }

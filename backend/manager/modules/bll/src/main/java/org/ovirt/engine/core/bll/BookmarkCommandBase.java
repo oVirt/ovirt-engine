@@ -51,9 +51,9 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     }
 
     protected void addErrorMessages(EngineMessage messageActionTypeParameter, EngineMessage messageReason) {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__BOOKMARK);
-        addCanDoActionMessage(messageActionTypeParameter);
-        addCanDoActionMessage(messageReason);
+        addValidationMessage(EngineMessage.VAR__TYPE__BOOKMARK);
+        addValidationMessage(messageActionTypeParameter);
+        addValidationMessage(messageReason);
     }
 
     protected void addInvalidIdErrorMessages(EngineMessage messageActionTypeParameter) {

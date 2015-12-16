@@ -20,8 +20,8 @@ public class StopGlusterVolumeProfileCommand extends GlusterVolumeCommandBase<Gl
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__STOP_PROFILE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__STOP_PROFILE);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override

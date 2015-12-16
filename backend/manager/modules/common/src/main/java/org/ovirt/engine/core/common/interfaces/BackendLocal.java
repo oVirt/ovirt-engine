@@ -22,11 +22,11 @@ public interface BackendLocal {
 
     ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
-            boolean isRunOnlyIfAllCanDoPass, boolean waitForResult);
+            boolean isRunOnlyIfAllValidationPass, boolean waitForResult);
 
     ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
-            boolean isRunOnlyIfAllCanDoPass);
+            boolean isRunOnlyIfAllValidationPass);
 
     void initialize();
 

@@ -165,8 +165,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__EXPORT);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             return false;
         }
         if (getDiskImage() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
         return true;
     }
@@ -234,7 +234,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!validateDiskImage()) {
             return false;
         }
@@ -246,12 +246,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         // At the moment it's not possible to export images that have a snapshot
         // or that are based on a a template.
         if (!getDiskImage().getParentId().equals(Guid.Empty)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
         }
 
         for (VM vm : getVmDao().getVmsListForDisk(getDiskImage().getId(), false)) {
             if (vm.getStatus() != VMStatus.Down) {
-                return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
             }
         }
 

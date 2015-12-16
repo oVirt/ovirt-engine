@@ -59,12 +59,12 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                     : eventSubscriber.getMethodAddress();
 
             if (!isEmailValid(mailAddress)) {
-                addCanDoActionMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
+                addValidationMessage(EngineMessage.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
                 retValue = false;
             }
             break;
         default:
-            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
+            addValidationMessage(EngineMessage.EN_UNKNOWN_NOTIFICATION_METHOD);
             retValue = false;
             break;
         }
@@ -103,10 +103,10 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                 .getEventDao()
                 .getAllForSubscriber(eventSubscriber.getSubscriberId());
         if (list.isEmpty()) {
-            addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
+            addValidationMessage(EngineMessage.EN_NOT_SUBSCRIBED);
         } else {
             if (!validateSubscription(list, eventSubscriber)) {
-                addCanDoActionMessage(EngineMessage.EN_NOT_SUBSCRIBED);
+                addValidationMessage(EngineMessage.EN_NOT_SUBSCRIBED);
             } else {
                 String tagName = eventSubscriber.getTagName();
                 // validate notification method
@@ -133,7 +133,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         Tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
         if (tag == null) {
 
-            addCanDoActionMessage(EngineMessage.EN_UNKNOWN_TAG_NAME);
+            addValidationMessage(EngineMessage.EN_UNKNOWN_TAG_NAME);
             retValue = false;
         }
 

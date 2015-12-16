@@ -12,20 +12,20 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean returnValue = true;
         if (getRole() == null) {
             returnValue = false;
-            addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
+            addValidationMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
         } else {
-            if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
+            if (checkIfRoleIsReadOnly(getReturnValue().getValidationMessages())) {
                 returnValue = false;
-                addCanDoActionMessage(EngineMessage.VAR__TYPE__ROLE);
-                addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+                addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
+                addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
             } else {
                 if (getPermissionDao().getAllForRole(getParameters().getRoleId()).size() != 0) {
                     returnValue = false;
-                    addCanDoActionMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
+                    addValidationMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
 
                 }
             }

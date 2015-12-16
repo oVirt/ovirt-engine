@@ -47,7 +47,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionNoVM() {
+    public void testValidateNoVM() {
         WatchdogParameters params = new WatchdogParameters();
         params.setId(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"));
         params.setAction(VmWatchdogAction.PAUSE);
@@ -61,11 +61,11 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
             }
         };
 
-        Assert.assertFalse(command.canDoAction());
+        Assert.assertFalse(command.validate());
     }
 
     @Test
-    public void testCanDoAction() {
+    public void testValidate() {
         WatchdogParameters params = new WatchdogParameters();
         Guid vmGuid = new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db");
         params.setId(vmGuid);
@@ -93,7 +93,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         VmWatchdog vmWatchdog = spy(new VmWatchdog());
         when(vmWatchdog.getModel()).thenReturn(vmWatchdogType);
 
-        Assert.assertTrue(command.canDoAction());
+        Assert.assertTrue(command.validate());
     }
 
 }

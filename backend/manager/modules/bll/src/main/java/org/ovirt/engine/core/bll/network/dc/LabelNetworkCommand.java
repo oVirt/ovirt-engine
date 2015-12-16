@@ -48,12 +48,12 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__LABEL);
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__LABEL);
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         NetworkValidator validator = new NetworkValidator(vmDao, getNetwork());
         return validate(validator.networkIsSet())
                 && validate(validator.notLabeled())

@@ -26,13 +26,13 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }
 
         if (!isInternalExecution() && !ObjectIdentityChecker.canUpdateField(getVm(), "vdsGroupId", getVm().getStatus())) {
-            addCanDoActionMessage(EngineMessage.VM_STATUS_NOT_VALID_FOR_UPDATE);
+            addValidationMessage(EngineMessage.VM_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
 
@@ -42,8 +42,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM__CLUSTER);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM__CLUSTER);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         ProviderValidator validatorOld = new ProviderValidator(getOldProvider());
         ProviderValidator validatorNew = new ProviderValidator(getProvider());
         return validate(validatorOld.providerIsSet())
@@ -85,8 +85,8 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__PROVIDER);
+        addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__PROVIDER);
     }
 
     @Override

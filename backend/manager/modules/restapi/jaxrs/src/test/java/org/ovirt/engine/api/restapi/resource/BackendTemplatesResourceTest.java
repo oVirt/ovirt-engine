@@ -461,7 +461,7 @@ public class BackendTemplatesResourceTest
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
 
-    protected void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+    protected void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -472,7 +472,7 @@ public class BackendTemplatesResourceTest
         setUpGetConsoleExpectations(new int[] {0});
         setUpGetSoundcardExpectations(new int[] {0});
 
-        super.doTestBadAdd(canDo, success, detail);
+        super.doTestBadAdd(valid, success, detail);
     }
 
     @Test

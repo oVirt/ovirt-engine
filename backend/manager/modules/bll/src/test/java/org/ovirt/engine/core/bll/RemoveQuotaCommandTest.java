@@ -85,9 +85,9 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCanDoActionCommand() throws Exception {
+    public void testValidateCommand() throws Exception {
         RemoveQuotaCommand removeQuotaCommand = createCommand();
-        assertTrue(removeQuotaCommand.canDoAction());
+        assertTrue(removeQuotaCommand.validate());
     }
 
     private RemoveQuotaCommand createCommand() {

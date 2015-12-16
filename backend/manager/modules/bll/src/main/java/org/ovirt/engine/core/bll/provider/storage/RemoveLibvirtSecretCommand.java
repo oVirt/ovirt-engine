@@ -11,7 +11,7 @@ public class RemoveLibvirtSecretCommand extends LibvirtSecretCommandBase {
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         LibvirtSecretValidator libvirtSecretValidator =
                 new LibvirtSecretValidator(getParameters().getLibvirtSecret());
         return validate(libvirtSecretValidator.uuidExist());
@@ -33,6 +33,6 @@ public class RemoveLibvirtSecretCommand extends LibvirtSecretCommandBase {
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 }

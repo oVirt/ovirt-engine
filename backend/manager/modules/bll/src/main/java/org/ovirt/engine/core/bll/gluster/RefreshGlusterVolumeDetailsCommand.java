@@ -25,19 +25,19 @@ public class RefreshGlusterVolumeDetailsCommand extends GlusterVolumeCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REFRESH);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
+        addValidationMessage(EngineMessage.VAR__ACTION__REFRESH);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if(!super.canDoAction()) {
+    protected boolean validate() {
+        if(!super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
         if (!glusterVolume.isOnline()) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
         }
 
         return true;

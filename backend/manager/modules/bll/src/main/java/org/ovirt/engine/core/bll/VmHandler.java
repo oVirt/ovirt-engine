@@ -607,7 +607,7 @@ public class VmHandler {
      * @param candidateInterfaceName
      *            - Candidate for interface name.
      * @param messages
-     *            - Messages for CanDoAction().
+     *            - Messages for Validate().
      * @return - True , if name is valid, false, if name already exist.
      */
     public static boolean isNotDuplicateInterfaceName(List<VmNic> interfaces,
@@ -630,7 +630,7 @@ public class VmHandler {
      * @param numOfMonitors
      *            Number of monitors
      * @param reasons
-     *            Messages for CanDoAction().
+     *            Messages for Validate().
      * @return
      */
     public static boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
@@ -709,7 +709,7 @@ public class VmHandler {
      * @param osId
      * @param vdsGroup
      * @param messages
-     *            - Messages for CanDoAction()
+     *            - Messages for Validate()
      * @return
      */
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
@@ -890,10 +890,10 @@ public class VmHandler {
         return true;
     }
 
-    public static boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> canDoActionMessages) {
+    public static boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> validationMessages) {
         String cpuId = cpuFlagsManagerHandler.getCpuId(cpuName, version);
         if (cpuId == null) {
-            canDoActionMessages.add(EngineMessage.CPU_TYPE_UNKNOWN.name());
+            validationMessages.add(EngineMessage.CPU_TYPE_UNKNOWN.name());
             return false;
         }
         if (!osRepository.isCpuSupported(
@@ -901,8 +901,8 @@ public class VmHandler {
                 version,
                 cpuId)) {
             String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
-            canDoActionMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
-            canDoActionMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
+            validationMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
+            validationMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
             return false;
         }
         return true;
@@ -966,22 +966,22 @@ public class VmHandler {
      * Checks that dedicated host exists on the same cluster as the VM
      *
      * @param vm                  - the VM to check
-     * @param canDoActionMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
+     * @param validationMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
      * @return
      */
-    public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> canDoActionMessages) {
+    public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> validationMessages) {
         boolean result = true;
         for (Guid vdsId : vm.getDedicatedVmForVdsList()) {
             // get dedicated host, checks if exists and compare its cluster to the VM cluster
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
-                if (canDoActionMessages != null) {
-                    canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
+                if (validationMessages != null) {
+                    validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
                 }
                 result = false;
             } else if (!Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId())) {
-                if (canDoActionMessages != null) {
-                    canDoActionMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
+                if (validationMessages != null) {
+                    validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
                 }
                 result = false;
             }

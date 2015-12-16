@@ -35,23 +35,23 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__CREATE);
+        addValidationMessage(EngineMessage.VAR__ACTION__CREATE);
         super.setActionMessageParameters();
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 
         GlusterVolumeEntity volume = getGlusterVolume();
         if (volume != null && volume.getStatus() == GlusterStatus.DOWN) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN);
         }
 
         if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
         }
 
         // Validate the scheduling dates (start and end by dates)
@@ -62,7 +62,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
                 && schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
                 && schedule.getEndByDate() != null && convertedStartDate != null
                 && convertedEndByDate.compareTo(convertedStartDate) <= 0) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_END_BY_DATE_BEFORE_START_DATE);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_END_BY_DATE_BEFORE_START_DATE);
         }
 
         return true;

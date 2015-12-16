@@ -11,7 +11,7 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         if (getBookmark() == null) {
             addInvalidIdErrorMessages(EngineMessage.VAR__ACTION__UPDATE);
             return false;

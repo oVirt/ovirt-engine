@@ -201,7 +201,7 @@ public class BackendAttachedStorageDomainResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetDomainExpectations(StorageType.NFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(
@@ -210,7 +210,7 @@ public class BackendAttachedStorageDomainResourceTest
                 DetachStorageDomainFromPoolParameters.class,
                 new String[]{"StorageDomainId", "StoragePoolId"},
                 new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID},
-                canDo,
+                valid,
                 success
             )
         );

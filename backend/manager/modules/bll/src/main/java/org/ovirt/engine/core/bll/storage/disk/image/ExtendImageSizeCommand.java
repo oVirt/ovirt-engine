@@ -231,8 +231,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__EXTEND_IMAGE_SIZE);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM_DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__EXTEND_IMAGE_SIZE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_DISK);
     }
 
     @Override

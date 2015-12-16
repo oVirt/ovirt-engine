@@ -64,7 +64,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__CLUSTER);
+        addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER);
     }
 
     protected ArchitectureType getArchitecture() {
@@ -124,7 +124,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
                         getVdsGroup().getClusterPolicyProperties());
         if (!validationErrors.isEmpty()) {
             SimpleCustomPropertiesUtil.getInstance().handleCustomPropertiesError(validationErrors,
-                    getReturnValue().getCanDoActionMessages());
+                    getReturnValue().getValidationMessages());
             return false;
         }
         return true;

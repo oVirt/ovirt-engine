@@ -13,7 +13,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -106,142 +106,142 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     }
 
     @Test
-    public void canDoActionSucceeds() {
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    public void validateSucceeds() {
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoActionSucceedsInitFormatDataDomain() {
+    public void validateSucceedsInitFormatDataDomain() {
         sd.setStorageFormat(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         assertEquals("Format not initialized correctly", StorageFormatType.V3, sd.getStorageFormat());
     }
 
     @Test
-    public void canDoActionSucceedsInitFormatDataDomain30() {
+    public void validateSucceedsInitFormatDataDomain30() {
         sd.setStorageFormat(null);
         sp.setCompatibilityVersion(Version.v3_0);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
     }
 
     @Test
-    public void canDoActionSucceedsInitFormatIsoDomain() {
+    public void validateSucceedsInitFormatIsoDomain() {
         sd.setStorageFormat(null);
         sd.setStorageDomainType(StorageDomainType.ISO);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
     }
 
     @Test
-    public void canDoActionSucceedsInitFormatExportDomain() {
+    public void validateSucceedsInitFormatExportDomain() {
         sd.setStorageFormat(null);
         sd.setStorageDomainType(StorageDomainType.ImportExport);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
     }
 
     @Test
-    public void canDoActionFailsNameExists() {
+    public void validateFailsNameExists() {
         when(sdsDao.getByName(sd.getName())).thenReturn(new StorageDomainStatic());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
     }
 
     @Test
-    public void canDoActionFailsLongName() {
+    public void validateFailsLongName() {
         sd.setStorageName(RandomUtils.instance().nextString(11));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
 
     @Test
-    public void canDoActionSucceedsPoolNotSpecified() {
+    public void validateSucceedsPoolNotSpecified() {
         sd.setStorageFormat(null);
         vds.setStoragePoolId(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoActionFailsPoolSpecifiedDoesNotExist() {
+    public void validateFailsPoolSpecifiedDoesNotExist() {
         params.setStoragePoolId(spId);
         when(spDao.get(spId)).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
 
     @Test
-    public void canDoActionFailsBlockIso() {
+    public void validateFailsBlockIso() {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setStorageType(StorageType.FCP);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
-    public void canDoActionSucceedsExportOnLocal() {
+    public void validateSucceedsExportOnLocal() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.LOCALFS);
         sd.setStorageFormat(StorageFormatType.V1);
         sp.setIsLocal(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
-    public void canDoActionFailsExportOnBlock() {
+    public void validateFailsExportOnBlock() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.ISCSI);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
-    public void canDoActionFailsMaster() {
+    public void validateFailsMaster() {
         sd.setStorageDomainType(StorageDomainType.Master);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
-    public void canDoActionFailsUnsupportedFormat() {
+    public void validateFailsUnsupportedFormat() {
         sp.setCompatibilityVersion(Version.v3_0);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }
 
     @Test
-    public void canDoActionFailsUnsupportedBlockOnlyFormat() {
+    public void validateFailsUnsupportedBlockOnlyFormat() {
         sd.setStorageFormat(StorageFormatType.V2);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
-    public void canDoActionFailsUnsupportedIsoFormat() {
+    public void validateFailsUnsupportedIsoFormat() {
         sd.setStorageDomainType(StorageDomainType.ISO);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
-    public void canDoActionFailsUnsupportedExportFormat() {
+    public void validateFailsUnsupportedExportFormat() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
-    public void canDoActionFailsNoConnection() {
+    public void validateFailsNoConnection() {
         when(sscDao.get(connId.toString())).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
-    public void canDoActionFailsConnectionAlreadyUsed() {
+    public void validateFailsConnectionAlreadyUsed() {
         when(sdDao.getAllByConnectionId(connId)).thenReturn(Collections.singletonList(new StorageDomain()));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+        ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
 }

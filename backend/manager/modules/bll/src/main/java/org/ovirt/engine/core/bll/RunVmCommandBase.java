@@ -116,8 +116,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             reexecuteCommand();
 
             // if there was no rerun attempt in the previous executeAction call and the command
-            // wasn't done because canDoAction check returned false..
-            if (!_isRerun && !getReturnValue().getCanDoAction()) {
+            // wasn't done because validate check returned false..
+            if (!_isRerun && !getReturnValue().isValid()) {
                 runningFailed();
             }
 
@@ -129,8 +129,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void reexecuteCommand() {
-        // restore CanDoAction value to false so CanDoAction checks will run again
-        getReturnValue().setCanDoAction(false);
+        // restore Validate value to false so Validate checks will run again
+        getReturnValue().setValid(false);
         if (getExecutionContext() != null) {
             Job job = getExecutionContext().getJob();
             if (job != null) {

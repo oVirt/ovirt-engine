@@ -91,10 +91,10 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected boolean validate() {
         boolean result = true;
         if (getVds() == null) {
-            addCanDoActionMessage(EngineMessage.VDS_INVALID_SERVER_ID);
+            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             result = false;
         }
         return result;

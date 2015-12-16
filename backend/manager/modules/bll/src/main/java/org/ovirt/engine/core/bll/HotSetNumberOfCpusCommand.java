@@ -44,41 +44,41 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
 
 
     @Override
-    protected boolean canDoAction() {
-        boolean canDo = true;
+    protected boolean validate() {
+        boolean valid = true;
         if (getVm() == null) {
-            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         if (getVm().getStatus() != VMStatus.Up) {
-            canDo = failVmStatusIllegal();
+            valid = failVmStatusIllegal();
         }
         if (getParameters().getVm().getCpuPerSocket() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfCpuPerSocket,
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
-            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
+            valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
         if (getParameters().getVm().getThreadsPerCpu() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfThreadsPerCpu,
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
-            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
+            valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
         }
         if (getParameters().getVm().getNumOfSockets() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfVmSockets,
                         getVm().getVdsGroupCompatibilityVersion().getValue())) {
-            canDo = failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
+            valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-                canDo = failCanDoAction(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
+                valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
             }
         } else if (!FeatureSupported.hotUnplugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
-            canDo = failCanDoAction(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
+            valid = failValidation(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
         }
 
-        return canDo;
+        return valid;
     }
 
     /**
@@ -121,10 +121,10 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__HOT_SET_CPUS);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__VM);
-        addCanDoActionMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
-        addCanDoActionMessageVariable("architecture", getVm().getClusterArch());
+        addValidationMessage(EngineMessage.VAR__ACTION__HOT_SET_CPUS);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
+        addValidationMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
+        addValidationMessageVariable("architecture", getVm().getClusterArch());
     }
 
     @Override

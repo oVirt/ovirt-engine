@@ -33,7 +33,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-/** A Validator for various VM canDoAction needs */
+/** A Validator for various VM validate needs */
 public class VmValidator {
     private Iterable<VM> vms;
 

@@ -43,13 +43,13 @@ public class StartRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBa
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(EngineMessage.VAR__ACTION__REMOVE_BRICKS_START);
-        addCanDoActionMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE_BRICKS_START);
+        addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (!super.canDoAction()) {
+    protected boolean validate() {
+        if (!super.validate()) {
             return false;
         }
 

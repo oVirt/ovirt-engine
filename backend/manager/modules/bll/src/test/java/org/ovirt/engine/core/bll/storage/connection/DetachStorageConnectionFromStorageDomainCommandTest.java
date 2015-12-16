@@ -16,8 +16,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
@@ -67,30 +67,30 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
     }
 
     @Test
-    public void canDoActionSuccess() {
+    public void validateSuccess() {
         when(validator.isConnectionExists()).thenReturn(ValidationResult.VALID);
         when(validator.isConnectionForISCSIDomainAttached(domain)).thenReturn(Boolean.TRUE);
         when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
         when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
-    public void canDoActionFailure() {
+    public void validateFailure() {
         when(validator.isConnectionExists()).thenReturn(ValidationResult.VALID);
         when(validator.isConnectionForISCSIDomainAttached(domain)).thenReturn(Boolean.FALSE);
         when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
         when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST);
     }
 
     @Test
-    public void canDoActionFailureNotExists() {
+    public void validateFailureNotExists() {
         ValidationResult result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         when(validator.isConnectionExists()).thenReturn(result);
         when(validator.isISCSIConnectionAndDomain(domain)).thenReturn(ValidationResult.VALID);
         when(validator.isDomainOfConnectionExistsAndInactive(domain)).thenReturn(ValidationResult.VALID);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
 
     @Test
