@@ -787,6 +787,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___UpdateStoragePool();
 
+    String VdcActionType___UploadDiskImage();
+
+    String VdcActionType___UploadImageStatus();
+
     String VdcActionType___AddEventSubscription();
 
     String VdcActionType___RemoveEventSubscription();

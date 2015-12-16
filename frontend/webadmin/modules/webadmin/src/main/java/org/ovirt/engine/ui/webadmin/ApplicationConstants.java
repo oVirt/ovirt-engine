@@ -1905,6 +1905,33 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Timeout (deciseconds)")
     String nfsTimeoutGeneral();
 
+    @DefaultStringValue("Image Source")
+    String uploadImageSourceLabel();
+
+    @DefaultStringValue("Local File")
+    String uploadImageSourceLocal();
+
+    @DefaultStringValue("Remote URI")
+    String uploadImageSourceRemote();
+
+    @DefaultStringValue("Image File")
+    String uploadImageFileLabel();
+
+    @DefaultStringValue("Image URI")
+    String uploadImageUriLabel();
+
+    @DefaultStringValue("Image Type")
+    String uploadImageTypeLabel();
+
+    @DefaultStringValue("Image Upload not available: the required HTML5 APIs are not supported by your browser")
+    String uploadImageUploadNotSupportedMessage();
+
+    @DefaultStringValue("Disk Options")
+    String uploadImageDiskOptionsLabel();
+
+    @DefaultStringValue("Disk Information")
+    String uploadImageDiskOptionsInfoOnlyLabel();
+
     @DefaultStringValue("Warning Low Space Indicator (%)")
     String warningLowSpaceIndicatorUnits();
 

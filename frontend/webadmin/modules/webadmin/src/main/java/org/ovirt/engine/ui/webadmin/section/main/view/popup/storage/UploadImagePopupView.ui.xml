@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.UploadImagePopupView.WidgetStyle">
+        @external obrand_diskTypePanel;
+        .obrand_diskTypePanel {
+            height: 36px;
+            width: 100%;
+            display: block;
+            color: white;
+            font-weight: bold;
+        }
+        .sectionTitle {
+            display: block;
+            float: left;
+            padding-top: 6px;
+            margin-right: 15px;
+            margin-bottom: 6px;
+            margin-left: 3px;
+        }
+        .imageSourcePanel {
+            padding-top: 6px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .messagePanel {
+            color: #CD2127;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .progressPanel {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .optionsPanel {
+            margin-top: 5px;
+        }
+        .optionsPanel>* {
+            margin-top: 15px;
+        }
+
+        .imageFileUploadLabel {
+            font-size: 13px;
+            padding: 0 5px;
+            font-family: Arial, sans-serif;
+            line-height: 16px;
+            color: #333;
+        }
+        .imageFileUploadInput {
+            float: right;
+            width: 460px;
+        }
+
+        /* The following styles are applied within the application code */
+        .imageUriEditor {
+            width: 560px;
+        }
+        .imageUriEditorContent {
+            float: right;
+            width: 460px;
+        }
+
+        .volumeFormatEditor {
+            width: 240px;
+        }
+        .volumeFormatEditorContent {
+            width: 140px;
+        }
+
+    </ui:style>
+
+    <d:SimpleDialogPanel width="790px" height="640px">
+        <d:content>
+            <g:FlowPanel>
+
+                <g:HorizontalPanel addStyleNames="{style.obrand_diskTypePanel}">
+                    <g:Label ui:field="imageSourceLabel" addStyleNames="{style.sectionTitle}" />
+                    <w:RadioButtonsHorizontalPanel ui:field="imageSourcePanel" name="imageSourcePanel" addStyleNames="{style.imageSourcePanel}" />
+                </g:HorizontalPanel>
+
+                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="180px">
+                    <g:HorizontalPanel ui:field="imageFileUploadPanel">
+                        <g:Label ui:field="imageFileUploadLabel" addStyleNames="{style.imageFileUploadLabel}" />
+                        <g:FileUpload ui:field="imageFileUpload" addStyleNames="{style.imageFileUploadInput}" />
+                    </g:HorizontalPanel>
+
+                    <g:FlowPanel ui:field="imageFileDownloadPanel">
+                        <g:FlowPanel ui:field="downloadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="imageUriEditor" />
+                    </g:FlowPanel>
+
+                    <e:ListModelListBoxEditor ui:field="volumeFormatEditor" />
+                    <g:FlowPanel ui:field="uploadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
+                    <g:FlowPanel ui:field="progressMessagePanel" visible="false" addStyleNames="{style.progressPanel}" />
+                </g:FlowPanel>
+
+                <g:HorizontalPanel addStyleNames="{style.obrand_diskTypePanel}">
+                    <g:Label ui:field="diskOptionsLabel" addStyleNames="{style.sectionTitle}" />
+                </g:HorizontalPanel>
+                <vm:VmDiskPopupWidget ui:field="vmDiskPopupWidget" />
+
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

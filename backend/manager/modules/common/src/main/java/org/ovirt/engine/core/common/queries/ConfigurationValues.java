@@ -169,7 +169,12 @@ public enum ConfigurationValues {
     MultipleGraphicsSupported(ConfigAuthType.User),
     DisplayUncaughtUIExceptions,
     DisplaySupportedBrowserWarning,
-    RefreshLunSupported;
+    RefreshLunSupported,
+    UploadImageUiInactivityTimeoutInSeconds(ConfigAuthType.User),
+    UploadImageChunkSizeKB,
+    UploadImageXhrTimeoutInSeconds,
+    UploadImageXhrRetryIntervalInSeconds,
+    UploadImageXhrMaxRetries;
 
     public static enum ConfigAuthType {
         Admin,

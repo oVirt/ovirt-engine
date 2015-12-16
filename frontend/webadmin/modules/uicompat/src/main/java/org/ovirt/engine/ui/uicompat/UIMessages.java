@@ -603,6 +603,15 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Errata for VM {0}")
     String errataForVm(String vmName);
 
+    @DefaultMessage("Failed to start upload: {0}")
+    String uploadImageFailedToStartMessage(String reason);
+
+    @DefaultMessage("Failed to resume upload: {0}")
+    String uploadImageFailedToResumeMessage(String reason);
+
+    @DefaultMessage("Failed to resume upload: size of prior file ({0} bytes) does not match size of new file ({1} bytes).")
+    String uploadImageFailedToResumeSizeMessage(long priorFileBytes, long newFileBytes);
+
     @DefaultMessage("Failed to communicate with the external provider, see log for additional details.")
     String providerFailure();
 }
