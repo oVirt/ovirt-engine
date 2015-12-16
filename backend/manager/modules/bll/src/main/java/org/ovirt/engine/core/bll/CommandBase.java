@@ -1207,7 +1207,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /**
      * Calculates the proper parameters for the task
-     * @param actionType parent command type for which the task is created
+     * @param parentCommandType parent command type for which the task is created
      * @param parameters parameter of the creating command
      */
     protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType,
