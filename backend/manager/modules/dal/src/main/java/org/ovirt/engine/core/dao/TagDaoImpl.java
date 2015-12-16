@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -100,15 +99,6 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     }
 
     @Override
-    public List<Tags> getAllUserGroupTagsWithIds(String ids) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("tag_ids", ids);
-
-        return getCallsHandler()
-                .executeReadList("GetUserGroupTagsByTagIds", TagRowMapper.instance, parameterSource);
-    }
-
-    @Override
     public List<Tags> getAllForUsers(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_ids", ids);
@@ -133,15 +123,6 @@ public class TagDaoImpl extends BaseDao implements TagDao {
 
         return getCallsHandler()
                 .executeReadList("GetTagsByVdsId", TagRowMapper.instance, parameterSource);
-    }
-
-    @Override
-    public List<Tags> getAllForVdsWithIds(String ids) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("tag_ids", ids);
-
-        return getCallsHandler()
-                .executeReadList("GetVdsTagsByTagIds", TagRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -452,25 +433,5 @@ public class TagDaoImpl extends BaseDao implements TagDao {
 
         getCallsHandler()
                 .executeModification("Deletetags_vm_map", parameterSource);
-    }
-
-    @Override
-    public List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("ad_id", adElementId)
-                .addValue("vm_pool_id", vmPoolId);
-
-        RowMapper<TagsVmPoolMap> mapper = new RowMapper<TagsVmPoolMap>() {
-            @Override
-            public TagsVmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                TagsVmPoolMap entity = new TagsVmPoolMap();
-                entity.setTagId(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler()
-                        .executeReadList(
-                                "GetVmPoolTagsByVmPoolIdAndAdElementId", mapper, parameterSource);
     }
 }

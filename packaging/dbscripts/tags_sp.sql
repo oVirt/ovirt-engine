@@ -211,20 +211,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetUserGroupTagsByTagIds (v_tag_ids VARCHAR(4000))
-RETURNS SETOF tags_user_group_map_view STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT DISTINCT tags_user_group_map_view.*
-    FROM tags_user_group_map_view
-    WHERE tag_id IN (
-            SELECT *
-            FROM fnSplitterUuid(v_tag_ids)
-            );
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 ----------------------------------------------------------------
 -- [tags_user_map] Table
 --
@@ -379,20 +365,6 @@ BEGIN
     WHERE vds_id IN (
             SELECT *
             FROM fnSplitterUuid(v_vds_ids)
-            );
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetVdsTagsByTagIds (v_tag_ids VARCHAR(4000))
-RETURNS SETOF tags_vds_map_view STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT DISTINCT tags_vds_map_view.*
-    FROM tags_vds_map_view
-    WHERE tag_id IN (
-            SELECT *
-            FROM fnSplitterUuid(v_tag_ids)
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;

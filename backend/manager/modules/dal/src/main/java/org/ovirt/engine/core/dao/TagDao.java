@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -62,15 +61,6 @@ public interface TagDao extends Dao {
     List<Tags> getAllForUserGroups(String ids);
 
     /**
-     * Retrieves the list of user group tags by the given ids.
-     *
-     * @param ids
-     *            the ids
-     * @return the list of tags
-     */
-    List<Tags> getAllUserGroupTagsWithIds(String ids);
-
-    /**
      * Retrieves the list of tags for the given VDS ids.
      *
      * @param ids
@@ -78,15 +68,6 @@ public interface TagDao extends Dao {
      * @return the list of tags
      */
     List<Tags> getAllForVds(String ids);
-
-    /**
-     * Retrieves the list of VDS tags with the given tag ids.
-     *
-     * @param ids
-     *            the tag ids
-     * @return the list of tags
-     */
-    List<Tags> getAllForVdsWithIds(String ids);
 
     /**
      * Retrieves the list of tags for the given VM ids.
@@ -198,6 +179,4 @@ public interface TagDao extends Dao {
     void attachTemplateToTag(TagsTemplateMap tagVmMap);
 
     void detachTemplateFromTag(Guid tagId, Guid vmId);
-
-    List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId);
 }
