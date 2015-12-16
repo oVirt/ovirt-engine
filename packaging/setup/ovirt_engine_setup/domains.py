@@ -50,6 +50,21 @@ class StorageType(object):
 
 
 @util.export
+class StorageDomainStatus(object):
+    # See: org.ovirt.engine.core.common.businessentities.StorageDomainStatus
+    UNKNOWN = 0
+    UNINITIALIZED = 1
+    UNATTACHED = 2
+    ACTIVE = 3
+    INACTIVE = 4
+    LOCKED = 5
+    MAINTENANCE = 6
+    PREPARINGFORMAINTENANCE = 7
+    DETACHING = 8
+    ACTIVATING = 9
+
+
+@util.export
 class DomainChecker(base.Base):
     """
     Domains utility.
