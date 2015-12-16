@@ -311,7 +311,7 @@ public class VmsMonitoring {
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
     }
 
-    private void importHostedEngineVM(Map vmStruct) {
+    private void importHostedEngineVM(Map<String, Object> vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
             vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
@@ -414,8 +414,8 @@ public class VmsMonitoring {
             DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, vdsGroup.getCompatibilityVersion());
 
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
-            Map[] vmsInfo = getVmInfo(vmsToQuery);
-            for (Map vmInfo : vmsInfo) {
+            Map<String, Object>[] vmsInfo = getVmInfo(vmsToQuery);
+            for (Map<String, Object> vmInfo : vmsInfo) {
                 Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
                 VmStatic vmStatic = new VmStatic();
                 vmStatic.setId(vmId);
@@ -707,15 +707,15 @@ public class VmsMonitoring {
      * @param vmsToUpdate
      * @return
      */
-    protected Map[] getVmInfo(List<String> vmsToUpdate) {
+    protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate) {
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
         VDS vds = new VDS();
         vds.setId(vdsManager.getVdsId());
-        Map[] result = {};
+        Map<String, Object>[] result = new Map[0];
         VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.FullList,
                 new FullListVDSCommandParameters(vds, vmsToUpdate));
         if (vdsReturnValue.getSucceeded()) {
-            result = (Map[]) (vdsReturnValue.getReturnValue());
+            result = (Map<String, Object>[]) (vdsReturnValue.getReturnValue());
         }
         return result;
     }
