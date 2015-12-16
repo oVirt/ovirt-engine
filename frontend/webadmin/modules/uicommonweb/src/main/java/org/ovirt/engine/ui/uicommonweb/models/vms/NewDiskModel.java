@@ -226,7 +226,7 @@ public class NewDiskModel extends AbstractDiskModel {
         StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
                 : getStorageDomain().getSelectedItem().getStorageType();
         IntegerValidation sizeValidation = new IntegerValidation();
-        sizeValidation.setMinimum(1);
+        sizeValidation.setMinimum(getMinimumDiskSize());
         if (storageType.isBlockDomain()) {
             sizeValidation.setMaximum((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
@@ -234,6 +234,10 @@ public class NewDiskModel extends AbstractDiskModel {
         getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();
+    }
+
+    protected int getMinimumDiskSize() {
+        return 1;
     }
 
     @Override

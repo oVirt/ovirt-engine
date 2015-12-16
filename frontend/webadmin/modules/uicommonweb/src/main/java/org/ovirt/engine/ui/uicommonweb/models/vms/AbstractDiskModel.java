@@ -339,7 +339,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     protected abstract void updateVolumeType(StorageType storageType);
 
-    protected boolean isEditEnabled() {
+    public boolean isEditEnabled() {
         return (getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged()) && getIsChangable();
     }
 
@@ -790,6 +790,13 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void updateReadOnlyChangeability() {
+        if (getVm() == null) { // read-only is a characteristic of a VM device, not a disk
+            getIsReadOnly().setIsAvailable(false);
+            getIsReadOnly().setEntity(false);
+            getIsReadOnly().setIsChangeable(false);
+            return;
+        }
+
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
         if (diskInterface == DiskInterface.IDE) {
