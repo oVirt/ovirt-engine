@@ -47,6 +47,15 @@ public interface VdsServerConnector {
 
     public Map<String, Object> setHaMaintenanceMode(String mode, boolean enabled);
 
+    public Map<String, Object> add_image_ticket(String ticketId, String[] ops, long timeout,
+            long size, String url);
+
+    public Map<String, Object> remove_image_ticket(String ticketId);
+
+    public Map<String, Object> extend_image_ticket(String ticketId, long timeout);
+
+    public Map<String, Object> get_image_transfer_session_stats(String ticketId);
+
     public Map<String, Object> getAllVmStats();
 
     public Map<String, Object> hostdevListByCaps();

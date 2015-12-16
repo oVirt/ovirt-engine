@@ -137,6 +137,11 @@ public enum VDSCommandType {
     GetConvertedOvf("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DeleteV2VJob("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CancelConvertVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    AddImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    RemoveImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    ExtendImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetImageTransferSessionStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),

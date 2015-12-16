@@ -77,6 +77,15 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc setHaMaintenanceMode(String mode, boolean enabled);
 
+    StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId, String[] ops, long timeout,
+                                               long size, String url);
+
+    StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId);
+
+    StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout);
+
+    OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId);
+
     StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password);
 
     StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force);

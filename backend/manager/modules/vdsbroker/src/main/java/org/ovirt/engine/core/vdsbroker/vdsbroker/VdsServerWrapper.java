@@ -1702,6 +1702,52 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId,
+            String[] ops, long timeout, long size, String url) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.add_image_ticket(ticketId,
+                    ops, timeout, size, url);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.remove_image_ticket(ticketId);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.extend_image_ticket(ticketId, timeout);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.get_image_transfer_session_stats(ticketId);
+            OneMapReturnForXmlRpc wrapper = new OneMapReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public GlusterTasksListReturnForXmlRpc glusterTasksList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterTasksList();

@@ -47,6 +47,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.OneMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
@@ -1806,6 +1807,60 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc add_image_ticket(String ticketId, String[] ops, long timeout,
+            long size, String url) {
+        HashMap<String, Object> ticketDict = new HashMap<>();
+        ticketDict.put("uuid", ticketId);
+        ticketDict.put("timeout", timeout);
+        ticketDict.put("ops", ops);
+        ticketDict.put("size", size);
+        ticketDict.put("path", url);  // ovirt-image-daemon still expects "path"
+
+        JsonRpcRequest request =
+                new RequestBuilder("Host.add_image_ticket")
+                        .withParameter("ticket", ticketDict)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc remove_image_ticket(String ticketId) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.remove_image_ticket")
+                        .withParameter("uuid", ticketId)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc extend_image_ticket(String ticketId, long timeout) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.extend_image_ticket")
+                        .withParameter("uuid", ticketId)
+                        .withParameter("timeout", timeout)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public OneMapReturnForXmlRpc get_image_transfer_session_stats(String ticketId) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.get_image_transfer_session_stats")
+                        .withParameter("ticketUUID", ticketId)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("statsMap");
+        return new OneMapReturnForXmlRpc(response);
     }
 
     @Override
