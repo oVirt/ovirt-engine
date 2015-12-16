@@ -763,6 +763,18 @@ select fn_db_add_config_value_for_versions_up_to('ChangeNetworkUnderBridgeInUseS
 
 select fn_db_add_config_value_for_versions_up_to('NetworkExclusivenessPermissiveValidation','false','3.5');
 
+select fn_db_add_config_value('ImageProxyURL','http://localhost','general');
+select fn_db_add_config_value('ImageProxyPort','8081','general');
+select fn_db_add_config_value('ImageTransferClientTicketValidityInSeconds','3600','general');
+select fn_db_add_config_value('ImageTransferHostTicketValidityInSeconds','300','general');
+select fn_db_add_config_value('ImageTransferHostTicketRefreshAllowanceInSeconds','60','general');
+select fn_db_add_config_value('ImageTransferPausedLogIntervalInSeconds','1800','general');
+select fn_db_add_config_value('UploadImageUiInactivityTimeoutInSeconds','60','general');
+select fn_db_add_config_value('UploadImageChunkSizeKB','8192','general');
+select fn_db_add_config_value('UploadImageXhrTimeoutInSeconds','10','general');
+select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','general');
+select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
+
 select fn_db_add_config_value_for_versions_up_to('GetDeviceListWithoutStatusSupported','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('InitialSizeSparseDiskSupported','false','3.5');
