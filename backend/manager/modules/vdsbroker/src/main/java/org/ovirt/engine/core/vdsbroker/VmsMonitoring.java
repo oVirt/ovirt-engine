@@ -578,7 +578,7 @@ public class VmsMonitoring {
                 deviceId = addNewVmDevice(vmId, device, logicalName);
             } else {
                 vmDevice.setIsPlugged(Boolean.TRUE);
-                vmDevice.setAddress(((Map<String, String>) device.get(VdsProperties.Address)).toString());
+                vmDevice.setAddress(device.get(VdsProperties.Address).toString());
                 vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
                 vmDevice.setLogicalName(logicalName);
                 vmDevice.setHostDevice(StringUtils.defaultString((String) device.get(VdsProperties.HostDev)));
@@ -668,7 +668,7 @@ public class VmsMonitoring {
         if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
             log.error("Empty or NULL values were passed for a VM '{}' device, Device is skipped", vmId);
         } else {
-            String address = ((Map<String, String>) device.get(VdsProperties.Address)).toString();
+            String address = device.get(VdsProperties.Address).toString();
             String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
             Object o = device.get(VdsProperties.SpecParams);
             newDeviceId = Guid.newGuid();
