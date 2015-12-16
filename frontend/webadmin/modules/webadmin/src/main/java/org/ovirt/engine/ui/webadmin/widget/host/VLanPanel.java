@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.renderer.HostVLanNameRenderer;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -128,8 +129,13 @@ class VLanElementPanel extends TogglePanel {
 
     private HorizontalPanel createSyncPanel(final NetworkImplementationDetails networkImplementationDetails) {
         HorizontalPanel output = new HorizontalPanel();
-        boolean sync = networkImplementationDetails == null ? true : networkImplementationDetails.isInSync();
-        if (!sync) {
+        boolean managed = false;
+        boolean sync = false;
+        if (networkImplementationDetails != null) {
+            managed = networkImplementationDetails.isManaged();
+            sync = networkImplementationDetails.isInSync();
+        }
+        if (managed && !sync) {
             output.add(new Image(resources.networkNotSyncImage()));
         }
 
