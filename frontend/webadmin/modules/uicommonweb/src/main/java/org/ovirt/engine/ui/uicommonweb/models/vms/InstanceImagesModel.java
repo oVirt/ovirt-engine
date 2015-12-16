@@ -188,7 +188,16 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
 
     private InstanceImageLineModel findBecomeNonBoot(Disk bootDisk) {
         for (InstanceImageLineModel model : getItems()) {
+            if (model.isGhost()) {
+                // this is not an actual item
+                continue;
+            }
+
             Disk disk = model.getDiskModel().getEntity().getDisk();
+            if (disk.getId() == null) {
+                // does not yet exist on the server so no need to edit it
+                continue;
+            }
             if (disk.getId().equals(bootDisk.getId())) {
                 if (disk.isBoot()) {
                     return null;
