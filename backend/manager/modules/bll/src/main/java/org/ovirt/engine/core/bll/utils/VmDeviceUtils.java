@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -55,9 +56,22 @@ public class VmDeviceUtils {
     private final static int VNC_MIN_MONITORS = 1;
     private final static int SINGLE_QXL_MONITORS = 1;
     public final static Map<String, Object> EMPTY_SPEC_PARAMS = Collections.emptyMap();
-    private static OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-    private static DbFacade dbFacade = SimpleDependencyInjector.getInstance().get(DbFacade.class);
-    private static VmDeviceDao dao = dbFacade.getVmDeviceDao();
+    private static OsRepository osRepository;
+    private static DbFacade dbFacade;
+    private static VmDeviceDao dao;
+
+    static {
+        init();
+    }
+
+    /**
+     * Useful for tests that want to re-initialize the static dependencies using newly mocked objects.
+     */
+    public static void init() {
+        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        dbFacade = SimpleDependencyInjector.getInstance().get(DbFacade.class);
+        dao = dbFacade.getVmDeviceDao();
+    }
 
     /*
      * CD-ROM device
@@ -1890,4 +1904,19 @@ public class VmDeviceUtils {
                         .collect(Collectors.toMap(VmDevice::getDevice, Function.<E>identity()));
     }
 
+    /**
+     * Add sound device when the following holds:
+     * <ul>
+     *  <li>User has not specified a concrete value</li>
+     *  <li>Sound device is supported in given compatibility version</li>
+     *  <li>VM is desktop type</li>
+     * </ul>
+     */
+    public static boolean shouldOverrideSoundDevice(Boolean soundDeviceEnabled,
+            VmStatic vmStatic,
+            Version compatibilityVersion) {
+        return soundDeviceEnabled == null &&
+                osRepository.isSoundDeviceEnabled(vmStatic.getOsId(), compatibilityVersion) &&
+                vmStatic.getVmType() == VmType.Desktop;
+    }
 }

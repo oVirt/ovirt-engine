@@ -24,6 +24,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -289,6 +290,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private void mockVmDevice(VmDevice vmDevice) {
         when(vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
         doReturn(vmDeviceDao).when(dbFacade).getVmDeviceDao();
+        VmDeviceUtils.init();
     }
 
     @Test

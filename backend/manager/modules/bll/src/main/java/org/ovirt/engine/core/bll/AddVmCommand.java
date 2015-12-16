@@ -76,7 +76,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -171,7 +170,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             setVmTemplateId(templateIdToUse);
 
             // API backward compatibility
-            if (shouldOverrideSoundDevice()) {
+            if (VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
+                    getParameters().getVmStaticData(),
+                    getEffectiveCompatibilityVersion())) {
                 parameters.setSoundDeviceEnabled(true);
             }
 
@@ -204,21 +205,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getParameters().getVmStaticData().getMigrationSupport() == null) {
             setDefaultMigrationPolicy();
         }
-    }
-
-    /**
-     * Add sound device when the following holds:
-     * <ul>
-     *     <li>User has not specified a concrete value</li>
-     *     <li>Cluster in fact supports sound devices</li>
-     *     <li>VM is desktop type</li>
-     * </ul>
-     */
-    private boolean shouldOverrideSoundDevice() {
-        return getParameters().isSoundDeviceEnabled() == null &&
-                getVdsGroup() != null &&
-                isSoundDeviceEnabled() &&
-                getParameters().getVmStaticData().getVmType() == VmType.Desktop;
     }
 
     @Override

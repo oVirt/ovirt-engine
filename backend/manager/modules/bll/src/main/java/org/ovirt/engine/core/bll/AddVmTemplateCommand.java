@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -138,8 +137,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setVdsGroupId(parameterMasterVm.getVdsGroupId());
 
             // API backward compatibility
-            if (parameters.isSoundDeviceEnabled() == null) {
-                parameters.setSoundDeviceEnabled(parameterMasterVm.getVmType() == VmType.Desktop);
+            if (VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
+                    getParameters().getMasterVm(),
+                    getVm().getCompatibilityVersion())) {
+                parameters.setSoundDeviceEnabled(true);
             }
 
             if (getParameters().isConsoleEnabled() == null) {
