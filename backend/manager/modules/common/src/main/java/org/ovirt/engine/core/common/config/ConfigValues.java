@@ -1155,6 +1155,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirt-engine")
     SSHKeyAlias,
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("SHA-256")
+    SSHDefaultKeyDigest,
 
     /*
      * Whether to allow a cluster with both Virt and Gluster services enabled

@@ -49,13 +49,12 @@ public class GlusterUtilTest {
         setupMock();
     }
 
-    private void setupMock() throws AuthenticationException, IOException {
+    private void setupMock() throws AuthenticationException, Exception {
         doReturn(client).when(glusterUtil).getSSHClient();
-        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, WRONG_PASSWORD);
         doReturn(FINGER_PRINT1).when(client).getHostFingerprint();
         doReturn(OUTPUT_XML).when(glusterUtil).executePeerStatusCommand(client);
-        doNothing().when(glusterUtil).authenticate(client, USER, PASSWORD);
-        doThrow(AuthenticationException.class).when(glusterUtil).authenticate(client, USER, WRONG_PASSWORD);
+        doThrow(AuthenticationException.class).when(glusterUtil).authenticate(client);
     }
 
     @Test
@@ -63,7 +62,8 @@ public class GlusterUtilTest {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
         doReturn(client).when(glusterUtil).getSSHClient();
-        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, PASSWORD);
+        doNothing().when(glusterUtil).authenticate(client);
         doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD, FINGER_PRINT1);
         assertNotNull(peers);
@@ -78,7 +78,8 @@ public class GlusterUtilTest {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
         doReturn(client).when(glusterUtil).getSSHClient();
-        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, PASSWORD);
+        doNothing().when(glusterUtil).authenticate(client);
         doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         Set<String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD);
         assertNotNull(peers);

@@ -183,6 +183,15 @@ public class SSHClient implements Closeable {
     /**
      * Set host.
      * @param host host.
+     * @param port port.
+     */
+    public void setHost(String host, Integer port) {
+        setHost(host, port == null ? DEFAULT_SSH_PORT : port);
+    }
+
+    /**
+     * Set host.
+     * @param host host.
      */
     public void setHost(String host) {
         setHost(host, DEFAULT_SSH_PORT);

@@ -142,8 +142,8 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
     public void execute() throws Exception {
         try {
             _dialog.setVds(_vds);
-            _dialog.connect();
             _dialog.useDefaultKeyPair();
+            _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(

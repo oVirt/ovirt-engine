@@ -21,6 +21,7 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
         String fingerPrint = null;
         try (final EngineSSHClient client = getEngineSSHClient()) {
             client.setHost(serverName);
+            client.setUser("dummy");
             client.connect();
             fingerPrint = client.getHostFingerprint();
         } catch (Throwable e) {

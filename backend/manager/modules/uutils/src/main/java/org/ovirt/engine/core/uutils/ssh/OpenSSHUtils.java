@@ -1,13 +1,19 @@
 package org.ovirt.engine.core.uutils.ssh;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -20,9 +26,49 @@ public class OpenSSHUtils {
 
     // Names of supported algorithms:
     private static final String SSH_RSA = "ssh-rsa";
+    private static final String MD5 = "MD5";
 
     private OpenSSHUtils () {
         // No instances allowed.
+    }
+
+    private static byte[] getByteArrayOfData(DataInputStream dataInputStream) throws IOException {
+        byte [] contents = new byte[dataInputStream.readInt()];
+        if (dataInputStream.read(contents, 0, contents.length) != contents.length) {
+            throw new IOException("Invalid ASN1 array");
+        }
+        return contents;
+    }
+
+    /**
+     * Convert a public key string to real public key.
+     */
+    public static PublicKey decodeKeyString(final String key) throws IOException, GeneralSecurityException {
+        String[] words = key.split("\\s+", 3);
+
+        if (words.length < 2 || !SSH_RSA.equals(words[0])) {
+            throw new GeneralSecurityException("Unsupported SSH public key");
+        }
+
+
+        try (
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(words[1]));
+            DataInputStream dataInputStream = new DataInputStream(inputStream)
+        ) {
+            if (!Arrays.equals(getByteArrayOfData(dataInputStream), SSH_RSA.getBytes(StandardCharsets.UTF_8))) {
+                throw new GeneralSecurityException("Unsupported SSH public key");
+            }
+
+            byte[] exponentBytes = getByteArrayOfData(dataInputStream);
+            byte[] modulusBytes = getByteArrayOfData(dataInputStream);
+
+            return KeyFactory.getInstance("RSA").generatePublic(
+                new RSAPublicKeySpec(
+                    new BigInteger(modulusBytes),
+                    new BigInteger(exponentBytes)
+                )
+            );
+        }
     }
 
     /**
@@ -132,37 +178,52 @@ public class OpenSSHUtils {
         return keyString;
     }
 
-
-    public static final String fixupKeyFingerprintHash(String fingerprint) {
-        String h = fingerprint.split(":", 2)[0];
+    public static final boolean checkKeyFingerprint(String expected, final PublicKey key, StringBuilder actual) throws Exception {
+        String digest = expected.split(":", 2)[0];
         try {
-            if (h.length() == 2) {
-                Integer.parseInt(h, 16);
-                fingerprint = "MD5:" + fingerprint;
+            if (digest.length() == 2) {
+                Integer.parseInt(digest, 16);
+                digest = MD5;
+                expected = digest + ":" + expected;
             }
         } catch(NumberFormatException e) {
             // ignore
         }
-        return fingerprint;
-    }
 
-    public static final String getKeyFingerprintHash(final String fingerprint) {
-        String algo = fingerprint.split(":", 2)[0];
-        if (!algo.startsWith("MD")) {
-            algo = algo.replaceFirst("([0-9])", "-$1");
+        if (!digest.startsWith("MD")) {
+            digest = digest.replaceFirst("([0-9])", "-$1");
         }
-        return algo;
+
+        String fingerprint = getKeyFingerprint(key, digest);
+
+        boolean result;
+        if (MD5.equals(digest)) {
+            result = expected.equalsIgnoreCase(fingerprint);
+        } else {
+            result = expected.equals(fingerprint);
+        }
+
+        if (actual != null) {
+            actual.setLength(0);
+            actual.append(fingerprint);
+        }
+
+        return result;
     }
 
     public static final String getKeyFingerprint(final PublicKey key, String digest) {
+        if (digest == null) {
+            digest = "SHA-256";
+        }
+
         try {
             MessageDigest md = MessageDigest.getInstance(digest);
             md.update(getKeyBytes(key));
 
             String fingerprint;
-            if ("MD5".equals(digest)) {
+            if (MD5.equals(digest)) {
                 StringBuilder s = new StringBuilder();
-                s.append("MD5");
+                s.append(MD5);
                 for (byte b : md.digest()) {
                     s.append(':');
                     s.append(String.format("%02x", b));
@@ -184,6 +245,10 @@ public class OpenSSHUtils {
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static final String getKeyFingerprint(final PublicKey key) throws Exception {
+        return getKeyFingerprint(key, null);
     }
 
     /*

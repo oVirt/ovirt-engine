@@ -24,7 +24,9 @@ public class OpenSSHUtilsTest {
         final PublicKey key = decodeKey(keyEncoding);
         final String fingerprintString = OpenSSHUtils.getKeyFingerprint(key, algo);
         assertEquals(goodFingerprintString, fingerprintString);
-        assertEquals(algo, OpenSSHUtils.getKeyFingerprintHash(fingerprintString));
+        StringBuilder actual = new StringBuilder();
+        assertTrue(OpenSSHUtils.checkKeyFingerprint(goodFingerprintString, key, actual));
+        assertEquals(goodFingerprintString, actual.toString());
     }
 
     @Test
@@ -35,18 +37,16 @@ public class OpenSSHUtilsTest {
         }
     }
 
+    @Test
+    public void testFingerprintStringsMD5() throws Exception {
+        assertTrue(OpenSSHUtils.checkKeyFingerprint(KEYS[0][1].replace("MD5:", ""), decodeKey(KEYS[0][0]), null));
+    }
+
     private static void testKeyString(final String keyEncoding, final String goodKeyString) throws Exception {
         final PublicKey key = decodeKey(keyEncoding);
         final String keyString = OpenSSHUtils.getKeyString(key, null);
         assertEquals(goodKeyString, keyString);
-    }
-
-    @Test
-    public void testMd5Hash() throws Exception {
-        String fingerprint1 = "1b:d3:aa:c3:67:4b:b5:55:a9:ff:19:0c:16:7e:d1:de";
-        String goodfingerprint1 = "MD5:" + fingerprint1;
-        assertEquals(goodfingerprint1, OpenSSHUtils.fixupKeyFingerprintHash(fingerprint1));
-        assertEquals(goodfingerprint1, OpenSSHUtils.fixupKeyFingerprintHash(goodfingerprint1));
+        assertEquals(key, OpenSSHUtils.decodeKeyString(keyString));
     }
 
     @Test

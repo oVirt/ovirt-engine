@@ -7,8 +7,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
@@ -34,7 +32,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
     }
 
     @Test
-    public void testExecuteQueryCommnad() throws IOException{
+    public void testExecuteQueryCommnad() throws Exception {
         when(getQueryParameters().getServer()).thenReturn(serverName);
         doReturn(fingerPrint).when(mockEngineSSHClient).getHostFingerprint();
         getQuery().executeQueryCommand();

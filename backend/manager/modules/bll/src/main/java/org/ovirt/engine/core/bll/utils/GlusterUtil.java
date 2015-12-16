@@ -99,8 +99,8 @@ public class GlusterUtil {
             IOException {
 
         try (final SSHClient client = getSSHClient()) {
-            connect(client, server);
-            authenticate(client, username, password);
+            connect(client, server, username, password);
+            authenticate(client);
             String serversXml = executePeerStatusCommand(client);
             return extractServers(serversXml);
         }
@@ -139,18 +139,20 @@ public class GlusterUtil {
     public Map<String, String> getPeers(String server, String username, String password, String fingerprint)
             throws AuthenticationException, IOException {
         try (final SSHClient client = getSSHClient()) {
-            connect(client, server);
-            authenticate(client, username, password);
+            connect(client, server, username, password);
+            authenticate(client);
             String serversXml = executePeerStatusCommand(client);
             return getFingerprints(extractServers(serversXml));
         }
     }
 
-    protected void connect(SSHClient client, String serverName) {
+    protected void connect(SSHClient client, String serverName, String userId, String password) {
         Integer timeout = Config.<Integer> getValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
         client.setHost(serverName, SSH_PORT);
+        client.setUser(userId);
+        client.setPassword(password);
         try {
             client.connect();
         } catch (Exception e) {
@@ -159,9 +161,7 @@ public class GlusterUtil {
         }
     }
 
-    protected void authenticate(SSHClient client, String userId, String password) throws AuthenticationException {
-        client.setUser(userId);
-        client.setPassword(password);
+    protected void authenticate(SSHClient client) throws AuthenticationException {
         try {
             client.authenticate();
         } catch (AuthenticationException e) {

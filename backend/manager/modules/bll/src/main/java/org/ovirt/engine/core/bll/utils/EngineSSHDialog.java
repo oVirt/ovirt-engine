@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.io.IOException;
 import java.net.ConnectException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -36,7 +35,7 @@ public class EngineSSHDialog extends SSHDialog {
      * Get host fingerprint.
      * @return fingerprint.
      */
-    public String getHostFingerprint() throws IOException {
+    public String getHostFingerprint() throws Exception {
         if (_client == null) {
             throw new ConnectException("SSH is not connected");
         }

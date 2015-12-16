@@ -242,6 +242,7 @@ public class SSHDialog implements Closeable {
             _client.setHost(_host, _port);
 
             log.debug("connecting");
+            _client.setUser(_user);
             _client.connect();
         }
         catch(Exception e) {
@@ -265,7 +266,6 @@ public class SSHDialog implements Closeable {
      * Authenticate.
      */
     public void authenticate() throws Exception {
-        _client.setUser(_user);
         _client.setPassword(_password);
         _client.setKeyPair(_keyPair);
         _client.authenticate();

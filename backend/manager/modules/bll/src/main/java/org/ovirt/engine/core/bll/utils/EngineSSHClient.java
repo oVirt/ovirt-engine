@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -54,20 +53,8 @@ public class EngineSSHClient extends SSHClient {
     public void connect() throws Exception {
         super.connect();
         if (_vds != null) {
-            String expected = _vds.getSshKeyFingerprint();
-
-            String hash;
-            if (StringUtils.isEmpty(expected)) {
-                hash = "SHA-256";
-            } else {
-                expected = OpenSSHUtils.fixupKeyFingerprintHash(expected);
-                hash = OpenSSHUtils.getKeyFingerprintHash(expected);
-            }
-
-            String actual = getHostFingerprint(hash);
-
-            if (StringUtils.isEmpty(expected)) {
-                _vds.setSshKeyFingerprint(actual);
+            if (StringUtils.isEmpty(_vds.getSshKeyFingerprint())) {
+                _vds.setSshKeyFingerprint(getHostFingerprint());
                 try {
                     DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
                 } catch (Exception e) {
@@ -79,30 +66,30 @@ public class EngineSSHClient extends SSHClient {
                          )
                      );
                 }
-            } else if (!actual.equals(expected)) {
-                throw new GeneralSecurityException(
-                    String.format(
-                        "Invalid fingerprint %s, expected %s",
-                        actual,
-                        expected
-                    )
-                );
+            } else {
+                StringBuilder actual = new StringBuilder();
+                if (!OpenSSHUtils.checkKeyFingerprint(_vds.getSshKeyFingerprint(), getHostKey(), actual)) {
+                    throw new GeneralSecurityException(
+                        String.format(
+                            "Invalid fingerprint %s, expected %s",
+                            actual,
+                            _vds.getSshKeyFingerprint()
+                        )
+                    );
+                }
             }
         }
     }
 
-    public String getHostFingerprint(String hash) throws IOException {
-        String fingerprint = OpenSSHUtils.getKeyFingerprint(getHostKey(), hash);
-
-        if (fingerprint == null) {
-            throw new IOException("Unable to parse host key");
-        }
-
-        return fingerprint;
+    public String getHostFingerprint(String digest) throws Exception {
+        return OpenSSHUtils.getKeyFingerprint(
+            getHostKey(),
+            digest == null ? Config.<String> getValue(ConfigValues.SSHDefaultKeyDigest) : digest
+        );
     }
 
-    public String getHostFingerprint() throws IOException {
-        return getHostFingerprint("SHA-256");
+    public String getHostFingerprint() throws Exception {
+        return getHostFingerprint(null);
     }
 
     /**
