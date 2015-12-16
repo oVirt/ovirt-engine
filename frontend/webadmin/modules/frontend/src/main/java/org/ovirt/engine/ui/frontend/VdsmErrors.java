@@ -25,6 +25,10 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String HostIdMismatch();
 
+    String ImageDeamonError();
+
+    String ImageDeamonUnsupported();
+
     String ImageDeleteError();
 
     String ImageDoesNotExistInDomainError();
@@ -36,6 +40,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String ImagePathError();
 
     String ImagesActionError();
+
+    String ImageTicketsError();
 
     String ImageValidationError();
 
