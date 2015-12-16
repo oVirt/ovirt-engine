@@ -372,32 +372,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVmDataFromPoolByPoolName (
-    v_pool_name VARCHAR(4000),
-    v_user_id uuid,
-    v_is_filtered boolean
-    )
-RETURNS SETOF vms STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT vms.*
-    FROM vms
-    WHERE vm_pool_name = v_pool_name
-        AND (
-            NOT v_is_filtered
-            OR EXISTS (
-                SELECT 1
-                FROM user_vm_pool_permissions_view
-                WHERE user_id = v_user_id
-                    AND entity_id = vms.vm_guid
-                )
-            )
-        -- Limiting results to 1 since we only need a single VM from the pool to retrieve the pool data
-        LIMIT 1;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetAllVm_poolsByUser_id_with_groups_and_UserRoles (v_user_id UUID)
 RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
 BEGIN

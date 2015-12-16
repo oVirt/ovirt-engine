@@ -123,16 +123,4 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
      * @return a single VM from the pool
      */
     VM getVmDataFromPoolByPoolGuid(Guid vmPoolId, Guid userID, boolean isFiltered);
-
-    /**
-     * Returns a single VM from the vm pool with the specified name, with optional filtering.
-     * @param vmPoolName
-     *            the vm pool name
-     * @param userID
-     *            the ID of the user requesting the information
-     * @param isFiltered
-     *            Whether the results should be filtered according to the user's permissions
-     * @return a single VM from the pool
-     */
-    VM getVmDataFromPoolByPoolName(String vmPoolName, Guid userId, boolean isFiltered);
 }

@@ -225,11 +225,4 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("pool_id", vmPoolId).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeRead("GetVmDataFromPoolByPoolId", VMRowMapper.instance, parameterSource);
     }
-
-    @Override
-    public VM getVmDataFromPoolByPoolName(String vmPoolName, Guid userId, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("pool_name", vmPoolName).addValue("user_id", userId).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeRead("GetVmDataFromPoolByPoolName", VMRowMapper.instance, parameterSource);
-    }
 }
