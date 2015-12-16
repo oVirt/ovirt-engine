@@ -96,7 +96,6 @@ public class VmsMonitoring {
     private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
-    private final List<VmDynamic> poweringUpVms = new ArrayList<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
@@ -779,32 +778,10 @@ public class VmsMonitoring {
     /**
      * An access method for test usages
      *
-     * @return The devices to be added to the database
-     */
-    protected List<VmDevice> getNewVmDevices() {
-        return Collections.unmodifiableList(newVmDevices);
-    }
-
-    /**
-     * An access method for test usages
-     *
-     * @return The devices to be removed from the database
-     */
-    protected List<VmDeviceId> getRemovedVmDevices() {
-        return Collections.unmodifiableList(removedDeviceIds);
-    }
-
-    /**
-     * An access method for test usages
-     *
      * @return The LUNs to update in DB
      */
     protected List<LUNs> getVmLunDisksToSave() {
         return vmLunDisksToSave;
-    }
-
-    protected List<VmDynamic> getPoweringUpVms() {
-        return poweringUpVms;
     }
 
     protected DbFacade getDbFacade() {
