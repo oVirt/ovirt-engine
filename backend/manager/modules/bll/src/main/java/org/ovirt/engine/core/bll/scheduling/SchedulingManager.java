@@ -128,12 +128,9 @@ public class SchedulingManager implements BackendService {
     private void loadExternalScheduler() {
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)) {
             log.info("Starting external scheduler discovery thread");
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (exSchedulerDiscovery.discover()) {
-                        reloadPolicyUnits();
-                    }
+            ThreadPoolUtil.execute(() -> {
+                if (exSchedulerDiscovery.discover()) {
+                    reloadPolicyUnits();
                 }
             });
         } else {

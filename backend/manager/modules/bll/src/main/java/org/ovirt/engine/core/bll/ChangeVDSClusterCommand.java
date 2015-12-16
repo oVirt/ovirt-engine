@@ -373,14 +373,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return;
         }
 
-        ThreadPoolUtil.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                runInternalAction(VdcActionType.PersistentHostSetupNetworks, params, cloneContextAndDetachFromParent());
-
-            }
-        });
+        ThreadPoolUtil.execute(() -> runInternalAction(
+                VdcActionType.PersistentHostSetupNetworks,
+                params,
+                cloneContextAndDetachFromParent()));
     }
 
     @Override

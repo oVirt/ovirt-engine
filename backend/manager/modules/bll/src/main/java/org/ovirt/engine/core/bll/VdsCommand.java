@@ -90,12 +90,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void runSleepOnReboot(final VDSStatus status) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                sleepOnReboot(status);
-            }
-        });
+        ThreadPoolUtil.execute(() -> sleepOnReboot(status));
     }
 
     private void sleepOnReboot(final VDSStatus status) {

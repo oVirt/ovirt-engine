@@ -48,20 +48,17 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         // if host failed to recover, no point in sending migrate, as it would fail.
         if (getParameters().getNonOperationalReason() != NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH) {
             orderListOfRunningVmsOnVds(getVdsId());
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // migrate vms according to cluster migrateOnError option
-                    switch (getVdsGroup().getMigrateOnError()) {
-                    case YES:
-                        migrateAllVms(getExecutionContext());
-                        break;
-                    case HA_ONLY:
-                        migrateAllVms(getExecutionContext(), true);
-                        break;
-                    default:
-                        break;
-                    }
+            ThreadPoolUtil.execute(() -> {
+                // migrate vms according to cluster migrateOnError option
+                switch (getVdsGroup().getMigrateOnError()) {
+                case YES:
+                    migrateAllVms(getExecutionContext());
+                    break;
+                case HA_ONLY:
+                    migrateAllVms(getExecutionContext(), true);
+                    break;
+                default:
+                    break;
                 }
             });
         }

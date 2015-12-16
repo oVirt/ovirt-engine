@@ -619,23 +619,18 @@ public class SSHClient implements Closeable {
             final OutputStream dummy = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
             final ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         ) {
-            t = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try (OutputStream out = new GZIPOutputStream(pout)) {
-                            byte b[] = new byte[STREAM_BUFFER_SIZE];
-                            int n;
-                            while ((n = in.read(b)) != -1) {
-                                out.write(b, 0, n);
-                            }
-                        }
-                        catch (IOException e) {
-                            log.debug("Exceution during stream processing", e);
-                        }
+            t = new Thread(() -> {
+                try (OutputStream out = new GZIPOutputStream(pout)) {
+                    byte b[] = new byte[STREAM_BUFFER_SIZE];
+                    int n;
+                    while ((n = in.read(b)) != -1) {
+                        out.write(b, 0, n);
                     }
-                },
-                "SSHClient.compress " + file1
+                } catch (IOException e) {
+                    log.debug("Exceution during stream processing", e);
+                }
+            },
+            "SSHClient.compress " + file1
             );
             t.start();
 
@@ -701,24 +696,19 @@ public class SSHClient implements Closeable {
             final InputStream empty = new ByteArrayInputStream(new byte[0]);
             final ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         ) {
-            t = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try (final InputStream in = new GZIPInputStream(pin)) {
+            t = new Thread(() -> {
+                try (final InputStream in = new GZIPInputStream(pin)) {
 
-                            byte [] b = new byte[STREAM_BUFFER_SIZE];
-                            int n;
-                            while ((n = in.read(b)) != -1) {
-                                out.write(b, 0, n);
-                            }
-                        }
-                        catch (IOException e) {
-                            log.debug("Exceution during stream processing", e);
-                        }
+                    byte[] b = new byte[STREAM_BUFFER_SIZE];
+                    int n;
+                    while ((n = in.read(b)) != -1) {
+                        out.write(b, 0, n);
                     }
-                },
-                "SSHClient.decompress " + file2
+                } catch (IOException e) {
+                    log.debug("Exceution during stream processing", e);
+                }
+            },
+            "SSHClient.decompress " + file2
             );
             t.start();
 

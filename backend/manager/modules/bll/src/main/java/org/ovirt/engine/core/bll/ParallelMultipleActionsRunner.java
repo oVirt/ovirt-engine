@@ -24,13 +24,7 @@ public class ParallelMultipleActionsRunner extends MultipleActionsRunner {
     protected void runCommands() {
         for (final CommandBase<?> command : getCommands()) {
             if (command.getReturnValue().getCanDoAction()) {
-                ThreadPoolUtil.execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        executeValidatedCommand(command);
-                    }
-                });
+                ThreadPoolUtil.execute(() -> executeValidatedCommand(command));
             }
         }
     }

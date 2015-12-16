@@ -243,12 +243,7 @@ public class VdsEventListener implements IVdsEventListener {
             return;
         }
 
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                 processOnVmStopInternal(vmIds, hostId);
-            }
-        });
+        ThreadPoolUtil.execute(() -> processOnVmStopInternal(vmIds, hostId));
     }
 
     private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {
@@ -269,13 +264,10 @@ public class VdsEventListener implements IVdsEventListener {
      */
     @Override
     public void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomainId);
-                parameters.setVdsId(vdsId);
-                backend.runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
-            }
+        ThreadPoolUtil.execute(() -> {
+            StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomainId);
+            parameters.setVdsId(vdsId);
+            backend.runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
         });
     }
 
@@ -305,20 +297,17 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void vdsNotResponding(final VDS vds) {
         ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                log.info("ResourceManager::vdsNotResponding entered for Host '{}', '{}'",
-                        vds.getId(),
-                        vds.getHostName());
+        ThreadPoolUtil.execute(() -> {
+            log.info("ResourceManager::vdsNotResponding entered for Host '{}', '{}'",
+                    vds.getId(),
+                    vds.getHostName());
 
-                FenceVdsActionParameters params = new FenceVdsActionParameters(vds.getId());
-                backend.runInternalAction(VdcActionType.VdsNotRespondingTreatment,
-                        params,
-                        ExecutionHandler.createInternalJobContext());
+            FenceVdsActionParameters params = new FenceVdsActionParameters(vds.getId());
+            backend.runInternalAction(VdcActionType.VdsNotRespondingTreatment,
+                    params,
+                    ExecutionHandler.createInternalJobContext());
 
-                moveBricksToUnknown(vds);
-            }
+            moveBricksToUnknown(vds);
         });
     }
 
@@ -338,25 +327,22 @@ public class VdsEventListener implements IVdsEventListener {
         HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(vds);
         boolean isSucceeded = backend.runInternalAction(VdcActionType.InitVdsOnUp, params).getSucceeded();
         if (isSucceeded) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // migrate vms that its their default vds and failback
-                        // is on
-                        List<VmStatic> vmsToMigrate =
-                                DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
-                        if (!vmsToMigrate.isEmpty()) {
-                            CommandContext ctx = new CommandContext(new EngineContext());
-                            ctx.getExecutionContext().setMonitored(true);
-                            backend.runInternalMultipleActions(VdcActionType.MigrateVmToServer,
-                                    new ArrayList<>(createMigrateVmToServerParametersList(vmsToMigrate, vds)),
-                                    ctx);
-                        }
-                    } catch (RuntimeException e) {
-                        log.error("Failed to initialize Vds on up: {}", e.getMessage());
-                        log.error("Exception", e);
+            ThreadPoolUtil.execute(() -> {
+                try {
+                    // migrate vms that its their default vds and failback
+                    // is on
+                    List<VmStatic> vmsToMigrate =
+                            DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
+                    if (!vmsToMigrate.isEmpty()) {
+                        CommandContext ctx = new CommandContext(new EngineContext());
+                        ctx.getExecutionContext().setMonitored(true);
+                        backend.runInternalMultipleActions(VdcActionType.MigrateVmToServer,
+                                new ArrayList<>(createMigrateVmToServerParametersList(vmsToMigrate, vds)),
+                                ctx);
                     }
+                } catch (RuntimeException e) {
+                    log.error("Failed to initialize Vds on up: {}", e.getMessage());
+                    log.error("Exception", e);
                 }
             });
         }
@@ -508,12 +494,7 @@ public class VdsEventListener implements IVdsEventListener {
         if (command != null) {
             // The command will be invoked in a different VDS in its rerun method, so we're calling
             // its rerun method from a new thread so that it won't be executed within our current VDSM lock
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    command.rerun();
-                }
-            });
+            ThreadPoolUtil.execute(() -> command.rerun());
         }
     }
 
@@ -543,28 +524,20 @@ public class VdsEventListener implements IVdsEventListener {
         if (vmIds.isEmpty()) {
             return;
         }
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (Guid vmId : vmIds) {
-                    CpuQos qos = DbFacade.getInstance().getCpuQosDao().getCpuQosByVmId(vmId);
-                    if (qos != null && qos.getCpuLimit() != null) {
-                        resourceManagerProvider.get().runVdsCommand(VDSCommandType.UpdateVmPolicy,
-                                new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));
-                    }
+        ThreadPoolUtil.execute(() -> {
+            for (Guid vmId : vmIds) {
+                CpuQos qos = DbFacade.getInstance().getCpuQosDao().getCpuQosByVmId(vmId);
+                if (qos != null && qos.getCpuLimit() != null) {
+                    resourceManagerProvider.get().runVdsCommand(VDSCommandType.UpdateVmPolicy,
+                            new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));
                 }
             }
         });
     }
 
     public void onError(@Observes final VDSNetworkException vdsException) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                resourceManagerProvider.get().getVdsManager(
-                        vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException);
-            }
-        });
+        ThreadPoolUtil.execute(() -> resourceManagerProvider.get().getVdsManager(
+                vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException));
     }
 
     @Override
@@ -573,12 +546,9 @@ public class VdsEventListener implements IVdsEventListener {
             return;
         }
 
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
-                hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
-            }
+        ThreadPoolUtil.execute(() -> {
+            HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+            hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
         });
     }
 
@@ -619,10 +589,6 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void importHostedEngineVm(final VM vm) {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override public void run() {
-                hostedEngineImporterProvider.get().doImport(vm);
-            }
-        });
+        ThreadPoolUtil.execute(() -> hostedEngineImporterProvider.get().doImport(vm));
     }
 }

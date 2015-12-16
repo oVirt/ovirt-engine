@@ -953,20 +953,17 @@ public class VdsManager {
             return;
         }
         // avoid nested locks by doing this in a separate thread
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                VDSReturnValue returnValue = null;
-                returnValue =
-                        resourceManager.runVdsCommand(VDSCommandType.DestroyVm,
-                                new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    log.info("Stopped migrating VM: '{}' on VDS: '{}'", vm.getName(), vm.getMigratingToVds());
-                }
-                else {
-                    log.info("Could not stop migrating VM: '{}' on VDS: '{}'", vm.getName(),
-                            vm.getMigratingToVds());
-                }
+        ThreadPoolUtil.execute(() -> {
+            VDSReturnValue returnValue = null;
+            returnValue =
+                    resourceManager.runVdsCommand(VDSCommandType.DestroyVm,
+                            new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
+            if (returnValue != null && returnValue.getSucceeded()) {
+                log.info("Stopped migrating VM: '{}' on VDS: '{}'", vm.getName(), vm.getMigratingToVds());
+            }
+            else {
+                log.info("Could not stop migrating VM: '{}' on VDS: '{}'", vm.getName(),
+                        vm.getMigratingToVds());
             }
         });
     }

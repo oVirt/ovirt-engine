@@ -53,28 +53,22 @@ public class EngineEncryptionUtilsTest {
         final StringBuffer failures = new StringBuffer();
         for (int i = 0; i < 100; i++) {
             final int threadCount = i;
-            l.add (
-                new Thread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String encrypted = EngineEncryptionUtils.encrypt(plain);
-                                String actualDecrypted = EngineEncryptionUtils.decrypt(encrypted);
-                                if (!plain.equals(actualDecrypted)) {
-                                    String failure = String.format("Failure in test %d, plain is %s%n",
-                                                            threadCount,
-                                                            actualDecrypted);
-                                    failures.append(failure);
-                                    failed.set(true);
-                                }
-                            }
-                            catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
+            l.add(
+                new Thread(() -> {
+                    try {
+                        String encrypted = EngineEncryptionUtils.encrypt(plain);
+                        String actualDecrypted = EngineEncryptionUtils.decrypt(encrypted);
+                        if (!plain.equals(actualDecrypted)) {
+                            String failure = String.format("Failure in test %d, plain is %s%n",
+                                    threadCount,
+                                    actualDecrypted);
+                            failures.append(failure);
+                            failed.set(true);
                         }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                )
+                })
             );
         }
 

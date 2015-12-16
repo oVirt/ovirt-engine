@@ -302,19 +302,15 @@ public class BackendResource extends BaseBackendResource {
     protected void doNonBlockingAction(final VdcActionType task, final VdcActionParametersBase params) {
         setCorrelationId(params);
         setJobOrStepId(params);
-        ThreadPoolUtil.execute(new Runnable() {
+        ThreadPoolUtil.execute(() -> {
             VdcActionParametersBase sp = sessionize(params);
             DbUser currentUser = getCurrent().getUser();
             VdcActionParametersBase logout = currentUser != null ? sessionize(new VdcActionParametersBase()) : null;
-
-            @Override
-            public void run() {
-                try {
-                    backend.runAction(task, sp);
-                } finally {
-                    if (currentUser != null) {
-                        backend.logoff(logout);
-                    }
+            try {
+                backend.runAction(task, sp);
+            } finally {
+                if (currentUser != null) {
+                    backend.logoff(logout);
                 }
             }
         });

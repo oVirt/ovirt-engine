@@ -173,12 +173,7 @@ public class MultipleActionsRunner {
     }
 
     protected void invokeCommands() {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                runCommands();
-            }
-        });
+        ThreadPoolUtil.execute(() -> runCommands());
     }
 
     protected void invokeSyncCommands() {
