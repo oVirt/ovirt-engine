@@ -1280,6 +1280,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if (returnValue != null && returnValue.getSucceeded()) {
             cancel();
             if (model.getOptimizeForVirtStore().getEntity()) {
+                volume.setId((Guid) returnValue.getActionReturnValue());
                 optimizeVolumesForVirtStore(Arrays.asList(volume));
             }
         }
