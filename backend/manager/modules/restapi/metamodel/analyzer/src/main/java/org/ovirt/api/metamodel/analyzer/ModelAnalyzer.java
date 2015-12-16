@@ -223,7 +223,7 @@ public class ModelAnalyzer {
         }
         if (javaSuperClass != null) {
             String javaSuperClassName = javaSuperClass.getName();
-            Name baseTypeName = NameParser.parseUsingCase(javaSuperClassName);
+            Name baseTypeName = parseJavaName(javaSuperClassName);
             assignType(baseTypeName, type::setBase);
         }
 
@@ -291,7 +291,7 @@ public class ModelAnalyzer {
         }
         if (javaSuperClass != null) {
             String javaSuperClassName = removeSuffix(javaSuperClass.getName(), SERVICE_SUFFIX);
-            Name baseTypeName = NameParser.parseUsingCase(javaSuperClassName);
+            Name baseTypeName = parseJavaName(javaSuperClassName);
             assignService(baseTypeName, service::setBase);
         }
 
@@ -458,7 +458,7 @@ public class ModelAnalyzer {
         javaName = removeSuffix(javaName, SERVICE_SUFFIX);
 
         // Parse the Java name and assign it to the concept:
-        Name name = NameParser.parseUsingCase(javaName);
+        Name name = parseJavaName(javaName);
         service.setName(name);
     }
 
@@ -467,7 +467,7 @@ public class ModelAnalyzer {
         String javaName = javaClass.getName();
 
         // Parse the Java name and assign it to the concept:
-        Name name = NameParser.parseUsingCase(javaName);
+        Name name = parseJavaName(javaName);
         concept.setName(name);
     }
 
@@ -480,20 +480,20 @@ public class ModelAnalyzer {
             name = NameParser.parseUsingSeparator(javaName, '_');
         }
         else {
-            name = NameParser.parseUsingCase(javaName);
+            name = parseJavaName(javaName);
         }
         concept.setName(name);
     }
 
     private void analyzeName(JavaMethod javaMethod, Concept concept) {
         String javaName = javaMethod.getName();
-        Name name = NameParser.parseUsingCase(javaName);
+        Name name = parseJavaName(javaName);
         concept.setName(name);
     }
 
     private void analyzeName(JavaParameter javaParameter, Concept concept) {
         String javaName = javaParameter.getName();
-        Name name = NameParser.parseUsingCase(javaName);
+        Name name = parseJavaName(javaName);
         concept.setName(name);
     }
 
@@ -537,7 +537,7 @@ public class ModelAnalyzer {
                  typeName = model.getDecimalType().getName();
                  break;
              default:
-                 typeName = NameParser.parseUsingCase(javaTypeName);
+                 typeName = parseJavaName(javaTypeName);
              }
         }
         if (javaClass.isArray()) {
@@ -598,12 +598,10 @@ public class ModelAnalyzer {
     private void assignServiceReference(JavaClass javaClass, ServiceSetter setter) {
         // Get the name of the Java class:
         String javaName = javaClass.getName();
-
-        // Remove suffixes:
         javaName = removeSuffix(javaName, SERVICE_SUFFIX);
 
         // Parse the name and assign it to the service:
-        Name name = NameParser.parseUsingCase(javaName);
+        Name name = parseJavaName(javaName);
         assignService(name, setter);
     }
 
@@ -726,5 +724,23 @@ public class ModelAnalyzer {
             text = text.substring(0, text.length() - suffix.length());
         }
         return text;
+    }
+
+    /**
+     * Creates a model name from a Java name, doing any processing that is required, for example removing the prefixes
+     * or suffixes that are used to avoid conflicts with Java reserved words.
+     */
+    private Name parseJavaName(String text) {
+        // Remove the underscore prefixes and suffixes, as they only make sense to avoid conflicts with Java reserved
+        // words and they aren't needed in the model:
+        while (text.startsWith("_")) {
+            text = text.substring(1);
+        }
+        while (text.endsWith("_")) {
+            text = text.substring(0, text.length() - 1);
+        }
+
+        // Once the name is clean it can be parsed:
+        return NameParser.parseUsingCase(text);
     }
 }
