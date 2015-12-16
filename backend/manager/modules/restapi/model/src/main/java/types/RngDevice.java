@@ -21,5 +21,5 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface RngDevice {
     Rate rate();
-    String source();
+    RngSource source();
 }

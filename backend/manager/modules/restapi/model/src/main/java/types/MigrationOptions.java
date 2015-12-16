@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface MigrationOptions {
-    String autoConverge();
-    String compressed();
+    InheritableBoolean autoConverge();
+    InheritableBoolean compressed();
 }

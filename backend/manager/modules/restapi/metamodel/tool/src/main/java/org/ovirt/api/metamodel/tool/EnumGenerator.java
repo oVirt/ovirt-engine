@@ -9,6 +9,8 @@ import org.ovirt.api.metamodel.concepts.EnumValue;
 import org.ovirt.api.metamodel.concepts.Model;
 import org.ovirt.api.metamodel.concepts.Type;
 
+import static java.lang.String.join;
+
 public class EnumGenerator extends JavaGenerator {
 
     @Inject
@@ -91,7 +93,7 @@ public class EnumGenerator extends JavaGenerator {
     }
 
     private String getEnumValueLine(EnumValue enumValue, boolean lastValue) {
-        String value = enumValue.getName().toString().toUpperCase();
+        String value = join("_", enumValue.getName().getWords()).toUpperCase();
         return value + (lastValue ? ";" : ",");
     }
 

@@ -24,6 +24,5 @@ public interface VnicPassThrough {
     /**
      * Defines if the vNIC to be implemented as a virtual device or as a pass-through to a host device.
      */
-    // TODO: Create a "PashThroughMode" enum in the model and use it instead of String.
-    String mode();
+    VnicPassThroughMode mode();
 }

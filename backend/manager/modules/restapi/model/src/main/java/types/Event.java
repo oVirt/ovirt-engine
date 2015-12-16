@@ -24,7 +24,7 @@ import java.util.Date;
 @Type
 public interface Event extends Identified {
     Integer code();
-    String severity();
+    LogSeverity severity();
     Date time();
     String correlationId();
     String origin();

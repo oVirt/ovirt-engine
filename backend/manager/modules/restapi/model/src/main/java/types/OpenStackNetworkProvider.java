@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface OpenStackNetworkProvider extends OpenStackProvider {
-    String pluginType();
+    NetworkPluginType pluginType();
     AgentConfiguration agentConfiguration();
 }

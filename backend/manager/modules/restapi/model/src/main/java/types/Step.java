@@ -23,13 +23,13 @@ import java.util.Date;
 
 @Type
 public interface Step extends Identified {
-    String type();
+    StepEnum type();
     Integer number();
     Status status();
     Date startTime();
     Date endTime();
     Boolean external();
-    String externalType();
+    ExternalSystemType externalType();
 
     @Link Step parentStep();
     @Link Job job();

@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface OperatingSystem {
-    String type();
+    OsType type();
     Boot boot();
     String kernel();
     String initrd();

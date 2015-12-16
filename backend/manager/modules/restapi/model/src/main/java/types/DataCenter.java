@@ -22,11 +22,11 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface DataCenter extends Identified {
     Boolean local();
-    String storageFormat();
+    StorageFormat storageFormat();
     Version version();
     Version[] supportedVersions();
     Status status();
-    String quotaMode();
+    QuotaModeType quotaMode();
 
     @Link MacPool macPool();
 }

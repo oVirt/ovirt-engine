@@ -23,13 +23,13 @@ import org.ovirt.api.metamodel.annotations.Type;
 public interface StorageConnection extends Identified {
     // Common to all types of storage connections:
     String address();
-    String type();
+    StorageType type();
 
     // For NFS:
     String path();
     String mountOptions();
     String vfsType();
-    String nfsVersion();
+    NfsVersion nfsVersion();
     Integer nfsTimeo();
     Integer nfsRetrans();
 

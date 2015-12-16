@@ -27,7 +27,7 @@ public interface VmPool extends Identified {
     Display display();
     RngDevice rngDevice();
     Boolean soundcardEnabled();
-    String type();
+    VmPoolType type();
     Boolean useLatestTemplateVersion();
 
     @Link Cluster cluster();

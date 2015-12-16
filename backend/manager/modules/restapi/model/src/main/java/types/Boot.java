@@ -20,5 +20,5 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface Boot {
-    String[] devices();
+    BootDevice[] devices();
 }

@@ -1137,3 +1137,17 @@ The element was kept for backward compatibility. Use
       <name>policy_name</name>
       ...
     </scheduling_policy>
+
+### Added snapshot.snapshot_type
+
+Enums are being gradually introduces to the API. Some fields which
+were string until now, are replaced with an appropriate enum. One
+such field is vm.type. But this field is inherited by snapshot,
+and snapshot type is different than vm type. So a new field has been
+added to snapshot entity: snapshot.snapshot_type.
+
+    <snapshot>
+      ...
+      <snapshot_type>regualr|active|stateless|preview</snapshot_type>
+      ...
+    </scheduling_policy>

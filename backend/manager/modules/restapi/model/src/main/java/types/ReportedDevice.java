@@ -21,7 +21,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface ReportedDevice extends Identified {
-    String type();
+    ReportedDeviceType type();
     Mac mac();
     Ip[] ips();
 

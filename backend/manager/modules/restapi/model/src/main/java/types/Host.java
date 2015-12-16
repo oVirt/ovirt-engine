@@ -46,7 +46,7 @@ public interface Host extends Identified {
     Integer maxSchedulingMemory();
     VmSummary summary();
     Boolean overrideIptables();
-    String protocol();
+    HostProtocol protocol();
     OperatingSystem os();
     Version libvirtVersion();
     /**
@@ -54,9 +54,9 @@ public interface Host extends Identified {
      */
     Display display();
     HostedEngine hostedEngine();
-    String kdumpStatus();
+    KdumpStatus kdumpStatus();
     SeLinux selinux();
-    String autoNumaStatus();
+    AutoNumaStatus autoNumaStatus();
     Boolean numaSupported();
     Boolean liveSnapshotSupport();
     KatelloErratum[] katelloErrata();

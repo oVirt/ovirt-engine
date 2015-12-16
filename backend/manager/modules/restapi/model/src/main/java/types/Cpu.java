@@ -26,7 +26,7 @@ public interface Cpu {
     String name();
     Double speed();
     CpuTune cpuTune();
-    String mode();
-    String architecture();
+    CpuMode mode();
+    Architecture architecture();
     Core[] cores();
 }

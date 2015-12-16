@@ -34,7 +34,7 @@ public interface Vm extends VmBase {
     String fqdn();
     Boolean useLatestTemplateVersion();
     Boolean nextRunConfigurationExists();
-    String numaTuneMode();
+    NumaTuneMode numaTuneMode();
     TimeZone guestTimeZone();
     GuestOperatingSystem guestOperatingSystem();
 

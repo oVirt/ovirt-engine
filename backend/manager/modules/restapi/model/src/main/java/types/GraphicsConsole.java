@@ -21,7 +21,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface GraphicsConsole extends Identified {
-    String protocol();
+    GraphicsType protocol();
     Integer port();
     Integer tlsPort();
     String address();

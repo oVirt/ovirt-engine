@@ -23,7 +23,7 @@ import java.util.Date;
 
 @Type
 public interface VmBase extends Identified {
-    String type();
+    VmType type();
     Status status();
     Integer memory();
     Cpu cpu();

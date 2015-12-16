@@ -22,7 +22,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface AgentConfiguration {
     String networkMappings();
-    String brokerType();
+    MessageBrokerType brokerType();
     String address();
     Integer port();
     String username();

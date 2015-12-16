@@ -55,13 +55,13 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
         assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
         assertEquals(entity.getDiskId(), Guid.Empty.toString());
-        assertEquals(entity.getStatus(), LunStatus.Free.value());
+        assertEquals(entity.getStatus(), LunStatus.FREE.value());
     }
 
     @Test
     public void testStorageDomainMappings() {
-        assertEquals(LunStatus.Free, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Free, null));
-        assertEquals(LunStatus.Used, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Used, null));
-        assertEquals(LunStatus.Unusable, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Unusable, null));
+        assertEquals(LunStatus.FREE, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Free, null));
+        assertEquals(LunStatus.USED, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Used, null));
+        assertEquals(LunStatus.UNUSABLE, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common.businessentities.storage.LunStatus.Unusable, null));
     }
 }

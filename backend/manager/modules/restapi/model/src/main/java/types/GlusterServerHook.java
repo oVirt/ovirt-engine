@@ -21,7 +21,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface GlusterServerHook extends Identified {
-  String contentType();
+  HookContentType contentType();
   Status status();
   String checksum();
 

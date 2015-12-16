@@ -26,7 +26,7 @@ public interface Disk extends Device {
     Integer provisionedSize();
     Integer actualSize();
     Status status();
-    String _interface();
+    DiskInterface _interface();
     DiskFormat format();
     Boolean sparse();
     Boolean bootable();
@@ -37,9 +37,9 @@ public interface Disk extends Device {
     Boolean active();
     Boolean readOnly();
     HostStorage lunStorage();
-    String sgio();
+    ScsiGenericIO sgio();
     Boolean usesScsiReservation();
-    String storageType();
+    DiskStorageType storageType();
     String logicalName();
 
     @Link StorageDomain storageDomain();

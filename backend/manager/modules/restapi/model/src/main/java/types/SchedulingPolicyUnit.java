@@ -20,7 +20,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface SchedulingPolicyUnit extends Identified {
-    String type();
+    PolicyUnitType type();
     Boolean internal();
     Boolean enabled();
     Property[] properties();

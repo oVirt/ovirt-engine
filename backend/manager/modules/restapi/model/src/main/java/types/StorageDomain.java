@@ -21,7 +21,7 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface StorageDomain extends Identified {
-    String type();
+    StorageDomainType type();
     Status status();
     Status externalStatus();
     Boolean master();
@@ -29,7 +29,7 @@ public interface StorageDomain extends Identified {
     Integer available();
     Integer used();
     Integer committed();
-    String storageFormat();
+    StorageFormat storageFormat();
     Boolean wipeAfterDelete();
     Boolean _import(); // TODO: Should be an action parameter.
     Integer warningLowSpaceIndicator();

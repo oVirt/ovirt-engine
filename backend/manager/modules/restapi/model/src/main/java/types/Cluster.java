@@ -39,7 +39,7 @@ public interface Cluster extends Identified {
     Display display();
     Ksm ksm();
     SerialNumber serialNumber();
-    String[] requiredRngSources();
+    RngSource[] requiredRngSources();
     FencingPolicy fencingPolicy();
     MigrationOptions migration();
 

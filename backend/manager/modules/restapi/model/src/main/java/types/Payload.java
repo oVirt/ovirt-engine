@@ -22,5 +22,5 @@ import org.ovirt.api.metamodel.annotations.Type;
 public interface Payload {
     File[] files();
     String volumeId();
-    String type();
+    VmDeviceType type();
 }

@@ -26,7 +26,7 @@ public interface HostNic extends Identified {
     String baseInterface();
     Vlan vlan();
     Bonding bonding();
-    String bootProtocol();
+    BootProtocol bootProtocol();
     Statistic[] statistics();
     Boolean checkConnectivity();
     Integer speed();

@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface Configuration {
-    String type();
+    ConfigurationType type();
     String data();
 }

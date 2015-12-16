@@ -21,8 +21,8 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface GlusterVolume extends Identified {
-    String volumeType();
-    String[] transportTypes();
+    GlusterVolumeType volumeType();
+    TransportType[] transportTypes();
     Integer replicaCount();
     Integer stripeCount();
     Integer disperseCount();

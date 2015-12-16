@@ -21,5 +21,5 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface Usb {
     Boolean enabled();
-    String type();
+    UsbType type();
 }

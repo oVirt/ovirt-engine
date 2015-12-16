@@ -22,8 +22,8 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface GlusterHook extends Identified {
     String glusterCommand();
-    String stage();
-    String contentType();
+    HookStage stage();
+    HookContentType contentType();
     String checksum();
     String content();
     Integer conflictStatus();

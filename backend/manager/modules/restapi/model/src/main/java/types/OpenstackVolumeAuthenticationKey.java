@@ -25,7 +25,7 @@ import java.util.Date;
 public interface OpenstackVolumeAuthenticationKey extends Identified {
     String uuid();
     String value();
-    String usageType();
+    OpenstackVolumeAuthenticationKeyUsageType usageType();
     Date creationDate();
 
     @Link OpenStackVolumeProvider openstackVolumeProvider();

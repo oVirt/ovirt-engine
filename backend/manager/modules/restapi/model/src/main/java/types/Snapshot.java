@@ -24,8 +24,9 @@ import java.util.Date;
 @Type
 public interface Snapshot extends Vm {
     Date date();
-    String snapshotStatus();
+    SnapshotStatus snapshotStatus();
     Boolean persistMemorystate();
+    SnapshotType snapshotType(); //revisit. Had to be done because of VmBase.type changed to VmType
 
     @Link Vm vm();
 }

@@ -22,11 +22,11 @@ import org.ovirt.api.metamodel.annotations.Type;
 @Type
 public interface Nic extends Device {
     Boolean linked();
-    String _interface();
+    NicInterface _interface();
     Mac mac();
     Boolean plugged();
     ReportedDevice[] reportedDevices();
-    String bootProtocol();
+    BootProtocol bootProtocol();
     Boolean onBoot();
 
     /**

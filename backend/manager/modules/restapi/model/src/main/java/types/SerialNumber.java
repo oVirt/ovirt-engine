@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface SerialNumber {
-    String policy();
+    SerialNumberPolicy policy();
     String value();
 }

@@ -22,6 +22,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 public interface NicConfiguration {
     String name();
     Ip ip();
-    String bootProtocol();
+    BootProtocol bootProtocol();
     Boolean onBoot();
 }

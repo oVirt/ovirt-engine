@@ -20,6 +20,6 @@ import org.ovirt.api.metamodel.annotations.Type;
 
 @Type
 public interface Watchdog extends Device {
-    String model();
-    String action();
+    WatchdogModel model();
+    WatchdogAction action();
 }
