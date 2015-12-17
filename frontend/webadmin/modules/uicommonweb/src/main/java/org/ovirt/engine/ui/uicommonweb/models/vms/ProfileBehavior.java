@@ -61,7 +61,8 @@ public abstract class ProfileBehavior {
             @Override
             public void onSuccess(Object model1, Object result1) {
                 List<Network> clusterNetworks = (List<Network>) result1;
-                managementNetworkName = Linq.findManagementNetwork(clusterNetworks).getName();
+                Network managementNetwork = Linq.findManagementNetwork(clusterNetworks);
+                managementNetworkName = managementNetwork != null ? managementNetwork.getName() : null;
 
                 profilesQuery.setModel(clusterNetworks);
                 AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
