@@ -94,12 +94,29 @@ public class OSTest {
 
     @Test
     public void shouldDetectDifferentOs() {
-        assertThat(new OS("os1", new Version("6.3")).isSameOs(new OS("os2", new Version("6.3")))).isFalse();
+        assertThat(new OS("os1", new Version("6.3")).isSameOsFamily(new OS("os2", new Version("6.3")))).isFalse();
     }
 
     @Test
     public void shouldDetectSameOs() {
-        assertThat(new OS("os1", new Version("6.3")).isSameOs(new OS("os1", new Version("6.3")))).isTrue();
+        assertThat(new OS("os1", new Version("6.3")).isSameOsFamily(new OS("os1", new Version("6.3")))).isTrue();
+    }
+
+    @Test
+    public void shouldDetectEqualOs() {
+        assertThat(new OS("RHEL", new Version("6.3"))
+                .isSameOsFamily(new OS("oVirt Node", new Version("6.3")))).isTrue();
+        assertThat(new OS("RHEL", new Version("6.3"))
+                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3")))).isTrue();
+        assertThat(new OS("oVirt Node", new Version("6.3"))
+                .isSameOsFamily(new OS("RHEV Hypervisor", new Version("6.3")))).isTrue();
+    }
+
+    @Test
+    public void shouldReturnCorrectOsFamiliy() {
+        assertThat(new OS("RHEV Hypervisor", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
+        assertThat(new OS("RHEL", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
+        assertThat(new OS("oVirt Node", new Version("6.3")).getOsFamily()).isEqualTo("RHEL");
     }
 
     @Test

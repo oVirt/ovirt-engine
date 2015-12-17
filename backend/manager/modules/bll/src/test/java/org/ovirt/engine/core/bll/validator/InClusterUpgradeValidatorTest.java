@@ -67,7 +67,7 @@ public class InClusterUpgradeValidatorTest {
     public void setUp() throws Exception {
         invalidVM = newVM();
         validVM = newVM();
-        oldHost = newHost("RHEL - 6.1 - 1.el6");
+        oldHost = newHost("RHEV Hypervisor - 6.1 - 1.el6");
         newHost1 = newHost("RHEL - 7.2 - 1.el7");
         newHost2 = newHost("RHEL - 7.2 - 1.el7");
     }
