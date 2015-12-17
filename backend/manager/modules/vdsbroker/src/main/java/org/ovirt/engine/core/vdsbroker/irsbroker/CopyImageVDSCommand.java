@@ -19,10 +19,6 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
     @Override
     protected void executeIrsBrokerCommand() {
         StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstStorageDomainId());
-        /**
-         * TODO: EINAV: - Consider 'RunAsync' parameter (pass it to IRS too). - Add 'description' parameter. - we should
-         * provide 'volumeUUID'. - TaskID should be provided by IRS.
-         */
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID. Parameters:");
