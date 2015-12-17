@@ -45,6 +45,7 @@
     <module name="EmptyBlock">
         <property name="option" value="text"/>
     </module>
+    <module name="EmptyForInitializerPad" />
 
     <!-- oVirt checks -->
     <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
