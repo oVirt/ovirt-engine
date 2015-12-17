@@ -23,8 +23,6 @@ import org.junit.Test;
  * Long transfer test.
  */
 public class TransferTest {
-    final static String hello_command = "echo test";
-    final static String hello_result = "test\n";
     String remote;
     static File local1;
     File local2;
