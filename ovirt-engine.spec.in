@@ -234,6 +234,8 @@ BuildRequires:	maven
 %endif
 BuildRequires:	unzip
 
+Requires(pre):	shadow-utils
+
 Requires:	%{jboss} >= 8.2.1
 Conflicts:	%{jboss} >= 9
 %if %{ovirt_wildfly_overlay}
@@ -365,6 +367,7 @@ Requires:	ovirt-host-deploy-java >= 1.4.0
 Requires:	python-cheetah
 Requires:	spice-html5
 Requires:	vdsm-jsonrpc-java >= 1.1.5
+Requires(pre):	shadow-utils
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
@@ -467,6 +470,7 @@ Requires:	nfs-utils
 Requires:	policycoreutils-python
 Requires:	python-psycopg2
 Requires:	yum
+Requires(pre):	shadow-utils
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
@@ -526,6 +530,7 @@ Requires:	java
 Requires:	logrotate
 Requires:	python-psycopg2
 Requires:	bzip2
+Requires(pre):		shadow-utils
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
@@ -577,6 +582,7 @@ Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	numpy
 Requires:	python-websockify >= 0.6.0
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
+Requires(pre):		shadow-utils
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
