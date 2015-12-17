@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -86,6 +87,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -851,6 +853,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
             if (provider.getType() != ProviderType.FOREMAN) {
                 return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH);
+            }
+        }
+
+        if (getVdsGroup().isInUpgradeMode()) {
+            getParameters().getVm().setVdsGroupCompatibilityVersion(getVdsGroup().getCompatibilityVersion());
+            if (!validate(Injector.get(InClusterUpgradeValidator.class)
+                    .isVmReadyForUpgrade(getParameters().getVm()))) {
+                return false;
             }
         }
 
