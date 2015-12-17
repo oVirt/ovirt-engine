@@ -23,6 +23,7 @@ public class InternalAuthn implements Extension {
             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
                 doLoad(input, output);
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
+                // Do nothing
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS)) {
                 doAuthenticate(input, output);
             } else {

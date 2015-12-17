@@ -105,6 +105,7 @@ public class Smtp extends Transport {
 
         String encryption = props.getProperty(MAIL_SMTP_ENCRYPTION);
         if (MAIL_SMTP_ENCRYPTION_NONE.equals(encryption)) {
+            // Do nothing
         } else if (MAIL_SMTP_ENCRYPTION_SSL.equals(encryption)) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");

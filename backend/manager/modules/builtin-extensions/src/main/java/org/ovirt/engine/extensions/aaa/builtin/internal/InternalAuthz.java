@@ -42,6 +42,7 @@ public class InternalAuthz implements Extension {
             if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.LOAD)) {
                 doLoad(input, output);
             } else if (input.get(Base.InvokeKeys.COMMAND).equals(Base.InvokeCommands.INITIALIZE)) {
+                // Do nothing
             } else if (command.equals(Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)) {
                 doFetchPrincipalRecord(input, output);
             } else if (command.equals(Authz.InvokeCommands.QUERY_CLOSE)) {

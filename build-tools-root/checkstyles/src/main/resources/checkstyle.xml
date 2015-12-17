@@ -42,6 +42,9 @@
     <module name="ArrayTypeStyle" />
     <module name="AtclauseOrder" />
     <module name="NonEmptyAtclauseDescription" />
+    <module name="EmptyBlock">
+        <property name="option" value="text"/>
+    </module>
 
     <!-- oVirt checks -->
     <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
