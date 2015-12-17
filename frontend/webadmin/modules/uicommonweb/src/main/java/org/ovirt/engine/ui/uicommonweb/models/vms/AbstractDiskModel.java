@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -50,6 +53,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
@@ -874,14 +878,11 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     public boolean validate() {
-        getDescription().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+        getDescription().validateEntity(new IValidation[] {
+                new SpecialAsciiI18NOrNoneValidation(),
+                new LengthValidation(BusinessEntitiesDefinitions.DISK_DESCRIPTION_MAX_SIZE)});
 
-        if (getVm() == null) {
-            getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
-        }
-        else {
-            getAlias().validateEntity(new IValidation[] { new I18NNameValidation() });
-        }
+        getAlias().validateEntity(getDiskAliasValidations());
 
         StoragePool dataCenter = getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
@@ -894,6 +895,15 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid()
                 && getDiskInterface().getIsValid() && getCinderVolumeType().getIsValid();
+    }
+
+    private IValidation[] getDiskAliasValidations() {
+        Collection<IValidation> diskAliasValidations = new ArrayList<>(Arrays.asList(
+                new I18NNameValidation(), new LengthValidation(BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)));
+        if (getVm() == null) {
+            diskAliasValidations.add(new NotEmptyValidation());
+        }
+        return diskAliasValidations.toArray(new IValidation[diskAliasValidations.size()]);
     }
 
     protected void forceCreationWarning(ArrayList<String> usedLunsMessages) {

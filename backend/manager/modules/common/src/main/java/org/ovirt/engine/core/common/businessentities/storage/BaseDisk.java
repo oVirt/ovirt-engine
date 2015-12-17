@@ -43,13 +43,16 @@ public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The alias name of the disk.
      */
-    @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, groups = { CreateEntity.class })
+    @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE,
+            groups = { CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "VALIDATION_DISK_ALIAS_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String diskAlias = "";
 
     /**
      * The description of the disk.
      */
+    @Size(min = 0, max = BusinessEntitiesDefinitions.DISK_DESCRIPTION_MAX_SIZE,
+            groups = { CreateEntity.class, UpdateEntity.class })
     @ValidDescription(message = "VALIDATION_DISK_DESCRIPTION_INVALID", groups = { CreateEntity.class
             , UpdateEntity.class })
     private String diskDescription;

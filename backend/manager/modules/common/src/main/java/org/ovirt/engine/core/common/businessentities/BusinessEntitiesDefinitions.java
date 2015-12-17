@@ -57,6 +57,9 @@ public final class BusinessEntitiesDefinitions {
     public static final int STORAGE_SIZE = 250;
     public static final int STORAGE_NAME_SIZE = 250;
 
+    // Disk (base_disks)
+    public static final int DISK_DESCRIPTION_MAX_SIZE = 500;
+
     // LUNS (luns)
     public static final int LUN_PHYSICAL_VOLUME_ID = 50;
     public static final int LUN_ID = 255;

@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -663,6 +664,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             jobProperties.put("diskalias", getDiskAlias());
         }
         return jobProperties;
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(UpdateEntity.class);
+        return super.getValidationGroups();
     }
 
     public long getNewDiskSizeInGB() {
