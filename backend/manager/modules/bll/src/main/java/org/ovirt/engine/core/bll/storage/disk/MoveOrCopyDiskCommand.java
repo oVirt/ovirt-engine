@@ -422,6 +422,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         image.setQuotaId(getParameters().getQuotaId());
         image.setDiskProfileId(getParameters().getDiskProfileId());
         image.setImageStatus(ImageStatus.LOCKED);
+        image.setVmSnapshotId(null);
+        image.setParentId(Guid.Empty);
+        image.setImageTemplateId(Guid.Empty);
 
         parameters.setDestinationImageId(newImageId);
         parameters.setDestImageGroupId(newId);
