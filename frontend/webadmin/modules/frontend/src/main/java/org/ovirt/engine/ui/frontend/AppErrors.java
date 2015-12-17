@@ -664,6 +664,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The set cluster compatibility version does not allow mixed major host OS versions. Can not start the cluster upgrade.")
     String MIXED_HOST_VERSIONS_NOT_ALLOWED();
 
+    @DefaultStringValue("Cannot suspend VM. Cluster is in upgrade mode.")
+    String VM_CANNOT_SUSPEND_CLUSTER_UPGRADING();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 

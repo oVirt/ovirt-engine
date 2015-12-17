@@ -199,6 +199,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
 
+        if (getVdsGroup().isInUpgradeMode()) {
+            return failCanDoAction(EngineMessage.VM_CANNOT_SUSPEND_CLUSTER_UPGRADING);
+        }
+
         if (CommandCoordinatorUtil.entityHasTasks(getVmId())) {
             return failCanDoAction(EngineMessage.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
