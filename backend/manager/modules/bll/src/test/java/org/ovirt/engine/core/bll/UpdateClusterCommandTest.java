@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -164,7 +165,12 @@ public class UpdateClusterCommandTest {
         createCommandWithDefaultCluster();
         cpuExists();
         architectureIsUpdatable();
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
+    }
+
+    private void initAndAssertValidation(boolean value) {
+        cmd.init();
+        assertThat(cmd.validate(), is(value));
     }
 
     @Test
@@ -193,7 +199,7 @@ public class UpdateClusterCommandTest {
         createCommandWithDifferentCpuName();
         cpuExists();
         architectureIsUpdatable();
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
     }
 
     private void cpuIsNotUpdatable() {
@@ -237,7 +243,7 @@ public class UpdateClusterCommandTest {
         StoragePoolDao storagePoolDao2 = Mockito.mock(StoragePoolDao.class);
         when(storagePoolDao2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
         doReturn(storagePoolDao2).when(cmd).getStoragePoolDao();
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
     }
 
     @Test
@@ -325,7 +331,7 @@ public class UpdateClusterCommandTest {
         setupCpu();
         storagePoolIsLocalFS();
 
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
     }
 
     private void managementNetworkNotFoundById() {
@@ -388,7 +394,7 @@ public class UpdateClusterCommandTest {
         when(clusterDao.getByName(anyString())).thenReturn(createClusterWithNoCpuName());
         when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<>());
         allQueriesForVms();
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
     }
 
     @Test
@@ -463,7 +469,7 @@ public class UpdateClusterCommandTest {
         clusterHasVds();
         when(clusterFeatureDao.getSupportedFeaturesByClusterId(any(Guid.class))).thenReturn(Collections.emptySet());
         when(hostFeatureDao.getSupportedHostFeaturesByHostId(any(Guid.class))).thenReturn(Collections.singleton("TEST_FEATURE"));
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
     }
 
     @Test
@@ -472,7 +478,7 @@ public class UpdateClusterCommandTest {
         cpuExists();
         architectureIsUpdatable();
         cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
         verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
     }
@@ -485,7 +491,7 @@ public class UpdateClusterCommandTest {
         architectureIsUpdatable();
         oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         cmd.getCluster().setClusterPolicyId(NOT_UPGRADE_POLICY_GUID);
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
         verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(1)).isUpgradeDone(anyList());
     }
@@ -498,7 +504,7 @@ public class UpdateClusterCommandTest {
         architectureIsUpdatable();
         oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
-        assertTrue(cmd.validate());
+        initAndAssertValidation(true);
         verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
         verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
     }
@@ -827,7 +833,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void validateFailedWithReason(final EngineMessage message) {
-        assertFalse(cmd.validate());
+        initAndAssertValidation(false);
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(message.toString()));
     }
 }

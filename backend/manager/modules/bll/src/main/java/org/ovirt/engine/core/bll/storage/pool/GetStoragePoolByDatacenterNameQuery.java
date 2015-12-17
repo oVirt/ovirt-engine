@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import org.ovirt.engine.core.bll.QueriesCommandBase;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class GetStoragePoolByDatacenterNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
+public class GetStoragePoolByDatacenterNameQuery<P extends NameQueryParameters> extends StoragePoolQueryBase<P> {
     public GetStoragePoolByDatacenterNameQuery(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected void executeQueryCommand() {
-        getQueryReturnValue()
-                .setReturnValue(getDbFacade()
-                        .getStoragePoolDao()
-                        .getByName(getParameters().getName(), true));
+    protected List<StoragePool> queryDataCenter() {
+        return storagePoolDao.getByName(getParameters().getName(), true);
     }
 }

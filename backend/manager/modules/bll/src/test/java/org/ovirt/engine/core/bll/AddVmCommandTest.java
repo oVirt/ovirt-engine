@@ -33,7 +33,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -116,7 +116,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
-    private MacPoolPerDc macPoolPerDc;
+    private MacPoolPerCluster macPoolPerCluster;
 
     @Mock
     StorageDomainDao sdDao;
@@ -420,7 +420,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockDaos(result);
         mockBackend(result);
         initCommandMethods(result);
-        result.poolPerDc = this.macPoolPerDc;
+        result.macPoolPerCluster = this.macPoolPerCluster;
         result.postConstruct();
         return result;
     }
@@ -481,7 +481,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB) {
         VM vm = initializeMock(domainSizeGB);
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
-        cmd.poolPerDc = macPoolPerDc;
+        cmd.macPoolPerCluster = macPoolPerCluster;
         initCommandMethods(cmd);
         initializeVmStaticDaoMock(vm);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();

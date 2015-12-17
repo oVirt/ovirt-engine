@@ -14,13 +14,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolValidatorTest extends DbDependentTestBase {
@@ -33,13 +33,13 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     private MacPoolDao macPoolDaoMock;
 
     @Mock
-    private StoragePoolDao storagePoolDao;
+    private ClusterDao clusterDao;
 
     @Before
     public void setUp() throws Exception {
         this.macPoolValidator = createMacPoolValidator(macPool);
         when(DbFacade.getInstance().getMacPoolDao()).thenReturn(macPoolDaoMock);
-        when(DbFacade.getInstance().getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(DbFacade.getInstance().getClusterDao()).thenReturn(clusterDao);
     }
 
     private MacPoolValidator createMacPoolValidator(MacPool macPool) {
@@ -136,10 +136,10 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     @Test
     public void testNotRemovingUsedPoolRecordIsUsed() throws Exception {
         macPool.setId(Guid.newGuid());
-        final StoragePool storagePool = new StoragePool();
-        storagePool.setName("storagePool");
-        when(storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId()))
-                .thenReturn(Collections.singletonList(storagePool));
+        final Cluster cluster = new Cluster();
+        cluster.setName("cluster");
+        when(clusterDao.getAllClustersByMacPoolId(macPool.getId()))
+                .thenReturn(Collections.singletonList(cluster));
 
         assertThat(macPoolValidator.notRemovingUsedPool(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL));
@@ -149,8 +149,8 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     public void testNotRemovingUsedPoolRecordNotUsed() throws Exception {
         macPool.setId(Guid.newGuid());
 
-        when(storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId()))
-                .thenReturn(Collections.<StoragePool>emptyList());
+        when(clusterDao.getAllClustersByMacPoolId(macPool.getId()))
+                .thenReturn(Collections.<Cluster> emptyList());
 
         assertThat(macPoolValidator.notRemovingUsedPool(), isValid());
     }

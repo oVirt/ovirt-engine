@@ -66,6 +66,16 @@ public class MacPoolDaoImpl extends DefaultGenericDao<MacPool, Guid> implements 
     }
 
     @Override
+    public MacPool getByClusterId(Guid dataCenterId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", dataCenterId);
+
+        return getCallsHandler().executeRead("GetMacPoolByClusterId",
+                new MacPoolRowMapper(),
+                parameterSource);
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(MacPool entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())

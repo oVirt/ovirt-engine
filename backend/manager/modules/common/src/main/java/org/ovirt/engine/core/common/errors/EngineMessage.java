@@ -6,7 +6,7 @@ public enum EngineMessage {
     VAR__TYPE__HOST,
     VAR__ENTITIES__HOSTS,
     VAR__ENTITIES__HOST,
-    VAR__ENTITIES__DATA_CENTERS,
+    VAR__ENTITIES__CLUSTERS,
     VAR__TYPE__VM,
     VAR__ENTITIES__VMS,
     VAR__ENTITIES__VM,

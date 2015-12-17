@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -38,6 +40,9 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         extends ClusterOperationCommandBase<T> {
 
     public static final String DefaultNetworkDescription = "Default Management Network";
+
+    @Inject
+    protected MacPoolDao macPoolDao;
 
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
@@ -76,6 +81,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
         checkMaxMemoryOverCommitValue();
         cluster.setDetectEmulatedMachine(true);
+        cluster.setMacPoolId(calculateMacPoolIdToUse());
         getClusterDao().save(cluster);
 
         alertIfFencingDisabled();
@@ -108,9 +114,15 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
         cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
 
-        VdcReturnValueBase addCpuProfileReturnValue = getBackend().runAction(VdcActionType.AddCpuProfile, cpuProfileAddParameters);
+        VdcReturnValueBase addCpuProfileReturnValue = getBackend().runAction(VdcActionType.AddCpuProfile,
+                cpuProfileAddParameters);
         cpuProfile.setId(addCpuProfileReturnValue.getActionReturnValue());
+    }
 
+    private Guid calculateMacPoolIdToUse() {
+        Cluster cluster = getCluster();
+        Guid requestedMacPoolId = cluster == null ? null : cluster.getMacPoolId();
+        return requestedMacPoolId == null ? macPoolDao.getDefaultPool().getId() : requestedMacPoolId;
     }
 
     private void attachManagementNetwork() {
@@ -221,9 +233,12 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getCluster().getStoragePoolId(),
-                VdcObjectType.StoragePool,
-                getActionType().getActionGroup()));
+        return Arrays.asList(
+                new PermissionSubject(getCluster().getStoragePoolId(),
+                        VdcObjectType.StoragePool,
+                        getActionType().getActionGroup()),
+                new PermissionSubject(calculateMacPoolIdToUse(), VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL)
+        );
     }
 
     @Override

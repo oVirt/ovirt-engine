@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -76,6 +78,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     private NetworkDao networkDao;
 
+    @Inject
+    private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
+
     private List<VDS> allForCluster;
     private Cluster oldGroup;
 
@@ -86,6 +91,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected void init() {
         updateMigrateOnError();
+        oldGroup = getClusterDao().get(getCluster().getId());
     }
 
     public UpdateClusterCommand(T parameters, CommandContext commandContext) {
@@ -97,8 +103,25 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         super(commandId);
     }
 
+    private Guid getOldMacPoolId() {
+        return oldGroup.getMacPoolId();
+    }
+
+    private Guid getNewMacPoolId() {
+        final Cluster cluster = getCluster();
+        return cluster == null ? null : cluster.getMacPoolId();
+    }
+
     @Override
     protected void executeCommand() {
+        Guid oldMacPoolId = getOldMacPoolId();
+        Guid newMacPoolId = getNewMacPoolId();
+        this.moveMacsOfUpdatedCluster.moveMacsOfUpdatedCluster(
+                oldMacPoolId,
+                newMacPoolId,
+                getClusterId(),
+                getContext());
+
         getCluster().setArchitecture(getArchitecture());
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
@@ -254,7 +277,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         List<VM> vmList = null;
 
-        oldGroup = getClusterDao().get(getCluster().getId());
         if (oldGroup == null) {
             addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
@@ -665,5 +687,18 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     public ClusterFeatureDao getClusterFeatureDao() {
         return clusterFeatureDao;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        final List<PermissionSubject> result = new ArrayList<>(super.getPermissionCheckSubjects());
+
+        final Guid macPoolId = getNewMacPoolId();
+        final boolean changingPoolDefinition = macPoolId != null && !macPoolId.equals(getOldMacPoolId());
+        if (changingPoolDefinition) {
+            result.add(new PermissionSubject(macPoolId, VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL));
+        }
+
+        return result;
     }
 }

@@ -51,6 +51,11 @@ public class StoragePool implements IVdcQueryable, BusinessEntityWithStatus<Guid
 
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
+    /**
+     * Unique mac pool over whole data center. Data center DOES NOT have mac pool associated, only its clusters have.
+     * When updating DC, setting this will set mac pool for all its clusters. When getting DC, this property
+     * will be/should be set only when all DCs clusters share same mac pool.
+     */
     private Guid macPoolId;
 
     public StoragePool() {

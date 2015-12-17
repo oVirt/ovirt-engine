@@ -8,15 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -51,9 +47,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
 
-    @Inject
-    private MacPoolPerDc poolPerDc;
-
     private Map<String, Pair<String, String>> sharedLocks;
 
     public RemoveStoragePoolCommand(T parameters, CommandContext commandContext) {
@@ -66,7 +59,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected void executeCommand() {
-        List<String> macsToRemove = getVmNicDao().getAllMacsByDataCenter(getStoragePool().getId());
         removeNetworks();
 
         // Detach master storage domain last.
@@ -86,8 +78,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        MacPool macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId(), getContext());
-        macPool.freeMacs(macsToRemove);
         removeDataCenter();
 
         setSucceeded(true);

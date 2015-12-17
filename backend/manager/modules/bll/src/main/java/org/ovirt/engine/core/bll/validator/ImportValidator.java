@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -97,7 +97,10 @@ public class ImportValidator {
                 freeMacs++;
             }
         }
-        if (freeMacs > 0 && !(getMacPool().getAvailableMacsCount() >= freeMacs)) {
+
+        //this does not pass CommandContext. Do NOT use this pool to do any modification. You can safely use only methods with readlock.
+        MacPool macPool = Injector.get(MacPoolPerCluster.class).getMacPoolForCluster(params.getClusterId(), null);
+        if (freeMacs > 0 && !(macPool.getAvailableMacsCount() >= freeMacs)) {
             return new ValidationResult(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
         }
 
@@ -143,10 +146,6 @@ public class ImportValidator {
 
     protected StorageDomain getStorageDomain(Guid domainId) {
         return getStorageDomainDao().getForStoragePool(domainId, getStoragePool().getId());
-    }
-
-    private MacPool getMacPool() {
-        return Injector.get(MacPoolPerDc.class).getMacPoolForDataCenter(params.getStoragePoolId());
     }
 
     public StorageDomainDao getStorageDomainDao() {

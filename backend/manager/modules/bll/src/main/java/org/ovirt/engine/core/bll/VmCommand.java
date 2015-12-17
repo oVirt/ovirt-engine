@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -46,7 +47,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private static final int Kb = 1024;
 
     @Inject
-    protected MacPoolPerDc poolPerDc;
+    protected MacPoolPerCluster macPoolPerCluster;
+
+    @Inject
+    private VmDao vmDao;
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -66,7 +70,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected MacPool getMacPool() {
         if (this.macPool == null) {
-            this.macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId(), getContext());
+            this.macPool = macPoolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
         }
 
         return this.macPool;
@@ -216,9 +220,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmNetwork() {
+        MacPool macPool = getMacPool();
         if (getInterfaces() != null) {
             for (VmNic iface : getInterfaces()) {
-                getMacPool().freeMac(iface.getMacAddress());
+                macPool.freeMac(iface.getMacAddress());
             }
         }
     }

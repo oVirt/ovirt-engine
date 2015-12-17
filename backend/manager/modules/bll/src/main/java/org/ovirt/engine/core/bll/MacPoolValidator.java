@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class MacPoolValidator {
@@ -26,13 +26,13 @@ public class MacPoolValidator {
     }
 
     public ValidationResult notRemovingUsedPool() {
-        final StoragePoolDao storagePoolDao = getDbFacade().getStoragePoolDao();
-        final List<StoragePool> dataCenters = storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId());
+        final ClusterDao clusterDao = getDbFacade().getClusterDao();
+        final List<Cluster> clusters = clusterDao.getAllClustersByMacPoolId(macPool.getId());
 
-        final Collection<String> replacements = ReplacementUtils.replaceWithNameable("DATACENTERS_USING_MAC_POOL", dataCenters);
-        replacements.add(EngineMessage.VAR__ENTITIES__DATA_CENTERS.name());
+        final Collection<String> replacements = ReplacementUtils.replaceWithNameable("CLUSTERS_USING_MAC_POOL", clusters);
+        replacements.add(EngineMessage.VAR__ENTITIES__CLUSTERS.name());
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL,
-                replacements.toArray(new String[0])).when(dataCenters.size() != 0);
+                replacements.toArray(new String[replacements.size()])).when(clusters.size() != 0);
     }
 
     protected DbFacade getDbFacade() {

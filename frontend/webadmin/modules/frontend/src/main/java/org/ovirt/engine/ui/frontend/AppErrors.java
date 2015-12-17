@@ -7,7 +7,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL();
 
-    String VAR__ENTITIES__DATA_CENTERS();
+    String VAR__ENTITIES__CLUSTERS();
 
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL();
 

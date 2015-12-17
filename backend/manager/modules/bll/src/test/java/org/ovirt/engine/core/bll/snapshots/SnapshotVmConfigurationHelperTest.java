@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.InjectorRule;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -46,7 +46,7 @@ public class SnapshotVmConfigurationHelperTest {
 
     @Before
     public void setUp() throws Exception {
-        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+        injectorRule.bind(MacPoolPerCluster.class, mock(MacPoolPerCluster.class));
 
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingVm = createVm(existingVmId);

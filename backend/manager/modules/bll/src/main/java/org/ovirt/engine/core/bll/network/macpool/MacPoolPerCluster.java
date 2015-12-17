@@ -12,9 +12,9 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
 import org.slf4j.Logger;
@@ -22,10 +22,13 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 @Startup
-public class MacPoolPerDc {
+public class MacPoolPerCluster {
 
     @Inject
     private MacPoolDao macPoolDao;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     @Inject
     private DecoratedMacPoolFactory decoratedMacPoolFactory;
@@ -33,18 +36,21 @@ public class MacPoolPerDc {
     @Inject
     MacPoolFactory macPoolFactory;
 
+    private static final Logger log = LoggerFactory.getLogger(MacPoolPerCluster.class);
+
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
     static final String POOL_TO_BE_REMOVED_DOES_NOT_EXIST_EXCEPTION_MESSAGE =
             "Trying to removed pool which does not exist.";
-    private static final Logger log = LoggerFactory.getLogger(MacPoolPerDc.class);
     private final Map<Guid, MacPool> macPools = new HashMap<>();
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
 
-    public MacPoolPerDc() {}
+    //required by J2EE specification; session bean should have no-arg constructor.
+    public MacPoolPerCluster() {}
 
-    MacPoolPerDc(MacPoolDao macPoolDao, MacPoolFactory macPoolFactory, DecoratedMacPoolFactory decoratedMacPoolFactory) {
+    MacPoolPerCluster(MacPoolDao macPoolDao, ClusterDao clusterDao, MacPoolFactory macPoolFactory, DecoratedMacPoolFactory decoratedMacPoolFactory) {
         this.macPoolDao = macPoolDao;
+        this.clusterDao = clusterDao;
         this.macPoolFactory = macPoolFactory;
         this.decoratedMacPoolFactory = decoratedMacPoolFactory;
     }
@@ -72,16 +78,12 @@ public class MacPoolPerDc {
         }
     }
 
-    public MacPool getMacPoolForDataCenter(Guid dataCenterId) {
-        return getMacPoolForDataCenter(dataCenterId, null);
-    }
-
     /**
-     * @param dataCenterId id of data center.
+     * @param clusterId id of cluster.
      * @return {@link MacPool} instance to be used within transaction, compensation or scope without either.
      */
-    public MacPool getMacPoolForDataCenter(Guid dataCenterId, CommandContext commandContext) {
-        return getMacPoolById(getMacPoolId(dataCenterId), commandContext);
+    public MacPool getMacPoolForCluster(Guid clusterId, CommandContext commandContext) {
+        return getMacPoolById(getMacPoolId(clusterId), commandContext);
     }
 
     public MacPool getMacPoolById(Guid macPoolId) {
@@ -102,9 +104,9 @@ public class MacPoolPerDc {
         return getMacPoolById(macPoolId, Collections.singletonList(new TransactionalMacPoolDecorator(commandContext)));
     }
 
-    private Guid getMacPoolId(Guid dataCenterId) {
-        final StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(dataCenterId);
-        return storagePool == null ? null : storagePool.getMacPoolId();
+    private Guid getMacPoolId(Guid clusterId) {
+        final Cluster cluster = clusterDao.get(clusterId);
+        return cluster == null ? null : cluster.getMacPoolId();
     }
 
     private MacPool getMacPoolWithoutLocking(Guid macPoolId, List<MacPoolDecorator> decorators) {

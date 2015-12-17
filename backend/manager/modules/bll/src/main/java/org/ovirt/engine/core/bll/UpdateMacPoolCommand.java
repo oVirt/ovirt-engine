@@ -70,7 +70,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
         registerRollbackHandler(new CustomTransactionCompletionListener());
 
         getMacPoolDao().update(getMacPoolEntity());
-        poolPerDc.modifyPool(getMacPoolEntity());
+        macPoolPerCluster.modifyPool(getMacPoolEntity());
 
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getMacPoolId());
@@ -100,7 +100,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
         @Override
         public void onRollback() {
-            poolPerDc.modifyPool(oldMacPool);
+            macPoolPerCluster.modifyPool(oldMacPool);
         }
     }
 }

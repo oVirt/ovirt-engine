@@ -28,39 +28,46 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddClusterCommandTest extends BaseCommandTest {
 
-    private final String CLUSTER_NAME = "clusterName";
-    private final String CLUSTER_DESCRIPTION = "cluster description";
-    private final Guid DATA_CENTER_ID = Guid.newGuid();
-    private final String CPU_NAME = "Cpu Name";
-    private final int MAX_VDS_MEMORY_OVER_COMMIT = 10;
-    private final boolean COUNT_THREADS_AS_CORES = true;
-    private final boolean SET_TRANSPARENT_HUGE_PAGES = true;
-    private final Version SET_COMPATIBILITY_VERSION = new Version("3.5");
-    private final MigrateOnErrorOptions MIGRATE_ON_ERROR = MigrateOnErrorOptions.NO;
-    private final String CORRELATION_ID = "C0RR3LAT10N1D";
-    private final ArchitectureType ARCHITECTURE_TYPE = ArchitectureType.x86;
+    private static final String CLUSTER_NAME = "clusterName";
+    private static final String CLUSTER_DESCRIPTION = "cluster description";
+    private static final Guid DATA_CENTER_ID = Guid.newGuid();
+    private static final String CPU_NAME = "Cpu Name";
+    private static final int MAX_VDS_MEMORY_OVER_COMMIT = 10;
+    private static final boolean COUNT_THREADS_AS_CORES = true;
+    private static final boolean SET_TRANSPARENT_HUGE_PAGES = true;
+    private static final Version SET_COMPATIBILITY_VERSION = new Version("3.5");
+    private static final MigrateOnErrorOptions MIGRATE_ON_ERROR = MigrateOnErrorOptions.NO;
+    private static final String CORRELATION_ID = "C0RR3LAT10N1D";
+    private static final ArchitectureType ARCHITECTURE_TYPE = ArchitectureType.x86;
 
     //Mocks
     @Mock
-    private static CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
     private ClusterDao clusterDao;
+
+    @Mock
+    private MacPoolDao macPoolDao;
+
     @Mock
     private Network managementNetwork;
-    @Mock
-    private static NetworkClusterDao networkClusterDao;
 
-    private AddClusterCommand addClusterCommand;
+    @Mock
+    private NetworkClusterDao networkClusterDao;
+
+    private AddClusterCommand<?> addClusterCommand;
     private CommandContext commandContext;
     private Cluster cluster;
 
@@ -110,12 +117,11 @@ public class AddClusterCommandTest extends BaseCommandTest {
     }
 
     private void createCommand() {
-        AddClusterCommand addClusterCommandInstance = new AddClusterCommand(parameters, commandContext) {
-            {
-                cpuFlagsManagerHandler = AddClusterCommandTest.cpuFlagsManagerHandler;
-                networkClusterDao = AddClusterCommandTest.networkClusterDao;
-            }
-        };
+        AddClusterCommand addClusterCommandInstance = new AddClusterCommand<>(parameters, commandContext);
+
+        addClusterCommandInstance.cpuFlagsManagerHandler = cpuFlagsManagerHandler;
+        addClusterCommandInstance.networkClusterDao = networkClusterDao;
+        addClusterCommandInstance.macPoolDao = macPoolDao;
 
         addClusterCommand = spy(addClusterCommandInstance);
         doReturn(ARCHITECTURE_TYPE).when(addClusterCommand).getArchitecture();
@@ -123,6 +129,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
         doReturn(clusterDao).when(addClusterCommand).getClusterDao();
         doReturn(managementNetwork).when(addClusterCommand).getManagementNetwork();
 
+        when(macPoolDao.getDefaultPool()).thenReturn(new MacPool());
     }
 
     private void mockBackend() {
@@ -157,9 +164,9 @@ public class AddClusterCommandTest extends BaseCommandTest {
     public void getPermissionCheckSubjectsTest() {
         List<PermissionSubject> permissions = addClusterCommand.getPermissionCheckSubjects();
 
-        assertEquals(permissions.size(), 1);
-        PermissionSubject permissionSubject = permissions.get(0);
+        assertEquals(permissions.size(), 2);
 
+        PermissionSubject permissionSubject = permissions.get(0);
         assertEquals(cluster.getStoragePoolId(), permissionSubject.getObjectId());
         assertEquals(VdcObjectType.StoragePool, permissionSubject.getObjectType());
 

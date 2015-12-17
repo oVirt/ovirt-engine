@@ -66,6 +66,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         return destDomainId;
     }
 
+    @Override
     public Guid getClusterId() {
         return clusterId;
     }

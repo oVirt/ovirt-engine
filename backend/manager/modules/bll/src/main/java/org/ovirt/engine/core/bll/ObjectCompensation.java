@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.ReleaseMacsTransientCompensation;
 import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.TransientCompensationBusine
 @Singleton
 public class ObjectCompensation {
     @Inject
-    private MacPoolPerDc macPoolPerDc;
+    private MacPoolPerCluster macPoolPerCluster;
 
     public void compensate(CommandBase command, TransientCompensationBusinessEntity entity) {
         switch (entity.getTransientEntityType()) {
@@ -28,7 +28,7 @@ public class ObjectCompensation {
     }
 
     private void handleReleaseMacsCompensation(ReleaseMacsTransientCompensation releaseMacs) {
-        MacPool macPool = macPoolPerDc.getMacPoolById(releaseMacs.getMacPoolId());
+        MacPool macPool = macPoolPerCluster.getMacPoolById(releaseMacs.getMacPoolId());
         macPool.freeMacs(releaseMacs.getMacs());
     }
 }

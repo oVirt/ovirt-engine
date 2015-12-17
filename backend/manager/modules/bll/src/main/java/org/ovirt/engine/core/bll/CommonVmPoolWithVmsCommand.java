@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -70,7 +70,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         implements QuotaStorageDependent {
 
     @Inject
-    private MacPoolPerDc poolPerDc;
+    MacPoolPerCluster poolPerCluster;
 
 
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
@@ -104,11 +104,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     /*
        this method exist not to do caching, but to deal with init being called from constructor in class hierarchy.
        init method is not called via Postconstruct, but from constructor, meaning, that in tests
-       we're unable pro inject 'poolPerDc' soon enough.
+       we're unable pro inject 'poolPerCluster' soon enough.
     * */
     protected MacPool getMacPool() {
         if (macPool == null) {
-            macPool = poolPerDc.getMacPoolForDataCenter(getStoragePoolId());
+            macPool = poolPerCluster.getMacPoolForCluster(getClusterId(), getContext());
         }
         return macPool;
     }

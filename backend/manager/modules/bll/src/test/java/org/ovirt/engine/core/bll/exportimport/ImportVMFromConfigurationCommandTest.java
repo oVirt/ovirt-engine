@@ -31,7 +31,7 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -88,7 +88,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
     @Mock
-    private MacPoolPerDc macPoolPerDc;
+    private MacPoolPerCluster macPoolPerCluster;
 
     @Before
     public void setUp() throws IOException {
@@ -96,7 +96,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
         storagePoolId = Guid.newGuid();
         clusterId = Guid.newGuid();
-        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
 
 
         // init the injector with the osRepository instance
@@ -215,28 +214,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private void initCommand(OvfEntityData resultOvfEntityData) {
         ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
         initUnregisteredOVFData(resultOvfEntityData);
-        cmd = spy(new ImportVmFromConfigurationCommand<ImportVmParameters>(
-                parameters, CommandContext.createContext(parameters.getSessionId())) {
-            // Overridden here and not during spying, since it's called in the constructor
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
-                return unregisteredOVFDataDao;
-            }
-
-            @Override
-            protected void initUser() {
-            }
-
-            public Cluster getCluster() {
-                return cluster;
-            }
-
-            @Override
-            protected List<DiskImage> getImages() {
-                return Collections.emptyList();
-            }
-        });
+        cmd = spy(new ImportVmParametersImportVmFromConfigurationCommandStub(parameters));
         cmd.init();
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(parameters));
@@ -281,5 +259,33 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStoragePoolId(storagePoolId);
         return sd;
+    }
+
+    private class ImportVmParametersImportVmFromConfigurationCommandStub extends ImportVmFromConfigurationCommand<ImportVmParameters> {
+
+        public ImportVmParametersImportVmFromConfigurationCommandStub(ImportVmParameters parameters) {
+            super(parameters, CommandContext.createContext(parameters.getSessionId()));
+            macPoolPerCluster = ImportVMFromConfigurationCommandTest.this.macPoolPerCluster;
+        }
+
+        // Overridden here and not during spying, since it's called in the constructor
+        @SuppressWarnings("synthetic-access")
+        @Override
+        public UnregisteredOVFDataDao getUnregisteredOVFDataDao() {
+            return unregisteredOVFDataDao;
+        }
+
+        @Override
+        protected void initUser() {
+        }
+
+        public Cluster getCluster() {
+            return cluster;
+        }
+
+        @Override
+        protected List<DiskImage> getImages() {
+            return Collections.emptyList();
+        }
     }
 }

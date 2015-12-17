@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.InjectorRule;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -43,7 +43,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+        injectorRule.bind(MacPoolPerCluster.class, mock(MacPoolPerCluster.class));
 
         vmId = Guid.newGuid();
         vm = new VM();

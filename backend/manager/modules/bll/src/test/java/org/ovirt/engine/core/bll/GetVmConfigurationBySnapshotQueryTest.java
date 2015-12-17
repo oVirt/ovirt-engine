@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -43,7 +43,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     public void setUp() throws Exception {
         super.setUp();
 
-        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+        injectorRule.bind(MacPoolPerCluster.class, mock(MacPoolPerCluster.class));
 
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration

@@ -2,18 +2,15 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.MoveMacsOfUpdatedCluster;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerDc;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -21,7 +18,6 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -41,10 +37,10 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -58,10 +54,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Inject
     private VmDao vmDao;
 
-    @Inject VmNicDao vmNicDao;
+    @Inject
+    private ClusterDao clusterDao;
 
     @Inject
-    private MacPoolPerDc poolPerDc;
+    private MoveMacsOfUpdatedCluster moveMacsOfUpdatedCluster;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -79,51 +76,23 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected void executeCommand() {
-        Guid oldMacPoolId = getOldMacPoolId();
-        Guid newMacPoolId = getNewMacPoolId();
-        Objects.requireNonNull(oldMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
-        Objects.requireNonNull(newMacPoolId); //this should not happen, just make sure this invariant is fulfilled.
-
-        MacPool sourcePool = poolPerDc.getMacPoolById(oldMacPoolId, getContext());
-        MacPool targetPool = poolPerDc.getMacPoolById(newMacPoolId, getContext());
-        boolean needToMigrateMacs = !oldMacPoolId.equals(newMacPoolId);
-
         updateQuotaCache();
         copyUnchangedStoragePoolProperties(getStoragePool(), oldStoragePool);
-
-        List<String> vmInterfaceMacs = null;
-        if (needToMigrateMacs) {
-            vmInterfaceMacs = vmNicDao.getAllMacsByDataCenter(getParameters().getStoragePoolId());
-        }
-
         getStoragePoolDao().updatePartial(getStoragePool());
 
-        if (needToMigrateMacs) {
-            moveMacsOfUpdatedDataCenter(vmInterfaceMacs, sourcePool, targetPool);
-        }
-
         updateStoragePoolFormatType();
-
+        updateAllClustersMacPool();
         setSucceeded(true);
     }
 
-    /**
-     * All MACs of given DC are found, and all of them are {@link MacPool#freeMac(String) freed}
-     * from source {@link MacPool macPool} and are
-     * {@link MacPool#forceAddMac(String) added}
-     * to target {@link MacPool macPool}. Because source macPool may contain duplicates and/or allow
-     * duplicates, {@link MacPool#forceAddMac(String)} is used to add them override
-     * <em>allowDuplicates</em> setting of target macPool.
-     * @param vmInterfaceMacs all macs to move between pools
-     * @param sourceMacPool mac pool to move macs from
-     * @param targetMacPool mac pool to move macs to
-     */
-    private void moveMacsOfUpdatedDataCenter(List<String> vmInterfaceMacs, MacPool sourceMacPool, MacPool targetMacPool) {
-        Objects.requireNonNull(vmInterfaceMacs);
-
-        for (String mac : vmInterfaceMacs) {
-            sourceMacPool.freeMac(mac);
-            targetMacPool.forceAddMac(mac);
+    private void updateAllClustersMacPool() {
+        final Guid newMacPoolId = getParameters().getStoragePool().getMacPoolId();
+        final boolean shouldSetNewMacPoolOnAllClusters = newMacPoolId != null;
+        if (shouldSetNewMacPoolOnAllClusters) {
+            List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePoolId());
+            for (Cluster cluster : clusters) {
+                this.moveMacsOfUpdatedCluster.updateClusterAndMoveMacs(cluster, newMacPoolId, getContext());
+            }
         }
     }
 
@@ -370,33 +339,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         logable.setStoragePoolId(getOldStoragePool().getId());
     }
 
-    private Guid getOldMacPoolId() {
-        return getOldStoragePool().getMacPoolId();
-    }
-
-    private Guid getNewMacPoolId() {
-        return getParameters().getStoragePool() == null ? null : getParameters().getStoragePool().getMacPoolId();
-    }
-
     private StoragePool getOldStoragePool() {
         if (oldStoragePool == null) {
             oldStoragePool = getStoragePoolDao().get(getStoragePool().getId());
         }
 
         return oldStoragePool;
-    }
-
-    @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        final List<PermissionSubject> result = new ArrayList<>(super.getPermissionCheckSubjects());
-
-        final Guid macPoolId = getNewMacPoolId();
-        final boolean changingPoolDefinition = macPoolId != null && !macPoolId.equals(getOldMacPoolId());
-        if (changingPoolDefinition) {
-            result.add(new PermissionSubject(macPoolId, VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL));
-        }
-
-        return result;
     }
 
     ManagementNetworkUtil getManagementNetworkUtil() {

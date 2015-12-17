@@ -64,7 +64,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
         getMacPoolDao().save(getMacPoolEntity());
         addPermission(getCurrentUser().getId(), getMacPoolEntity().getId());
 
-        poolPerDc.createPool(getMacPoolEntity());
+        macPoolPerCluster.createPool(getMacPoolEntity());
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getMacPoolId());
     }
@@ -87,7 +87,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
         @Override
         public void onRollback() {
-            poolPerDc.removePool(getMacPoolId());
+            macPoolPerCluster.removePool(getMacPoolId());
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -47,15 +46,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setId(Guid.newGuid());
         getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
 
-        getStoragePool().setMacPoolId(calculateMacPoolIdToUse());
         getStoragePoolDao().save(getStoragePool());
-    }
-
-    private Guid calculateMacPoolIdToUse() {
-        Guid requestedMacPoolId = getStoragePool() == null ? null : getStoragePool().getMacPoolId();
-        return requestedMacPoolId == null
-                ? getDbFacade().getMacPoolDao().getDefaultPool().getId()
-                : requestedMacPoolId;
     }
 
     @Override
@@ -147,9 +138,8 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Arrays.asList(
-                new PermissionSubject(Guid.SYSTEM, VdcObjectType.System, getActionType().getActionGroup()),
-                new PermissionSubject(calculateMacPoolIdToUse(), VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL)
+        return Collections.singletonList(
+                new PermissionSubject(Guid.SYSTEM, VdcObjectType.System, getActionType().getActionGroup())
         );
     }
 

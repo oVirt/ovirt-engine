@@ -68,6 +68,7 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
 
     private Guid privateClusterId;
 
+    @Override
     public Guid getClusterId() {
         return privateClusterId;
     }

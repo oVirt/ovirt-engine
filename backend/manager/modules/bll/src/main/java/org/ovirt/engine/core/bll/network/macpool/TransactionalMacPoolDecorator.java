@@ -144,6 +144,7 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
         }
 
         public boolean shouldUseCompensation() {
+
             CompensationContext compensationContext = this.commandContext.getCompensationContext();
             return compensationContext != null && compensationContext.isCompensationEnabled();
         }
