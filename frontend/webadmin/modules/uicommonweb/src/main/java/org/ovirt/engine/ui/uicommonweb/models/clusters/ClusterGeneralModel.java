@@ -345,8 +345,6 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
                             public void executed(FrontendMultipleActionAsyncResult result) {
                                 ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
                                 innerGlusterSwiftModel.stopProgress();
-                                for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
-                                }
                                 cancel();
                                 updateGlusterDetails();
                             }
