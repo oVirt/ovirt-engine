@@ -7,30 +7,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.apache.commons.lang.ClassUtils;
 
 class StringValueConverter {
-
-    private static final Map<Class<?>, Class<?>> typeBox = new HashMap<>();
-    static {
-        typeBox.put(boolean.class, Boolean.class);
-        typeBox.put(byte.class, Byte.class);
-        typeBox.put(char.class, Character.class);
-        typeBox.put(double.class, Double.class);
-        typeBox.put(float.class, Float.class);
-        typeBox.put(int.class, Integer.class);
-        typeBox.put(long.class, Long.class);
-        typeBox.put(short.class, Short.class);
-        typeBox.put(void.class, Void.class);
-    }
-
     public static Object getObjectValueByString(Class<?> clazz, String value) {
         Object v = null;
 
         if (clazz.isPrimitive()) {
-            clazz = typeBox.get(clazz);
+            clazz = ClassUtils.primitiveToWrapper(clazz);
         }
 
         if (clazz.equals(Collection.class)) {
@@ -95,5 +81,4 @@ class StringValueConverter {
 
         return v;
     }
-
 }
