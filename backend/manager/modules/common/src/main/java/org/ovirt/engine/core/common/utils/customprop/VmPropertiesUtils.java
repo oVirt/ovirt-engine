@@ -20,18 +20,14 @@ import org.ovirt.engine.core.compat.Version;
  */
 public class VmPropertiesUtils extends CustomPropertiesUtils {
 
-    private static final VmPropertiesUtils vmPropertiesUtils;
-
-    static {
-        vmPropertiesUtils = new VmPropertiesUtils();
-    }
+    private static final VmPropertiesUtils instance = new VmPropertiesUtils();
 
     private Map<Version, Map<String, String>> predefinedProperties;
     private Map<Version, Map<String, String>> userdefinedProperties;
     private Map<Version, Map<String, String>> allVmProperties;
 
     public static VmPropertiesUtils getInstance() {
-        return vmPropertiesUtils;
+        return instance;
     }
 
     public void init() throws InitializationException {
