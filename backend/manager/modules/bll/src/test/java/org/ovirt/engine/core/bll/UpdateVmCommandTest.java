@@ -9,6 +9,8 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -24,6 +26,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,6 +34,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -56,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -100,6 +105,12 @@ public class UpdateVmCommandTest {
 
     @Mock
     DbFacade dbFacade;
+
+    @Mock
+    InClusterUpgradeValidator inClusterUpgradeValidator;
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     private static final Map<String, String> migrationMap = new HashMap<>();
 
@@ -148,6 +159,7 @@ public class UpdateVmCommandTest {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
         //injectorRule.bind(DbFacade.class, dbFacade);
+        injectorRule.bind(InClusterUpgradeValidator.class, inClusterUpgradeValidator);
 
         when(osRepository.getMinimumRam(osId, version)).thenReturn(0);
         when(osRepository.getMinimumRam(osId, null)).thenReturn(0);
@@ -398,6 +410,38 @@ public class UpdateVmCommandTest {
         mockVmValidator();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testShouldCheckVmOnClusterUpgrade() {
+        prepareVmToPassCanDoAction();
+        mockVmValidator();
+        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
+        group.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any(VM.class));
+    }
+
+    @Test
+    public void testCheckVmOnlyOnClusterUpgrade() {
+        prepareVmToPassCanDoAction();
+        mockVmValidator();
+        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        verify(inClusterUpgradeValidator, times(0)).isVmReadyForUpgrade(any(VM.class));
+    }
+
+    @Test
+    public void testFailOnClusterUpgrade() {
+        prepareVmToPassCanDoAction();
+        mockVmValidator();
+        final ValidationResult validationResult = new ValidationResult(EngineMessage
+                .BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER);
+        doReturn(validationResult).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
+        group.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                EngineMessage.BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER);
+        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any(VM.class));
     }
 
     @Test

@@ -63,7 +63,7 @@ public class InClusterUpgradeValidator {
         }
 
         for (final VM vm : vms) {
-            final List<UPGRADE_ERROR> errors = isVmReadyForUpgrade(vm);
+            final List<UPGRADE_ERROR> errors = checkVmReadyForUpgrade(vm);
             if (!errors.isEmpty()) {
                 vmValidationResults.put(vm.getId(), errors);
             }
@@ -76,7 +76,18 @@ public class InClusterUpgradeValidator {
         }
     }
 
-    public List<UPGRADE_ERROR> isVmReadyForUpgrade(final VM vm) {
+    public ValidationResult isVmReadyForUpgrade(final VM vm) {
+        requireNonNull(vm);
+        List<UPGRADE_ERROR> validationResult = checkVmReadyForUpgrade(vm);
+        if (validationResult.isEmpty()) {
+            return ValidationResult.VALID;
+        } else {
+            return new ValidationResult(EngineMessage.BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER,
+                    String.format("$json %1$s", VmValidation.toJson(validationResult)));
+        }
+    }
+
+    protected List<UPGRADE_ERROR> checkVmReadyForUpgrade(final VM vm) {
         requireNonNull(vm);
         final List<UPGRADE_ERROR> errors = new ArrayList<>();
         if (vm.getStatus().isSuspended()) {
@@ -156,7 +167,30 @@ public class InClusterUpgradeValidator {
         );
     }
 
-    private static class ClusterValidation {
+    public static class VmValidation {
+
+        List<UPGRADE_ERROR> vm;
+
+        public VmValidation(List<UPGRADE_ERROR> vm) {
+            this.vm = vm;
+        }
+
+        public List<UPGRADE_ERROR> getVm() {
+            return vm;
+        }
+
+        public static String toJson(final List<UPGRADE_ERROR> vm){
+             final ObjectMapper mapper = new ObjectMapper();
+            mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+            try {
+                return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(new VmValidation(vm));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static class ClusterValidation {
 
         public ClusterValidation(final Map<Guid, List<UPGRADE_ERROR>> hosts, final Map<Guid, List<UPGRADE_ERROR>> vms) {
             this.hosts = hosts;

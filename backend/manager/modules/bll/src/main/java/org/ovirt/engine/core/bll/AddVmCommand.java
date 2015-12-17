@@ -38,6 +38,7 @@ import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -106,6 +107,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -711,6 +713,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!validate(NumaValidator.checkVmNumaNodesIntegrity(getParameters().getVm(), getParameters().getVm().getvNumaNodeList()))) {
             return false;
+        }
+
+        if (getVdsGroup().isInUpgradeMode()) {
+            getParameters().getVm().setVdsGroupCompatibilityVersion(getVdsGroup().getCompatibilityVersion());
+            if (!validate(Injector.get(InClusterUpgradeValidator.class)
+                    .isVmReadyForUpgrade(getParameters().getVm()))) {
+                return false;
+            }
         }
 
         return true;

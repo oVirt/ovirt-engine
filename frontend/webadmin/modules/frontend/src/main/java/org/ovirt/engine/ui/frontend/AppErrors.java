@@ -667,6 +667,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot suspend VM. Cluster is in upgrade mode.")
     String VM_CANNOT_SUSPEND_CLUSTER_UPGRADING();
 
+    @DefaultStringValue("Cannot bind VM to specific hosts while cluster is in upgrade mode. Reason: ${json}")
+    String BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 
