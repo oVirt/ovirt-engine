@@ -9,8 +9,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 @SuppressWarnings("unused")
 public class ChangeCDModel extends Model {
 
-    // public event EventHandler Executed = delegate { };
-
     public static final EventDefinition executedEventDefinition;
     private Event<EventArgs> privateExecutedEvent;
 
@@ -44,7 +42,6 @@ public class ChangeCDModel extends Model {
 
     private void doAction() {
         getExecutedEvent().raise(this, EventArgs.EMPTY);
-        // Executed(this, EventArgs.Empty);
     }
 
     @Override
