@@ -181,7 +181,7 @@ Conflicts:	ovirt-engine-wildfly-overlay >= 10.0.0
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
-Requires:	%{name}-cli >= 3.6.0.0
+Requires:	%{name}-cli >= 4.0.0.0
 Requires:	%{name}-dbscripts = %{version}-%{release}
 Requires:	%{name}-restapi = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
@@ -197,8 +197,8 @@ Requires:	jakarta-commons-httpclient
 Requires:	java-openjdk >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
-Requires:	ovirt-image-uploader >= 3.6.0
-Requires:	ovirt-iso-uploader >= 3.6.0
+Requires:	ovirt-image-uploader >= 4.0.0
+Requires:	ovirt-iso-uploader >= 4.0.0
 Requires:	%{patternfly}
 Requires:	postgresql-jdbc
 Requires:	postgresql-server >= 8.4.7
@@ -292,7 +292,7 @@ Requires:	novnc
 Requires:	openssh
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
-Requires:	ovirt-host-deploy-java >= 1.4.0
+Requires:	ovirt-host-deploy-java >= 1.5.0
 Requires:	python-cheetah
 Requires:	spice-html5
 Requires:	vdsm-jsonrpc-java >= 1.1.4
@@ -328,12 +328,12 @@ The RESTful API for %{ovirt_product_name_short}
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
-Requires:	ovirt-setup-lib >= 1.0.0
+Requires:	ovirt-setup-lib >= 1.0.1
 Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.4.0
+Requires:	otopi >= 1.4.1
 Requires:	python-paramiko
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 3.5.0
@@ -359,11 +359,11 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 %package setup-plugin-ovirt-engine
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
-Requires:	%{name} >= 3.5.0
+Requires:	%{name} >= 3.6.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	openssh
-Conflicts:	%{name} < 3.5.0
+Conflicts:	%{name} < 3.6.0
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
