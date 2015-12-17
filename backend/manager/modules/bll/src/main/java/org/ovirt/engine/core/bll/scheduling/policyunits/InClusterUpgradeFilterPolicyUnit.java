@@ -49,7 +49,7 @@ public class InClusterUpgradeFilterPolicyUnit extends PolicyUnitImpl {
                         host.getHostOs());
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__INVALID_OS.name());
                 messages.addMessage(host.getId(), String.format("$os %1$s", host.getHostOs()));
-            } else if (!hostOs.isSameOs(lastHostOs)) {
+            } else if (!hostOs.isSameOsFamily(lastHostOs)) {
                 log.debug("Host {} does not run the same operating system. Expected {}, found {}",
                         host.getId(),
                         lastHostOs.getName(),

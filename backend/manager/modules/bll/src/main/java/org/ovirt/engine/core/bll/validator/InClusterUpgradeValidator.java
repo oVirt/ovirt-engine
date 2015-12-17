@@ -147,17 +147,17 @@ public class InClusterUpgradeValidator {
     }
 
     private static void putMajorVersion(Map<String, Set<Integer>> majorVersions, OS hostOs) {
-        if (!majorVersions.containsKey(hostOs.getName())) {
-            majorVersions.put(hostOs.getName(), new HashSet<Integer>());
+        if (!majorVersions.containsKey(hostOs.getOsFamily())) {
+            majorVersions.put(hostOs.getOsFamily(), new HashSet<Integer>());
         }
-        majorVersions.get(hostOs.getName()).add(hostOs.getVersion().getMajor());
+        majorVersions.get(hostOs.getOsFamily()).add(hostOs.getVersion().getMajor());
     }
 
     private static void putHost(Map<String, Set<VDS>> osToHostIdMap, VDS host, OS hostOs) {
-        if (!osToHostIdMap.containsKey(hostOs.getName())) {
-            osToHostIdMap.put(hostOs.getName(), new HashSet<VDS>());
+        if (!osToHostIdMap.containsKey(hostOs.getOsFamily())) {
+            osToHostIdMap.put(hostOs.getOsFamily(), new HashSet<VDS>());
         }
-        osToHostIdMap.get(hostOs.getName()).add(host);
+        osToHostIdMap.get(hostOs.getOsFamily()).add(host);
     }
 
     public ValidationResult checkClusterUpgradeIsEnabled(final VDSGroup cluster) {
