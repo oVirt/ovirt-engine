@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_CPUS_PINNED;
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NEEDS_PASSTHROUGH;
+import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NOT_MIGRATABLE;
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_NUMA_PINNED;
 import static org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator.UpgradeError.VM_SUSPENDED;
 import static org.ovirt.engine.core.common.businessentities.MigrationSupport.PINNED_TO_HOST;
@@ -108,33 +109,39 @@ public class InClusterUpgradeValidatorTest {
     }
 
     @Test
+    public void shouldDetectNonMigratableVMs() {
+        invalidVM.setMigrationSupport(PINNED_TO_HOST);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NOT_MIGRATABLE);
+    }
+
+    @Test
     public void shouldDetectCpuPinning() {
         invalidVM.setCpuPinning("i am pinned");
-        assertThat(validator.isVmReadyForUpgrade(invalidVM)).contains(VM_CPUS_PINNED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_CPUS_PINNED);
     }
 
     @Test
     public void shouldDetectNumaPinning() {
         invalidVM.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, Arrays.asList(createVdsNumaNode(1)))));
-        assertThat(validator.isVmReadyForUpgrade(invalidVM)).contains(VM_NUMA_PINNED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NUMA_PINNED);
     }
 
     @Test
     public void shouldAllowUnpinnedNumaNodes() {
         validVM.setvNumaNodeList(Arrays.asList(createVmNumaNode(1)));
-        assertThat(validator.isVmReadyForUpgrade(validVM)).isEmpty();
+        assertThat(validator.checkVmReadyForUpgrade(validVM)).isEmpty();
     }
 
     @Test
     public void shouldDetectSuspendedVM() {
         invalidVM.setStatus(VMStatus.Suspended);
-        assertThat(validator.isVmReadyForUpgrade(invalidVM)).contains(VM_SUSPENDED);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_SUSPENDED);
     }
 
     @Test
     public void shouldDetectPassThroughDeviceOnVM() {
         when(hostDeviceManager.checkVmNeedsDirectPassthrough(any(VM.class))).thenReturn(true);
-        assertThat(validator.isVmReadyForUpgrade(invalidVM)).contains(VM_NEEDS_PASSTHROUGH);
+        assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(VM_NEEDS_PASSTHROUGH);
     }
 
     @Test
@@ -168,7 +175,7 @@ public class InClusterUpgradeValidatorTest {
 
     @Test
     public void shouldAllowUpgradeForVM() {
-        assertThat(validator.isVmReadyForUpgrade(validVM)).isEmpty();
+        assertThat(validator.checkVmReadyForUpgrade(validVM)).isEmpty();
     }
 
     private VM newVM() {
