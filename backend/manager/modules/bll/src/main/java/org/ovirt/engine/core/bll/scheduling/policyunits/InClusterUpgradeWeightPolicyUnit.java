@@ -61,7 +61,7 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
                         host.getId(),
                         host.getHostOs());
                 weights.add(toWeight(host, BAD_WEIGHT));
-            } else if (!hostOs.isSameOs(lastHostOs)) {
+            } else if (!hostOs.isSameOsFamily(lastHostOs)) {
                 log.debug("Host {} does not run the same operating system. Expected {}, found {}",
                         host.getId(),
                         lastHostOs.getName(),
