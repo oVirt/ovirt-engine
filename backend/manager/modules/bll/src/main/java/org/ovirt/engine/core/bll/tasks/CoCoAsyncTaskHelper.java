@@ -275,10 +275,10 @@ public class CoCoAsyncTaskHelper {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
         if (asyncTask != null) {
-            VdcActionParametersBase parentParameters = command.getParentParameters();
+            VdcActionParametersBase parentParameters = command.getParentParameters() == null ?
+                    command.getParentParameters(parentCommand) : command.getParentParameters();
             Guid parentCommandId =
                     parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
-            parentParameters = parentParameters == null ? command.getParentParameters(parentCommand) : parentParameters;
             if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
                 command.getParameters().setCommandType(command.getActionType());
             }
@@ -307,10 +307,11 @@ public class CoCoAsyncTaskHelper {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        VdcActionParametersBase parentParameters = command.getParentParameters();
+        VdcActionParametersBase parentParameters = command.getParentParameters() == null ?
+                command.getParentParameters(parentCommand) : command.getParentParameters();
         Guid parentCommandId =
                 parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
-        parentParameters = parentParameters == null ? command.getParentParameters(parentCommand) : parentParameters;
+
         if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
         }
