@@ -323,8 +323,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
                 GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) model;
                 GlusterSwiftAction action =
-                        getGlusterSwiftAction(swiftServiceModel.getEntity().getStatus(),
-                                              swiftServiceModel.getStartSwift().getEntity(),
+                        getGlusterSwiftAction(swiftServiceModel.getStartSwift().getEntity(),
                                               swiftServiceModel.getStopSwift().getEntity(),
                                               swiftServiceModel.getRestartSwift().getEntity());
                 if (action != null) {
@@ -359,10 +358,8 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             }
         }
         else {
-            GlusterServiceStatus swiftStatus = glusterSwiftModel.getSwiftStatus().getEntity();
             GlusterSwiftAction action =
-                    getGlusterSwiftAction(swiftStatus,
-                                          glusterSwiftModel.getStartSwift().getEntity(),
+                    getGlusterSwiftAction(glusterSwiftModel.getStartSwift().getEntity(),
                             glusterSwiftModel.getStopSwift().getEntity(),
                             glusterSwiftModel.getRestartSwift().getEntity());
             if (action != null) {
@@ -392,10 +389,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         }
     }
 
-    private GlusterSwiftAction getGlusterSwiftAction(GlusterServiceStatus currentStatus,
-            boolean isStart,
-            boolean isStop,
-            boolean isRestart) {
+    private GlusterSwiftAction getGlusterSwiftAction(boolean isStart, boolean isStop, boolean isRestart) {
         GlusterSwiftAction action = null;
         if (isStart) {
             action = GlusterSwiftAction.START;
