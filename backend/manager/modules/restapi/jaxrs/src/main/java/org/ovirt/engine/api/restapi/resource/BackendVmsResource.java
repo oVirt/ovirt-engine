@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -571,11 +572,11 @@ public class BackendVmsResource extends
         boolean includeData = details.contains(DetailHelper.MAIN);
         boolean includeSize = details.contains("size");
 
+        List<Guid> vmIds = entities.stream().map(VM::getId).collect(Collectors.toList());
         if (includeData) {
             // Fill VmInit for entities - the search query no join the VmInit to Vm
             IdsQueryParameters params = new IdsQueryParameters();
-            List<Guid> ids = entities.stream().map(VM::getId).collect(Collectors.toList());
-            params.setId(ids);
+            params.setId(vmIds);
             VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
             if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
                 List<VmInit> vmInits = queryReturnValue.getReturnValue();
@@ -588,9 +589,13 @@ public class BackendVmsResource extends
 
         Vms collection = new Vms();
         if (includeData) {
+            // optimization of DB access: retrieve GraphicsDevices for all VMs at once
+            Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices =
+                    DisplayHelper.getGraphicsDevicesForMultipleEntities(this, vmIds);
+
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 Vm vm = map(entity);
-                DisplayHelper.adjustDisplayData(this, vm);
+                DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices);
                 removeRestrictedInfo(vm);
                 collection.getVms().add(addLinks(populate(vm, entity)));
             }

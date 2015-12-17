@@ -33,6 +33,12 @@ public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOpera
             Guid userID,
             boolean isFiltered);
 
+    List<VmDevice> getVmDeviceByTypeAndDevice(List<Guid> vmsIds,
+            VmDeviceGeneralType type,
+            String device,
+            Guid userID,
+            boolean isFiltered);
+
     List<VmDevice> getVmDeviceByType(VmDeviceGeneralType type);
 
     List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId);

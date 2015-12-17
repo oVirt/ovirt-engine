@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Display;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.action.HasGraphicsDevices;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -25,9 +27,19 @@ public class DisplayHelper {
      * Returns graphics types of graphics devices of entity with given id.
      */
     public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id) {
-        List<GraphicsType> graphicsTypes = new ArrayList<>();
+        return getGraphicsTypesForEntity(backendResource, id, null);
+    }
 
-        List<GraphicsDevice> graphicsDevices = getGraphicsDevicesForEntity(backendResource, id);
+    public static List<GraphicsType> getGraphicsTypesForEntity(BackendResource backendResource, Guid id,
+            Map<Guid, List<GraphicsDevice>> cache) {
+        List<GraphicsType> graphicsTypes = new ArrayList<>();
+        List<GraphicsDevice> graphicsDevices;
+
+        if (cache == null) {
+            graphicsDevices = getGraphicsDevicesForEntity(backendResource, id);
+        } else {
+            graphicsDevices = cache.get(id);
+        }
 
         if (graphicsDevices != null) {
             for (GraphicsDevice graphicsDevice : graphicsDevices) {
@@ -44,6 +56,15 @@ public class DisplayHelper {
                 new IdQueryParameters(id),
                 id.toString(), true);
 
+        return graphicsDevices;
+    }
+
+    public static Map<Guid, List<GraphicsDevice>> getGraphicsDevicesForMultipleEntities(
+            BackendResource backendResource, List<Guid> vmIds) {
+        Map<Guid, List<GraphicsDevice>> graphicsDevices = backendResource.getEntity(Map.class,
+                VdcQueryType.GetGraphicsDevicesMultiple,
+                new IdsQueryParameters(vmIds),
+                "GetGraphicsDevicesMultiple", true);
         return graphicsDevices;
     }
 
@@ -75,7 +96,7 @@ public class DisplayHelper {
      * If there are multiple graphics, SPICE is preferred.
      */
     public static void adjustDisplayData(BackendResource res, Template template) {
-        adjustDisplayDataInternal(res, template);
+        adjustDisplayDataInternal(res, template, null);
     }
 
     /**
@@ -84,14 +105,20 @@ public class DisplayHelper {
      * If there are multiple graphics, SPICE is preferred.
      */
     public static void adjustDisplayData(BackendResource res, Vm vm) {
-        adjustDisplayDataInternal(res, vm);
+        adjustDisplayData(res, vm, null);
     }
 
-    private static void adjustDisplayDataInternal(BackendResource backendResource, BaseResource res) {
+    public static void adjustDisplayData(BackendResource res, Vm vm, Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices) {
+        adjustDisplayDataInternal(res, vm, vmsGraphicsDevices);
+    }
+
+    private static void adjustDisplayDataInternal(BackendResource backendResource, BaseResource res,
+            Map<Guid, List<GraphicsDevice>> vmsGraphicsDevices) {
         Display display = extractDisplayFromResource(res);
 
         if (display != null && !display.isSetType()) {
-            List<GraphicsType> graphicsTypes = getGraphicsTypesForEntity(backendResource, new Guid(res.getId()));
+            List<GraphicsType> graphicsTypes = getGraphicsTypesForEntity(backendResource,
+                    new Guid(res.getId()), vmsGraphicsDevices);
 
             if (graphicsTypes.contains(GraphicsType.SPICE)) {
                 display.setType(DisplayType.SPICE);

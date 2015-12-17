@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -107,7 +109,7 @@ public class BackendVmsResourceTest
                         new Object[] { GUIDS[i] },
                         vm);
             }
-            setUpGetGraphicsExpectations(3);
+            setUpGetGraphicsMultipleExpectations(3);
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);
             List<Vm> vms = getCollection();
@@ -1124,7 +1126,7 @@ public class BackendVmsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetGraphicsExpectations(3);
+        setUpGetGraphicsMultipleExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -1142,7 +1144,7 @@ public class BackendVmsResourceTest
 
     private void testListAllConsoleAware(boolean allContent) throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpGetGraphicsExpectations(3);
+        setUpGetGraphicsMultipleExpectations(3);
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
@@ -1170,7 +1172,7 @@ public class BackendVmsResourceTest
         expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
         setUpGetPayloadExpectations(3);
         setUpGetBallooningExpectations(3);
-        setUpGetGraphicsExpectations(3);
+        setUpGetGraphicsMultipleExpectations(3);
         setUpGetConsoleExpectations(0, 1, 2);
         setUpGetVmOvfExpectations(0, 1, 2);
         setUpGetVirtioScsiExpectations(0, 1, 2);
@@ -1207,7 +1209,7 @@ public class BackendVmsResourceTest
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(QUERY);
 
-        setUpGetGraphicsExpectations(3);
+        setUpGetGraphicsMultipleExpectations(3);
         setUpQueryExpectations(QUERY);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -1628,6 +1630,19 @@ public class BackendVmsResourceTest
 
         // Add the default expectations:
         super.setUpQueryExpectations(query, failure);
+    }
+
+    protected void setUpGetGraphicsMultipleExpectations(int times) throws Exception {
+        Map<Guid, List<GraphicsDevice>> vmDevices = new HashMap<>();
+        for (int i = 0; i < times; i++) {
+            vmDevices.put(GUIDS[i], Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
+
+        setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevicesMultiple,
+                VdcQueryParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                vmDevices);
     }
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {

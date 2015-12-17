@@ -282,6 +282,36 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+-- Returns for all VMs
+CREATE OR REPLACE FUNCTION GetVmDeviceByTypeAndDevice (
+    v_vm_ids UUID[],
+    v_type VARCHAR(30),
+    v_device VARCHAR(30),
+    v_user_id UUID,
+    v_is_filtered BOOLEAN
+    )
+RETURNS SETOF vm_device_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM vm_device_view
+    WHERE vm_id = ANY(v_vm_ids)
+        AND type = v_type
+        AND device = v_device
+        AND (
+            NOT v_is_filtered
+            OR EXISTS (
+                SELECT 1
+                FROM user_vm_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = vm_id
+                )
+            )
+    ORDER BY NULLIF(alias, '') NULLS LAST;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVmUnmanagedDevicesByVmId (v_vm_id UUID)
 RETURNS SETOF vm_device_view STABLE AS $PROCEDURE$
 BEGIN
@@ -349,5 +379,4 @@ BEGIN
     WHERE type = v_type;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
-
 

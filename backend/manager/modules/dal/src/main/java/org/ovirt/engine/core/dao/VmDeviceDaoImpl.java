@@ -124,6 +124,19 @@ public class VmDeviceDaoImpl extends
     }
 
     @Override
+    public List<VmDevice> getVmDeviceByTypeAndDevice
+            (List<Guid> vmsIds, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_ids", createArrayOfUUIDs(vmsIds))
+                .addValue("type", type.getValue())
+                .addValue("device", device)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered);
+
+        return getCallsHandler().executeReadList("GetVmDeviceByTypeAndDevice",
+                createEntityRowMapper(), parameterSource);
+    }
+    @Override
     public List<VmDevice> getVmDeviceByType(VmDeviceGeneralType type) {
         return getCallsHandler().executeReadList("GetVmDeviceByType",
                 createEntityRowMapper(),
