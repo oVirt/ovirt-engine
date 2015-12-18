@@ -137,9 +137,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setVdsGroupId(parameterMasterVm.getVdsGroupId());
 
             // API backward compatibility
-            if (VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
+            if (VmDeviceUtils.shouldOverrideSoundDevice(
                     getParameters().getMasterVm(),
-                    getVm().getCompatibilityVersion())) {
+                    getVm().getCompatibilityVersion(),
+                    getParameters().isSoundDeviceEnabled())) {
                 parameters.setSoundDeviceEnabled(true);
             }
 

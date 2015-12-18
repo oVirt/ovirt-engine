@@ -170,9 +170,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             setVmTemplateId(templateIdToUse);
 
             // API backward compatibility
-            if (VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
+            if (VmDeviceUtils.shouldOverrideSoundDevice(
                     getParameters().getVmStaticData(),
-                    getEffectiveCompatibilityVersion())) {
+                    getEffectiveCompatibilityVersion(),
+                    getParameters().isSoundDeviceEnabled())) {
                 parameters.setSoundDeviceEnabled(true);
             }
 

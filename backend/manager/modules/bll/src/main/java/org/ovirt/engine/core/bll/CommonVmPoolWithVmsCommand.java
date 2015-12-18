@@ -231,9 +231,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         parameters.setParentCommand(VdcActionType.AddVmPoolWithVms);
         // check if device is enabled or we need to override it to true
         parameters.setSoundDeviceEnabled(Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled())
-                || VmDeviceUtils.shouldOverrideSoundDevice(getParameters().isSoundDeviceEnabled(),
-                        getParameters().getVmStaticData(),
-                        getEffectiveCompatibilityVersion()));
+                || VmDeviceUtils.shouldOverrideSoundDevice(
+                            getParameters().getVmStaticData(),
+                            getEffectiveCompatibilityVersion(),
+                            getParameters().isSoundDeviceEnabled()));
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
         parameters.setBalloonEnabled(getParameters().isBalloonEnabled());

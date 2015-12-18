@@ -46,6 +46,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
+
     private final static String RAM = "ram";
     private final static String VRAM = "vram";
     private final static String HEADS = "heads";
@@ -542,6 +543,29 @@ public class VmDeviceUtils {
      */
     public static boolean hasSoundDevice(Guid vmId) {
         return !getSoundDevices(vmId).isEmpty();
+    }
+
+    /**
+     * Checks if a sound device must be added automatically.
+     *
+     * A sound device must be added automatically, if all of the following conditions
+     * are true:
+     * <ul>
+     *  <li>User has not specified explicitly to enable/disable the device</li>
+     *  <li>Sound device is supported in the given compatibility version</li>
+     *  <li>VM is of desktop type</li>
+     * </ul>
+     *
+     * @param vmStatic
+     * @param compatibilityVersion
+     * @param soundDeviceEnabled
+     * @return
+     */
+    public static boolean shouldOverrideSoundDevice(VmStatic vmStatic, Version compatibilityVersion,
+                                                    Boolean soundDeviceEnabled) {
+        return soundDeviceEnabled == null &&
+                osRepository.isSoundDeviceEnabled(vmStatic.getOsId(), compatibilityVersion) &&
+                vmStatic.getVmType() == VmType.Desktop;
     }
 
     /*
@@ -1904,19 +1928,4 @@ public class VmDeviceUtils {
                         .collect(Collectors.toMap(VmDevice::getDevice, Function.<E>identity()));
     }
 
-    /**
-     * Add sound device when the following holds:
-     * <ul>
-     *  <li>User has not specified a concrete value</li>
-     *  <li>Sound device is supported in given compatibility version</li>
-     *  <li>VM is desktop type</li>
-     * </ul>
-     */
-    public static boolean shouldOverrideSoundDevice(Boolean soundDeviceEnabled,
-            VmStatic vmStatic,
-            Version compatibilityVersion) {
-        return soundDeviceEnabled == null &&
-                osRepository.isSoundDeviceEnabled(vmStatic.getOsId(), compatibilityVersion) &&
-                vmStatic.getVmType() == VmType.Desktop;
-    }
 }
