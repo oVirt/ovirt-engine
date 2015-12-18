@@ -860,25 +860,27 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
                 glusterTunedProfile.setItems(glusterTunedProfiles);
                 glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
+                String newSelectedItem = null;
                 if (oldSelectedProfile != null) {
-                    String newSelectedItem =
+                    newSelectedItem =
                             Linq.firstOrDefault(glusterTunedProfiles, new IPredicate<String>() {
                                 @Override
                                 public boolean match(String item) {
                                     return item.equals(oldSelectedProfile);
                                 }
                             });
-                    if (newSelectedItem != null) {
-                        glusterTunedProfile.setSelectedItem(newSelectedItem);
-                    } else if (getIsEdit()) {
-                        glusterTunedProfile.setSelectedItem(Linq.firstOrDefault(glusterTunedProfiles, new IPredicate<String>() {
-                            @Override
-                            public boolean match(String item) {
-                                return item.equals(getEntity().getGlusterTunedProfile());
-                            }
-                        }));
-                    }
                 }
+                if (newSelectedItem != null) {
+                    glusterTunedProfile.setSelectedItem(newSelectedItem);
+                } else if (getIsEdit()) {
+                    glusterTunedProfile.setSelectedItem(Linq.firstOrDefault(glusterTunedProfiles, new IPredicate<String>() {
+                        @Override
+                        public boolean match(String item) {
+                            return item.equals(getEntity().getGlusterTunedProfile());
+                        }
+                    }));
+                }
+
             }
         }));
     }
@@ -1806,9 +1808,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 ArrayList<Version> versions = (ArrayList<Version>) result;
                 Version selectedVersion = clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
-                if (selectedVersion == null ||
+                if (!clusterModel.getIsEdit() && (selectedVersion == null ||
                         !versions.contains(selectedVersion) ||
-                        selectedVersion.compareTo(selectedDataCenter.getcompatibility_version()) > 0)
+                        selectedVersion.compareTo(selectedDataCenter.getcompatibility_version()) > 0))
                 {
                     if(ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)){
                         clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
