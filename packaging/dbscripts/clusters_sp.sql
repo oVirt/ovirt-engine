@@ -44,7 +44,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_ksm_merge_across_nodes BOOLEAN,
     v_migration_bandwidth_limit_type VARCHAR(16),
     v_custom_migration_bandwidth_limit INT,
-    v_migration_policy_id UUID
+    v_migration_policy_id UUID,
+    v_mac_pool_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -89,7 +90,8 @@ BEGIN
         ksm_merge_across_nodes,
         migration_bandwidth_limit_type,
         custom_migration_bandwidth_limit,
-        migration_policy_id
+        migration_policy_id,
+        mac_pool_id
         )
     VALUES (
         v_cluster_id,
@@ -132,7 +134,8 @@ BEGIN
         v_ksm_merge_across_nodes,
         v_migration_bandwidth_limit_type,
         v_custom_migration_bandwidth_limit,
-        v_migration_policy_id
+        v_migration_policy_id,
+        v_mac_pool_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -179,7 +182,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_ksm_merge_across_nodes BOOLEAN,
     v_migration_bandwidth_limit_type VARCHAR(16),
     v_custom_migration_bandwidth_limit INT,
-    v_migration_policy_id UUID
+    v_migration_policy_id UUID,
+    v_mac_pool_id UUID
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -227,7 +231,8 @@ BEGIN
         ksm_merge_across_nodes = v_ksm_merge_across_nodes,
         migration_bandwidth_limit_type = v_migration_bandwidth_limit_type,
         custom_migration_bandwidth_limit = v_custom_migration_bandwidth_limit,
-        migration_policy_id = v_migration_policy_id
+        migration_policy_id = v_migration_policy_id,
+        mac_pool_id = v_mac_pool_id
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -560,3 +565,13 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetAllClustersByMacPoolId (v_id UUID)
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT cv.*
+    FROM cluster_view cv
+    WHERE cv.mac_pool_id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

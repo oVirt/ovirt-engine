@@ -71,6 +71,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetMacPoolByClusterId (v_cluster_id UUID)
+RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT mp.*
+    FROM mac_pools mp
+    INNER JOIN cluster c
+        ON c.mac_pool_id = mp.id
+    WHERE c.cluster_id = v_cluster_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetAllFromMacPools ()
 RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
 BEGIN
@@ -91,13 +104,9 @@ BEGIN
     WHERE EXISTS (
             SELECT 1
             FROM vm_static
-            INNER JOIN cluster
-                ON vm_static.cluster_id = cluster.cluster_id
-            WHERE cluster.storage_pool_id IN (
-                    SELECT sp.id
-                    FROM storage_pool sp
-                    WHERE sp.mac_pool_id = v_id
-                    )
+            INNER JOIN cluster c
+                ON vm_static.cluster_id = c.cluster_id
+            WHERE c.mac_pool_id = v_id
                 AND vm_static.vm_guid = vm_interface.vm_guid
             );
 END;$PROCEDURE$

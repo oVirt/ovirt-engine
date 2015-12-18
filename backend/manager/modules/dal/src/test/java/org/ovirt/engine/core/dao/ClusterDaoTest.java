@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -72,6 +73,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
         newGroup.setCustomMigrationNetworkBandwidth(1000);
         newGroup.setMigrationPolicyId(Guid.newGuid());
+        newGroup.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
     }
 
     /**
@@ -508,5 +510,15 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         List<Cluster> clusters = dao.getClustersHavingHosts();
         assertNotNull(clusters);
         assertThat(clusters, hasSize(4));
+    }
+
+    @Test
+    public void testGetAllClustersByMacPoolId() {
+        assertThat(dao.getAllClustersByMacPoolId(FixturesTool.NON_DEFAULT_MAC_POOL).size(), is(9));
+    }
+
+    @Test
+    public void testGetAllClustersByMacPoolIdForNonExistingMacPoolId() {
+        assertThat(dao.getAllClustersByMacPoolId(Guid.newGuid()).size(), is(0));
     }
 }

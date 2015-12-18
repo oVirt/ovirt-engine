@@ -52,7 +52,14 @@ public interface VmNicDao extends GenericDao<VmNic, Guid> {
      */
     List<String> getAllMacsByDataCenter(Guid dataCenterId);
 
-    /***
+    /**
+     * Retrieves the MAC addresses of the Vms in the given Cluster.
+     * @param clusterId ID of cluster
+     * @return the list of MAC addresses belonging to given Cluster.
+     */
+    List<String> getAllMacsByClusterId(Guid clusterId);
+
+    /**
      * Retrieves the plugged VmNetworkInterfaces that have the given MAC address
      *
      * @param macAddress

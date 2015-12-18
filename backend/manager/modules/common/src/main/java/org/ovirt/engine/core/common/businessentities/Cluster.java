@@ -135,6 +135,7 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
     private Integer customMigrationNetworkBandwidth;
 
     private Guid migrationPolicyId;
+    private Guid macPoolId;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -513,6 +514,14 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
         this.migrationPolicyId = migrationPolicyId;
     }
 
+    public Guid getMacPoolId() {
+        return macPoolId;
+    }
+
+    public void setMacPoolId(Guid macPoolId) {
+        this.macPoolId = macPoolId;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -553,7 +562,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 ksmMergeAcrossNumaNodes,
                 customMigrationNetworkBandwidth,
                 migrationBandwidthLimitType,
-                migrationPolicyId
+                migrationPolicyId,
+                macPoolId
         );
     }
 
@@ -607,7 +617,8 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
                 && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
                 && Objects.equals(customMigrationNetworkBandwidth, other.customMigrationNetworkBandwidth)
                 && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType)
-                && Objects.equals(migrationPolicyId, other.migrationPolicyId);
+                && Objects.equals(migrationPolicyId, other.migrationPolicyId)
+                && Objects.equals(macPoolId, other.macPoolId);
     }
 
     @Override

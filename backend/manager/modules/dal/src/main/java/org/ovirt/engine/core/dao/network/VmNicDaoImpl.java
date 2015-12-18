@@ -56,6 +56,12 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
     }
 
     @Override
+    public List<String> getAllMacsByClusterId(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetMacsByClusterId",
+                macMapper, getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public List<VmNic> getPluggedForMac(String macAddress) {
         return getCallsHandler().executeReadList("GetPluggedVmInterfacesByMac",
                 VnicRowMapper.INSTANCE, getCustomMapSqlParameterSource().addValue("mac_address", macAddress));

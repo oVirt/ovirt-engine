@@ -189,4 +189,10 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
     int getVmsCountByClusterId(Guid clusterId);
 
     List<Cluster> getClustersByServiceAndCompatibilityVersion(boolean glusterService, boolean virtService, String compatibilityVersion);
+
+    /**
+     * @param macPoolId id of mac pool.
+     * @return all Cluster records bound to given macPoolId.
+     */
+    List<Cluster> getAllClustersByMacPoolId(Guid macPoolId);
 }

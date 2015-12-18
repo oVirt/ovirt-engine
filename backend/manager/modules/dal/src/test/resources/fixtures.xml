@@ -813,6 +813,7 @@
 
     <table name="cluster">
         <column>cluster_id</column>
+        <column>mac_pool_id</column>
         <column>name</column>
         <column>description</column>
         <column>cpu_name</column>
@@ -851,6 +852,7 @@
         <column>migration_policy_id</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.iscsi</value>
             <null />
             <value>Intel Xeon Core2</value>
@@ -890,6 +892,7 @@
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.iscsi2</value>
             <null />
             <value>Intel Xeon Core2</value>
@@ -929,6 +932,7 @@
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.iscsi3</value>
             <null />
             <value>Intel Xeon Core2</value>
@@ -968,6 +972,7 @@
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.nfs</value>
             <null />
             <value>Intel Conroe Family</value>
@@ -1007,6 +1012,7 @@
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.nfs2</value>
             <null />
             <value>Intel Conroe Family</value>
@@ -1046,6 +1052,7 @@
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.nfs3</value>
             <null />
             <value>Intel Conroe Family</value>
@@ -1085,6 +1092,7 @@
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.nfs4</value>
             <null />
             <value>Intel Xeon Core2</value>
@@ -1124,6 +1132,7 @@
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>rhel6.localfs</value>
             <null />
             <value>Intel Xeon Core2</value>
@@ -1163,6 +1172,7 @@
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>c248552d-64d4-4a77-ab1d-4c5eea00be6b</value>
             <value>gluster.only</value>
             <null />
             <value>Intel Xeon Core2</value>

@@ -899,6 +899,22 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetMacsByClusterId (v_cluster_id UUID)
+RETURNS SETOF VARCHAR STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT mac_addr
+    FROM vm_interface
+    WHERE EXISTS (
+            SELECT 1
+            FROM vm_static
+            WHERE vm_static.cluster_id = v_cluster_id
+              AND vm_static.vm_guid = vm_interface.vm_guid
+            );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- VM Interface View
 ----------------------------------------------------------------

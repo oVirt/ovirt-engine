@@ -249,7 +249,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("ksm_merge_across_nodes", cluster.isKsmMergeAcrossNumaNodes())
                 .addValue("migration_bandwidth_limit_type", cluster.getMigrationBandwidthLimitType().name())
                 .addValue("custom_migration_bandwidth_limit", cluster.getCustomMigrationNetworkBandwidth())
-                .addValue("migration_policy_id", cluster.getMigrationPolicyId());
+                .addValue("migration_policy_id", cluster.getMigrationPolicyId())
+                .addValue("mac_pool_id", cluster.getMacPoolId());
 
         return parameterSource;
     }
@@ -323,6 +324,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
             entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
             entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
             entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
+            entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
 
             return entity;
         }
@@ -371,5 +373,12 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 getCustomMapSqlParameterSource().addValue("gluster_service", glusterService)
                         .addValue("virt_service", virtService)
                         .addValue("compatibility_version", compatibilityVersion));
+    }
+
+    @Override
+    public List<Cluster> getAllClustersByMacPoolId(Guid macPoolId) {
+        return getCallsHandler().executeReadList("GetAllClustersByMacPoolId",
+                ClusterRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("id", macPoolId));
     }
 }
