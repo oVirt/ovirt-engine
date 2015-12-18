@@ -840,14 +840,15 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
                 glusterTunedProfile.setItems(glusterTunedProfiles);
                 glusterTunedProfile.setIsAvailable(glusterTunedProfile.getItems().size() > 0);
+                String newSelectedItem = null;
                 if (oldSelectedProfile != null) {
-                    String newSelectedItem =
+                    newSelectedItem =
                             Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(oldSelectedProfile));
-                    if (newSelectedItem != null) {
-                        glusterTunedProfile.setSelectedItem(newSelectedItem);
-                    } else if (getIsEdit()) {
-                        glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(getEntity().getGlusterTunedProfile())));
-                    }
+                }
+                if (newSelectedItem != null) {
+                    glusterTunedProfile.setSelectedItem(newSelectedItem);
+                } else if (getIsEdit()) {
+                    glusterTunedProfile.setSelectedItem(Linq.firstOrNull(glusterTunedProfiles, new Linq.EqualsPredicate(getEntity().getGlusterTunedProfile())));
                 }
             }
         }));
@@ -1898,9 +1899,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 ArrayList<Version> versions = (ArrayList<Version>) result;
                 Version selectedVersion = clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
-                if (selectedVersion == null ||
+                if (!clusterModel.getIsEdit() && (selectedVersion == null ||
                         !versions.contains(selectedVersion) ||
-                        selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0) {
+                        selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0)) {
                     if(ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)){
                         clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                     }
