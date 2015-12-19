@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,6 +52,7 @@ public abstract class BaseDaoTestCase {
     protected static final String PRIVILEGED_USER_ENGINE_SESSION_ID = "c6f975b2-6f67-11e4-8455-3c970e14c386";
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     protected static final String UNPRIVILEGED_USER_ENGINE_SESSION_ID = "9ee57fd0-6f67-11e4-9e67-3c970e14c386";
+    private static boolean initialized = false;
 
     @Inject
     protected DbFacade dbFacade;
@@ -63,16 +67,41 @@ public abstract class BaseDaoTestCase {
     @BeforeClass
     public static void initTestCase() throws Exception {
         if(dataSource == null) {
-            dataSource = createDataSource();
-            ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
+            try {
+                dataSource = createDataSource();
+                ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
 
-            final IDataSet dataset = initDataSet();
-            // load data from fixtures to DB
-            DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
-            SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-            builder.bind("java:/ENGINEDataSource", dataSource);
-            builder.activate();
+                final IDataSet dataset = initDataSet();
+                // load data from fixtures to DB
+                DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+                SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+                builder.bind("java:/ENGINEDataSource", dataSource);
+                builder.activate();
+                initialized = true;
+            } catch (Exception e) {
+                /*
+                 * note: without logging current maven setting does NOT produce stacktrace/message for following AssertionError.
+                 * this error log is absolutely vital to actually see, what went wrong!
+                 */
+                LoggerFactory.getLogger(BaseDaoTestCase.class).error("Unable to init tests", e);
+
+                /*
+                 * note: re-throwing exception here is absolutely vital. Without it, all tests of first executed
+                 * descendant test class will be normally executed. With added assumption using Assume then all tests
+                 * will be skipped and successful tests execution will be pronounced. This exception will cause first of
+                 * executed descendant test class fail and it's constructor will not be even reached.
+                 */
+                throw new AssertionError("Unable to init tests", e);
+            }
         }
+    }
+
+    public BaseDaoTestCase() {
+        /*
+         * note: all tests, which reached this point when initialization failed, can be skipped, but only if first
+         * executed test class stated failure. Otherwise all tests will be skipped and success pronounced.
+         */
+        assumeTrue("Uninitialized TestCase, cannot proceed. Look above for causing exception.", initialized);
     }
 
     @Before
