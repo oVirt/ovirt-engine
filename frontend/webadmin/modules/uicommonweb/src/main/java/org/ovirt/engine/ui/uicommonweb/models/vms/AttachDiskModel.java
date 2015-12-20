@@ -250,6 +250,8 @@ public class AttachDiskModel extends NewDiskModel {
         };
         attachableDisksMap.get(DiskStorageType.IMAGE).
                 getSelectedItemsChangedEvent().addListener(selectionChangedListener);
+        attachableDisksMap.get(DiskStorageType.CINDER).
+                getSelectedItemsChangedEvent().addListener(selectionChangedListener);
         attachableDisksMap.get(DiskStorageType.LUN).
                 getSelectedItemsChangedEvent().addListener(selectionChangedListener);
     }
