@@ -304,6 +304,9 @@ public enum VdcActionType {
     RemoveStorageServerConnectionExtension(1020, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     AddStorageServerConnectionExtension(1021, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     RefreshVolume(1022, QuotaDependency.NONE),
+    UploadImage(1023, false, QuotaDependency.NONE),
+    UploadDiskImage(1024, false, QuotaDependency.STORAGE),
+    UploadImageStatus(1025, false, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
