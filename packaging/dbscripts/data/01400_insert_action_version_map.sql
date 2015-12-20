@@ -3,6 +3,7 @@
 --
 
 
+
 --
 -- Data for Name: action_version_map; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -31,6 +32,7 @@ INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_po
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1013, '3.3', '3.3');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1014, '3.3', '*');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1015, '3.3', '*');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (6, '3.4', '*');
 
 
 --

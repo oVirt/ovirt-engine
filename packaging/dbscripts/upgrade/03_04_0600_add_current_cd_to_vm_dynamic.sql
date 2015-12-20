@@ -1,1 +1,0 @@
-select fn_db_add_column('vm_dynamic', 'current_cd', 'varchar(4000) default null');

@@ -3,6 +3,7 @@
 --
 
 
+
 --
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -29,6 +30,12 @@ INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def0000d-0000-0000-0000-def000000000', 'ExternalTasksCreator', 'External Tasks Creator', true, 2, false, 255);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def0000a-0000-0000-0000-def000000010', 'VnicProfileUser', 'VM Network Interface Profile User', true, 2, false, 1);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00009-0000-0000-0000-def000000009', 'UserTemplateBasedVm', 'Template User', true, 2, false, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000011', 'InstanceCreator', 'User Role, permission to create Instances', true, 2, false, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00012-0000-0000-0000-def000000012', 'UserInstanceManager', 'User Role, with permission for any operation on Instances', true, 2, false, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def0000c-0000-0000-0000-def00000000c', 'ReadOnlyAdmin', 'Read Only Administrator Role', true, 1, true, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000013', 'TagManager', 'Tag Manager', true, 1, false, 255);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000014', 'BookmarkManager', 'Bookmark Manager', true, 1, false, 255);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00011-0000-0000-0000-def000000015', 'EventNotificationManager', 'Event Notification Manager', true, 1, false, 255);
 
 
 --

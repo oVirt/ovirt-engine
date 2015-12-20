@@ -2,6 +2,7 @@
 -- PostgreSQL database dump
 --
 
+
 --
 -- Name: all_storage_usage_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -14,6 +15,7 @@ CREATE TYPE all_storage_usage_rs AS (
 	storage_size_gb bigint,
 	storage_size_gb_usage double precision
 );
+
 
 
 --
@@ -32,6 +34,7 @@ CREATE TYPE all_vds_group_usage_rs AS (
 );
 
 
+
 --
 -- Name: async_tasks_info_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -45,6 +48,7 @@ CREATE TYPE async_tasks_info_rs AS (
 );
 
 
+
 --
 -- Name: authzentryinfotype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -56,6 +60,7 @@ CREATE TYPE authzentryinfotype AS (
 );
 
 
+
 --
 -- Name: booleanresulttype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -63,6 +68,7 @@ CREATE TYPE authzentryinfotype AS (
 CREATE TYPE booleanresulttype AS (
 	result boolean
 );
+
 
 
 --
@@ -74,6 +80,7 @@ CREATE TYPE idtexttype AS (
 );
 
 
+
 --
 -- Name: iduuidtype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -81,6 +88,7 @@ CREATE TYPE idtexttype AS (
 CREATE TYPE iduuidtype AS (
 	id uuid
 );
+
 
 
 --
@@ -94,6 +102,7 @@ CREATE TYPE user_permissions AS (
 );
 
 
+
 --
 -- Name: vds_group_usage_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -102,6 +111,9 @@ CREATE TYPE vds_group_usage_rs AS (
 	virtual_cpu_usage integer,
 	mem_size_mb_usage bigint
 );
+
+
+
 
 
 --
@@ -115,6 +127,7 @@ CREATE TABLE action_version_map (
 );
 
 
+
 --
 -- Name: ad_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -122,10 +135,42 @@ CREATE TABLE action_version_map (
 CREATE TABLE ad_groups (
     id uuid NOT NULL,
     name character varying(256) NOT NULL,
-    status integer NOT NULL,
     domain character varying(100),
-    distinguishedname character varying(4000) DEFAULT NULL::character varying
+    distinguishedname character varying(4000) DEFAULT NULL::character varying,
+    active boolean DEFAULT false NOT NULL,
+    external_id bytea DEFAULT '\x'::bytea NOT NULL
 );
+
+
+
+--
+-- Name: affinity_group_members; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE affinity_group_members (
+    affinity_group_id uuid NOT NULL,
+    vm_id uuid NOT NULL
+);
+
+
+
+
+--
+-- Name: affinity_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE affinity_groups (
+    id uuid NOT NULL,
+    name character varying(128) NOT NULL,
+    description character varying(4000),
+    cluster_id uuid NOT NULL,
+    positive boolean DEFAULT true NOT NULL,
+    enforcing boolean DEFAULT true NOT NULL,
+    _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
+    _update_date timestamp with time zone
+);
+
+
 
 
 --
@@ -151,6 +196,7 @@ CREATE TABLE async_tasks (
 );
 
 
+
 --
 -- Name: async_tasks_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -160,6 +206,7 @@ CREATE TABLE async_tasks_entities (
     entity_id uuid NOT NULL,
     entity_type character varying(128)
 );
+
 
 
 --
@@ -172,6 +219,7 @@ CREATE SEQUENCE audit_log_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 --
@@ -215,6 +263,7 @@ CREATE TABLE audit_log (
 );
 
 
+
 --
 -- Name: base_disks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -234,6 +283,7 @@ CREATE TABLE base_disks (
 );
 
 
+
 --
 -- Name: bookmarks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -243,6 +293,7 @@ CREATE TABLE bookmarks (
     bookmark_name character varying(40),
     bookmark_value character varying(300) NOT NULL
 );
+
 
 
 --
@@ -263,6 +314,7 @@ CREATE TABLE business_entity_snapshot (
 );
 
 
+
 --
 -- Name: cluster_policies; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -277,6 +329,7 @@ CREATE TABLE cluster_policies (
 );
 
 
+
 --
 -- Name: cluster_policy_units; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -287,6 +340,7 @@ CREATE TABLE cluster_policy_units (
     filter_sequence integer DEFAULT 0,
     factor integer DEFAULT 1
 );
+
 
 
 --
@@ -301,6 +355,7 @@ CREATE SEQUENCE custom_actions_seq
     CACHE 1;
 
 
+
 --
 -- Name: custom_actions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -312,6 +367,7 @@ CREATE TABLE custom_actions (
     tab integer NOT NULL,
     description character varying(4000)
 );
+
 
 
 --
@@ -330,6 +386,7 @@ CREATE TABLE disk_image_dynamic (
 );
 
 
+
 --
 -- Name: disk_lun_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -338,6 +395,7 @@ CREATE TABLE disk_lun_map (
     disk_id uuid NOT NULL,
     lun_id character varying NOT NULL
 );
+
 
 
 --
@@ -351,7 +409,7 @@ CREATE TABLE dwh_history_timekeeping (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: dwh_osinfo; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -363,7 +421,7 @@ CREATE TABLE dwh_osinfo (
 );
 
 
-SET default_with_oids = false;
+
 
 --
 -- Name: event_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -373,6 +431,7 @@ CREATE TABLE event_map (
     event_up_name character varying(100) NOT NULL,
     event_down_name character varying(100) NOT NULL
 );
+
 
 
 --
@@ -390,6 +449,7 @@ CREATE TABLE event_notification_hist (
 );
 
 
+
 --
 -- Name: event_notification_methods; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -398,6 +458,7 @@ CREATE TABLE event_notification_methods (
     method_id integer NOT NULL,
     method_type character(10) NOT NULL
 );
+
 
 
 --
@@ -413,7 +474,7 @@ CREATE TABLE event_subscriber (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: gluster_cluster_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -428,7 +489,7 @@ CREATE TABLE gluster_cluster_services (
 );
 
 
-SET default_with_oids = false;
+
 
 --
 -- Name: gluster_hooks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -450,7 +511,7 @@ CREATE TABLE gluster_hooks (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: gluster_server; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -462,7 +523,7 @@ CREATE TABLE gluster_server (
 );
 
 
-SET default_with_oids = false;
+
 
 --
 -- Name: gluster_server_hooks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -479,7 +540,7 @@ CREATE TABLE gluster_server_hooks (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: gluster_server_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -497,6 +558,7 @@ CREATE TABLE gluster_server_services (
 );
 
 
+
 --
 -- Name: gluster_service_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -504,6 +566,7 @@ CREATE TABLE gluster_server_services (
 CREATE TABLE gluster_service_types (
     service_type character varying(100) NOT NULL
 );
+
 
 
 --
@@ -517,7 +580,7 @@ CREATE TABLE gluster_services (
 );
 
 
-SET default_with_oids = false;
+
 
 --
 -- Name: gluster_volume_access_protocols; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -527,6 +590,8 @@ CREATE TABLE gluster_volume_access_protocols (
     volume_id uuid NOT NULL,
     access_protocol character varying(32) NOT NULL
 );
+
+
 
 
 --
@@ -546,6 +611,8 @@ CREATE TABLE gluster_volume_bricks (
 );
 
 
+
+
 --
 -- Name: gluster_volume_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -558,6 +625,7 @@ CREATE TABLE gluster_volume_options (
 );
 
 
+
 --
 -- Name: gluster_volume_transport_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -566,6 +634,7 @@ CREATE TABLE gluster_volume_transport_types (
     volume_id uuid NOT NULL,
     transport_type character varying(32) NOT NULL
 );
+
 
 
 --
@@ -586,14 +655,17 @@ CREATE TABLE gluster_volumes (
 );
 
 
+
 --
 -- Name: image_storage_domain_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
 
 CREATE TABLE image_storage_domain_map (
     image_id uuid NOT NULL,
-    storage_domain_id uuid NOT NULL
+    storage_domain_id uuid NOT NULL,
+    quota_id uuid
 );
+
 
 
 --
@@ -614,9 +686,46 @@ CREATE TABLE images (
     image_group_id uuid,
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
-    quota_id uuid,
     active boolean DEFAULT false NOT NULL
 );
+
+
+
+
+--
+-- Name: iscsi_bonds; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE iscsi_bonds (
+    id uuid NOT NULL,
+    name character varying(50) NOT NULL,
+    description character varying(4000),
+    storage_pool_id uuid NOT NULL
+);
+
+
+
+--
+-- Name: iscsi_bonds_networks_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE iscsi_bonds_networks_map (
+    iscsi_bond_id uuid NOT NULL,
+    network_id uuid NOT NULL
+);
+
+
+
+--
+-- Name: iscsi_bonds_storage_connections_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE iscsi_bonds_storage_connections_map (
+    iscsi_bond_id uuid NOT NULL,
+    connection_id character varying(50) NOT NULL
+);
+
+
 
 
 --
@@ -639,6 +748,7 @@ CREATE TABLE job (
 );
 
 
+
 --
 -- Name: job_subject_entity; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -650,6 +760,7 @@ CREATE TABLE job_subject_entity (
 );
 
 
+
 --
 -- Name: lun_storage_server_connection_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -658,6 +769,7 @@ CREATE TABLE lun_storage_server_connection_map (
     lun_id character varying(255) NOT NULL,
     storage_server_connection character varying(50) NOT NULL
 );
+
 
 
 --
@@ -676,6 +788,7 @@ CREATE TABLE luns (
 );
 
 
+
 --
 -- Name: materialized_views; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -690,6 +803,7 @@ CREATE TABLE materialized_views (
     custom boolean DEFAULT false,
     active boolean DEFAULT true
 );
+
 
 
 --
@@ -711,8 +825,11 @@ CREATE TABLE network (
     vm_network boolean DEFAULT true NOT NULL,
     provider_network_provider_id uuid,
     provider_network_external_id text,
-    free_text_comment text
+    free_text_comment text,
+    label text,
+    qos_id uuid
 );
+
 
 
 --
@@ -729,7 +846,7 @@ CREATE TABLE network_cluster (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: network_qos; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -737,8 +854,8 @@ SET default_with_oids = true;
 
 CREATE TABLE network_qos (
     id uuid NOT NULL,
-    name character varying(50) NOT NULL,
-    storage_pool_id uuid NOT NULL,
+    name character varying(50),
+    storage_pool_id uuid,
     inbound_average integer,
     inbound_peak integer,
     inbound_burst integer,
@@ -750,7 +867,29 @@ CREATE TABLE network_qos (
 );
 
 
-SET default_with_oids = false;
+
+--
+-- Name: object_column_white_list; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE object_column_white_list (
+    object_name character varying(128) NOT NULL,
+    column_name character varying(128) NOT NULL
+);
+
+
+
+--
+-- Name: object_column_white_list_sql; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE object_column_white_list_sql (
+    object_name character varying(128) NOT NULL,
+    sql text NOT NULL
+);
+
+
+
 
 --
 -- Name: permissions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -763,6 +902,7 @@ CREATE TABLE permissions (
     object_id uuid NOT NULL,
     object_type_id integer NOT NULL
 );
+
 
 
 --
@@ -778,6 +918,7 @@ CREATE TABLE policy_units (
     enabled boolean DEFAULT true NOT NULL,
     description text
 );
+
 
 
 --
@@ -802,6 +943,7 @@ CREATE TABLE providers (
 );
 
 
+
 --
 -- Name: quota; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -820,6 +962,7 @@ CREATE TABLE quota (
 );
 
 
+
 --
 -- Name: quota_limitation; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -833,6 +976,7 @@ CREATE TABLE quota_limitation (
     mem_size_mb bigint,
     storage_size_gb bigint
 );
+
 
 
 --
@@ -850,6 +994,7 @@ CREATE TABLE repo_file_meta_data (
 );
 
 
+
 --
 -- Name: roles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -865,6 +1010,7 @@ CREATE TABLE roles (
 );
 
 
+
 --
 -- Name: roles_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -873,6 +1019,7 @@ CREATE TABLE roles_groups (
     role_id uuid NOT NULL,
     action_group_id integer NOT NULL
 );
+
 
 
 --
@@ -885,6 +1032,7 @@ CREATE SEQUENCE schema_version_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 --
@@ -905,6 +1053,7 @@ CREATE TABLE schema_version (
 );
 
 
+
 --
 -- Name: snapshots; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -922,6 +1071,7 @@ CREATE TABLE snapshots (
     _update_date timestamp with time zone,
     memory_volume character varying(255)
 );
+
 
 
 --
@@ -945,6 +1095,7 @@ CREATE TABLE step (
 );
 
 
+
 --
 -- Name: storage_domain_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -955,6 +1106,7 @@ CREATE TABLE storage_domain_dynamic (
     used_disk_size integer,
     _update_date timestamp with time zone
 );
+
 
 
 --
@@ -977,6 +1129,7 @@ CREATE TABLE storage_domain_static (
 );
 
 
+
 --
 -- Name: storage_pool; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -985,7 +1138,7 @@ CREATE TABLE storage_pool (
     id uuid NOT NULL,
     name character varying(40) NOT NULL,
     description character varying(4000) NOT NULL,
-    storage_pool_type integer NOT NULL,
+    storage_pool_type integer,
     storage_pool_format_type character varying(50),
     status integer NOT NULL,
     master_domain_version integer NOT NULL,
@@ -994,8 +1147,10 @@ CREATE TABLE storage_pool (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
     quota_enforcement_type integer,
-    free_text_comment text
+    free_text_comment text,
+    is_local boolean
 );
+
 
 
 --
@@ -1009,6 +1164,7 @@ CREATE TABLE storage_pool_iso_map (
 );
 
 
+
 --
 -- Name: storage_server_connections; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1017,7 +1173,7 @@ CREATE TABLE storage_server_connections (
     id character varying(50) NOT NULL,
     connection character varying(250) NOT NULL,
     user_name character varying(50),
-    password character varying(50),
+    password text,
     iqn character varying(128),
     port character varying(50),
     portal character varying(50),
@@ -1028,6 +1184,7 @@ CREATE TABLE storage_server_connections (
     nfs_timeo smallint,
     nfs_retrans smallint
 );
+
 
 
 --
@@ -1046,6 +1203,7 @@ CREATE TABLE tags (
 );
 
 
+
 --
 -- Name: tags_user_group_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1055,6 +1213,7 @@ CREATE TABLE tags_user_group_map (
     group_id uuid NOT NULL,
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
+
 
 
 --
@@ -1068,6 +1227,7 @@ CREATE TABLE tags_user_map (
 );
 
 
+
 --
 -- Name: tags_vds_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1077,6 +1237,7 @@ CREATE TABLE tags_vds_map (
     vds_id uuid NOT NULL,
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
+
 
 
 --
@@ -1091,6 +1252,7 @@ CREATE TABLE tags_vm_map (
 );
 
 
+
 --
 -- Name: tags_vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1100,6 +1262,7 @@ CREATE TABLE tags_vm_pool_map (
     vm_pool_id uuid NOT NULL,
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
+
 
 
 --
@@ -1117,11 +1280,12 @@ CREATE TABLE users (
     role character varying(255),
     email character varying(255),
     note character varying(255),
-    status integer NOT NULL,
     last_admin_check_status boolean DEFAULT false NOT NULL,
     group_ids text,
-    external_id bytea DEFAULT '\x'::bytea NOT NULL
+    external_id bytea DEFAULT '\x'::bytea NOT NULL,
+    active boolean DEFAULT false NOT NULL
 );
+
 
 
 --
@@ -1136,6 +1300,7 @@ CREATE SEQUENCE uuid_sequence
     CACHE 1;
 
 
+
 --
 -- Name: vdc_db_log_seq; Type: SEQUENCE; Schema: public; Owner: engine
 --
@@ -1146,6 +1311,7 @@ CREATE SEQUENCE vdc_db_log_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 --
@@ -1162,6 +1328,7 @@ CREATE TABLE vdc_db_log (
 );
 
 
+
 --
 -- Name: vdc_options_seq; Type: SEQUENCE; Schema: public; Owner: engine
 --
@@ -1174,6 +1341,7 @@ CREATE SEQUENCE vdc_options_seq
     CACHE 1;
 
 
+
 --
 -- Name: vdc_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1184,6 +1352,7 @@ CREATE TABLE vdc_options (
     option_value character varying(4000) NOT NULL,
     version character varying(40) DEFAULT 'general'::character varying NOT NULL
 );
+
 
 
 --
@@ -1222,7 +1391,6 @@ CREATE TABLE vds_dynamic (
     kernel_version character varying(4000),
     iscsi_initiator_name character varying(4000),
     transparent_hugepages_state integer DEFAULT 0 NOT NULL,
-    anonymous_hugepages integer DEFAULT 0 NOT NULL,
     hooks character varying(4000) DEFAULT ''::character varying,
     _update_date timestamp with time zone,
     non_operational_reason integer DEFAULT 0 NOT NULL,
@@ -1238,8 +1406,11 @@ CREATE TABLE vds_dynamic (
     hw_uuid character varying(255),
     hw_family character varying(255),
     hbas text,
-    supported_emulated_machines character varying(255)
+    supported_emulated_machines character varying(255),
+    gluster_version character varying(4000),
+    controlled_by_pm_policy boolean DEFAULT false
 );
+
 
 
 --
@@ -1268,8 +1439,14 @@ CREATE TABLE vds_groups (
     cluster_policy_custom_properties text,
     enable_balloon boolean DEFAULT false NOT NULL,
     free_text_comment text,
-    detect_emulated_machine boolean DEFAULT false
+    detect_emulated_machine boolean DEFAULT false,
+    architecture integer DEFAULT 0 NOT NULL,
+    optimization_type smallint DEFAULT 0,
+    spice_proxy character varying(255),
+    ha_reservation boolean DEFAULT false NOT NULL,
+    enable_ksm boolean DEFAULT true NOT NULL
 );
+
 
 
 --
@@ -1296,8 +1473,11 @@ CREATE TABLE vds_interface (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
     mtu integer,
-    bridged boolean DEFAULT true NOT NULL
+    bridged boolean DEFAULT true NOT NULL,
+    labels text,
+    qos_overridden boolean DEFAULT false NOT NULL
 );
+
 
 
 --
@@ -1316,6 +1496,7 @@ CREATE TABLE vds_interface_statistics (
 );
 
 
+
 --
 -- Name: vds_spm_id_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1325,6 +1506,7 @@ CREATE TABLE vds_spm_id_map (
     vds_spm_id integer NOT NULL,
     vds_id uuid NOT NULL
 );
+
 
 
 --
@@ -1366,8 +1548,10 @@ CREATE TABLE vds_static (
     ssh_username character varying(255),
     ssh_port integer,
     free_text_comment text,
+    disable_auto_pm boolean DEFAULT false,
     CONSTRAINT vds_static_vds_spm_priority_check CHECK (((vds_spm_priority >= (-1)) AND (vds_spm_priority <= 10)))
 );
+
 
 
 --
@@ -1391,8 +1575,11 @@ CREATE TABLE vds_statistics (
     ksm_pages bigint,
     ksm_state boolean,
     _update_date timestamp with time zone,
-    mem_free bigint
+    mem_free bigint,
+    ha_score integer DEFAULT 0 NOT NULL,
+    anonymous_hugepages integer
 );
+
 
 
 --
@@ -1413,8 +1600,10 @@ CREATE TABLE vm_device (
     _create_date timestamp with time zone DEFAULT now(),
     _update_date timestamp with time zone,
     alias character varying(255) DEFAULT ''::character varying,
-    custom_properties text
+    custom_properties text,
+    snapshot_id uuid
 );
+
 
 
 --
@@ -1459,8 +1648,11 @@ CREATE TABLE vm_dynamic (
     last_watchdog_action character varying(8),
     is_run_once boolean DEFAULT false NOT NULL,
     vm_fqdn text DEFAULT ''::text,
-    cpu_name character varying(255)
+    cpu_name character varying(255),
+    last_stop_time timestamp with time zone,
+    current_cd character varying(4000) DEFAULT NULL::character varying
 );
+
 
 
 --
@@ -1474,6 +1666,30 @@ CREATE TABLE vm_guest_agent_interfaces (
     ipv4_addresses text,
     ipv6_addresses text
 );
+
+
+
+
+--
+-- Name: vm_init; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE TABLE vm_init (
+    vm_id uuid NOT NULL,
+    host_name text,
+    domain text,
+    authorized_keys text,
+    regenerate_keys boolean DEFAULT false,
+    time_zone character varying(40) DEFAULT NULL::character varying,
+    dns_servers text,
+    dns_search_domains text,
+    networks text,
+    password text,
+    winkey character varying(30) DEFAULT NULL::character varying,
+    custom_script text
+);
+
+
 
 
 --
@@ -1495,6 +1711,7 @@ CREATE TABLE vm_interface (
 );
 
 
+
 --
 -- Name: vm_interface_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1511,6 +1728,7 @@ CREATE TABLE vm_interface_statistics (
 );
 
 
+
 --
 -- Name: vm_ovf_generations; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1522,6 +1740,7 @@ CREATE TABLE vm_ovf_generations (
 );
 
 
+
 --
 -- Name: vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1530,6 +1749,7 @@ CREATE TABLE vm_pool_map (
     vm_pool_id uuid,
     vm_guid uuid NOT NULL
 );
+
 
 
 --
@@ -1545,8 +1765,10 @@ CREATE TABLE vm_pools (
     vds_group_id uuid,
     prestarted_vms smallint DEFAULT 0,
     max_assigned_vms_per_user smallint DEFAULT 1,
-    vm_pool_comment text
+    vm_pool_comment text,
+    spice_proxy character varying(255)
 );
+
 
 
 --
@@ -1561,7 +1783,6 @@ CREATE TABLE vm_static (
     os integer DEFAULT 0 NOT NULL,
     description character varying(4000),
     vds_group_id uuid NOT NULL,
-    domain character varying(40),
     creation_date timestamp with time zone,
     num_of_monitors integer NOT NULL,
     is_initialized boolean,
@@ -1607,8 +1828,17 @@ CREATE TABLE vm_static (
     free_text_comment text,
     single_qxl_pci boolean DEFAULT false NOT NULL,
     cpu_shares integer DEFAULT 0 NOT NULL,
-    vnc_keyboard_layout character varying(16) DEFAULT NULL::character varying
+    vnc_keyboard_layout character varying(16) DEFAULT NULL::character varying,
+    instance_type_id uuid,
+    image_type_id uuid,
+    sso_method character varying(32) DEFAULT 'guest_agent'::character varying NOT NULL,
+    original_template_id uuid,
+    original_template_name character varying(255) DEFAULT NULL::character varying,
+    migration_downtime integer,
+    template_version_number integer,
+    template_version_name character varying(40) DEFAULT NULL::character varying
 );
+
 
 
 --
@@ -1628,7 +1858,7 @@ CREATE TABLE vm_statistics (
 );
 
 
-SET default_with_oids = true;
+
 
 --
 -- Name: vnic_profiles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1645,6 +1875,15 @@ CREATE TABLE vnic_profiles (
     _update_date timestamp with time zone,
     network_qos_id uuid
 );
+
+
+
+--
+-- Name: affinity_group_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY affinity_groups
+    ADD CONSTRAINT affinity_group_pk PRIMARY KEY (id);
 
 
 --
@@ -1669,6 +1908,14 @@ ALTER TABLE ONLY disk_lun_map
 
 ALTER TABLE ONLY gluster_volumes
     ADD CONSTRAINT gluster_volumes_name_unique UNIQUE (cluster_id, vol_name);
+
+
+--
+-- Name: groups_domain_external_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY ad_groups
+    ADD CONSTRAINT groups_domain_external_id_unique UNIQUE (domain, external_id);
 
 
 --
@@ -1896,6 +2143,30 @@ ALTER TABLE ONLY images
 
 
 --
+-- Name: pk_iscsi_bonds; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY iscsi_bonds
+    ADD CONSTRAINT pk_iscsi_bonds PRIMARY KEY (id);
+
+
+--
+-- Name: pk_iscsi_bonds_networks_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY iscsi_bonds_networks_map
+    ADD CONSTRAINT pk_iscsi_bonds_networks_map PRIMARY KEY (iscsi_bond_id, network_id);
+
+
+--
+-- Name: pk_iscsi_bonds_storage_connections_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY iscsi_bonds_storage_connections_map
+    ADD CONSTRAINT pk_iscsi_bonds_storage_connections_map PRIMARY KEY (iscsi_bond_id, connection_id);
+
+
+--
 -- Name: pk_jobs; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
 --
 
@@ -1949,6 +2220,22 @@ ALTER TABLE ONLY network_cluster
 
 ALTER TABLE ONLY network_qos
     ADD CONSTRAINT pk_network_qos_id PRIMARY KEY (id);
+
+
+--
+-- Name: pk_object_column_white_list; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY object_column_white_list
+    ADD CONSTRAINT pk_object_column_white_list PRIMARY KEY (object_name, column_name);
+
+
+--
+-- Name: pk_object_column_white_list_sql; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY object_column_white_list_sql
+    ADD CONSTRAINT pk_object_column_white_list_sql PRIMARY KEY (object_name);
 
 
 --
@@ -2208,6 +2495,14 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
+-- Name: pk_vm_init; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+--
+
+ALTER TABLE ONLY vm_init
+    ADD CONSTRAINT pk_vm_init PRIMARY KEY (vm_id);
+
+
+--
 -- Name: pk_vm_interface; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
 --
 
@@ -2359,6 +2654,13 @@ CREATE UNIQUE INDEX audit_log_origin_custom_event_id_idx ON audit_log USING btre
 
 
 --
+-- Name: idx_affinity_group_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE INDEX idx_affinity_group_cluster_id ON affinity_groups USING btree (cluster_id);
+
+
+--
 -- Name: idx_audit_correlation_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
 --
 
@@ -2433,6 +2735,13 @@ CREATE INDEX idx_business_entity_snapshot_command_id ON business_entity_snapshot
 --
 
 CREATE UNIQUE INDEX idx_combined_ad_role_object ON permissions USING btree (ad_element_id, role_id, object_id);
+
+
+--
+-- Name: idx_gluster_bricks_task_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE INDEX idx_gluster_bricks_task_id ON gluster_volume_bricks USING btree (task_id);
 
 
 --
@@ -2524,6 +2833,13 @@ CREATE INDEX idx_job_start_time ON job USING btree (start_time);
 --
 
 CREATE INDEX idx_job_subject_entity_entity_id ON job_subject_entity USING btree (entity_id);
+
+
+--
+-- Name: idx_network_external_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+--
+
+CREATE INDEX idx_network_external_id ON network USING btree (provider_network_external_id) WHERE (provider_network_external_id IS NOT NULL);
 
 
 --
@@ -2716,6 +3032,30 @@ CREATE INDEX ix_vdc_options ON vdc_options USING btree (option_name);
 
 
 --
+-- Name: affinity_group_cluster_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY affinity_groups
+    ADD CONSTRAINT affinity_group_cluster_id_fk FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+
+
+--
+-- Name: affinity_group_member_affinity_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY affinity_group_members
+    ADD CONSTRAINT affinity_group_member_affinity_id_fk FOREIGN KEY (affinity_group_id) REFERENCES affinity_groups(id) ON DELETE CASCADE;
+
+
+--
+-- Name: affinity_group_member_vm_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY affinity_group_members
+    ADD CONSTRAINT affinity_group_member_vm_id_fk FOREIGN KEY (vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
+
+
+--
 -- Name: disk_lun_to_disk_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
@@ -2804,6 +3144,14 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
+-- Name: fk_image_storage_domain_map_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY image_storage_domain_map
+    ADD CONSTRAINT fk_image_storage_domain_map_quota FOREIGN KEY (quota_id) REFERENCES quota(id) ON DELETE SET NULL;
+
+
+--
 -- Name: fk_image_storage_domain_map_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
@@ -2812,11 +3160,43 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: fk_images_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: fk_iscsi_bonds_networks_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
-ALTER TABLE ONLY images
-    ADD CONSTRAINT fk_images_quota FOREIGN KEY (quota_id) REFERENCES quota(id) ON DELETE SET NULL;
+ALTER TABLE ONLY iscsi_bonds_networks_map
+    ADD CONSTRAINT fk_iscsi_bonds_networks_map_iscsi_bond_id FOREIGN KEY (iscsi_bond_id) REFERENCES iscsi_bonds(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_iscsi_bonds_networks_map_network_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY iscsi_bonds_networks_map
+    ADD CONSTRAINT fk_iscsi_bonds_networks_map_network_id FOREIGN KEY (network_id) REFERENCES network(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_iscsi_bonds_storage_connections_map_connection_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY iscsi_bonds_storage_connections_map
+    ADD CONSTRAINT fk_iscsi_bonds_storage_connections_map_connection_id FOREIGN KEY (connection_id) REFERENCES storage_server_connections(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_iscsi_bonds_storage_connections_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY iscsi_bonds_storage_connections_map
+    ADD CONSTRAINT fk_iscsi_bonds_storage_connections_map_iscsi_bond_id FOREIGN KEY (iscsi_bond_id) REFERENCES iscsi_bonds(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_iscsi_bonds_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY iscsi_bonds
+    ADD CONSTRAINT fk_iscsi_bonds_storage_pool FOREIGN KEY (storage_pool_id) REFERENCES storage_pool(id) ON DELETE CASCADE;
 
 
 --
@@ -2865,6 +3245,14 @@ ALTER TABLE ONLY network_cluster
 
 ALTER TABLE ONLY network
     ADD CONSTRAINT fk_network_provided_by FOREIGN KEY (provider_network_provider_id) REFERENCES providers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_network_qos_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY network
+    ADD CONSTRAINT fk_network_qos_id FOREIGN KEY (qos_id) REFERENCES network_qos(id) ON DELETE SET NULL;
 
 
 --
@@ -3372,6 +3760,14 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
+-- Name: vm_device_snapshot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vm_device
+    ADD CONSTRAINT vm_device_snapshot_id_fkey FOREIGN KEY (snapshot_id) REFERENCES snapshots(snapshot_id) ON DELETE CASCADE;
+
+
+--
 -- Name: vm_guid_pools; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
@@ -3401,6 +3797,14 @@ ALTER TABLE ONLY vm_pool_map
 
 ALTER TABLE ONLY vm_dynamic
     ADD CONSTRAINT vm_static_vm_dynamic FOREIGN KEY (vm_guid) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
+
+
+--
+-- Name: vm_static_vm_init; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vm_init
+    ADD CONSTRAINT vm_static_vm_init FOREIGN KEY (vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
 --

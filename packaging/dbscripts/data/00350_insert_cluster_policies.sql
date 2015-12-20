@@ -3,6 +3,7 @@
 --
 
 
+
 --
 -- Data for Name: cluster_policies; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -17,6 +18,11 @@ INSERT INTO cluster_policies (id, name, description, is_locked, is_default, cust
   "LowUtilization" : "20"
 }');
 INSERT INTO cluster_policies (id, name, description, is_locked, is_default, custom_properties) VALUES ('b4ed2332-a7ac-4d5f-9596-99a439cb2812', 'None', '', true, true, NULL);
+INSERT INTO cluster_policies (id, name, description, is_locked, is_default, custom_properties) VALUES ('8d5d7bec-68de-4a67-b53e-0ac54686d579', 'VM_Evenly_Distributed', '', true, false, '{
+  "HighVmCount" : "10",
+  "MigrationThreshold" : "5",
+  "SpmVmGrace" : "5"
+}');
 
 
 --
