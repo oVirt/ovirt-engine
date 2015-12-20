@@ -513,12 +513,15 @@
         <column>external_id</column>
         <column>name</column>
         <column>domain</column>
+        <column>namespace</column>
+        <column>distinguishedname</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>a</value>
             <value>administrators</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -526,6 +529,7 @@
             <value>qa-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -533,6 +537,7 @@
             <value>qb-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d4</value>
@@ -540,6 +545,7 @@
             <value>qc-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d5</value>
@@ -547,6 +553,7 @@
             <value>qd-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d6</value>
@@ -554,6 +561,7 @@
             <value>qe-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d7</value>
@@ -561,6 +569,7 @@
             <value>qf-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d8</value>
@@ -568,6 +577,7 @@
             <value>qg-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d9</value>
@@ -575,6 +585,7 @@
             <value>qh-membersgroup@testportal.redhat.com/test-all-users</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
         <row>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
@@ -582,6 +593,7 @@
             <value>philosophers</value>
             <value>rhel</value>
             <value>*</value>
+            <null/>
         </row>
     </table>
 
@@ -817,6 +829,9 @@
         <column>is_auto_converge</column>
         <column>is_migrate_compressed</column>
         <column>maintenance_reason_required</column>
+        <column>gluster_tuned_profile</column>
+        <column>gluster_cli_based_snapshot_scheduled</column>
+        <column>ksm_merge_across_nodes</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -849,6 +864,8 @@
             <value>true</value>
             <value>true</value>
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -883,6 +900,8 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -917,6 +936,8 @@
             <value>false</value>
             <value>true</value>
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -951,6 +972,8 @@
             <null />
             <value>true</value>
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -985,6 +1008,8 @@
             <value>true</value>
             <null />
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -1019,6 +1044,8 @@
             <null />
             <value>false</value>
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -1053,6 +1080,8 @@
             <value>false</value>
             <null />
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -1087,6 +1116,8 @@
             <null />
             <null />
             <value>false</value>
+            <null/>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -1120,6 +1151,8 @@
             <value>false</value>
             <null />
             <null />
+            <value>true</value>
+            <null/>
             <value>true</value>
             <value>true</value>
         </row>
@@ -1632,6 +1665,7 @@
             <null />
             <null />
             <null />
+            <null />
         </row>
     </table>
 
@@ -1680,6 +1714,7 @@
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
+            <null />
         </row>
         <row>
             <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
@@ -1691,6 +1726,7 @@
             <value>{ "prop1" : "true" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
+            <null />
         </row>
         <row>
             <value>2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6</value>
@@ -1702,6 +1738,7 @@
             <value>{}</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
+            <null />
         </row>
     </table>
 
@@ -1730,11 +1767,13 @@
             <value>engine2_profile</value>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
             <null />
+            <null />
         </row>
         <row>
             <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
             <value>engine3_profile</value>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <null />
             <null />
         </row>
         <row>
@@ -1742,6 +1781,7 @@
             <value>engine4_profile</value>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+            <null />
         </row>
     </table>
 
@@ -4718,6 +4758,8 @@
             <value>7</value>
             <value>Cinder domain</value>
             <value>false</value>
+            <null />
+            <null />
         </row>
     </table>
 
@@ -6286,11 +6328,13 @@
             <value>engine2_profile</value>
             <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
             <null />
+            <null />
         </row>
         <row>
             <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
             <value>engine3_profile</value>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
+            <null />
             <null />
         </row>
         <row>
@@ -6298,6 +6342,7 @@
             <value>engine4_profile</value>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+            <null />
         </row>
     </table>
 
@@ -6574,6 +6619,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44293</value>
@@ -6608,6 +6654,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44294</value>
@@ -6642,6 +6689,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44295</value>
@@ -6676,6 +6724,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44296</value>
@@ -6710,6 +6759,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44297</value>
@@ -6744,6 +6794,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
         <row>
             <value>44298</value>
@@ -6778,6 +6829,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <null />
         </row>
     </table>
 
