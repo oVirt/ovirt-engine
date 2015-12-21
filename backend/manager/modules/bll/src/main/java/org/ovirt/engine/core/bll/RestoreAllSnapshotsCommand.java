@@ -311,20 +311,24 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     removeInProcessImageIds.contains(diskImage.getId())) {
                 continue;
             }
-
+            DiskImage previewedDiskImage = null;
             for (DiskImage diskImageFromPreview : imagesFromPreviewSnapshot) {
-                if ((diskImageFromPreview.getDiskStorageType() == DiskStorageType.CINDER) && diskImageFromPreview.getImageId().equals(diskImage.getImageId())) {
-                    cinderVolumesToRemove.add((CinderDisk) diskImageFromPreview);
-                    continue;
+                if (diskImageFromPreview.getImageId().equals(diskImage.getImageId())) {
+                    previewedDiskImage = diskImageFromPreview;
+                    break;
                 }
-                VdcReturnValueBase retValue = runAsyncTask(VdcActionType.RemoveImage,
-                        new RemoveImageParameters(diskImage.getImageId()));
+            }
+            if (previewedDiskImage != null && (previewedDiskImage.getDiskStorageType() == DiskStorageType.CINDER)) {
+                cinderVolumesToRemove.add((CinderDisk) previewedDiskImage);
+                continue;
+            }
+            VdcReturnValueBase retValue = runAsyncTask(VdcActionType.RemoveImage,
+                    new RemoveImageParameters(diskImage.getImageId()));
 
-                if (retValue.getSucceeded()) {
-                    removeInProcessImageIds.add(diskImage.getImageId());
-                } else {
-                    log.error("Failed to remove image '{}'", diskImage.getImageId());
-                }
+            if (retValue.getSucceeded()) {
+                removeInProcessImageIds.add(diskImage.getImageId());
+            } else {
+                log.error("Failed to remove image '{}'", diskImage.getImageId());
             }
         }
     }
