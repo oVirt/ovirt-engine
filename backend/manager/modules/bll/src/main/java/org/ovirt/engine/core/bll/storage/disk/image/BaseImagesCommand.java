@@ -96,17 +96,17 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         diskImage = value;
     }
 
-    private Guid _destinationImageId = Guid.Empty;
+    private Guid destinationImageId = Guid.Empty;
 
     protected Guid getDestinationImageId() {
-        return getParameters() != null ? getParameters().getDestinationImageId() : _destinationImageId;
+        return getParameters() != null ? getParameters().getDestinationImageId() : destinationImageId;
     }
 
     protected void setDestinationImageId(Guid value) {
         if (getParameters() != null) {
             getParameters().setDestinationImageId(value);
         } else {
-            _destinationImageId = value;
+            destinationImageId = value;
         }
     }
 

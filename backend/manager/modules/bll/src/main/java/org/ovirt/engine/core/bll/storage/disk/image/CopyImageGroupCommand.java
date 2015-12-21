@@ -40,20 +40,20 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         this(parameters, null);
     }
 
-    private DiskImage _diskImage;
+    private DiskImage diskImage;
 
     @Override
     protected DiskImage getImage() {
         switch (getActionState()) {
         case END_SUCCESS:
         case END_FAILURE:
-            if (_diskImage == null) {
+            if (diskImage == null) {
                 List<DiskImage> diskImages =
                         getDiskImageDao().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
-                _diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
+                diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
             }
 
-            return _diskImage;
+            return diskImage;
 
         default:
             return super.getImage();

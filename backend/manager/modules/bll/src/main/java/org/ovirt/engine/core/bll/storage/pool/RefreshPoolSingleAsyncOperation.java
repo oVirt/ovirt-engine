@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private static final Logger log = LoggerFactory.getLogger(RefreshPoolSingleAsyncOperation.class);
 
-    private final ArrayList<Guid> _vdsIdsToSetNonOperational;
+    private final ArrayList<Guid> vdsIdsToSetNonOperational;
 
     private Guid masterStorageDomainId;
 
@@ -28,7 +28,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
     public RefreshPoolSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
         super(vdss, domain, storagePool);
-        _vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
+        vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
         masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()
                 .getMasterStorageDomainIdForPool(getStoragePool().getId());
         storagePoolIsoMap = DbFacade.getInstance()
@@ -53,8 +53,8 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                             getStoragePool().getName(),
                             e.getMessage());
                     log.debug("Exception", e);
-                    synchronized (_vdsIdsToSetNonOperational) {
-                        _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
+                    synchronized (vdsIdsToSetNonOperational) {
+                        vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
                     }
                 }
             } else {

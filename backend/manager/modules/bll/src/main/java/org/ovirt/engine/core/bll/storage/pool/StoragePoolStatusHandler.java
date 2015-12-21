@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
-    private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools = new HashMap<>();
+    private static HashMap<Guid, StoragePoolStatusHandler> nonOperationalPools = new HashMap<>();
 
     private final Guid poolId;
     private final SchedulerUtilQuartzImpl schedulerUtil;
@@ -64,7 +64,7 @@ public final class StoragePoolStatusHandler {
 
     @OnTimerMethodAnnotation("onTimeout")
     public void onTimeout() {
-        if (_nonOperationalPools.containsKey(poolId)) {
+        if (nonOperationalPools.containsKey(poolId)) {
             try {
                 StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
                 if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
@@ -76,24 +76,24 @@ public final class StoragePoolStatusHandler {
     }
 
     public static void poolStatusChanged(Guid poolId, StoragePoolStatus status) {
-        if (_nonOperationalPools.containsKey(poolId) && status != StoragePoolStatus.NotOperational) {
-            StoragePoolStatusHandler handler = _nonOperationalPools.get(poolId);
+        if (nonOperationalPools.containsKey(poolId) && status != StoragePoolStatus.NotOperational) {
+            StoragePoolStatusHandler handler = nonOperationalPools.get(poolId);
 
             if (handler != null) {
                 synchronized (handler) {
                     handler.deScheduleTimeout();
                 }
             }
-            synchronized (_nonOperationalPools) {
-                _nonOperationalPools.remove(poolId);
+            synchronized (nonOperationalPools) {
+                nonOperationalPools.remove(poolId);
             }
         } else if (status == StoragePoolStatus.NotOperational) {
-            synchronized (_nonOperationalPools) {
+            synchronized (nonOperationalPools) {
                 final SchedulerUtilQuartzImpl schedulerUtil = Injector.get(SchedulerUtilQuartzImpl.class);
                 final StoragePoolStatusHandler storagePoolStatusHandler = new StoragePoolStatusHandler(
                         poolId,
                         schedulerUtil);
-                _nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
+                nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
             }
         }
     }
@@ -112,8 +112,8 @@ public final class StoragePoolStatusHandler {
                     VdcActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL));
-            synchronized (_nonOperationalPools) {
-                _nonOperationalPools.remove(pool.getId());
+            synchronized (nonOperationalPools) {
+                nonOperationalPools.remove(pool.getId());
             }
         }
     }

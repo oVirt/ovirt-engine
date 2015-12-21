@@ -6,13 +6,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
-    private boolean _isLastMaster;
-    private Guid _newMasterStorageDomainId = Guid.Empty;
+    private boolean isLastMaster;
+    private Guid newMasterStorageDomainId = Guid.Empty;
 
     @Override
     public ISingleAsyncOperation createSingleAsyncOperation() {
-        return new AfterDeactivateSingleAsyncOperation(getVdss(), getStorageDomain(), getStoragePool(), _isLastMaster,
-                _newMasterStorageDomainId);
+        return new AfterDeactivateSingleAsyncOperation(getVdss(), getStorageDomain(), getStoragePool(), isLastMaster,
+                newMasterStorageDomainId);
     }
 
     @Override
@@ -21,10 +21,10 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
         if (!(parameters.get(3) instanceof Boolean)) {
             throw new IllegalArgumentException();
         }
-        _isLastMaster = (Boolean) (parameters.get(3));
+        isLastMaster = (Boolean) (parameters.get(3));
         if (!(parameters.get(4) instanceof Guid)) {
             throw new IllegalArgumentException();
         }
-        _newMasterStorageDomainId = (Guid) parameters.get(4);
+        newMasterStorageDomainId = (Guid) parameters.get(4);
     }
 }

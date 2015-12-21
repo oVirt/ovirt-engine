@@ -38,7 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
  * @see RestartVdsCommand
  */
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
-    private final VDS _problematicVds;
+    private final VDS problematicVds;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -47,12 +47,12 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
      */
     protected FenceVdsManualyCommand(Guid commandId) {
         super(commandId);
-        _problematicVds = null;
+        problematicVds = null;
     }
 
     public FenceVdsManualyCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        _problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
+        problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
     }
 
     public FenceVdsManualyCommand(T parameters) {
@@ -65,14 +65,14 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     public Guid getProblematicVdsId() {
-        return _problematicVds.getId();
+        return problematicVds.getId();
     }
 
     @Override
     protected boolean canDoAction() {
         // check problematic vds status
-        if (isLegalStatus(_problematicVds.getStatus())) {
-            if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
+        if (isLegalStatus(problematicVds.getStatus())) {
+            if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
                 if(!getStoragePool().isLocal()) {
                     if (!initializeVds()) {
                         return false;
@@ -92,12 +92,12 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected void executeCommand() {
-        setVdsName(_problematicVds.getName());
-        if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
+        setVdsName(problematicVds.getName());
+        if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             activateDataCenter();
         }
         if ((getParameters()).getClearVMs()) {
-            VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
+            VdsActionParameters tempVar = new VdsActionParameters(problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
             runInternalActionWithTasksContext(
                     VdcActionType.ClearNonResponsiveVdsVms,
@@ -105,7 +105,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         }
         setSucceeded(true);
         // Remove all alerts except NOT CONFIG alert
-        AlertDirector.removeAllVdsAlerts(_problematicVds.getId(), false);
+        AlertDirector.removeAllVdsAlerts(problematicVds.getId(), false);
     }
 
     @Override

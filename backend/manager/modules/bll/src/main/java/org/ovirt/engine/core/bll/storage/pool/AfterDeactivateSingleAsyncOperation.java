@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private static final Logger log = LoggerFactory.getLogger(AfterDeactivateSingleAsyncOperation.class);
 
-    private final boolean _isLastMaster;
+    private final boolean isLastMaster;
     private Guid masterStorageDomainId = Guid.Empty;
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
@@ -29,7 +29,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
             StoragePool storagePool, boolean isLastMaster, Guid newMasterStorageDomain) {
         super(vdss, domain, storagePool);
 
-        _isLastMaster = isLastMaster;
+        this.isLastMaster = isLastMaster;
 
         if (masterStorageDomainId != null && !masterStorageDomainId.equals(Guid.Empty)) {
             this.masterStorageDomainId = newMasterStorageDomain;
@@ -48,7 +48,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
             log.info("After deactivate treatment vds '{}', pool '{}'", getVdss().get(iterationId).getName(),
                     getStoragePool().getName());
 
-            if (!_isLastMaster) {
+            if (!isLastMaster) {
                 Backend.getInstance().getResourceManager().runVdsCommand(
                         VDSCommandType.ConnectStoragePool, new ConnectStoragePoolVDSCommandParameters(
                         getVdss().get(iterationId), getStoragePool(), masterStorageDomainId, storagePoolIsoMap, true));

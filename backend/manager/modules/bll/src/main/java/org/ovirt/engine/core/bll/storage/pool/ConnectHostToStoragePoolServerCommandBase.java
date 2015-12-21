@@ -29,7 +29,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePoolServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
-    private List<StorageServerConnections> _connections;
+    private List<StorageServerConnections> connections;
     private Map<StorageType, List<StorageServerConnections>> connectionsTypeMap;
 
     public ConnectHostToStoragePoolServerCommandBase(T parameters, CommandContext cmdContext) {
@@ -51,7 +51,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
                 EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Unknown, StorageDomainStatus.Inactive) :
                 EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Unknown);
 
-        _connections =
+        connections =
                 DbFacade.getInstance()
                         .getStorageServerConnectionDao()
                         .getStorageConnectionsByStorageTypeAndStatus(getStoragePool().getId(),
@@ -63,7 +63,7 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
 
     private void updateConnectionsTypeMap() {
         connectionsTypeMap = new HashMap<>();
-        for (StorageServerConnections conn : _connections) {
+        for (StorageServerConnections conn : connections) {
             StorageType connType = conn.getStorageType();
             MultiValueMapUtils.addToMap(connType, conn, connectionsTypeMap);
         }

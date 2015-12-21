@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
-    private ArrayList<Guid> _vdsIdsToSetNonOperational;
+    private ArrayList<Guid> vdsIdsToSetNonOperational;
 
     @Override
     public void initialize(ArrayList parameters) {
@@ -18,13 +18,13 @@ public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSi
         if (!l.isEmpty() && !(l.get(0) instanceof Integer)) {
             throw new IllegalArgumentException();
         }
-        _vdsIdsToSetNonOperational = (ArrayList<Guid>) parameters.get(3);
+        vdsIdsToSetNonOperational = (ArrayList<Guid>) parameters.get(3);
     }
 
     @Override
     public ISingleAsyncOperation createSingleAsyncOperation() {
         ISingleAsyncOperation tempVar = new RefreshPoolSingleAsyncOperation(getVdss(), getStorageDomain(),
-                getStoragePool(), _vdsIdsToSetNonOperational);
+                getStoragePool(), vdsIdsToSetNonOperational);
         return tempVar;
     }
 }

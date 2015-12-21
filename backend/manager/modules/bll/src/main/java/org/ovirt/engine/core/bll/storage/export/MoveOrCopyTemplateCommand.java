@@ -59,7 +59,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private List<PermissionSubject> permissionCheckSubject;
-    private List<DiskImage> _templateDisks;
+    private List<DiskImage> templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
 
@@ -105,11 +105,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected List<DiskImage> getTemplateDisks() {
-        if (_templateDisks == null && getVmTemplate() != null) {
+        if (templateDisks == null && getVmTemplate() != null) {
             VmTemplateHandler.updateDisksFromDb(getVmTemplate());
-            _templateDisks = getVmTemplate().getDiskList();
+            templateDisks = getVmTemplate().getDiskList();
         }
-        return _templateDisks;
+        return templateDisks;
     }
 
     @Override

@@ -14,11 +14,11 @@ public class StorageHelperDirector {
 
     private static final Logger log = LoggerFactory.getLogger(StorageHelperDirector.class);
 
-    private static StorageHelperDirector _instance = new StorageHelperDirector();
-    private Map<StorageType, IStorageHelper> _helpers = new EnumMap<>(StorageType.class);
+    private static StorageHelperDirector instance = new StorageHelperDirector();
+    private Map<StorageType, IStorageHelper> helpers = new EnumMap<>(StorageType.class);
 
     public static StorageHelperDirector getInstance() {
-        return _instance;
+        return instance;
     }
 
     private StorageHelperDirector() {
@@ -45,7 +45,7 @@ public class StorageHelperDirector {
                     if (actionType != null) {
                         Constructor<?> info = actionType.getConstructors()[0];
                         IStorageHelper currentHelper = (IStorageHelper) info.newInstance(null);
-                        _helpers.put(storageType, currentHelper);
+                        helpers.put(storageType, currentHelper);
                     }
                 }
             }
@@ -58,6 +58,6 @@ public class StorageHelperDirector {
     }
 
     public IStorageHelper getItem(StorageType index) {
-        return _helpers.get(index);
+        return helpers.get(index);
     }
 }

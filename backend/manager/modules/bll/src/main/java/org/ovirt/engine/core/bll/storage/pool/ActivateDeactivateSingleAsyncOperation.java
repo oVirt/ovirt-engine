@@ -8,29 +8,29 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleAsyncOperation {
-    private StorageDomain _domain;
-    private StoragePool _pool;
-    private ArrayList<VDS> _vdss;
+    private StorageDomain domain;
+    private StoragePool pool;
+    private ArrayList<VDS> vdss;
 
     public ActivateDeactivateSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool) {
-        _vdss = vdss;
-        _domain = domain;
-        _pool = storagePool;
+        this.vdss = vdss;
+        this.domain = domain;
+        pool = storagePool;
     }
 
     @Override
     public abstract void execute(int iterationId);
 
     protected StorageDomain getStorageDomain() {
-        return _domain;
+        return domain;
     }
 
     protected StoragePool getStoragePool() {
-        return _pool;
+        return pool;
     }
 
     protected ArrayList<VDS> getVdss() {
-        return _vdss;
+        return vdss;
     }
 }

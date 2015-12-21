@@ -296,7 +296,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private boolean checkStorageDomainsInPool() {
         if (!getParameters().getIsInternal()) {
-            boolean _hasData = false;
+            boolean hasData = false;
             StorageFormatType storageFormat = null;
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
@@ -305,7 +305,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 StorageDomainValidator domainValidator = new StorageDomainValidator(domain);
                 if (isStorageDomainNotNull(domain) && validate(domainValidator.checkStorageDomainSharedStatusNotLocked()) && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
                     if (domain.getStorageDomainType() == StorageDomainType.Data) {
-                        _hasData = true;
+                        hasData = true;
                         if (storageFormat == null) {
                             storageFormat = domain.getStorageFormat();
                         } else if (storageFormat != domain.getStorageFormat()) {
@@ -317,7 +317,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     return false;
                 }
             }
-            if (!_hasData) {
+            if (!hasData) {
                 addCanDoActionMessage(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_AND_ISO_DOMAINS);
                 return false;
             }
