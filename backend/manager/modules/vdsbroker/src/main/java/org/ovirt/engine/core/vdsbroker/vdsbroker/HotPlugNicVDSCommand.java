@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -37,24 +38,30 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         Map<String, Object> map = new HashMap<>();
         VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
-        Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();
-        map.put(VdsProperties.Type, vmDevice.getType().getValue());
-        map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
-        map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
+        VM vm = getParameters().getVm();
 
-        if (FeatureSupported.networkLinking(clusterVersion)) {
-            map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
+        if (!nic.isPassthrough()) {
+            Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();
+            map.put(VdsProperties.Type, vmDevice.getType().getValue());
+            map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
+            map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
+
+            if (FeatureSupported.networkLinking(clusterVersion)) {
+                map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
+            }
+
+            addAddress(map, vmDevice.getAddress());
+            map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            map.put(VdsProperties.NIC_TYPE,
+                    VmInfoBuilder.evaluateInterfaceType(VmInterfaceType.forValue(nic.getType()), vm
+                            .getHasAgent()));
+            map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
+
+            VmInfoBuilder.addProfileDataToNic(map, vm, vmDevice, nic);
+            VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
+        } else {
+            VmInfoBuilder.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
         }
-
-        addAddress(map, vmDevice.getAddress());
-        map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-        map.put(VdsProperties.NIC_TYPE,
-                VmInfoBuilder.evaluateInterfaceType(VmInterfaceType.forValue(nic.getType()), getParameters().getVm()
-                        .getHasAgent()));
-        map.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
-
-        VmInfoBuilder.addProfileDataToNic(map, getParameters().getVm(), vmDevice, nic);
-        VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
         return map;
     }
 

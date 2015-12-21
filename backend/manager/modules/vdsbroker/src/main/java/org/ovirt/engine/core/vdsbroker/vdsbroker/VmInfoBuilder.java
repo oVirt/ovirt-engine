@@ -594,7 +594,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
                 if (vmInterface.isPassthrough()) {
                     String vfDeviceName = vm.getPassthroughVnicToVfMap().get(vmInterface.getId());
-                    addNetworkVirtualFunctionProperties(struct, vmInterface, vmDevice, vfDeviceName);
+                    addNetworkVirtualFunctionProperties(struct, vmInterface, vmDevice, vfDeviceName, vm);
                 } else {
                     addNetworkInterfaceProperties(struct,
                             vmInterface,
@@ -802,10 +802,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         addNetworkFiltersToNic(struct, clusterVersion);
     }
 
-    private void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
+    static void addNetworkVirtualFunctionProperties(Map<String, Object> struct,
             VmNic vmInterface,
             VmDevice vmDevice,
-            String vfName) {
+            String vfName,
+            VM vm) {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.HostDev, vfName);

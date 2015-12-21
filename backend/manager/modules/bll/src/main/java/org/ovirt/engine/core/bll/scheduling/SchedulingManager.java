@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
@@ -84,6 +85,11 @@ public class SchedulingManager implements BackendService {
     private ExternalSchedulerDiscovery exSchedulerDiscovery;
     @Inject
     private DbFacade dbFacade;
+    @Inject
+    private NetworkDeviceHelper networkDeviceHelper;
+    @Inject
+    private HostDeviceManager hostDeviceManager;
+
     private PendingResourceManager pendingResourceManager;
 
     /**
@@ -330,8 +336,12 @@ public class SchedulingManager implements BackendService {
     }
 
     private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
-        NetworkDeviceHelper networkDeviceHelper = Injector.get(NetworkDeviceHelper.class);
-        networkDeviceHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
+        try {
+            hostDeviceManager.acquireHostDevicesLock(hostId);
+            networkDeviceHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
+        } finally {
+            hostDeviceManager.releaseHostDevicesLock(hostId);
+        }
     }
 
     /**

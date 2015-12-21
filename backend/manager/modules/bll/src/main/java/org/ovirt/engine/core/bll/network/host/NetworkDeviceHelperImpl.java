@@ -256,12 +256,22 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
     @Override
     public void setVmIdOnVfs(Guid hostId, Guid vmId, final Set<String> vfsNames) {
-
         List<HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId);
 
         List<HostDevice> vfs = hostDevices.stream()
-                .filter(device -> vfsNames.contains(device.getDeviceName()) && isVf(device)).collect(Collectors.toList());
+                .filter(device -> vfsNames.contains(device.getDeviceName()) && isVf(device))
+                .collect(Collectors.toList());
 
+        if (vmId != null) {
+            HostDevice alreadyTakenVf = vfs.stream().filter(vf -> vf.getVmId() != null).findFirst().orElse(null);
+
+            if (alreadyTakenVf != null) {
+                throw new IllegalStateException(
+                        String.format("VF %s is already taken by VM %s",
+                                alreadyTakenVf.getName(),
+                                alreadyTakenVf.getVmId()));
+            }
+        }
         setVmIdOnVfsDevices(vmId, new HashSet<>(vfs));
     }
 

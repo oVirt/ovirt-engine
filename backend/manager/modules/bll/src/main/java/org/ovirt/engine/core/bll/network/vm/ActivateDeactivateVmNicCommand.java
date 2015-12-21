@@ -1,22 +1,32 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
+import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -27,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -48,6 +59,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private Network network;
 
     private NetworkProviderProxy providerProxy;
+
+    @Inject
+    private VfScheduler vfScheduler;
+
+    @Inject
+    private NetworkDeviceHelper networkDeviceHelper;
+
+    @Inject
+    private HostDeviceManager hostDeviceManager;
 
     public ActivateDeactivateVmNicCommand(T parameters) {
         this(parameters, null);
@@ -85,13 +105,17 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             // External networks are handled by their provider, so only check if exists on host for internal networks.
             if (getNetwork() != null
                     && !getNetwork().isExternal()
+                    && !isPassthrough()
                     && !networkAttachedToVds(getNetwork().getName(), getVdsId())) {
                 addCanDoActionMessage(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
 
-            if (failPassthroughVnicHotPlug()) {
-                return false;
+            if (getParameters().getAction() == PlugAction.PLUG && isPassthrough()) {
+                String vfToUse = updateFreeVf();
+                if (vfToUse == null) {
+                    return false;
+                }
             }
         }
 
@@ -106,6 +130,21 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         return true;
+    }
+
+    private String updateFreeVf() {
+        String vfToUse = vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork());
+
+        if (vfToUse == null) {
+            failCanDoAction(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
+                    String.format("$vnicName %1$s", getInterfaceName()));
+        }
+
+        return vfToUse;
+    }
+
+    private boolean isPassthrough() {
+        return VmInterfaceType.pciPassthrough == VmInterfaceType.forValue(getParameters().getNic().getType());
     }
 
     public Network getNetwork() {
@@ -142,16 +181,55 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 plugToExternalNetwork();
             }
 
+            String vfToUse = null;
             try {
-                runVdsCommand(getParameters().getAction().getCommandType(),
+                if (isNicToBePlugged) {
+
+                    if (isPassthrough()) {
+                        try {
+                            hostDeviceManager.acquireHostDevicesLock(getVdsId());
+                            vfToUse = updateFreeVf();
+                            if (vfToUse == null) {
+                                return;
+                            }
+
+                            networkDeviceHelper.setVmIdOnVfs(getVdsId(),
+                                    getVmId(),
+                                    Collections.singleton(vfToUse));
+                            vmDevice.setHostDevice(vfToUse);
+                        } finally {
+                            hostDeviceManager.releaseHostDevicesLock(getVdsId());
+                        }
+                    }
+                }
+                VDSReturnValue returnValue = runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
                             getParameters().getNic(),
                             vmDevice));
+
+                if (returnValue.getSucceeded()) {
+                    boolean passthroughHotPlug = vfToUse != null;
+                    boolean passthroughHotUnplug = isPassthrough() && getParameters().getAction() == PlugAction.UNPLUG;
+
+                    if (passthroughHotUnplug) {
+                        networkDeviceHelper.setVmIdOnVfs(getVdsId(),
+                                null,
+                                new HashSet<String>(Arrays.asList(vmDevice.getHostDevice())));
+                    }
+
+                    if (passthroughHotPlug || passthroughHotUnplug) {
+                        runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                    }
+                } else {
+                    clearPassthroughData(vfToUse);
+                }
             } catch (EngineException e) {
                 if (externalNetworkIsPlugged && getParameters().isNewNic()) {
                     unplugFromExternalNetwork();
                 }
+
+                clearPassthroughData(vfToUse);
 
                 throw e;
             }
@@ -159,6 +237,12 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         setSucceeded(true);
+    }
+
+    private void clearPassthroughData(String vfToUse) {
+        if (vfToUse != null) {
+            networkDeviceHelper.setVmIdOnVfs(getVdsId(), null, Collections.singleton(vfToUse));
+        }
     }
 
     private void clearAddressIfPciSlotIsDuplicated(VmDevice vmDeviceToHotplug) {
@@ -268,13 +352,5 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         } else {
             return new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE);
         }
-    }
-
-    protected boolean failPassthroughVnicHotPlug() {
-        if (VmInterfaceType.pciPassthrough == VmInterfaceType.forValue(getParameters().getNic().getType())) {
-            addCanDoActionMessage(EngineMessage.HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED);
-            return true;
-        }
-        return false;
     }
 }

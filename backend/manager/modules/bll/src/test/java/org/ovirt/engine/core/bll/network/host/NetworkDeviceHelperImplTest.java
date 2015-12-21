@@ -485,11 +485,11 @@ public class NetworkDeviceHelperImplTest {
     @Test
     public void setVmIdOnVfs() {
         List<HostDevice> vfs = mockVfsOnNetDevice(1);
+        vfs.stream().forEach(vf -> vf.setVmId(null));
         mockHostDevices(vfs);
 
         HostDevice vf = vfs.get(0);
         Guid vmId = Guid.newGuid();
-        vf.setVmId(vmId);
         networkDeviceHelper.setVmIdOnVfs(HOST_ID, vmId, Collections.singleton(vf.getDeviceName()));
 
         verify(hostDeviceDao).setVmIdOnHostDevice(hostDeviceIdCaptor.capture(), vmIdCaptor.capture());

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -206,6 +207,35 @@ public class VfSchedulerImplTest {
 
         vfScheduler.cleanVmData(vmId);
         assertNull(vfScheduler.getVnicToVfMap(vmId, hostId));
+    }
+
+    @Test
+    public void findFreeVfForVnicNoFreeVfTest() {
+        findFreeVfForVnicCommon(false);
+    }
+
+    @Test
+    public void findFreeVfForVnicTest() {
+        findFreeVfForVnicCommon(true);
+    }
+
+    private void findFreeVfForVnicCommon(boolean existFreeVf) {
+        VmNetworkInterface vnic = mockVnic(true, "net1");
+
+        HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
+        HostDevice vf = updateVfsConfig(hostNicVfsConfig, vnic, 1, true, false, false, existFreeVf);
+
+        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), isNull(List.class))).thenReturn(vf);
+
+        mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig));
+
+        String freeVf = vfScheduler.findFreeVfForVnic(hostId, createNetwork(vnic.getNetworkName()));
+
+        if (existFreeVf) {
+            assertNotNull(freeVf);
+        } else {
+            assertNull(freeVf);
+        }
     }
 
     private void initHostWithOneVfsConfig(List<VmNetworkInterface> passthroughVnics,

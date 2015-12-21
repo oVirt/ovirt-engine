@@ -1684,9 +1684,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC Address is already in use")
     String NETWORK_MAC_ADDRESS_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Hot plugging/unplugging of passthrough virtual machine network interface is not supported.")
-    String HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
 
@@ -3490,6 +3487,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$detailMessage there are no free virtual functions which are suitable for virtual nic(s) ${vnicNames}. A virtual function is considered as suitable if the VF's configuration of its physical function contains the virtual nic's network/network label")
     String VAR__DETAIL__NO_SUITABLE_VF();
+
+    @DefaultStringValue("Cannot ${action} ${type}. There is no free virtual function which is suitable for virtual nic ${vnicName}. A virtual function is considered as suitable if the VF's configuration of its physical function contains the virtual nic's network/network label.")
+    String CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF();
 
     @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
     String VAR__DETAIL__LOW_CPU_LEVEL();

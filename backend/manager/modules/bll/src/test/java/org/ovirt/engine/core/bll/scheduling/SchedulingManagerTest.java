@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -21,6 +22,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
+import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -41,8 +44,14 @@ public class SchedulingManagerTest {
 
     @Inject @Spy
     private Instance<SchedulingManager> schedulingManager;
+
     @Inject
     private DbFacade dbFacade;
+
+    @Produces
+    private NetworkDeviceHelper networkDeviceHelper = mock(NetworkDeviceHelper.class);
+    @Produces
+    private HostDeviceManager hostDeviceManager = mock(HostDeviceManager.class);
 
     @Before
     public void initTest() {
@@ -61,7 +70,7 @@ public class SchedulingManagerTest {
                         SchedulingManager.class,
                         ExternalSchedulerDiscovery.class,
                         BasicMigrationHandler.class
-)
+                        )
                 .addClasses(
                         CommonTestMocks.commonClasses()
                 )

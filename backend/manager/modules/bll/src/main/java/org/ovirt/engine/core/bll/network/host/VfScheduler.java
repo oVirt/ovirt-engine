@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,6 +20,16 @@ public interface VfScheduler {
      * @return the names of the problematic vm interfaces
      */
     public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> vnics);
+
+    /**
+     * Return the name of a free suitable vf. If there is no one, return null.
+     *
+     * @param hostId
+     * @param vnicNetwork
+     *
+     * @return the name of a free suitable vf. If there is no one, return null.
+     */
+    public String findFreeVfForVnic(Guid hostId, Network vnicNetwork);
 
     /**
      * Returns the mapping between the VM interfaces to the virtual functions.

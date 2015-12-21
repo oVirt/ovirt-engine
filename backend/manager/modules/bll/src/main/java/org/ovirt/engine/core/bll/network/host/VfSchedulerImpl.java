@@ -72,7 +72,10 @@ public class VfSchedulerImpl implements VfScheduler {
 
         for (final VmNetworkInterface vnic : pluggedPassthroughVnics) {
             String freeVf = null;
-            freeVf = findFreeVfForVnic(vfsConfigs, vnic, nicToUsedVfs, fetchedNics);
+            freeVf = findFreeVfForVnic(vfsConfigs,
+                    nicToUsedVfs,
+                    fetchedNics,
+                    vnic.getNetworkName() == null ? null : networkDao.getByName(vnic.getNetworkName()));
             if (freeVf == null) {
                 problematicVnics.add(vnic.getName());
             } else {
@@ -83,16 +86,28 @@ public class VfSchedulerImpl implements VfScheduler {
         return problematicVnics;
     }
 
+    @Override
+    public String findFreeVfForVnic(Guid hostId, Network vnicNetwork) {
+
+        List<HostNicVfsConfig> vfsConfigs =
+                vfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId);
+
+        String freeVf = findFreeVfForVnic(vfsConfigs,
+                new HashMap<>(),
+                new HashMap<>(),
+                vnicNetwork);
+
+        return freeVf;
+    }
+
     private List<VmNetworkInterface> getPluggedPassthroughVnics(List<VmNetworkInterface> vnics) {
         return vnics.stream().filter(vnic -> vnic.isPassthrough() && vnic.isPlugged()).collect(Collectors.toList());
     }
 
    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
-            final VmNetworkInterface vnic,
             Map<Guid, List<String>> nicToUsedVfs,
-            Map<Guid, VdsNetworkInterface> fetchedNics) {
-        Network vnicNetwork =
-                vnic.getNetworkName() == null ? null : networkDao.getByName(vnic.getNetworkName());
+            Map<Guid, VdsNetworkInterface> fetchedNics,
+            Network vnicNetwork) {
         for (HostNicVfsConfig vfsConfig : vfsConfigs) {
             if (vfsConfig.getNumOfVfs() != 0 && isNetworkInVfsConfig(vnicNetwork, vfsConfig)) {
                 String freeVf = getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics);
