@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.Ksm;
+import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.MemoryOverCommit;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
@@ -120,6 +121,10 @@ public class ClusterMapper {
             ClusterMigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
         }
 
+        if (model.isSetMacPool() && model.getMacPool().isSetId()) {
+            entity.setMacPoolId(GuidUtils.asGuid(model.getMacPool().getId()));
+        }
+
         return entity;
     }
 
@@ -191,6 +196,17 @@ public class ClusterMapper {
         if (entity.getFencingPolicy() != null) {
             model.setFencingPolicy(FencingPolicyMapper.map(entity.getFencingPolicy(), null));
         }
+
+        if (entity.getMacPoolId() != null) {
+            MacPool macPool = model.getMacPool();
+            if (macPool == null) {
+                macPool = new MacPool();
+                model.setMacPool(macPool);
+            }
+
+            macPool.setId(entity.getMacPoolId().toString());
+        }
+
         return model;
     }
 

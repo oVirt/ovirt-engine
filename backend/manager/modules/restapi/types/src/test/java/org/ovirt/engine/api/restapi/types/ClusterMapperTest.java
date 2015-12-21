@@ -55,6 +55,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.e
         assertEquals(model.getDisplay().getProxy(), transform.getDisplay().getProxy());
         assertEquals(model.getSerialNumber().getPolicy(), transform.getSerialNumber().getPolicy());
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
+        assertEquals(model.getMacPool().getId(), transform.getMacPool().getId());
     }
 
     private Mapper<org.ovirt.engine.api.model.Cluster, Cluster> getMapper() {
