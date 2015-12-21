@@ -13,8 +13,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_pool (
     v_master_domain_version INT,
     v_spm_vds_id UUID,
     v_compatibility_version VARCHAR(40),
-    v_quota_enforcement_type INT,
-    v_mac_pool_id UUID
+    v_quota_enforcement_type INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -28,8 +27,7 @@ BEGIN
         master_domain_version,
         spm_vds_id,
         compatibility_version,
-        quota_enforcement_type,
-        mac_pool_id
+        quota_enforcement_type
         )
     VALUES (
         v_description,
@@ -41,8 +39,7 @@ BEGIN
         v_master_domain_version,
         v_spm_vds_id,
         v_compatibility_version,
-        v_quota_enforcement_type,
-        v_mac_pool_id
+        v_quota_enforcement_type
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -58,8 +55,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool (
     v_master_domain_version INT,
     v_spm_vds_id UUID,
     v_compatibility_version VARCHAR(40),
-    v_quota_enforcement_type INT,
-    v_mac_pool_id UUID
+    v_quota_enforcement_type INT
     )
 RETURNS VOID
     --The [storage_pool] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -76,8 +72,7 @@ BEGIN
         spm_vds_id = v_spm_vds_id,
         compatibility_version = v_compatibility_version,
         _update_date = LOCALTIMESTAMP,
-        quota_enforcement_type = v_quota_enforcement_type,
-        mac_pool_id = v_mac_pool_id
+        quota_enforcement_type = v_quota_enforcement_type
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -90,8 +85,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool_partial (
     v_is_local BOOLEAN,
     v_storage_pool_format_type VARCHAR(50),
     v_compatibility_version VARCHAR(40),
-    v_quota_enforcement_type INT,
-    v_mac_pool_id UUID
+    v_quota_enforcement_type INT
     )
 RETURNS VOID
     --The [storage_pool] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -105,8 +99,7 @@ BEGIN
         storage_pool_format_type = v_storage_pool_format_type,
         compatibility_version = v_compatibility_version,
         _update_date = LOCALTIMESTAMP,
-        quota_enforcement_type = v_quota_enforcement_type,
-        mac_pool_id = v_mac_pool_id
+        quota_enforcement_type = v_quota_enforcement_type
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1307,17 +1300,6 @@ BEGIN
     SELECT COUNT(*)
     FROM image_storage_domain_map
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION GetAllDataCentersByMacPoolId (v_id UUID)
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT sp.*
-    FROM storage_pool sp
-    WHERE sp.mac_pool_id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.dao;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -42,7 +40,6 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
 
         newPool = new StoragePool();
         newPool.setName("newPoolDude");
-        newPool.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
         newPool.setCompatibilityVersion(Version.getLast());
 
     }
@@ -318,15 +315,5 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
     private static void assertCorrectGetAllResult(List<StoragePool> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
-    }
-
-    @Test
-    public void testGetAllDataCentersByMacPoolId() {
-        assertThat(dao.getAllDataCentersByMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID).size(), is(6));
-    }
-
-    @Test
-    public void testGetAllDataCentersByMacPoolIdForNonExistingMacPoolId() {
-        assertThat(dao.getAllDataCentersByMacPoolId(Guid.newGuid()).size(), is(0));
     }
 }

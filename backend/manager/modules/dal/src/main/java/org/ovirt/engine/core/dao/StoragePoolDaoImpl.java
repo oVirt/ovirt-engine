@@ -44,7 +44,6 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                     .getString("compatibility_version")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
-            entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
             return entity;
         }
     }
@@ -141,8 +140,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("spm_vds_id", pool.getSpmVdsId())
                 .addValue("quota_enforcement_type", pool.getQuotaEnforcementType())
                 .addValue("compatibility_version",
-                        pool.getCompatibilityVersion())
-                .addValue("mac_pool_id", pool.getMacPoolId());
+                        pool.getCompatibilityVersion());
 
         getCallsHandler().executeModification("Insertstorage_pool",
                 parameterSource);
@@ -164,8 +162,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("compatibility_version",
                         pool.getCompatibilityVersion())
                 .addValue("quota_enforcement_type",
-                        pool.getQuotaEnforcementType().getValue())
-                .addValue("mac_pool_id", pool.getMacPoolId());
+                        pool.getQuotaEnforcementType().getValue());
 
         getCallsHandler().executeModification("Updatestorage_pool", parameterSource);
     }
@@ -182,8 +179,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("compatibility_version",
                         pool.getCompatibilityVersion())
                 .addValue("quota_enforcement_type",
-                        pool.getQuotaEnforcementType().getValue())
-                .addValue("mac_pool_id", pool.getMacPoolId());
+                        pool.getQuotaEnforcementType().getValue());
 
         getCallsHandler().executeModification("Updatestorage_pool_partial", parameterSource);
     }
@@ -240,12 +236,5 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
         return getCallsHandler().executeReadList("GetDcIdByExternalNetworkId",
                 createGuidMapper(),
                 getCustomMapSqlParameterSource().addValue("external_id", externalId));
-    }
-
-    @Override
-    public List<StoragePool> getAllDataCentersByMacPoolId(Guid macPoolId) {
-        return getCallsHandler().executeReadList("GetAllDataCentersByMacPoolId",
-                new StoragePoolRawMapper(),
-                getCustomMapSqlParameterSource().addValue("id", macPoolId));
     }
 }
