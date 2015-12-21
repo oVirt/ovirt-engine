@@ -18,7 +18,8 @@ CREATE OR REPLACE FUNCTION InsertVmDevice (
     v_custom_properties TEXT,
     v_snapshot_id uuid,
     v_logical_name VARCHAR(255),
-    v_is_using_scsi_reservation boolean
+    v_is_using_scsi_reservation boolean,
+    v_host_device VARCHAR(255)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -37,7 +38,8 @@ BEGIN
         custom_properties,
         snapshot_id,
         logical_name,
-        is_using_scsi_reservation
+        is_using_scsi_reservation,
+        host_device
         )
     VALUES (
         v_device_id,
@@ -54,7 +56,8 @@ BEGIN
         v_custom_properties,
         v_snapshot_id,
         v_logical_name,
-        v_is_using_scsi_reservation
+        v_is_using_scsi_reservation,
+        v_host_device
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -74,7 +77,8 @@ CREATE OR REPLACE FUNCTION UpdateVmDevice (
     v_custom_properties TEXT,
     v_snapshot_id uuid,
     v_logical_name VARCHAR(255),
-    v_is_using_scsi_reservation boolean
+    v_is_using_scsi_reservation boolean,
+    v_host_device VARCHAR(255)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -92,6 +96,7 @@ BEGIN
         snapshot_id = v_snapshot_id,
         logical_name = v_logical_name,
         is_using_scsi_reservation = v_is_using_scsi_reservation,
+        host_device = v_host_device,
         _update_date = current_timestamp
     WHERE device_id = v_device_id
         AND vm_id = v_vm_id;

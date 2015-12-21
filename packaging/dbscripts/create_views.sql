@@ -3073,7 +3073,8 @@ SELECT device_id,
     custom_properties,
     snapshot_id,
     logical_name,
-    is_using_scsi_reservation
+    is_using_scsi_reservation,
+    host_device
 FROM vm_device;
 
 -- Permissions on VNIC Profiles

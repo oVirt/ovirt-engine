@@ -92,6 +92,11 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
      */
     private Map<String, String> customProperties;
 
+    /**
+     * The passthrough host device this vm device represents in case there is any.
+     */
+    private String hostDevice;
+
     public VmDevice() {
         isPlugged = Boolean.FALSE;
         alias = "";
@@ -272,6 +277,14 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.customProperties = customProperties;
     }
 
+    public String getHostDevice() {
+        return hostDevice;
+    }
+
+    public void setHostDevice(String hostDevice) {
+        this.hostDevice = hostDevice;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -288,7 +301,8 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 customProperties,
                 snapshotId,
                 logicalName,
-                usingScsiReservation
+                usingScsiReservation,
+                hostDevice
         );
     }
 
@@ -314,7 +328,8 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(snapshotId, other.snapshotId)
                 && Objects.equals(logicalName, other.logicalName)
-                && usingScsiReservation == other.usingScsiReservation;
+                && usingScsiReservation == other.usingScsiReservation
+                && Objects.equals(hostDevice, other.hostDevice);
     }
 
     @Override
@@ -334,6 +349,7 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 .append("snapshotId", getSnapshotId())
                 .append("logicalName", getLogicalName())
                 .append("usingScsiReservation", isUsingScsiReservation())
+                .append("hostDevice", getHostDevice())
                 .build();
     }
 

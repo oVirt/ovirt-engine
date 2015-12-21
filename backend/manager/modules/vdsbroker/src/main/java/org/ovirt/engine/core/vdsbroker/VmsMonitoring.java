@@ -581,6 +581,7 @@ public class VmsMonitoring {
                 vmDevice.setAddress(((Map<String, String>) device.get(VdsProperties.Address)).toString());
                 vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
                 vmDevice.setLogicalName(logicalName);
+                vmDevice.setHostDevice(StringUtils.defaultString((String) device.get(VdsProperties.HostDev)));
                 addVmDeviceToList(vmDevice);
             }
 
