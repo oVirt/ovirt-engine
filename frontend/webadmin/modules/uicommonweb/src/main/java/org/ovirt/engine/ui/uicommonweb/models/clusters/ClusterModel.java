@@ -15,6 +15,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -49,8 +51,10 @@ import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.ClusterVersionChangeValidation;
@@ -846,11 +850,66 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.migrationBandwidthLimitType = migrationBandwidthLimitType;
     }
 
+    private ListModel<MacPool> macPoolListModel;
+
+    public ListModel<MacPool> getMacPoolListModel() {
+        return macPoolListModel;
+    }
+
+    private void setMacPoolListModel(ListModel<MacPool> macPoolListModel) {
+        this.macPoolListModel = macPoolListModel;
+    }
+
+    private MacPoolModel macPoolModel;
+
+    public MacPoolModel getMacPoolModel() {
+        return macPoolModel;
+    }
+
+    private void setMacPoolModel(MacPoolModel macPoolModel) {
+        this.macPoolModel = macPoolModel;
+    }
+
+    private UICommand addMacPoolCommand;
+
+    public UICommand getAddMacPoolCommand() {
+        return addMacPoolCommand;
+    }
+
+    public void setAddMacPoolCommand(UICommand addMacPoolCommand) {
+        this.addMacPoolCommand = addMacPoolCommand;
+    }
+
+    @Override
+    public void setEntity(Cluster value) {
+        super.setEntity(value);
+        initSelectedMacPool();
+    }
+
     public ClusterModel() {
         super();
         ListModel<KsmPolicyForNuma> ksmPolicyForNumaSelection = new ListModel<>();
         ksmPolicyForNumaSelection.setItems(Arrays.asList(KsmPolicyForNuma.values()));
         setKsmPolicyForNumaSelection(ksmPolicyForNumaSelection);
+        initMacPools();
+    }
+
+    private void initMacPools() {
+        setMacPoolListModel(new SortedListModel<>(new Linq.SharedMacPoolComparator()));
+        setMacPoolModel(new MacPoolModel());
+        getMacPoolModel().setIsChangeable(false);
+        getMacPoolListModel().getItemsChangedEvent().addListener(this);
+        getMacPoolListModel().getSelectedItemChangedEvent().addListener(this);
+        startProgress();
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllMacPools,
+                new VdcQueryParametersBase(),
+                new AsyncQuery(new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        getMacPoolListModel().setItems((Collection<MacPool>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                        stopProgress();
+                    }
+                }));
     }
 
     public void initTunedProfiles() {
@@ -1508,73 +1567,83 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
-            if (sender == getDataCenter()) {
-                storagePool_SelectedItemChanged(args);
+        if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
+            handleItemsChangedEventDefinition(sender);
+        } else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+            handleSelectedItemChangedEventDefinition(sender, args);
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
+            handleEntityChangedEventDefinition((EntityModel) sender);
+        }
+    }
+
+    private void handleItemsChangedEventDefinition(Object sender) {
+        if (sender == getMacPoolListModel()) {
+            initSelectedMacPool();
+        }
+    }
+
+    private void handleEntityChangedEventDefinition(EntityModel senderEntityModel) {
+        if (senderEntityModel == getSpiceProxyEnabled()) {
+            getSpiceProxy().setIsChangeable(getSpiceProxyEnabled().getEntity());
+        } else if ((Boolean) senderEntityModel.getEntity()) {
+            if (senderEntityModel == getOptimizationNone_IsSelected()) {
+                getOptimizationForServer_IsSelected().setEntity(false);
+                getOptimizationForDesktop_IsSelected().setEntity(false);
+                getOptimizationCustom_IsSelected().setEntity(false);
             }
-            else if (sender == getVersion()) {
-                version_SelectedItemChanged(args);
+            else if (senderEntityModel == getOptimizationForServer_IsSelected()) {
+                getOptimizationNone_IsSelected().setEntity(false);
+                getOptimizationForDesktop_IsSelected().setEntity(false);
+                getOptimizationCustom_IsSelected().setEntity(false);
             }
-            else if (sender == getClusterPolicy()) {
-                clusterPolicyChanged();
+            else if (senderEntityModel == getOptimizationForDesktop_IsSelected()) {
+                getOptimizationNone_IsSelected().setEntity(false);
+                getOptimizationForServer_IsSelected().setEntity(false);
+                getOptimizationCustom_IsSelected().setEntity(false);
             }
-            else if (sender == getCPU()) {
-                CPU_SelectedItemChanged(args);
+            else if (senderEntityModel == getOptimizationCustom_IsSelected()) {
+                getOptimizationNone_IsSelected().setEntity(false);
+                getOptimizationForServer_IsSelected().setEntity(false);
+                getOptimizationForDesktop_IsSelected().setEntity(false);
             }
-            else if (sender == getArchitecture()) {
-                architectureSelectedItemChanged(args);
+            else if (senderEntityModel == getMigrateOnErrorOption_YES()) {
+                getMigrateOnErrorOption_NO().setEntity(false);
+                getMigrateOnErrorOption_HA_ONLY().setEntity(false);
             }
-            else if (sender == getMigrationPolicies()) {
-                migrationPoliciesChanged();
+            else if (senderEntityModel == getMigrateOnErrorOption_NO()) {
+                getMigrateOnErrorOption_YES().setEntity(false);
+                getMigrateOnErrorOption_HA_ONLY().setEntity(false);
+            }
+            else if (senderEntityModel == getMigrateOnErrorOption_HA_ONLY()) {
+                getMigrateOnErrorOption_YES().setEntity(false);
+                getMigrateOnErrorOption_NO().setEntity(false);
+            } else if (senderEntityModel == getOptimizeForUtilization()) {
+                getOptimizeForSpeed().setEntity(false);
+            } else if (senderEntityModel == getOptimizeForSpeed()) {
+                getOptimizeForUtilization().setEntity(false);
+            } else if(senderEntityModel == getGuarantyResources()) {
+                getAllowOverbooking().setEntity(false);
+            } else if(senderEntityModel == getAllowOverbooking()) {
+                getGuarantyResources().setEntity(false);
             }
         }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
-            EntityModel senderEntityModel = (EntityModel) sender;
+    }
 
-            if (senderEntityModel == getSpiceProxyEnabled()) {
-                getSpiceProxy().setIsChangeable(getSpiceProxyEnabled().getEntity());
-            } else if ((Boolean) senderEntityModel.getEntity()) {
-                if (senderEntityModel == getOptimizationNone_IsSelected()) {
-                    getOptimizationForServer_IsSelected().setEntity(false);
-                    getOptimizationForDesktop_IsSelected().setEntity(false);
-                    getOptimizationCustom_IsSelected().setEntity(false);
-                }
-                else if (senderEntityModel == getOptimizationForServer_IsSelected()) {
-                    getOptimizationNone_IsSelected().setEntity(false);
-                    getOptimizationForDesktop_IsSelected().setEntity(false);
-                    getOptimizationCustom_IsSelected().setEntity(false);
-                }
-                else if (senderEntityModel == getOptimizationForDesktop_IsSelected()) {
-                    getOptimizationNone_IsSelected().setEntity(false);
-                    getOptimizationForServer_IsSelected().setEntity(false);
-                    getOptimizationCustom_IsSelected().setEntity(false);
-                }
-                else if (senderEntityModel == getOptimizationCustom_IsSelected()) {
-                    getOptimizationNone_IsSelected().setEntity(false);
-                    getOptimizationForServer_IsSelected().setEntity(false);
-                    getOptimizationForDesktop_IsSelected().setEntity(false);
-                }
-                else if (senderEntityModel == getMigrateOnErrorOption_YES()) {
-                    getMigrateOnErrorOption_NO().setEntity(false);
-                    getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-                }
-                else if (senderEntityModel == getMigrateOnErrorOption_NO()) {
-                    getMigrateOnErrorOption_YES().setEntity(false);
-                    getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-                }
-                else if (senderEntityModel == getMigrateOnErrorOption_HA_ONLY()) {
-                    getMigrateOnErrorOption_YES().setEntity(false);
-                    getMigrateOnErrorOption_NO().setEntity(false);
-                } else if (senderEntityModel == getOptimizeForUtilization()) {
-                    getOptimizeForSpeed().setEntity(false);
-                } else if (senderEntityModel == getOptimizeForSpeed()) {
-                    getOptimizeForUtilization().setEntity(false);
-                } else if(senderEntityModel == getGuarantyResources()) {
-                    getAllowOverbooking().setEntity(false);
-                } else if(senderEntityModel == getAllowOverbooking()) {
-                    getGuarantyResources().setEntity(false);
-                }
-            }
+    private void handleSelectedItemChangedEventDefinition(Object sender, EventArgs args) {
+        if (sender == getDataCenter()) {
+            storagePool_SelectedItemChanged(args);
+        } else if (sender == getVersion()) {
+            version_SelectedItemChanged(args);
+        } else if (sender == getClusterPolicy()) {
+            clusterPolicyChanged();
+        } else if (sender == getCPU()) {
+            CPU_SelectedItemChanged(args);
+        } else if (sender == getArchitecture()) {
+            architectureSelectedItemChanged(args);
+        } else if (sender == getMacPoolListModel()) {
+            getMacPoolModel().setEntity(getMacPoolListModel().getSelectedItem());
+        }  else if (sender == getMigrationPolicies()) {
+            migrationPoliciesChanged();
         }
     }
 
@@ -1996,6 +2065,20 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
+    private void initSelectedMacPool() {
+        Collection<MacPool> allMacPools = getMacPoolListModel().getItems();
+        Cluster cluster = getEntity();
+        if (allMacPools != null && cluster != null) {
+            Guid macPoolId = cluster.getMacPoolId();
+            for (MacPool macPool : allMacPools) {
+                if (macPool.getId().equals(macPoolId)) {
+                    getMacPoolListModel().setSelectedItem(macPool);
+                    break;
+                }
+            }
+        }
+    }
+
     public boolean validate(boolean validateCpu) {
         return validate(true, validateCpu, true);
     }
@@ -2060,6 +2143,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
         }
 
+        getMacPoolModel().validate();
+
         boolean generalTabValid = getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getManagementNetwork().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
@@ -2085,8 +2170,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 getMigrationBandwidthLimitType().getIsValid() && getCustomMigrationNetworkBandwidth().getIsValid();
         setValidTab(TabName.MIGRATION_TAB, migrationTabValid);
 
+        boolean macPoolTabValid = getMacPoolModel().getIsValid();
+        setValidTab(TabName.MAC_POOL_TAB, macPoolTabValid);
+
         ValidationCompleteEvent.fire(getEventBus(), this);
-        return generalTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid() && migrationTabValid;
+        return generalTabValid && macPoolTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid() && migrationTabValid;
     }
 
     public void validateName() {

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -50,6 +52,8 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.NewSharedMacPoolModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -127,6 +131,16 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         privateAddMultipleHostsCommand = value;
     }
 
+    private UICommand addMacPoolCommand;
+
+    public UICommand getAddMacPoolCommand() {
+        return addMacPoolCommand;
+    }
+
+    private void setAddMacPoolCommand(UICommand addMacPoolCommand) {
+        this.addMacPoolCommand = addMacPoolCommand;
+    }
+
     private Object privateGuideContext;
 
     public Object getGuideContext() {
@@ -193,6 +207,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setAddMacPoolCommand(new UICommand("AddMacPool", this)); //$NON-NLS-1$
+        getAddMacPoolCommand().setTitle(ConstantsManager.getInstance().getConstants().addMacPoolButton());
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setResetEmulatedMachineCommand(new UICommand("ResetEmulatedMachine", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
@@ -283,6 +299,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         }
 
         ClusterModel clusterModel = new ClusterModel();
+        clusterModel.setAddMacPoolCommand(addMacPoolCommand);
         clusterModel.init(false);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
@@ -337,6 +354,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
 
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final ClusterModel clusterModel = new ClusterModel();
+        clusterModel.setAddMacPoolCommand(addMacPoolCommand);
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
         clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
@@ -431,6 +449,24 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         clusterModel.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         clusterModel.getCommands().add(tempVar2);
+    }
+
+    private void addMacPool(final ClusterModel clusterModel) {
+        SharedMacPoolModel macPoolModel = new NewSharedMacPoolModel.ClosingWithSetConfirmWindow(this) {
+            @Override
+            protected void onActionSucceeded(Guid macPoolId) {
+                MacPool macPool = getEntity();
+                macPool.setId(macPoolId);
+                Collection<MacPool> macPools = new ArrayList<>(clusterModel.getMacPoolListModel().getItems());
+                macPools.add(macPool);
+                clusterModel.getMacPoolListModel().setItems(macPools);
+                clusterModel.getMacPoolListModel().setSelectedItem(macPool);
+                ClusterListModel.this.setConfirmWindow(null);
+            }
+        };
+
+        macPoolModel.setEntity(new MacPool());
+        setConfirmWindow(macPoolModel);
     }
 
     public void remove() {
@@ -727,6 +763,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                 ? model.getCustomMigrationNetworkBandwidth().getEntity()
                 : null);
 
+        cluster.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
+
         return cluster;
     }
 
@@ -989,6 +1027,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
     public void executeCommand(UICommand command, Object... parameters) {
         if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0])) {
             super.executeCommand(command, parameters);
+        } else if (command == getAddMacPoolCommand()) {
+            super.executeCommand(command, parameters);
+            addMacPool((ClusterModel) parameters[0]);
         }
     }
 

@@ -240,7 +240,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String dataCenterPopupQuotaEnforceTypeLabel();
 
-    String dataCenterPopupMacPoolLabel();
+    String clusterPopupMacPoolLabel();
 
     String dataCenterEditNetworkPopupLabel();
 
@@ -896,7 +896,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String dataCenterGeneralTab();
 
-    String dataCenterMacPoolTab();
+    String clusterMacPoolTab();
 
     String statusStorageDc();
 

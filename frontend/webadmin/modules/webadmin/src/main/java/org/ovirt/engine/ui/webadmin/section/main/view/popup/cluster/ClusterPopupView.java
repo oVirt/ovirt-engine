@@ -5,6 +5,7 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -18,6 +19,8 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
@@ -44,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -54,6 +58,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.MacPoolWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -457,6 +462,22 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "ksmPolicyForNumaSelection.selectedItem")
     public ListModelRadioGroupEditor<ClusterModel.KsmPolicyForNuma> ksmPolicyForNumaEditor;
 
+    @UiField(provided = true)
+    @Path(value = "macPoolListModel.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<MacPool> macPoolListEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    MacPoolWidget macPoolWidget;
+
+    @UiField
+    @WithElementId
+    DialogTab macPoolTab;
+
+    @UiField
+    UiCommandButton addMacPoolButton;
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -494,6 +515,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         getTabNameMapping().put(TabName.CLUSTER_POLICY_TAB, this.clusterPolicyTab);
         getTabNameMapping().put(TabName.OPTIMIZATION_TAB, this.optimizationTab);
         getTabNameMapping().put(TabName.MIGRATION_TAB, this.migrationTab);
+        getTabNameMapping().put(TabName.MAC_POOL_TAB, macPoolTab);
     }
 
     private void addStyles() {
@@ -584,6 +606,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         customPropertiesSheetEditor = new KeyValueWidget<>("auto", "auto"); //$NON-NLS-1$ $NON-NLS-2$
         migrationBandwidthLimitTypeEditor = new BootstrapListBoxListModelEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
+        macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
+        macPoolListEditor.setLabel(constants.clusterPopupMacPoolLabel());
     }
 
     private void initCheckBoxEditors() {
@@ -672,6 +696,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Override
     public void edit(final ClusterModel object) {
         driver.edit(object);
+        updateMacPool(object.getMacPoolModel());
         customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
 
         enableOvirtServiceEditor.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
@@ -777,6 +802,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 }
             }
         });
+    }
+
+    @Override
+    public void updateMacPool(MacPoolModel macPoolModel) {
+        macPoolWidget.edit(macPoolModel);
+    }
+
+    @Override
+    public HasUiCommandClickHandlers getMacPoolButton() {
+        return addMacPoolButton;
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {

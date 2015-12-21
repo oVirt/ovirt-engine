@@ -24,58 +24,30 @@
             padding-top: 20px;
         }
 
-        .floatRight {
-            float: right;
-        }
     </ui:style>
 
     <d:SimpleDialogPanel width="740px" height="370px">
         <d:content>
-            <t:DialogTabPanel ui:field="tabPanel" height="100%" width="100%">
-                <t:tab>
-                    <t:DialogTab ui:field="generalTab" label="{constants.dataCenterGeneralTab}">
-                        <t:content>
-                            <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.topElement}">
-                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="storagePoolTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="versionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                            </b:Container>
-                        </t:content>
-                    </t:DialogTab>
-                </t:tab>
-                <t:tab>
-                    <t:DialogTab ui:field="macPoolTab" label="{constants.dataCenterMacPoolTab}">
-                        <t:content>
-                            <b:Container addStyleNames="{style.container}">
-                                <b:Row addStyleNames="{style.topElement}">
-                                    <e:ListModelListBoxEditor ui:field="macPoolListEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="LG_12">
-                                        <c:UiCommandButton ui:field="addMacPoolButton" addStyleNames="{style.floatRight}" />
-                                    </b:Column>
-                                </b:Row>
-                                <m:MacPoolWidget ui:field="macPoolWidget" usePatternFly="true" />
-                            </b:Container>
-                        </t:content>
-                    </t:DialogTab>
-                </t:tab>
-            </t:DialogTabPanel>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row addStyleNames="{style.topElement}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="storagePoolTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="versionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClus
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterMainTabSelectedItems;
@@ -69,6 +70,7 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider,
+            final Provider<SharedMacPoolPopupPresenterWidget> macPoolPopupProvider,
             final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<CommonModel> commonModelProvider,
             final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
@@ -82,6 +84,8 @@ public class ClusterModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                     return guidePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getAddMacPoolCommand()) {
+                    return macPoolPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getAddMultipleHostsCommand()) {
                     return addMultipleHostsPopupProvider.get();
                 } else {

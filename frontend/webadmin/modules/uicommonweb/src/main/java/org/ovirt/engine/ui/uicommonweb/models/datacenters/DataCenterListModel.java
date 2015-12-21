@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -55,8 +54,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
-import org.ovirt.engine.ui.uicommonweb.models.macpool.NewSharedMacPoolModel;
-import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -133,16 +130,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         privateRecoveryStorageCommand = value;
     }
 
-    private UICommand addMacPoolCommand;
-
-    public UICommand getAddMacPoolCommand() {
-        return addMacPoolCommand;
-    }
-
-    private void setAddMacPoolCommand(UICommand addMacPoolCommand) {
-        this.addMacPoolCommand = addMacPoolCommand;
-    }
-
     protected Object[] getSelectedKeys() {
         if (getSelectedItems() == null) {
             return new Object[0];
@@ -201,8 +188,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
-        setAddMacPoolCommand(new UICommand("AddMacPool", this)); //$NON-NLS-1$
-        getAddMacPoolCommand().setTitle(ConstantsManager.getInstance().getConstants().addMacPoolButton());
+
         UICommand tempVar = new UICommand("ForceRemove", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(true);
         setForceRemoveCommand(tempVar);
@@ -293,7 +279,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
 
         DataCenterModel model = new DataCenterModel();
-        model.setAddMacPoolCommand(addMacPoolCommand);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterTitle());
         model.setHelpTag(HelpTag.new_data_center);
@@ -315,7 +300,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
 
         final DataCenterModel model = new DataCenterModel();
-        model.setAddMacPoolCommand(addMacPoolCommand);
         setWindow(model);
         model.setEntity(dataCenter);
         model.setDataCenterId(dataCenter.getId());
@@ -357,24 +341,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
-    }
-
-    private void addMacPool(final DataCenterModel dcModel) {
-        SharedMacPoolModel macPoolModel = new NewSharedMacPoolModel.ClosingWithSetConfirmWindow(this) {
-            @Override
-            protected void onActionSucceeded(Guid macPoolId) {
-                MacPool macPool = getEntity();
-                macPool.setId(macPoolId);
-                Collection<MacPool> macPools = new ArrayList<>(dcModel.getMacPoolListModel().getItems());
-                macPools.add(macPool);
-                dcModel.getMacPoolListModel().setItems(macPools);
-                dcModel.getMacPoolListModel().setSelectedItem(macPool);
-                DataCenterListModel.this.setConfirmWindow(null);
-            }
-        };
-
-        macPoolModel.setEntity(new MacPool());
-        setConfirmWindow(macPoolModel);
     }
 
     public void remove() {
@@ -751,7 +717,6 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         dataCenter.setCompatibilityVersion(model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
-        dataCenter.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
 
         model.startProgress();
 
@@ -955,14 +920,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, St
         }
     }
 
-    @Override
-    public void executeCommand(UICommand command, Object... parameters) {
-        super.executeCommand(command, parameters);
 
-        if (command == getAddMacPoolCommand()) {
-            addMacPool((DataCenterModel) parameters[0]);
-        }
-    }
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
