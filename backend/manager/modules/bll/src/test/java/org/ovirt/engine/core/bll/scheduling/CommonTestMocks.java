@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.scheduling;
 import static org.mockito.Mockito.mock;
 
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
@@ -18,12 +17,6 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @Singleton
 public class CommonTestMocks {
-
-    // initialize core concrete services
-    @Inject
-    private Injector injector;
-    @Inject
-    private SessionDataContainer sessionDataContainer;
 
     // providers of common dependencies
     @Produces
