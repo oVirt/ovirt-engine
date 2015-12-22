@@ -57,30 +57,24 @@ public class CinderBroker extends AuditLogableBase {
     }
 
     public String createDisk(final CinderDisk cinderDisk) {
-        return execute(new Callable<String>() {
-            @Override
-            public String call() {
-                VolumeForCreate cinderVolume = new VolumeForCreate();
-                cinderVolume.setName(cinderDisk.getDiskAlias());
-                cinderVolume.setDescription(cinderDisk.getDiskDescription());
-                cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
-                cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
-                return proxy.createVolume(cinderVolume);
-            }
+        return execute(() -> {
+            VolumeForCreate cinderVolume = new VolumeForCreate();
+            cinderVolume.setName(cinderDisk.getDiskAlias());
+            cinderVolume.setDescription(cinderDisk.getDiskDescription());
+            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
+            return proxy.createVolume(cinderVolume);
         });
     }
 
     public String cloneDisk(final CinderDisk cinderDisk) {
-        return execute(new Callable<String>() {
-            @Override
-            public String call() {
-                VolumeForCreate cinderVolume = new VolumeForCreate();
-                cinderVolume.setName(cinderDisk.getDiskAlias());
-                cinderVolume.setDescription(cinderDisk.getDiskDescription());
-                cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
-                cinderVolume.setSourceVolid(cinderDisk.getImageId().toString());
-                return proxy.createVolume(cinderVolume);
-            }
+        return execute(() -> {
+            VolumeForCreate cinderVolume = new VolumeForCreate();
+            cinderVolume.setName(cinderDisk.getDiskAlias());
+            cinderVolume.setDescription(cinderDisk.getDiskDescription());
+            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setSourceVolid(cinderDisk.getImageId().toString());
+            return proxy.createVolume(cinderVolume);
         });
     }
 
@@ -123,96 +117,75 @@ public class CinderBroker extends AuditLogableBase {
     }
 
     public boolean deleteVolume(final CinderDisk cinderDisk) {
-        return execute(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                try {
-                    proxy.deleteVolume(cinderDisk.getImageId().toString());
-                    return true;
-                } catch (OpenStackResponseException ex) {
-                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
-                        return false;
-                    }
-                    throw ex;
+        return execute(() -> {
+            try {
+                proxy.deleteVolume(cinderDisk.getImageId().toString());
+                return true;
+            } catch (OpenStackResponseException ex) {
+                if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                    return false;
                 }
+                throw ex;
             }
         });
     }
 
     public Void updateDisk(final CinderDisk cinderDisk) {
-        return execute(new Callable<Void>() {
-            @Override
-            public Void call() {
-                VolumeForUpdate volumeForUpdate = new VolumeForUpdate();
-                volumeForUpdate.setName(cinderDisk.getDiskAlias());
-                volumeForUpdate.setDescription(cinderDisk.getDiskDescription());
-                proxy.updateVolume(cinderDisk.getImageId().toString(), volumeForUpdate);
-                return null;
-            }
+        return execute(() -> {
+            VolumeForUpdate volumeForUpdate = new VolumeForUpdate();
+            volumeForUpdate.setName(cinderDisk.getDiskAlias());
+            volumeForUpdate.setDescription(cinderDisk.getDiskDescription());
+            proxy.updateVolume(cinderDisk.getImageId().toString(), volumeForUpdate);
+            return null;
         });
     }
 
     public Void extendDisk(final CinderDisk cinderDisk, final int newSize) {
-        return execute(new Callable<Void>() {
-            @Override
-            public Void call() {
-                proxy.extendVolume(cinderDisk.getImageId().toString(), newSize);
-                return null;
-            }
+        return execute(() -> {
+            proxy.extendVolume(cinderDisk.getImageId().toString(), newSize);
+            return null;
         });
     }
 
     public String createSnapshot(final CinderDisk cinderDisk, final String snapshotDescription) {
-        return execute(new Callable<String>() {
-            @Override
-            public String call() {
-                SnapshotForCreate snapshotForCreate = new SnapshotForCreate();
-                snapshotForCreate.setVolumeId(cinderDisk.getImageId().toString());
-                snapshotForCreate.setDescription(snapshotDescription);
-                return proxy.createSnapshot(snapshotForCreate);
-            }
+        return execute(() -> {
+            SnapshotForCreate snapshotForCreate = new SnapshotForCreate();
+            snapshotForCreate.setVolumeId(cinderDisk.getImageId().toString());
+            snapshotForCreate.setDescription(snapshotDescription);
+            return proxy.createSnapshot(snapshotForCreate);
         });
     }
 
     public boolean deleteSnapshot(final Guid snapshotId) {
-        return execute(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                try {
-                    proxy.deleteSnapshot(snapshotId.toString());
-                    return true;
-                } catch (OpenStackResponseException ex) {
-                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
-                        return false;
-                    }
-                    throw ex;
+        return execute(() -> {
+            try {
+                proxy.deleteSnapshot(snapshotId.toString());
+                return true;
+            } catch (OpenStackResponseException ex) {
+                if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                    return false;
                 }
+                throw ex;
             }
         });
     }
 
     public String cloneVolumeFromSnapshot(final CinderDisk cinderDisk, final Guid snapshotId) {
-        return execute(new Callable<String>() {
-            @Override
-            public String call() {
-                VolumeForCreate cinderVolume = new VolumeForCreate();
-                cinderVolume.setName(cinderDisk.getDiskAlias());
-                cinderVolume.setDescription(cinderDisk.getDiskDescription());
-                cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
-                cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
-                cinderVolume.setSnapshotId(snapshotId.toString());
-                return proxy.cloneVolumeFromSnapshot(cinderVolume);
-            }
+        return execute(() -> {
+            VolumeForCreate cinderVolume = new VolumeForCreate();
+            cinderVolume.setName(cinderDisk.getDiskAlias());
+            cinderVolume.setDescription(cinderDisk.getDiskDescription());
+            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
+            cinderVolume.setSnapshotId(snapshotId.toString());
+            return proxy.cloneVolumeFromSnapshot(cinderVolume);
         });
     }
 
     public CinderConnectionInfo initializeConnectionForDisk(final CinderDisk cinderDisk) {
-        return execute(new Callable<CinderConnectionInfo>() {
-            @Override
-            public CinderConnectionInfo call() {
-                ConnectionForInitialize connectionForInitialize = new ConnectionForInitialize();
-                return proxy.initializeConnectionForVolume(cinderDisk.getImageId().toString(), connectionForInitialize);
-            }
+        return execute(() -> {
+            ConnectionForInitialize connectionForInitialize = new ConnectionForInitialize();
+            return proxy.initializeConnectionForVolume(cinderDisk.getImageId().toString(), connectionForInitialize);
         });
     }
 
@@ -233,62 +206,50 @@ public class CinderBroker extends AuditLogableBase {
     }
 
     public boolean isDiskExist(final Guid id) {
-        return execute(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                try {
-                    Volume volume = proxy.getVolumeById(id.toString());
-                    return volume != null;
-                } catch (OpenStackResponseException ex) {
-                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
-                        return false;
-                    }
-                    throw ex;
+        return execute(() -> {
+            try {
+                Volume volume = proxy.getVolumeById(id.toString());
+                return volume != null;
+            } catch (OpenStackResponseException ex) {
+                if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                    return false;
                 }
+                throw ex;
             }
         });
     }
 
     public boolean isSnapshotExist(final Guid id) {
-        return execute(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                try {
-                    Snapshot snapshot = proxy.getSnapshotById(id.toString());
-                    return snapshot != null;
-                } catch (OpenStackResponseException ex) {
-                    if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
-                        log.info("Snapshot does not exists");
-                        return false;
-                    } else {
-                        log.error("An error has occurred while looking for snapshot.");
-                        throw ex;
-                    }
-
+        return execute(() -> {
+            try {
+                Snapshot snapshot = proxy.getSnapshotById(id.toString());
+                return snapshot != null;
+            } catch (OpenStackResponseException ex) {
+                if (ex.getStatus() == HttpStatus.SC_NOT_FOUND) {
+                    log.info("Snapshot does not exists");
+                    return false;
+                } else {
+                    log.error("An error has occurred while looking for snapshot.");
+                    throw ex;
                 }
+
             }
         });
     }
 
     public ImageStatus getSnapshotStatus(final Guid id) {
-        return execute(new Callable<ImageStatus>() {
-            @Override
-            public ImageStatus call() {
-                Snapshot snapshot = proxy.getSnapshotById(id.toString());
-                CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(snapshot.getStatus());
-                return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
-            }
+        return execute(() -> {
+            Snapshot snapshot = proxy.getSnapshotById(id.toString());
+            CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(snapshot.getStatus());
+            return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
         });
     }
 
     public ImageStatus getDiskStatus(final Guid id) {
-        return execute(new Callable<ImageStatus>() {
-            @Override
-            public ImageStatus call() {
-                Volume volume = proxy.getVolumeById(id.toString());
-                CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(volume.getStatus());
-                return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
-            }
+        return execute(() -> {
+            Volume volume = proxy.getVolumeById(id.toString());
+            CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(volume.getStatus());
+            return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
         });
     }
 

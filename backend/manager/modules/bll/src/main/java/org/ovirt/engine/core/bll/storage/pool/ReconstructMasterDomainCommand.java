@@ -251,50 +251,47 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         List<Callable<Void>> tasks = new ArrayList<>();
         for (final VDS vds : getAllRunningVdssInPool()) {
-            tasks.add(new Callable<Void>() {
-                @Override
-                public Void call() {
-                    try {
-                        if (!connectVdsToNewMaster(vds)) {
-                            log.warn("failed to connect vds '{}' to the new master '{}'",
-                                    vds.getId(), getNewMasterStorageDomainId());
-                            return null;
-                        }
+            tasks.add(() -> {
+                try {
+                    if (!connectVdsToNewMaster(vds)) {
+                        log.warn("failed to connect vds '{}' to the new master '{}'",
+                                vds.getId(), getNewMasterStorageDomainId());
+                        return null;
+                    }
 
-                        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao()
-                                .getAllForStoragePool(getStoragePool().getId());
-                        try {
-                            runVdsCommand(
+                    List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDao()
+                            .getAllForStoragePool(getStoragePool().getId());
+                    try {
+                        runVdsCommand(
+                                VDSCommandType.ConnectStoragePool,
+                                new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
+                                        getNewMasterStorageDomainId(), storagePoolIsoMap, true));
+                    } catch (EngineException ex) {
+                        if (EngineError.StoragePoolUnknown == ex.getVdsError().getCode()) {
+                            VDSReturnValue returnVal = runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
-                                            getNewMasterStorageDomainId(), storagePoolIsoMap, true));
-                        } catch (EngineException ex) {
-                            if (EngineError.StoragePoolUnknown == ex.getVdsError().getCode()) {
-                                VDSReturnValue returnVal = runVdsCommand(
-                                        VDSCommandType.ConnectStoragePool,
-                                        new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
-                                                getNewMasterStorageDomainId(), storagePoolIsoMap));
-                                if (!returnVal.getSucceeded()) {
-                                    log.error("Post reconstruct actions (connectPool) did not complete on host '{}' in the pool. error {}",
-                                            vds.getId(),
-                                            returnVal.getVdsError().getMessage());
-                                }
-                            } else {
-                                log.error("Post reconstruct actions (refreshPool)"
-                                        + " did not complete on host '{}' in the pool. error {}",
+                                            getNewMasterStorageDomainId(), storagePoolIsoMap));
+                            if (!returnVal.getSucceeded()) {
+                                log.error("Post reconstruct actions (connectPool) did not complete on host '{}' in the pool. error {}",
                                         vds.getId(),
-                                        ex.getMessage());
+                                        returnVal.getVdsError().getMessage());
                             }
+                        } else {
+                            log.error("Post reconstruct actions (refreshPool)"
+                                    + " did not complete on host '{}' in the pool. error {}",
+                                    vds.getId(),
+                                    ex.getMessage());
                         }
-                    } catch (Exception e) {
-                        log.error("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
-                                + " did not complete on host '{}' in the pool: {}",
-                                vds.getId(),
-                                e.getMessage());
-                        log.debug("Exception", e);
                     }
-                    return null;
+                } catch (Exception e) {
+                    log.error("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
+                            + " did not complete on host '{}' in the pool: {}",
+                            vds.getId(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
+                return null;
             });
         }
         ThreadPoolUtil.invokeAll(tasks);

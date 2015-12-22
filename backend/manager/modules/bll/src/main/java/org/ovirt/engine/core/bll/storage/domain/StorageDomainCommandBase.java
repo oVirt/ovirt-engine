@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
-import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -287,24 +286,21 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
         List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
         for (final VDS vds : hostsInStatusUp) {
-            callables.add(new Callable<Pair<Guid, Boolean>>() {
-                @Override
-                public Pair<Guid, Boolean> call() throws Exception {
-                    Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
-                    try {
-                        boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
-                                .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
-                        toReturn.setSecond(connectResult);
-                    } catch (RuntimeException e) {
-                        log.error("Failed to connect host '{}' to storage domain (name '{}', id '{}'): {}",
-                                vds.getName(),
-                                getStorageDomain().getName(),
-                                getStorageDomain().getId(),
-                                e.getMessage());
-                        log.debug("Exception", e);
-                    }
-                    return toReturn;
+            callables.add(() -> {
+                Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
+                try {
+                    boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                            .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
+                    toReturn.setSecond(connectResult);
+                } catch (RuntimeException e) {
+                    log.error("Failed to connect host '{}' to storage domain (name '{}', id '{}'): {}",
+                            vds.getName(),
+                            getStorageDomain().getName(),
+                            getStorageDomain().getId(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
+                return toReturn;
             });
         }
 
@@ -315,24 +311,21 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
         List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
         for (final VDS vds : hostsInStatusUp) {
-            callables.add(new Callable<Pair<Guid, Boolean>>() {
-                @Override
-                public Pair<Guid, Boolean> call() throws Exception {
-                    Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
-                    try {
-                        boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
-                                .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
-                        toReturn.setSecond(connectResult);
-                    } catch (RuntimeException e) {
-                        log.error("Failed to disconnect host '{}' to storage domain (name '{}', id '{}'): {}",
-                                vds.getName(),
-                                getStorageDomain().getName(),
-                                getStorageDomain().getId(),
-                                e.getMessage());
-                        log.debug("Exception", e);
-                    }
-                    return toReturn;
+            callables.add(() -> {
+                Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
+                try {
+                    boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                            .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
+                    toReturn.setSecond(connectResult);
+                } catch (RuntimeException e) {
+                    log.error("Failed to disconnect host '{}' to storage domain (name '{}', id '{}'): {}",
+                            vds.getName(),
+                            getStorageDomain().getName(),
+                            getStorageDomain().getId(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
+                return toReturn;
             });
         }
 
@@ -346,12 +339,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                         null,
                         EventType.POOLREFRESH,
                         ""),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
-                        return null;
-                    }
+                () -> {
+                    runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
+                    return null;
                 });
     }
 

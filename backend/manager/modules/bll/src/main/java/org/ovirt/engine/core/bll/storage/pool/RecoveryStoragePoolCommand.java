@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.concurrent.Callable;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
@@ -107,40 +105,37 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                             getParameters().getNewMasterDomainId(),
                             null,
                             EventType.RECOVERY, ""),
-                    new Callable<EventResult>() {
-                        @Override
-                        public EventResult call() {
-                            getParameters().setStorageDomainId(getMasterDomainIdFromDb());
-                            StoragePoolIsoMap domainPoolMap =
-                                    new StoragePoolIsoMap(
-                                            getParameters().getNewMasterDomainId(),
-                                            getParameters().getStoragePoolId(),
-                                            StorageDomainStatus.Active);
-                            DbFacade.getInstance()
-                                    .getStoragePoolIsoMapDao()
-                                    .save(domainPoolMap);
+                    () -> {
+                        getParameters().setStorageDomainId(getMasterDomainIdFromDb());
+                        StoragePoolIsoMap domainPoolMap =
+                                new StoragePoolIsoMap(
+                                        getParameters().getNewMasterDomainId(),
+                                        getParameters().getStoragePoolId(),
+                                        StorageDomainStatus.Active);
+                        DbFacade.getInstance()
+                                .getStoragePoolIsoMapDao()
+                                .save(domainPoolMap);
 
-                            getParameters().setVdsId(getVds().getId());
-                            VdcReturnValueBase returnVal = runInternalAction(
-                                    VdcActionType.ReconstructMasterDomain, getParameters(), cloneContextAndDetachFromParent());
+                        getParameters().setVdsId(getVds().getId());
+                        VdcReturnValueBase returnVal = runInternalAction(
+                                VdcActionType.ReconstructMasterDomain, getParameters(), cloneContextAndDetachFromParent());
 
-                            boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
-                                    (Boolean) returnVal.getActionReturnValue() : false;
+                        boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
+                                (Boolean) returnVal.getActionReturnValue() : false;
 
-                            getStoragePoolDao().updateStatus(getStoragePool().getId(),
-                                    StoragePoolStatus.NonResponsive);
+                        getStoragePoolDao().updateStatus(getStoragePool().getId(),
+                                StoragePoolStatus.NonResponsive);
 
-                            if (!reconstructVerbExecuted) {
-                                getStoragePoolIsoMapDao().remove(domainPoolMap.getId());
-                            }
-
-                            if (returnVal.getSucceeded()) {
-                                updateStorageDomainFormatIfNeeded(loadTargetedMasterDomain());
-                            }
-
-                            setSucceeded(returnVal.getSucceeded());
-                            return new EventResult(reconstructVerbExecuted, EventType.RECONSTRUCT);
+                        if (!reconstructVerbExecuted) {
+                            getStoragePoolIsoMapDao().remove(domainPoolMap.getId());
                         }
+
+                        if (returnVal.getSucceeded()) {
+                            updateStorageDomainFormatIfNeeded(loadTargetedMasterDomain());
+                        }
+
+                        setSucceeded(returnVal.getSucceeded());
+                        return new EventResult(reconstructVerbExecuted, EventType.RECONSTRUCT);
                     });
         } else {
             getReturnValue().setFault(new EngineFault(new EngineException(EngineError.StorageServerConnectionError,

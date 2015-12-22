@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
-import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -262,14 +260,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!getParameters().isInactive()) {
             getEventQueue().submitEventSync(
                     new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),
-                    new Callable<EventResult>() {
-                        @Override
-                        public EventResult call() {
-                            runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
-                                    isLastMaster,
-                                    newMasterId);
-                            return null;
-                        }
+                    () -> {
+                        runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
+                                isLastMaster,
+                                newMasterId);
+                        return null;
                     });
 
             if (spm != null) {

@@ -247,14 +247,11 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     public void attachCinderDomainToPool(final Guid storageDomainId, final Guid storagePoolId) {
-        execute(new Callable<Object>() {
-            @Override
-            public Object call() {
-                StoragePoolIsoMap storagePoolIsoMap =
-                        new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-                getStoragePoolIsoMapDao().save(storagePoolIsoMap);
-                return null;
-            }
+        execute(() -> {
+            StoragePoolIsoMap storagePoolIsoMap =
+                    new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
+            getStoragePoolIsoMapDao().save(storagePoolIsoMap);
+            return null;
         });
     }
 
@@ -285,28 +282,22 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     public void detachCinderDomainFromPool(final StoragePoolIsoMap mapToRemove) {
-        execute(new Callable<Object>() {
-            @Override
-            public Object call() {
-                getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
-                        mapToRemove.getStoragePoolId()));
-                return null;
-            }
+        execute(() -> {
+            getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
+                    mapToRemove.getStoragePoolId()));
+            return null;
         });
     }
 
     private void updateCinderDomainStatus(final Guid storageDomainId,
                                           final Guid storagePoolId,
                                           final StorageDomainStatus storageDomainStatus) {
-        execute(new Callable<Object>() {
-            @Override
-            public Object call() {
-                StoragePoolIsoMap map =
-                        getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
-                map.setStatus(storageDomainStatus);
-                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
-                return null;
-            }
+        execute(() -> {
+            StoragePoolIsoMap map =
+                    getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
+            map.setStatus(storageDomainStatus);
+            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            return null;
         });
     }
 

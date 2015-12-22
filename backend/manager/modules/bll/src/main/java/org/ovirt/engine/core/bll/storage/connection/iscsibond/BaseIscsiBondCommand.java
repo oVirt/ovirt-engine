@@ -48,37 +48,34 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
         List<VDS> hosts = getVdsDao().getAllForStoragePoolAndStatus(getIscsiBond().getStoragePoolId(), VDSStatus.Up);
 
         for (final VDS host : hosts) {
-            tasks.add(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    try {
-                        final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
-                        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.ConnectStorageServer,
-                                new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
-                        );
-                        final Map<String, String> iscsiMap = (Map<String, String>) returnValue.getReturnValue();
-                        List<String> failedConnectionsList = iscsiMap.entrySet().stream()
-                                .filter(e -> !"0".equals(e.getValue())).map(Map.Entry::getKey)
-                                .collect(Collectors.toList());
-                        if (!failedConnectionsList.isEmpty()) {
-                            log.error("Host '{}' - '{}' encounter problems to connect to the iSCSI Storage"
-                                            + " Server. The following connections were problematic"+ "" +
-                                            " (connectionid=vdsm result): {}",
-                                    host.getName(),
-                                    host.getId(),
-                                    iscsiMap.toString());
-                            encounterConnectionProblems = true;
-                        }
-                    } catch (EngineException e) {
-                        log.error("Could not connect Host '{}' - '{}' to Iscsi Storage Server: {}",
+            tasks.add(() -> {
+                try {
+                    final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
+                    VDSReturnValue returnValue = runVdsCommand(VDSCommandType.ConnectStorageServer,
+                            new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
+                    );
+                    final Map<String, String> iscsiMap = (Map<String, String>) returnValue.getReturnValue();
+                    List<String> failedConnectionsList = iscsiMap.entrySet().stream()
+                            .filter(e -> !"0".equals(e.getValue())).map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+                    if (!failedConnectionsList.isEmpty()) {
+                        log.error("Host '{}' - '{}' encounter problems to connect to the iSCSI Storage"
+                                        + " Server. The following connections were problematic"+ "" +
+                                        " (connectionid=vdsm result): {}",
                                 host.getName(),
                                 host.getId(),
-                                e.getMessage());
-                        log.debug("Exception", e);
+                                iscsiMap.toString());
                         encounterConnectionProblems = true;
                     }
-                    return null;
+                } catch (EngineException e) {
+                    log.error("Could not connect Host '{}' - '{}' to Iscsi Storage Server: {}",
+                            host.getName(),
+                            host.getId(),
+                            e.getMessage());
+                    log.debug("Exception", e);
+                    encounterConnectionProblems = true;
                 }
+                return null;
             });
         }
 

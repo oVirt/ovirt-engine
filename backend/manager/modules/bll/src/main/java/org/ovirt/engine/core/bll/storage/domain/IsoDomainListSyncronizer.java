@@ -150,12 +150,9 @@ public class IsoDomainListSyncronizer {
             // If the list should be refreshed and the refresh from the VDSM was succeeded, fetch the file list again
             // from the DB.
             if (shouldRefreshIsoDomain(repoImage.getLastRefreshed())) {
-                tasks.add(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        updateCachedIsoFileListFromVdsm(repoImage);
-                        return null;
-                    }
+                tasks.add(() -> {
+                    updateCachedIsoFileListFromVdsm(repoImage);
+                    return null;
                 });
             } else {
                 log.debug("Automatic refresh process for '{}' file type in storage domain id '{}' was not performed"

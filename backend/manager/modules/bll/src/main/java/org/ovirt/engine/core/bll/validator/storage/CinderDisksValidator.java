@@ -52,52 +52,46 @@ public class CinderDisksValidator {
     }
 
     public ValidationResult validateCinderDiskLimits() {
-        return validate(new Callable<ValidationResult>() {
-            @Override
-            public ValidationResult call() {
-                Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
-                        getRelatedCinderDisksToStorageDomainMap();
-                Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
-                        relatedCinderDisksByStorageMap.values();
-                for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
-                    Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
-                    int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
-                    if (isLimitExceeded(limits, VolumeClassification.Volume, numOfDisks)) {
-                        String storageName =
-                                getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
-                                        .getStorageName();
-                        return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
-                                String.format("$maxTotalVolumes %d", limits.getAbsolute().getMaxTotalVolumes()),
-                                String.format("$storageName %s", storageName));
-                    }
+        return validate(() -> {
+            Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
+                    getRelatedCinderDisksToStorageDomainMap();
+            Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
+                    relatedCinderDisksByStorageMap.values();
+            for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
+                Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
+                int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
+                if (isLimitExceeded(limits, VolumeClassification.Volume, numOfDisks)) {
+                    String storageName =
+                            getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
+                                    .getStorageName();
+                    return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
+                            String.format("$maxTotalVolumes %d", limits.getAbsolute().getMaxTotalVolumes()),
+                            String.format("$storageName %s", storageName));
                 }
-                return ValidationResult.VALID;
             }
+            return ValidationResult.VALID;
         });
     }
 
     public ValidationResult validateCinderDiskSnapshotsLimits() {
-        return validate(new Callable<ValidationResult>() {
-            @Override
-            public ValidationResult call() {
-                Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
-                        getRelatedCinderDisksToStorageDomainMap();
-                Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
-                        relatedCinderDisksByStorageMap.values();
-                for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
-                    Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
-                    int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
-                    if (isLimitExceeded(limits, VolumeClassification.Snapshot, numOfDisks)) {
-                        String storageName =
-                                getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
-                                        .getStorageName();
-                        return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
-                                String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalVolumes()),
-                                String.format("$storageName %s", storageName));
-                    }
+        return validate(() -> {
+            Map<Guid, CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageMap =
+                    getRelatedCinderDisksToStorageDomainMap();
+            Collection<CinderStorageRelatedDisksAndProxy> relatedCinderDisksByStorageCollection =
+                    relatedCinderDisksByStorageMap.values();
+            for (CinderStorageRelatedDisksAndProxy relatedCinderDisksByStorage : relatedCinderDisksByStorageCollection) {
+                Limits limits = relatedCinderDisksByStorage.getProxy().getLimits();
+                int numOfDisks = relatedCinderDisksByStorage.getCinderDisks().size();
+                if (isLimitExceeded(limits, VolumeClassification.Snapshot, numOfDisks)) {
+                    String storageName =
+                            getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
+                                    .getStorageName();
+                    return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
+                            String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalVolumes()),
+                            String.format("$storageName %s", storageName));
                 }
-                return ValidationResult.VALID;
             }
+            return ValidationResult.VALID;
         });
     }
 
@@ -172,18 +166,15 @@ public class CinderDisksValidator {
     }
 
     public ValidationResult validateCinderDisksAlreadyRegistered() {
-        return validate(new Callable<ValidationResult>() {
-            @Override
-            public ValidationResult call() {
-                for (CinderDisk disk : cinderDisks) {
-                    Disk diskFromDB = getDiskDao().get(disk.getId());
-                    if (diskFromDB != null) {
-                        return new ValidationResult(EngineMessage.CINDER_DISK_ALREADY_REGISTERED,
-                                String.format("$diskAlias %s", diskFromDB.getDiskAlias()));
-                    }
+        return validate(() -> {
+            for (CinderDisk disk : cinderDisks) {
+                Disk diskFromDB = getDiskDao().get(disk.getId());
+                if (diskFromDB != null) {
+                    return new ValidationResult(EngineMessage.CINDER_DISK_ALREADY_REGISTERED,
+                            String.format("$diskAlias %s", diskFromDB.getDiskAlias()));
                 }
-                return ValidationResult.VALID;
             }
+            return ValidationResult.VALID;
         });
     }
 
@@ -192,25 +183,22 @@ public class CinderDisksValidator {
      * (note that this method validates only against a single disk).
      */
     public ValidationResult validateCinderVolumeTypesExist() {
-        return validate(new Callable<ValidationResult>() {
-            @Override
-            public ValidationResult call() {
-                final CinderDisk disk = cinderDisks.iterator().next();
-                OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
-                List<CinderVolumeType> volumeTypes = proxy.getVolumeTypes();
-                boolean volumeTypeExists = CollectionUtils.exists(volumeTypes, new Predicate() {
-                    @Override
-                    public boolean evaluate(Object o) {
-                        return ((CinderVolumeType) o).getName().equals(disk.getCinderVolumeType());
-                    }
-                });
-
-                if (!volumeTypeExists) {
-                    return new ValidationResult(EngineMessage.CINDER_VOLUME_TYPE_NOT_EXISTS,
-                            String.format("$cinderVolumeType %s", disk.getCinderVolumeType()));
+        return validate(() -> {
+            final CinderDisk disk = cinderDisks.iterator().next();
+            OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
+            List<CinderVolumeType> volumeTypes = proxy.getVolumeTypes();
+            boolean volumeTypeExists = CollectionUtils.exists(volumeTypes, new Predicate() {
+                @Override
+                public boolean evaluate(Object o) {
+                    return ((CinderVolumeType) o).getName().equals(disk.getCinderVolumeType());
                 }
-                return ValidationResult.VALID;
+            });
+
+            if (!volumeTypeExists) {
+                return new ValidationResult(EngineMessage.CINDER_VOLUME_TYPE_NOT_EXISTS,
+                        String.format("$cinderVolumeType %s", disk.getCinderVolumeType()));
             }
+            return ValidationResult.VALID;
         });
     }
 
