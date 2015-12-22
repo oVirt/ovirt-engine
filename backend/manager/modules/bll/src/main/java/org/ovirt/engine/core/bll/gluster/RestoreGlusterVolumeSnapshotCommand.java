@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeInfoVDSPara
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotActionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -249,28 +248,25 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     @Override
     public void executeCommand() {
-        Boolean tranRetVal = TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
-            @Override
-            public Boolean runInTransaction() {
-                if (georepSessions != null) {
-                    // Stop the geo-replication session
-                    if (!stopGeoReplicationSessions(georepSessions)) {
-                        return false;
-                    }
-
-                    // Stop the slave volumes
-                    if (!stopSlaveVolumes(georepSessions)) {
-                        return false;
-                    }
-
-                    // Restore the slave volumes to said the snapshot
-                    if (!restoreSlaveVolumesToSnapshot(georepSessions, getParameters().getSnapshotName())) {
-                        return false;
-                    }
+        Boolean tranRetVal = TransactionSupport.executeInNewTransaction(() -> {
+            if (georepSessions != null) {
+                // Stop the geo-replication session
+                if (!stopGeoReplicationSessions(georepSessions)) {
+                    return false;
                 }
 
-                return true;
+                // Stop the slave volumes
+                if (!stopSlaveVolumes(georepSessions)) {
+                    return false;
+                }
+
+                // Restore the slave volumes to said the snapshot
+                if (!restoreSlaveVolumesToSnapshot(georepSessions, getParameters().getSnapshotName())) {
+                    return false;
+                }
             }
+
+            return true;
         });
 
         if (!tranRetVal) {

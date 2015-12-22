@@ -57,7 +57,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,16 +301,13 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void removeServerFromDb(final VDS server) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
+        TransactionSupport.executeInNewTransaction(() -> {
 
-                removeVdsStatisticsFromDb(server);
-                removeVdsDynamicFromDb(server);
-                removeVdsStaticFromDb(server);
+            removeVdsStatisticsFromDb(server);
+            removeVdsDynamicFromDb(server);
+            removeVdsStaticFromDb(server);
 
-                return null;
-            }
+            return null;
         });
     }
 
@@ -832,24 +828,18 @@ public class GlusterSyncJob extends GlusterJob {
         // Insert the new options in a single transaction
         if (!newOptionsSortedList.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            saveNewOptions(existingVolume, newOptionsSortedList);
-                            return null;
-                        }
+                    () -> {
+                        saveNewOptions(existingVolume, newOptionsSortedList);
+                        return null;
                     });
         }
 
         // Update the existing options in a single transaction
         if (!existingOptionsSortedList.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            updateExistingOptions(existingVolume, existingOptionsSortedList);
-                            return null;
-                        }
+                    () -> {
+                        updateExistingOptions(existingVolume, existingOptionsSortedList);
+                        return null;
                     });
         }
     }

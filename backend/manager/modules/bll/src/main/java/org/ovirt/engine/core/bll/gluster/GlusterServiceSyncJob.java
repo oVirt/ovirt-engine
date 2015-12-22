@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,12 +207,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         if (server.getStatus() != VDSStatus.Up) {
             // Update the status of all the services of stopped server in single transaction
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Map<String, GlusterServiceStatus>>() {
-                        @Override
-                        public Map<String, GlusterServiceStatus> runInTransaction() {
-                            return updateGlusterServicesStatusForStoppedServer(server);
-                        }
-                    });
+                    () -> updateGlusterServicesStatusForStoppedServer(server));
         } else {
             acquireLock(server.getId());
             try {

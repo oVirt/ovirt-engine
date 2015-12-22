@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeSnaps
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBase<CreateGlusterVolumeSnapshotParameters> {
@@ -137,12 +136,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         GlusterVolumeEntity volume = getGlusterVolume();
 
         // Pause geo-rep sessions and create snapshot for slave volumes
-        Boolean tranRetVal = TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
-            @Override
-            public Boolean runInTransaction() {
-                return pauseAndCreateSnapshotForGeoRepSessions();
-            }
-        });
+        Boolean tranRetVal = TransactionSupport.executeInNewTransaction(() -> pauseAndCreateSnapshotForGeoRepSessions());
 
         if (!tranRetVal) {
             return;

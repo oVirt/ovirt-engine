@@ -32,7 +32,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -99,15 +98,12 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
         // Add bricks in a single transaction
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        addGlusterVolumeBricks(bricksList,
-                                getParameters().getReplicaCount(),
-                                getParameters().getStripeCount(),
-                                getParameters().isForce());
-                        return null;
-                    }
+                () -> {
+                    addGlusterVolumeBricks(bricksList,
+                            getParameters().getReplicaCount(),
+                            getParameters().getStripeCount(),
+                            getParameters().isForce());
+                    return null;
                 });
         if (getGlusterVolume().getIsGeoRepMaster() || getGlusterVolume().getIsGeoRepSlave()) {
             Set<Guid> newServerIds = findNewServers(bricksList, volumeBeforeBrickAdd);

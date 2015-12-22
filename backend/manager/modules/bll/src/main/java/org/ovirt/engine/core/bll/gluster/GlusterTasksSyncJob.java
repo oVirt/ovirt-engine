@@ -45,7 +45,6 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,17 +112,13 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private void createJobForTaskFromCLI(final VDSGroup cluster, final GlusterAsyncTask task) {
-        ThreadPoolUtil.execute(() -> TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                try {
-                    createJobToMonitor(cluster, task);
-                } catch (EngineException e) {
-                    log.error("Error creating job for task from CLI", e);
-                }
-                return null;
+        ThreadPoolUtil.execute(() -> TransactionSupport.executeInNewTransaction(() -> {
+            try {
+                createJobToMonitor(cluster, task);
+            } catch (EngineException e) {
+                log.error("Error creating job for task from CLI", e);
             }
+            return null;
         }));
     }
 
