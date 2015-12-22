@@ -1293,10 +1293,13 @@ fi
 %endif
 
 %changelog
-* Thu Sep 24 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.1
+* Tue Dec 22 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.2-1
+- Bump version to 3.6.2
+
+* Thu Sep 24 2015 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.1-1
 - Bump version to 3.6.1
 
-* Thu Jul 10 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.0
+* Thu Jul 10 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.0-1
 - Update dependencies and removed legacy provides / requires
 
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1
