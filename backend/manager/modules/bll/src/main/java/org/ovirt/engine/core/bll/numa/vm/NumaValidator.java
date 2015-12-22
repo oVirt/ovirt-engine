@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -50,12 +54,59 @@ public class NumaValidator {
      * @param cpuCores      number of virtual cpu cores
      * @return the validation result
      */
-    public static ValidationResult checkVmNumaNodeCount(int numaNodeCount, int cpuCores) {
+    private static ValidationResult checkVmNumaNodeCount(int numaNodeCount, int cpuCores) {
 
         if (cpuCores < numaNodeCount) {
             return new ValidationResult(EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
                     String.format("$numaNodes %d", numaNodeCount),
                     String.format("$cpus %d", cpuCores));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Check if the provided numa nodes do not containe the same numa node index more than once
+     *
+     * @param vmNumaNodes to check for duplicates
+     * @return {@link ValidationResult#VALID} if no duplicates exist
+     */
+    public static ValidationResult checkVmNumaIndexDuplicates(final List<VmNumaNode> vmNumaNodes) {
+        Set<Integer> indices = new HashSet<>();
+        for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            if (!indices.add(vmNumaNode.getIndex())) {
+                return new ValidationResult(EngineMessage.VM_NUMA_NODE_INDEX_DUPLICATE,
+                        String.format("$nodeIndex %d", vmNumaNode.getIndex()));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Check if the indices of the provided numa nodes are continuous
+     *
+     * @param vmNumaNodes to check if indices are continuous
+     * @return {@link ValidationResult#VALID} if no indices are missing
+     */
+    public static ValidationResult checkVmNumaIndexContinuity(final List<VmNumaNode> vmNumaNodes) {
+        Set<Integer> indices = new HashSet<>();
+        for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            indices.add(vmNumaNode.getIndex());
+        }
+        List<Integer> missingIndices = new ArrayList<>();
+        for (int x = 0; x < vmNumaNodes.size(); x++) {
+            if (!indices.contains(x)) {
+                missingIndices.add(x);
+            }
+        }
+
+        if (!missingIndices.isEmpty()) {
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_NON_CONTINUOUS_INDEX,
+                    String.format("$nodeCount %d", vmNumaNodes.size()),
+                    String.format("$minIndex %d", 0),
+                    String.format("$maxIndex %d", indices.size() - 1),
+                    String.format("$missingIndices %s", formatMissingIndices(missingIndices)));
         }
 
         return ValidationResult.VALID;
@@ -85,6 +136,16 @@ public class NumaValidator {
             return validationResult;
         }
 
+        validationResult = checkVmNumaIndexDuplicates(vmNumaNodes);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = checkVmNumaIndexContinuity(vmNumaNodes);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
         return ValidationResult.VALID;
     }
 
@@ -94,7 +155,7 @@ public class NumaValidator {
      * validation takes place.
      *
      * @param vm            with numa nodes
-     * @param vmNumaNodes to use for validation
+     * @param vmNumaNodes   to use for validation
      * @param hostNumaNodes from a host
      * @return weather the vm can run on the hostNumaNodes or not
      */
@@ -158,15 +219,15 @@ public class NumaValidator {
     }
 
     /**
-     * Check the whole numa configuration of a VM. The numa nodes for validation need to be passed in separately
-     * because the numa nodes are not necessarily part of the VM when the validation takes place.
+     * Check the whole numa configuration of a VM. The numa nodes for validation need to be passed in separately because
+     * the numa nodes are not necessarily part of the VM when the validation takes place.
      *
-     * @param vm to check comaptiblity with
+     * @param vm          to check comaptiblity with
      * @param vmNumaNodes to use for validation
      * @return the validation result
      */
     public static ValidationResult checkVmNumaNodesIntegrity(final VM vm, final List<VmNumaNode> vmNumaNodes) {
-        if (vmNumaNodes.isEmpty()){
+        if (vmNumaNodes.isEmpty()) {
             return ValidationResult.VALID;
         }
 
@@ -177,7 +238,7 @@ public class NumaValidator {
 
         //TODO Proper validation for multiple host pinning
         //TODO Numa sheduling policy
-        if (Config.<Boolean>getValue(ConfigValues.SupportNUMAMigration)){
+        if (Config.<Boolean>getValue(ConfigValues.SupportNUMAMigration)) {
             return ValidationResult.VALID;
         }
 
@@ -187,7 +248,15 @@ public class NumaValidator {
         }
 
         final List<VdsNumaNode> hostNumaNodes = DbFacade.getInstance().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(
-               vm.getDedicatedVmForVdsList().get(0));
+                vm.getDedicatedVmForVdsList().get(0));
         return validateNumaCompatibility(vm, vmNumaNodes, hostNumaNodes);
+    }
+
+    private static String formatMissingIndices(List<Integer> missingIndices) {
+        String str = StringUtils.join(missingIndices.subList(0, Math.min(10, missingIndices.size())), ", ");
+        if (missingIndices.size() > 10) {
+            str = str + ", ...";
+        }
+        return str;
     }
 }

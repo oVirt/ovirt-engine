@@ -5,7 +5,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
-import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNodeWithId;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVmNumaNodeDao;
@@ -63,6 +62,7 @@ public class RemoveVmNumaNodesCommandTest {
     private List<VdsNumaNode> vdsNumaNodes;
     private List<VmNumaNode> removeNumaNodes;
 
+    private static final Guid NODE_ID_0 = Guid.newGuid();
     private static final Guid NODE_ID_1 = Guid.newGuid();
     private static final Guid NODE_ID_2 = Guid.newGuid();
 
@@ -73,10 +73,10 @@ public class RemoveVmNumaNodesCommandTest {
         DbFacade.setInstance(dbFacade);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
-        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(1, NODE_ID_1),
-                createVmNumaNodeWithId(2, NODE_ID_2), createVmNumaNode(3)));
-        removeNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(1, NODE_ID_1), createVmNumaNodeWithId
-                (2, NODE_ID_2)));
+        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(0, NODE_ID_0),
+                createVmNumaNodeWithId(1, NODE_ID_1), createVmNumaNodeWithId(2, NODE_ID_2)));
+        removeNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(0, NODE_ID_0), createVmNumaNodeWithId
+                (1, NODE_ID_1)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
@@ -95,14 +95,38 @@ public class RemoveVmNumaNodesCommandTest {
         vm.setvNumaNodeList(existingNumaNodes);
         final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         command.executeCommand();
-        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(Arrays.asList(NODE_ID_1, NODE_ID_2));
+        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(Arrays.asList(NODE_ID_0, NODE_ID_1));
     }
 
     @Test
     public void canRemoveNodesWithVmFromDb() {
         final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromDb();
         command.executeCommand();
-        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(Arrays.asList(NODE_ID_1, NODE_ID_2));
+        verify(vmNumaNodeDao).massRemoveNumaNodeByNumaNodeId(Arrays.asList(NODE_ID_0, NODE_ID_1));
+    }
+
+    @Test
+    public void canDeleteNodeWithHighestIndex() {
+        removeNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(2, NODE_ID_2)));
+        vm.setvNumaNodeList(existingNumaNodes);
+        final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromDb();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void canNotDeleteNodeWithLowerIndex() {
+        vm.setvNumaNodeList(existingNumaNodes);
+        final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromDb();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.VM_NUMA_NODE_NON_CONTINUOUS_INDEX);
+    }
+
+    @Test
+    public void canDeleteMultipleNodesAtOnce() {
+        removeNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(1, NODE_ID_1),
+                createVmNumaNodeWithId(2, NODE_ID_2)));
+        vm.setvNumaNodeList(existingNumaNodes);
+        final RemoveVmNumaNodesCommand command = mockedCommandWithVmFromDb();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test

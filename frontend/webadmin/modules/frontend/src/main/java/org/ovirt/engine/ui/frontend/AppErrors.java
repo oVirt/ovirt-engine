@@ -3575,6 +3575,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Host has no NUMA architecture")
     String HOST_NUMA_NOT_SUPPORTED();
 
+    @DefaultStringValue("NUMA node with index ${nodeIndex} exists at least twice.")
+    String VM_NUMA_NODE_INDEX_DUPLICATE();
+
+    @DefaultStringValue("Expected a continuous index sequence of ${minIndex}-${maxIndex} for ${nodeCount} numa nodes. Missing indices ${missingIndices}."
+            + "Assign indices with increasing order starting from 0 to your virtual numa nodes.")
+    String VM_NUMA_NODE_NON_CONTINUOUS_INDEX();
+
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 
