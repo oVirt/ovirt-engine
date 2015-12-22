@@ -61,9 +61,8 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
     private List<VdsNumaNode> vdsNumaNodes;
     private List<VmNumaNode> updatedNumaNodes;
 
+    private static final Guid NODE_ID_0 = Guid.newGuid();
     private static final Guid NODE_ID_1 = Guid.newGuid();
-    private static final Guid NODE_ID_2 = Guid.newGuid();
-    private static final Guid NODE_ID_3 = Guid.newGuid();
 
     @Before
     public void setUp() throws Exception {
@@ -73,10 +72,10 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
         DbFacade.setInstance(dbFacade);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
-        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(1, NODE_ID_1),
-                createVmNumaNodeWithId(2, NODE_ID_2), createVmNumaNode(3)));
-        updatedNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(1, NODE_ID_1), createVmNumaNodeWithId
-                (2, NODE_ID_2)));
+        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(0, NODE_ID_0),
+                createVmNumaNodeWithId(1, NODE_ID_1), createVmNumaNode(2)));
+        updatedNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNodeWithId(0, NODE_ID_0), createVmNumaNodeWithId
+                (1, NODE_ID_1)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
@@ -115,13 +114,27 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canDetectMissingRequiredHostNumaNodes() {
-        updatedNumaNodes = Arrays.asList(createVmNumaNodeWithId(3, vdsNumaNodes, NODE_ID_3));
-        existingNumaNodes.addAll(updatedNumaNodes);
+        updatedNumaNodes = Arrays.asList(createVmNumaNodeWithId(0, vdsNumaNodes, NODE_ID_0));
         vm.setvNumaNodeList(existingNumaNodes);
         vdsNumaNodes.remove(0);
         final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
+    }
+
+    @Test
+    public void canDetectDuplicateNumaNodes() {
+        updatedNumaNodes = Arrays.asList(createVmNumaNode(10), createVmNumaNode(10));
+        final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.VM_NUMA_NODE_INDEX_DUPLICATE);
+    }
+
+    @Test
+    public void canUpdateNumaNodesWithArbitraryIndex() {
+        updatedNumaNodes = Arrays.asList(createVmNumaNode(0), createVmNumaNode(2));
+        final UpdateVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test

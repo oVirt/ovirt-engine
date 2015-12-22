@@ -70,8 +70,8 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         DbFacade.setInstance(dbFacade);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
-        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
-        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
+        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(2), createVmNumaNode(3)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
@@ -125,7 +125,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
 
     @Test
     public void canDetectMissingRequiredHostNumaNodes() {
-        existingNumaNodes.set(0, createVmNumaNode(1, vdsNumaNodes));
+        existingNumaNodes.set(0, createVmNumaNode(0, vdsNumaNodes));
         vdsNumaNodes.remove(0);
         final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -209,6 +209,22 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         vm.setNumOfSockets(1);
         vm.setCpuPerSocket(3);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_NUMA_NODE_MORE_NODES_THAN_CPUS);
+    }
+
+    @Test
+    public void canDetectDuplicateNumaNodes() {
+        newNumaNodes = Arrays.asList(createVmNumaNode(10), createVmNumaNode(10));
+        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.VM_NUMA_NODE_INDEX_DUPLICATE);
+    }
+
+    @Test
+    public void canDetectNonContinuousNumaNodeIndices() {
+        newNumaNodes = Arrays.asList(createVmNumaNode(2), createVmNumaNode(4));
+        final AddVmNumaNodesCommand command = mockedCommandWithVmFromParams();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.VM_NUMA_NODE_NON_CONTINUOUS_INDEX);
     }
 
     private AddVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {

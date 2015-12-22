@@ -59,6 +59,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
         if (getVm() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
+        if (!validate(NumaValidator.checkVmNumaIndexDuplicates(getParameters().getVmNumaNodeList()))) {
+            return false;
+        }
         return validate(NumaValidator.checkVmNumaNodesIntegrity(getVm(), getVmNumaNodesForValidation()));
     }
 

@@ -57,7 +57,7 @@ public class NumaValidatorTest {
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
-        vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1, vdsNumaNodes), createVmNumaNode(2)));
+        vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0, vdsNumaNodes), createVmNumaNode(1)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
 
         vm = new VM();
@@ -105,14 +105,14 @@ public class NumaValidatorTest {
     }
 
     @Test
-    public void shouldDetectTooMuchVmNumaNodes(){
+    public void shouldDetectTooMuchVmNumaNodes() {
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertValidationFailure(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
 
     @Test
-    public void shouldDetectTooMuchHostNodes(){
+    public void shouldDetectTooMuchHostNodes() {
         vm.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, vdsNumaNodes)));
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertValidationFailure(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
@@ -120,8 +120,32 @@ public class NumaValidatorTest {
     }
 
     @Test
-    public void shouldValidateSingleNodePinning(){
-        vm.setvNumaNodeList(Arrays.asList(createVmNumaNode(1, Arrays.asList(createVdsNumaNode(1)))));
+    public void shouldDetectDuplicateNodeIndex() {
+        vmNumaNodes.get(0).setIndex(1);
+        vmNumaNodes.get(1).setIndex(1);
+        assertValidationFailure(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_INDEX_DUPLICATE);
+    }
+
+    @Test
+    public void shouldDetectNonContinuousNodeIndices() {
+        vmNumaNodes.get(0).setIndex(0);
+        vmNumaNodes.get(1).setIndex(2);
+        assertValidationFailure(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_NON_CONTINUOUS_INDEX);
+    }
+
+    @Test
+    public void shouldDetectIndicesNotStartingWithZero() {
+        vmNumaNodes.get(0).setIndex(2);
+        vmNumaNodes.get(1).setIndex(3);
+        assertValidationFailure(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_NON_CONTINUOUS_INDEX);
+    }
+
+    @Test
+    public void shouldValidateSingleNodePinning() {
+        vm.setvNumaNodeList(Arrays.asList(createVmNumaNode(0, Arrays.asList(createVdsNumaNode(1)))));
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertTrue(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
     }

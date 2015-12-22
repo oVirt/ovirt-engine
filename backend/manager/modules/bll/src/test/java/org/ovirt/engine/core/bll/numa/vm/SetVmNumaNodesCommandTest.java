@@ -71,9 +71,9 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
         DbFacade.setInstance(dbFacade);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
-        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
         existingNumaNodeIds = existingNumaNodes.stream().map(VmNumaNode::getId).collect(Collectors.toList());
-        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
@@ -127,7 +127,6 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
-
 
     private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {
         return mockedCommand(new VmNumaNodeOperationParameters(vm, newNumaNodes));
