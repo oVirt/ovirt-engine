@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -38,6 +39,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class VmInterfaceModel extends Model {
     protected static final String ON_SAVE_COMMAND = "OnSave"; //$NON-NLS-1$
+
+    private Collection<VmInterfaceType> supportedVnicTypes;
 
     private EntityModel<String> privateName;
     private ListModel<VnicProfileView> privateProfile;
@@ -513,11 +516,17 @@ public abstract class VmInterfaceModel extends Model {
     protected VmInterfaceType getDefaultNicTypeByProfile() {
         VnicProfileView profile = getProfile().getSelectedItem();
 
-        ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
-        nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
-        boolean passthroughSupported = nicTypes.contains(VmInterfaceType.pciPassthrough);
+        boolean passthroughSupported = getSupportedVnicTypes().contains(VmInterfaceType.pciPassthrough);
 
         return profile != null && profile.isPassthrough() && passthroughSupported ? VmInterfaceType.pciPassthrough
-                : AsyncDataProvider.getInstance().getDefaultNicType(getNicType().getItems());
+                : AsyncDataProvider.getInstance().getDefaultNicType(getSupportedVnicTypes());
+    }
+
+    protected Collection<VmInterfaceType> getSupportedVnicTypes() {
+        return supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
+    }
+
+    protected void setSupportedVnicTypes(Collection<VmInterfaceType> supportedVnicTypes) {
+        this.supportedVnicTypes = supportedVnicTypes;
     }
 }
