@@ -497,8 +497,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         if (containsLocalStorage(model)) {
             shouldAddressWarnning = false;
-            model.getLatch().setIsAvailable(true);
-            model.getLatch().setIsChangeable(true);
+            model.getForce().setIsAvailable(true);
+            model.getForce().setIsChangeable(true);
+            model.setForceLabel(ConstantsManager.getInstance().getConstants().storageRemovePopupFormatLabel());
 
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }
@@ -532,7 +533,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onDetach() {
-        ConfirmationModel confirmModel = (ConfirmationModel) getWindow();
+        final ConfirmationModel confirmModel = (ConfirmationModel) getWindow();
 
         if (confirmModel.getProgress() != null) {
             return;
@@ -570,7 +571,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                     VDS locaVds = (VDS) result;
                     for (VdcActionParametersBase item : dataCenterStorageListModel.getpb_remove()) {
                         ((RemoveStorageDomainParameters) item).setVdsId((locaVds != null ? locaVds.getId() : null));
-                        ((RemoveStorageDomainParameters) item).setDoFormat(true);
+                        ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                     }
 
                     dataCenterStorageListModel.postDetach(dataCenterStorageListModel.getWindow());

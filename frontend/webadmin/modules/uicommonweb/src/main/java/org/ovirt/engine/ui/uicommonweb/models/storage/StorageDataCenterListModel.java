@@ -468,8 +468,9 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.setItems(items);
 
         if (containsLocalStorage(model)) {
-            model.getLatch().setIsAvailable(true);
-            model.getLatch().setIsChangeable(true);
+            model.getForce().setIsAvailable(true);
+            model.getForce().setIsChangeable(true);
+            model.setForceLabel(ConstantsManager.getInstance().getConstants().storageRemovePopupFormatLabel());
             shouldAddressWarnning = false;
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }
@@ -503,7 +504,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void onDetach() {
-        ConfirmationModel model = (ConfirmationModel) getWindow();
+        final ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (!model.validate()) {
             return;
@@ -536,7 +537,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                 RemoveStorageDomainParameters tempVar =
                                         new RemoveStorageDomainParameters(storage.getId());
                                 tempVar.setVdsId((locaVds != null ? locaVds.getId() : null));
-                                tempVar.setDoFormat(true);
+                                tempVar.setDoFormat(model.getForce().getEntity());
                                 RemoveStorageDomainParameters removeStorageDomainParameters = tempVar;
                                 listModel.getremovePrms().add(removeStorageDomainParameters);
                                 if (listModel.getremovePrms().size() + listModel.getdetachPrms().size() == listModel.getSelectedItems()
