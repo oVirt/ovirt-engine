@@ -90,7 +90,6 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -302,14 +301,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         final Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = new HashMap<>();
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addVmTemplateToDb();
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            addVmTemplateToDb();
+            getCompensationContext().stateChanged();
+            return null;
         });
 
         if (getVm() != null && !addVmTemplateCinderDisks(srcDeviceIdToTargetDeviceIdMapping)) {
@@ -317,44 +312,40 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return;
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addPermission();
-                addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
-                addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
-                Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
-                if (isVmInDb) {
-                    VmDeviceUtils.copyVmDevices(getVmId(),
-                            getVmTemplateId(),
-                            srcDeviceIdToTargetDeviceIdMapping,
-                            getParameters().isSoundDeviceEnabled(),
-                            getParameters().isConsoleEnabled(),
-                            getParameters().isVirtioScsiEnabled(),
-                            VmDeviceUtils.hasMemoryBalloon(getVmId()),
-                            graphicsToSkip,
-                            false);
-                } else {
-                    // for instance type and new template without a VM
-                    VmDeviceUtils.copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
-                            getVmTemplateId(),
-                            srcDeviceIdToTargetDeviceIdMapping,
-                            getParameters().isSoundDeviceEnabled(),
-                            getParameters().isConsoleEnabled(),
-                            getParameters().isVirtioScsiEnabled(),
-                            Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
-                            graphicsToSkip,
-                            false);
-                }
-
-                updateWatchdog(getVmTemplateId());
-                updateRngDevice(getVmTemplateId());
-                addGraphicsDevice();
-
-                setSucceeded(true);
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            addPermission();
+            addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
+            addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
+            Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
+            if (isVmInDb) {
+                VmDeviceUtils.copyVmDevices(getVmId(),
+                        getVmTemplateId(),
+                        srcDeviceIdToTargetDeviceIdMapping,
+                        getParameters().isSoundDeviceEnabled(),
+                        getParameters().isConsoleEnabled(),
+                        getParameters().isVirtioScsiEnabled(),
+                        VmDeviceUtils.hasMemoryBalloon(getVmId()),
+                        graphicsToSkip,
+                        false);
+            } else {
+                // for instance type and new template without a VM
+                VmDeviceUtils.copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
+                        getVmTemplateId(),
+                        srcDeviceIdToTargetDeviceIdMapping,
+                        getParameters().isSoundDeviceEnabled(),
+                        getParameters().isConsoleEnabled(),
+                        getParameters().isVirtioScsiEnabled(),
+                        Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
+                        graphicsToSkip,
+                        false);
             }
+
+            updateWatchdog(getVmTemplateId());
+            updateRngDevice(getVmTemplateId());
+            addGraphicsDevice();
+
+            setSucceeded(true);
+            return null;
         });
 
         if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {

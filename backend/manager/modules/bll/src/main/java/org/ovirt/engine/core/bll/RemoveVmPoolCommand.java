@@ -34,7 +34,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,17 +115,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     @Override
     protected void executeCommand() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(getVmPool());
-                setPoolBeingDestroyed();
-                setPrestartedToZero();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(getVmPool());
+            setPoolBeingDestroyed();
+            setPrestartedToZero();
+            getCompensationContext().stateChanged();
+            return null;
         });
         setCommandShouldBeLogged(false);  // disable logging at the end of command execution
         log();                            // and log the message now

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
@@ -60,15 +59,11 @@ public class VmManager {
     }
 
     public void succededToHibernate() {
-        TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        VmDynamic vmDynamic = getVmDynamicDao().get(id);
-                        vmDynamic.setStatus(VMStatus.SavingState);
-                        update(vmDynamic);
-                        return null;
-                    }
+        TransactionSupport.executeInNewTransaction(() -> {
+                    VmDynamic vmDynamic = getVmDynamicDao().get(id);
+                    vmDynamic.setStatus(VMStatus.SavingState);
+                    update(vmDynamic);
+                    return null;
                 }
         );
     }

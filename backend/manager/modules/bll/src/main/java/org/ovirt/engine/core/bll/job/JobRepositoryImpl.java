@@ -18,7 +18,6 @@ import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,60 +44,48 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public void saveStep(final Step step) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                try {
-                    jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
-                    stepDao.save(step);
-                } catch (Exception e) {
-                    log.error("Failed to save step '{}', '{}': {}",
-                            step.getId(),
-                            step.getStepName(),
-                            e.getMessage());
-                    log.debug("Exception", e);
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            try {
+                jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
+                stepDao.save(step);
+            } catch (Exception e) {
+                log.error("Failed to save step '{}', '{}': {}",
+                        step.getId(),
+                        step.getStepName(),
+                        e.getMessage());
+                log.debug("Exception", e);
             }
+            return null;
         });
     }
 
     @Override
     public void updateStep(final Step step) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
 
-            @Override
-            public Void runInTransaction() {
-
-                try {
-                    jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
-                    stepDao.update(step);
-                } catch (Exception e) {
-                    log.error("Failed to update step '{}', '{}': {}",
-                            step.getId(),
-                            step.getStepName(),
-                            e.getMessage());
-                    log.debug("Exception", e);
-                }
-                return null;
+            try {
+                jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
+                stepDao.update(step);
+            } catch (Exception e) {
+                log.error("Failed to update step '{}', '{}': {}",
+                        step.getId(),
+                        step.getStepName(),
+                        e.getMessage());
+                log.debug("Exception", e);
             }
+            return null;
         });
     }
 
     @Override
     public void saveJob(final Job job) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.save(job);
-                Set<Entry<Guid, VdcObjectType>> entrySet = job.getJobSubjectEntities().entrySet();
-                for (Entry<Guid, VdcObjectType> entry : entrySet) {
-                    jobSubjectEntityDao.save(job.getId(), entry.getKey(), entry.getValue());
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            jobDao.save(job);
+            Set<Entry<Guid, VdcObjectType>> entrySet = job.getJobSubjectEntities().entrySet();
+            for (Entry<Guid, VdcObjectType> entry : entrySet) {
+                jobSubjectEntityDao.save(job.getId(), entry.getKey(), entry.getValue());
             }
+            return null;
         });
     }
 
@@ -190,53 +177,37 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public void updateExistingStepAndSaveNewStep(final Step existingStep, final Step newStep) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.updateJobLastUpdateTime(existingStep.getJobId(), new Date());
-                stepDao.update(existingStep);
-                stepDao.save(newStep);
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            jobDao.updateJobLastUpdateTime(existingStep.getJobId(), new Date());
+            stepDao.update(existingStep);
+            stepDao.save(newStep);
+            return null;
         });
     }
 
     @Override
     public void updateCompletedJobAndSteps(final Job job) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.update(job);
-                stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            jobDao.update(job);
+            stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
+            return null;
         });
     }
 
     @Override
     public void closeCompletedJobSteps(final Guid jobId, final JobExecutionStatus status) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                stepDao.updateJobStepsCompleted(jobId, status, new Date());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            stepDao.updateJobStepsCompleted(jobId, status, new Date());
+            return null;
         });
     }
 
     @Override
     public void finalizeJobs() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.deleteRunningJobsOfTasklessCommands();
-                jobDao.updateStartedExecutionEntitiesToUnknown(new Date());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            jobDao.deleteRunningJobsOfTasklessCommands();
+            jobDao.updateStartedExecutionEntitiesToUnknown(new Date());
+            return null;
         });
 
     }

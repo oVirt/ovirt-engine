@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -158,36 +157,31 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     }
 
     private void saveIllegalDisk(final DiskImage diskImage) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                // Allocating new IDs for image and disk as it's possible
-                // that more than one clone will be made from this source
-                // So this is required to avoid PK violation at DB.
-                diskImage.setImageId(Guid.newGuid());
-                diskImage.setId(Guid.newGuid());
-                diskImage.setParentId(Guid.Empty);
-                diskImage.setImageTemplateId(Guid.Empty);
+        TransactionSupport.executeInNewTransaction(() -> {
+            // Allocating new IDs for image and disk as it's possible
+            // that more than one clone will be made from this source
+            // So this is required to avoid PK violation at DB.
+            diskImage.setImageId(Guid.newGuid());
+            diskImage.setId(Guid.newGuid());
+            diskImage.setParentId(Guid.Empty);
+            diskImage.setImageTemplateId(Guid.Empty);
 
-                ImagesHandler.setDiskAlias(diskImage, getVm());
-                ImagesHandler.addDiskImage(diskImage, getVmId());
-                return null;
-            }
+            ImagesHandler.setDiskAlias(diskImage, getVm());
+            ImagesHandler.addDiskImage(diskImage, getVmId());
+            return null;
         });
     }
 
+    /**
+     * Assumption - a snapshot can be locked only if in status OK, so if validate passed
+     * this is the status of the snapshot. In addition the newly added VM is in down status
+     */
     protected void lockSnapshot() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                // Assumption - a snapshot can be locked only if in status OK, so if validate passed
-                // this is the status of the snapshot. In addition the newly added VM is in down status
-                getCompensationContext().snapshotEntityStatus(getSnapshot());
-                getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntityStatus(getSnapshot());
+            getSnapshotDao().updateStatus(getParameters().getSourceSnapshotId(), SnapshotStatus.LOCKED);
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 

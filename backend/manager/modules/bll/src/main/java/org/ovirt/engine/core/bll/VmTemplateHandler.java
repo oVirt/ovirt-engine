@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,13 +77,10 @@ public class VmTemplateHandler {
      */
     public static void lockVmTemplateInTransaction(final Guid vmTemplateGuid,
             final CompensationContext compensationContext) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Locked, compensationContext);
-                compensationContext.stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Locked, compensationContext);
+            compensationContext.stateChanged();
+            return null;
         });
     }
 

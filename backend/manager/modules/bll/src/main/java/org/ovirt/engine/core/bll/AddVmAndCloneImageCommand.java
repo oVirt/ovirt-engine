@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -406,21 +405,18 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     private void saveIllegalDisk(final DiskImage diskImage) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                // Allocating new IDs for image and disk as it's possible
-                // that more than one clone will be made from this source
-                // So this is required to avoid PK violation at DB.
-                diskImage.setImageId(Guid.newGuid());
-                diskImage.setId(Guid.newGuid());
-                diskImage.setParentId(Guid.Empty);
-                diskImage.setImageTemplateId(Guid.Empty);
+        TransactionSupport.executeInNewTransaction(() -> {
+            // Allocating new IDs for image and disk as it's possible
+            // that more than one clone will be made from this source
+            // So this is required to avoid PK violation at DB.
+            diskImage.setImageId(Guid.newGuid());
+            diskImage.setId(Guid.newGuid());
+            diskImage.setParentId(Guid.Empty);
+            diskImage.setImageTemplateId(Guid.Empty);
 
-                ImagesHandler.setDiskAlias(diskImage, getVm());
-                ImagesHandler.addDiskImage(diskImage, getVmId());
-                return null;
-            }
+            ImagesHandler.setDiskAlias(diskImage, getVm());
+            ImagesHandler.addDiskImage(diskImage, getVmId());
+            return null;
         });
     }
 

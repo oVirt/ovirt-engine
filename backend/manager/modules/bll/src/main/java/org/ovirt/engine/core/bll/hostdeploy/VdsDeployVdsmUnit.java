@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.otopi.dialog.Event;
 import org.ovirt.otopi.dialog.SoftError;
@@ -167,12 +166,9 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         log.info("Assigning unique id {} to Host {}", vdsmid, _deploy.getVds().getHostName());
         _deploy.getVds().setUniqueId(vdsmid);
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
+            return null;
         });
     }
 
@@ -184,12 +180,9 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
 
         _deploy.getVds().setVdsType(VDSType.oVirtNode);
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
+            return null;
         });
     }
 

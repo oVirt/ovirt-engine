@@ -58,7 +58,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
@@ -106,15 +105,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                addVdsStaticToDb();
-                addVdsDynamicToDb();
-                addVdsStatisticsToDb();
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            addVdsStaticToDb();
+            addVdsDynamicToDb();
+            addVdsStatisticsToDb();
+            getCompensationContext().stateChanged();
+            return null;
         });
 
         if (getParameters().isProvisioned()) {
@@ -151,20 +147,17 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 return;
             }
         }
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                initializeVds(true);
-                alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
-                testVdsPowerManagementStatus(getParameters().getVdsStaticData());
-                setSucceeded(true);
-                setActionReturnValue(getVdsIdRef());
+        TransactionSupport.executeInNewTransaction(() -> {
+            initializeVds(true);
+            alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
+            testVdsPowerManagementStatus(getParameters().getVdsStaticData());
+            setSucceeded(true);
+            setActionReturnValue(getVdsIdRef());
 
-                // If the installation failed, we don't want to compensate for the failure since it will remove the
-                // host, but instead the host should be left in an "install failed" status.
-                getCompensationContext().resetCompensation();
-                return null;
-            }
+            // If the installation failed, we don't want to compensate for the failure since it will remove the
+            // host, but instead the host should be left in an "install failed" status.
+            getCompensationContext().resetCompensation();
+            return null;
         });
         // do not install vds's which added in pending mode or for provisioning (currently power
         // clients). they are installed as part of the approve process or automatically after provision
@@ -225,13 +218,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 vds.getVdsType().name(),
                 vdsName);
         VdcReturnValueBase result =
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<VdcReturnValueBase>() {
-                    @Override
-                    public VdcReturnValueBase runInTransaction() {
-                        return runInternalAction(VdcActionType.RemoveVds,
-                                new RemoveVdsParameters(oVirtId));
-                    }
-                });
+                TransactionSupport.executeInNewTransaction(() -> runInternalAction(VdcActionType.RemoveVds,
+                        new RemoveVdsParameters(oVirtId)));
 
         if (!result.getSucceeded()) {
             String errors =

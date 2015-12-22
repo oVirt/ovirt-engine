@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -262,16 +261,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private void lockSnapshot(final Snapshot snapshot) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(snapshot);
-                getSnapshotDao().updateStatus(
-                        getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntityStatus(snapshot);
+            getSnapshotDao().updateStatus(
+                    getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 

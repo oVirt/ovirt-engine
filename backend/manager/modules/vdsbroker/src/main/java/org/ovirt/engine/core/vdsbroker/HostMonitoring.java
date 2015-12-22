@@ -40,7 +40,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
@@ -173,13 +172,9 @@ public class HostMonitoring {
             }
             if (!statistics.isEmpty()) {
                 TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                        new TransactionMethod<Void>() {
-
-                            @Override
-                            public Void runInTransaction() {
-                                getDbFacade().getInterfaceDao().massUpdateStatisticsForVds(statistics);
-                                return null;
-                            }
+                        () -> {
+                            getDbFacade().getInterfaceDao().massUpdateStatisticsForVds(statistics);
+                            return null;
                         });
             }
             saveCpuStatisticsDataToDb();
@@ -196,38 +191,29 @@ public class HostMonitoring {
                     .getAllCpuStatisticsByVdsId(vds.getId());
             if (dbCpuStats.isEmpty()) {
                 TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                        new TransactionMethod<Void>() {
-                            @Override
-                            public Void runInTransaction() {
-                                getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
-                                        cpuStatisticsToSave, vds.getId());
-                                return null;
-                            }
+                        () -> {
+                            getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
+                                    cpuStatisticsToSave, vds.getId());
+                            return null;
                         });
             }
             else {
                 boolean needRemoveAndSave = isRemvoeAndSaveVdsCpuStatsNeeded(cpuStatisticsToSave, dbCpuStats);
                 if (needRemoveAndSave) {
                     TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            new TransactionMethod<Void>() {
-                                @Override
-                                public Void runInTransaction() {
-                                    getDbFacade().getVdsCpuStatisticsDao().removeAllCpuStatisticsByVdsId(vds.getId());
-                                    getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
-                                            cpuStatisticsToSave, vds.getId());
-                                    return null;
-                                }
+                            () -> {
+                                getDbFacade().getVdsCpuStatisticsDao().removeAllCpuStatisticsByVdsId(vds.getId());
+                                getDbFacade().getVdsCpuStatisticsDao().massSaveCpuStatistics(
+                                        cpuStatisticsToSave, vds.getId());
+                                return null;
                             });
                 }
                 else {
                     TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            new TransactionMethod<Void>() {
-                                @Override
-                                public Void runInTransaction() {
-                                    getDbFacade().getVdsCpuStatisticsDao().massUpdateCpuStatistics(
-                                            cpuStatisticsToSave, vds.getId());
-                                    return null;
-                                }
+                            () -> {
+                                getDbFacade().getVdsCpuStatisticsDao().massUpdateCpuStatistics(
+                                        cpuStatisticsToSave, vds.getId());
+                                return null;
                             });
                 }
             }

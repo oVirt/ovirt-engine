@@ -42,7 +42,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,17 +216,14 @@ public final class AsyncTaskManager {
             @SuppressWarnings("synthetic-access")
             @Override
             public void run() {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        try {
-                            for (AsyncTask task : tasks) {
-                                handlePartiallyExecutedTaskOfCommand(task);
-                            }
-                            return null;
-                        } finally {
-                            irsBrokerLatch.countDown();
+                TransactionSupport.executeInNewTransaction(() -> {
+                    try {
+                        for (AsyncTask task : tasks) {
+                            handlePartiallyExecutedTaskOfCommand(task);
                         }
+                        return null;
+                    } finally {
+                        irsBrokerLatch.countDown();
                     }
                 });
             }
@@ -677,14 +673,11 @@ public final class AsyncTaskManager {
                     }
                 }
 
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        for (SPMTask task : newlyAddedTasks) {
-                            AsyncTaskUtils.addOrUpdateTaskInDB(task);
-                        }
-                        return null;
+                TransactionSupport.executeInNewTransaction(() -> {
+                    for (SPMTask task : newlyAddedTasks) {
+                        AsyncTaskUtils.addOrUpdateTaskInDB(task);
                     }
+                    return null;
                 });
 
                 for (SPMTask task : newlyAddedTasks) {

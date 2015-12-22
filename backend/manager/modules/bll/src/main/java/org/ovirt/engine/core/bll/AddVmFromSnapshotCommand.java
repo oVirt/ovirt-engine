@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -192,19 +191,17 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
+    /**
+     * Assumption - a snapshot can be locked only if in status OK, so if validate passed
+     * this is the status of the snapshot. In addition the newly added VM is in down status
+     */
     protected void lockEntities() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                // Assumption - a snapshot can be locked only if in status OK, so if validate passed
-                // this is the status of the snapshot. In addition the newly added VM is in down status
-                getCompensationContext().snapshotEntityStatus(getSnapshot());
-                getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);
-                lockVmWithCompensationIfNeeded();
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntityStatus(getSnapshot());
+            getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);
+            lockVmWithCompensationIfNeeded();
+            getCompensationContext().stateChanged();
+            return null;
         });
         freeLock();
     }

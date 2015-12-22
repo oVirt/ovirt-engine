@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -74,14 +73,11 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
     @Override
     protected void executeCommand() {
         prepareRoleForCommand();
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getRoleDao().save(getRole());
-                getCompensationContext().snapshotNewEntity(getRole());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getRoleDao().save(getRole());
+            getCompensationContext().snapshotNewEntity(getRole());
+            getCompensationContext().stateChanged();
+            return null;
         });
 
         VdcReturnValueBase attachAction = runInternalAction(

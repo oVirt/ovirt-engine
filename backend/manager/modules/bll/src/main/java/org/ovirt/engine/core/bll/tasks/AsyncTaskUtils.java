@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +32,14 @@ public class AsyncTaskUtils {
     public static void addOrUpdateTaskInDB(final SPMTask asyncTask) {
         try {
             if (asyncTask.getParameters().getDbAsyncTask() != null) {
-                TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-
-                    @Override
-                    public Void runInTransaction() {
-                        addOrUpdateTaskInDB(asyncTask.getParameters().getDbAsyncTask());
-                        Map<Guid, VdcObjectType> entitiesMap = asyncTask.getEntitiesMap();
-                        List<AsyncTaskEntity> asyncTaskEntities =
-                                buildAsyncTaskEntities(asyncTask.getParameters().getDbAsyncTask().getTaskId(),
-                                        entitiesMap);
-                        getAsyncTaskDao().insertAsyncTaskEntities(asyncTaskEntities);
-                        return null;
-                    }
-
+                TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+                    addOrUpdateTaskInDB(asyncTask.getParameters().getDbAsyncTask());
+                    Map<Guid, VdcObjectType> entitiesMap = asyncTask.getEntitiesMap();
+                    List<AsyncTaskEntity> asyncTaskEntities =
+                            buildAsyncTaskEntities(asyncTask.getParameters().getDbAsyncTask().getTaskId(),
+                                    entitiesMap);
+                    getAsyncTaskDao().insertAsyncTaskEntities(asyncTaskEntities);
+                    return null;
                 });
             }
         } catch (RuntimeException e) {

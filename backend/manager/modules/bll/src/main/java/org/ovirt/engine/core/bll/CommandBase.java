@@ -424,18 +424,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private void clearAsyncTasksWithOutVdsmId() {
         if (!getReturnValue().getTaskPlaceHolderIdList().isEmpty()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-                        AsyncTask task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
-                        if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                            CommandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
-                        }
-
+            TransactionSupport.executeInNewTransaction(() -> {
+                for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
+                    AsyncTask task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
+                    if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                        CommandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
                     }
-                    return null;
+
                 }
+                return null;
             });
         }
     }
@@ -481,57 +478,53 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         } catch (NullPointerException e) {
             log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
         }
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                Deserializer deserializer =
-                        SerializationFactory.getDeserializer();
-                List<BusinessEntitySnapshot> entitySnapshots =
-                        getBusinessEntitySnapshotDao().getAllForCommandId(commandId);
-                log.debug("Command [id={}]: {} compensation data.", commandId,
-                        entitySnapshots.isEmpty() ? "No" : "Going over");
-                for (BusinessEntitySnapshot snapshot : entitySnapshots) {
-                    Class<Serializable> snapshotClass =
-                            (Class<Serializable>) ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
-                    Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
-                    log.info("Command [id={}]: Compensating {} of {}; snapshot: {}.",
-                            commandId,
-                            snapshot.getSnapshotType(),
-                            snapshot.getEntityType(),
-                            (snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
-                                    : snapshotData.toString()));
-                    Class<BusinessEntity<Serializable>> entityClass =
-                            (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
-                    GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
-                            DbFacade.getInstance().getDaoForEntity(entityClass);
+        TransactionSupport.executeInNewTransaction(() -> {
+            Deserializer deserializer =
+                    SerializationFactory.getDeserializer();
+            List<BusinessEntitySnapshot> entitySnapshots =
+                    getBusinessEntitySnapshotDao().getAllForCommandId(commandId);
+            log.debug("Command [id={}]: {} compensation data.", commandId,
+                    entitySnapshots.isEmpty() ? "No" : "Going over");
+            for (BusinessEntitySnapshot snapshot : entitySnapshots) {
+                Class<Serializable> snapshotClass =
+                        (Class<Serializable>) ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
+                Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
+                log.info("Command [id={}]: Compensating {} of {}; snapshot: {}.",
+                        commandId,
+                        snapshot.getSnapshotType(),
+                        snapshot.getEntityType(),
+                        (snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
+                                : snapshotData.toString()));
+                Class<BusinessEntity<Serializable>> entityClass =
+                        (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
+                GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
+                        DbFacade.getInstance().getDaoForEntity(entityClass);
 
-                    switch (snapshot.getSnapshotType()) {
-                    case CHANGED_STATUS_ONLY:
-                        EntityStatusSnapshot entityStatusSnapshot = (EntityStatusSnapshot) snapshotData;
-                        ((StatusAwareDao<Serializable, Enum<?>>) daoForEntity).updateStatus(
-                                entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
-                        break;
-                    case DELETED_OR_UPDATED_ENTITY:
-                        BusinessEntity<Serializable> entitySnapshot = (BusinessEntity<Serializable>) snapshotData;
-                        if (daoForEntity.get(entitySnapshot.getId()) == null) {
-                            daoForEntity.save(entitySnapshot);
-                        } else {
-                            daoForEntity.update(entitySnapshot);
-                        }
-                        break;
-                    case UPDATED_ONLY_ENTITY:
-                        daoForEntity.update((BusinessEntity<Serializable>)snapshotData);
-                        break;
-                    case NEW_ENTITY_ID:
-                        daoForEntity.remove(snapshotData);
-                        break;
+                switch (snapshot.getSnapshotType()) {
+                case CHANGED_STATUS_ONLY:
+                    EntityStatusSnapshot entityStatusSnapshot = (EntityStatusSnapshot) snapshotData;
+                    ((StatusAwareDao<Serializable, Enum<?>>) daoForEntity).updateStatus(
+                            entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
+                    break;
+                case DELETED_OR_UPDATED_ENTITY:
+                    BusinessEntity<Serializable> entitySnapshot = (BusinessEntity<Serializable>) snapshotData;
+                    if (daoForEntity.get(entitySnapshot.getId()) == null) {
+                        daoForEntity.save(entitySnapshot);
+                    } else {
+                        daoForEntity.update(entitySnapshot);
                     }
+                    break;
+                case UPDATED_ONLY_ENTITY:
+                    daoForEntity.update((BusinessEntity<Serializable>)snapshotData);
+                    break;
+                case NEW_ENTITY_ID:
+                    daoForEntity.remove(snapshotData);
+                    break;
                 }
-
-                cleanUpCompensationData();
-                return null;
             }
 
+            cleanUpCompensationData();
+            return null;
         });
     }
 
@@ -1580,14 +1573,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             taskId = task.getTaskId();
             TransactionScopeOption scopeOption =
                     getTransactive() ? TransactionScopeOption.RequiresNew : TransactionScopeOption.Required;
-            TransactionSupport.executeInScope(scopeOption, new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    saveTaskAndPutInMap(taskKey, task);
-                    return null;
-                }
-
+            TransactionSupport.executeInScope(scopeOption, () -> {
+                saveTaskAndPutInMap(taskKey, task);
+                return null;
             });
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {

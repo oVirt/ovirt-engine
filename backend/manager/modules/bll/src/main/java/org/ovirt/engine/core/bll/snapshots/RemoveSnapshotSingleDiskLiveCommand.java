@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -364,15 +363,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         try {
             lockVmSnapshotsWithWait(getVm());
 
-            TransactionSupport.executeInNewTransaction(
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            Snapshot s = getSnapshotDao().get(snapshotId);
-                            s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
-                            getSnapshotDao().update(s);
-                            return null;
-                        }
+            TransactionSupport.executeInNewTransaction(() -> {
+                        Snapshot s = getSnapshotDao().get(snapshotId);
+                        s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
+                        getSnapshotDao().update(s);
+                        return null;
                     });
         } finally {
             if (getSnapshotsEngineLock() != null) {
@@ -385,15 +380,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         try {
             lockVmSnapshotsWithWait(getVm());
 
-            TransactionSupport.executeInNewTransaction(
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            Snapshot s = getSnapshotDao().get(snapshotId);
-                            s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
-                            getSnapshotDao().update(s);
-                            return null;
-                        }
+            TransactionSupport.executeInNewTransaction(() -> {
+                        Snapshot s = getSnapshotDao().get(snapshotId);
+                        s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
+                        getSnapshotDao().update(s);
+                        return null;
                     });
         } finally {
             if (getSnapshotsEngineLock() != null) {
@@ -404,12 +395,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     public void onFailed() {
         if (!completedMerge()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    syncDbRecordsMergeFailure();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                syncDbRecordsMergeFailure();
+                return null;
             });
             log.error("Merging of snapshot '{}' images '{}'..'{}' failed. Images have been" +
                             " marked illegal and can no longer be previewed or reverted to." +
@@ -420,12 +408,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             );
 
         } else {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    syncDbRecords(false);
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                syncDbRecords(false);
+                return null;
             });
             log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +
                             " Some or all of the following volumes may be orphaned: {}." +

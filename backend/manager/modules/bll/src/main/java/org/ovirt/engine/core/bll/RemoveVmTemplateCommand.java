@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -274,20 +273,16 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
         if (!diskImages.isEmpty() || !cinderDisks.isEmpty()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    if (!diskImages.isEmpty() && removeVmTemplateImages()) {
-                        VmHandler.removeVmInitFromDB(getVmTemplate());
-                        setSucceeded(true);
-                    }
-                    if (!cinderDisks.isEmpty()) {
-                        removeCinderDisks(cinderDisks);
-                        setSucceeded(true);
-                    }
-                    return null;
+            TransactionSupport.executeInNewTransaction(() -> {
+                if (!diskImages.isEmpty() && removeVmTemplateImages()) {
+                    VmHandler.removeVmInitFromDB(getVmTemplate());
+                    setSucceeded(true);
                 }
+                if (!cinderDisks.isEmpty()) {
+                    removeCinderDisks(cinderDisks);
+                    setSucceeded(true);
+                }
+                return null;
             });
         } else {
             // if for some reason template doesn't have images, remove it now and not in end action

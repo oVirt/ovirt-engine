@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -63,16 +62,13 @@ public class JobWrapper implements Job {
             throws Exception, IllegalAccessException, InvocationTargetException {
         OnTimerMethodAnnotation annotation = methodToRun.getAnnotation(OnTimerMethodAnnotation.class);
         if (annotation.transactional()) {
-            Exception e = TransactionSupport.executeInNewTransaction(new TransactionMethod<Exception>() {
-                @Override
-                public Exception runInTransaction() {
-                    try {
-                        methodToRun.invoke(instance, methodParams);
-                    } catch (Exception e) {
-                        return e;
-                    }
-                    return null;
+            Exception e = TransactionSupport.executeInNewTransaction(() -> {
+                try {
+                    methodToRun.invoke(instance, methodParams);
+                } catch (Exception e1) {
+                    return e1;
                 }
+                return null;
             });
             if (e != null) {
                 throw e;

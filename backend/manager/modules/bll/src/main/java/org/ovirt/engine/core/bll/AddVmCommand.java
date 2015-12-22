@@ -105,7 +105,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -900,39 +899,31 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         ArrayList<String> errorMessages = new ArrayList<>();
         if (canAddVm(errorMessages, destStorages.values())) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    addVmStatic();
-                    addVmDynamic();
-                    addVmNetwork();
-                    addVmNumaNodes();
-                    addVmStatistics();
-                    addActiveSnapshot();
-                    addVmPermission();
-                    addVmInit();
-                    addVmRngDevice();
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                addVmStatic();
+                addVmDynamic();
+                addVmNetwork();
+                addVmNumaNodes();
+                addVmStatistics();
+                addActiveSnapshot();
+                addVmPermission();
+                addVmInit();
+                addVmRngDevice();
+                getCompensationContext().stateChanged();
+                return null;
             });
 
             if (addVmImages()) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                    @Override
-                    public Void runInTransaction() {
-                        copyVmDevices();
-                        addDiskPermissions();
-                        addVmPayload();
-                        updateSmartCardDevices();
-                        addVmWatchdog();
-                        addGraphicsDevice();
-                        setActionReturnValue(getVm().getId());
-                        setSucceeded(true);
-                        return null;
-                    }
+                TransactionSupport.executeInNewTransaction(() -> {
+                    copyVmDevices();
+                    addDiskPermissions();
+                    addVmPayload();
+                    updateSmartCardDevices();
+                    addVmWatchdog();
+                    addGraphicsDevice();
+                    setActionReturnValue(getVm().getId());
+                    setSucceeded(true);
+                    return null;
                 });
             }
         } else {

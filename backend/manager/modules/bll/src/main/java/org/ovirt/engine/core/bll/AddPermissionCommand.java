@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
@@ -170,14 +169,11 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (permission == null) {
             paramPermission.setAdElementId(principalId);
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    getPermissionDao().save(paramPermission);
-                    getCompensationContext().snapshotNewEntity(paramPermission);
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                getPermissionDao().save(paramPermission);
+                getCompensationContext().snapshotNewEntity(paramPermission);
+                getCompensationContext().stateChanged();
+                return null;
             });
             permission = paramPermission;
         }

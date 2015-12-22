@@ -165,33 +165,30 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         final List<DiskImage> filteredImages = (List<DiskImage>) CollectionUtils.subtract(
                 images, getImagesExcludedFromPreview(images, previousActiveSnapshotId, newActiveSnapshotId));
         final List<CinderDisk> cinderDisks = new ArrayList<>();
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(previousActiveSnapshot);
-                getSnapshotDao().remove(previousActiveSnapshotId);
-                snapshotsManager.addSnapshot(previousActiveSnapshotId,
-                        "Active VM before the preview",
-                        SnapshotType.PREVIEW,
-                        getVm(),
-                        previousActiveSnapshot.getMemoryVolume(),
-                        getCompensationContext());
-                snapshotsManager.addActiveSnapshot(newActiveSnapshotId,
-                        getVm(),
-                        restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
-                        images,
-                        getCompensationContext());
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(previousActiveSnapshot);
+            getSnapshotDao().remove(previousActiveSnapshotId);
+            snapshotsManager.addSnapshot(previousActiveSnapshotId,
+                    "Active VM before the preview",
+                    SnapshotType.PREVIEW,
+                    getVm(),
+                    previousActiveSnapshot.getMemoryVolume(),
+                    getCompensationContext());
+            snapshotsManager.addActiveSnapshot(newActiveSnapshotId,
+                    getVm(),
+                    restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
+                    images,
+                    getCompensationContext());
 
-                // if there are no images there's no reason to save the compensation data to DB as the update is
-                // being executed in the same transaction so we can restore the vm config and end the command.
-                if (!filteredImages.isEmpty()) {
-                    getCompensationContext().stateChanged();
-                } else {
-                    getVmStaticDao().incrementDbGeneration(getVm().getId());
-                    restoreVmConfigFromSnapshot();
-                }
-                return null;
+            // if there are no images there's no reason to save the compensation data to DB as the update is
+            // being executed in the same transaction so we can restore the vm config and end the command.
+            if (!filteredImages.isEmpty()) {
+                getCompensationContext().stateChanged();
+            } else {
+                getVmStaticDao().incrementDbGeneration(getVm().getId());
+                restoreVmConfigFromSnapshot();
             }
+            return null;
         });
 
         if (!filteredImages.isEmpty()) {

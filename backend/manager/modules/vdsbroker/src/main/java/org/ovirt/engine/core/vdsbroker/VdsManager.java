@@ -55,7 +55,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -481,20 +480,17 @@ public class VdsManager {
 
         //The database operation should be in one transaction
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        if (!numaNodesToRemove.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDao().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
-                        }
-                        if (!numaNodesToUpdate.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDao().massUpdateNumaNode(numaNodesToUpdate);
-                        }
-                        if (!numaNodesToSave.isEmpty()) {
-                            dbFacade.getVdsNumaNodeDao().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
-                        }
-                        return null;
+                () -> {
+                    if (!numaNodesToRemove.isEmpty()) {
+                        dbFacade.getVdsNumaNodeDao().massRemoveNumaNodeByNumaNodeId(numaNodesToRemove);
                     }
+                    if (!numaNodesToUpdate.isEmpty()) {
+                        dbFacade.getVdsNumaNodeDao().massUpdateNumaNode(numaNodesToUpdate);
+                    }
+                    if (!numaNodesToSave.isEmpty()) {
+                        dbFacade.getVdsNumaNodeDao().massSaveNumaNode(numaNodesToSave, vds.getId(), null);
+                    }
+                    return null;
                 });
     }
 

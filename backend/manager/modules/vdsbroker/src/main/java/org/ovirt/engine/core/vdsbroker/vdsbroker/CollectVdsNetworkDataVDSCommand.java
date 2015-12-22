@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<CollectHostNetworkDataVdsCommandParameters> {
@@ -48,15 +47,11 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
      * {@link org.ovirt.engine.core.common.businessentities.VdsDynamic} entity in the DB.
      */
     private void updateNetConfigDirtyFlag() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance()
-                        .getVdsDynamicDao()
-                        .updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            DbFacade.getInstance()
+                    .getVdsDynamicDao()
+                    .updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
+            return null;
         });
     }
 }

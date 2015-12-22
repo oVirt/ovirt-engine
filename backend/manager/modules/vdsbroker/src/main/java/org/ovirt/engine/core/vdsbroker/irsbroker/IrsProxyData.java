@@ -74,7 +74,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
@@ -623,12 +622,7 @@ public class IrsProxyData {
             if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
                 String host =
                         TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                                new TransactionMethod<String>() {
-                                    @Override
-                                    public String runInTransaction() {
-                                        return gethostFromVds();
-                                    }
-                                });
+                                () -> gethostFromVds());
 
                 if (host != null) {
                     // Get the values of the timeouts:
@@ -1080,12 +1074,9 @@ public class IrsProxyData {
         storagePool.setStatus(StoragePoolStatus.Contend);
         storagePool.setSpmVdsId(selectedVds.getId());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                DbFacade.getInstance().getStoragePoolDao().update(storagePool);
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            DbFacade.getInstance().getStoragePoolDao().update(storagePool);
+            return null;
         });
 
         log.info("starting spm on vds '{}', storage pool '{}', prevId '{}', LVER '{}'",
@@ -1113,16 +1104,13 @@ public class IrsProxyData {
                             EngineError.ENGINE,
                             TransactionScopeOption.RequiresNew);
             if (spmStatus != null) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        StoragePool pool =
-                                DbFacade.getInstance().getStoragePoolDao().get(storagePool.getId());
-                        pool.setSpmVdsId(null);
-                        DbFacade.getInstance().getStoragePoolDao().update(pool);
-                        return null;
-                    }
-                });
+                 TransactionSupport.executeInNewTransaction(() -> {
+                     StoragePool pool =
+                             DbFacade.getInstance().getStoragePoolDao().get(storagePool.getId());
+                     pool.setSpmVdsId(null);
+                     DbFacade.getInstance().getStoragePoolDao().update(pool);
+                     return null;
+                 });
             }
             throw new IrsSpmStartFailedException();
         }

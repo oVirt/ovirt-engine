@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -49,15 +48,12 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected void executeCommand() {
         VDSReturnValue vdsReturnValue = performImageVdsmOperation();
         if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    processOldImageFromDb();
-                    addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
-                    setActionReturnValue(newDiskImage);
-                    setSucceeded(true);
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                processOldImageFromDb();
+                addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
+                setActionReturnValue(newDiskImage);
+                setSucceeded(true);
+                return null;
             });
         }
     }

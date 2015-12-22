@@ -33,7 +33,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 
@@ -163,15 +162,11 @@ public class CoCoAsyncTaskHelper {
      * @param asyncTask
      */
     public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
-        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getAsyncTaskDao().save(asyncTask);
-                coco.persistCommand(asyncTask.getRootCmdEntity());
-                coco.persistCommand(asyncTask.getChildCmdEntity());
-                return null;
-            }
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            DbFacade.getInstance().getAsyncTaskDao().save(asyncTask);
+            coco.persistCommand(asyncTask.getRootCmdEntity());
+            coco.persistCommand(asyncTask.getChildCmdEntity());
+            return null;
         });
     }
 
@@ -185,21 +180,17 @@ public class CoCoAsyncTaskHelper {
     }
 
     public int removeTaskFromDbByTaskId(final Guid taskId) throws RuntimeException {
-        return TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Integer>() {
-
-            @Override
-            public Integer runInTransaction() {
-                AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
-                int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
-                if (shouldRemoveCommand(asyncTask)) {
-                    coco.removeCommand(asyncTask.getCommandId());
-                    if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
-                        coco.removeCommand(asyncTask.getRootCommandId());
-                    }
+        return TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
+            int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
+            if (shouldRemoveCommand(asyncTask)) {
+                coco.removeCommand(asyncTask.getCommandId());
+                if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                    coco.removeCommand(asyncTask.getRootCommandId());
                 }
-
-                return retVal;
             }
+
+            return retVal;
         });
     }
 
@@ -227,36 +218,28 @@ public class CoCoAsyncTaskHelper {
     }
 
     public int removeByVdsmTaskId(final Guid vdsmTaskId) {
-        return TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Integer>() {
-
-            @Override
-            public Integer runInTransaction() {
-                AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
-                int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
-                if (shouldRemoveCommand(asyncTask)) {
-                    coco.removeCommand(asyncTask.getCommandId());
-                    if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
-                        coco.removeCommand(asyncTask.getRootCommandId());
-                    }
+        return TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
+            int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
+            if (shouldRemoveCommand(asyncTask)) {
+                coco.removeCommand(asyncTask.getCommandId());
+                if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                    coco.removeCommand(asyncTask.getRootCommandId());
                 }
-
-                return retVal;
             }
+
+            return retVal;
         });
     }
 
     public void addOrUpdateTaskInDB(final AsyncTask asyncTask) {
-        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                if (!asyncTask.getChildCmdEntity().getRootCommandId().equals(asyncTask.getChildCmdEntity().getId())) {
-                    coco.persistCommand(asyncTask.getRootCmdEntity());
-                }
-                coco.persistCommand(asyncTask.getChildCmdEntity());
-                DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
-                return null;
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            if (!asyncTask.getChildCmdEntity().getRootCommandId().equals(asyncTask.getChildCmdEntity().getId())) {
+                coco.persistCommand(asyncTask.getRootCmdEntity());
             }
+            coco.persistCommand(asyncTask.getChildCmdEntity());
+            DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
+            return null;
         });
     }
 

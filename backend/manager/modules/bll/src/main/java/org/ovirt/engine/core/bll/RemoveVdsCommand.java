@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSPa
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -74,15 +73,11 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             removeGlusterHooksFromDb();
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                removeVdsStatisticsFromDb();
-                removeVdsDynamicFromDb();
-                removeVdsStaticFromDb();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            removeVdsStatisticsFromDb();
+            removeVdsDynamicFromDb();
+            removeVdsStaticFromDb();
+            return null;
         });
         removeVdsFromCollection();
         setSucceeded(true);

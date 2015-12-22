@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,14 +171,11 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     private void saveImageStorageDomainMapList(final List<ImageStorageDomainMap> copiedTemplateDisks) {
         if (!copiedTemplateDisks.isEmpty()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    for (ImageStorageDomainMap imageStorageDomainMap : copiedTemplateDisks) {
-                        getImageStorageDomainMapDao().save(imageStorageDomainMap);
-                    }
-                    return null;
+            TransactionSupport.executeInNewTransaction(() -> {
+                for (ImageStorageDomainMap imageStorageDomainMap : copiedTemplateDisks) {
+                    getImageStorageDomainMapDao().save(imageStorageDomainMap);
                 }
+                return null;
             });
         }
     }

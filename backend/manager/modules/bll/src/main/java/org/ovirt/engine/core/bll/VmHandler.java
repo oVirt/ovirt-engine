@@ -89,7 +89,6 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -236,15 +235,11 @@ public class VmHandler {
      *            Used to save the old VM status, for compensation purposes.
      */
     public static void lockVm(final VmDynamic vm, final CompensationContext compensationContext) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                compensationContext.snapshotEntityStatus(vm);
-                lockVm(vm.getId());
-                compensationContext.stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            compensationContext.snapshotEntityStatus(vm);
+            lockVm(vm.getId());
+            compensationContext.stateChanged();
+            return null;
         });
     }
 
@@ -303,15 +298,11 @@ public class VmHandler {
      *            Used to save the old VM status, for compensation purposes.
      */
     public static void unlockVm(final VM vm, final CompensationContext compensationContext) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                compensationContext.snapshotEntityStatus(vm.getDynamicData());
-                unLockVm(vm);
-                compensationContext.stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            compensationContext.snapshotEntityStatus(vm.getDynamicData());
+            unLockVm(vm);
+            compensationContext.stateChanged();
+            return null;
         });
     }
 

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddQuotaCommand extends QuotaCRUDCommand {
@@ -45,13 +44,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     protected void executeCommand() {
         setQuotaParameter();
         if (getParameters().isCopyPermissions()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    return executeAddQutoa();
-                }
-            });
+            TransactionSupport.executeInNewTransaction(() -> executeAddQutoa());
         } else {
             executeAddQutoa();
         }

@@ -74,7 +74,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -256,16 +255,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         final Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
         final Guid activeSnapshotId = activeSnapshot.getId();
 
-        TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(activeSnapshot);
-                getSnapshotDao().updateId(activeSnapshotId, newActiveSnapshotId);
-                activeSnapshot.setId(newActiveSnapshotId);
-                getCompensationContext().snapshotNewEntity(activeSnapshot);
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            getCompensationContext().snapshotEntity(activeSnapshot);
+            getSnapshotDao().updateId(activeSnapshotId, newActiveSnapshotId);
+            activeSnapshot.setId(newActiveSnapshotId);
+            getCompensationContext().snapshotNewEntity(activeSnapshot);
+            getCompensationContext().stateChanged();
+            return null;
         });
 
         return activeSnapshotId;
@@ -492,12 +488,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      */
     protected boolean performLiveSnapshot(final Snapshot snapshot) {
         try {
-            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
-                    return null;
-                }
+            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
+                runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
+                return null;
             });
         } catch (EngineException e) {
             handleVdsLiveSnapshotFailure(e);

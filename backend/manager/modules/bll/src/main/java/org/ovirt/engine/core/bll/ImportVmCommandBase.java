@@ -50,7 +50,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
@@ -418,17 +417,13 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected abstract void processImages();
 
     protected void addVmToDb() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addVmStatic();
-                addVmDynamic();
-                addVmStatistics();
-                addVmInterfaces();
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            addVmStatic();
+            addVmDynamic();
+            addVmStatistics();
+            addVmInterfaces();
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 

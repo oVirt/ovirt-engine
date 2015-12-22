@@ -59,7 +59,6 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister;
 
@@ -278,18 +277,15 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         // save the new cluster id
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                VdsStatic staticData = getVds().getStaticData();
-                getCompensationContext().snapshotEntity(staticData);
-                staticData.setVdsGroupId(targetClusterId);
-                DbFacade.getInstance().getVdsStaticDao().update(staticData);
-                getCompensationContext().stateChanged();
-                // remove the server from resource manager and add it back
-                initializeVds();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            VdsStatic staticData = getVds().getStaticData();
+            getCompensationContext().snapshotEntity(staticData);
+            staticData.setVdsGroupId(targetClusterId);
+            DbFacade.getInstance().getVdsStaticDao().update(staticData);
+            getCompensationContext().stateChanged();
+            // remove the server from resource manager and add it back
+            initializeVds();
+            return null;
         });
 
         if (targetStoragePool != null

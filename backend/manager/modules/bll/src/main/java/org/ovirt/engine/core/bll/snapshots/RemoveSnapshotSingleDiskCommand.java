@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -95,18 +94,15 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
         @Override
         public void onRollback() {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    if (!getParameters().isLeaveLocked()) {
-                        DiskImage diskImage = getDestinationDiskImage();
-                        if (diskImage != null) {
-                            getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
-                        }
-                        unLockImage();
+            TransactionSupport.executeInNewTransaction(() -> {
+                if (!getParameters().isLeaveLocked()) {
+                    DiskImage diskImage = getDestinationDiskImage();
+                    if (diskImage != null) {
+                        getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
                     }
-                    return null;
+                    unLockImage();
                 }
+                return null;
             });
         }
     }

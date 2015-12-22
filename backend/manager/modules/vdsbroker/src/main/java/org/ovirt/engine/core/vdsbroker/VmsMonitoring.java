@@ -39,7 +39,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -362,22 +361,19 @@ public class VmsMonitoring {
     private void saveVmGuestAgentNetworkDevices() {
         if (!vmGuestAgentNics.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            for (Guid vmId : vmGuestAgentNics.keySet()) {
-                                getDbFacade().getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
-                            }
+                    () -> {
+                        for (Guid vmId : vmGuestAgentNics.keySet()) {
+                            getDbFacade().getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
+                        }
 
-                            for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
-                                if (nics != null) {
-                                    for (VmGuestAgentInterface nic : nics) {
-                                        getDbFacade().getVmGuestAgentInterfaceDao().save(nic);
-                                    }
+                        for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
+                            if (nics != null) {
+                                for (VmGuestAgentInterface nic : nics) {
+                                    getDbFacade().getVmGuestAgentInterfaceDao().save(nic);
                                 }
                             }
-                            return null;
                         }
+                        return null;
                     }
             );
         }
@@ -388,24 +384,17 @@ public class VmsMonitoring {
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            getDbFacade().getVmDeviceDao().removeAll(removedDeviceIds);
-                            return null;
-                        }
+                    () -> {
+                        getDbFacade().getVmDeviceDao().removeAll(removedDeviceIds);
+                        return null;
                     });
         }
 
         if (!newVmDevices.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-
-                        @Override
-                        public Void runInTransaction() {
-                            getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
-                            return null;
-                        }
+                    () -> {
+                        getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
+                        return null;
                     });
         }
     }
@@ -415,12 +404,9 @@ public class VmsMonitoring {
 
         if (!vmJobIdsToRemove.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            getDbFacade().getVmJobDao().removeAll(vmJobIdsToRemove);
-                            return null;
-                        }
+                    () -> {
+                        getDbFacade().getVmJobDao().removeAll(vmJobIdsToRemove);
+                        return null;
                     });
         }
     }

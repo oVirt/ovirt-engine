@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmIconDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -124,29 +123,26 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         removeMemoryVolumes();
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                removeVmFromDb();
-                if (getParameters().isRemoveDisks()) {
-                    for (DiskImage image : diskImages) {
-                        getCompensationContext().snapshotEntityStatus(image.getImage(), ImageStatus.ILLEGAL);
-                        ImagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
-                    }
-
-                    for (LunDisk lunDisk : lunDisks) {
-                        ImagesHandler.removeLunDisk(lunDisk);
-                    }
-
-                    getCompensationContext().stateChanged();
+        TransactionSupport.executeInNewTransaction(() -> {
+            removeVmFromDb();
+            if (getParameters().isRemoveDisks()) {
+                for (DiskImage image : diskImages) {
+                    getCompensationContext().snapshotEntityStatus(image.getImage(), ImageStatus.ILLEGAL);
+                    ImagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
                 }
-                else {
-                    for (DiskImage image : diskImages) {
-                        getImageDao().updateImageVmSnapshotId(image.getImageId(), null);
-                    }
+
+                for (LunDisk lunDisk : lunDisks) {
+                    ImagesHandler.removeLunDisk(lunDisk);
                 }
-                return null;
+
+                getCompensationContext().stateChanged();
             }
+            else {
+                for (DiskImage image : diskImages) {
+                    getImageDao().updateImageVmSnapshotId(image.getImageId(), null);
+                }
+            }
+            return null;
         });
 
         Collection<DiskImage> unremovedDisks = Collections.emptyList();

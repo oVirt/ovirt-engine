@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -67,17 +66,13 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             setSucceeded(setVdsStatus(VDSStatus.Unassigned).getSucceeded());
 
             if (getSucceeded()) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                    @Override
-                    public Void runInTransaction() {
-                        // set network to operational / non-operational
-                        List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
-                        for (Network net : networks) {
-                            NetworkClusterHelper.setStatus(vds.getVdsGroupId(), net);
-                        }
-                        return null;
+                TransactionSupport.executeInNewTransaction(() -> {
+                    // set network to operational / non-operational
+                    List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+                    for (Network net : networks) {
+                        NetworkClusterHelper.setStatus(vds.getVdsGroupId(), net);
                     }
+                    return null;
                 });
 
                 if (vds.getHighlyAvailableIsConfigured()) {

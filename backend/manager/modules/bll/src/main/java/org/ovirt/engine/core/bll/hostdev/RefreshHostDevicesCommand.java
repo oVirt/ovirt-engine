@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -115,20 +114,17 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
         try {
             hostDeviceManager.acquireHostDevicesLock(getVdsId());
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
+            TransactionSupport.executeInNewTransaction(() -> {
 
-                    hostDeviceDao.saveAllInBatch(newDevices);
-                    hostDeviceDao.updateAllInBatch(changedDevices);
-                    hostDeviceDao.removeAllInBatch(removedDevices);
+                hostDeviceDao.saveAllInBatch(newDevices);
+                hostDeviceDao.updateAllInBatch(changedDevices);
+                hostDeviceDao.removeAllInBatch(removedDevices);
 
-                    handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
+                handleHostNicVfsConfigUpdate(newDevices, changedDevices, removedDevices);
 
-                    getVmDeviceDao().removeAllInBatch(removedVmDevices);
+                getVmDeviceDao().removeAllInBatch(removedVmDevices);
 
-                    return null;
-                }
+                return null;
             });
         } finally {
             hostDeviceManager.releaseHostDevicesLock(getVdsId());

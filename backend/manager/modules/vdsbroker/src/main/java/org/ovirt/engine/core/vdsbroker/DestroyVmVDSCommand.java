@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,16 +39,13 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
             changeStatus(parameters, curVm);
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    curVm.setStopReason(getParameters().getReason());
-                    vmManager.update(curVm.getDynamicData());
-                    vmManager.update(curVm.getStatisticsData());
-                    update(curVm.getInterfaces());
-                    getVmNumaNodeDao().massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                curVm.setStopReason(getParameters().getReason());
+                vmManager.update(curVm.getDynamicData());
+                vmManager.update(curVm.getStatisticsData());
+                update(curVm.getInterfaces());
+                getVmNumaNodeDao().massUpdateVmNumaNodeRuntimePinning(curVm.getvNumaNodeList());
+                return null;
             });
             getVDSReturnValue().setReturnValue(curVm.getStatus());
         } else if (vdsReturnValue.getExceptionObject() != null) {

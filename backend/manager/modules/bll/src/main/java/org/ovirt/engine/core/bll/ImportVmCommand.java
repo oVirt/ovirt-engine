@@ -81,7 +81,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -612,24 +611,20 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void processImages(final boolean useCopyImages) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addVmImagesAndSnapshots();
-                addMemoryImages();
-                updateSnapshotsFromExport();
-                if (useCopyImages) {
-                    moveOrCopyAllImageGroups();
-                }
-                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
-                if (getParameters().isImportAsNewEntity()) {
-                    getParameters().setVm(getVm());
-                    setVmId(getVm().getId());
-                }
-                return null;
-
+        TransactionSupport.executeInNewTransaction(() -> {
+            addVmImagesAndSnapshots();
+            addMemoryImages();
+            updateSnapshotsFromExport();
+            if (useCopyImages) {
+                moveOrCopyAllImageGroups();
             }
+            VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
+            if (getParameters().isImportAsNewEntity()) {
+                getParameters().setVm(getVm());
+                setVmId(getVm().getId());
+            }
+            return null;
+
         });
     }
 

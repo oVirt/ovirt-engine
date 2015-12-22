@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,16 +58,12 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
             }
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    _vdsManager.setStatus(parameters.getStatus(), vds);
-                    _vdsManager.updatePartialDynamicData(parameters.getNonOperationalReason(),
-                            parameters.getMaintenanceReason());
-                    _vdsManager.updateStatisticsData(vds.getStatisticsData());
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                _vdsManager.setStatus(parameters.getStatus(), vds);
+                _vdsManager.updatePartialDynamicData(parameters.getNonOperationalReason(),
+                        parameters.getMaintenanceReason());
+                _vdsManager.updateStatisticsData(vds.getStatisticsData());
+                return null;
             });
         } else {
             getVDSReturnValue().setSucceeded(false);
