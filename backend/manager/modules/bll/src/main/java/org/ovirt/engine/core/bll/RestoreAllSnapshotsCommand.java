@@ -503,16 +503,26 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private void addRedundantCinderSnapshots(Guid previewedSnapshotId, List<DiskImage> imagesFromActiveSnapshot) {
         List<CinderDisk> cinderImagesForPreviewedSnapshot =
                 ImagesHandler.filterDisksBasedOnCinder(getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshotId));
+        Set<Guid> criticalSnapshotsChain = getCriticalSnapshotsChain(imagesFromActiveSnapshot, cinderImagesForPreviewedSnapshot);
         for (DiskImage image : cinderImagesForPreviewedSnapshot) {
-            for (DiskImage diskImage : imagesFromActiveSnapshot) {
-                if (diskImage.getId().equals(image.getId())) {
-                    List<Guid> redundantSnapshotIdsToDelete =
-                            CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(image.getId(),
-                                    diskImage.getImageId());
-                    snapshotsToRemove.addAll(redundantSnapshotIdsToDelete);
+            List<Guid> redundantSnapshotIdsToDelete = CINDERStorageHelper.getRedundantVolumesToDeleteAfterCommitSnapshot(
+                    image.getId(), criticalSnapshotsChain);
+            snapshotsToRemove.addAll(redundantSnapshotIdsToDelete);
+        }
+    }
+
+    private Set<Guid> getCriticalSnapshotsChain(List<DiskImage> imagesFromActiveSnapshot, List<CinderDisk> cinderImagesForPreviewedSnapshot) {
+        Set<Guid> criticalSnapshotsChain = new HashSet<>();
+        for (DiskImage diskImageFromActive : imagesFromActiveSnapshot) {
+            for (DiskImage previewedDiskImage : cinderImagesForPreviewedSnapshot) {
+                if (diskImageFromActive.getId().equals(previewedDiskImage.getId())) {
+                    for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForLeaf(diskImageFromActive.getImageId())) {
+                        criticalSnapshotsChain.add(diskImage.getVmSnapshotId());
+                    }
                 }
             }
         }
+        return criticalSnapshotsChain;
     }
 
     @Override
