@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -75,24 +73,10 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
             CommandExecutionStatus status,
             int completedChildren);
 
-    public void obtainChildCommands(CommandBase<?> commandBase, List<Guid> childCommands) {
-        List<VdcActionParametersBase> parameters = new LinkedList<>();
-        for (Guid id : childCommands) {
-            CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(id);
-            if (command.getParameters().getShouldBeEndedByParent()) {
-                command.getParameters().setCommandType(command.getActionType());
-                parameters.add(command.getParameters());
-            }
-        }
-
-        commandBase.getParameters().setImagesParameters(parameters);
-    }
-
     private void endAction(CommandBase<?> commandBase, List<Guid> childCmdIds, boolean succeeded) {
         if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown
                 || !commandBase.getParameters().getShouldBeEndedByParent()) {
 
-            obtainChildCommands(commandBase, childCmdIds);
             commandBase.endAction();
 
             if (commandBase.getParameters().getParentCommand() == VdcActionType.Unknown) {

@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.inject.Inject;
@@ -546,7 +546,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
             startFinalizingStep();
         }
-
+        obtainChildCommands();
         try {
             initiateLockEndAction();
             setActionState();
@@ -607,6 +607,22 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             _actionState = CommandActionState.END_SUCCESS;
         } else {
             _actionState = CommandActionState.END_FAILURE;
+        }
+    }
+
+    public void obtainChildCommands() {
+        if (getCallback() != null) {
+            List<Guid> childCommands = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
+            List<VdcActionParametersBase> parameters = new LinkedList<>();
+            for (Guid id : childCommands) {
+                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(id);
+                if (command.getParameters().getShouldBeEndedByParent()) {
+                    command.getParameters().setCommandType(command.getActionType());
+                    parameters.add(command.getParameters());
+                }
+            }
+
+            getParameters().setImagesParameters(parameters);
         }
     }
 
