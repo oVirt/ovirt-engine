@@ -73,13 +73,13 @@ public class SetVmNumaNodesCommandTest {
         DbFacade.setInstance(dbFacade);
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
-        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
         existingNumaNodeIds = LinqUtils.transformToList(existingNumaNodes, new Function<VmNumaNode, Guid>() {
             @Override public Guid eval(VmNumaNode vmNumaNode) {
                 return vmNumaNode.getId();
             }
         });
-        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
+        newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0), createVmNumaNode(1)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
 
@@ -133,7 +133,6 @@ public class SetVmNumaNodesCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
-
 
     private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommandWithVmFromParams() {
         return mockedCommand(new VmNumaNodeOperationParameters(vm, newNumaNodes));
