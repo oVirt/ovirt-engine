@@ -374,7 +374,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = new SnapshotVmConfigurationHelper();
             VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
                     previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
-            imagesFromPreviewSnapshot.addAll(vmFromConf.getImages());
+            List<DiskImage> previewedImagesFromDB = getDiskImageDao().getAllSnapshotsForVmSnapshot(previewedSnapshot.getId());
+            imagesFromPreviewSnapshot.addAll(ImagesHandler.imagesIntersection(vmFromConf.getImages(), previewedImagesFromDB));
         }
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
 
