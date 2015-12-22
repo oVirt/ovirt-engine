@@ -21,8 +21,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVmInterfaceModel extends VmInterfaceModel {
 
-    private Collection<VmInterfaceType> supportedVnicTypes;
-
     public static NewVmInterfaceModel createInstance(VmBase vm,
             VMStatus vmStatus,
             Guid dcId,
@@ -62,7 +60,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                supportedVnicTypes = (Collection<VmInterfaceType>) returnValue;
+                setSupportedVnicTypes((Collection<VmInterfaceType>) returnValue);
                 postNicInit();
             }
         };
@@ -106,11 +104,8 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     protected void initSelectedType() {
         final VmInterfaceType defaultNicType = getDeafultNicTypeByProfile();
 
-        final Collection<VmInterfaceType> vnicTypes =
-                supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
-
         if (getNicType().getItems() == null) {
-            getNicType().setItems(vnicTypes, defaultNicType);
+            getNicType().setItems(getSupportedVnicTypes(), defaultNicType);
         } else {
             getNicType().setSelectedItem(defaultNicType);
         }
