@@ -79,21 +79,18 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
         List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final VDS server : getServersInCluster()) {
-            taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
-                @Override
-                public Pair<VDS, VDSReturnValue> call() throws Exception {
-                    VDSReturnValue returnValue;
-                        returnValue =
-                               runVdsCommand(
-                                       VDSCommandType.RemoveGlusterHook,
-                                       new GlusterHookVDSParameters(server.getId(),
-                                               entity.getGlusterCommand(),
-                                               entity.getStage(),
-                                               entity.getName()
-                                               ));
-                     return new Pair<>(server, returnValue);
+            taskList.add(() -> {
+                VDSReturnValue returnValue;
+                    returnValue =
+                           runVdsCommand(
+                                   VDSCommandType.RemoveGlusterHook,
+                                   new GlusterHookVDSParameters(server.getId(),
+                                           entity.getGlusterCommand(),
+                                           entity.getStage(),
+                                           entity.getName()
+                                           ));
+                 return new Pair<>(server, returnValue);
 
-                }
             });
         }
 

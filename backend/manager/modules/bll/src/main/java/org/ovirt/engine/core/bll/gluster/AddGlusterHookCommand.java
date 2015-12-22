@@ -96,23 +96,20 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
 
         List<Callable<Pair<GlusterServerHook, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final GlusterServerHook serverHook : getMissingServerHooks()) {
-            taskList.add(new Callable<Pair<GlusterServerHook, VDSReturnValue>>() {
-                @Override
-                public Pair<GlusterServerHook, VDSReturnValue> call() throws Exception {
-                    VDSReturnValue returnValue;
-                    returnValue =
-                            runVdsCommand(
-                                    VDSCommandType.AddGlusterHook,
-                                    new GlusterHookVDSParameters(serverHook.getServerId(),
-                                            entity.getGlusterCommand(),
-                                            entity.getStage(),
-                                            entity.getName(),
-                                            entity.getContent(),
-                                            entity.getChecksum(),
-                                            hookEnabled));
-                    return new Pair<>(serverHook, returnValue);
+            taskList.add(() -> {
+                VDSReturnValue returnValue;
+                returnValue =
+                        runVdsCommand(
+                                VDSCommandType.AddGlusterHook,
+                                new GlusterHookVDSParameters(serverHook.getServerId(),
+                                        entity.getGlusterCommand(),
+                                        entity.getStage(),
+                                        entity.getName(),
+                                        entity.getContent(),
+                                        entity.getChecksum(),
+                                        hookEnabled));
+                return new Pair<>(serverHook, returnValue);
 
-                }
             });
         }
 

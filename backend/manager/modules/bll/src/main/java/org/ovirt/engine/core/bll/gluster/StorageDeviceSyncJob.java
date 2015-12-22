@@ -51,12 +51,9 @@ public class StorageDeviceSyncJob extends GlusterJob {
         List<Callable<Pair<VDS, List<StorageDevice>>>> storageDevicesListCalls = new ArrayList<>();
 
         for (final VDS server : upServers) {
-            storageDevicesListCalls.add(new Callable<Pair<VDS, List<StorageDevice>>>() {
-                @Override
-                public Pair<VDS, List<StorageDevice>> call() throws Exception {
-                    List<StorageDevice> storageDevices = getStorageDevicesFromServer(server);
-                    return new Pair<>(server, storageDevices);
-                }
+            storageDevicesListCalls.add(() -> {
+                List<StorageDevice> storageDevices = getStorageDevicesFromServer(server);
+                return new Pair<>(server, storageDevices);
             });
         }
 

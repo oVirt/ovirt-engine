@@ -139,76 +139,73 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
         List<Callable<Boolean>> perSessionCallables = new ArrayList<>();
         for (final GlusterGeoRepSession currentSession : sessions) {
-            perSessionCallables.add(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    // Ids of servers on which steps like mount broker setup and/or passwordless ssh need to be done.
-                    Set<Guid> serverIdsToPrep = new HashSet<>(newServerIds);
-                    // Assume current volume as master volume of current session
-                    GlusterVolumeEntity masterVolume = volume;
-                    boolean succeeded = true;
-                    addCustomValue(GlusterConstants.VOLUME_NAME, currentSession.getMasterVolumeName());
-                    addCustomValue(GlusterConstants.GEO_REP_SLAVE_VOLUME_NAME, currentSession.getSlaveVolumeName());
-                    addCustomValue(GlusterConstants.GEO_REP_USER, currentSession.getUserName());
-                    if (currentSession.getMasterVolumeId().equals(volume.getId())) {
-                        /*
-                         * If the volume is master, and there are any new servers, serverIdsToPrep is a set of all slave
-                         * servers. This is bcoz the new server's keys also need to be updated to all slave servers.
-                         */
-                        serverIdsToPrep = getSlaveNodesSet(currentSession);
-                    } else {
-                        // If its slave and non-root session, do partial mount broker setup
-                        if (!currentSession.getUserName().equalsIgnoreCase("root")) {
-                            succeeded =
-                                    evaluateReturnValue(errorType,
-                                            getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                                                    new SetUpMountBrokerParameters(volume.getClusterId(),
-                                                            serverIdsToPrep,
-                                                            volume.getName(),
-                                                            currentSession.getUserName())));
-                            if (succeeded) {
-                                auditLogDirector.log(AddBricksToGlusterVolumeCommand.this,
-                                        AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
-                            }
-                        }
-                        /*
-                         * If the assumption that current volume is master, is invalid, which will be known here, update
-                         * master volume correctly.
-                         */
-                        masterVolume = getGlusterVolumeDao().getById(currentSession.getMasterVolumeId());
-                    }
-                    if (succeeded) {
+            perSessionCallables.add(() -> {
+                // Ids of servers on which steps like mount broker setup and/or passwordless ssh need to be done.
+                Set<Guid> serverIdsToPrep = new HashSet<>(newServerIds);
+                // Assume current volume as master volume of current session
+                GlusterVolumeEntity masterVolume = volume;
+                boolean succeeded = true;
+                addCustomValue(GlusterConstants.VOLUME_NAME, currentSession.getMasterVolumeName());
+                addCustomValue(GlusterConstants.GEO_REP_SLAVE_VOLUME_NAME, currentSession.getSlaveVolumeName());
+                addCustomValue(GlusterConstants.GEO_REP_USER, currentSession.getUserName());
+                if (currentSession.getMasterVolumeId().equals(volume.getId())) {
+                    /*
+                     * If the volume is master, and there are any new servers, serverIdsToPrep is a set of all slave
+                     * servers. This is bcoz the new server's keys also need to be updated to all slave servers.
+                     */
+                    serverIdsToPrep = getSlaveNodesSet(currentSession);
+                } else {
+                    // If its slave and non-root session, do partial mount broker setup
+                    if (!currentSession.getUserName().equalsIgnoreCase("root")) {
                         succeeded =
                                 evaluateReturnValue(errorType,
-                                        runInternalAction(VdcActionType.SetUpPasswordLessSSHInternal,
-                                                new SetUpPasswordLessSSHParameters(masterVolume.getClusterId(),
+                                        getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
+                                                new SetUpMountBrokerParameters(volume.getClusterId(),
                                                         serverIdsToPrep,
+                                                        volume.getName(),
                                                         currentSession.getUserName())));
+                        if (succeeded) {
+                            auditLogDirector.log(AddBricksToGlusterVolumeCommand.this,
+                                    AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
+                        }
                     }
-                    if (succeeded) {
-                        auditLogDirector.log(AddBricksToGlusterVolumeCommand.this, AuditLogType.SET_UP_PASSWORDLESS_SSH);
-                        succeeded =
-                                evaluateReturnValue(errorType,
-                                        runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,
-                                                new GlusterVolumeGeoRepSessionVDSParameters(getClusterUtils().getRandomUpServer(masterVolume.getClusterId())
-                                                        .getId(),
-                                                        currentSession.getMasterVolumeName(),
-                                                        currentSession.getSlaveHostName(),
-                                                        currentSession.getSlaveVolumeName(),
-                                                        currentSession.getUserName(),
-                                                        true)));
-                    }
-                    if (currentSession.getStatus() == GeoRepSessionStatus.ACTIVE
-                            || currentSession.getStatus() == GeoRepSessionStatus.INITIALIZING) {
-                        succeeded =
-                                evaluateReturnValue(errorType,
-                                        runInternalAction(VdcActionType.StartGlusterVolumeGeoRep,
-                                                new GlusterVolumeGeoRepSessionParameters(currentSession.getMasterVolumeId(),
-                                                        currentSession.getId(),
-                                                        true)));
-                    }
-                    return succeeded;
+                    /*
+                     * If the assumption that current volume is master, is invalid, which will be known here, update
+                     * master volume correctly.
+                     */
+                    masterVolume = getGlusterVolumeDao().getById(currentSession.getMasterVolumeId());
                 }
+                if (succeeded) {
+                    succeeded =
+                            evaluateReturnValue(errorType,
+                                    runInternalAction(VdcActionType.SetUpPasswordLessSSHInternal,
+                                            new SetUpPasswordLessSSHParameters(masterVolume.getClusterId(),
+                                                    serverIdsToPrep,
+                                                    currentSession.getUserName())));
+                }
+                if (succeeded) {
+                    auditLogDirector.log(AddBricksToGlusterVolumeCommand.this, AuditLogType.SET_UP_PASSWORDLESS_SSH);
+                    succeeded =
+                            evaluateReturnValue(errorType,
+                                    runVdsCommand(VDSCommandType.CreateGlusterVolumeGeoRepSession,
+                                            new GlusterVolumeGeoRepSessionVDSParameters(getClusterUtils().getRandomUpServer(masterVolume.getClusterId())
+                                                    .getId(),
+                                                    currentSession.getMasterVolumeName(),
+                                                    currentSession.getSlaveHostName(),
+                                                    currentSession.getSlaveVolumeName(),
+                                                    currentSession.getUserName(),
+                                                    true)));
+                }
+                if (currentSession.getStatus() == GeoRepSessionStatus.ACTIVE
+                        || currentSession.getStatus() == GeoRepSessionStatus.INITIALIZING) {
+                    succeeded =
+                            evaluateReturnValue(errorType,
+                                    runInternalAction(VdcActionType.StartGlusterVolumeGeoRep,
+                                            new GlusterVolumeGeoRepSessionParameters(currentSession.getMasterVolumeId(),
+                                                    currentSession.getId(),
+                                                    true)));
+                }
+                return succeeded;
             });
         }
         ThreadPoolUtil.invokeAll(perSessionCallables);

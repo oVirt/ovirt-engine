@@ -97,16 +97,11 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
         final SetUpMountBrokerParameters parameters = getParameters();
         final List<Callable<VDSReturnValue>> mountBrokerSetupReturnStatuses = new ArrayList<>();
         for (final Guid currentRemoteServerId : getParameters().getRemoteServerIds()) {
-            mountBrokerSetupReturnStatuses.add(new Callable<VDSReturnValue>() {
-                @Override
-                public VDSReturnValue call() throws Exception {
-                    return setUpMountBrokerPartial(currentRemoteServerId,
-                            parameters.getRemoteUserName(),
-                            parameters.getRemoteUserGroup(),
-                            parameters.getRemoteVolumeName(),
-                            parameters.isPartial());
-                }
-            });
+            mountBrokerSetupReturnStatuses.add(() -> setUpMountBrokerPartial(currentRemoteServerId,
+                    parameters.getRemoteUserName(),
+                    parameters.getRemoteUserGroup(),
+                    parameters.getRemoteVolumeName(),
+                    parameters.isPartial()));
         }
         List<VDSReturnValue> returnValues = ThreadPoolUtil.invokeAll(mountBrokerSetupReturnStatuses);
         List<String> errors = new ArrayList<>();

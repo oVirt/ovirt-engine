@@ -50,16 +50,13 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
             final String userName) {
         List<Callable<VdcReturnValueBase>> slaveWritePubKeyList = new ArrayList<>();
         for (final Guid currentRemoteHostId : remoteServersSet) {
-            slaveWritePubKeyList.add(new Callable<VdcReturnValueBase>() {
-                @Override
-                public VdcReturnValueBase call() throws Exception {
-                    String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
-                    getCustomValues().remove(currentHostNameToLog);
-                    addCustomValue(GlusterConstants.VDS_NAME, getVdsDao().get(currentRemoteHostId).getName());
-                    return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
-                            new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
-                                    pubKeys, userName));
-                }
+            slaveWritePubKeyList.add(() -> {
+                String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
+                getCustomValues().remove(currentHostNameToLog);
+                addCustomValue(GlusterConstants.VDS_NAME, getVdsDao().get(currentRemoteHostId).getName());
+                return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
+                        new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
+                                pubKeys, userName));
             });
         }
         List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);

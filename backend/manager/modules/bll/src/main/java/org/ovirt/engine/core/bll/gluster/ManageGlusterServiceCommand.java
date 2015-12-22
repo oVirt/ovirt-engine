@@ -141,20 +141,17 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         final List<String> serviceList = getServiceList();
         List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<>();
         for (final VDS upServer : servers) {
-            commandList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
-                @Override
-                public Pair<VDS, VDSReturnValue> call() {
-                    VDSReturnValue returnValue =
-                            runVdsCommand(VDSCommandType.ManageGlusterService,
-                                    new GlusterServiceVDSParameters(upServer.getId(), serviceList, actionType));
-                    Pair<VDS, VDSReturnValue> pairRetVal = new Pair<>(upServer, returnValue);
-                    if (returnValue.getSucceeded()) {
-                        updateService(upServer.getId(), (List<GlusterServerService>) returnValue.getReturnValue());
-                    } else {
-                        errors.add(returnValue.getVdsError().getMessage());
-                    }
-                    return pairRetVal;
+            commandList.add(() -> {
+                VDSReturnValue returnValue =
+                        runVdsCommand(VDSCommandType.ManageGlusterService,
+                                new GlusterServiceVDSParameters(upServer.getId(), serviceList, actionType));
+                Pair<VDS, VDSReturnValue> pairRetVal = new Pair<>(upServer, returnValue);
+                if (returnValue.getSucceeded()) {
+                    updateService(upServer.getId(), (List<GlusterServerService>) returnValue.getReturnValue());
+                } else {
+                    errors.add(returnValue.getVdsError().getMessage());
                 }
+                return pairRetVal;
             });
         }
 

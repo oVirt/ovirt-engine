@@ -96,16 +96,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         List<Callable<Map<String, GlusterServiceStatus>>> taskList =
                 new ArrayList<>();
         for (final VDS server : serversList) {
-            taskList.add(new Callable<Map<String, GlusterServiceStatus>>() {
-                /**
-                 * Fetches and updates status of all services of the given server, <br>
-                 * and returns a map having key = service name and value = service status
-                 */
-                @Override
-                public Map<String, GlusterServiceStatus> call() throws Exception {
-                    return refreshServerServices(server);
-                }
-            });
+            taskList.add(() -> refreshServerServices(server));
         }
         return taskList;
     }

@@ -69,13 +69,10 @@ public class GlusterHookSyncJob extends GlusterJob {
 
         List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final VDS upServer : upServers) {
-            taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
-                @Override
-                public Pair<VDS, VDSReturnValue> call() throws Exception {
-                    VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterHooksList,
-                            new VdsIdVDSCommandParametersBase(upServer.getId()));
-                    return new Pair<>(upServer, returnValue);
-                }
+            taskList.add(() -> {
+                VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterHooksList,
+                        new VdsIdVDSCommandParametersBase(upServer.getId()));
+                return new Pair<>(upServer, returnValue);
             });
         }
         List<Pair<VDS, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
@@ -293,13 +290,10 @@ public class GlusterHookSyncJob extends GlusterJob {
     private void updateContentTasksList(List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList,
             final GlusterHookEntity hook,
             final VDS server) {
-        contentTasksList.add(new Callable<Pair<GlusterHookEntity, VDSReturnValue>>() {
-            @Override
-            public Pair<GlusterHookEntity, VDSReturnValue> call() throws Exception {
-                VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHookContent,
-                        new GlusterHookVDSParameters(server.getId(), hook.getGlusterCommand(), hook.getStage(), hook.getName()));
-                return new Pair<>(hook, returnValue);
-            }
+        contentTasksList.add(() -> {
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHookContent,
+                    new GlusterHookVDSParameters(server.getId(), hook.getGlusterCommand(), hook.getStage(), hook.getName()));
+            return new Pair<>(hook, returnValue);
         });
     }
 

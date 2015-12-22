@@ -137,22 +137,19 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
         for (final Guid serverId : serverIdsToUpdate) {
-            taskList.add(new Callable<Pair<Guid, VDSReturnValue>>() {
-                @Override
-                public Pair<Guid, VDSReturnValue> call() throws Exception {
-                    VDSReturnValue returnValue;
-                        returnValue =
-                               runVdsCommand(
-                                       VDSCommandType.UpdateGlusterHook,
-                                       new GlusterHookVDSParameters(serverId,
-                                               entity.getGlusterCommand(),
-                                               entity.getStage(),
-                                               entity.getName(),
-                                               hookContent,
-                                               hookChecksum));
-                     return new Pair<>(serverId, returnValue);
+            taskList.add(() -> {
+                VDSReturnValue returnValue;
+                    returnValue =
+                           runVdsCommand(
+                                   VDSCommandType.UpdateGlusterHook,
+                                   new GlusterHookVDSParameters(serverId,
+                                           entity.getGlusterCommand(),
+                                           entity.getStage(),
+                                           entity.getName(),
+                                           hookContent,
+                                           hookChecksum));
+                 return new Pair<>(serverId, returnValue);
 
-                }
             });
         }
 

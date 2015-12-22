@@ -97,14 +97,9 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
         List<Callable<GlusterGeoRepSession>> geoRepSessionCalls = new ArrayList<>();
         for (final GlusterGeoRepSession geoRepSession: geoRepSessions) {
-            geoRepSessionCalls.add(new Callable<GlusterGeoRepSession>() {
-
-                @Override
-                public GlusterGeoRepSession call() throws Exception {
-                    geoRepSession.setSessionDetails((ArrayList) getSessionDetailFromCLI(cluster, geoRepSession));
-                    return geoRepSession;
-                }
-
+            geoRepSessionCalls.add(() -> {
+                geoRepSession.setSessionDetails((ArrayList) getSessionDetailFromCLI(cluster, geoRepSession));
+                return geoRepSession;
             });
         }
 
