@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -160,12 +159,9 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     }
 
     private void updateBootOrder() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                VmDeviceUtils.updateBootOrder(getVm().getId());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            VmDeviceUtils.updateBootOrder(getVm().getId());
+            return null;
         });
     }
 

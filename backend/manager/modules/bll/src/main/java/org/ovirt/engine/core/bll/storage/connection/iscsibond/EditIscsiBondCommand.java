@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -54,19 +53,15 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
     @Override
     protected void executeCommand() {
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                if (isNameChanged() || isDescriptionChanged()) {
-                    getDbFacade().getIscsiBondDao().update(getIscsiBond());
-                }
-
-                removedNetworks = updateNetworksIds();
-                updateConnectionsIds();
-
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            if (isNameChanged() || isDescriptionChanged()) {
+                getDbFacade().getIscsiBondDao().update(getIscsiBond());
             }
+
+            removedNetworks = updateNetworksIds();
+            updateConnectionsIds();
+
+            return null;
         });
 
         if (!addedConnections.isEmpty() || !addedNetworks.isEmpty()) {

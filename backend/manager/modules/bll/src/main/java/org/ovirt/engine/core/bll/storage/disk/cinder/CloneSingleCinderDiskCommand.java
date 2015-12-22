@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -66,25 +65,22 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     }
 
     protected void addCinderDiskTemplateToDB(final CinderDisk cinderDisk) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getBaseDiskDao().save(cinderDisk);
-                getImageDao().save(cinderDisk.getImage());
-                DiskImageDynamic diskDynamic = new DiskImageDynamic();
-                diskDynamic.setId(cinderDisk.getImageId());
-                getDiskImageDynamicDao().save(diskDynamic);
-                ImageStorageDomainMap image_storage_domain_map = new ImageStorageDomainMap(cinderDisk.getImageId(),
-                        cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId());
-                getDbFacade().getImageStorageDomainMapDao().save(image_storage_domain_map);
+        TransactionSupport.executeInNewTransaction(() -> {
+            getBaseDiskDao().save(cinderDisk);
+            getImageDao().save(cinderDisk.getImage());
+            DiskImageDynamic diskDynamic = new DiskImageDynamic();
+            diskDynamic.setId(cinderDisk.getImageId());
+            getDiskImageDynamicDao().save(diskDynamic);
+            ImageStorageDomainMap image_storage_domain_map = new ImageStorageDomainMap(cinderDisk.getImageId(),
+                    cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId());
+            getDbFacade().getImageStorageDomainMapDao().save(image_storage_domain_map);
 
-                getCompensationContext().snapshotNewEntity(image_storage_domain_map);
-                getCompensationContext().snapshotNewEntity(diskDynamic);
-                getCompensationContext().snapshotNewEntity(cinderDisk.getImage());
-                getCompensationContext().snapshotNewEntity(cinderDisk);
-                getCompensationContext().stateChanged();
-                return null;
-            }
+            getCompensationContext().snapshotNewEntity(image_storage_domain_map);
+            getCompensationContext().snapshotNewEntity(diskDynamic);
+            getCompensationContext().snapshotNewEntity(cinderDisk.getImage());
+            getCompensationContext().snapshotNewEntity(cinderDisk);
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 

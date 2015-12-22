@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -57,40 +56,36 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            for (DiskImage disk : disks) {
+                // we force export template image to COW+Sparse but we don't update
+                // the ovf so the import
+                // will set the original format
+                MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
+                        .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
+                        getMoveOrCopyImageOperation());
+                p.setParentCommand(getActionType());
+                p.setParentParameters(getParameters());
+                p.setEntityInfo(getParameters().getEntityInfo());
+                p.setUseCopyCollapse(true);
+                p.setCopyVolumeType(CopyVolumeType.SharedVol);
+                p.setVolumeFormat(disk.getVolumeFormat());
+                p.setVolumeType(disk.getVolumeType());
+                p.setForceOverride(getParameters().getForceOverride());
+                p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
+                p.setShouldLockImageOnRevert(false);
+                p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
+                VdcReturnValueBase vdcRetValue =
+                        runInternalActionWithTasksContext(VdcActionType.CopyImageGroup, p);
 
-            @Override
-            public Void runInTransaction() {
-                for (DiskImage disk : disks) {
-                    // we force export template image to COW+Sparse but we don't update
-                    // the ovf so the import
-                    // will set the original format
-                    MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
-                            getMoveOrCopyImageOperation());
-                    p.setParentCommand(getActionType());
-                    p.setParentParameters(getParameters());
-                    p.setEntityInfo(getParameters().getEntityInfo());
-                    p.setUseCopyCollapse(true);
-                    p.setCopyVolumeType(CopyVolumeType.SharedVol);
-                    p.setVolumeFormat(disk.getVolumeFormat());
-                    p.setVolumeType(disk.getVolumeType());
-                    p.setForceOverride(getParameters().getForceOverride());
-                    p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
-                    p.setShouldLockImageOnRevert(false);
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
-                    VdcReturnValueBase vdcRetValue =
-                            runInternalActionWithTasksContext(VdcActionType.CopyImageGroup, p);
-
-                    if (!vdcRetValue.getSucceeded()) {
-                        throw new EngineException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
-                                .getMessage());
-                    }
-
-                    getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+                if (!vdcRetValue.getSucceeded()) {
+                    throw new EngineException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
+                            .getMessage());
                 }
-                return null;
+
+                getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
             }
+            return null;
         });
     }
 

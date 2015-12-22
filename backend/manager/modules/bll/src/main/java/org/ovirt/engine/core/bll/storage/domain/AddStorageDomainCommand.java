@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -87,25 +86,22 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected void addStorageDomainInDb() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                StorageDomainStatic storageStaticData = getStorageDomain().getStorageStaticData();
-                DbFacade.getInstance().getStorageDomainStaticDao().save(storageStaticData);
-                // create default disk profile for type master or data storage domains
-                if (storageStaticData.getStorageDomainType().isDataDomain()) {
-                    getDiskProfileDao().save(DiskProfileHelper.createDiskProfile(storageStaticData.getId(),
-                            storageStaticData.getStorageName()));
-                }
-                getCompensationContext().snapshotNewEntity(storageStaticData);
-                StorageDomainDynamic newStorageDynamic =
-                        new StorageDomainDynamic(null, getStorageDomain().getId(), null);
-                getReturnValue().setActionReturnValue(getStorageDomain().getId());
-                DbFacade.getInstance().getStorageDomainDynamicDao().save(newStorageDynamic);
-                getCompensationContext().snapshotNewEntity(newStorageDynamic);
-                getCompensationContext().stateChanged();
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            StorageDomainStatic storageStaticData = getStorageDomain().getStorageStaticData();
+            DbFacade.getInstance().getStorageDomainStaticDao().save(storageStaticData);
+            // create default disk profile for type master or data storage domains
+            if (storageStaticData.getStorageDomainType().isDataDomain()) {
+                getDiskProfileDao().save(DiskProfileHelper.createDiskProfile(storageStaticData.getId(),
+                        storageStaticData.getStorageName()));
             }
+            getCompensationContext().snapshotNewEntity(storageStaticData);
+            StorageDomainDynamic newStorageDynamic =
+                    new StorageDomainDynamic(null, getStorageDomain().getId(), null);
+            getReturnValue().setActionReturnValue(getStorageDomain().getId());
+            DbFacade.getInstance().getStorageDomainDynamicDao().save(newStorageDynamic);
+            getCompensationContext().snapshotNewEntity(newStorageDynamic);
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 
@@ -115,14 +111,11 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                 new GetStorageDomainStatsVDSCommandParameters(getVds().getId(),
                                         getStorageDomain().getId()))
                         .getReturnValue();
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
-                DbFacade.getInstance().getStorageDomainDynamicDao().update(sd.getStorageDynamicData());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
+            DbFacade.getInstance().getStorageDomainDynamicDao().update(sd.getStorageDynamicData());
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 

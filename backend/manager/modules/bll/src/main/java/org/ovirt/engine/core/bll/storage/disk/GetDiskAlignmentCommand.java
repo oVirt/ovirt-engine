@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.GetDiskImageAlignmentVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.GetDiskLunAlignmentVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -206,15 +205,13 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         if (isImageExclusiveLockNeeded()) {
             final DiskImage diskImage = (DiskImage) getDisk();
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(diskImage.getImage());
-                    getCompensationContext().stateChanged();
-                    diskImage.setImageStatus(ImageStatus.LOCKED);
-                    ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
-                    return null;
-                }});
+            TransactionSupport.executeInNewTransaction(() -> {
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage());
+                getCompensationContext().stateChanged();
+                diskImage.setImageStatus(ImageStatus.LOCKED);
+                ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+                return null;
+            });
         }
     }
 

@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -121,16 +120,13 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.info("ActivateStorage Domain. After Connect all hosts to pool. Time: {}", new Date());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                map.setStatus(StorageDomainStatus.Active);
-                DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
-                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-                    calcStoragePoolStatusByDomainsStatus();
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            map.setStatus(StorageDomainStatus.Active);
+            DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
+                calcStoragePoolStatusByDomainsStatus();
             }
+            return null;
         });
         refreshAllVdssInPool();
 

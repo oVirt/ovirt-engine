@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -41,13 +40,10 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
     @Override
     protected void executeCommand() {
         final CinderDisk newCinderVolume = createVolumeFromSnapshotInCinder();
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                processOldImageFromDb();
-                addDiskImageToDb(newCinderVolume, getCompensationContext(), Boolean.TRUE);
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            processOldImageFromDb();
+            addDiskImageToDb(newCinderVolume, getCompensationContext(), Boolean.TRUE);
+            return null;
         });
 
         getParameters().setDestinationImageId(newCinderVolume.getImageId());

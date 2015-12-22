@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -152,40 +151,37 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             }
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            getDiskImageDynamicDao().remove(diskImage.getImageId());
-                            Guid imageTemplate = diskImage.getImageTemplateId();
-                            Guid currentGuid = diskImage.getImageId();
-                            // next 'while' statement removes snapshots from DB only (the
-                            // 'DeleteImageGroup'
-                            // VDS Command should take care of removing all the snapshots from
-                            // the storage).
-                            while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
-                                removeChildren(currentGuid);
+                    () -> {
+                        getDiskImageDynamicDao().remove(diskImage.getImageId());
+                        Guid imageTemplate = diskImage.getImageTemplateId();
+                        Guid currentGuid = diskImage.getImageId();
+                        // next 'while' statement removes snapshots from DB only (the
+                        // 'DeleteImageGroup'
+                        // VDS Command should take care of removing all the snapshots from
+                        // the storage).
+                        while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
+                            removeChildren(currentGuid);
 
-                                DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
-                                if (image != null) {
-                                    removeSnapshot(image);
-                                    currentGuid = image.getParentId();
-                                } else {
-                                    currentGuid = Guid.Empty;
-                                    log.warn(
-                                            "'image' (snapshot of image '{}') is null, cannot remove it.",
-                                            diskImage.getImageId());
-                                }
+                            DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
+                            if (image != null) {
+                                removeSnapshot(image);
+                                currentGuid = image.getParentId();
+                            } else {
+                                currentGuid = Guid.Empty;
+                                log.warn(
+                                        "'image' (snapshot of image '{}') is null, cannot remove it.",
+                                        diskImage.getImageId());
                             }
-
-                            getBaseDiskDao().remove(diskImage.getId());
-                            getVmDeviceDao().remove(new VmDeviceId(diskImage.getId(), null));
-
-                            for (Snapshot s : updatedSnapshots) {
-                                getSnapshotDao().update(s);
-                            }
-
-                            return null;
                         }
+
+                        getBaseDiskDao().remove(diskImage.getId());
+                        getVmDeviceDao().remove(new VmDeviceId(diskImage.getId(), null));
+
+                        for (Snapshot s : updatedSnapshots) {
+                            getSnapshotDao().update(s);
+                        }
+
+                        return null;
                     });
         } finally {
             if (getSnapshotsEngineLock() != null) {
@@ -263,16 +259,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void removeImageMapping() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getImageStorageDomainMapDao().remove(
-                        new ImageStorageDomainMapId(getParameters().getImageId(),
-                                getParameters().getStorageDomainId()));
-                ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),
-                        getRelevantDiskImage().getImageStatus());
-                return null;
-            }});
+        TransactionSupport.executeInNewTransaction(() -> {
+            getImageStorageDomainMapDao().remove(
+                    new ImageStorageDomainMapId(getParameters().getImageId(),
+                            getParameters().getStorageDomainId()));
+            ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),
+                    getRelevantDiskImage().getImageStatus());
+            return null;
+        });
     }
 
     private void performImageDbOperations() {

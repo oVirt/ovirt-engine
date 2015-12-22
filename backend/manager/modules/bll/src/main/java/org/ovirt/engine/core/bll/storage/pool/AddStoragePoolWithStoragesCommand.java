@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -81,17 +80,14 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             // setting storage pool status to maintenance
             StoragePool storagePool = getStoragePool();
             getCompensationContext().snapshotEntity(storagePool);
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    getStoragePool().setStatus(StoragePoolStatus.Maintenance);
-                    getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
-                    DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
-                    getCompensationContext().stateChanged();
-                    StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
-                            getStoragePool().getStatus());
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                getStoragePool().setStatus(StoragePoolStatus.Maintenance);
+                getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
+                DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
+                getCompensationContext().stateChanged();
+                StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
+                        getStoragePool().getStatus());
+                return null;
             });
 
             // Following code performs only read operations, therefore no need for new transaction
@@ -141,12 +137,9 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         }
 
         // Create pool phase completed, no rollback is needed here, so compensation information needs to be cleared!
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().resetCompensation();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().resetCompensation();
+            return null;
         });
         freeLock();
         // if create succeeded activate
@@ -156,68 +149,64 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     private boolean updateStorageDomainsInDb() {
-        boolean result  = TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
-
-            @Override
-            public Boolean runInTransaction() {
-                for (Guid storageDomainId : getParameters().getStorages()) {
-                    StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
-                                storageDomainId);
-                    if (storageDomain != null) {
-                        StoragePoolIsoMap mapFromDB =
-                            DbFacade.getInstance()
-                            .getStoragePoolIsoMapDao()
-                                        .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
-                        boolean existingInDb = mapFromDB != null;
-                        if (existingInDb) {
-                            getCompensationContext().snapshotEntity(mapFromDB);
-                        }
-                        final StorageDomainStatic staticDomain = storageDomain.getStorageStaticData();
-                        boolean staticDomainChanged = false;
-                        StorageFormatType requiredFormatType =
-                                VersionStorageFormatUtil.getRequiredForVersion
-                                        (getStoragePool().getCompatibilityVersion(), storageDomain.getStorageType());
-                        if (staticDomain.getStorageFormat().compareTo(requiredFormatType) < 0) {
-                            if (!staticDomainChanged) {
-                                getCompensationContext().snapshotEntity(staticDomain);
-                            }
-                            staticDomain.setStorageFormat(requiredFormatType);
-                            staticDomainChanged = true;
-                        }
-                        storageDomain.setStoragePoolId(getStoragePool().getId());
-                        if (masterStorageDomain == null
-                                && storageDomain.getStorageDomainType() == StorageDomainType.Data) {
-                            if (!staticDomainChanged) {
-                                getCompensationContext().snapshotEntity(staticDomain);
-                            }
-                            storageDomain.setStorageDomainType(StorageDomainType.Master);
-                            staticDomainChanged = true;
-                            masterStorageDomain = storageDomain;
-                            // The update of storage pool should be without compensation,
-                            // this is why we run it in a different SUPRESS transaction.
-                            updateStoragePoolMasterDomainVersionInDiffTransaction();
-                        }
-                        if (staticDomainChanged) {
-                            getStorageDomainStaticDao().update(staticDomain);
-                        }
-                        storageDomain.setStatus(StorageDomainStatus.Locked);
-                        if (existingInDb) {
-                            DbFacade.getInstance()
-                                        .getStoragePoolIsoMapDao()
-                                        .update(storageDomain.getStoragePoolIsoMapData());
-                        } else {
-                            DbFacade.getInstance()
-                                        .getStoragePoolIsoMapDao()
-                                        .save(storageDomain.getStoragePoolIsoMapData());
-                            getCompensationContext().snapshotNewEntity(storageDomain.getStoragePoolIsoMapData());
-                        }
-                    } else {
-                        return false;
+        boolean result  = TransactionSupport.executeInNewTransaction(() -> {
+            for (Guid storageDomainId : getParameters().getStorages()) {
+                StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
+                            storageDomainId);
+                if (storageDomain != null) {
+                    StoragePoolIsoMap mapFromDB =
+                        DbFacade.getInstance()
+                        .getStoragePoolIsoMapDao()
+                                    .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
+                    boolean existingInDb = mapFromDB != null;
+                    if (existingInDb) {
+                        getCompensationContext().snapshotEntity(mapFromDB);
                     }
+                    final StorageDomainStatic staticDomain = storageDomain.getStorageStaticData();
+                    boolean staticDomainChanged = false;
+                    StorageFormatType requiredFormatType =
+                            VersionStorageFormatUtil.getRequiredForVersion
+                                    (getStoragePool().getCompatibilityVersion(), storageDomain.getStorageType());
+                    if (staticDomain.getStorageFormat().compareTo(requiredFormatType) < 0) {
+                        if (!staticDomainChanged) {
+                            getCompensationContext().snapshotEntity(staticDomain);
+                        }
+                        staticDomain.setStorageFormat(requiredFormatType);
+                        staticDomainChanged = true;
+                    }
+                    storageDomain.setStoragePoolId(getStoragePool().getId());
+                    if (masterStorageDomain == null
+                            && storageDomain.getStorageDomainType() == StorageDomainType.Data) {
+                        if (!staticDomainChanged) {
+                            getCompensationContext().snapshotEntity(staticDomain);
+                        }
+                        storageDomain.setStorageDomainType(StorageDomainType.Master);
+                        staticDomainChanged = true;
+                        masterStorageDomain = storageDomain;
+                        // The update of storage pool should be without compensation,
+                        // this is why we run it in a different SUPRESS transaction.
+                        updateStoragePoolMasterDomainVersionInDiffTransaction();
+                    }
+                    if (staticDomainChanged) {
+                        getStorageDomainStaticDao().update(staticDomain);
+                    }
+                    storageDomain.setStatus(StorageDomainStatus.Locked);
+                    if (existingInDb) {
+                        DbFacade.getInstance()
+                                    .getStoragePoolIsoMapDao()
+                                    .update(storageDomain.getStoragePoolIsoMapData());
+                    } else {
+                        DbFacade.getInstance()
+                                    .getStoragePoolIsoMapDao()
+                                    .save(storageDomain.getStoragePoolIsoMapData());
+                        getCompensationContext().snapshotNewEntity(storageDomain.getStoragePoolIsoMapData());
+                    }
+                } else {
+                    return false;
                 }
-                getCompensationContext().stateChanged();
-                return true;
             }
+            getCompensationContext().stateChanged();
+            return true;
         });
         return result && masterStorageDomain != null;
     }
@@ -246,16 +235,13 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
             // if activate domain failed then set domain status to inactive
             if (!returnValue) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        DbFacade.getInstance()
-                                .getStoragePoolIsoMapDao()
-                                .updateStatus(
-                                        new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
-                                        StorageDomainStatus.Inactive);
-                        return null;
-                    }
+                TransactionSupport.executeInNewTransaction(() -> {
+                    DbFacade.getInstance()
+                            .getStoragePoolIsoMapDao()
+                            .updateStatus(
+                                    new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
+                                    StorageDomainStatus.Inactive);
+                    return null;
                 });
             }
         }
@@ -268,22 +254,19 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             resetOvfStoreDisks();
             final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
                     getEntitiesFromStorageOvfDisk(storageDomainId, getStoragePool().getId());
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
-                    registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
+            TransactionSupport.executeInNewTransaction(() -> {
+                List<DiskImage> ovfStoreDiskImages = getAllOVFDisks(storageDomainId, getStoragePool().getId());
+                registerAllOvfDisks(ovfStoreDiskImages, storageDomainId);
 
-                    // Update unregistered entities
-                    for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                        getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
-                        getUnregisteredOVFDataDao().saveOVFData(ovf);
-                        log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                                ovf.getEntityId(),
-                                ovf.getEntityName());
-                    }
-                    return null;
+                // Update unregistered entities
+                for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                    getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(), storageDomainId);
+                    getUnregisteredOVFDataDao().saveOVFData(ovf);
+                    log.info("Adding OVF data of entity id '{}' and entity name '{}'",
+                            ovf.getEntityId(),
+                            ovf.getEntityName());
                 }
+                return null;
             });
         }
     }

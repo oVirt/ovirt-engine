@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -45,12 +44,9 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         final List<LUNs> lunsFromDb = getLunDao().getAllForVolumeGroup(getStorageDomain().getStorage());
 
         if (isLunsInfoMismatch(lunsFromVgInfo, lunsFromDb)) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    refreshLunsInfo(lunsFromVgInfo, lunsFromDb);
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                refreshLunsInfo(lunsFromVgInfo, lunsFromDb);
+                return null;
             });
         }
 

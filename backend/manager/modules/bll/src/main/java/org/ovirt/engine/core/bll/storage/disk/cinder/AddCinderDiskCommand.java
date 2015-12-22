@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,23 +55,20 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
     }
 
     protected void addCinderDiskToDB(final CinderDisk cinderDisk) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getBaseDiskDao().save(cinderDisk);
-                getImageDao().save(cinderDisk.getImage());
-                getImageStorageDomainMapDao().save(new ImageStorageDomainMap(cinderDisk.getImageId(),
-                        cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId()));
+        TransactionSupport.executeInNewTransaction(() -> {
+            getBaseDiskDao().save(cinderDisk);
+            getImageDao().save(cinderDisk.getImage());
+            getImageStorageDomainMapDao().save(new ImageStorageDomainMap(cinderDisk.getImageId(),
+                    cinderDisk.getStorageIds().get(0), cinderDisk.getQuotaId(), cinderDisk.getDiskProfileId()));
 
-                DiskImageDynamic diskDynamic = new DiskImageDynamic();
-                diskDynamic.setId(cinderDisk.getImageId());
-                getDiskImageDynamicDao().save(diskDynamic);
+            DiskImageDynamic diskDynamic = new DiskImageDynamic();
+            diskDynamic.setId(cinderDisk.getImageId());
+            getDiskImageDynamicDao().save(diskDynamic);
 
-                if (getVm() != null) {
-                    addManagedDeviceForDisk(cinderDisk.getId());
-                }
-                return null;
+            if (getVm() != null) {
+                addManagedDeviceForDisk(cinderDisk.getId());
             }
+            return null;
         });
     }
 

@@ -243,34 +243,28 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected void changeStorageDomainStatusInTransaction(final StorageDomainStatus status) {
-        executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                CompensationContext context = getCompensationContext();
-                for (StorageDomain domain : domains) {
-                    for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
-                        context.snapshotEntityStatus(map);
-                        updateStatus(map, status);
-                    }
+        executeInNewTransaction(() -> {
+            CompensationContext context = getCompensationContext();
+            for (StorageDomain domain : domains) {
+                for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
+                    context.snapshotEntityStatus(map);
+                    updateStatus(map, status);
                 }
-                getCompensationContext().stateChanged();
-                return null;
             }
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 
     protected void updateStorageDomain(final List<StorageDomain> storageDomainsToUpdate) {
-        executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                for (StorageDomain domainToUpdate : storageDomainsToUpdate) {
-                        CompensationContext context = getCompensationContext();
-                        context.snapshotEntity(domainToUpdate.getStorageDynamicData());
-                        getStorageDomainDynamicDao().update(domainToUpdate.getStorageDynamicData());
-                        getCompensationContext().stateChanged();
-                }
-                return null;
+        executeInNewTransaction(() -> {
+            for (StorageDomain domainToUpdate : storageDomainsToUpdate) {
+                    CompensationContext context = getCompensationContext();
+                    context.snapshotEntity(domainToUpdate.getStorageDynamicData());
+                    getStorageDomainDynamicDao().update(domainToUpdate.getStorageDynamicData());
+                    getCompensationContext().stateChanged();
             }
+            return null;
         });
     }
 

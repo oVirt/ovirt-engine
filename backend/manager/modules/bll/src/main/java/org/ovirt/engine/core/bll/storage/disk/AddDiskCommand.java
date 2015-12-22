@@ -69,7 +69,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -448,17 +447,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         } else {
             lun = lunFromStorage;
         }
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
-                getBaseDiskDao().save(getParameters().getDiskInfo());
-                getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
-                if (getVm() != null) {
-                    addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
+            getBaseDiskDao().save(getParameters().getDiskInfo());
+            getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
+            if (getVm() != null) {
+                addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
             }
+            return null;
         });
         getReturnValue().setActionReturnValue(getParameters().getDiskInfo().getId());
         plugDiskToVmIfNeeded();

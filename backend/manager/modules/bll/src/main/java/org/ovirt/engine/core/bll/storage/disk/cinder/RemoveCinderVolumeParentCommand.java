@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> {
@@ -120,12 +119,9 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
                 getParameters().isUpdateSnapshot() ? getSnapshotWithoutCinderVolume(cinderVolume) : null;
 
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        removeDiskFromDb(cinderVolume, updated);
-                        return null;
-                    }
+                () -> {
+                    removeDiskFromDb(cinderVolume, updated);
+                    return null;
                 });
     }
 }

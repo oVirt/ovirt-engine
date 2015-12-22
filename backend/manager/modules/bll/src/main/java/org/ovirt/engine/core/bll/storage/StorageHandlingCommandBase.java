@@ -111,13 +111,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
-        executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                int master_domain_version = getStoragePoolDao().increaseStoragePoolMasterVersion(getStoragePool().getId());
-                getStoragePool().setMasterDomainVersion(master_domain_version);
-                return null;
-            }
+        executeInScope(TransactionScopeOption.Suppress, () -> {
+            int master_domain_version = getStoragePoolDao().increaseStoragePoolMasterVersion(getStoragePool().getId());
+            getStoragePool().setMasterDomainVersion(master_domain_version);
+            return null;
         });
     }
 
@@ -239,37 +236,34 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             final List<DiskImage> disksForStorageDomain,
             final Guid storageDomainId) {
         if (!vmsForStorageDomain.isEmpty() || !vmTemplatesForStorageDomain.isEmpty() || !disksForStorageDomain.isEmpty()) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    for (VM vm : vmsForStorageDomain) {
-                        removeEntityLeftOver(vm.getId(), vm.getName(), storageDomainId);
-                        getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
-                                vm.getId(),
-                                vm.getName(),
-                                VmEntityType.VM,
-                                vm.getClusterArch(),
-                                vm.getVdsGroupCompatibilityVersion(),
-                                storageDomainId,
-                                null,
-                                null));
-                    }
-
-                    for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
-                        removeEntityLeftOver(vmTemplate.getId(), vmTemplate.getName(), storageDomainId);
-                        getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
-                                vmTemplate.getId(),
-                                vmTemplate.getName(),
-                                VmEntityType.TEMPLATE,
-                                vmTemplate.getClusterArch(),
-                                getVdsGroupDao().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
-                                storageDomainId,
-                                null,
-                                null));
-                    }
-                    getStorageDomainDao().removeEntitesFromStorageDomain(storageDomainId);
-                    return null;
+            TransactionSupport.executeInNewTransaction(() -> {
+                for (VM vm : vmsForStorageDomain) {
+                    removeEntityLeftOver(vm.getId(), vm.getName(), storageDomainId);
+                    getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                            vm.getId(),
+                            vm.getName(),
+                            VmEntityType.VM,
+                            vm.getClusterArch(),
+                            vm.getVdsGroupCompatibilityVersion(),
+                            storageDomainId,
+                            null,
+                            null));
                 }
+
+                for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
+                    removeEntityLeftOver(vmTemplate.getId(), vmTemplate.getName(), storageDomainId);
+                    getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
+                            vmTemplate.getId(),
+                            vmTemplate.getName(),
+                            VmEntityType.TEMPLATE,
+                            vmTemplate.getClusterArch(),
+                            getVdsGroupDao().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
+                            storageDomainId,
+                            null,
+                            null));
+                }
+                getStorageDomainDao().removeEntitesFromStorageDomain(storageDomainId);
+                return null;
             });
         }
     }
@@ -335,12 +329,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 getStoragePool().setSpmVdsId(null);
             }
 
-            executeInScope(TransactionScopeOption.Required, new TransactionMethod<StoragePool>() {
-                @Override
-                public StoragePool runInTransaction() {
-                    getStoragePoolDao().update(getStoragePool());
-                    return null;
-                }
+            executeInScope(TransactionScopeOption.Required, () -> {
+                getStoragePoolDao().update(getStoragePool());
+                return null;
             });
             StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
         }

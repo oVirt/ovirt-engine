@@ -236,29 +236,26 @@ public class IsoDomainListSyncronizer {
         try {
             syncObject.lock();
             return (Boolean) TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
+                    () -> {
+                        repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
 
-                            Integer totalListSize = Config.<Integer> getValue(ConfigValues.GlanceImageTotalListSize);
-                            List<RepoImage> repoImages = client.getAllImagesAsRepoImages(
-                                    Config.<Integer> getValue(ConfigValues.GlanceImageListSize), totalListSize);
+                        Integer totalListSize = Config.<Integer> getValue(ConfigValues.GlanceImageTotalListSize);
+                        List<RepoImage> repoImages = client.getAllImagesAsRepoImages(
+                                Config.<Integer> getValue(ConfigValues.GlanceImageListSize), totalListSize);
 
-                            if (repoImages.size() >= totalListSize) {
-                                AuditLogableBase logable = new AuditLogableBase();
-                                logable.addCustomValue("imageDomain", storageDomain.getName());
-                                logable.addCustomValue("imageListSize", String.valueOf(repoImages.size()));
-                                auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
-                            }
-
-                            for (RepoImage repoImage : repoImages) {
-                                repoImage.setRepoDomainId(storageDomain.getId());
-                                repoFileMetaDataDao.addRepoFileMap(repoImage);
-                            }
-
-                            return true;
+                        if (repoImages.size() >= totalListSize) {
+                            AuditLogableBase logable = new AuditLogableBase();
+                            logable.addCustomValue("imageDomain", storageDomain.getName());
+                            logable.addCustomValue("imageListSize", String.valueOf(repoImages.size()));
+                            auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
                         }
+
+                        for (RepoImage repoImage : repoImages) {
+                            repoImage.setRepoDomainId(storageDomain.getId());
+                            repoFileMetaDataDao.addRepoFileMap(repoImage);
+                        }
+
+                        return true;
                     });
         } finally {
             syncObject.unlock();

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeClassificatio
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -88,15 +87,12 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         if (!isStatelessSnapshot()) {
             getDiskImage().setVmSnapshotId(getParameters().getVmSnapshotId());
         }
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                processOldImageFromDb();
-                addDiskImageToDb(newCinderVolume, getCompensationContext(), isStatelessSnapshot());
-                setActionReturnValue(newCinderVolume);
-                setSucceeded(true);
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            processOldImageFromDb();
+            addDiskImageToDb(newCinderVolume, getCompensationContext(), isStatelessSnapshot());
+            setActionReturnValue(newCinderVolume);
+            setSucceeded(true);
+            return null;
         });
 
         getReturnValue().setActionReturnValue(newCinderVolume.getImageId());

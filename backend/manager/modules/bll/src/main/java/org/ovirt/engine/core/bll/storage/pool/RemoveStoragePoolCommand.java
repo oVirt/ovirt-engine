@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
@@ -98,16 +97,12 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void removeDataCenter() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(getStoragePool());
+            getStoragePoolDao().remove(getStoragePool().getId());
+            getCompensationContext().stateChanged();
 
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(getStoragePool());
-                getStoragePoolDao().remove(getStoragePool().getId());
-                getCompensationContext().stateChanged();
-
-                return null;
-            }
+            return null;
         });
     }
 
@@ -121,22 +116,18 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                for (final Network net : networks) {
-                    List<VnicProfile> profiles = getDbFacade().getVnicProfileDao().getAllForNetwork(net.getId());
-                    for (VnicProfile vnicProfile : profiles) {
-                        getCompensationContext().snapshotEntity(vnicProfile);
-                        getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
-                    }
-                    getCompensationContext().snapshotEntity(net);
-                    getNetworkDao().remove(net.getId());
+        TransactionSupport.executeInNewTransaction(() -> {
+            for (final Network net : networks) {
+                List<VnicProfile> profiles = getDbFacade().getVnicProfileDao().getAllForNetwork(net.getId());
+                for (VnicProfile vnicProfile : profiles) {
+                    getCompensationContext().snapshotEntity(vnicProfile);
+                    getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
                 }
-                getCompensationContext().stateChanged();
-                return null;
+                getCompensationContext().snapshotEntity(net);
+                getNetworkDao().remove(net.getId());
             }
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 
@@ -160,16 +151,12 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         boolean retVal = true;
         final StorageDomain masterDomain =
                 storageDomains.stream().filter(s ->  s.getStorageDomainType() == StorageDomainType.Master).findFirst().orElse(null);
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
-                masterDomain.setStatus(StorageDomainStatus.Locked);
-                getDbFacade().getStoragePoolIsoMapDao().update(masterDomain.getStoragePoolIsoMapData());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
+            masterDomain.setStatus(StorageDomainStatus.Locked);
+            getDbFacade().getStoragePoolIsoMapDao().update(masterDomain.getStoragePoolIsoMapData());
+            getCompensationContext().stateChanged();
+            return null;
         });
         // destroying a pool is an SPM action. We need to connect all hosts
         // to the pool. Later on, during spm election, one of the hosts will
@@ -218,16 +205,13 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void handleMasterDomain(StorageDomain masterDomain) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                detachStorageDomainWithEntities(masterDomain);
-                getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
-                masterDomain.setStorageDomainType(StorageDomainType.Data);
-                getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            detachStorageDomainWithEntities(masterDomain);
+            getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
+            masterDomain.setStorageDomainType(StorageDomainType.Data);
+            getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
+            getCompensationContext().stateChanged();
+            return null;
         });
     }
 
@@ -237,13 +221,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                             new IrsBaseVDSCommandParameters(getStoragePool().getId()));
         } catch (EngineException e) {
             try {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        runVdsCommand(VDSCommandType.SpmStopOnIrs,
-                                        new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
-                        return null;
-                    }
+                TransactionSupport.executeInNewTransaction(() -> {
+                    runVdsCommand(VDSCommandType.SpmStopOnIrs,
+                                    new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
+                    return null;
                 });
             } catch (Exception e1) {
                 log.error("Failed destroy storage pool with id '{}' and after that failed to stop spm: {}",
@@ -256,18 +237,15 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void removeDomainFromDb(final StorageDomain domain) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                // Not compensation for remove domain as we don't want
-                // to rollback a deleted domain - it will only cause more
-                // problems if a domain got deleted in VDSM and not in backend
-                // as it will be impossible to remove it.
-                StorageHelperDirector.getInstance().getItem(domain.getStorageType())
-                        .storageDomainRemoved(domain.getStorageStaticData());
-                getStorageDomainDao().remove(domain.getId());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            // Not compensation for remove domain as we don't want
+            // to rollback a deleted domain - it will only cause more
+            // problems if a domain got deleted in VDSM and not in backend
+            // as it will be impossible to remove it.
+            StorageHelperDirector.getInstance().getItem(domain.getStorageType())
+                    .storageDomainRemoved(domain.getStorageStaticData());
+            getStorageDomainDao().remove(domain.getId());
+            return null;
         });
 
     }

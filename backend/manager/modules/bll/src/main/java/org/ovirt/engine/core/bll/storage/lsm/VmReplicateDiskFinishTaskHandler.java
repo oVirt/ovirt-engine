@@ -25,7 +25,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandler<TaskHandlerCommand<? extends LiveMigrateDiskParameters>> {
@@ -88,32 +87,28 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         }
 
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Object>() {
-                    @SuppressWarnings("synthetic-access")
-                    @Override
-                    public Object runInTransaction() {
-                        for (DiskImage di : getDiskImageDao().getAllSnapshotsForImageGroup
-                                (getEnclosingCommand().getParameters().getImageGroupID())) {
-                            getImageStorageDomainMapDao().remove
-                                    (new ImageStorageDomainMapId(di.getImageId(),
-                                            sourceStorageDomainId));
-                            getImageStorageDomainMapDao().save
-                                    (new ImageStorageDomainMap(di.getImageId(),
-                                            targetStorageDomainId,
-                                            targetQuota,
-                                            targetDiskProfile));
-                            // since moveDiskInDB can be called to 'rollback' the entity in case of
-                            // an exception, we store locally the old quota and disk profile id.
-                            if (sourceQuotaId == null) {
-                                sourceQuotaId = di.getQuotaId();
-                            }
-
-                            if (sourceDiskProfileId == null) {
-                                sourceDiskProfileId = di.getDiskProfileId();
-                            }
+                () -> {
+                    for (DiskImage di : getDiskImageDao().getAllSnapshotsForImageGroup
+                            (getEnclosingCommand().getParameters().getImageGroupID())) {
+                        getImageStorageDomainMapDao().remove
+                                (new ImageStorageDomainMapId(di.getImageId(),
+                                        sourceStorageDomainId));
+                        getImageStorageDomainMapDao().save
+                                (new ImageStorageDomainMap(di.getImageId(),
+                                        targetStorageDomainId,
+                                        targetQuota,
+                                        targetDiskProfile));
+                        // since moveDiskInDB can be called to 'rollback' the entity in case of
+                        // an exception, we store locally the old quota and disk profile id.
+                        if (sourceQuotaId == null) {
+                            sourceQuotaId = di.getQuotaId();
                         }
-                        return null;
+
+                        if (sourceDiskProfileId == null) {
+                            sourceDiskProfileId = di.getDiskProfileId();
+                        }
                     }
+                    return null;
                 });
     }
 

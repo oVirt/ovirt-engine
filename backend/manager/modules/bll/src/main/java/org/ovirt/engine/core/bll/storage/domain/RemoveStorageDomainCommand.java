@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -76,13 +75,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                getStorageHelper(dom).storageDomainRemoved(dom.getStorageStaticData());
-                getStorageDomainDao().remove(dom.getId());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getStorageHelper(dom).storageDomainRemoved(dom.getStorageStaticData());
+            getStorageDomainDao().remove(dom.getId());
+            return null;
         });
 
         setSucceeded(true);

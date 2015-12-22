@@ -25,7 +25,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -79,18 +78,15 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                 DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(cinderDisk.getId());
         ImagesHandler.sortImageList(diskSnapshots);
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        int indCinderVolumeToDelete = diskSnapshots.size() - 1;
-                        while (indCinderVolumeToDelete >= 0) {
-                            CinderDisk cinderVolume = (CinderDisk) diskSnapshots.get(indCinderVolumeToDelete);
-                            Snapshot updated = getSnapshotWithoutCinderVolume(cinderVolume);
-                            removeDiskFromDb(cinderVolume, updated);
-                            indCinderVolumeToDelete--;
-                        }
-                        return null;
+                () -> {
+                    int indCinderVolumeToDelete = diskSnapshots.size() - 1;
+                    while (indCinderVolumeToDelete >= 0) {
+                        CinderDisk cinderVolume = (CinderDisk) diskSnapshots.get(indCinderVolumeToDelete);
+                        Snapshot updated = getSnapshotWithoutCinderVolume(cinderVolume);
+                        removeDiskFromDb(cinderVolume, updated);
+                        indCinderVolumeToDelete--;
                     }
+                    return null;
                 });
 
     }

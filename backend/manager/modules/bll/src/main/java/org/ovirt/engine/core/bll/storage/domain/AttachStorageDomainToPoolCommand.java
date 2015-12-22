@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -110,17 +109,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getParameters().getStoragePoolId()));
                 if (map == null) {
-                    executeInNewTransaction(new TransactionMethod<Object>() {
-
-                        @Override
-                        public Object runInTransaction() {
-                            map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
-                                    .getStoragePoolId(), StorageDomainStatus.Locked);
-                            getStoragePoolIsoMapDao().save(map);
-                            getCompensationContext().snapshotNewEntity(map);
-                            getCompensationContext().stateChanged();
-                            return null;
-                        }
+                    executeInNewTransaction(() -> {
+                        map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
+                                .getStoragePoolId(), StorageDomainStatus.Locked);
+                        getStoragePoolIsoMapDao().save(map);
+                        getCompensationContext().snapshotNewEntity(map);
+                        getCompensationContext().stateChanged();
+                        return null;
                     });
                     connectHostsInUpToDomainStorageServer();
 
@@ -172,34 +167,31 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     final List<OvfEntityData> unregisteredEntitiesFromOvfDisk =
                             getEntitiesFromStorageOvfDisk(getParameters().getStorageDomainId(),
                                     getStoragePoolIdFromVds());
-                    executeInNewTransaction(new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
-                            map.setStatus(StorageDomainStatus.Maintenance);
-                            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+                    executeInNewTransaction(() -> {
+                        final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
+                        map.setStatus(StorageDomainStatus.Maintenance);
+                        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
 
-                            if (sdType == StorageDomainType.Master) {
-                                calcStoragePoolStatusByDomainsStatus();
-                            }
-
-                            // upgrade the domain format to the storage pool format
-                            updateStorageDomainFormatIfNeeded(getStorageDomain());
-                            List<DiskImage> ovfStoreDiskImages =
-                                    getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
-                            registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
-
-                            // Update unregistered entities
-                            for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                                getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
-                                        getParameters().getStorageDomainId());
-                                getUnregisteredOVFDataDao().saveOVFData(ovf);
-                                log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                                        ovf.getEntityId(),
-                                        ovf.getEntityName());
-                            }
-                            return null;
+                        if (sdType == StorageDomainType.Master) {
+                            calcStoragePoolStatusByDomainsStatus();
                         }
+
+                        // upgrade the domain format to the storage pool format
+                        updateStorageDomainFormatIfNeeded(getStorageDomain());
+                        List<DiskImage> ovfStoreDiskImages =
+                                getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
+                        registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
+
+                        // Update unregistered entities
+                        for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                            getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
+                                    getParameters().getStorageDomainId());
+                            getUnregisteredOVFDataDao().saveOVFData(ovf);
+                            log.info("Adding OVF data of entity id '{}' and entity name '{}'",
+                                    ovf.getEntityId(),
+                                    ovf.getEntityName());
+                        }
+                        return null;
                     });
 
                     if (getParameters().getActivate()) {
@@ -230,14 +222,11 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             final DiskProfile diskProfile =
                     DiskProfileHelper.createDiskProfile(getStorageDomain().getId(),
                             getStorageDomainName());
-            executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Void runInTransaction() {
-                    getDiskProfileDao().save(diskProfile);
-                    getCompensationContext().snapshotNewEntity(diskProfile);
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            executeInNewTransaction(() -> {
+                getDiskProfileDao().save(diskProfile);
+                getCompensationContext().snapshotNewEntity(diskProfile);
+                getCompensationContext().stateChanged();
+                return null;
             });
         }
     }

@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -108,14 +107,11 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     }
 
     protected void saveLUNsInDB(final List<LUNs> luns) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                for (LUNs lun : luns) {
-                    proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            for (LUNs lun : luns) {
+                proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
             }
+            return null;
         });
     }
 

@@ -64,7 +64,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -242,13 +241,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (!hasSnappableDisks() && snapshotsWithMemory.isEmpty()) {
             endSuccessfully();
         } else {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    moveOrCopyAllImageGroups();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                moveOrCopyAllImageGroups();
+                return null;
             });
 
             if (!getReturnValue().getVdsmTaskIdList().isEmpty()) {

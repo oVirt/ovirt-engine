@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -67,12 +66,9 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
     @Override
     public void removeDiskFromDbCallBack(final CinderDisk cinderVolume) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        removeDiskFromDb(cinderVolume, null);
-                        return null;
-                    }
+                () -> {
+                    removeDiskFromDb(cinderVolume, null);
+                    return null;
                 });
     }
 

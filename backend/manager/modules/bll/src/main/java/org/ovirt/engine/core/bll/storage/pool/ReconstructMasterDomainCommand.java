@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
@@ -123,14 +122,11 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         // To issue a reconstructMaster you need to set the domain inactive unless the selected domain is the current master
         if (getParameters().isInactive() && !getStorageDomain().getId().equals(getNewMasterStorageDomainId())) {
-            executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    setStorageDomainStatus(StorageDomainStatus.Inactive, getCompensationContext());
-                    calcStoragePoolStatusByDomainsStatus();
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            executeInNewTransaction(() -> {
+                setStorageDomainStatus(StorageDomainStatus.Inactive, getCompensationContext());
+                calcStoragePoolStatusByDomainsStatus();
+                getCompensationContext().stateChanged();
+                return null;
             });
         }
 

@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -161,16 +160,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         storagePool.setStoragePoolFormatType(targetFormat);
 
         TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        getStoragePoolDao().updatePartial(storagePool);
-                        updateMemberDomainsFormat(targetFormat);
-                        if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
-                            getVmStaticDao().incrementDbGenerationForAllInStoragePool(storagePool.getId());
-                        }
-                        return null;
+                () -> {
+                    getStoragePoolDao().updatePartial(storagePool);
+                    updateMemberDomainsFormat(targetFormat);
+                    if (FeatureSupported.ovfStoreOnAnyDomain(spVersion)) {
+                        getVmStaticDao().incrementDbGenerationForAllInStoragePool(storagePool.getId());
                     }
+                    return null;
                 });
 
         return targetFormat;

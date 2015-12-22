@@ -422,16 +422,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
             final StorageDomainStatus status, final CompensationContext context) {
-        executeInNewTransaction(new TransactionMethod<StoragePoolIsoMap>() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public StoragePoolIsoMap runInTransaction() {
-                context.snapshotEntityStatus(map);
-                map.setStatus(status);
-                getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
-                context.stateChanged();
-                return null;
-            }
+        executeInNewTransaction(() -> {
+            context.snapshotEntityStatus(map);
+            map.setStatus(status);
+            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+            context.stateChanged();
+            return null;
         });
     }
 

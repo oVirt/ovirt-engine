@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -66,17 +65,14 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setQuotaId(getParameters().getQuotaId());
         newDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
-                    addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
-                } else {
-                    addDiskImageToDb(newDiskImage, null, Boolean.TRUE);
-                    getCompensationContext().snapshotEntityStatus(newDiskImage.getImage(), ImageStatus.ILLEGAL);
-                }
-                return null;
+        TransactionSupport.executeInNewTransaction(() -> {
+            if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
+                addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
+            } else {
+                addDiskImageToDb(newDiskImage, null, Boolean.TRUE);
+                getCompensationContext().snapshotEntityStatus(newDiskImage.getImage(), ImageStatus.ILLEGAL);
             }
+            return null;
         });
         freeLock();
         if (getParameters().isShouldRemainIllegalOnFailedExecution()) {

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -76,14 +75,11 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                     if (domain.getStorageDomainType() == StorageDomainType.Data) {
                         log.info("Image id '{}' will be set at illegal state with no snapshot id.", image.getImageId());
                         TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                                new TransactionMethod<Object>() {
-                                    @Override
-                                    public Object runInTransaction() {
-                                        // If VDSM task didn't succeed to initiate a task we change the disk to at illegal
-                                        // state.
-                                        updateDiskImagesToIllegal(image);
-                                        return true;
-                                    }
+                                () -> {
+                                    // If VDSM task didn't succeed to initiate a task we change the disk to at illegal
+                                    // state.
+                                    updateDiskImagesToIllegal(image);
+                                    return true;
                                 });
                     } else {
                         log.info("Image id '{}' is not on a data domain and will not be marked as illegal.", image.getImageId());

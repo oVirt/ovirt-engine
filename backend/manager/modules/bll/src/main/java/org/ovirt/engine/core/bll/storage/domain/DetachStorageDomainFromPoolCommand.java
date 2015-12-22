@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
@@ -83,22 +82,19 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         disconnectAllHostsInPool();
 
         log.info(" Detach storage domain: after disconnect storage");
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                detachStorageDomainWithEntities(getStorageDomain());
-                StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
-                getCompensationContext().snapshotEntity(mapToRemove);
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                        .remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
-                                mapToRemove.getStoragePoolId()));
-                // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
-                // data center
-                DbFacade.getInstance().getDiskProfileDao().nullifyQosForStorageDomain(getStorageDomain().getId());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            detachStorageDomainWithEntities(getStorageDomain());
+            StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
+            getCompensationContext().snapshotEntity(mapToRemove);
+            DbFacade.getInstance()
+                    .getStoragePoolIsoMapDao()
+                    .remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
+                            mapToRemove.getStoragePoolId()));
+            // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
+            // data center
+            DbFacade.getInstance().getDiskProfileDao().nullifyQosForStorageDomain(getStorageDomain().getId());
+            getCompensationContext().stateChanged();
+            return null;
         });
         if (returnValue.getSucceeded() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             // reset iso for this pool in vdsBroker cache

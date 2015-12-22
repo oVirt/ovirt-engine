@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParameters> extends
@@ -37,12 +36,10 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
 
     @Override
     protected void executeCommand() {
-        executeInNewTransaction(new TransactionMethod<Void>() {
-            public Void runInTransaction() {
-                setStorageDomainStatus(StorageDomainStatus.Locked, getCompensationContext());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        executeInNewTransaction(() -> {
+            setStorageDomainStatus(StorageDomainStatus.Locked, getCompensationContext());
+            getCompensationContext().stateChanged();
+            return null;
         });
         boolean supportForceExtendVG = Config.<Boolean> getValue(
                 ConfigValues.SupportForceExtendVG, getStoragePool().getCompatibilityVersion().toString());
@@ -50,16 +47,14 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         runVdsCommand(VDSCommandType.ExtendStorageDomain,
                 new ExtendStorageDomainVDSCommandParameters(getStoragePoolId(), getStorageDomain()
                         .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG));
-        executeInNewTransaction(new TransactionMethod<Void>() {
-            public Void runInTransaction() {
-                for (LUNs lun : getParameters().getLunsList()) {
-                    proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
-                }
-
-                setStorageDomainStatus(StorageDomainStatus.Active, null);
-                getCompensationContext().resetCompensation();
-                return null;
+        executeInNewTransaction(() -> {
+            for (LUNs lun : getParameters().getLunsList()) {
+                proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
             }
+
+            setStorageDomainStatus(StorageDomainStatus.Active, null);
+            getCompensationContext().resetCompensation();
+            return null;
         });
         setSucceeded(true);
     }

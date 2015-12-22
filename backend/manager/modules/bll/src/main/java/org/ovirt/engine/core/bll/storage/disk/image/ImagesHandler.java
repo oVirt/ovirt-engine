@@ -54,7 +54,6 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -728,26 +727,20 @@ public final class ImagesHandler {
                 }
             }
 
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    for (Guid diskId : diskIds) {
-                        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
-                    }
-                    compensationContext.stateChanged();
-                    return null;
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+                for (Guid diskId : diskIds) {
+                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
                 }
+                compensationContext.stateChanged();
+                return null;
             });
         } else {
 
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    for (Guid diskId : diskIds) {
-                        updateAllDiskImageSnapshotsStatus(diskId, status);
-                    }
-                    return null;
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+                for (Guid diskId : diskIds) {
+                    updateAllDiskImageSnapshotsStatus(diskId, status);
                 }
+                return null;
             });
         }
     }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -43,23 +42,19 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
         iscsiBond.setId(Guid.newGuid());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getDbFacade().getIscsiBondDao().save(iscsiBond);
 
-            @Override
-            public Void runInTransaction() {
-                getDbFacade().getIscsiBondDao().save(iscsiBond);
-
-                for (Guid networkId : iscsiBond.getNetworkIds()) {
-                    getDbFacade().getIscsiBondDao().addNetworkToIscsiBond(iscsiBond.getId(), networkId);
-                }
-
-                for (String connectionId : iscsiBond.getStorageConnectionIds()) {
-                    getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(iscsiBond.getId(), connectionId);
-                }
-
-                getReturnValue().setActionReturnValue(iscsiBond.getId());
-                return null;
+            for (Guid networkId : iscsiBond.getNetworkIds()) {
+                getDbFacade().getIscsiBondDao().addNetworkToIscsiBond(iscsiBond.getId(), networkId);
             }
+
+            for (String connectionId : iscsiBond.getStorageConnectionIds()) {
+                getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(iscsiBond.getId(), connectionId);
+            }
+
+            getReturnValue().setActionReturnValue(iscsiBond.getId());
+            return null;
         });
 
         connectAllHostsToStorage(iscsiBond.getStorageConnectionIds());

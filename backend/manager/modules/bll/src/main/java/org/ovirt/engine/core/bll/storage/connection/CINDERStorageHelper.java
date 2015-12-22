@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,12 +229,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private <T> void execute(final Callable<T> callable) {
         if (runInNewTransaction) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    invokeCallable(callable);
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                invokeCallable(callable);
+                return null;
             });
         } else {
             invokeCallable(callable);
