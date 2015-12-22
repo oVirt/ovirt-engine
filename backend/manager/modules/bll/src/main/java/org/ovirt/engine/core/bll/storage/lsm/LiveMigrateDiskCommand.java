@@ -170,7 +170,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         boolean validate = super.validate();
 
         if (!validate) {
-            auditLogDirector.log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
+            auditLogDirector.log(this, AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE);
         }
 
         return validate;
@@ -192,18 +192,18 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         switch (getActionState()) {
         case EXECUTE:
             if (!getParameters().getTaskGroupSuccess()) {
-                return AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE;
+                return AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE;
             }
             if (isFirstTaskHandler() && getSucceeded()) {
-                return AuditLogType.USER_MOVED_VM_DISK;
+                return AuditLogType.USER_MOVED_DISK;
             }
             break;
 
         case END_SUCCESS:
-            return AuditLogType.USER_MOVED_VM_DISK_FINISHED_SUCCESS;
+            return AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS;
 
         case END_FAILURE:
-            return AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE;
+            return AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE;
         }
 
         return AuditLogType.UNASSIGNED;
