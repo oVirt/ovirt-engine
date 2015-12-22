@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     private final VmNetworkInterface nic;
-    private Collection<VmInterfaceType> supportedVnicTypes;
 
     protected BaseEditVmInterfaceModel(VmBase vm,
             VMStatus vmStatus,
@@ -54,7 +53,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                supportedVnicTypes = (Collection<VmInterfaceType>) returnValue;
+                setSupportedVnicTypes((Collection<VmInterfaceType>) returnValue);
                 postNicInit();
             }
         };
@@ -102,15 +101,12 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     protected void initSelectedType() {
         VmInterfaceType selectedNicType = VmInterfaceType.forValue(getNic().getType());
 
-        final Collection<VmInterfaceType> vnicTypes =
-                supportedVnicTypes == null ? new ArrayList<VmInterfaceType>() : supportedVnicTypes;
-
-        if (selectedNicType == null || !vnicTypes.contains(selectedNicType)) {
+        if (selectedNicType == null || !getSupportedVnicTypes().contains(selectedNicType)) {
             selectedNicType = getDeafultNicTypeByProfile();
         }
 
         if (getNicType().getItems() == null) {
-            getNicType().setItems(vnicTypes, selectedNicType);
+            getNicType().setItems(getSupportedVnicTypes(), selectedNicType);
         } else {
             getNicType().setSelectedItem(selectedNicType);
         }
