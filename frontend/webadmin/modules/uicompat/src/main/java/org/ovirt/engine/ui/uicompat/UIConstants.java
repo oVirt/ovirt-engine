@@ -1306,6 +1306,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("A bond name must begin with the prefix 'bond' followed by a number.")
     String bondNameInvalid();
 
+    @DefaultStringValue("Format Domain, i.e. Storage Content will be lost!")
+    String storageRemovePopupFormatLabel();
+
     // Role tree tooltip
     @DefaultStringValue("Allow to Add/Remove Users from the System")
     String allowToAddRemoveUsersFromTheSystemRoleTreeTooltip();
