@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -54,14 +53,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             getInterface().setId(Guid.newGuid());
             getInterface().setVmId(getParameters().getVmId());
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    addInterfaceToDb(getInterface());
-                    addInterfaceDeviceToDb();
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                addInterfaceToDb(getInterface());
+                addInterfaceDeviceToDb();
+                getCompensationContext().stateChanged();
+                return null;
             });
 
             if (getInterface().isPlugged()) {

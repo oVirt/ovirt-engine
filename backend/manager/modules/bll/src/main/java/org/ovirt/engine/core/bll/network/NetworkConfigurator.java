@@ -34,7 +34,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,14 +128,10 @@ public class NetworkConfigurator {
     }
 
     public void refreshNetworkConfiguration() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
-                        new CollectHostNetworkDataVdsCommandParameters(host));
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
+                    new CollectHostNetworkDataVdsCommandParameters(host));
+            return null;
         });
     }
 

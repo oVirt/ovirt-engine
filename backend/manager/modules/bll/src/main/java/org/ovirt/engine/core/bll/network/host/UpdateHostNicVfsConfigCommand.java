@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.HostDevChangeNumVfsVDSParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -78,22 +77,18 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
     private boolean saveChangesToDb(final boolean shouldRefreshHost,
             final HostNicVfsConfig oldVfsConfig,
             final boolean allNetworksAllowedChanged) {
-        return TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
+        return TransactionSupport.executeInNewTransaction(() -> {
+            boolean result = true;
 
-            @Override
-            public Boolean runInTransaction() {
-                boolean result = true;
-
-                if (shouldRefreshHost) {
-                    result = refreshHost();
-                }
-
-                if (result && allNetworksAllowedChanged) {
-                    getVfsConfigDao().update(oldVfsConfig);
-                }
-
-                return result;
+            if (shouldRefreshHost) {
+                result = refreshHost();
             }
+
+            if (result && allNetworksAllowedChanged) {
+                getVfsConfigDao().update(oldVfsConfig);
+            }
+
+            return result;
         });
     }
 

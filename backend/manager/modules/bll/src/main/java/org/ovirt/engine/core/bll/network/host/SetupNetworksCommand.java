@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.slf4j.Logger;
@@ -203,13 +202,9 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     private void updateModifiedInterfaces() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<T>() {
-
-            @Override
-            public T runInTransaction() {
-                getDbFacade().getInterfaceDao().massUpdateInterfacesForVds(getModifiedInterfaces());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            getDbFacade().getInterfaceDao().massUpdateInterfacesForVds(getModifiedInterfaces());
+            return null;
         });
     }
 
@@ -257,28 +252,25 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     private void persistNetworkChanges(final VDS updatedHost) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
+        TransactionSupport.executeInNewTransaction(() -> {
 
-                List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
-                ifaces.addAll(getRemovedBonds().values());
-                UserConfiguredNetworkData userConfiguredNetworkData =
-                        new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces,
-                            getParameters().getCustomProperties());
+            List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
+            ifaces.addAll(getRemovedBonds().values());
+            UserConfiguredNetworkData userConfiguredNetworkData =
+                    new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces,
+                        getParameters().getCustomProperties());
 
-                // save the new network topology to DB
-                hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
-                        false,
-                        userConfiguredNetworkData);
+            // save the new network topology to DB
+            hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
+                    false,
+                    userConfiguredNetworkData);
 
-                getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
-                for (Network net : getNetworks()) {
-                    NetworkClusterHelper.setStatus(getVdsGroupId(), net);
-                }
-
-                return null;
+            getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
+            for (Network net : getNetworks()) {
+                NetworkClusterHelper.setStatus(getVdsGroupId(), net);
             }
+
+            return null;
         });
     }
 

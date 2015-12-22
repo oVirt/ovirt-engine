@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -93,15 +92,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    updatePassthoughDeviceIfNeeded();
-                    getCompensationContext().snapshotEntity(oldIface);
-                    getVmNicDao().update(getInterface());
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
+            TransactionSupport.executeInNewTransaction(() -> {
+                updatePassthoughDeviceIfNeeded();
+                getCompensationContext().snapshotEntity(oldIface);
+                getVmNicDao().update(getInterface());
+                getCompensationContext().stateChanged();
+                return null;
             });
 
             succeeded = updateHost();

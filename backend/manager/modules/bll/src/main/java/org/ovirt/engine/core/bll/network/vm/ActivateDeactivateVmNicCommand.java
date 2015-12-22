@@ -300,15 +300,11 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private TransactionMethod<Void> updateDevice() {
-        return new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG ? true : false);
-                getVmDeviceDao().update(vmDevice);
-                VmDeviceUtils.updateBootOrder(getVm().getId());
-                return null;
-            }
+        return () -> {
+            vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG ? true : false);
+            getVmDeviceDao().update(vmDevice);
+            VmDeviceUtils.updateBootOrder(getVm().getId());
+            return null;
         };
     }
 

@@ -32,7 +32,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,30 +98,24 @@ public class VmInterfaceManager {
     }
 
     public void auditLogMacInUse(final VmNic iface) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                AuditLogableBase logable = createAuditLog(iface);
-                log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
-                log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
-                        "therefore the action for VM '{}' failed.", iface.getName(), iface.getMacAddress(),
-                        iface.getVmId());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            AuditLogableBase logable = createAuditLog(iface);
+            log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
+            log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
+                    "therefore the action for VM '{}' failed.", iface.getName(), iface.getMacAddress(),
+                    iface.getVmId());
+            return null;
         });
     }
 
     public void auditLogMacInUseUnplug(final VmNic iface) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                AuditLogableBase logable = createAuditLog(iface);
-                log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG);
-                log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
-                        "therefore it is being unplugged from VM '{}'.", iface.getName(), iface.getMacAddress(),
-                        iface.getVmId());
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            AuditLogableBase logable = createAuditLog(iface);
+            log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG);
+            log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
+                    "therefore it is being unplugged from VM '{}'.", iface.getName(), iface.getMacAddress(),
+                    iface.getVmId());
+            return null;
         });
     }
 

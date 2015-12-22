@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -67,28 +66,25 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
 
     @Override
     protected void executeCommand() {
-        final Boolean dbUpdateResult = TransactionSupport.executeInNewTransaction(new TransactionMethod<Boolean>() {
-            @Override
-            public Boolean runInTransaction() {
-                final Collection<NetworkCluster> attachments = getParameters().getAttachments();
-                final List<NetworkCluster> managementNetworkAttachments =
-                        attachments.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
-                final List<NetworkCluster> nonManagementNetworkAttachments =
-                        attachments.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
-                final Collection<NetworkCluster> updates = getParameters().getUpdates();
-                final List<NetworkCluster> managementNetworkUpdates =
-                        updates.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
-                final List<NetworkCluster> nonManagementNetworkUpdates =
-                        updates.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
+        final Boolean dbUpdateResult = TransactionSupport.executeInNewTransaction(() -> {
+            final Collection<NetworkCluster> attachments = getParameters().getAttachments();
+            final List<NetworkCluster> managementNetworkAttachments =
+                    attachments.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
+            final List<NetworkCluster> nonManagementNetworkAttachments =
+                    attachments.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
+            final Collection<NetworkCluster> updates = getParameters().getUpdates();
+            final List<NetworkCluster> managementNetworkUpdates =
+                    updates.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
+            final List<NetworkCluster> nonManagementNetworkUpdates =
+                    updates.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
 
-                boolean resultStatus = attachNetworks(managementNetworkAttachments);
-                resultStatus = resultStatus && updateNetworkAttachments(managementNetworkUpdates);
-                resultStatus = resultStatus && attachNetworks(nonManagementNetworkAttachments);
-                resultStatus = resultStatus && updateNetworkAttachments(nonManagementNetworkUpdates);
-                resultStatus = resultStatus && detachNetworks(getParameters().getDetachments());
+            boolean resultStatus = attachNetworks(managementNetworkAttachments);
+            resultStatus = resultStatus && updateNetworkAttachments(managementNetworkUpdates);
+            resultStatus = resultStatus && attachNetworks(nonManagementNetworkAttachments);
+            resultStatus = resultStatus && updateNetworkAttachments(nonManagementNetworkUpdates);
+            resultStatus = resultStatus && detachNetworks(getParameters().getDetachments());
 
-                return resultStatus;
-            }
+            return resultStatus;
         });
 
         setSucceeded(dbUpdateResult);

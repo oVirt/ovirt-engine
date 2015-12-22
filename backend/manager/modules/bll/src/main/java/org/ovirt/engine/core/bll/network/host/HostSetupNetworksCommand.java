@@ -81,7 +81,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
@@ -757,28 +756,23 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private void persistNetworkChanges(final VDS updatedHost) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                UserConfiguredNetworkData userConfiguredNetworkData =
-                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(), applyUserConfiguredNics());
+        TransactionSupport.executeInNewTransaction(() -> {
+            UserConfiguredNetworkData userConfiguredNetworkData =
+                new UserConfiguredNetworkData(getParameters().getNetworkAttachments(), applyUserConfiguredNics());
 
-                // save the new network topology to DB
-                hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
-                    false,
-                    userConfiguredNetworkData);
+            // save the new network topology to DB
+            hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
+                false,
+                userConfiguredNetworkData);
 
-                getVdsDynamicDao().updateNetConfigDirty(updatedHost.getId(), updatedHost.getNetConfigDirty());
+            getVdsDynamicDao().updateNetConfigDirty(updatedHost.getId(), updatedHost.getNetConfigDirty());
 
-                // Update cluster networks (i.e. check if need to activate each new network)
-                for (Network net : getModifiedNetworks()) {
-                    NetworkClusterHelper.setStatus(getVdsGroupId(), net);
-                }
-
-                return null;
+            // Update cluster networks (i.e. check if need to activate each new network)
+            for (Network net : getModifiedNetworks()) {
+                NetworkClusterHelper.setStatus(getVdsGroupId(), net);
             }
 
-
+            return null;
         });
     }
 

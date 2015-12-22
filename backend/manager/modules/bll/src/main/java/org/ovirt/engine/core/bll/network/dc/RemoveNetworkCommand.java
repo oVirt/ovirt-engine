@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -57,16 +56,13 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     protected void executeCommand() {
         setStoragePoolId(getNetwork().getDataCenterId());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void> () {
-            @Override
-            public Void runInTransaction() {
-                removeVnicProfiles();
-                removeFromClusters();
-                getCompensationContext().snapshotEntity(getNetwork());
-                getNetworkDao().remove(getNetwork().getId());
-                getCompensationContext().stateChanged();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            removeVnicProfiles();
+            removeFromClusters();
+            getCompensationContext().snapshotEntity(getNetwork());
+            getNetworkDao().remove(getNetwork().getId());
+            getCompensationContext().stateChanged();
+            return null;
         });
 
         if (getNetwork().isExternal()) {

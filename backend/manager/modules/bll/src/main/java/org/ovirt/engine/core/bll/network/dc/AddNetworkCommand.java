@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -47,19 +46,15 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     protected void executeCommand() {
         getNetwork().setId(Guid.newGuid());
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getNetworkDao().save(getNetwork());
 
-            @Override
-            public Void runInTransaction() {
-                getNetworkDao().save(getNetwork());
-
-                if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
-                    getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));
-                }
-
-                NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());
-                return null;
+            if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
+                getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));
             }
+
+            NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());
+            return null;
         });
 
         getReturnValue().setActionReturnValue(getNetwork().getId());

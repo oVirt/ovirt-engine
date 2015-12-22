@@ -55,7 +55,6 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
@@ -86,22 +85,18 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getNetworkDao().update(getNetwork());
 
-            @Override
-            public Void runInTransaction() {
-                getNetworkDao().update(getNetwork());
-
-                for (NetworkCluster clusterAttachment : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
-                    NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
-                }
-
-                if (networkChangedToNonVmNetwork()) {
-                    removeVnicProfiles();
-                }
-
-                return null;
+            for (NetworkCluster clusterAttachment : getNetworkClusterDao().getAllForNetwork(getNetwork().getId())) {
+                NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
             }
+
+            if (networkChangedToNonVmNetwork()) {
+                removeVnicProfiles();
+            }
+
+            return null;
         });
 
         if (!getNetwork().isExternal()) {

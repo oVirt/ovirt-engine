@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -55,13 +54,9 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
         getNetwork().setVlanId(null);
         getNetwork().setLabel(null);
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addNetwork();
-                return null;
-            }
+        TransactionSupport.executeInNewTransaction(() -> {
+            addNetwork();
+            return null;
         });
     }
 
