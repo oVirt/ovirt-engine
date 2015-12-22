@@ -137,13 +137,7 @@ public class MultipleActionsRunner {
 
     private Callable<VdcReturnValueBase> buildValidateAsynchronously(
             final int currentValidateId, final int totalSize) {
-        return new Callable<VdcReturnValueBase>() {
-
-            @Override
-            public VdcReturnValueBase call() {
-                return runValidateOnly(currentValidateId, totalSize);
-            }
-        };
+        return () -> runValidateOnly(currentValidateId, totalSize);
     }
 
     protected VdcReturnValueBase runValidateOnly(final int currentValidateId, final int totalSize) {

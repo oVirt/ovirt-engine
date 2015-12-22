@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -251,12 +250,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                 EventType.VDSCONNECTTOPOOL,
                                 "Trying to connect host " + vds.getHostName() + " with id " + vds.getId()
                                         + " to the pool " + getStoragePool().getId()),
-                        new Callable<EventResult>() {
-                            @Override
-                            public EventResult call() {
-                                return runConnectHostToPoolEvent(getStoragePool().getId(), vds);
-                            }
-                        });
+                        () -> runConnectHostToPoolEvent(getStoragePool().getId(), vds));
         return result;
     }
 

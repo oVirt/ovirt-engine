@@ -88,12 +88,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
             final FenceActionExecutor executor,
             final FenceActionType fenceAction
     ) {
-        return (new Callable<FenceOperationResult>() {
-            @Override
-            public FenceOperationResult call() {
-                return executor.fence(fenceAction);
-            }
-        });
+        return (() -> executor.fence(fenceAction));
     }
 
     /**

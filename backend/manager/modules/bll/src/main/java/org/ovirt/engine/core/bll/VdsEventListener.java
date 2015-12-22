@@ -198,12 +198,9 @@ public class VdsEventListener implements IVdsEventListener {
     private void clearDomainCache(final VDS vds) {
         eventQueue.submitEventSync(new Event(vds.getStoragePoolId(),
                 null, vds.getId(), EventType.VDSCLEARCACHE, ""),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
-                        return new EventResult(true, EventType.VDSCLEARCACHE);
-                    }
+                () -> {
+                    IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
+                    return new EventResult(true, EventType.VDSCLEARCACHE);
                 });
     }
 
@@ -560,21 +557,18 @@ public class VdsEventListener implements IVdsEventListener {
         // collect all Active hosts into a callable list
         List<Callable<Object>> callables = new LinkedList<>();
         for (final VDS vds : activeHostsInCluster) {
-            callables.add(new Callable<Object>() {
-                @Override
-                public Object call() {
-                    try {
-                        resourceManagerProvider.get().runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
-                                new MomPolicyVDSParameters(vds,
-                                        cluster.isEnableBallooning(),
-                                        cluster.isEnableKsm(),
-                                        cluster.isKsmMergeAcrossNumaNodes())
-                                );
-                    } catch (EngineException e) {
-                        log.error("Could not update MoM policy on host '{}'", vds.getName());
-                    }
-                    return null;
+            callables.add(() -> {
+                try {
+                    resourceManagerProvider.get().runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
+                            new MomPolicyVDSParameters(vds,
+                                    cluster.isEnableBallooning(),
+                                    cluster.isEnableKsm(),
+                                    cluster.isKsmMergeAcrossNumaNodes())
+                            );
+                } catch (EngineException e) {
+                    log.error("Could not update MoM policy on host '{}'", vds.getName());
                 }
+                return null;
             });
         }
         // run all VDSCommands concurrently with executor

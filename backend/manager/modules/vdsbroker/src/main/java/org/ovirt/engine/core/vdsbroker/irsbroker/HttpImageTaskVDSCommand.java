@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -65,12 +64,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         VdsManager manager = resourceManager.getVdsManager(getParameters().getVdsId());
         final HttpClient httpclient = manager.getVdsProxy().getHttpClient();
         try {
-            FutureTask<Integer> futureTask = new FutureTask(new Callable<Integer>() {
-                @Override
-                public Integer call() throws Exception {
-                    return httpclient.executeMethod(method);
-                }
-            });
+            FutureTask<Integer> futureTask = new FutureTask(() -> httpclient.executeMethod(method));
             Future<Integer> f = ThreadPoolUtil.execute(futureTask);
             if (f.get(Config.<Integer> getValue(getConfigValueTimeLimitForOperation()), TimeUnit.MINUTES) == null) {
                 responseCode = futureTask.get();

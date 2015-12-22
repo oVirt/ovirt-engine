@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -232,13 +231,7 @@ public class CommandExecutor {
         }
         Future<VdcReturnValueBase> retVal;
         try {
-            retVal = executor.submit(new Callable<VdcReturnValueBase>() {
-
-                @Override
-                public VdcReturnValueBase call() throws Exception {
-                    return executeCommand(command, cmdContext);
-                }
-            });
+            retVal = executor.submit(() -> executeCommand(command, cmdContext));
         } catch(RejectedExecutionException ex) {
             command.setCommandStatus(CommandStatus.FAILED);
             log.error("Failed to submit command to executor service, command '{}' status has been set to FAILED",

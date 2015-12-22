@@ -498,14 +498,11 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("bondings", bonding)
                         .withParameter("options", options)
                         .build();
-        final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
-            @Override
-            public Map<String, Object> call() throws Exception {
-                if (isPolicyReset) {
-                    updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
-                }
-                return new FutureMap(client, request).withResponseKey("status");
+        final FutureCallable callable = new FutureCallable(() -> {
+            if (isPolicyReset) {
+                updateHeartbeatPolicy(client.getClientRetryPolicy().clone(), false);
             }
+            return new FutureMap(client, request).withResponseKey("status");
         });
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
@@ -998,13 +995,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public FutureTask<Map<String, Object>> timeBoundPoll(final long timeout, final TimeUnit unit) {
         final JsonRpcRequest request = new RequestBuilder("Host.ping").build();
-        final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
-
-            @Override
-            public Map<String, Object> call() throws Exception {
-                return new FutureMap(client, request, timeout, unit);
-            }
-        });
+        final FutureCallable callable = new FutureCallable(() -> new FutureMap(client, request, timeout, unit));
 
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 

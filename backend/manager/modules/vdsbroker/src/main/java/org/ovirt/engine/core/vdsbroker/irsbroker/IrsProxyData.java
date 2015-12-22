@@ -374,25 +374,22 @@ public class IrsProxyData {
     public void queueDomainMaintenanceCheck(final StorageDomain domain, final StoragePool pool) {
         getEventQueue()
                 .submitEventAsync(new Event(_storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
-                        new Callable<EventResult>() {
-                            @Override
-                            public EventResult call() {
-                                Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
-                                Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
-                                if (vdsConnectedToPool.isEmpty() ||
-                                        (vdsDomInMaintenance != null &&
-                                                vdsDomInMaintenance.containsAll(vdsConnectedToPool))) {
-                                    log.info("Moving domain '{}' to maintenance", domain.getId());
-                                    DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(
-                                            domain.getStoragePoolIsoMapData().getId(),
-                                            StorageDomainStatus.Maintenance);
-                                    AuditLogableBase auditLogableBase = new AuditLogableBase();
-                                    auditLogableBase.addCustomValue("StorageDomainName", domain.getName());
-                                    auditLogableBase.addCustomValue("StoragePoolName", pool.getName());
-                                    new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
-                                }
-                                return null;
+                        () -> {
+                            Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
+                            Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
+                            if (vdsConnectedToPool.isEmpty() ||
+                                    (vdsDomInMaintenance != null &&
+                                            vdsDomInMaintenance.containsAll(vdsConnectedToPool))) {
+                                log.info("Moving domain '{}' to maintenance", domain.getId());
+                                DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(
+                                        domain.getStoragePoolIsoMapData().getId(),
+                                        StorageDomainStatus.Maintenance);
+                                AuditLogableBase auditLogableBase = new AuditLogableBase();
+                                auditLogableBase.addCustomValue("StorageDomainName", domain.getName());
+                                auditLogableBase.addCustomValue("StoragePoolName", pool.getName());
+                                new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
                             }
+                            return null;
                         });
     }
 
@@ -553,20 +550,17 @@ public class IrsProxyData {
 
         getEventQueue().submitEventSync(new Event(_storagePoolId,
                 masterDomainId, null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        log.warn(logMessage);
+                () -> {
+                    log.warn(logMessage);
 
-                        AuditLogableBase logable = new AuditLogableBase(currentVdsId);
-                        logable.setStorageDomainId(masterDomainId);
-                        new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
+                    AuditLogableBase logable = new AuditLogableBase(currentVdsId);
+                    logable.setStorageDomainId(masterDomainId);
+                    new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
-                        return ResourceManager.getInstance()
-                                .getEventListener()
-                                .masterDomainNotOperational(masterDomainId, storagePoolId, false, true);
+                    return ResourceManager.getInstance()
+                            .getEventListener()
+                            .masterDomainNotOperational(masterDomainId, storagePoolId, false, true);
 
-                    }
                 });
         throw new IRSNoMasterDomainException(exceptionMessage);
     }
@@ -1328,14 +1322,11 @@ public class IrsProxyData {
                                        final Set<Guid> domainsInMaintenance) {
         getEventQueue().submitEventSync(new Event(_storagePoolId,
                 null, vdsId, EventType.DOMAINMONITORING, ""),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        EventResult result = new EventResult(true, EventType.DOMAINMONITORING);
-                        updateProblematicVdsData(vdsId, vdsName, domainsInProblem);
-                        updateMaintenanceVdsData(vdsId, vdsName, domainsInMaintenance);
-                        return result;
-                    }
+                () -> {
+                    EventResult result = new EventResult(true, EventType.DOMAINMONITORING);
+                    updateProblematicVdsData(vdsId, vdsName, domainsInProblem);
+                    updateMaintenanceVdsData(vdsId, vdsName, domainsInMaintenance);
+                    return result;
                 });
     }
 
@@ -1545,17 +1536,14 @@ public class IrsProxyData {
     public void onTimer(final Guid domainId) {
         getEventQueue().submitEventAsync(new Event(_storagePoolId,
                 domainId, null, EventType.DOMAINFAILOVER, ""),
-                new Callable<EventResult>() {
-                    @Override
-                    public EventResult call() {
-                        EventResult result = null;
-                        if (_domainsInProblem.containsKey(domainId)) {
-                            log.info("starting processDomainRecovery for domain '{}'.", getDomainIdTuple(domainId));
-                            result = processDomainRecovery(domainId);
-                        }
-                        _timers.remove(domainId);
-                        return result;
+                () -> {
+                    EventResult result = null;
+                    if (_domainsInProblem.containsKey(domainId)) {
+                        log.info("starting processDomainRecovery for domain '{}'.", getDomainIdTuple(domainId));
+                        result = processDomainRecovery(domainId);
                     }
+                    _timers.remove(domainId);
+                    return result;
                 });
     }
 
@@ -1639,23 +1627,15 @@ public class IrsProxyData {
 
                 acquiredLocks.putAll(lockMap);
 
-                connectStorageTasks.add(new Callable<Void>() {
-
-                    @Override
-                    public Void call() {
-                        ResourceManager.getInstance()
-                                .getEventListener().connectHostToDomainsInActiveOrUnknownStatus(vds);
-                        return null;
-                    }
+                connectStorageTasks.add(() -> {
+                    ResourceManager.getInstance()
+                            .getEventListener().connectHostToDomainsInActiveOrUnknownStatus(vds);
+                    return null;
                 });
 
-                refreshStoragePoolTasks.add(new Callable<Void>() {
-
-                    @Override
-                    public Void call() {
-                        StoragePoolDomainHelper.refreshHostPoolMetadata(vds, storagePool, masterDomainId, storagePoolIsoMap);
-                        return null;
-                    }
+                refreshStoragePoolTasks.add(() -> {
+                    StoragePoolDomainHelper.refreshHostPoolMetadata(vds, storagePool, masterDomainId, storagePoolIsoMap);
+                    return null;
                 });
             }
 
@@ -1669,13 +1649,10 @@ public class IrsProxyData {
                             null,
                             EventType.POOLREFRESH,
                             ""),
-                    new Callable<EventResult>() {
-                        @Override
-                        public EventResult call() {
-                            log.info("Running storage pool metadata refresh for hosts '{}'", handledHosts);
-                            ThreadPoolUtil.invokeAll(refreshStoragePoolTasks);
-                            return new EventResult(true, EventType.POOLREFRESH);
-                        }
+                    () -> {
+                        log.info("Running storage pool metadata refresh for hosts '{}'", handledHosts);
+                        ThreadPoolUtil.invokeAll(refreshStoragePoolTasks);
+                        return new EventResult(true, EventType.POOLREFRESH);
                     });
         } finally {
             if (!acquiredLocks.isEmpty()) {
