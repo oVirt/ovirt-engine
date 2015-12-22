@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -481,15 +480,10 @@ class StyledCompositeCell<T> extends CompositeCell<T> {
             String style = styleProvider.styleStringOf(hasCell) == null ? "" : styleProvider.styleStringOf(hasCell); //$NON-NLS-1$
 
             sb.append(templates.div(cellId, style));
-            render(context, value, sb, hasCell);
+            render(context, value, sb, hasCell, id);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
             i++;
         }
-    }
-
-    @Override
-    protected Element getContainerElement(Element parent) {
-        return parent.getFirstChildElement();
     }
 
     interface StyledProvider<T> {
