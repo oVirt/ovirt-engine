@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -35,6 +36,10 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
     public AddExistingBlockStorageDomainCommand(T parameters) {
         super(parameters);
+    }
+
+    public AddExistingBlockStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

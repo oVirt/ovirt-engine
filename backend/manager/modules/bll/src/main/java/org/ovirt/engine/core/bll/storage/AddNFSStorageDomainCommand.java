@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,4 +19,7 @@ public class AddNFSStorageDomainCommand<T extends StorageDomainManagementParamet
         super(parameters);
     }
 
+    public AddNFSStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
 }

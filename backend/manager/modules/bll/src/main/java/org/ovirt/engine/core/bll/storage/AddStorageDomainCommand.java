@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
@@ -48,6 +49,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected AddStorageDomainCommand(Guid commandId) {
         super(commandId);
+    }
+
+    protected AddStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected void initializeStorageDomain() {
