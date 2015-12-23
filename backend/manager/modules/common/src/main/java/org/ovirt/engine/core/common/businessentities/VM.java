@@ -36,7 +36,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
 
     @Valid
     private List<Snapshot> snapshots;
-    private boolean runOnce;
 
     private String vdsGroupSpiceProxy;
 
@@ -1548,7 +1547,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
         result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
         result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
-        result = prime * result + (runOnce ? 1231 : 1237);
         result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
         result = prime * result + ((spiceDriverVersion == null) ? 0 : spiceDriverVersion.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
