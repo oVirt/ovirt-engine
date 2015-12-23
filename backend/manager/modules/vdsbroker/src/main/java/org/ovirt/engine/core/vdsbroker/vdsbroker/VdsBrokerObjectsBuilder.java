@@ -2027,9 +2027,11 @@ public class VdsBrokerObjectsBuilder {
             iface.setAddress(extractAddress(nicProperties));
             iface.setSubnet(extractSubnet(nicProperties));
 
-            String mtu = (String) nicProperties.get(VdsProperties.MTU);
-            if (StringUtils.isNotBlank(mtu)) {
-                iface.setMtu(Integer.parseInt(mtu));
+            Object mtu = nicProperties.get(VdsProperties.MTU);
+            if (mtu != null) {
+                if (StringUtils.isNotBlank(mtu.toString())) {
+                    iface.setMtu(Integer.parseInt(mtu.toString()));
+                }
             }
 
             addBootProtocol(nicProperties, host, iface);
