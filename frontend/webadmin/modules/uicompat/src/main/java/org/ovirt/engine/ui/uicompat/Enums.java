@@ -73,7 +73,7 @@ public interface Enums extends LocalizedEnums {
 
     String NfsVersion___V4();
 
-    String NfsVersion___V41();
+    String NfsVersion___V4_1();
 
     String NfsVersion___AUTO();
 
