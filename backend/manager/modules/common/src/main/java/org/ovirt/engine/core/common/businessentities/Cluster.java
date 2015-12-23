@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.validation.annotation.ValidCluster;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -328,6 +329,10 @@ public class Cluster implements IVdcQueryable, BusinessEntity<Guid>, HasStorageP
 
     public void setMaintenanceReasonRequired(boolean maintenanceReasonRequired) {
         this.maintenanceReasonRequired = maintenanceReasonRequired;
+    }
+
+    public boolean isInUpgradeMode(){
+        return ClusterPolicy.UPGRADE_POLICY_GUID.equals(clusterPolicyId);
     }
 
     public Guid getClusterPolicyId() {

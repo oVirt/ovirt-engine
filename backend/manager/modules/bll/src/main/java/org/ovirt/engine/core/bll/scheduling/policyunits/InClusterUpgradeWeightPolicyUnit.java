@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 @SchedulingUnit(
         guid = "84e6ddee-ab0d-42dd-82f0-c298889db568",
         name = "InClusterUpgrade",
-        description = "Penalize hosts with older OS version more than hosts with the same OS version where a vm is currently running on. Newer OS versions are not penalized",
+        description = "Penalize hosts with older OS version more than hosts with the same OS version where a vm is "
+                + "currently running on. Newer OS versions are not penalized",
         type = PolicyUnitType.WEIGHT
 )
 public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
@@ -48,16 +49,16 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        final VdsDynamic lastHost = getLastHost(vm);
-        if (lastHost == null) {
+        final VdsDynamic sourceHost = getLastHost(vm);
+        if (sourceHost == null) {
             return noWeights(hosts);
         }
 
-        final OS lastHostOs = OS.fromPackageVersionString(lastHost.getHostOs());
+        final OS lastHostOs = OS.fromPackageVersionString(sourceHost.getHostOs());
         if (!lastHostOs.isValid()) {
-            log.debug("Source host {} does not provide a valid OS identifier. Found {}.",
-                    lastHost.getId(),
-                    lastHost.getHostOs());
+            log.debug("Source host {} does not provides a valid OS identifier. Found {}.",
+                    sourceHost.getId(),
+                    sourceHost.getHostOs());
             return noWeights(hosts);
         }
 
@@ -85,7 +86,6 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
         }
         return weights;
     }
-
 
     private static List<Pair<Guid, Integer>> noWeights(final List<VDS> hosts) {
         final List<Pair<Guid, Integer>> weights = new ArrayList<>();

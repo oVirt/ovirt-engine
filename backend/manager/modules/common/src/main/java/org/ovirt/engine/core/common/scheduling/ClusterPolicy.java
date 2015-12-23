@@ -15,6 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
     private static final long serialVersionUID = 7739745365583134911L;
+    public static final Guid UPGRADE_POLICY_GUID =
+            Guid.createGuidFromString("8d5d7bec-68de-4a67-b53e-0ac54686d586");
 
     /**
      * entity unique identifier
@@ -102,6 +104,10 @@ public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Namea
 
     public boolean isDefaultPolicy() {
         return defaultPolicy;
+    }
+
+    public boolean isClusterUpgradePolicy() {
+        return UPGRADE_POLICY_GUID.equals(id);
     }
 
     public void setDefaultPolicy(boolean defaultPolicy) {

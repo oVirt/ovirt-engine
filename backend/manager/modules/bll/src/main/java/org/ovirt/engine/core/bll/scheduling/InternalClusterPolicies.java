@@ -18,6 +18,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
@@ -139,6 +141,19 @@ public class InternalClusterPolicies {
                 .set(PolicyUnitParameter.HIGH_VM_COUNT, "10")
                 .set(PolicyUnitParameter.MIGRATION_THRESHOLD, "5")
                 .set(PolicyUnitParameter.SPM_VM_GRACE, "5")
+                .register();
+
+        createBuilder("8d5d7bec-68de-4a67-b53e-0ac54686d586")
+                .name("InClusterUpgrade")
+                .setBalancer(NoneBalancePolicyUnit.class)
+                .addFilters(EmulatedMachineFilterPolicyUnit.class)
+                .addFilters(NetworkPolicyUnit.class)
+                .addFilters(MigrationPolicyUnit.class)
+                .addFilters(MemoryPolicyUnit.class)
+                .addFilters(CPUPolicyUnit.class)
+                .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(InClusterUpgradeFilterPolicyUnit.class)
+                .addFunction(1, InClusterUpgradeWeightPolicyUnit.class)
                 .register();
     }
 

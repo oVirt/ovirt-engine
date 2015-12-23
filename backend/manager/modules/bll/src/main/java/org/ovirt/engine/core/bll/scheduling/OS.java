@@ -24,7 +24,6 @@ public class OS {
         Objects.requireNonNull(version);
         this.name = name;
         this.version = new Version(version.getMajor(), version.getMinor(), version.getBuild(), version.getRevision());
-
     }
 
     public boolean isValid() {

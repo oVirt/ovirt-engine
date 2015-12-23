@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
@@ -60,6 +62,8 @@ public class InternalPolicyUnits {
         enabledUnits.add(VmAffinityWeightPolicyUnit.class);
         enabledUnits.add(CpuPinningPolicyUnit.class);
         enabledUnits.add(CompatibilityVersionFilterPolicyUnit.class);
+        enabledUnits.add(InClusterUpgradeFilterPolicyUnit.class);
+        enabledUnits.add(InClusterUpgradeWeightPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {

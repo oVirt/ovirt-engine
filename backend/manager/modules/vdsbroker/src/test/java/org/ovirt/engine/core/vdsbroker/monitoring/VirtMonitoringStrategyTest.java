@@ -10,28 +10,22 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
-import org.ovirt.engine.core.utils.MockConfigRule;
 public class VirtMonitoringStrategyTest {
 
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.CheckMixedRhelVersions, Version.v3_5, true)
-    );
-
     private VDS vdsFromDb = new VDS();
+    private Cluster cluster;
 
     public VirtMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao()));
@@ -100,6 +94,26 @@ public class VirtMonitoringStrategyTest {
         assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
     }
 
+    @Test
+    public void testAllowRhel7InRhel6() {
+        VDS vds = createBaseVds();
+        vdsFromDb.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        vds.setHostOs("RHEL - 7Server - 1.el7");
+        cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
+    @Test
+    public void testAllowRhel6InRhel7() {
+        VDS vds = createBaseVds();
+        vdsFromDb.setHostOs("RHEL - 7Server - 1.el7");
+        vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
     private VDS createBaseVds() {
         VDS vds = new VDS();
         vds.setSupportedEmulatedMachines("pc-1.0");
@@ -131,11 +145,11 @@ public class VirtMonitoringStrategyTest {
 
     private ClusterDao mockCluster() {
         ClusterDao mock = mock(ClusterDao.class);
-        Cluster value = new Cluster();
-        value.setEmulatedMachine("pc-1.0");
-        value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
-        value.setCompatibilityVersion(Version.v3_5);
-        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        cluster = new Cluster();
+        cluster.setEmulatedMachine("pc-1.0");
+        cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
+        cluster.setCompatibilityVersion(Version.v3_5);
+        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(cluster);
         return mock;
     }
 
