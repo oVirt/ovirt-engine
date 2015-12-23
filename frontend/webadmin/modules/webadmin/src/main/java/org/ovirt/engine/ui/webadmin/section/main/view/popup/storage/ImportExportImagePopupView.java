@@ -169,13 +169,13 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.typeIso(), "100px"); //$NON-NLS-1$
-        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
+        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.BYTES) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {
                     return ((RepoImage) object.getEntity()).getSize();
                 } else if (object.getEntity() instanceof DiskImage) {
-                    return ((DiskImage) (object.getEntity())).getSizeInGigabytes();
+                    return ((DiskImage) (object.getEntity())).getSize();
                 }
                 return null;
             }
