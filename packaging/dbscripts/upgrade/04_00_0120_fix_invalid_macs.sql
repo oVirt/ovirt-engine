@@ -1,20 +1,28 @@
 UPDATE
   mac_pool_ranges
 SET
-  from_mac = (
-              SELECT
-                string_agg(a, ':')
-              FROM (
-                    SELECT
-                      regexp_replace(regexp_split_to_table(from_mac, ':'), '^(.)$', '0\1') AS a
-                    ) AS b
+  from_mac = ( SELECT
+                substr(
+                  regexp_replace(
+                    lpad(replace(from_mac, ':', ''),
+                      12,
+                      '0'),
+                    '(..)',
+                    '\1:',
+                    'g'),
+                1,
+                17)
               ),
-  to_mac = (
-              SELECT
-                string_agg(a, ':')
-              FROM (
-                    SELECT
-                      regexp_replace(regexp_split_to_table(to_mac, ':'), '^(.)$', '0\1') AS a
-                    ) AS b
-              )
+  to_mac = (SELECT
+              substr(
+                regexp_replace(
+                  lpad(replace(to_mac, ':', ''),
+                    12,
+                    '0'),
+                  '(..)',
+                  '\1:',
+                  'g'),
+              1,
+              17)
+            )
 ;
