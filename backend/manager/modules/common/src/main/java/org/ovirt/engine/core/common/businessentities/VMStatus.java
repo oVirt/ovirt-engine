@@ -159,4 +159,8 @@ public enum VMStatus implements Identifiable {
     public boolean isDownOrSuspended() {
         return this == Down || this == Suspended;
     }
+
+    public boolean isSuspended() {
+        return this == Suspended;
+    }
 }

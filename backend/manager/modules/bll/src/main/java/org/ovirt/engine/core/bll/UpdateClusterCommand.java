@@ -451,7 +451,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         if (result) {
-            result = validateClusterPolicy();
+            result = validateClusterPolicy(oldGroup);
         }
         if (result && getParameters().isForceResetEmulatedMachine()) {
             for (VDS vds : allForCluster) {

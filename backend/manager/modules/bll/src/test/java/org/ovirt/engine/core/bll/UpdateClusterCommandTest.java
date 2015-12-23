@@ -4,9 +4,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -27,6 +31,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -36,11 +42,13 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -50,6 +58,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -65,6 +74,7 @@ public class UpdateClusterCommandTest {
     private static final Guid DEFAULT_CLUSTER_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
     private static final Guid DEFAULT_FEATURE_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA96");
     private static final Guid TEST_MANAGEMENT_NETWORK_ID = Guid.newGuid();
+    private static final Guid NOT_UPGRADE_POLICY_GUID = Guid.newGuid();
 
     private static final Map<String, String> migrationMap = Collections.unmodifiableMap(
             new HashMap<String, String>() {{
@@ -85,7 +95,7 @@ public class UpdateClusterCommandTest {
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_0.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
-            );
+    );
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
@@ -115,6 +125,13 @@ public class UpdateClusterCommandTest {
     private UpdateClusterNetworkClusterValidator networkClusterValidator;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+
+    @Mock
+    private SchedulingManager schedulingManager;
+    @Mock
+    private InClusterUpgradeValidator inClusterUpgradeValidator;
+    @Mock
+    private VmNumaNodeDao vmNumaNodeDao;
 
     @Mock
     private Network mockManagementNetwork = createManagementNetwork();
@@ -449,6 +466,60 @@ public class UpdateClusterCommandTest {
         assertTrue(cmd.validate());
     }
 
+    @Test
+    public void shouldCheckIfClusterCanBeUpgraded() {
+        createCommandWithDefaultCluster();
+        cpuExists();
+        architectureIsUpdatable();
+        cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator)
+                .checkClusterUpgradeIsEnabled(any(Cluster.class));
+        assertTrue(cmd.validate());
+        verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(anyList(), anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(Cluster.class));
+    }
+
+    @Test
+    public void shouldCheckIfMixedHostOsIsAllowed() {
+        createCommandWithDefaultCluster();
+        cpuExists();
+        architectureIsUpdatable();
+        cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(new ValidationResult(EngineMessage.CLUSTER_UPGRADE_CAN_NOT_BE_STARTED))
+                .when(inClusterUpgradeValidator).checkClusterUpgradeIsEnabled(any(Cluster.class));
+        assertFalse(cmd.validate());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(1)).checkClusterUpgradeIsEnabled(any(Cluster.class));
+    }
+
+    @Test
+    public void shouldCheckIfClusterUpgradeIsDone() {
+        createCommandWithDefaultCluster();
+        Cluster oldCluster = oldGroupFromDb();
+        cpuExists();
+        architectureIsUpdatable();
+        oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        cmd.getCluster().setClusterPolicyId(NOT_UPGRADE_POLICY_GUID);
+        assertTrue(cmd.validate());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
+        verify(inClusterUpgradeValidator, times(1)).isUpgradeDone(anyList());
+    }
+
+    @Test
+    public void shouldStayInUpgradeMode() {
+        createCommandWithDefaultCluster();
+        Cluster oldCluster = oldGroupFromDb();
+        cpuExists();
+        architectureIsUpdatable();
+        oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        assertTrue(cmd.validate());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+    }
+
     private void createSimpleCommand() {
         createCommand(createNewCluster());
     }
@@ -530,8 +601,20 @@ public class UpdateClusterCommandTest {
         doReturn(clusterFeatureDao).when(cmd).getClusterFeatureDao();
         doReturn(hostFeatureDao).when(cmd).getHostFeatureDao();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
-        doReturn(true).when(cmd).validateClusterPolicy();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any(VDS.class));
+
+        // cluster upgrade
+        doReturn(schedulingManager).when(cmd).getSchedulingManager();
+        doReturn(vmNumaNodeDao).when(cmd).getVmNumaNodeDao();
+        doReturn(inClusterUpgradeValidator).when(cmd).getUpgradeValidator();
+        doReturn(new ClusterPolicy()).when(schedulingManager).getClusterPolicy(any(Guid.class));
+        final ClusterPolicy clusterPolicy = new ClusterPolicy();
+        clusterPolicy.setId(ClusterPolicy.UPGRADE_POLICY_GUID);
+        doReturn(clusterPolicy).when(schedulingManager).getClusterPolicy(eq(ClusterPolicy.UPGRADE_POLICY_GUID));
+        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradeDone(anyList());
+        doReturn(ValidationResult.VALID).when(inClusterUpgradeValidator).isUpgradePossible(anyList(), anyList());
+        doReturn(new HashMap<Guid, List<VmNumaNode>>()).when(vmNumaNodeDao)
+                .getVmNumaNodeInfoByClusterIdAsMap(any(Guid.class));
 
         if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();
@@ -554,6 +637,7 @@ public class UpdateClusterCommandTest {
         Cluster group = new Cluster();
         group.setName("BadName");
         group.setCompatibilityVersion(VERSION_1_1);
+        group.setClusterPolicyId(Guid.newGuid());
         return group;
     }
 
@@ -561,6 +645,7 @@ public class UpdateClusterCommandTest {
         Cluster group = new Cluster();
         group.setCompatibilityVersion(VERSION_1_1);
         group.setName("Default");
+        group.setClusterPolicyId(Guid.newGuid());
         return group;
     }
 
@@ -572,6 +657,7 @@ public class UpdateClusterCommandTest {
         group.setCompatibilityVersion(VERSION_1_1);
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.x86_64);
+        group.setClusterPolicyId(Guid.newGuid());
         return group;
     }
 
@@ -590,6 +676,7 @@ public class UpdateClusterCommandTest {
         group.setCompatibilityVersion(VERSION_1_1);
         group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.undefined);
+        group.setClusterPolicyId(Guid.newGuid());
         return group;
     }
 
@@ -664,6 +751,12 @@ public class UpdateClusterCommandTest {
         when(clusterDao.get(DEFAULT_CLUSTER_ID)).thenReturn(createDetachedDefaultCluster());
     }
 
+    private Cluster oldGroupFromDb() {
+        final Cluster vdsGroup = createDefaultCluster();
+        when(clusterDao.get(DEFAULT_CLUSTER_ID)).thenReturn(vdsGroup);
+        return vdsGroup;
+    }
+
     private void storagePoolAlreadyHasCluster() {
         Cluster group = new Cluster();
         List<Cluster> groupList = new ArrayList<>();
@@ -689,7 +782,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void allQueriesForVms() {
-        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VM> emptyList());
+        when(vmDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VM>emptyList());
     }
 
     private void clusterHasVds() {

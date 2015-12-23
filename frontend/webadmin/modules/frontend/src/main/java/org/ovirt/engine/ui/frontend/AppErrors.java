@@ -649,6 +649,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Sub Version of selected template (${subVersionId}) is being concurrently removed. Please wait and try again later.")
     String ACTION_TYPE_FAILED_SUBVERSION_BEING_CONCURRENTLY_REMOVED();
 
+    @DefaultStringValue("${json}")
+    String CLUSTER_UPGRADE_NOT_FINISHED();
+
+    @DefaultStringValue("${json}")
+    String CLUSTER_UPGRADE_CAN_NOT_BE_STARTED();
+
+    @DefaultStringValue("The set cluster compatibility version does not allow mixed major host OS versions. Can not start the cluster upgrade.")
+    String MIXED_HOST_VERSIONS_NOT_ALLOWED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Role is Read-Only.")
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 

@@ -224,6 +224,18 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
     }
 
     @Override
+    public Map<Guid, List<VmNumaNode>> getVmNumaNodeInfoByClusterIdAsMap(Guid vdsGroupId) {
+        Map<Guid, List<VmNumaNode>> map = new HashMap<>();
+        for (Pair<Guid, VmNumaNode> pair : getVmNumaNodeInfoByClusterId(vdsGroupId)){
+            if (!map.containsKey(pair.getFirst())){
+                map.put(pair.getFirst(), new ArrayList<>());
+            }
+            map.get(pair.getFirst()).add(pair.getSecond());
+        }
+        return map;
+    }
+
+    @Override
     public List<Pair<Guid, Integer>> getPinnedNumaNodeIndex(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);

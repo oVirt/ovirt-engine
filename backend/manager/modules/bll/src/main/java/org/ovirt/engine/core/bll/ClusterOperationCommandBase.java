@@ -11,12 +11,16 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -25,7 +29,11 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
         ClusterCommandBase<T> {
@@ -35,6 +43,18 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     @Inject
     private SchedulingManager schedulingManager;
+
+    @Inject
+    private InClusterUpgradeValidator upgradeValidator;
+
+    @Inject
+    private VdsDao vdsDao;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);
@@ -99,21 +119,38 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         return allowVirGluster;
     }
 
-    protected boolean validateClusterPolicy() {
-        ClusterPolicy clusterPolicy = null;
-        if (getCluster().getClusterPolicyId() != null) {
-            clusterPolicy =
-                schedulingManager.getClusterPolicy(getCluster().getClusterPolicyId());
-        }
+    protected boolean validateClusterPolicy(Cluster oldCluster) {
+        Cluster newCluster = getCluster();
+        boolean alreadyInUpgradeMode = oldCluster != null && oldCluster.isInUpgradeMode();
+        ClusterPolicy clusterPolicy = getClusterPolicy(newCluster);
         if (clusterPolicy == null) {
-            clusterPolicy = schedulingManager.getClusterPolicy(getCluster().getClusterPolicyName());
-            if (clusterPolicy == null) {
+            return false;
+        }
+        newCluster.setClusterPolicyId(clusterPolicy.getId());
+
+        if (alreadyInUpgradeMode && !newCluster.isInUpgradeMode()) {
+            // Check if we can safely stop the cluster upgrade
+            final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
+            if (!validate(getUpgradeValidator().isUpgradeDone(hosts))) {
                 return false;
             }
-            getCluster().setClusterPolicyId(clusterPolicy.getId());
+        } else if (!alreadyInUpgradeMode && newCluster.isInUpgradeMode()) {
+            // Check if we can safely start the cluster upgrade
+            if (!validate(getUpgradeValidator().checkClusterUpgradeIsEnabled(getCluster()))) {
+                return false;
+            }
+
+            final List<VDS> hosts = getVdsDao().getAllForCluster(getClusterId());
+            final List<VM> vms = getVmDao().getAllForCluster(getClusterId());
+            populateVMNUMAInfo(vms);
+
+            if (!validate(getUpgradeValidator().isUpgradePossible(hosts, vms))) {
+                return false;
+            }
         }
+
         Map<String, String> customPropertiesRegexMap =
-                schedulingManager.getCustomPropertiesRegexMap(clusterPolicy);
+                getSchedulingManager().getCustomPropertiesRegexMap(clusterPolicy);
         updateClusterPolicyProperties(getCluster(), clusterPolicy, customPropertiesRegexMap);
         List<ValidationError> validationErrors =
                 SimpleCustomPropertiesUtil.getInstance().validateProperties(customPropertiesRegexMap,
@@ -124,6 +161,31 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             return false;
         }
         return true;
+    }
+
+    private ClusterPolicy getClusterPolicy(final Cluster cluster) {
+        ClusterPolicy clusterPolicy = null;
+        if (cluster == null){
+            return null;
+        }
+        if (cluster.getClusterPolicyId() != null) {
+            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyId());
+        }
+        if (clusterPolicy == null) {
+            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyName());
+        }
+        return clusterPolicy;
+    }
+
+    private void populateVMNUMAInfo(final List<VM> vms) {
+        // Populate numa nodes with a mass update
+        final Map<Guid, List<VmNumaNode>> numaNodes =
+                getVmNumaNodeDao().getVmNumaNodeInfoByClusterIdAsMap(getClusterId());
+        for (final VM vm : vms) {
+            if (numaNodes.containsKey(vm.getId())) {
+                vm.setvNumaNodeList(numaNodes.get(vm.getId()));
+            }
+        }
     }
 
     /**
@@ -170,5 +232,17 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
+    }
+
+    protected VmNumaNodeDao getVmNumaNodeDao() {
+        return vmNumaNodeDao;
+    }
+
+    protected SchedulingManager getSchedulingManager() {
+        return schedulingManager;
+    }
+
+    protected InClusterUpgradeValidator getUpgradeValidator() {
+        return upgradeValidator;
     }
 }
