@@ -125,7 +125,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return false;
         }
 
-        if (!validate(macAvailable())) {
+        if (getParameters().getAction() == PlugAction.PLUG && !validate(macAvailable())) {
             return false;
         }
 
