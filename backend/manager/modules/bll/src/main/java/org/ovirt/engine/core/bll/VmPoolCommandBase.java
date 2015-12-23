@@ -92,12 +92,12 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     /**
      * Checks if a VM can be attached to a user.
-     * @param vm_guid
+     * @param vmId
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean canAttachNonPrestartedVmToUser(Guid vm_guid, ArrayList<String> messages) {
-        return isVmFree(vm_guid, messages);
+    protected static boolean canAttachNonPrestartedVmToUser(Guid vmId, List<String> messages) {
+        return isVmFree(vmId, messages);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean canAttachPrestartedVmToUser(Guid vmId, ArrayList<String> messages) {
+    protected static boolean canAttachPrestartedVmToUser(Guid vmId, List<String> messages) {
         // check that there isn't another user already attached to this VM
         // and make sure the Vm is running stateless
         return !vmAssignedToUser(vmId, messages) && vmIsRunningStateless(vmId);
@@ -124,7 +124,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            The messages.
      * @return <code>true</code> if [is vm free] [the specified vm id]; otherwise, <code>false</code>.
      */
-    protected static boolean isVmFree(Guid vmId, ArrayList<String> messages) {
+    protected static boolean isVmFree(Guid vmId, List<String> messages) {
         // check that there isn't another user already attached to this VM:
         if (vmAssignedToUser(vmId, messages)) {
             return failVmFree(messages);
@@ -200,7 +200,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return false;
     }
 
-    private static boolean vmAssignedToUser(Guid vmId, ArrayList<String> messages) {
+    private static boolean vmAssignedToUser(Guid vmId, List<String> messages) {
         if (DbFacade.getInstance().getDbUserDao().getAllForVm(vmId).size() > 0) {
             messages.add(EngineMessage.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
             return true;
@@ -208,7 +208,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return false;
     }
 
-    protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
+    protected static boolean canRunPoolVm(Guid vmId, List<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
