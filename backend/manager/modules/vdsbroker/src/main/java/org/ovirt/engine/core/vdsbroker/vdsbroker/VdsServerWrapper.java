@@ -2053,7 +2053,7 @@ public class VdsServerWrapper implements IVdsServer {
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
-    };
+    }
 
     @Override
     public StatusOnlyReturnForXmlRpc glusterStopProcesses() {
