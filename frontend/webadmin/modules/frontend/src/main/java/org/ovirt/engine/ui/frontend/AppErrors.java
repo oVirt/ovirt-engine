@@ -1684,6 +1684,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC Address is already in use")
     String NETWORK_MAC_ADDRESS_IN_USE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Hot plugging/unplugging of passthrough virtual machine network interface is not supported in the current cluster version.")
+    String HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
 

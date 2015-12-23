@@ -650,4 +650,13 @@ public class FeatureSupported {
     public static boolean multipleGraphicsSupported(Version version) {
         return supportedInConfig(ConfigValues.MultipleGraphicsSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> hotplug/unplug of VFs is supported in this version
+     */
+    public static boolean sriovHotPlugSupported(Version version) {
+        return supportedInConfig(ConfigValues.SriovHotPlugSupported, version);
+    }
 }

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -111,10 +112,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 return false;
             }
 
-            if (getParameters().getAction() == PlugAction.PLUG && isPassthrough()) {
-                String vfToUse = updateFreeVf();
-                if (vfToUse == null) {
+            if (isPassthrough()) {
+                if (!checkSriovHotPlugSupported()) {
                     return false;
+                }
+
+                if (getParameters().getAction() == PlugAction.PLUG) {
+                    String vfToUse = updateFreeVf();
+                    if (vfToUse == null) {
+                        return false;
+                    }
                 }
             }
         }
@@ -352,5 +359,12 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         } else {
             return new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE);
         }
+    }
+
+    protected boolean checkSriovHotPlugSupported() {
+        if (!FeatureSupported.sriovHotPlugSupported(getVm().getVdsGroupCompatibilityVersion())) {
+            return failValidation(EngineMessage.HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED);
+        }
+        return true;
     }
 }
