@@ -1448,9 +1448,9 @@ public class VdsBrokerObjectsBuilder {
                 return (Integer) input.get(name);
             }
             String stringValue = (String) input.get(name);
-            if (!StringUtils.isEmpty(stringValue)) { // in case the input
-                                                     // is decimal and we
-                                                     // need int.
+            if (StringUtils.isNotEmpty(stringValue)) { // in case the input
+                                                       // is decimal and we
+                                                       // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
             }
             try {
@@ -2027,11 +2027,9 @@ public class VdsBrokerObjectsBuilder {
             iface.setAddress(extractAddress(nicProperties));
             iface.setSubnet(extractSubnet(nicProperties));
 
-            Object mtu = nicProperties.get(VdsProperties.MTU);
+            final Integer mtu = assignIntValue(nicProperties, VdsProperties.MTU);
             if (mtu != null) {
-                if (StringUtils.isNotBlank(mtu.toString())) {
-                    iface.setMtu(Integer.parseInt(mtu.toString()));
-                }
+                iface.setMtu(mtu);
             }
 
             addBootProtocol(nicProperties, host, iface);
