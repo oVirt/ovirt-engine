@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -21,6 +22,10 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     public AddStorageDomainCommon(T parameters) {
         super(parameters);
+    }
+
+    public AddStorageDomainCommon(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected boolean checkStorageConnection(String storageDomainConnection) {

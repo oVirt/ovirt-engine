@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -27,12 +29,13 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 
 /**
@@ -51,6 +54,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     @Inject
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomain heStorageDomain;
+
     static final StorageType[] SUPPORTED_DOMAIN_TYPES =
             { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
 
@@ -63,18 +67,8 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     }
 
     @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
-    }
-
-    @Override
-    protected boolean getSucceeded() {
-        return super.getSucceeded();
-    }
-
-    @Override
-    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-        return super.runVdsCommand(commandType, parameters);
+    protected void init() {
+        fetchStorageDomainInfo();
     }
 
     @Override
@@ -85,7 +79,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         }
 
         // fetch info on storage domain from VDSM, sets #heStorageDomain
-        if (!fetchStorageDomainInfo()) {
+        if (heStorageDomain == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
@@ -108,6 +102,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         case NFS:
         case GLUSTERFS:
             actionType = VdcActionType.AddExistingFileStorageDomain;
+            setSucceeded(true);
             break;
         case ISCSI:
             discoverBlockConnectionDetails();
@@ -117,9 +112,12 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
             break;
         }
 
-        setSucceeded(getBackend().runInternalAction(
-                actionType,
-                addSdParams).getSucceeded());
+        if (getSucceeded()) {
+            setSucceeded(getBackend().runInternalAction(
+                    actionType,
+                    addSdParams,
+                    getContext()).getSucceeded());
+        }
 
         if (getSucceeded()) {
             AttachStorageDomainToPoolParameters attachSdParams =
@@ -128,7 +126,8 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                             addSdParams.getStoragePoolId());
             setSucceeded(getBackend().runInternalAction(
                     VdcActionType.AttachStorageDomainToPool,
-                    attachSdParams).getSucceeded());
+                    attachSdParams,
+                    getContext()).getSucceeded());
         }
 
         setActionReturnValue(heStorageDomain);
@@ -169,8 +168,10 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
             if (!removeDisk.getSucceeded()) {
                 setSucceeded(false);
                 log.error("Failed to remove the hosted engine direct lun disk");
+                return;
             }
         }
+        setSucceeded(true);
     }
 
     /**
@@ -210,4 +211,28 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                 ? AuditLogType.HOSTED_ENGINE_DOMAIN_IMPORT_SUCCEEDED
                 : AuditLogType.HOSTED_ENGINE_DOMAIN_IMPORT_FAILED;
     }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Command);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (heStorageDomain != null && heStorageDomain.getId() != null) {
+            return Collections.singletonMap(
+                    heStorageDomain.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(
+                            LockingGroup.STORAGE,
+                            EngineMessage.ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED));
+        }
+        return Collections.emptyMap();
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
+    }
+
 }

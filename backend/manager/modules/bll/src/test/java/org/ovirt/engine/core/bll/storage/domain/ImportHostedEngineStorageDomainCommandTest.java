@@ -5,7 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -35,6 +40,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -44,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -86,6 +93,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private VdsDao vdsDao;
     @Mock
     private BaseDiskDao baseDiskDao;
+    @Mock
+    private VDSBrokerFrontend vdsBroker;
 
     @Before
     public void initTest() {
@@ -95,26 +104,24 @@ public class ImportHostedEngineStorageDomainCommandTest {
     @Test
     public void failsIfImported() throws Exception {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(new StorageDomainStatic());
+        mockGetExistingDomain(true);
 
+        cmd.init();
         cmd.validate();
 
         ValidateTestUtils.assertValidationMessages(
                 "",
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
-        verify(backend, times(0)).runInternalQuery(
-                eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
         verify(cmd, times(0)).executeCommand();
     }
 
     @Test
     public void failsInNotImportedAndNotExists() throws Exception {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
-        doReturn(createQueryReturnValueWith(Collections.emptyList()))
-                .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
+        mockGetExistingDomain(false);
 
+        cmd.init();
         ValidateTestUtils.runAndAssertValidateFailure(
                 "",
                 cmd,
@@ -128,13 +135,11 @@ public class ImportHostedEngineStorageDomainCommandTest {
     @Test
     public void storageTypeUnsupported() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
-        StorageDomain sd = new StorageDomain();
+        StorageDomain sd = mockGetExistingDomain(true);
         sd.setStorageType(StorageType.CINDER);
         sd.setStorageName(HOSTED_STORAGE_NAME);
-        doReturn(createQueryReturnValueWith(Arrays.asList(sd)))
-                .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
 
+        cmd.init();
         ValidateTestUtils.runAndAssertValidateFailure(
                 "",
                 cmd,
@@ -148,69 +153,58 @@ public class ImportHostedEngineStorageDomainCommandTest {
     @Test
     public void validatePass() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
-        StorageDomain sd = new StorageDomain();
+        StorageDomain sd = mockGetExistingDomain(true);
         int i = new Random().nextInt(SUPPORTED_DOMAIN_TYPES.length);
         sd.setStorageType(SUPPORTED_DOMAIN_TYPES[i]);
         sd.setStorageName(HOSTED_STORAGE_NAME);
-        doReturn(createQueryReturnValueWith(Arrays.asList(sd)))
-                .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
 
+        cmd.init();
         assertTrue(cmd.validate());
     }
 
     @Test
     public void callConcreteAddSD() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
-        StorageDomain sd = new StorageDomain();
+        StorageDomain sd = mockGetExistingDomain(true);
         sd.setStorageName(HOSTED_STORAGE_NAME);
         sd.setStorageType(StorageType.NFS);
-        doReturn(createQueryReturnValueWith(Arrays.asList(sd)))
-                .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
-        doReturn(successfulReturnValue())
-                .when(backend).runInternalAction(eq(VdcActionType.AddExistingFileStorageDomain),
-                any(VdcActionParametersBase.class));
-        doReturn(successfulReturnValue())
-                .when(backend).runInternalAction(eq(VdcActionType.AttachStorageDomainToPool),
-                any(VdcActionParametersBase.class));
+        mockCommandCall(VdcActionType.AddExistingFileStorageDomain, true);
+        mockCommandCall(VdcActionType.AttachStorageDomainToPool, true);
 
+        cmd.init();
         cmd.validate();
         cmd.executeCommand();
 
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingFileStorageDomain),
-                any(VdcActionParametersBase.class));
+                any(VdcActionParametersBase.class),
+                any(CommandContext.class));
     }
 
     @Test
     public void callConcreteAddBlockSD() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(null);
-        StorageDomain sd = new StorageDomain();
+        StorageDomain sd = mockGetExistingDomain(true);
         sd.setId(HE_SD_ID);
         sd.setStorageName(HOSTED_STORAGE_NAME);
         sd.setStorageType(StorageType.ISCSI);
         sd.setStorage(VG_ID.toString());
-        doReturn(createQueryReturnValueWith(Arrays.asList(sd)))
-                .when(backend).runInternalQuery(eq(VdcQueryType.GetExistingStorageDomainList),
-                any(VdcQueryParametersBase.class));
-        doReturn(successfulReturnValue())
-                .when(backend).runInternalAction(eq(VdcActionType.AddExistingBlockStorageDomain),
-                any(VdcActionParametersBase.class));
+        mockCommandCall(VdcActionType.RemoveDisk, false);
+        mockCommandCall(VdcActionType.AddExistingBlockStorageDomain, true);
         doReturn(createVdsReturnValue(createSdLuns()))
-                .when(cmd).runVdsCommand(eq(VDSCommandType.GetDeviceList), any(VDSParametersBase.class));
-        doReturn(successfulReturnValue())
-                .when(backend).runInternalAction(eq(VdcActionType.AttachStorageDomainToPool),
-                any(VdcActionParametersBase.class));
+                .when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetDeviceList), any(VDSParametersBase.class));
+        mockCommandCall(VdcActionType.AttachStorageDomainToPool, true);
 
+        cmd.init();
         cmd.validate();
         cmd.executeCommand();
 
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingBlockStorageDomain),
-                any(VdcActionParametersBase.class));
+                any(VdcActionParametersBase.class),
+                any(CommandContext.class));
 
-        assertTrue(cmd.getSucceeded());
+        assertTrue(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getReturnValue().getActionReturnValue(), sd);
         assertTrue(sd.getStorageStaticData().getConnection().getUserName().equals(ISCSIUSER));
         assertTrue(sd.getStorageStaticData().getConnection().getPassword().equals(ISCSIPASS));
@@ -250,7 +244,6 @@ public class ImportHostedEngineStorageDomainCommandTest {
     protected void prepareCommand() {
         parameters.setStoragePoolId(HE_SP_ID);
         parameters.setVdsId(HE_VDS_ID);
-        doReturn(backend).when(cmd).getBackend();
         // vds
         doReturn(vdsDao).when(cmd).getVdsDao();
         VDS vds = new VDS();
@@ -266,11 +259,47 @@ public class ImportHostedEngineStorageDomainCommandTest {
         when(backend.runInternalAction(
                 eq(VdcActionType.RemoveDisk),
                 any(VdsActionParameters.class))).thenReturn(successfulReturnValue());
+        // compensation
+        CompensationContext compensationContext = mock(CompensationContext.class);
+        when(cmd.getCompensationContext()).thenReturn(compensationContext);
+        doNothing().when(compensationContext).snapshotEntity(any(BusinessEntity.class));
+        doNothing().when(compensationContext).stateChanged();
+        when(cmd.getContext()).thenReturn(new CommandContext(new EngineContext()));
     }
 
     private VdcReturnValueBase successfulReturnValue() {
         VdcReturnValueBase value = new VdcReturnValueBase();
         value.setSucceeded(true);
         return value;
+    }
+
+    private void mockCommandCall(VdcActionType actionType, boolean withContext) {
+        if (withContext) {
+            doReturn(successfulReturnValue())
+                    .when(backend).runInternalAction(eq(actionType),
+                    any(VdcActionParametersBase.class),
+                    any(CommandContext.class));
+        } else {
+            doReturn(successfulReturnValue())
+                    .when(backend).runInternalAction(eq(actionType),
+                    any(VdcActionParametersBase.class));
+        }
+
+    }
+
+    protected StorageDomain mockGetExistingDomain(boolean answerWithDomain) {
+        StorageDomain sd = null;
+        List<StorageDomain> domains = Collections.emptyList();
+        if (answerWithDomain) {
+            sd = new StorageDomain();
+            domains = Arrays.asList(sd);
+        }
+
+        doReturn(createQueryReturnValueWith(domains))
+                .when(backend).runInternalQuery(
+                eq(VdcQueryType.GetExistingStorageDomainList),
+                any(VdcQueryParametersBase.class));
+
+        return sd;
     }
 }
