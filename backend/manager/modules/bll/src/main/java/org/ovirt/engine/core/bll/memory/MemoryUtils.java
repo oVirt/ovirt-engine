@@ -22,8 +22,8 @@ public class MemoryUtils {
      *  time the snapshot was taken */
     public static final long METADATA_SIZE_IN_BYTES = 10 * 1024;
 
-    private static final String VM_HIBERNATION_METADATA_DISK_DESCRIPTION = "meta-data for hibernated VM";
-    private static final String VM_HIBERNATION_MEMORY_DISK_DESCRIPTION = "memory dump for hibernated VM";
+    private static final String VM_HIBERNATION_METADATA_DISK_DESCRIPTION = "metadata for VM hibernation";
+    private static final String VM_HIBERNATION_MEMORY_DISK_DESCRIPTION = "memory dump for VM hibernation";
     private static final String VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
     private static final String VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
