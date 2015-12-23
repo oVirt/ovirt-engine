@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -275,19 +276,16 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
-        hostOutOfSync.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+        hostOutOfSync.makeSortable(new PairFirstComparator<VdsNetworkInterface, VDS>(new Comparator<VdsNetworkInterface>() {
+                    @Override
+                    public int compare(VdsNetworkInterface o1, VdsNetworkInterface o2) {
+                        return Boolean.compare(extractSyncStatus(o1), extractSyncStatus(o2));
+                    }
 
-            @Override
-            public int compare(PairQueryable<VdsNetworkInterface, VDS> o1,
-                    PairQueryable<VdsNetworkInterface, VDS> o2) {
-                boolean syncStatus1 =
-                        (o1.getFirst() == null) ? false : o1.getFirst().getNetworkImplementationDetails().isInSync();
-                boolean syncStatus2 =
-                        (o2.getFirst() == null) ? false : o2.getFirst().getNetworkImplementationDetails().isInSync();
-                return Boolean.compare(syncStatus1, syncStatus2);
-            }
-
-        });
+                    private boolean extractSyncStatus(VdsNetworkInterface iface) {
+                        return (iface != null) && iface.getNetworkImplementationDetails().isInSync();
+                    }
+        }));
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
