@@ -1,11 +1,19 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -22,6 +30,10 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
         for (Guid childCmdId : childCmdIds) {
             CommandStatus commandStatus = CommandCoordinatorUtil.getCommandStatus(childCmdId);
             switch (commandStatus) {
+            case NOT_STARTED:
+            case ACTIVE:
+                log.info("Waiting on CloneCinderDisksCommandCallback child commands to complete");
+                break;
             case SUCCEEDED:
                 finishedChildren++;
                 break;
@@ -52,13 +64,44 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
+        revertCinderDisks(childCmdIds);
         getCommand(cmdId).endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
+        getCommand(cmdId).getParameters().setTaskGroupSuccess(false);
+    }
+
+    private void revertCinderDisks(List<Guid> childCmdIds) {
+        for (Guid childCmdId : childCmdIds) {
+            ImagesContainterParametersBase commandParameters =
+                    (ImagesContainterParametersBase) CommandCoordinatorUtil.getCommandEntity(childCmdId)
+                            .getCommandParameters();
+            Guid destinationImageId = commandParameters.getDestinationImageId();
+            Guid storageDomainId = commandParameters.getStorageDomainId();
+            removeCinderDisk(destinationImageId, storageDomainId);
+        }
+    }
+
+    private void removeCinderDisk(Guid cinderDiskId, Guid storageDomainId) {
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.RemoveCinderDisk,
+                buildChildCommandParameters(cinderDiskId),
+                null,
+                new SubjectEntity(VdcObjectType.Storage, storageDomainId));
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Fail to revert disk id '{}'.", cinderDiskId);
+            log.error("Exception: ", e);
+        }
+    }
+
+    private RemoveCinderDiskParameters buildChildCommandParameters(Guid cinderDiskId) {
+        RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDiskId);
+        removeDiskParams.setShouldBeLogged(false);
+        return removeDiskParams;
     }
 
     private T getCommand(Guid cmdId) {
