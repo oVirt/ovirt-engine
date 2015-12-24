@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -120,8 +121,16 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         if (selectedDataCenterId == null) {
             return;
         }
+        List<VmTemplate> templatesInDataCenter = new ArrayList<>();
+        for (VmTemplate template : templates) {
+            if (Objects.equals(template.getStoragePoolId(), selectedDataCenterId)) {
+                templatesInDataCenter.add(template);
+            }
+        }
         List<VmTemplate> properArchitectureTemplates = AsyncDataProvider.getInstance()
-                .filterTemplatesByArchitecture(templates, dataCenterWithCluster.getCluster().getArchitecture());
+                .filterTemplatesByArchitecture(
+                        templatesInDataCenter,
+                        dataCenterWithCluster.getCluster().getArchitecture());
         List<VmTemplate> properStateTemplates = new ArrayList<>();
         for (VmTemplate template : properArchitectureTemplates) {
             if (template.getStatus().equals(VmTemplateStatus.OK)) {
