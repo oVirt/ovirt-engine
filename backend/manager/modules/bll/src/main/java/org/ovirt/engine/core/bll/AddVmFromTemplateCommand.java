@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -57,6 +59,15 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     protected boolean validateIsImagesOnDomains() {
         return true;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        T parameters = getParameters();
+        List<CinderDisk> cinderDisks =
+                ImagesHandler.filterDisksBasedOnCinder(getVmTemplate().getDiskTemplateMap().values());
+        parameters.setUseCinderCommandCallback(!cinderDisks.isEmpty());
     }
 
     @Override
@@ -219,5 +230,10 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     protected boolean isVirtioScsiEnabled() {
         return getParameters().isVirtioScsiEnabled() != null ?
                 super.isVirtioScsiEnabled() : isVirtioScsiControllerAttached(getVmTemplateId());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
