@@ -16,6 +16,7 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
     private Guid vmId;
     private Guid storageDomainId;
     private boolean updateSnapshot;
+    private boolean lockVM = true;
 
     public RemoveCinderDiskParameters() {
     }
@@ -83,5 +84,13 @@ public class RemoveCinderDiskParameters extends RemoveImageParameters {
 
     public void setStorageDomainId(Guid storageDomainId) {
         this.storageDomainId = storageDomainId;
+    }
+
+    public boolean isLockVM() {
+        return lockVM;
+    }
+
+    public void setLockVM(boolean lockVM) {
+        this.lockVM = lockVM;
     }
 }

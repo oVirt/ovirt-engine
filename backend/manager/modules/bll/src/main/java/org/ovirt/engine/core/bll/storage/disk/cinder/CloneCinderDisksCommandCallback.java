@@ -100,6 +100,7 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
 
     private RemoveCinderDiskParameters buildChildCommandParameters(Guid cinderDiskId) {
         RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDiskId);
+        removeDiskParams.setLockVM(false);
         removeDiskParams.setShouldBeLogged(false);
         return removeDiskParams;
     }
