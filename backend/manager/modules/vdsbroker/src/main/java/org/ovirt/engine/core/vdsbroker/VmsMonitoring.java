@@ -90,7 +90,7 @@ public class VmsMonitoring {
     private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
 
     //*** data collectors ***//
-    private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap();
+    private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
     private final List<VmStatistics> vmStatisticsToSave = new ArrayList<>();
     private final List<List<VmNetworkInterface>> vmInterfaceStatisticsToSave = new ArrayList<>();
     private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
@@ -251,7 +251,7 @@ public class VmsMonitoring {
             // rerun all vms from rerun list
             if (vmAnalyzer.isRerun()) {
                 log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getDbVm().getId(), vdsManager.getVdsName());
-                ResourceManager.getInstance().rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
+                getResourceManager().rerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
             }
 
             if (vmAnalyzer.isSuccededToRun()) {
@@ -285,7 +285,7 @@ public class VmsMonitoring {
             }
 
             if (vmAnalyzer.isRemoveFromAsync()) {
-                ResourceManager.getInstance().removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
+                getResourceManager().removeAsyncRunningVm(vmAnalyzer.getDbVm().getId());
             }
 
             if (vmAnalyzer.isHostedEngineUnmanaged()) {
