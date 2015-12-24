@@ -1922,6 +1922,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
             importSanStorage(context);
         }
         else if ("Finish".equals(key)) { //$NON-NLS-1$
+            if (getWindow() == null) {
+                return;
+            }
+
             getWindow().stopProgress();
 
             if ((Boolean) data.get(1)) {
