@@ -18,30 +18,35 @@ public class CloneCinderDisksCommandCallback<T extends CommandBase<CloneCinderDi
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
 
         boolean anyFailed = false;
+        int finishedChildren = 0;
         for (Guid childCmdId : childCmdIds) {
             CommandStatus commandStatus = CommandCoordinatorUtil.getCommandStatus(childCmdId);
             switch (commandStatus) {
-            case NOT_STARTED:
-            case ACTIVE:
-                log.info("Waiting on CloneCinderDisksCommandCallback child commands to complete");
-                return;
             case SUCCEEDED:
+                finishedChildren++;
                 break;
             case FAILED:
             case FAILED_RESTARTED:
             case UNKNOWN:
                 anyFailed = true;
             default:
+                finishedChildren++;
                 log.error("Invalid command status: '{}", commandStatus);
                 break;
             }
         }
 
-        T command = getCommand(cmdId);
-        command.getParameters().setTaskGroupSuccess(!anyFailed);
-        command.setCommandStatus(anyFailed ? CommandStatus.FAILED : CommandStatus.SUCCEEDED);
-        log.info("All CloneCinderDisksCommandCallback commands have completed, status '{}'",
-                command.getCommandStatus());
+        if (finishedChildren == childCmdIds.size()) {
+            T command = getCommand(cmdId);
+            command.getParameters().setTaskGroupSuccess(!anyFailed);
+            command.setCommandStatus(anyFailed ? CommandStatus.FAILED : CommandStatus.SUCCEEDED);
+            log.info("All CloneCinderDisksCommandCallback commands have completed, status '{}'",
+                    command.getCommandStatus());
+        } else {
+            log.info("Waiting for all child commands to finish. {}/{} child commands were completed.",
+                    childCmdIds.size(),
+                    finishedChildren);
+        }
     }
 
     @Override
