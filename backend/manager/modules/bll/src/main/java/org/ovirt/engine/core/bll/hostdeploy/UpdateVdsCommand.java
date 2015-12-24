@@ -35,13 +35,18 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsCommand<T>  implements RenamedEntityInfoProvider{
 
     private VDS oldHost;
-    private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
+    private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
+            "host_name",
+            "ip",
+            "vds_unique_id",
+            "port",
+            "vds_group_id",
+            "protocol");
     private VdcActionType actionType;
 
     public UpdateVdsCommand(T parameters) {
@@ -166,10 +171,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     return;
                 }
             }
-        }
-
-        if (oldHost.getProtocol() != getParameters().getVdsStaticData().getProtocol()) {
-            ResourceManager.getInstance().reestablishConnection(oldHost.getId());
         }
 
         // set clusters network to be operational (if needed)

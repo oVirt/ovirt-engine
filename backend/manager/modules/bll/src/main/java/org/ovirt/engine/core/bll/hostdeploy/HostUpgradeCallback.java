@@ -59,7 +59,7 @@ public class HostUpgradeCallback extends CommandCallback {
      * Evaluates the host status in regards to maintenance status: The host must move to {@code VDSStatus.Maintenance}
      * in order to proceed with the upgrade process.
      *
-     * @param The
+     * @param childCmdIds
      *            child command IDs list to search if {@code MaintenanceNumberOfVdss} exists in it
      * @param rootCommand
      *            The root command
@@ -108,24 +108,24 @@ public class HostUpgradeCallback extends CommandCallback {
             return false;
         }
 
-            // upgrade command execution has started and its status should be examined
-            switch (upgradeCommand.getCommandStatus()) {
-            case ACTIVE:
-            case NOT_STARTED:
+        // upgrade command execution has started and its status should be examined
+        switch (upgradeCommand.getCommandStatus()) {
+        case ACTIVE:
+        case NOT_STARTED:
+            return false;
 
-            case FAILED:
-            case FAILED_RESTARTED:
-            case UNKNOWN:
-                rootCommand.setCommandStatus(CommandStatus.FAILED);
-                return true;
+        case FAILED:
+        case FAILED_RESTARTED:
+        case UNKNOWN:
+            rootCommand.setCommandStatus(CommandStatus.FAILED);
+            return true;
 
-            case SUCCEEDED:
-                rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
-                return true;
-            }
+        case SUCCEEDED:
+            rootCommand.setCommandStatus(CommandStatus.SUCCEEDED);
+            return true;
+        }
 
         return true;
-
     }
 
     private CommandEntity getHostUpgradeInternalCommand(List<Guid> childCmdIds) {
@@ -153,7 +153,7 @@ public class HostUpgradeCallback extends CommandCallback {
     private boolean isMaintenanceCommandExecuted(List<Guid> childCmdIds) {
         Guid maintenanceCommandId = getMaintenanceCmdId(childCmdIds);
         CommandEntity maintenanceCmd = CommandCoordinatorUtil.getCommandEntity(maintenanceCommandId);
-        return maintenanceCmd == null ? false : maintenanceCmd.isExecuted();
+        return maintenanceCmd != null && maintenanceCmd.isExecuted();
     }
 
     private String getHostName(Guid hostId) {
