@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
@@ -10,9 +12,13 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.BookmarkDao;
 
 public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> extends CommandBase<T> {
+
+    @Inject
+    protected BookmarkDao bookmarkDao;
+
     private Bookmark bookmark;
     private String bookmarkName;
 
@@ -25,16 +31,21 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
 
     protected Bookmark getBookmark() {
         if (bookmark == null) {
-            bookmark = DbFacade.getInstance().getBookmarkDao()
-                    .get(getBookmarkId());
+            bookmark = bookmarkDao.get(getBookmarkId());
         }
         return bookmark;
     }
 
-    public String getBookmarkValue() {
-        return getBookmark() != null ? getBookmark().getValue() : null;
+    @Override
+    public void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__TYPE__BOOKMARK);
     }
 
+    /**
+     * This method is used by reflection by {@link org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector}
+     *
+     * @return The bookmark name
+     */
     public String getBookmarkName() {
         if (bookmarkName == null && getBookmark() != null) {
             bookmarkName = getBookmark().getName();
@@ -42,22 +53,8 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
         return bookmarkName;
     }
 
-    public void setBookmarkName(String value) {
-        bookmarkName = value;
-    }
-
     public Guid getBookmarkId() {
         return getParameters().getBookmarkId();
-    }
-
-    protected void addErrorMessages(EngineMessage messageActionTypeParameter, EngineMessage messageReason) {
-        addValidationMessage(EngineMessage.VAR__TYPE__BOOKMARK);
-        addValidationMessage(messageActionTypeParameter);
-        addValidationMessage(messageReason);
-    }
-
-    protected void addInvalidIdErrorMessages(EngineMessage messageActionTypeParameter) {
-        addErrorMessages(messageActionTypeParameter, EngineMessage.ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID);
     }
 
     @Override
@@ -66,5 +63,4 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
                 VdcObjectType.System,
                 ActionGroup.BOOKMARK_MANAGEMENT));
     }
-
 }

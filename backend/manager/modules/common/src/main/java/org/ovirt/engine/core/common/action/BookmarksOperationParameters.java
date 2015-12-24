@@ -7,15 +7,15 @@ import org.ovirt.engine.core.common.businessentities.Bookmark;
 public class BookmarksOperationParameters extends BookmarksParametersBase {
     private static final long serialVersionUID = 904048653429089175L;
     @Valid
-    private Bookmark _bookmark;
+    private Bookmark bookmark;
 
     public BookmarksOperationParameters(Bookmark bookmark) {
         super(bookmark.getId());
-        _bookmark = bookmark;
+        this.bookmark = bookmark;
     }
 
     public Bookmark getBookmark() {
-        return _bookmark;
+        return bookmark;
     }
 
     public BookmarksOperationParameters() {

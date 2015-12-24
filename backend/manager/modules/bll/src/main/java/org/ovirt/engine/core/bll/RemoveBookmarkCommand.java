@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends BookmarkCommandBase<T> {
     public RemoveBookmarkCommand(T parameters) {
@@ -11,10 +10,15 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
     }
 
     @Override
+    public void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+    }
+
+    @Override
     protected boolean validate() {
         if (getBookmark() == null) {
-            addInvalidIdErrorMessages(EngineMessage.VAR__ACTION__UPDATE);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID);
         }
 
         return true;
@@ -22,8 +26,7 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getBookmarkDao()
-                .remove(getBookmark().getId());
+        bookmarkDao.remove(getBookmark().getId());
         setSucceeded(true);
     }
 
