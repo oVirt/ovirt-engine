@@ -36,7 +36,7 @@ public class GlusterStorageModel extends PosixStorageModel {
     }
 
     @Override
-    public boolean isSupportedInVersion(Version dcVersion) {
+    public Boolean isSupportedInVersion(Version dcVersion) {
         return (Boolean) AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigurationValues.GlusterFsStorageEnabled, dcVersion.toString());
     }
