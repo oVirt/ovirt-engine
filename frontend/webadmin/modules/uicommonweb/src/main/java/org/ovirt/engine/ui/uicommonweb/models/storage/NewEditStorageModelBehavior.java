@@ -81,7 +81,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
     }
 
     private void checkCanItemBeSelected(final IStorageModel item, StoragePool dataCenter, boolean isNoExportOrIsoStorageAttached) {
-        if (!item.isSupportedInVersion(dataCenter.getCompatibilityVersion())) {
+        if (!Boolean.FALSE.equals(item.isSupportedInVersion(dataCenter.getCompatibilityVersion()))) {
             updateItemSelectability(item, false);
             return;
         }

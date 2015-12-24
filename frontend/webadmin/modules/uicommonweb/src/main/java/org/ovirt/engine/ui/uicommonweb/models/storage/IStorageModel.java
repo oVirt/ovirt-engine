@@ -26,5 +26,5 @@ public interface IStorageModel {
 
     boolean isEditable(StorageDomain storage);
 
-    boolean isSupportedInVersion(Version dcVersion);
+    Boolean isSupportedInVersion(Version dcVersion);
 }

@@ -463,7 +463,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         return ""; //$NON-NLS-1$
     }
 
-    public boolean isSupportedInVersion(Version dcVersion) {
+    public Boolean isSupportedInVersion(Version dcVersion) {
         return true;
     }
 }

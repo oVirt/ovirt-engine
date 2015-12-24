@@ -129,7 +129,7 @@ public class PosixStorageModel extends FileStorageModel {
     }
 
     @Override
-    public boolean isSupportedInVersion(Version dcVersion) {
+    public Boolean isSupportedInVersion(Version dcVersion) {
         return (Boolean) AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigurationValues.PosixStorageEnabled, dcVersion.toString());
     }
