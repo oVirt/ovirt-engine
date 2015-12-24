@@ -135,11 +135,11 @@ public class HostUpgradeCallback extends CommandCallback {
 
     private void invokeHostUpgrade(CommandBase<?> command, UpgradeHostParameters parameters) {
         CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.UpgradeHostInternal,
-                createUpgradeParameteres(parameters),
+                createUpgradeParameters(parameters),
                 command.cloneContextAndDetachFromParent());
     }
 
-    private VdcActionParametersBase createUpgradeParameteres(UpgradeHostParameters parameters) {
+    private VdcActionParametersBase createUpgradeParameters(UpgradeHostParameters parameters) {
         UpgradeHostParameters upgradeParams = new UpgradeHostParameters(parameters.getVdsId());
         upgradeParams.setSessionId(parameters.getSessionId());
         upgradeParams.setCorrelationId(parameters.getCorrelationId());
