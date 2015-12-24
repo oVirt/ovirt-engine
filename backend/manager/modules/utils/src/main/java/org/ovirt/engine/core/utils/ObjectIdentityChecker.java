@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
@@ -219,9 +220,7 @@ public class ObjectIdentityChecker {
                 Object sourceValue = property.getValue(source, null);
                 Object destinationValue = property.getValue(destination, null);
 
-                if (property.getCanWrite()
-                        && sourceValue != null && !sourceValue.equals(destinationValue)
-                        || ((sourceValue == null && destinationValue != null))) {
+                if (property.getCanWrite()&& !Objects.equals(sourceValue, destinationValue)) {
                     returnValue.add(property.getName());
                 }
             }
