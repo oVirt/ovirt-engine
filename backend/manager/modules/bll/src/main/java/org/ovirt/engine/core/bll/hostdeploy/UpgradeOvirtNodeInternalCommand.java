@@ -154,7 +154,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         if (getVds() == null) {
             return;
         }
-
+        reestablishConnectionIfNeeded();
         vdsInitialStatus = getVds().getStatus();
         if (isOvirtReInstallOrUpgrade()) {
             upgradeNode();

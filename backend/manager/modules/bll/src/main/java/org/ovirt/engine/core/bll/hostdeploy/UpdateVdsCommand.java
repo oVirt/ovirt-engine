@@ -45,7 +45,13 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private ResourceManager resourceManager;
 
     private VDS oldHost;
-    private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
+    private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
+            "host_name",
+            "ip",
+            "vds_unique_id",
+            "port",
+            "vds_group_id",
+            "protocol");
     private VdcActionType actionType;
 
     public UpdateVdsCommand(T parameters) {
@@ -167,10 +173,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     return;
                 }
             }
-        }
-
-        if (oldHost.getProtocol() != getParameters().getVdsStaticData().getProtocol()) {
-            resourceManager.reestablishConnection(oldHost.getId());
         }
 
         // set clusters network to be operational (if needed)
