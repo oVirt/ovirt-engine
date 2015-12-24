@@ -48,7 +48,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
 
         // if the disk is not part of a vm (floating), there are no snapshots to update
         // so no lock is required.
-        if (vm != null) {
+        if (getParameters().isLockVM() && vm != null) {
             getParameters().setVmId(vm.getId());
             lockVmSnapshotsWithWait(vm);
         }
