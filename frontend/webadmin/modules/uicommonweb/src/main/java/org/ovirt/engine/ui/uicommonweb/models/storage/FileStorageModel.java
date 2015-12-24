@@ -52,7 +52,7 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
         getContainer().getHost().setIsChangeable(isPathEditable);
     }
 
-    public boolean isSupportedInVersion(Version dcVersion) {
+    public Boolean isSupportedInVersion(Version dcVersion) {
         return true;
     }
 }
