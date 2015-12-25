@@ -108,8 +108,9 @@ public class SlaValidator {
 
         for (String cpu : StringUtils.split(host.getOnlineCpus(), ",")) {
             cpu = StringUtils.trim(cpu);
-            if (!StringUtils.isEmpty(cpu))
+            if (!StringUtils.isEmpty(cpu)) {
                 cpus.add(Integer.parseInt(cpu));
+            }
         }
         return cpus;
     }

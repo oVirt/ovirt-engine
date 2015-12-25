@@ -63,11 +63,12 @@ public class BackendStorageDomainsResource
 
     @Override
     public StorageDomains list() {
-        if (isFiltered())
+        if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllStorageDomains,
                     new VdcQueryParametersBase(), SearchType.StorageDomain));
-        else
+        } else {
             return mapCollection(getBackendCollection(SearchType.StorageDomain));
+        }
     }
 
     @Override

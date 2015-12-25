@@ -125,10 +125,12 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         }
 
         List<GlusterVolumeSnapshotConfig> updatedConfigs = new ArrayList<>();
-        for (GlusterVolumeSnapshotConfig param : updatedClusterConfigParams)
+        for (GlusterVolumeSnapshotConfig param : updatedClusterConfigParams) {
             updatedConfigs.add(param);
-        for (GlusterVolumeSnapshotConfig param : updatedVolumeConfigParams)
+        }
+        for (GlusterVolumeSnapshotConfig param : updatedVolumeConfigParams) {
             updatedConfigs.add(param);
+        }
 
         for (GlusterVolumeSnapshotConfig config : updatedConfigs) {
             VDSReturnValue retVal = runVdsCommand(VDSCommandType.SetGlusterVolumeSnapshotConfig,

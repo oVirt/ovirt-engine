@@ -106,11 +106,13 @@ public abstract class BaseDaoTestCase {
         InputStream is = null;
         try {
             String job = System.getProperty("JOB_NAME");
-            if (job == null)
+            if (job == null) {
                 job = "";
+            }
             String number = System.getProperty("BUILD_NUMBER");
-            if (number == null)
+            if (number == null) {
                 number = "";
+            }
             String schemaNamePostfix = job + number;
             is = BaseDaoTestCase.class.getResourceAsStream(
                     "/test-database.properties");

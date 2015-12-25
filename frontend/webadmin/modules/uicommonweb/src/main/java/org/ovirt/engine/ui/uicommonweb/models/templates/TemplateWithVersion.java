@@ -58,17 +58,27 @@ public class TemplateWithVersion implements Comparable<TemplateWithVersion> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TemplateWithVersion)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TemplateWithVersion)) {
+            return false;
+        }
 
         TemplateWithVersion that = (TemplateWithVersion) o;
 
-        if (!baseTemplate.equals(that.baseTemplate)) return false;
-        if (!templateVersion.equals(that.templateVersion)) return false;
+        if (!baseTemplate.equals(that.baseTemplate)) {
+            return false;
+        }
+        if (!templateVersion.equals(that.templateVersion)) {
+            return false;
+        }
 
         boolean isThisLatest = templateVersion instanceof LatestVmTemplate;
         boolean isOtherLatest = that.getTemplateVersion() instanceof LatestVmTemplate;
-        if (isThisLatest != isOtherLatest) return false;
+        if (isThisLatest != isOtherLatest) {
+            return false;
+        }
 
         return true;
     }

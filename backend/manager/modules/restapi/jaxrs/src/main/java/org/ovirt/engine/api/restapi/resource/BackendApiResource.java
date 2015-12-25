@@ -308,8 +308,12 @@ public class BackendApiResource
             return Response.serverError().build();
         } finally {
             try {
-                if (baos != null) baos.close();
-                if (is != null) is.close();
+                if (baos != null) {
+                    baos.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
             } catch (IOException e) {
                 log.error("cannot close a resource", e);
             }

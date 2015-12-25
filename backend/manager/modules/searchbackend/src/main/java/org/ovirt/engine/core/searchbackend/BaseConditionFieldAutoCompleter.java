@@ -48,10 +48,11 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public static String getLikeSyntax(boolean caseSensitive) {
         // for tests we don't have the Config class initialized
         // also if caseSensitive flag is set we will use LIKE
-        if (Config.getConfigUtils() == null || caseSensitive)
+        if (Config.getConfigUtils() == null || caseSensitive) {
             return "LIKE";
-        else
-            return Config.<String> getValue(ConfigValues.DBLikeSyntax);
+        } else {
+            return Config.<String>getValue(ConfigValues.DBLikeSyntax);
+        }
     }
 
     public String getMatchingSyntax(String fieldName, boolean positive, boolean caseSensitive) {
@@ -66,10 +67,11 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
      */
     public static String getI18NPrefix() {
         // for tests we don't have the Config class initialized
-        if (Config.getConfigUtils() == null)
+        if (Config.getConfigUtils() == null) {
             return "";
-        else
-            return Config.<String> getValue(ConfigValues.DBI18NPrefix);
+        } else {
+            return Config.<String>getValue(ConfigValues.DBI18NPrefix);
+        }
 
     }
 

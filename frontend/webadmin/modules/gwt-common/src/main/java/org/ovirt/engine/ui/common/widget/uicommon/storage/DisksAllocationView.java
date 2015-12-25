@@ -63,8 +63,9 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         int nbWidgetsInDiskListPanel = diskListPanel.getWidgetCount();
         for (int i = 0; i < nbWidgetsInDiskListPanel; ++i) {
             Widget widget = diskListPanel.getWidget(i);
-            if (widget instanceof FocusableComponentsContainer)
+            if (widget instanceof FocusableComponentsContainer) {
                 nextTabIndex = ((FocusableComponentsContainer) widget).setTabIndexes(nextTabIndex);
+            }
         }
         return nextTabIndex;
     }
@@ -81,20 +82,24 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         listHeader.addColumn(new EmptyColumn(), constants.aliasDisk(), width);
         listHeader.addColumn(new EmptyColumn(), constants.provisionedSizeDisk(), width);
 
-        if (showVolumeType)
+        if (showVolumeType) {
             listHeader.addColumn(new EmptyColumn(), constants.allocationDisk(), width);
+        }
 
-        if (showVolumeFormat)
+        if (showVolumeFormat) {
             listHeader.addColumn(new EmptyColumn(), constants.formatDisk(), width);
+        }
 
-        if (showSource)
+        if (showSource) {
             listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
+        }
 
         listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
         listHeader.addColumn(new EmptyColumn(), constants.diskProfile(), width);
 
-        if (showQuota)
+        if (showQuota) {
             listHeader.addColumn(new EmptyColumn(), constants.quotaDisk(), width);
+        }
 
         listHeader.setRowData(new ArrayList());
         listHeader.setWidth("100%", true); //$NON-NLS-1$

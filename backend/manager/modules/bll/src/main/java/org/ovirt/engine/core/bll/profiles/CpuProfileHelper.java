@@ -72,8 +72,9 @@ public class CpuProfileHelper {
     }
 
     public static ValidationResult setAndValidateCpuProfile(VmBase vmBase, Version version) {
-        if (!FeatureSupported.cpuQoS(version))
+        if (!FeatureSupported.cpuQoS(version)) {
             return ValidationResult.VALID;
+        }
         if (vmBase.getCpuProfileId() == null) {
             return assignFirstCpuProfile(vmBase);
         } else {

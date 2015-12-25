@@ -150,10 +150,12 @@ public class Version implements Comparable<Version>, Serializable {
 
     @Override
     public int compareTo(Version other) {
-        if (other == null)
+        if (other == null) {
             return 5;
-        if (this == other)
+        }
+        if (this == other) {
             return 0;
+        }
         int result = major - other.major;
         if (result == 0) {
             result = minor - other.minor;

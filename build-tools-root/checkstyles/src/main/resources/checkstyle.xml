@@ -35,6 +35,7 @@
     </module>
     <module name="LeftCurly"/>
     <module name="MethodName" />
+    <module name="NeedBraces" />
     <module name="NonEmptyAtclauseDescription" />
     <module name="NoWhitespaceBefore">
       <property name="tokens" value="SEMI"/>

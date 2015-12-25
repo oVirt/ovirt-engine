@@ -212,7 +212,9 @@ public class BackendHostNicResource
     private org.ovirt.engine.core.common.businessentities.network.Network lookupAtachedNetwork(String networkName) {
         if(!StringUtils.isEmpty(networkName)){
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()){
-                if(nwk.getName().equals(networkName)) return nwk;
+                if(nwk.getName().equals(networkName)) {
+                    return nwk;
+                }
             }
         }
         return null;

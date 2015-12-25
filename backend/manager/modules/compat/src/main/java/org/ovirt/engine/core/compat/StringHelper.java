@@ -17,10 +17,11 @@ public final class StringHelper {
     // version).
     // ------------------------------------------------------------------------------------
     public static String join(String separator, Object[] values) {
-        if (values == null)
+        if (values == null) {
             return null;
-        else
+        } else {
             return join(separator, values, 0, values.length);
+        }
     }
 
     // ------------------------------------------------------------------------------------
@@ -31,8 +32,9 @@ public final class StringHelper {
         //pre-allocate some space for better concatenation speed
         final StringBuilder result = new StringBuilder((count - startindex) * 32);
 
-        if (objectArray == null)
+        if (objectArray == null) {
             return null;
+        }
 
         for (int index = startindex; index < objectArray.length && index - startindex < count; index++) {
             if (separator != null && index > startindex) {
@@ -51,8 +53,9 @@ public final class StringHelper {
     // This method replaces the .NET static string method 'TrimEnd'.
     // ------------------------------------------------------------------------------------
     public static String trimEnd(String string, Character... charsToTrim) {
-        if (string == null || charsToTrim == null)
+        if (string == null || charsToTrim == null) {
             return string;
+        }
 
         int lengthToKeep = string.length();
         for (int index = string.length() - 1; index >= 0; index--) {
@@ -71,8 +74,9 @@ public final class StringHelper {
                     }
                 }
             }
-            if (!removeChar)
+            if (!removeChar) {
                 break;
+            }
         }
         return string.substring(0, lengthToKeep);
     }
@@ -81,8 +85,9 @@ public final class StringHelper {
     // This method replaces the .NET static string method 'TrimStart'.
     // ------------------------------------------------------------------------------------
     public static String trimStart(String string, Character... charsToTrim) {
-        if (string == null || charsToTrim == null)
+        if (string == null || charsToTrim == null) {
             return string;
+        }
 
         int startingIndex = 0;
         for (int index = 0; index < string.length(); index++) {
@@ -101,8 +106,9 @@ public final class StringHelper {
                     }
                 }
             }
-            if (!removeChar)
+            if (!removeChar) {
                 break;
+            }
         }
         return string.substring(startingIndex);
     }
@@ -117,17 +123,19 @@ public final class StringHelper {
 
     public static String trim(String s, char[] cs) {
         Character[] chars = new Character[cs.length];
-        for (int i = 0; i < cs.length; i++)
+        for (int i = 0; i < cs.length; i++) {
             chars[i] = cs[i];
+        }
 
         return trim(s, chars);
     }
 
     public static boolean stringsEqualIgnoreCase(String s1, String s2) {
-        if (s1 == null && s2 == null)
+        if (s1 == null && s2 == null) {
             return true;
-        else
+        } else {
             return s1 != null && s1.equalsIgnoreCase(s2);
+        }
     }
 
     /**
@@ -148,8 +156,9 @@ public final class StringHelper {
      */
     public static String quote(String s) {
         int slashEIndex = s.indexOf("\\E");
-        if (slashEIndex == -1)
+        if (slashEIndex == -1) {
             return "\\Q" + s + "\\E";
+        }
         StringBuilder sb = new StringBuilder(s.length() * 2);
         sb.append("\\Q");
         slashEIndex = 0;

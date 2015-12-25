@@ -31,8 +31,9 @@ public class DBConfigUtilsTest extends BaseDaoTestCase {
         ConfigValues[] values = ConfigValues.values();
 
         for (ConfigValues curConfig : values) {
-            if (curConfig == ConfigValues.Invalid)
+            if (curConfig == ConfigValues.Invalid) {
                 continue;
+            }
 
             Field configField = null;
             try {

@@ -276,7 +276,9 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     private boolean shouldExclude(String member, String[] subCollectionMembersToExclude) {
         if(subCollectionMembersToExclude !=null && subCollectionMembersToExclude.length > 0){
             for(String excludeMember : subCollectionMembersToExclude){
-                if(member.equals(excludeMember))return true;
+                if (member.equals(excludeMember)) {
+                        return true;
+                }
             }
         }
         return false;

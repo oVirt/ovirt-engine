@@ -795,8 +795,9 @@ public class VmHandler {
                     for (Map.Entry<?, ?> entry : map.entrySet()) {
                         boolean success = addDeviceUpdateOnNextRun(vmId, annotation,
                                 entry.getKey(), entry.getValue(), fieldList);
-                        if (!success)
+                        if (!success) {
                             break;
+                        }
                     }
                 } else {
                     log.warn("getVmDevicesFieldsToUpdateOnNextRun: Unsupported field type: " +

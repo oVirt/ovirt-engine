@@ -178,8 +178,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         saveTreeState();
         tree.clear();
 
-        if (rootItems == null)
-            return;
+        if (rootItems == null) {
+                return;
+        }
 
         for (R root : rootItems) {
             TreeItem rootItem = getRootItem(root);

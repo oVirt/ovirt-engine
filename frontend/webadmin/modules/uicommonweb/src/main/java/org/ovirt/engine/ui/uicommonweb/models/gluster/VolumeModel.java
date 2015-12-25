@@ -327,10 +327,11 @@ public class VolumeModel extends Model {
         AsyncDataProvider.getInstance().getHostListByCluster(_asyncQuery, getCluster().getSelectedItem().getName());
 
         // TODO: fetch the mount points to display
-        if (getBricks().getItems() != null)
+        if (getBricks().getItems() != null) {
             volumeBrickModel.getBricks().setItems(getBricks().getItems());
-        else
+        } else {
             volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
+        }
 
         UICommand command = UICommand.createDefaultOkUiCommand("OnAddBricks", this); //$NON-NLS-1$
         volumeBrickModel.getCommands().add(command);

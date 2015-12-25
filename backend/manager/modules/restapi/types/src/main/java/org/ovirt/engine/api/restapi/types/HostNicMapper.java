@@ -206,7 +206,9 @@ public class HostNicMapper {
             model.setSpeed(entity.getSpeed() * 1000L * 1000);
         }
         if (!StringUtils.isEmpty(entity.getBondOptions())) {
-            if(model.getBonding() == null) model.setBonding(new Bonding());
+            if(model.getBonding() == null) {
+                model.setBonding(new Bonding());
+            }
             model.getBonding().setOptions(new Options());
             for(String opt : entity.getBondOptions().split(OPTIONS_DELIMITER)){
                 String[] option_pair = opt.split(OPTIONS_EQ);

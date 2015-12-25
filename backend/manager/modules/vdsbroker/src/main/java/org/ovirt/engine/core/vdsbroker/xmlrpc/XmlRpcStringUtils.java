@@ -29,10 +29,11 @@ public class XmlRpcStringUtils {
                 String[] keyValPairs = str.split(PAIRS_SEPARATOR);
                 for (String pair : keyValPairs) {
                     String[] keyval = pair.split(KEY_VALUE_SEPARATOR);
-                    if (keyval.length == 2)
+                    if (keyval.length == 2) {
                         map.put(keyval[0].trim(), keyval[1].trim());
-                    else if (keyval.length == 1)
+                    } else if (keyval.length == 1) {
                         map.put(keyval[0].trim(), "");
+                    }
                 }
             }
         }

@@ -360,8 +360,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     vds.getStatus() != VDSStatus.InstallingOS &&
                     vds.getStatus() != VDSStatus.PendingApproval &&
                     vds.getStatus() != VDSStatus.Initializing &&
-                    vds.getStatus() != VDSStatus.InstallFailed)
+                    vds.getStatus() != VDSStatus.InstallFailed) {
                 return true;
+            }
         }
         return false;
     }

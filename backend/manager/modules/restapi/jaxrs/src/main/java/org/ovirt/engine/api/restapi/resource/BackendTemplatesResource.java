@@ -61,11 +61,12 @@ public class BackendTemplatesResource
 
     @Override
     public Templates list() {
-        if (isFiltered())
+        if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVmTemplates,
                     new VdcQueryParametersBase(), SearchType.VmTemplate));
-        else
+        } else {
             return mapCollection(getBackendCollection(SearchType.VmTemplate));
+        }
     }
 
     @Override

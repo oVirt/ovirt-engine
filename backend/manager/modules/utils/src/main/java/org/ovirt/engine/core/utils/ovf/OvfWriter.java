@@ -174,8 +174,9 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeAttributeString(OVF_URI, "parentRef", "");
             } else {
                 int i = 0;
-                while (_images.get(i).getImageId().equals(image.getParentId()))
+                while (_images.get(i).getImageId().equals(image.getParentId())) {
                     i++;
+                }
                 List<DiskImage> res = _images.subList(i, _images.size() - 1);
 
                 if (res.size() > 0) {

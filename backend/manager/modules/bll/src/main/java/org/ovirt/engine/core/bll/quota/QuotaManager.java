@@ -124,16 +124,18 @@ public class QuotaManager implements BackendService {
                         newUsedGlobalStorageSize,
                         quotaId,
                         quota,
-                        auditLogPair))
+                        auditLogPair)) {
                     return false;
+                }
             } else {
                 if (!checkConsumptionForSpecificStorageQuota(parameters,
                         desiredStorageSizeQuotaMap,
                         newUsedSpecificStorageSize,
                         quotaId,
                         quota,
-                        auditLogPair))
+                        auditLogPair)) {
                     return false;
+                }
             }
         }
         saveNewConsumptionValues(quotaMap, newUsedGlobalStorageSize, newUsedSpecificStorageSize);

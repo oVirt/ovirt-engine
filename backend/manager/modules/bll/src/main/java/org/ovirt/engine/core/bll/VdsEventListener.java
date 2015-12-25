@@ -545,8 +545,9 @@ public class VdsEventListener implements IVdsEventListener {
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread
     public void onMomPolicyChange(@Observes @MomPolicyUpdate final Cluster cluster) {
-        if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0)
+        if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0) {
             return;
+        }
         List<VDS> activeHostsInCluster =
                 vdsDao.getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
         // collect all Active hosts into a callable list
@@ -567,8 +568,9 @@ public class VdsEventListener implements IVdsEventListener {
             });
         }
         // run all VDSCommands concurrently with executor
-        if (callables.size() > 0)
+        if (callables.size() > 0) {
             ThreadPoolUtil.invokeAll(callables);
+        }
     }
 
     @Override

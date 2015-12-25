@@ -81,8 +81,9 @@ public class DialogTabPanel extends Composite {
     }
 
     void setActiveTab(DialogTab tab) {
-        if (activeTab != null)
+        if (activeTab != null) {
             activeTab.deactivate();
+        }
 
         if (tab != null) {
             tab.activate();

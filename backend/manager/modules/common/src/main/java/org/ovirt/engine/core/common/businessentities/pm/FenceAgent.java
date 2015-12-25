@@ -212,8 +212,9 @@ public class FenceAgent implements BusinessEntity<Guid> {
             if (pair.length == 2) { // key=value setting
                 pair[1] = (pair[1] == null ? "" : pair[1]);
                 // ignore illegal settings
-                if (pair[0].trim().length() > 0 && pair[1].trim().length() > 0)
+                if (pair[0].trim().length() > 0 && pair[1].trim().length() > 0) {
                     map.put(pair[0], pair[1]);
+                }
             } else { // only key setting
                 map.put(pair[0], "");
             }

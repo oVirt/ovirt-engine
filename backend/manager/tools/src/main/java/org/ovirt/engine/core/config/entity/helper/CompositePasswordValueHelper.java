@@ -54,8 +54,9 @@ public class CompositePasswordValueHelper implements ValueHelper {
                     sb.append(pair[1]);
                 }
             }
-            if (tokenizer.hasMoreElements())
+            if (tokenizer.hasMoreElements()) {
                 sb.append(",");
+            }
         }
         return sb.toString();
     }

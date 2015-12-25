@@ -458,8 +458,9 @@ public final class ImagesHandler {
             if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
                 result = checkImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
             }
-            if (!result)
+            if (!result) {
                 break;
+            }
         }
         return result;
     }

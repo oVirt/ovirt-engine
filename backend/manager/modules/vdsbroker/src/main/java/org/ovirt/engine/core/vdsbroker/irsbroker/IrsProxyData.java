@@ -1469,11 +1469,12 @@ public class IrsProxyData {
 
         if (domainsUnreachableByHost.isEmpty()) {
             Guid clearedReport = clearVdsReportInfoOnUnseenDomain(vdsId);
-            if (clearedReport != null)
+            if (clearedReport != null) {
                 log.info("Host '{}' no longer storage access problem to any relevant domain " +
-                        " clearing it's report (report id: '{}')",
+                                " clearing it's report (report id: '{}')",
                         vdsId,
                         clearedReport);
+            }
         } else if (newDomainUnreachableByHost) {
             Guid newReportId = Guid.newGuid();
             log.info("Host '{}' has reported new storage access problem to the following domains '{}'" +

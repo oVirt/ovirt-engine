@@ -420,8 +420,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // statically, therefore , in order to reflect changes in the parent tree
                 // we should not rely on the cached query in such case and have to build the
                 // query from scratch.
-                if (!containsStaticInValues(data.getQuery()))
+                if (!containsStaticInValues(data.getQuery())) {
                     queriesCache.put(searchKey, data);
+                }
             }
         } catch (SearchEngineIllegalCharacterException e) {
             log.error("Search expression can not end with ESCAPE character: {}", getParameters().getSearchPattern());

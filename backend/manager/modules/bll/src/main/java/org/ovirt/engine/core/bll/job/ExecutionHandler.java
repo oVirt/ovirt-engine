@@ -851,8 +851,9 @@ public class ExecutionHandler {
         try {
             List<Job> jobs = JobRepositoryFactory.getJobRepository().getJobsByEntityAndAction(entityId, actionType);
             for (Job job : jobs) {
-                if (job.getStatus() == JobExecutionStatus.STARTED)
+                if (job.getStatus() == JobExecutionStatus.STARTED) {
                     job.markJobEnded(status);
+                }
                 JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
             }
         } catch (RuntimeException e) {

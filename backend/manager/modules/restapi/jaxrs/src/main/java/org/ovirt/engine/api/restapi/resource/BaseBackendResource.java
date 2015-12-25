@@ -381,9 +381,10 @@ public class BaseBackendResource {
      */
     protected boolean isFiltered() {
         List<String> filterVar = getHttpHeaders().getRequestHeader(USER_FILTER_HEADER);
-        if (filterVar != null && filterVar.size() > 0)
+        if (filterVar != null && filterVar.size() > 0) {
             return Boolean.valueOf(filterVar.iterator().next());
-        else
+        } else {
             return false;
+        }
     }
 }

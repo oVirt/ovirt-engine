@@ -82,8 +82,9 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         Date convertedEndByDate = getGlusterUtil().convertDate(schedule.getEndByDate(), schedule.getTimeZone());
 
         String cronExpression = GlusterUtil.getInstance().getCronExpression(schedule);
-        if (cronExpression == null)
+        if (cronExpression == null) {
             throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
+        }
 
         return getDbSchedulUtil().scheduleACronJob(new GlusterSnapshotScheduleJob(),
                 "onTimer",

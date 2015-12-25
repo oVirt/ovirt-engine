@@ -185,8 +185,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         getReturnValue().setValid(isAddVmsSucceded());
         setSucceeded(isAddVmsSucceded());
         VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
-        if (!isVmsAdded())
+        if (!isVmsAdded()) {
             onNoVmsAdded(poolId);
+        }
         getCompensationContext().resetCompensation();
     }
 

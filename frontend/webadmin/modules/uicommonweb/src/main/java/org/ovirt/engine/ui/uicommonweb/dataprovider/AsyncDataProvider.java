@@ -3010,8 +3010,9 @@ public class AsyncDataProvider {
                     } else {
                         // the vlanParent should already be in ifacesOptions
                         // (since it has no network_name or bond_name).
-                        if (vlanParent != null)
+                        if (vlanParent != null) {
                             defaultInterfaceName.append(vlanParent.getName());
+                        }
                         asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
                     }
                 }

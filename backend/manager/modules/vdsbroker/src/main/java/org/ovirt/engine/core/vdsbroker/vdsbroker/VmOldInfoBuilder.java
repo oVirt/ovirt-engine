@@ -234,11 +234,12 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 .toString().toLowerCase();
         String bootSeqInBE = vm.getBootSequence().toString().toLowerCase();
         // TODO : find another way to distinguish run vs. run-once
-        if (bootSeqInBE.equals(bootSeqInDB))
+        if (bootSeqInBE.equals(bootSeqInDB)) {
             createInfo.put(VdsProperties.Boot, bootSeqInDB);
-        else
+        } else {
             // run once
             createInfo.put(VdsProperties.Boot, bootSeqInBE);
+        }
 
     }
 

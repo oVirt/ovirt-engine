@@ -77,8 +77,9 @@ public class ErrorMessageFormatter {
     public static String formatReturnValues(List<VdcReturnValueBase> values) {
         StringBuilder msg = new StringBuilder();
 
-        for (VdcReturnValueBase val : values)
+        for (VdcReturnValueBase val : values) {
             msg.append(val.getFault().getMessage());
+        }
 
         return msg.toString();
     }
@@ -86,8 +87,9 @@ public class ErrorMessageFormatter {
     public static String formatQueryReturnValues(List<VdcQueryReturnValue> values) {
         StringBuilder msg = new StringBuilder();
 
-        for (VdcQueryReturnValue val : values)
+        for (VdcQueryReturnValue val : values) {
             msg.append(val.getExceptionString());
+        }
 
         return msg.toString();
     }

@@ -5,8 +5,9 @@ import java.util.Map;
 
 public class XmlRpcObjectDescriptor {
     public static void toStringBuilder(Map<String, ?> map, StringBuilder builder) {
-        if (map == null)
+        if (map == null) {
             return;
+        }
 
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             if (entry.getValue() instanceof Map) {
@@ -32,8 +33,9 @@ public class XmlRpcObjectDescriptor {
     }
 
     public static void toStringBuilder(Map[] xmlRpc, StringBuilder builder) {
-        if (xmlRpc == null)
+        if (xmlRpc == null) {
             return;
+        }
 
         for (Map entry : xmlRpc) {
             toStringBuilder(entry, builder);
@@ -41,8 +43,9 @@ public class XmlRpcObjectDescriptor {
     }
 
     private static void toStringBuilder(Iterable xmlRpc, StringBuilder builder) {
-        if (xmlRpc == null)
+        if (xmlRpc == null) {
             return;
+        }
 
         for (Object value : xmlRpc) {
             if (value instanceof Iterable) {

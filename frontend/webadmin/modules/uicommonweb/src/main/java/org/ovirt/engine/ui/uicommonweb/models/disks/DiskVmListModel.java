@@ -52,10 +52,12 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
                 ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
                 ArrayList<VM> unPluggedList = (ArrayList<VM>) diskVmMap.get(false);
 
-                if (pluggedList != null)
+                if (pluggedList != null) {
                     vmList.addAll(pluggedList);
-                if (unPluggedList != null)
+                }
+                if (unPluggedList != null) {
                     vmList.addAll(unPluggedList);
+                }
 
                 setItems(vmList);
             }

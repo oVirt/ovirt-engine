@@ -97,8 +97,9 @@ public class XmlTextWriter {
 
     public void writeRaw (String string) {
         try {
-            if (string == null)
+            if (string == null) {
                 string = "";
+            }
             writer.writeCharacters(string);
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write CDATA", e);

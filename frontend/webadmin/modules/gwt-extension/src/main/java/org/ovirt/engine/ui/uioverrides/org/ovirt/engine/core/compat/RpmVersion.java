@@ -4,23 +4,30 @@ public class RpmVersion extends Version {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RpmVersion other = (RpmVersion) obj;
         if (rpmName == null) {
-            if (other.rpmName != null)
+            if (other.rpmName != null) {
                 return false;
-        } else if (!rpmName.equals(other.rpmName))
+            }
+        } else if (!rpmName.equals(other.rpmName)) {
             return false;
+        }
         if (rpmRelease == null) {
-            if (other.rpmRelease != null)
+            if (other.rpmRelease != null) {
                 return false;
-        } else if (!rpmRelease.equals(other.rpmRelease))
+            }
+        } else if (!rpmRelease.equals(other.rpmRelease)) {
             return false;
+        }
         return true;
     }
 

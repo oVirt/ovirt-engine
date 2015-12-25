@@ -1385,12 +1385,14 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
         // inactive KsmPolicyForNuma if KSM disabled
-        if (getEnableKsm().getEntity() == false)
+        if (getEnableKsm().getEntity() == false) {
             getKsmPolicyForNumaSelection().setIsChangeable(false);
+        }
         // hide KsmPolicyForNuma is cluseter version bellow 3.4
         Version version = getEntity().getCompatibilityVersion();
-        if (version.compareTo(Version.v3_4) < 0)
+        if (version.compareTo(Version.v3_4) < 0) {
             getKsmPolicyForNumaSelection().setIsAvailable(false);
+        }
     }
 
     private void loadCurrentClusterManagementNetwork() {
@@ -2085,11 +2087,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     public void setKsmPolicyForNuma(Boolean ksmPolicyForNumaFlag) {
-        if (ksmPolicyForNumaFlag == null)
+        if (ksmPolicyForNumaFlag == null) {
             return;
+        }
         KsmPolicyForNuma ksmPolicyForNuma = KsmPolicyForNuma.shareAcrossNumaNodes;
-        if (ksmPolicyForNumaFlag == false)
+        if (ksmPolicyForNumaFlag == false) {
             ksmPolicyForNuma = KsmPolicyForNuma.shareInsideEachNumaNode;
+        }
 
         getKsmPolicyForNumaSelection().setSelectedItem(ksmPolicyForNuma);
         return;

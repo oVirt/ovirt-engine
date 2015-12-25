@@ -150,9 +150,10 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             String pvSizeStr = (String) xlun.get("pvsize");
             if (!StringUtils.isEmpty(pvSizeStr)) {
                 Long pvSize = IrsBrokerCommand.assignLongValue(xlun, "pvsize");
-                if (pvSize != null)
+                if (pvSize != null) {
                     lun.setPvSize(SizeConverter.convert(pvSize,
                             SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
+                }
             }
         }
         if (xlun.containsKey("vendorID")) {

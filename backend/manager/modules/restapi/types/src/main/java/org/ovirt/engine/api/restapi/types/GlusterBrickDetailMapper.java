@@ -28,11 +28,15 @@ public class GlusterBrickDetailMapper {
     public static GlusterBrick map(GlusterVolumeAdvancedDetails fromEntity, GlusterBrick toModel) {
         GlusterBrick model = (toModel == null) ? new GlusterBrick() : toModel;
 
-        if (fromEntity.getBrickDetails() == null) return model;
+        if (fromEntity.getBrickDetails() == null) {
+            return model;
+        }
         //Since the getDetails call is for a single brick the list size will always be 1 - so get the first element
         BrickDetails detail = (fromEntity.getBrickDetails().size() > 0) ? fromEntity.getBrickDetails().get(0) : null;
 
-        if (detail == null) return model;
+        if (detail == null) {
+            return model;
+        }
 
         model = mapBrickProperties(detail, model);
 
@@ -88,7 +92,9 @@ public class GlusterBrickDetailMapper {
     public static GlusterBrickMemoryInfo map(MemoryStatus memoryStatusEntity) {
 
         GlusterBrickMemoryInfo memInfo = new GlusterBrickMemoryInfo();
-        if (memoryStatusEntity == null) return null;
+        if (memoryStatusEntity == null) {
+            return null;
+        }
 
         memInfo.setMemoryPools(new GlusterMemoryPools());
         for (Mempool pool:memoryStatusEntity.getMemPools()) {
@@ -101,7 +107,9 @@ public class GlusterBrickDetailMapper {
     public static GlusterMemoryPool map(Mempool poolEntity) {
         GlusterMemoryPool poolModel = new GlusterMemoryPool();
 
-        if (poolEntity == null) return null;
+        if (poolEntity == null) {
+            return null;
+        }
 
         if (StringUtils.isNotEmpty(poolEntity.getName())) {
             poolModel.setName(poolEntity.getName());

@@ -112,8 +112,9 @@ public class TransactionSupport {
 
     private static boolean statusOneOf(int status, int... options) {
         for (int option : options) {
-            if (status == option)
+            if (status == option) {
                 return true;
+            }
         }
         return false;
     }
@@ -134,10 +135,11 @@ public class TransactionSupport {
                         "Transaction is required to proceed but current transaction status is wrong: " + status);
             }
 
-            if (status == Status.STATUS_NO_TRANSACTION)
+            if (status == Status.STATUS_NO_TRANSACTION) {
                 return executeInNewTransaction(code);
-            else
+            } else {
                 return code.runInTransaction();
+            }
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
@@ -156,14 +158,16 @@ public class TransactionSupport {
 
             Transaction transaction = tm.getTransaction();
 
-            if (transaction != null)
+            if (transaction != null) {
                 transaction = tm.suspend();
+            }
 
             try {
                 result = code.runInTransaction();
             } finally {
-                if (transaction != null)
+                if (transaction != null) {
                     tm.resume(transaction);
+                }
             }
 
         } catch (RuntimeException rte) {
@@ -187,8 +191,9 @@ public class TransactionSupport {
 
             // suspend existing if exists
             transaction = tm.getTransaction();
-            if (transaction != null)
+            if (transaction != null) {
                 transaction = tm.suspend();
+            }
 
             // start new transaction
             tm.begin();

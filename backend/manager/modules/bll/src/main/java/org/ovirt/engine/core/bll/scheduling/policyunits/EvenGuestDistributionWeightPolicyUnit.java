@@ -39,8 +39,9 @@ public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
         int occupiedSlots = vds.getVmActive();
         final int SPMVMCountGrace = NumberUtils.toInt(parameters.get(PolicyUnitParameter.SPM_VM_GRACE.getDbName()),
                 spmVmGrace);
-        if (vds.isSpm())
+        if (vds.isSpm()) {
             occupiedSlots += SPMVMCountGrace;
+        }
 
         return occupiedSlots;
     }

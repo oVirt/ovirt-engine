@@ -167,10 +167,11 @@ public class BackendNetworksResourceTest
 
         @Override
         public int compare(Network n1, Network n2) {
-            if (n1.getId().equals(n2.getId()))
+            if (n1.getId().equals(n2.getId())) {
                 return 0;
-            else
+            } else {
                 return n1.getId().toString().compareTo(n2.getId().toString());
+            }
         }
     }
 }

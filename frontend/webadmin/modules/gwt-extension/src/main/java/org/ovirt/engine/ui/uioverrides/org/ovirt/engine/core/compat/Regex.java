@@ -47,12 +47,15 @@ public class Regex {
         this.pattern = pattern;
         this.options = options;
         String flags = "";
-        if (this.isGlobal())
+        if (this.isGlobal()) {
             flags += 'g';
-        if (this.isIgnoreCase())
+        }
+        if (this.isIgnoreCase()) {
             flags += 'i';
-        if (this.isMultiLine())
+        }
+        if (this.isMultiLine()) {
             flags += 'm';
+        }
         impl = RegExp.compile(pattern, flags);
     }
 

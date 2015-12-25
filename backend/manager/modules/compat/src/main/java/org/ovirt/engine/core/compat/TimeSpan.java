@@ -75,33 +75,46 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TimeSpan other = (TimeSpan) obj;
-        if (Days != other.Days)
+        if (Days != other.Days) {
             return false;
-        if (Hours != other.Hours)
+        }
+        if (Hours != other.Hours) {
             return false;
-        if (Milliseconds != other.Milliseconds)
+        }
+        if (Milliseconds != other.Milliseconds) {
             return false;
-        if (Minutes != other.Minutes)
+        }
+        if (Minutes != other.Minutes) {
             return false;
-        if (Seconds != other.Seconds)
+        }
+        if (Seconds != other.Seconds) {
             return false;
-        if (Double.doubleToLongBits(TotalDays) != Double.doubleToLongBits(other.TotalDays))
+        }
+        if (Double.doubleToLongBits(TotalDays) != Double.doubleToLongBits(other.TotalDays)) {
             return false;
-        if (Double.doubleToLongBits(TotalHours) != Double.doubleToLongBits(other.TotalHours))
+        }
+        if (Double.doubleToLongBits(TotalHours) != Double.doubleToLongBits(other.TotalHours)) {
             return false;
-        if (TotalMilliseconds != other.TotalMilliseconds)
+        }
+        if (TotalMilliseconds != other.TotalMilliseconds) {
             return false;
-        if (Double.doubleToLongBits(TotalMinutes) != Double.doubleToLongBits(other.TotalMinutes))
+        }
+        if (Double.doubleToLongBits(TotalMinutes) != Double.doubleToLongBits(other.TotalMinutes)) {
             return false;
-        if (Double.doubleToLongBits(TotalSeconds) != Double.doubleToLongBits(other.TotalSeconds))
+        }
+        if (Double.doubleToLongBits(TotalSeconds) != Double.doubleToLongBits(other.TotalSeconds)) {
             return false;
+        }
         return true;
     }
 

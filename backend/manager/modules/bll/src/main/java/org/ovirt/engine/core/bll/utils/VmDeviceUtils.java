@@ -1003,10 +1003,11 @@ public class VmDeviceUtils {
      */
     public static String getVmDeviceAddress(VmBase vmBase, final Guid deviceId) {
         VmDevice device = vmBase.getManagedDeviceMap().get(deviceId);
-        if (device != null)
+        if (device != null) {
             return device.getAddress();
-        else
+        } else {
             return StringUtils.EMPTY;
+        }
     }
 
     /**

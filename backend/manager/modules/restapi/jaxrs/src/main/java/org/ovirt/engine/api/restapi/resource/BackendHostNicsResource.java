@@ -279,7 +279,9 @@ public class BackendHostNicsResource
     }
 
     protected HostNic addSlaveLinks(HostNic nic, List<VdsNetworkInterface> ifaces) {
-        if(nic.getBonding() == null) nic.setBonding(new Bonding());
+        if(nic.getBonding() == null) {
+            nic.setBonding(new Bonding());
+        }
         nic.getBonding().setSlaves(new HostNics());
         for (VdsNetworkInterface i : ifaces) {
             if (i.isPartOfBond(nic.getName())) {
@@ -404,13 +406,16 @@ public class BackendHostNicsResource
         List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getClusterNetworks();
         if(net.isSetId()){
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : networks){
-                if (nwk.getId().toString().equals(net.getId()))
+                if (nwk.getId().toString().equals(net.getId())) {
                     return nwk;
+                }
             }
         }else{
             String networkName = net.getName();
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : networks){
-                if(nwk.getName().equals(networkName)) return nwk;
+                if(nwk.getName().equals(networkName)) {
+                    return nwk;
+                }
             }
         }
         return notFound(org.ovirt.engine.core.common.businessentities.network.Network.class);

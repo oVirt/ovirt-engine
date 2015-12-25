@@ -83,8 +83,9 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         int numOfPrestartedVmsInPool = 0;
         if (vmsInPool != null) {
             for (VM vm : vmsInPool) {
-                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId(), messages))
+                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId(), messages)) {
                     ++numOfPrestartedVmsInPool;
+                }
             }
         }
         return numOfPrestartedVmsInPool;

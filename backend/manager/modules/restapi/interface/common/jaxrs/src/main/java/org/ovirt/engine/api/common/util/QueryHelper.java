@@ -165,12 +165,14 @@ public class QueryHelper {
     }
 
     private static boolean hasMatrixParam(List<PathSegment> pathSegments, String param) {
-        if (pathSegments != null)
+        if (pathSegments != null) {
             for (PathSegment segement : pathSegments) {
                 MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
-                if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(param))
+                if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(param)) {
                     return true;
+                }
             }
+        }
         return false;
     }
 
@@ -193,8 +195,9 @@ public class QueryHelper {
             for (String key : constraints) {
                 for (PathSegment segement : uriInfo.getPathSegments()) {
                     MultivaluedMap<String, String> matrixParams = segement.getMatrixParameters();
-                    if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(key))
+                    if (matrixParams != null && !matrixParams.isEmpty() && matrixParams.containsKey(key)) {
                         params.put(key, getConstraint(matrixParams, key));
+                    }
                 }
             }
         }

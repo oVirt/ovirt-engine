@@ -30,11 +30,12 @@ public class BackendDataCentersResource extends
 
     @Override
     public DataCenters list() {
-        if (isFiltered())
+        if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllStoragePools,
                     new VdcQueryParametersBase()));
-        else
+        } else {
             return mapCollection(getBackendCollection(SearchType.StoragePool));
+        }
     }
 
     @Override

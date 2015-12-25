@@ -1493,8 +1493,9 @@ public class VdsBrokerObjectsBuilder {
                 Object[] arr2 = (Object[]) ((input.get(name) instanceof Object[]) ? input.get(name) : null);
                 if (arr2 != null) {
                     array = new String[arr2.length];
-                    for (int i = 0; i < arr2.length; i++)
+                    for (int i = 0; i < arr2.length; i++) {
                         array[i] = arr2[i].toString();
+                    }
                 }
             }
         }

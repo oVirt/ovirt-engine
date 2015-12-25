@@ -1825,8 +1825,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!isAutoAssignEditor.asRadioButton().getValue())
-                    specificHost.setValue(true, true);
+                if (!isAutoAssignEditor.asRadioButton().getValue()) {
+                        specificHost.setValue(true, true);
+                }
             }
         });
 

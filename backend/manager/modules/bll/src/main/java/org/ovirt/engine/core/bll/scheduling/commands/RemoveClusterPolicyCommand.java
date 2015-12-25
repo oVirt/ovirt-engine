@@ -31,8 +31,9 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
         List<Cluster> attachedClustersList =
                 getClusterDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId());
         List<String> clusterNamesList = new LinkedList<>();
-        for (Cluster cluster : attachedClustersList)
+        for (Cluster cluster : attachedClustersList) {
             clusterNamesList.add(cluster.getName());
+        }
         return StringUtils.join(clusterNamesList, ',');
     }
 

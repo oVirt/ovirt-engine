@@ -29,16 +29,17 @@ public class PostgresDataTypeFactory extends DefaultDataTypeFactory {
         log.debug("createDataType(sqlType='{}', sqlTypeName='{}')",
                 sqlType, sqlTypeName);
 
-        if (sqlType == Types.OTHER)
+        if (sqlType == Types.OTHER) {
             // Treat Postgresql UUID types as VARCHARS
-            if ("uuid".equals(sqlTypeName))
+
+            if ("uuid".equals(sqlTypeName)) {
                 return new UuidType();
-            // Intervals are custom types
-            else if ("interval".equals(sqlTypeName))
+            } else if ("interval".equals(sqlTypeName)) {
+                // Intervals are custom types
                 return new IntervalType();
-            else if ("inet".equals(sqlTypeName))
+            } else if ("inet".equals(sqlTypeName)) {
                 return new InetType();
-            else {
+            } else {
                 // Finally check whether the user defined a custom datatype
                 if (isEnumType(sqlTypeName)) {
                     log.debug("Custom enum type used for sqlTypeName '{}' (sqlType '{}')",
@@ -46,6 +47,7 @@ public class PostgresDataTypeFactory extends DefaultDataTypeFactory {
                     return new GenericEnumType(sqlTypeName);
                 }
             }
+        }
 
         return super.createDataType(sqlType, sqlTypeName);
     }
