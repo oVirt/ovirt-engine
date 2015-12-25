@@ -33,6 +33,7 @@
       <property name="option" value="top"/>
       <property name="sortStaticImportsAlphabetically" value="true"/>
     </module>
+    <module name="IllegalInstantiation"/>
     <module name="LeftCurly"/>
     <module name="MethodName" />
     <module name="NeedBraces" />
