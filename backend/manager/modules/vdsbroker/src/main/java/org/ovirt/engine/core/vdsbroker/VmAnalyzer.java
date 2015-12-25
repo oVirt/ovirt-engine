@@ -285,46 +285,42 @@ public class VmAnalyzer {
     private void proceedVmBeforeDeletion() {
         AuditLogType type = AuditLogType.UNASSIGNED;
         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-        switch (dbVm.getStatus()) {
-            case MigratingFrom: {
-                // if a VM that was a source host in migration process is now down with normal
-                // exit status that's OK, otherwise..
-                if (vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
-                    if (dbVm.getMigratingToVds() != null) {
-                        VDSReturnValue destoryReturnValue = vmsMonitoring.getResourceManager().runVdsCommand(
-                                VDSCommandType.DestroyVm,
-                                new DestroyVmVDSCommandParameters(new Guid(dbVm.getMigratingToVds().toString()),
-                                        dbVm.getId(),
-                                        true,
-                                        false,
-                                        0));
-                        if (destoryReturnValue.getSucceeded()) {
-                            log.info("Stopped migrating VM: '{}' on VDS: '{}'", dbVm.getName(),
-                                    dbVm.getMigratingToVds());
-                        } else {
-                            log.info("Could not stop migrating VM: '{}' on VDS: '{}', Error: '{}'", dbVm.getName(),
-                                    dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
-                        }
+        if (dbVm.getStatus() == VMStatus.MigratingFrom) {
+            // if a VM that was a source host in migration process is now down with normal
+            // exit status that's OK, otherwise..
+            if (vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
+                if (dbVm.getMigratingToVds() != null) {
+                    VDSReturnValue destoryReturnValue = vmsMonitoring.getResourceManager().runVdsCommand(
+                            VDSCommandType.DestroyVm,
+                            new DestroyVmVDSCommandParameters(new Guid(dbVm.getMigratingToVds().toString()),
+                                    dbVm.getId(),
+                                    true,
+                                    false,
+                                    0));
+                    if (destoryReturnValue.getSucceeded()) {
+                        log.info("Stopped migrating VM: '{}' on VDS: '{}'", dbVm.getName(),
+                                dbVm.getMigratingToVds());
+                    } else {
+                        log.info("Could not stop migrating VM: '{}' on VDS: '{}', Error: '{}'", dbVm.getName(),
+                                dbVm.getMigratingToVds(), destoryReturnValue.getExceptionString());
                     }
-                    // set vm status to down if source vm crushed
-                    ResourceManager.getInstance().internalSetVmStatus(dbVm,
-                            VMStatus.Down,
-                            vdsmVm.getVmDynamic().getExitStatus(),
-                            vdsmVm.getVmDynamic().getExitMessage(),
-                            vdsmVm.getVmDynamic().getExitReason());
-                    saveDynamic(dbVm.getDynamicData());
-                    saveStatistics();
-                    saveVmInterfaces();
-                    type = AuditLogType.VM_MIGRATION_ABORT;
-                    logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
-
-                    vmsMonitoring.getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
                 }
-                break;
+                // set vm status to down if source vm crushed
+                ResourceManager.getInstance().internalSetVmStatus(dbVm,
+                        VMStatus.Down,
+                        vdsmVm.getVmDynamic().getExitStatus(),
+                        vdsmVm.getVmDynamic().getExitMessage(),
+                        vdsmVm.getVmDynamic().getExitReason());
+                saveDynamic(dbVm.getDynamicData());
+                saveStatistics();
+                saveVmInterfaces();
+                type = AuditLogType.VM_MIGRATION_ABORT;
+                logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
+
+                vmsMonitoring.getResourceManager().removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
             }
-            default:
-                break;
         }
+
         if (type != AuditLogType.UNASSIGNED) {
             auditLog(logable, type);
         }
