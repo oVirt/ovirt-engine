@@ -115,71 +115,61 @@ public class ReportsListModel extends SearchableListWithReportsModel {
         if (dashboard != null) {
             setUri(dashboard.getUri());
 
+            StoragePool dataCenter;
+            Cluster cluster;
             switch (treeItemModel.getType()) {
-            case System: {
+            case System:
                 break;
-            }
-            case DataCenter: {
-                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
+            case DataCenter:
+                dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
-            }
-            case Clusters: {
-                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
+            case Clusters:
+                dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
-            }
-            case Cluster: {
-                Cluster cluster = (Cluster) treeItemModel.getEntity();
+            case Cluster:
+                cluster = (Cluster) treeItemModel.getEntity();
                 setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
-            case Hosts: {
-                Cluster cluster = (Cluster) treeItemModel.getEntity();
+            case Hosts:
+                cluster = (Cluster) treeItemModel.getEntity();
                 setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
-            case Host: {
+            case Host:
                 VDS host = (VDS) treeItemModel.getEntity();
                 setDataCenterID(host.getStoragePoolId().toString());
                 setResourceId("P_Host_ID", host.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
-            case Storages: {
-                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
+            case Storages:
+                dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
-            }
-            case Storage: {
+            case Storage:
                 StorageDomain storage = (StorageDomain) treeItemModel.getEntity();
                 setDataCenterID(storage.getStoragePoolId().toString());
                 setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
-            case Templates: {
-                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
+            case Templates:
+                dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
-            }
-            case VMs: {
+            case VMs:
                 VM vm = (VM) treeItemModel.getEntity();
                 setDataCenterID(vm.getStoragePoolId().toString());
                 setResourceId("P_VM_ID", vm.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
-            case Networks: {
-                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
+            case Networks:
+                dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
-            }
-            case Network: {
+            case Network:
                 Network network = (Network) treeItemModel.getEntity();
                 setDataCenterID(network.getDataCenterId().toString());
                 setResourceId("P_Network_ID", network.getQueryableId().toString()); //$NON-NLS-1$
                 break;
-            }
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
             }

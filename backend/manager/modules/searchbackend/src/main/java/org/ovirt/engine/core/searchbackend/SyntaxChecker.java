@@ -502,7 +502,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 tryNextObj = "";
 
                 break;
-            case CONDITION_RELATION: {
+            case CONDITION_RELATION:
                 RefObject<Integer> tempRefObject4 = new RefObject<>(curStartPos);
                 ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject4, syntaxContainer);
                 curStartPos = tempRefObject4.argvalue;
@@ -520,7 +520,6 @@ public class SyntaxChecker implements ISyntaxChecker {
                         freeTextObjSearched.add(curRefObj);
                     }
                 }
-            }
                 break;
             case SORTBY:
                 curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
@@ -641,7 +640,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                         retval.addToACList(conditionFieldAC.getCompletion(curPartialWord));
                     }
                     break;
-                case CONDITION_RELATION: {
+                case CONDITION_RELATION:
                     if (curState == SyntaxObjectType.CONDITION_FIELD) {
                         relObj = retval.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
                         String fldName = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
@@ -654,16 +653,14 @@ public class SyntaxChecker implements ISyntaxChecker {
                     if (conditionRelationAC != null) {
                         retval.addToACList(conditionRelationAC.getCompletion(curPartialWord));
                     }
-                }
                     break;
-                case CONDITION_VALUE: {
+                case CONDITION_VALUE:
                     relObj = retval.getPreviousSyntaxObject(3, SyntaxObjectType.CROSS_REF_OBJ);
                     String fldName = retval.getPreviousSyntaxObject(1, SyntaxObjectType.CONDITION_FIELD);
                     conditionValueAC = searchObjectAC.getFieldValueAutoCompleter(relObj, fldName);
                     if (conditionValueAC != null) {
                         retval.addToACList(conditionValueAC.getCompletion(curPartialWord));
                     }
-                }
                     break;
                 case SORTBY:
                     retval.addToACList(sortbyAC.getCompletion(curPartialWord));

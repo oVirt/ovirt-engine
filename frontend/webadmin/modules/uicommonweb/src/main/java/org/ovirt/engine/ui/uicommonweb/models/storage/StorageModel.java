@@ -375,38 +375,38 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+            SystemTreeItemModel dataCenterItem;
+            StoragePool dc;
             switch (getSystemTreeSelectedItem().getType()) {
             case DataCenter:
             case Cluster:
             case Storages:
-            case Storage: {
-                SystemTreeItemModel dataCenterItem =
+            case Storage:
+                dataCenterItem =
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
-                StoragePool dc = (StoragePool) dataCenterItem.getEntity();
+                dc = (StoragePool) dataCenterItem.getEntity();
 
                 getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-            }
                 break;
 
-            case Host: {
+            case Host:
                 VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
                 getHost().setIsChangeable(false);
                 getHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                 getHost().setSelectedItem(host);
 
-                SystemTreeItemModel dataCenterItem =
+                dataCenterItem =
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
-                StoragePool dc = (StoragePool) dataCenterItem.getEntity();
+                dc = (StoragePool) dataCenterItem.getEntity();
 
                 getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-            }
                 break;
             }
         }

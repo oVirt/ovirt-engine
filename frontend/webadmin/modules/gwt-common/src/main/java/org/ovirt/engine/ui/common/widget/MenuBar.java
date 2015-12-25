@@ -38,7 +38,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
         super.onBrowserEvent(event);
         switch (DOM.eventGetType(event)) {
         case Event.ONMOUSEOVER:
-        case Event.ONCLICK: {
+        case Event.ONCLICK:
             MenuItem item = findItem(DOM.eventGetTarget(event));
 
             if (item !=null){
@@ -50,10 +50,8 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
                 }
             }
             break;
-        }
-        default: {
+        default:
             break;
-        }
         }
     }
 

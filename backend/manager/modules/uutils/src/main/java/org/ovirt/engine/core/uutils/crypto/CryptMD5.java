@@ -56,14 +56,12 @@ public class CryptMD5 {
             altdigest.update(passwordBytes);
             altresult = altdigest.digest();
 
-            {
-                int i = passwordBytes.length;
-                while (i > 16) {
-                    digest.update(altresult, 0, 16);
-                    i -= 16;
-                }
-                digest.update(altresult, 0, i);
+            int j = passwordBytes.length;
+            while (j > 16) {
+                digest.update(altresult, 0, 16);
+                j -= 16;
             }
+            digest.update(altresult, 0, j);
 
             altresult[0] = '\000';
             for (int i = passwordBytes.length; i > 0; i >>= 1) {

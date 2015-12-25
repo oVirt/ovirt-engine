@@ -70,89 +70,69 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     protected void executeQueryCommand() {
         List<? extends IVdcQueryable> returnValue = new ArrayList<>();
         switch (getParameters().getSearchTypeValue()) {
-        case VM: {
+        case VM:
             returnValue = searchVmsFromDb();
             break;
-        }
-        case DirectoryGroup: {
+        case DirectoryGroup:
             returnValue = searchDirectoryGroups();
             break;
-        }
-        case DirectoryUser: {
+        case DirectoryUser:
             returnValue = searchDirectoryUsers();
             break;
-        }
-        case AuditLog: {
+        case AuditLog:
             returnValue = searchAuditLogEvents();
             break;
-        }
-        case DBUser: {
+        case DBUser:
             returnValue = searchDbUsers();
             break;
-        }
-        case DBGroup: {
+        case DBGroup:
             returnValue = searchDbGroups();
             break;
-        }
-        case VDS: {
+        case VDS:
             returnValue = searchVDSsByDb();
             break;
-        }
-        case VmTemplate: {
+        case VmTemplate:
             returnValue = searchVMTemplates();
             break;
-        }
-        case VmPools: {
+        case VmPools:
             returnValue = searchVmPools();
             break;
-        }
-        case Cluster: {
+        case Cluster:
             returnValue = searchClusters();
             break;
-        }
-        case StoragePool: {
+        case StoragePool:
             returnValue = searchStoragePool();
             break;
-        }
-        case StorageDomain: {
+        case StorageDomain:
             returnValue = searchStorageDomain();
             break;
-        }
-        case Quota: {
+        case Quota:
             returnValue = searchQuota();
             break;
-        }
-        case Disk: {
+        case Disk:
             returnValue = searchDisk();
             break;
-        }
-        case GlusterVolume: {
+        case GlusterVolume:
             returnValue = searchGlusterVolumes();
             break;
-        }
-        case Network: {
+        case Network:
             returnValue = searchNetworks();
             break;
-        }
-        case Provider: {
+        case Provider:
             returnValue = searchProviders();
             break;
-        }
-        case InstanceType: {
+        case InstanceType:
             returnValue = searchInstanceTypes();
             break;
-        }
-        case ImageType: {
+        case ImageType:
             returnValue = searchVMTemplates();
             break;
-        }
         case Session:
             returnValue = searchSessions();
             break;
-        default: {
+        default:
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
             break;
-        }
         }
         getQueryReturnValue().setReturnValue(returnValue);
     }

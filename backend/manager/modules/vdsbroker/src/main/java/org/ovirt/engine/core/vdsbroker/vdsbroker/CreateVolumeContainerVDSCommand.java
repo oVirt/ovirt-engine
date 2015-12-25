@@ -12,26 +12,24 @@ public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandPar
 
     @Override
     protected void executeDomainCommand() {
-        {
-            StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
-            setReturnValue(Guid.Empty);
+        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
+        setReturnValue(Guid.Empty);
 
-            log.info("-- executeDomainCommand: calling 'createVolumeContainer'");
+        log.info("-- executeDomainCommand: calling 'createVolumeContainer'");
 
-            status = getBroker().createVolumeContainer(
-                    getParameters().getStorageDomainId().toString(),
-                    getParameters().getNewImageGroupId().toString(),
-                    (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
-                    getParameters().getVolumeFormat().getValue(),
-                    2,
-                    getParameters().getNewImageID().toString(),
-                    getParameters().getDescription(),
-                    getParameters().getSrcImageGroupId() != null ? getParameters().getSrcImageGroupId().toString() : Guid.Empty.toString(),
-                    getParameters().getSrcImageId() != null ? getParameters().getSrcImageId().toString() : Guid.Empty.toString());
+        status = getBroker().createVolumeContainer(
+                getParameters().getStorageDomainId().toString(),
+                getParameters().getNewImageGroupId().toString(),
+                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                getParameters().getVolumeFormat().getValue(),
+                2,
+                getParameters().getNewImageID().toString(),
+                getParameters().getDescription(),
+                getParameters().getSrcImageGroupId() != null ? getParameters().getSrcImageGroupId().toString() : Guid.Empty.toString(),
+                getParameters().getSrcImageId() != null ? getParameters().getSrcImageId().toString() : Guid.Empty.toString());
 
-            proceedProxyReturnValue();
+        proceedProxyReturnValue();
 
-            setReturnValue(getParameters().getNewImageID().toString());
-        }
+        setReturnValue(getParameters().getNewImageID().toString());
     }
 }

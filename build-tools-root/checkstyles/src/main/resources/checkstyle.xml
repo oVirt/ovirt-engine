@@ -18,6 +18,7 @@
     <!-- Built-in checks -->
     <module name="ArrayTypeStyle" />
     <module name="AtclauseOrder" />
+    <module name="AvoidNestedBlocks"/>
     <module name="AvoidStarImport"/>
     <module name="EmptyBlock">
         <property name="option" value="text"/>

@@ -773,7 +773,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "DataCenter:"; //$NON-NLS-1$
                 }
                 break;
-            case DataCenter: {
+            case DataCenter:
                 if (getDataCenterList().isSearchStringMatch(source)) {
                     prefix.argvalue = "DataCenter: name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getClusterList().isSearchStringMatch(source)) {
@@ -799,18 +799,16 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 } else if (getProfileList().isSearchStringMatch(source)) {
                     prefix.argvalue = "VnicProfile: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Clusters: {
+            case Clusters:
                 if (getClusterList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Cluster: datacenter.name = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
 
             case Cluster:
-            case Cluster_Gluster: {
+            case Cluster_Gluster:
                 if (getClusterList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Cluster: name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getHostList().isSearchStringMatch(source)) {
@@ -830,9 +828,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 } else if (getPoolList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Pools: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Hosts: {
+            case Hosts:
                 if (getHostList().isSearchStringMatch(source)) {
                     SystemTreeItemModel cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
                     if (cluster == null) {
@@ -840,9 +837,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     }
                     prefix.argvalue = "Host: cluster = " + cluster.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Host: {
+            case Host:
                 if (getHostList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Host: name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getStorageList().isSearchStringMatch(source)) {
@@ -856,10 +852,9 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 } else if (getNetworkList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Network: Host_network.host_name = " + model.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
 
-            case Volumes: {
+            case Volumes:
                 if (getVolumeList().isSearchStringMatch(source)) {
                     SystemTreeItemModel cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
                     if (cluster == null) {
@@ -867,10 +862,9 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     }
                     prefix.argvalue = "Volume: cluster = " + cluster.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
 
-            case Volume: {
+            case Volume:
                 if (getVolumeList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Volume: name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -880,16 +874,14 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue =
                             "Events: volume.name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-            }
                 break;
-            case Storages: {
+            case Storages:
                 if (getStorageList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Storage: datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Storage: {
+            case Storage:
                 if (getDataCenterList().isSearchStringMatch(source)) {
                     prefix.argvalue = "DataCenter: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 } else if (getClusterList().isSearchStringMatch(source)) {
@@ -907,16 +899,14 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 } else if (getDiskList().isSearchStringMatch(source)) {
                     prefix.argvalue = "Disk: storages.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Templates: {
+            case Templates:
                 if (getTemplateList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Template: datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case VMs: {
+            case VMs:
                 if (getVmList().isSearchStringMatch(source)) {
                     SystemTreeItemModel ancestor = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
                     if (ancestor == null) {
@@ -924,16 +914,14 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     }
                     prefix.argvalue = "Vms: cluster = " + ancestor.getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Networks: {
+            case Networks:
                 if (getNetworkList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Network: datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$
                 }
-            }
                 break;
-            case Network: {
+            case Network:
                 if (getNetworkList().isSearchStringMatch(source)) {
                     prefix.argvalue =
                             "Network: name = " + model.getTitle() + " datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -953,7 +941,6 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue =
                             "VnicProfile : network_name = " + model.getTitle() + " datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-            }
                 break;
             case Providers:
                 if (getProviderList().isSearchStringMatch(source)) {

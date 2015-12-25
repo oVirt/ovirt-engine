@@ -121,20 +121,17 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         if (getRequiredAction() != null){
             switch (getRequiredAction()) {
-            case PLUG: {
+            case PLUG:
                 return activateOrDeactivateExistingNic(getInterface(), PlugAction.PLUG);
-            }
-            case UNPLUG: {
+            case UNPLUG:
                 return activateOrDeactivateExistingNic(oldIface, PlugAction.UNPLUG);
-            }
-            case UPDATE_VM_DEVICE: {
+            case UPDATE_VM_DEVICE:
                 runVdsCommand(VDSCommandType.UpdateVmInterface,
                         new VmNicDeviceVDSParameters(getVdsId(),
                                 getVm(),
                                 getVmNicDao().get(getInterface().getId()),
                                 oldVmDevice));
                 break;
-            }
             }
         }
         return true;

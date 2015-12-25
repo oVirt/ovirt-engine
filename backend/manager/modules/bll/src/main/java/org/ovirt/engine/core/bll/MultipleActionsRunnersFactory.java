@@ -21,28 +21,21 @@ public final class MultipleActionsRunnersFactory {
                                                                     boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
-        case DeactivateStorageDomainWithOvfUpdate: {
+        case DeactivateStorageDomainWithOvfUpdate:
             runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-        case AttachStorageDomainToPool: {
+        case AttachStorageDomainToPool:
             runner = new AttachStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-
-        case RunVm: {
+        case RunVm:
             runner = new RunVMActionRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-        case MigrateVm: {
+        case MigrateVm:
             runner = new MigrateVMActionRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-        case RemoveVmFromPool: {
+        case RemoveVmFromPool:
             runner = new RemoveVmFromPoolRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-
         case StartGlusterVolume:
         case StopGlusterVolume:
         case DeleteGlusterVolume:
@@ -52,12 +45,10 @@ public final class MultipleActionsRunnersFactory {
         case RemoveGlusterServer:
         case EnableGlusterHook:
         case DisableGlusterHook:
-        case DeleteGlusterVolumeSnapshot: {
+        case DeleteGlusterVolumeSnapshot:
             runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-
-        case RemoveVds: {
+        case RemoveVds:
             if (containsGlusterServer(parameters)) {
                 runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             } else {
@@ -65,13 +56,9 @@ public final class MultipleActionsRunnersFactory {
             }
 
             break;
-        }
-
-        case PersistentHostSetupNetworks: {
+        case PersistentHostSetupNetworks:
             runner = new ParallelMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
-
         case AttachNetworkToCluster:
         case DetachNetworkToCluster:
         case UpdateNetworkOnCluster:
