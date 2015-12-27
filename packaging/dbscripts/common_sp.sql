@@ -145,6 +145,35 @@ END
 IF ;END;$PROCEDURE$
     LANGUAGE plpgsql;
 
+-- rename a table
+CREATE OR REPLACE FUNCTION fn_db_rename_table (
+    v_table VARCHAR(128),
+    v_new_name VARCHAR(128)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
+
+BEGIN
+    IF (
+            EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                )
+            ) THEN
+    BEGIN
+        v_sql := 'ALTER TABLE ' || v_table || ' RENAME TO ' || v_new_name;
+
+        EXECUTE v_sql;
+    END;
+    ELSE
+        RAISE EXCEPTION 'Table % does not exist.',
+            v_table;
+END IF;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 -- Adds a value to vdc_options (if not exists)
 CREATE OR REPLACE FUNCTION fn_db_add_config_value (
     v_option_name VARCHAR(100),
