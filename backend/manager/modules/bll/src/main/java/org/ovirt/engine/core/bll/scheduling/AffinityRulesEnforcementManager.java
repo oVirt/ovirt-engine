@@ -66,7 +66,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     }
 
     /**
-     * refresh method is called each interval of AREM. It will try to find a broken affinity rule, choose a VM then, migrate it in order
+     * refresh method is called each interval of AffinityRulesEnforcementManager. It will try to find a broken affinity rule, choose a VM then, migrate it in order
      * to fix the breakage.
      */
     @OnTimerMethodAnnotation("refresh")
@@ -95,14 +95,14 @@ public class AffinityRulesEnforcementManager implements BackendService {
                 ExecutionHandler.createInternalJobContext());
     }
 
-    private void scheduleJobs(long regularInterval, long longInterval) {
+    private void scheduleJobs(long regularInterval, long initialInterval) {
         scheduler.scheduleAFixedDelayJob(
                 this,
                 "refresh",
                 new Class[] {},
                 new Object[] {},
+                initialInterval,
                 regularInterval,
-                longInterval,
                 TimeUnit.MINUTES);
     }
 }
