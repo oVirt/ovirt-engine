@@ -1509,11 +1509,33 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to change properties of the VM-Pool")
     String allowToChangePropertiesOfTheVmPoolRoleTreeTooltip();
 
+    @DefaultStringValue("Cpu Profile")
+    String cpuProfileRoleTree();
+
     @DefaultStringValue("Disk")
     String diskRoleTree();
 
+    @DefaultStringValue("Allow to create CPU Profile")
+    String allowToCreateCpuRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to delete CPU Profile")
+    String allowToDeleteCpuRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to update CPU Profile")
+    String allowToUpdateCpuProfileRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to assign CPU Profile to Vm")
+    String allowToAssignCpuRoleTreeToolTip();
+
+    @DefaultStringValue("note: Permissions containing these operations should be associated with Cpu Profile provisioning operations")
+    String notePermissionsContainingCpuProfileProvisioningOperationsRoleTreeTooltip();
+
+    @DefaultStringValue("note: Permissions containing these operations should be associated with Cpu Profile administration operations")
+    String notePermissionsContainingCpuProfileAdministrationOperationsRoleTreeTooltip();
+
+
     @DefaultStringValue("note: Permissions containing these operations should be associated with Disk or Storage Domain Object (or above)")
-    String notePermissionsContainingOperationsRoleTreeTooltip();
+    String notePermissionsContainingDiskOperationsRoleTreeTooltip();
 
     @DefaultStringValue("Allow to create Disk")
     String allowToCreateDiskRoleTreeTooltip();

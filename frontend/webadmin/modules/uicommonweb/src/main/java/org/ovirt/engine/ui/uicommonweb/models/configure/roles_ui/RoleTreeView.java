@@ -92,6 +92,7 @@ public class RoleTreeView {
                 createVmRoleTree(),
                 createVmPoolRoleTree(),
                 createDiskRoleTree(),
+                createCpuRoleTree(),
                 createMacPoolRoleTree());
 
         // nothing to filter
@@ -115,7 +116,7 @@ public class RoleTreeView {
     protected static RoleNode createDiskRoleTree() {
         return categoryNode(getConstants().diskRoleTree(),
                         categoryNode(getConstants().provisioningOperationsRoleTree(),
-                                getConstants().notePermissionsContainingOperationsRoleTreeTooltip(),
+                                getConstants().notePermissionsContainingDiskOperationsRoleTreeTooltip(),
 
                                 roleNode(ActionGroup.CREATE_DISK, getConstants().allowToCreateDiskRoleTreeTooltip()),
                                 roleNode(ActionGroup.DELETE_DISK, getConstants().allowToDeleteDiskRoleTreeTooltip()),
@@ -128,6 +129,18 @@ public class RoleTreeView {
                         categoryNode(getConstants().attachDiskProfileRoleTree(),
                                 getConstants().notePermissionsContainingDiskProfileOperationsRoleTreeTooltip(),
                                 roleNode(ActionGroup.ATTACH_DISK_PROFILE, getConstants().allowToAttachDiskProfileToDiskRoleTreeTooltip()) ) );
+    }
+
+    protected static RoleNode createCpuRoleTree() {
+        return categoryNode(getConstants().cpuProfileRoleTree(),
+                categoryNode(getConstants().provisioningOperationsRoleTree(),
+                        getConstants().notePermissionsContainingCpuProfileProvisioningOperationsRoleTreeTooltip(),
+                        roleNode(ActionGroup.CREATE_CPU_PROFILE, getConstants().allowToCreateCpuRoleTreeTooltip()),
+                        roleNode(ActionGroup.DELETE_CPU_PROFILE, getConstants().allowToDeleteCpuRoleTreeTooltip()),
+                        roleNode(ActionGroup.UPDATE_CPU_PROFILE, getConstants().allowToUpdateCpuProfileRoleTreeTooltip())),
+                categoryNode(getConstants().administrationOperationsRoleTree(),
+                        getConstants().notePermissionsContainingCpuProfileAdministrationOperationsRoleTreeTooltip(),
+                        roleNode(ActionGroup.ASSIGN_CPU_PROFILE, getConstants().allowToAssignCpuRoleTreeToolTip())));
     }
 
     protected static RoleNode createVmPoolRoleTree() {
