@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -634,6 +635,17 @@ public class UpdateVmDiskCommandTest {
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
+    }
+
+    @Test
+    public void testUpdateLockedDisk() {
+        final UpdateVmDiskParameters parameters = createParameters();
+        DiskImage disk = createDiskImage();
+        disk.setImageStatus(ImageStatus.LOCKED);
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+
+        initializeCommand(parameters);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test

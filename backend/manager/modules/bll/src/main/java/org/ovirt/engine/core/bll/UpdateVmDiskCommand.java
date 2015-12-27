@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -159,6 +160,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        boolean isDiskImageOrCinder = DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() ||
+                DiskStorageType.CINDER == getOldDisk().getDiskStorageType();
+
+        if (isDiskImageOrCinder) {
+            ValidationResult imagesNotLocked =
+                    new DiskImagesValidator(Collections.singletonList((DiskImage) getOldDisk())).diskImagesNotLocked();
+            if (!imagesNotLocked.isValid()) {
+                return validate(imagesNotLocked);
+            }
+        }
+
         DiskValidator oldDiskValidator = getDiskValidator(getOldDisk());
         ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
         if (!isHostedEngineDisk.isValid()) {
@@ -190,8 +202,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
         }
-        if ((DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() ||
-                DiskStorageType.CINDER == getOldDisk().getDiskStorageType()) && !validateCanResizeDisk()) {
+        if (isDiskImageOrCinder && !validateCanResizeDisk()) {
             return false;
         }
 
