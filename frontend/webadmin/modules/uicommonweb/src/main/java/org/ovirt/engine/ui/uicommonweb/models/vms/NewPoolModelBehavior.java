@@ -32,6 +32,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         templateValidate();
 
         instanceTypeManager = new NewPoolInstanceTypeManager(getModel());
+
+        getModel().getVmInitModel().init(null);
     }
 
     @Override
