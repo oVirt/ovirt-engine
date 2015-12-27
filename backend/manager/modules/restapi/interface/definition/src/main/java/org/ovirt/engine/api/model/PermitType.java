@@ -115,6 +115,12 @@ public enum PermitType {
     CONFIGURE_SCSI_GENERIC_IO,
     ACCESS_IMAGE_STORAGE,
 
+    // Cpu profile action groups
+    CREATE_CPU_PROFILE,
+    DELETE_CPU_PROFILE,
+    UPDATE_CPU_PROFILE,
+    ASSIGN_CPU_PROFILE,
+
     // Vm Interface action groups
     CONFIGURE_NETWORK_VNIC_PROFILE,
     CREATE_NETWORK_VNIC_PROFILE,

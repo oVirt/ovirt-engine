@@ -151,7 +151,13 @@ public enum ActionGroup {
     CREATE_MAC_POOL(1660, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     EDIT_MAC_POOL(1661, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     DELETE_MAC_POOL(1662, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
-    CONFIGURE_MAC_POOL(1663, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
+    CONFIGURE_MAC_POOL(1663, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+
+    // cpu profiles
+    DELETE_CPU_PROFILE(1665, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    UPDATE_CPU_PROFILE(1666, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    CREATE_CPU_PROFILE(1667, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    ASSIGN_CPU_PROFILE(1668, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
 
     private int id;
     private RoleType roleType;
