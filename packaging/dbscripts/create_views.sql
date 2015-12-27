@@ -3204,9 +3204,40 @@ SELECT DISTINCT entity_id,
 FROM user_disk_profile_permissions_view_base NATURAL
  JOIN engine_session_user_flat_groups;
 
-CREATE OR REPLACE VIEW gluster_volumes_view AS
+-- Permissions on cpu profiles
+-- The user has permissions on the cpu profile
+CREATE OR REPLACE VIEW user_cpu_profile_permissions_view_base (
+    entity_id,
+    granted_id
+    ) AS
 
-SELECT gluster_volumes.*,
+SELECT object_id,
+    ad_element_id
+FROM internal_permissions_view
+WHERE object_type_id = 30 -- 30 = Cpu Profile
+    AND EXISTS (
+        SELECT 1
+        FROM roles_groups
+        WHERE role_id = roles_groups.role_id
+            AND action_group_id = '1668' -- 1668 = action group
+                                         -- Assign Cpu Profile
+    );
+
+CREATE OR REPLACE VIEW user_cpu_profile_permissions_view (
+    entity_id,
+    user_id
+    ) AS
+
+SELECT DISTINCT entity_id,
+    user_id
+FROM user_cpu_profile_permissions_view_base NATURAL
+ JOIN engine_session_user_flat_groups;
+
+
+CREATE
+OR REPLACE VIEW gluster_volumes_view AS
+SELECT
+    gluster_volumes.*,
     vds_groups.name AS vds_group_name,
     CASE
         WHEN EXISTS (

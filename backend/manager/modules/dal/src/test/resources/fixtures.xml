@@ -1712,7 +1712,7 @@
         <column>qos_id</column>
         <column>description</column>
         <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87055</value>
             <value>engine_profile</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
@@ -1738,7 +1738,7 @@
             <null />
         </row>
         <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87056</value>
             <value>engine4_profile</value>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
@@ -2344,7 +2344,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87055</value>
             <value>true</value>
             <null />
             <value>emulated1</value>
@@ -2836,7 +2836,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87055</value>
             <value>true</value>
             <null />
             <null />
@@ -5496,11 +5496,24 @@
             <value>true</value>
             <value>1</value>
         </row>
+        <row>
+            <value>def00017-0000-0000-0000-def000000017</value>
+            <value>cpuprofileoperator</value>
+            <null />
+            <value>0</value>
+            <value>2</value>
+            <value>true</value>
+            <value>1</value>
+        </row>
     </table>
 
     <table name="roles_groups">
         <column>role_id</column>
         <column>action_group_id</column>
+        <row>
+            <value>def00017-0000-0000-0000-def000000017</value>
+            <value>1668</value>
+        </row>
         <row>
             <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
             <value>10</value>
@@ -5679,7 +5692,7 @@
             <value>2d2f2522-afd2-4964-a3b1-001cca295e47</value>
             <value>def00020-0000-0000-0000-abc000000010</value>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
             <value>29</value>
             <value>1425544473</value>
         </row>
@@ -5687,7 +5700,7 @@
             <value>2d2f2522-afd2-4964-a3b1-001cca295e48</value>
             <value>def00020-0000-0000-0000-abc000000010</value>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
-            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b223</value>
             <value>29</value>
             <value>1425544473</value>
         </row>
@@ -5697,6 +5710,22 @@
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
             <value>11</value>
+            <value>1425544473</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e49</value>
+            <value>def00017-0000-0000-0000-def000000017</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87055</value>
+            <value>30</value>
+            <value>1425544473</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e50</value>
+            <value>def00017-0000-0000-0000-def000000017</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>30</value>
             <value>1425544473</value>
         </row>
     </table>
@@ -6239,14 +6268,14 @@
         <column>qos_id</column>
         <column>description</column>
         <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
             <value>engine_profile</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
             <value>disk profile description</value>
         </row>
         <row>
-            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b223</value>
             <value>engine_profile_pm</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
@@ -6265,12 +6294,13 @@
             <null />
         </row>
         <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>engine4_profile</value>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
         </row>
     </table>
+
 
     <table name="image_storage_domain_map">
         <column>image_id</column>
@@ -6312,10 +6342,10 @@
             <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
-        </row>
+         </row>
     </table>
 
-    <table name="action_version_map">
+   <table name="action_version_map">
         <column>action_type</column>
         <column>cluster_minimal_version</column>
         <column>storage_pool_minimal_version</column>

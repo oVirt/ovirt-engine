@@ -102,11 +102,12 @@ BEGIN
             NOT v_is_filtered
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view
+                FROM user_cpu_profile_permissions_view
                 WHERE user_id = v_user_id
-                    AND entity_id = v_cluster_id
+                    AND entity_id = cpu_profiles.id
                 )
-            );
+            )
+    ORDER BY _create_date;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
