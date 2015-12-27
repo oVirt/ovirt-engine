@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -49,10 +50,14 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
+    private final static Logger log = LoggerFactory.getLogger(OvfReader.class);
+
     protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
     protected ArrayList<DiskImage> _images;
     protected ArrayList<VmNetworkInterface> interfaces;
@@ -554,7 +559,10 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        // due to depndency on vmBase.getOsId() must be read AFTER readOsSection
+        // after reading the hardware section, if graphics device is still absent, add a default one
+        addDefaultGraphicsDevice();
+
+        // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
         node = selectSingleNode(content, OvfProperties.TIMEZONE);
         if (node != null && StringUtils.isNotEmpty(node.innerText)) {
             vmBase.setTimeZone(node.innerText);
@@ -960,6 +968,41 @@ public abstract class OvfReader implements IOvfBuilder {
             } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
             }
+        }
+    }
+
+    private void addDefaultGraphicsDevice() {
+        VmDevice device = VmDeviceCommonUtils.findVmDeviceByGeneralType(
+                vmBase.getManagedDeviceMap(), VmDeviceGeneralType.GRAPHICS);
+        if (device != null) {
+            return;
+        }
+
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays =
+                osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
+        GraphicsType graphicsType =
+                    vmBase.getDefaultDisplayType() == DisplayType.cirrus ? GraphicsType.VNC : GraphicsType.SPICE;
+        GraphicsType supportedGraphicsType = null;
+        for (Pair<GraphicsType, DisplayType> pair : graphicsAndDisplays) {
+            if (pair.getSecond() == vmBase.getDefaultDisplayType()) {
+                if (pair.getFirst() == graphicsType) {
+                    supportedGraphicsType = graphicsType;
+                    break;
+                }
+                if (supportedGraphicsType == null) {
+                    supportedGraphicsType = pair.getFirst();
+                }
+            }
+        }
+        if (supportedGraphicsType != null) {
+            device = new GraphicsDevice(supportedGraphicsType.getCorrespondingDeviceType());
+            device.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+            addManagedVmDevice(device);
+        } else {
+            log.warn("Cannot find any graphics type for display type {} supported by OS {} in compatibility version {}",
+                    vmBase.getDefaultDisplayType().name(),
+                    osRepository.getOsName(vmBase.getOsId()),
+                    getVersion());
         }
     }
 

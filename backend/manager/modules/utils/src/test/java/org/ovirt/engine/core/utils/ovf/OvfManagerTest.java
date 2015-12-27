@@ -5,11 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -21,15 +23,21 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -66,6 +74,11 @@ public class OvfManagerTest {
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
+        final List<Pair<GraphicsType, DisplayType>> gndDefaultOs = new ArrayList<>();
+        gndDefaultOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
+        gndDefaultOs.add(new Pair<>(GraphicsType.VNC, DisplayType.cirrus));
+        final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
+        gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
 
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
@@ -80,6 +93,8 @@ public class OvfManagerTest {
                 return 0;
             }
         });
+        when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
+        when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);
 
         when(iconDefaultsProvider.getVmIconDefaults()).thenReturn(new HashMap<Integer, VmIconIdSizePair>(){{
             put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));
@@ -117,6 +132,44 @@ public class OvfManagerTest {
         final VM newVm = new VM();
         manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
         assertVm(vm, newVm, vm.getDbGeneration());
+    }
+
+    @Test
+    public void testVmOvfCreationDefaultGraphicsDevice() throws Exception {
+        VM vm = createVM();
+        vm.setDefaultDisplayType(DisplayType.cirrus);
+        vm.setVmOs(DEFAULT_OS_ID);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_5);
+        assertNotNull(xml);
+        final VM newVm = new VM();
+        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
+        int graphicsDeviceCount = 0;
+        for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
+            if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
+                graphicsDeviceCount++;
+                assertEquals(device.getDevice(), VmDeviceType.VNC.getName());
+            }
+        }
+        assertEquals(graphicsDeviceCount, 1);
+    }
+
+    @Test
+    public void testVmOvfCreationDefaultGraphicsDeviceFallbackToSupported() throws Exception {
+        VM vm = createVM();
+        vm.setDefaultDisplayType(DisplayType.cirrus);
+        vm.setVmOs(EXISTING_OS_ID);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_5);
+        assertNotNull(xml);
+        final VM newVm = new VM();
+        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
+        int graphicsDeviceCount = 0;
+        for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
+            if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
+                graphicsDeviceCount++;
+                assertEquals(device.getDevice(), VmDeviceType.SPICE.getName());
+            }
+        }
+        assertEquals(graphicsDeviceCount, 1);
     }
 
     @Test
