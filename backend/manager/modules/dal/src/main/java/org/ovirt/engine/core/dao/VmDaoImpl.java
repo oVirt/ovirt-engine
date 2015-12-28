@@ -238,11 +238,11 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllForVdsGroup(Guid vds_group_id) {
-        return getCallsHandler().executeReadList("GetVmsByVdsGroupId",
+    public List<VM> getAllForCluster(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetVmsByClusterId",
                 VMRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vds_group_id));
+                        .addValue("cluster_id", clusterId));
     }
 
     @Override
@@ -327,8 +327,8 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
-            entity.setVdsGroupDescription(rs.getString("vds_group_description"));
+            entity.setClusterName(rs.getString("cluster_name"));
+            entity.setClusterDescription(rs.getString("cluster_description"));
             entity.setVmtName(rs.getString("vmt_name"));
             entity.setVmtMemSizeMb(rs.getInt("vmt_mem_size_mb"));
             entity.setVmtOsId(rs.getInt("vmt_os"));
@@ -341,15 +341,15 @@ public class VmDaoImpl extends BaseDao implements VmDao {
             entity.setVmPoolName(rs.getString("vm_pool_name"));
             entity.setVmPoolId(getGuid(rs, "vm_pool_id"));
             entity.setRunOnVdsName(rs.getString("run_on_vds_name"));
-            entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
+            entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
             entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));
-            entity.setVdsGroupCompatibilityVersion(new Version(rs.getString("vds_group_compatibility_version")));
+            entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setClusterArch(ArchitectureType.forValue(rs.getInt("architecture")));
             entity.setVmPoolSpiceProxy(rs.getString("vm_pool_spice_proxy"));
-            entity.setVdsGroupSpiceProxy(rs.getString("vds_group_spice_proxy"));
+            entity.setClusterSpiceProxy(rs.getString("cluster_spice_proxy"));
             entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
             entity.setPreviewSnapshot(rs.getBoolean("is_previewing_snapshot"));
             return entity;

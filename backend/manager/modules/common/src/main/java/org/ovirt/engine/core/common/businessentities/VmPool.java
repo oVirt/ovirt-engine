@@ -37,7 +37,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @Size(max = BusinessEntitiesDefinitions.VM_POOL_PARAMS)
     private String parameters;
 
-    private Guid vdsGroupId;
+    private Guid clusterId;
 
     private int prestartedVms;
 
@@ -47,7 +47,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     private TimeSpan defaultEndTime;
 
-    private String vdsGroupName;
+    private String clusterpName;
 
     private int vmPoolAssignedCount;
 
@@ -59,7 +59,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     public static final char MASK_CHARACTER = '?';
 
-    @ValidUri(message = "VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidUri(message = "VALIDATION_CLUSTER_SPICE_PROXY_HOSTNAME_OR_IP", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
     private String spiceProxy;
 
@@ -82,7 +82,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 id,
                 defaultTimeInDays,
                 parameters,
-                vdsGroupId,
+                clusterId,
                 description,
                 name,
                 type,
@@ -105,7 +105,7 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         return Objects.equals(id, other.id)
                 && defaultTimeInDays == other.defaultTimeInDays
                 && Objects.equals(parameters, other.parameters)
-                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(clusterId, other.clusterId)
                 && Objects.equals(description, other.description)
                 && Objects.equals(name, other.name)
                 && Objects.equals(type, other.type)
@@ -228,20 +228,20 @@ public class VmPool implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.type = value;
     }
 
-    public Guid getVdsGroupId() {
-        return this.vdsGroupId;
+    public Guid getClusterId() {
+        return this.clusterId;
     }
 
-    public void setVdsGroupId(Guid value) {
-        this.vdsGroupId = value;
+    public void setClusterId(Guid value) {
+        this.clusterId = value;
     }
 
-    public String getVdsGroupName() {
-        return this.vdsGroupName;
+    public String getClusterName() {
+        return this.clusterpName;
     }
 
-    public void setVdsGroupName(String value) {
-        this.vdsGroupName = value;
+    public void setClusterName(String value) {
+        this.clusterpName = value;
     }
 
     @Override

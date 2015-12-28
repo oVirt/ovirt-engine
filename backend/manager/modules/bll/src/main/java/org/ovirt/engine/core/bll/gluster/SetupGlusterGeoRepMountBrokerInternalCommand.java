@@ -47,7 +47,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
                 getSlaveVolume();
         if (slaveVolume != null) {
             setGlusterVolumeId(slaveVolume.getId());
-            setVdsGroupId(slaveVolume.getClusterId());
+            setClusterId(slaveVolume.getClusterId());
         } else {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
         }

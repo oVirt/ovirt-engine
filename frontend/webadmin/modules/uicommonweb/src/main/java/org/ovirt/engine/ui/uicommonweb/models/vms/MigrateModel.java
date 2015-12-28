@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -36,13 +36,13 @@ public class MigrateModel extends Model {
         privateHosts = value;
     }
 
-    private ListModel<VDSGroup> clusters;
+    private ListModel<Cluster> clusters;
 
-    public ListModel<VDSGroup> getClusters() {
+    public ListModel<Cluster> getClusters() {
         return clusters;
     }
 
-    public void setClusters(ListModel<VDSGroup> clusters) {
+    public void setClusters(ListModel<Cluster> clusters) {
         this.clusters = clusters;
     }
 
@@ -163,12 +163,12 @@ public class MigrateModel extends Model {
         setSelectDestinationHost_IsSelected(new EntityModel<Boolean>());
         getSelectDestinationHost_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setClusters(new ListModel<VDSGroup>());
+        setClusters(new ListModel<Cluster>());
         getClusters().getSelectedItemChangedEvent().addListener(this);
     }
 
     public void initializeModel() {
-        if (vm.getVdsGroupId() == null) {
+        if (vm.getClusterId() == null) {
             return;
         }
 
@@ -177,14 +177,14 @@ public class MigrateModel extends Model {
 
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        List<VDSGroup> clusterList = (List<VDSGroup>) returnValue;
-                        List<VDSGroup> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
-                        List<VDSGroup> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
+                        List<Cluster> clusterList = (List<Cluster>) returnValue;
+                        List<Cluster> onlyWithArchitecture = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
+                        List<Cluster> onlyVirt = AsyncDataProvider.getInstance().getClusterByServiceList(onlyWithArchitecture, true, false);
 
 
-                        VDSGroup selected = null;
-                        for (VDSGroup cluster : onlyVirt) {
-                            if (cluster.getId().equals(vm.getVdsGroupId())) {
+                        Cluster selected = null;
+                        for (Cluster cluster : onlyVirt) {
+                            if (cluster.getId().equals(vm.getClusterId())) {
                                 selected = cluster;
                                 break;
                             }
@@ -197,7 +197,7 @@ public class MigrateModel extends Model {
     }
 
     private void loadHosts() {
-        VDSGroup selectedCluster = clusters.getSelectedItem();
+        Cluster selectedCluster = clusters.getSelectedItem();
         if (selectedCluster == null) {
             return;
         }
@@ -221,7 +221,7 @@ public class MigrateModel extends Model {
         boolean allRunOnSameVds = true;
 
         for (VM item : selectedVms) {
-            if (!item.getVdsGroupId().equals((selectedVms.get(0)).getVdsGroupId())) {
+            if (!item.getClusterId().equals((selectedVms.get(0)).getClusterId())) {
                 setVmsOnSameCluster(false);
             }
             if (run_on_vds == null) {

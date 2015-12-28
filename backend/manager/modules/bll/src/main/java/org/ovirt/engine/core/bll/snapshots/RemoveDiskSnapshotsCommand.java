@@ -203,7 +203,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected boolean isLiveMergeSupported() {
-        return FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion());
+        return FeatureSupported.liveMerge(getVm().getClusterCompatibilityVersion());
     }
 
     @Override

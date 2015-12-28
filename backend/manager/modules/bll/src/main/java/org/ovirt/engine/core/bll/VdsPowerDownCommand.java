@@ -49,7 +49,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
             return;
         }
 
-        boolean result = executeSshPowerDown(getVds().getVdsGroupCompatibilityVersion().toString());
+        boolean result = executeSshPowerDown(getVds().getClusterCompatibilityVersion().toString());
         if (result) {
             // SSH powerdown executed without errors set the status to down
             setVdsStatus(VDSStatus.Down);

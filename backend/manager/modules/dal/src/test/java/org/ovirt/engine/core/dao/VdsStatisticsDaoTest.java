@@ -29,7 +29,7 @@ public class VdsStatisticsDaoTest extends BaseDaoTestCase {
 
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
-        newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
+        newStaticVds.setClusterId(existingVds.getClusterId());
         newStaticVds.setProtocol(VdsProtocol.STOMP);
         newStatistics = new VdsStatistics();
 

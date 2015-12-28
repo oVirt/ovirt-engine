@@ -7,10 +7,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -107,7 +107,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             importParameters.setImportAsTemplate(importAsTemplate);
 
             if (importAsTemplate) {
-                importParameters.setClusterId(((VDSGroup) getCluster().getSelectedItem()).getId());
+                importParameters.setClusterId(((Cluster) getCluster().getSelectedItem()).getId());
             }
 
             actionParameters.add(importParameters);

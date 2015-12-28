@@ -23,7 +23,7 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 select fn_db_rename_config_key('AuditLogAgingThreashold', 'AuditLogAgingThreshold', 'general');
 select fn_db_rename_config_key('ClientConsoleModeDefault', 'ClientModeSpiceDefault', 'general');
 select fn_db_rename_config_key('PowerClientAutoApprovePatterns','AutoApprovePatterns','general');
-select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultVdsGroupID','AutoRegistrationDefaultVdsGroupID','general');
+select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultClusterID','AutoRegistrationDefaultClusterID','general');
 select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','AutoInstallCertificateOnApprove','general');
 select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCommunication', 'general');
 select fn_db_rename_config_key('SpiceReleaseCursorKeys', 'ConsoleReleaseCursorKeys', 'general');
@@ -85,7 +85,7 @@ select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','fa
 select fn_db_add_config_value('AutoApprovePatterns','','general');
 select fn_db_add_config_value('AutoInstallCertificateOnApprove','true','general');
 select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
-select fn_db_add_config_value('AutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
+select fn_db_add_config_value('AutoRegistrationDefaultClusterID','99408929-82CF-4DC7-A532-9D998063FA95','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
@@ -487,9 +487,9 @@ select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1
 select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$', '4.0');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
-select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
+select fn_db_add_config_value('QuotaGraceCluster','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
-select fn_db_add_config_value('QuotaThresholdVdsGroup','80','general');
+select fn_db_add_config_value('QuotaThresholdCluster','80','general');
 --Handling Connect to RDP console with Fully Qualified User-Name (user@domain)
 select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');

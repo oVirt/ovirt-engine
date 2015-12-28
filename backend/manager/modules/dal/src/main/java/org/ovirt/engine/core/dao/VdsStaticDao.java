@@ -39,11 +39,11 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
     /**
      * Retrieves all instances associated with the specified VDS group.
      *
-     * @param vdsGroup
+     * @param cluster
      *            the group id
      * @return the list of instances
      */
-    List<VdsStatic> getAllForVdsGroup(Guid vdsGroup);
+    List<VdsStatic> getAllForCluster(Guid cluster);
 
     /**
      * Retrieves for the parameter VM, return all pinned host names.

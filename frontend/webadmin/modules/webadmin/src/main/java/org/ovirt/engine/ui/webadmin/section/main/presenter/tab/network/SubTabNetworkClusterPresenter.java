@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -37,14 +37,14 @@ public class SubTabNetworkClusterPresenter
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(
-            SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
+            SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
         return new ModelBoundTabData(constants.networkClusterSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabNetworkClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
+            SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }

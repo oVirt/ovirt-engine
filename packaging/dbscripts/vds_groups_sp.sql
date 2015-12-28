@@ -1,10 +1,10 @@
 
 
 ----------------------------------------------------------------
--- [vds_groups] Table
+-- [cluster] Table
 --
-CREATE OR REPLACE FUNCTION InsertVdsGroups (
-    v_vds_group_id UUID,
+CREATE OR REPLACE FUNCTION InsertCluster (
+    v_cluster_id UUID,
     v_description VARCHAR(4000),
     v_free_text_comment TEXT,
     v_name VARCHAR(40),
@@ -45,8 +45,8 @@ CREATE OR REPLACE FUNCTION InsertVdsGroups (
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
-    INSERT INTO vds_groups (
-        vds_group_id,
+    INSERT INTO cluster (
+        cluster_id,
         description,
         name,
         free_text_comment,
@@ -86,7 +86,7 @@ BEGIN
         ksm_merge_across_nodes
         )
     VALUES (
-        v_vds_group_id,
+        v_cluster_id,
         v_description,
         v_name,
         v_free_text_comment,
@@ -128,11 +128,11 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateVdsGroup (
+CREATE OR REPLACE FUNCTION UpdateCluster (
     v_description VARCHAR(4000),
     v_free_text_comment TEXT,
     v_name VARCHAR(40),
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_cpu_name VARCHAR(255),
     v_storage_pool_id UUID,
     v_max_vds_memory_over_commit INT,
@@ -170,10 +170,10 @@ CREATE OR REPLACE FUNCTION UpdateVdsGroup (
     v_ksm_merge_across_nodes BOOLEAN
     )
 RETURNS VOID
-    --The [vds_groups] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
     AS $PROCEDURE$
 BEGIN
-    UPDATE vds_groups
+    UPDATE cluster
     SET description = v_description,
         free_text_comment = v_free_text_comment,
         name = v_name,
@@ -213,157 +213,157 @@ BEGIN
         is_migrate_compressed = v_is_migrate_compressed,
         gluster_tuned_profile = v_gluster_tuned_profile,
         ksm_merge_across_nodes = v_ksm_merge_across_nodes
-    WHERE vds_group_id = v_vds_group_id;
+    WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteVdsGroup (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION DeleteCluster (v_cluster_id UUID)
 RETURNS VOID AS $PROCEDURE$
 DECLARE v_val UUID;
 
 BEGIN
     -- Get (and keep) a shared lock with "right to upgrade to exclusive"
     -- in order to force locking parent before children
-    SELECT vds_group_id
+    SELECT cluster_id
     INTO v_val
-    FROM vds_groups
-    WHERE vds_group_id = v_vds_group_id
+    FROM cluster
+    WHERE cluster_id = v_cluster_id
     FOR UPDATE;
 
     DELETE
-    FROM vds_groups
-    WHERE vds_group_id = v_vds_group_id;
+    FROM cluster
+    WHERE cluster_id = v_cluster_id;
 
     -- delete VDS group permissions --
     DELETE
     FROM permissions
-    WHERE object_id = v_vds_group_id;
+    WHERE object_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetAllFromVdsGroups (
+CREATE OR REPLACE FUNCTION GetAllFromCluster (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE (
             NOT v_is_filtered
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view
+                FROM user_cluster_permissions_view
                 WHERE user_id = v_user_id
-                    AND entity_id = vds_group_id
+                    AND entity_id = cluster_id
                 )
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsGroupByVdsGroupId (
-    v_vds_group_id UUID,
+CREATE OR REPLACE FUNCTION GetClusterByClusterId (
+    v_cluster_id UUID,
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
-    WHERE vds_group_id = v_vds_group_id
+    SELECT cluster_view.*
+    FROM cluster_view
+    WHERE cluster_id = v_cluster_id
         AND (
             NOT v_is_filtered
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view
+                FROM user_cluster_permissions_view
                 WHERE user_id = v_user_id
-                    AND entity_id = v_vds_group_id
+                    AND entity_id = v_cluster_id
                 )
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsGroupByVdsGroupName (
-    v_vds_group_name VARCHAR(40),
+CREATE OR REPLACE FUNCTION GetClusterByClusterName (
+    v_cluster_name VARCHAR(40),
     v_is_case_sensitive BOOLEAN
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
-    WHERE name = v_vds_group_name
+    SELECT cluster_view.*
+    FROM cluster_view
+    WHERE name = v_cluster_name
         OR (
             NOT v_is_case_sensitive
-            AND name ilike v_vds_group_name
+            AND name ilike v_cluster_name
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsGroupForUserByVdsGroupName (
-    v_vds_group_name VARCHAR(40),
+CREATE OR REPLACE FUNCTION GetClusterForUserByClusterName (
+    v_cluster_name VARCHAR(40),
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
-    WHERE name = v_vds_group_name
+    SELECT cluster_view.*
+    FROM cluster_view
+    WHERE name = v_cluster_name
         AND (
             NOT v_is_filtered
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view
+                FROM user_cluster_permissions_view
                 WHERE user_id = v_user_id
-                    AND entity_id = vds_group_id
+                    AND entity_id = cluster_id
                 )
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsGroupsByStoragePoolId (
+CREATE OR REPLACE FUNCTION GetClustersByStoragePoolId (
     v_storage_pool_id UUID,
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE storage_pool_id = v_storage_pool_id
         AND (
             NOT v_is_filtered
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view
+                FROM user_cluster_permissions_view
                 WHERE user_id = v_user_id
-                    AND entity_id = vds_group_id
+                    AND entity_id = cluster_id
                 )
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 --This SP returns the VDS group if it has running vms
-CREATE OR REPLACE FUNCTION GetVdsGroupWithRunningVms (v_vds_group_id UUID)
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetClusterWithRunningVms (v_cluster_id UUID)
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
-    WHERE vds_group_id = v_vds_group_id
-        AND vds_group_id IN (
-            SELECT vds_group_id
+    SELECT cluster_view.*
+    FROM cluster_view
+    WHERE cluster_id = v_cluster_id
+        AND cluster_id IN (
+            SELECT cluster_id
             FROM vms
             WHERE vms.status NOT IN (
                     0,
@@ -375,15 +375,15 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 --This SP returns all VDS groups where currently no migration is going on
-CREATE OR REPLACE FUNCTION GetVdsGroupsWithoutMigratingVms ()
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetClustersWithoutMigratingVms ()
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
-    WHERE vds_group_id NOT IN (
-            SELECT s.vds_group_id
+    SELECT cluster_view.*
+    FROM cluster_view
+    WHERE cluster_id NOT IN (
+            SELECT s.cluster_id
             FROM vm_static s
             INNER JOIN vm_dynamic d
                 ON s.vm_guid = d.vm_guid
@@ -396,148 +396,148 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 --This SP returns if the VDS group does not have any hosts or VMs
-CREATE OR REPLACE FUNCTION GetIsVdsGroupEmpty (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION GetIsClusterEmpty (v_cluster_id UUID)
 RETURNS BOOLEAN AS $PROCEDURE$
 BEGIN
     RETURN NOT EXISTS (
             SELECT 1
             FROM vm_static
-            WHERE vds_group_id = v_vds_group_id
+            WHERE cluster_id = v_cluster_id
                 AND vm_guid != '00000000-0000-0000-0000-000000000000'
             )
         AND NOT EXISTS (
             SELECT 1
             FROM vds_static
-            WHERE vds_group_id = v_vds_group_id
+            WHERE cluster_id = v_cluster_id
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
---This SP returns all clusters with permissions to run the given action by user
-CREATE OR REPLACE FUNCTION fn_perms_get_vds_groups_with_permitted_action (
+--This SP returns all cluster with permissions to run the given action by user
+CREATE OR REPLACE FUNCTION fn_perms_get_cluster_with_permitted_action (
     v_user_id UUID,
     v_action_group_id INT
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE (
             SELECT 1
-            FROM get_entity_permissions(v_user_id, v_action_group_id, vds_groups_view.vds_group_id, 9)
+            FROM get_entity_permissions(v_user_id, v_action_group_id, cluster_view.cluster_id, 9)
             ) IS NOT NULL;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
--- This SP returns all clusters which have valid hosts attached to them
+-- This SP returns all cluster which have valid hosts attached to them
 CREATE OR REPLACE FUNCTION GetClustersHavingHosts ()
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE EXISTS (
             SELECT 1
             FROM vds_static
-            WHERE vds_group_id = vds_groups_view.vds_group_id
+            WHERE cluster_id = cluster_view.cluster_id
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
---This SP updates the vds_group emulated machine and the detection mode
-CREATE OR REPLACE FUNCTION UpdateVdsGroupEmulatedMachine (
-    v_vds_group_id UUID,
+--This SP updates the cluster emulated machine and the detection mode
+CREATE OR REPLACE FUNCTION UpdateClusterEmulatedMachine (
+    v_cluster_id UUID,
     v_emulated_machine VARCHAR(40),
     v_detect_emulated_machine BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
-    UPDATE vds_groups
+    UPDATE cluster
     SET emulated_machine = v_emulated_machine,
         detect_emulated_machine = v_detect_emulated_machine
-    WHERE vds_group_id = v_vds_group_id;
+    WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetTrustedVdsGroups ()
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetTrustedClusters ()
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE trusted_service;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
--- returns all clusters attached to a specific cluster policy (given as a parameter to the SP)
-CREATE OR REPLACE FUNCTION GetVdsGroupsByClusterPolicyId (v_cluster_policy_id UUID)
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+-- returns all cluster attached to a specific cluster policy (given as a parameter to the SP)
+CREATE OR REPLACE FUNCTION GetClustersByClusterPolicyId (v_cluster_policy_id UUID)
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE cluster_policy_id = v_cluster_policy_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetNumberOfVmsInCluster (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION GetNumberOfVmsInCluster (v_cluster_id UUID)
 RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT COUNT(vms.*)
     FROM vm_static vms
-    WHERE vms.vds_group_id = v_vds_group_id
+    WHERE vms.cluster_id = v_cluster_id
         AND vms.entity_type = 'VM';
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS host_vm_cluster_rs CASCADE;
 CREATE TYPE host_vm_cluster_rs AS (
-        vds_group_id UUID,
+        cluster_id UUID,
         hosts BIGINT,
         vms BIGINT
         );
 
-CREATE OR REPLACE FUNCTION GetHostsAndVmsForClusters (v_vds_group_ids UUID [])
+CREATE OR REPLACE FUNCTION GetHostsAndVmsForClusters (v_cluster_ids UUID [])
 RETURNS SETOF host_vm_cluster_rs STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT groups.vds_group_id,
+    SELECT groups.cluster_id,
         (
             SELECT COUNT(DISTINCT vds.vds_id)
             FROM vds_static vds
-            WHERE vds.vds_group_id = groups.vds_group_id
+            WHERE vds.cluster_id = groups.cluster_id
             ) AS host_count,
         (
             SELECT COUNT(DISTINCT vms.vm_guid)
             FROM vm_static vms
-            WHERE vms.vds_group_id = groups.vds_group_id
+            WHERE vms.cluster_id = groups.cluster_id
                 AND vms.entity_type::TEXT = 'VM'::TEXT
             ) AS vm_count
-    FROM vds_groups groups
-    WHERE groups.vds_group_id = ANY (v_vds_group_ids)
-    GROUP BY groups.vds_group_id;
+    FROM cluster groups
+    WHERE groups.cluster_id = ANY (v_cluster_ids)
+    GROUP BY groups.cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsGroupsByServiceAndCompatibilityVersion (
+CREATE OR REPLACE FUNCTION GetClustersByServiceAndCompatibilityVersion (
     v_gluster_service BOOLEAN,
     v_virt_service BOOLEAN,
     v_compatibility_version VARCHAR(40)
     )
-RETURNS SETOF vds_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vds_groups_view.*
-    FROM vds_groups_view
+    SELECT cluster_view.*
+    FROM cluster_view
     WHERE virt_service = v_virt_service
         AND gluster_service = v_gluster_service
         AND compatibility_version = v_compatibility_version;

@@ -160,7 +160,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     protected Set<String> getClusterForVolumes(Collection<GlusterVolumeEntity> eligibleVolumes) {
         Set<String> clusters = new HashSet<>();
         for(GlusterVolumeEntity currentVolume : eligibleVolumes) {
-            clusters.add(currentVolume.getVdsGroupName());
+            clusters.add(currentVolume.getClusterName());
         }
         return clusters;
     }
@@ -168,7 +168,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     public List<GlusterVolumeEntity> getVolumesInCluster(String cluster, Collection<GlusterVolumeEntity> volumes) {
         List<GlusterVolumeEntity> volumesInCurrentCluster= new ArrayList<>();
         for(GlusterVolumeEntity currentVolume : volumes) {
-            if(currentVolume.getVdsGroupName().equals(cluster)) {
+            if(currentVolume.getClusterName().equals(cluster)) {
                 volumesInCurrentCluster.add(currentVolume);
             }
         }

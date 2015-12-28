@@ -233,7 +233,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                         Collections.<Guid> emptyList(),
                         null,
                         null,
-                        DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId()));
+                        DbFacade.getInstance().getClusterDao().get(vm.getClusterId()));
     }
 
     private static Guid findActiveISODomain(Guid storagePoolId) {

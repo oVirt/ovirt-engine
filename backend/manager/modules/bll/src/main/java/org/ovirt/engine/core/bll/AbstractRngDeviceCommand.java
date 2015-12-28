@@ -47,7 +47,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         }
 
         if (cachedEntity != null) {
-            setVdsGroupId(cachedEntity.getVdsGroupId());
+            setClusterId(cachedEntity.getClusterId());
         }
 
         cachedRngDevices = new ArrayList<>();

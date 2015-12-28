@@ -10,12 +10,12 @@ import java.util.TreeMap;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -114,7 +114,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    GroupedListModelListBoxEditor<VDSGroup> clusterEditor;
+    GroupedListModelListBoxEditor<Cluster> clusterEditor;
 
     @UiField
     @Path(value = "name.entity")
@@ -428,15 +428,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
 
         // List boxes
-        clusterEditor = new GroupedListModelListBoxEditor<>(new GroupedListModelListBox<VDSGroup>(new NameRenderer<VDSGroup>()) {
+        clusterEditor = new GroupedListModelListBoxEditor<>(new GroupedListModelListBox<Cluster>(new NameRenderer<Cluster>()) {
 
             @Override
-            public SortedMap<String, List<VDSGroup>> getGroupedList(List<VDSGroup> acceptableValues) {
-                SortedMap<String, List<VDSGroup>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            public SortedMap<String, List<Cluster>> getGroupedList(List<Cluster> acceptableValues) {
+                SortedMap<String, List<Cluster>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 Collections.sort(acceptableValues, new DataCenterClusterComparator());
                 String currentDataCenter = null;
-                List<VDSGroup> currentClusterList = null;
-                for (VDSGroup cluster: acceptableValues) {
+                List<Cluster> currentClusterList = null;
+                for (Cluster cluster: acceptableValues) {
                     if (currentDataCenter == null || !currentDataCenter.equals(cluster.getStoragePoolName())) {
                         currentClusterList = new ArrayList<>();
                         currentDataCenter = cluster.getStoragePoolName();
@@ -452,26 +452,26 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
 
             @Override
-            public String getModelLabel(VDSGroup model) {
+            public String getModelLabel(Cluster model) {
                 return model.getName();
             }
 
             @Override
-            public String getGroupLabel(VDSGroup model) {
+            public String getGroupLabel(Cluster model) {
                 return messages.hostDataCenter(model.getStoragePoolName());
             }
 
-            public Comparator<VDSGroup> getComparator() {
+            public Comparator<Cluster> getComparator() {
                 return new DataCenterClusterComparator();
             }
 
             /**
              * Comparator that sorts on data center name first, and then cluster name. Ignoring case.
              */
-            final class DataCenterClusterComparator implements Comparator<VDSGroup> {
+            final class DataCenterClusterComparator implements Comparator<Cluster> {
 
                 @Override
-                public int compare(VDSGroup cluster1, VDSGroup cluster2) {
+                public int compare(Cluster cluster1, Cluster cluster2) {
                     if (cluster1.getStoragePoolName() != null && cluster2.getStoragePoolName() == null) {
                         return -1;
                     } else if (cluster2.getStoragePoolName() != null && cluster1.getStoragePoolName() == null) {

@@ -10,13 +10,13 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -208,13 +208,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateDataCenter = value;
     }
 
-    private ListModel<VDSGroup> privateCluster;
+    private ListModel<Cluster> privateCluster;
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return privateCluster;
     }
 
-    private void setCluster(ListModel<VDSGroup> value) {
+    private void setCluster(ListModel<Cluster> value) {
         privateCluster = value;
     }
 
@@ -570,7 +570,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
         getCluster().getSelectedItemChangedEvent().addListener(this);
         setPort(new EntityModel<Integer>());
         setFetchResult(new EntityModel<String>());
@@ -818,7 +818,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 public void onSuccess(Object model, Object result) {
                     HostModel hostModel = (HostModel) model;
                     @SuppressWarnings("unchecked")
-                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
+                    ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
 
                     if (hostModel.getIsNew()) {
                         updateClusterList(hostModel, clusters);
@@ -832,13 +832,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                                 Object[] objArray = (Object[]) model;
                                 HostModel hostModel = (HostModel) objArray[0];
                                 @SuppressWarnings("unchecked")
-                                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) objArray[1];
+                                ArrayList<Cluster> clusters = (ArrayList<Cluster>) objArray[1];
 
                                 ArchitectureType architecture = (ArchitectureType) returnValue;
 
-                                ArrayList<VDSGroup> filteredClusters = new ArrayList<>();
+                                ArrayList<Cluster> filteredClusters = new ArrayList<>();
 
-                                for (VDSGroup cluster : clusters) {
+                                for (Cluster cluster : clusters) {
                                     if (architecture == ArchitectureType.undefined
                                             || cluster.getArchitecture() == ArchitectureType.undefined
                                             || cluster.getArchitecture() == architecture) {
@@ -861,13 +861,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void updateClusterList(HostModel hostModel, List<VDSGroup> clusters) {
-        VDSGroup oldCluster = hostModel.getCluster().getSelectedItem();
-        List<VDSGroup> filteredClusters = filterClusters(clusters, hostModel.getDataCenter().getItems());
+    private void updateClusterList(HostModel hostModel, List<Cluster> clusters) {
+        Cluster oldCluster = hostModel.getCluster().getSelectedItem();
+        List<Cluster> filteredClusters = filterClusters(clusters, hostModel.getDataCenter().getItems());
         hostModel.getCluster().setItems(filteredClusters);
 
         if (oldCluster != null) {
-            VDSGroup newSelectedItem =
+            Cluster newSelectedItem =
                     Linq.firstOrNull(filteredClusters, new Linq.IdPredicate<>(oldCluster.getId()));
             if (newSelectedItem != null) {
                 hostModel.getCluster().setSelectedItem(newSelectedItem);
@@ -880,13 +880,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     }
 
-    private List<VDSGroup> filterClusters(List<VDSGroup> clusters, Collection<StoragePool> dataCenters) {
-        List<VDSGroup> result = new ArrayList<>();
+    private List<Cluster> filterClusters(List<Cluster> clusters, Collection<StoragePool> dataCenters) {
+        List<Cluster> result = new ArrayList<>();
         Set<Guid> dataCenterIds = new HashSet<>();
         for (StoragePool dataCenter: dataCenters) {
             dataCenterIds.add(dataCenter.getId());
         }
-        for (VDSGroup cluster: clusters) {
+        for (Cluster cluster: clusters) {
             if (dataCenterIds.contains(cluster.getStoragePoolId())) {
                 result.add(cluster);
             }
@@ -895,7 +895,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void cluster_SelectedItemChanged() {
-        VDSGroup cluster = getCluster().getSelectedItem();
+        Cluster cluster = getCluster().getSelectedItem();
         if (cluster != null) {
             AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
@@ -1165,7 +1165,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     protected abstract void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds);
 
-    protected abstract void updateModelClusterFromVds(ArrayList<VDSGroup> clusters, VDS vds);
+    protected abstract void updateModelClusterFromVds(ArrayList<Cluster> clusters, VDS vds);
 
     protected abstract void setAllowChangeHost(VDS vds);
 

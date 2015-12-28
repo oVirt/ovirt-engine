@@ -66,9 +66,9 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -134,14 +134,14 @@ public class BackendVmsResource extends
                 response = createVmFromSnapshot(vm);
             } else {
                 validateParameters(vm, "template.id|name");
-                VDSGroup cluster = getCluster(vm);
+                Cluster cluster = getCluster(vm);
                 VmTemplate template = lookupTemplate(vm.getTemplate(), cluster.getStoragePoolId());
 
                 VmStatic builtFromTemplate = VmMapper.map(template, null, cluster.getCompatibilityVersion());
                 // if VM is based on a template, and going to be on another cluster then template, clear the cpu_profile
                 // since the template cpu_profile doesn't match cluster.
                 if (!vm.isSetCpuProfile() && vm.isSetCluster()
-                        && !Objects.equals(Objects.toString(template.getVdsGroupId(), null), vm.getCluster().getId())) {
+                        && !Objects.equals(Objects.toString(template.getClusterId(), null), vm.getCluster().getId())) {
                     builtFromTemplate.setCpuProfileId(null);
                 }
 
@@ -155,7 +155,7 @@ public class BackendVmsResource extends
 
                 VmStatic staticVm = getMapper(Vm.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
                 if (namedCluster(vm)) {
-                    staticVm.setVdsGroupId(cluster.getId());
+                    staticVm.setClusterId(cluster.getId());
                 }
 
                 if (Guid.Empty.equals(template.getId()) && !vm.isSetOs()) {
@@ -277,7 +277,7 @@ public class BackendVmsResource extends
         Guid clusterId = namedCluster(vm) ? getCluster(vm).getId() : asGuid(vm.getCluster().getId());
         ImportVmParameters parameters = new ImportVmParameters();
         parameters.setVm(vmConfiguration);
-        parameters.setVdsGroupId(clusterId);
+        parameters.setClusterId(clusterId);
         if (initialization.isSetRegenerateIds()) {
             parameters.setImportAsNewEntity(initialization.isRegenerateIds());
         }
@@ -354,7 +354,7 @@ public class BackendVmsResource extends
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private Response cloneVmFromTemplate(VmStatic staticVm, Vm vm, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
+    private Response cloneVmFromTemplate(VmStatic staticVm, Vm vm, VmTemplate template, InstanceType instanceType, Cluster cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
         params.setVmPayload(getPayload(vm));
@@ -371,7 +371,7 @@ public class BackendVmsResource extends
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private void addDevicesToParams(AddVmParameters params, Vm vm, VmTemplate template, InstanceType instanceType, int osId, VDSGroup cluster) {
+    private void addDevicesToParams(AddVmParameters params, Vm vm, VmTemplate template, InstanceType instanceType, int osId, Cluster cluster) {
         Guid templateId = template != null ? template.getId() : null;
         Guid instanceTypeId = instanceType != null ? instanceType.getId() : null;
 
@@ -476,7 +476,7 @@ public class BackendVmsResource extends
         return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(entity, template);
     }
 
-    protected Response addVm(VmStatic staticVm, Vm vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
+    protected Response addVm(VmStatic staticVm, Vm vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, Cluster cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setStorageDomainId(storageDomainId);
@@ -499,7 +499,7 @@ public class BackendVmsResource extends
         }
     }
 
-    protected Response addVmFromScratch(VmStatic staticVm, Vm vm, InstanceType instanceType, VDSGroup cluster) {
+    protected Response addVmFromScratch(VmStatic staticVm, Vm vm, InstanceType instanceType, Cluster cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
@@ -656,18 +656,18 @@ public class BackendVmsResource extends
         return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
     }
 
-    private VDSGroup lookupCluster(Guid id) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
+    private Cluster lookupCluster(Guid id) {
+        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
     }
 
     protected boolean namedCluster(Vm vm) {
         return vm.isSetCluster() && vm.getCluster().isSetName() && !vm.getCluster().isSetId();
     }
 
-    protected VDSGroup getCluster(Vm vm) {
+    protected Cluster getCluster(Vm vm) {
         if (namedCluster(vm)) {
-            return isFiltered() ? lookupClusterByName(vm.getCluster().getName()) : getEntity(VDSGroup.class,
-                    VdcQueryType.GetVdsGroupByName,
+            return isFiltered() ? lookupClusterByName(vm.getCluster().getName()) : getEntity(Cluster.class,
+                    VdcQueryType.GetClusterByName,
                     new NameQueryParameters(vm.getCluster().getName()),
                     "Cluster: name=" + vm.getCluster().getName());
         }
@@ -675,8 +675,8 @@ public class BackendVmsResource extends
         return lookupCluster(asGuid(vm.getCluster().getId()));
     }
 
-    public VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new NameQueryParameters(name), "GetVdsGroupByName");
+    public Cluster lookupClusterByName(String name) {
+        return getEntity(Cluster.class, VdcQueryType.GetClusterByName, new NameQueryParameters(name), "GetClusterByName");
     }
 
     protected Vm setVmOvfConfiguration (Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {

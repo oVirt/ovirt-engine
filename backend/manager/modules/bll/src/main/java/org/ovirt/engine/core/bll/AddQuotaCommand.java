@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -95,10 +95,10 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
                 quotaStorage.setQuotaStorageId(Guid.newGuid());
             }
         }
-        if (quotaParameter.getQuotaVdsGroups() != null) {
-            for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
-                quotaVdsGroup.setQuotaId(quotaParameter.getId());
-                quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
+        if (quotaParameter.getQuotaClusters() != null) {
+            for (QuotaCluster quotaCluster : quotaParameter.getQuotaClusters()) {
+                quotaCluster.setQuotaId(quotaParameter.getId());
+                quotaCluster.setQuotaClusterId(Guid.newGuid());
             }
         }
         setQuotaThresholdDefaults(quotaParameter);
@@ -110,14 +110,14 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
         if (quotaParameter.getGraceStoragePercentage() == 0) {
             quotaParameter.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
         }
-        if (quotaParameter.getGraceVdsGroupPercentage() == 0) {
-            quotaParameter.setGraceVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceVdsGroup));
+        if (quotaParameter.getGraceClusterPercentage() == 0) {
+            quotaParameter.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
         }
         if (quotaParameter.getThresholdStoragePercentage() == 0) {
             quotaParameter.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
         }
-        if (quotaParameter.getThresholdVdsGroupPercentage() == 0) {
-            quotaParameter.setThresholdVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdVdsGroup));
+        if (quotaParameter.getThresholdClusterPercentage() == 0) {
+            quotaParameter.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
         }
     }
 

@@ -142,16 +142,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getDstSnapshot(),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getImagesToPreview(),
-                getCompensationContext(), getVm().getVdsGroupCompatibilityVersion(), getCurrentUser());
+                getCompensationContext(), getVm().getClusterCompatibilityVersion(), getCurrentUser());
     }
 
     @Override
     protected void executeVmCommand() {
         final boolean restoreMemory = getParameters().isRestoreMemory() &&
-                FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) &&
+                FeatureSupported.memorySnapshot(getVm().getClusterCompatibilityVersion()) &&
                 FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                         getVm().getClusterArch(),
-                        getVm().getVdsGroupCompatibilityVersion());
+                        getVm().getClusterCompatibilityVersion());
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();

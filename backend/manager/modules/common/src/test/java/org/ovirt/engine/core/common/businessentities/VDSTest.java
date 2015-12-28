@@ -23,7 +23,7 @@ public class VDSTest {
 
         VDS vds3 = new VDS();
         vds3.setId(Guid.newGuid());
-        vds3.setVdsGroupId(Guid.newGuid());
+        vds3.setClusterId(Guid.newGuid());
 
         return new VDS[] { vds1, vds2, vds3 };
     }

@@ -6,9 +6,9 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
     public static final String NAME = "NAME";
     public static final String STORAGEPOOLNAME = "STORAGEPOOLNAME";
     public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String thresholdVdsGroupPercentage = "THRESHOLDVDSGROUPPERCENTAGE";
+    public static final String thresholdClusterPercentage = "THRESHOLDCLUSTERPERCENTAGE";
     public static final String thresholdStoragePercentage = "THRESHOLDSTORAGEPERCENTAGE";
-    public static final String graceVdsGrouPercentage = "GRACEVDSGROUPPERCENTAGE";
+    public static final String graceClusterPercentage = "GRACECLUSTERPERCENTAGE";
     public static final String graceStoragePercentage = "GRACESTORAGEPERCENTAGE";
 
     private static final String enforcementType = "ENFORCEMENTTYPE";
@@ -19,9 +19,9 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         verbs.add(STORAGEPOOLNAME);
         verbs.add(DESCRIPTION);
         verbs.add(thresholdStoragePercentage);
-        verbs.add(thresholdVdsGroupPercentage);
+        verbs.add(thresholdClusterPercentage);
         verbs.add(graceStoragePercentage);
-        verbs.add(graceVdsGrouPercentage);
+        verbs.add(graceClusterPercentage);
         verbs.add(enforcementType);
 
         // Building the autoCompletion dict.
@@ -32,19 +32,19 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         getTypeDictionary().put(STORAGEPOOLNAME, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(thresholdStoragePercentage, Integer.class);
-        getTypeDictionary().put(thresholdVdsGroupPercentage, Integer.class);
+        getTypeDictionary().put(thresholdClusterPercentage, Integer.class);
         getTypeDictionary().put(graceStoragePercentage, Integer.class);
-        getTypeDictionary().put(graceVdsGrouPercentage, Integer.class);
+        getTypeDictionary().put(graceClusterPercentage, Integer.class);
         getTypeDictionary().put(enforcementType, QuotaEnforcementTypeEnum.class);
 
         // building the ColumnName dict.
         columnNameDict.put(NAME, "quota_name");
         columnNameDict.put(STORAGEPOOLNAME, "storage_pool_name");
         columnNameDict.put(DESCRIPTION, "description");
-        columnNameDict.put(thresholdVdsGroupPercentage, "threshold_vds_group_percentage");
+        columnNameDict.put(thresholdClusterPercentage, "threshold_cluster_percentage");
         columnNameDict.put(thresholdStoragePercentage, "threshold_storage_percentage");
         columnNameDict.put(graceStoragePercentage, "grace_storage_percentage");
-        columnNameDict.put(graceVdsGrouPercentage, "grace_vds_group_percentage");
+        columnNameDict.put(graceClusterPercentage, "grace_cluster_percentage");
         columnNameDict.put(enforcementType, "quota_enforcement_type");
 
         // Building the validation dict.

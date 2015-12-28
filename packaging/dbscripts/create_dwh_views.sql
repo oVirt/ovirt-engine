@@ -88,7 +88,7 @@ LEFT JOIN (
 
 CREATE OR REPLACE VIEW dwh_cluster_configuration_history_view AS
 
-SELECT vds_group_id AS cluster_id,
+SELECT cluster_id AS cluster_id,
     name AS cluster_name,
     description AS cluster_description,
     storage_pool_id AS datacenter_id,
@@ -96,7 +96,7 @@ SELECT vds_group_id AS cluster_id,
     compatibility_version,
     _create_date AS create_date,
     _update_date AS update_date
-FROM vds_groups
+FROM cluster
 WHERE (
         _create_date > (
             SELECT var_datetime
@@ -117,7 +117,7 @@ CREATE OR REPLACE VIEW dwh_host_configuration_history_view AS
 SELECT a.vds_id AS host_id,
     a.vds_unique_id AS host_unique_id,
     a.vds_name AS host_name,
-    a.vds_group_id AS cluster_id,
+    a.cluster_id AS cluster_id,
     CAST(a.vds_type AS SMALLINT) AS host_type,
     a.host_name AS fqdn_or_ip,
     b.physical_mem_mb AS memory_size_mb,
@@ -164,7 +164,7 @@ CREATE OR REPLACE VIEW dwh_host_configuration_full_check_view AS
 SELECT a.vds_id AS host_id,
     a.vds_unique_id AS host_unique_id,
     a.vds_name AS host_name,
-    a.vds_group_id AS cluster_id,
+    a.cluster_id AS cluster_id,
     CAST(a.vds_type AS SMALLINT) AS host_type,
     a.host_name AS fqdn_or_ip,
     b.physical_mem_mb AS memory_size_mb,
@@ -281,7 +281,7 @@ SELECT a.vm_guid AS vm_id,
     a.vm_name,
     a.description AS vm_description,
     CAST(a.vm_type AS SMALLINT) AS vm_type,
-    a.vds_group_id AS cluster_id,
+    a.cluster_id AS cluster_id,
     a.vmt_guid AS template_id,
     b.vm_name AS template_name,
     CAST(a.cpu_per_socket AS SMALLINT) AS cpu_per_socket,

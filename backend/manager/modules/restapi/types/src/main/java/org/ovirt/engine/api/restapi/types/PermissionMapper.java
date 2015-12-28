@@ -90,7 +90,7 @@ public class PermissionMapper {
         return p.isSetDataCenter() && p.getDataCenter().isSetId()
                ? VdcObjectType.StoragePool
                : p.isSetCluster() && p.getCluster().isSetId()
-                 ? VdcObjectType.VdsGroups
+                 ? VdcObjectType.Cluster
                  : p.isSetHost() && p.getHost().isSetId()
                    ? VdcObjectType.VDS
                    : p.isSetStorageDomain() && p.getStorageDomain().isSetId()
@@ -116,7 +116,7 @@ public class PermissionMapper {
             model.setDataCenter(new DataCenter());
             model.getDataCenter().setId(id);
             break;
-        case VdsGroups :
+        case Cluster:
             model.setCluster(new Cluster());
             model.getCluster().setId(id);
             break;

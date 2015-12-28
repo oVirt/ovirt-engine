@@ -77,7 +77,7 @@ public class HostMapper {
             entity.setName(model.getName());
         }
         if (model.isSetCluster() && model.getCluster().isSetId()) {
-            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
+            entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetAddress()) {
             entity.setHostName(model.getAddress());
@@ -181,9 +181,9 @@ public class HostMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setComment(entity.getComment());
-        if (entity.getVdsGroupId() != null) {
+        if (entity.getClusterId() != null) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getVdsGroupId().toString());
+            cluster.setId(entity.getClusterId().toString());
             model.setCluster(cluster);
         }
         model.setAddress(entity.getHostName());

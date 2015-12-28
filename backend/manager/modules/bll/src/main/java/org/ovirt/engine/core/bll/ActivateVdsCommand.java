@@ -68,9 +68,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             if (getSucceeded()) {
                 TransactionSupport.executeInNewTransaction(() -> {
                     // set network to operational / non-operational
-                    List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+                    List<Network> networks = getNetworkDao().getAllForCluster(vds.getClusterId());
                     for (Network net : networks) {
-                        NetworkClusterHelper.setStatus(vds.getVdsGroupId(), net);
+                        NetworkClusterHelper.setStatus(vds.getClusterId(), net);
                     }
                     return null;
                 });
@@ -84,7 +84,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 }
 
                 // Start glusterd service on the node, which would haven been stopped due to maintenance
-                if (vds.getVdsGroupSupportsGlusterService()) {
+                if (vds.getClusterSupportsGlusterService()) {
                     runVdsCommand(VDSCommandType.ManageGlusterService,
                             new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
                 }

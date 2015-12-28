@@ -843,7 +843,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
             }
         };
-        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
     }
 
     public void editManagementNetwork() {
@@ -955,7 +955,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
             }
         };
-        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
     }
 
     public void onEditManagementNetworkConfirmation(boolean isBond) {
@@ -1235,7 +1235,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 }
             }
         };
-        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
     }
 
     public void postBond(HostInterfaceListModel hostInterfaceListModel,
@@ -1542,7 +1542,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
             }
         };
-        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
     }
 
     public void onSave() {
@@ -1636,7 +1636,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                                 hostInterfaceListModel);
                     }
                 };
-                AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+                AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
             }
         }
         else {
@@ -1832,7 +1832,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                         hostInterfaceListModel);
             }
         };
-        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getClusterId());
     }
 
     public void cancel() {
@@ -1911,7 +1911,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration)
         // available only on less than 3.1 Clusters
         if (host != null) {
-            boolean isLessThan31 = host.getVdsGroupCompatibilityVersion().compareTo(Version.v3_1) < 0;
+            boolean isLessThan31 = host.getClusterCompatibilityVersion().compareTo(Version.v3_1) < 0;
 
             getSetupNetworksCommand().setIsAvailable(!isLessThan31);
 

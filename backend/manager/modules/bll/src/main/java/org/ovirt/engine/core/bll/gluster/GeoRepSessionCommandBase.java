@@ -28,7 +28,7 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_GEOREP_SESSION);
         addValidationMessageVariable("volumeName", getGlusterVolumeName());
-        addValidationMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessageVariable("cluster", getClusterName());
     }
 
     @Override

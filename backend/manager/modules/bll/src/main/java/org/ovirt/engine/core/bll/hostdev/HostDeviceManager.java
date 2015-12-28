@@ -145,7 +145,7 @@ public class HostDeviceManager implements BackendService {
     }
 
     private static boolean supportsHostDevicePassthrough(VM vm) {
-        return FeatureSupported.hostDevicePassthrough(vm.getVdsGroupCompatibilityVersion());
+        return FeatureSupported.hostDevicePassthrough(vm.getClusterCompatibilityVersion());
     }
 
     /**

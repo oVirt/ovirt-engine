@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityGroupsView;
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroupsView<VDSGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel>
+public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroupsView<Cluster, ClusterListModel<Void>, ClusterAffinityGroupListModel>
         implements SubTabClusterAffinityGroupPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterAffinityGroupView> {

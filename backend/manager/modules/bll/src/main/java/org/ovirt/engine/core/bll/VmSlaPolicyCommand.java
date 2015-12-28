@@ -36,7 +36,7 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
         if (getVm().getStatus() != VMStatus.Up) {
             return failVmStatusIllegal();
         }
-        if (!FeatureSupported.vmSlaPolicy(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.vmSlaPolicy(getVm().getClusterCompatibilityVersion())) {
             return failValidation(EngineMessage.VM_SLA_POLICY_NOT_SUPPORTED);
         }
 

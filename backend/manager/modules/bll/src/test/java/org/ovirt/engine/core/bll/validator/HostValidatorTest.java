@@ -22,11 +22,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -186,7 +186,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostAttachedToLocalStorageWithoutDataCenter() {
-        when(storagePoolDao.getForVdsGroup(any(Guid.class))).thenReturn(null);
+        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(null);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
         validator = new HostValidator(dbFacade, host);
 
@@ -197,9 +197,9 @@ public class HostValidatorTest {
     public void validateSingleHostAttachedToLocalStorage() {
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
-        when(storagePoolDao.getForVdsGroup(any(Guid.class))).thenReturn(dataCenter);
+        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(hostStaticDao.getAllForVdsGroup(any(Guid.class))).thenReturn(Collections.<VdsStatic> emptyList());
+        when(hostStaticDao.getAllForCluster(any(Guid.class))).thenReturn(Collections.<VdsStatic> emptyList());
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
         validator = new HostValidator(dbFacade, host);
 
@@ -210,9 +210,9 @@ public class HostValidatorTest {
     public void validateSingleHostAttachedToFewStorages() {
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
-        when(storagePoolDao.getForVdsGroup(any(Guid.class))).thenReturn(dataCenter);
+        when(storagePoolDao.getForCluster(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(hostStaticDao.getAllForVdsGroup(any(Guid.class)))
+        when(hostStaticDao.getAllForCluster(any(Guid.class)))
                 .thenReturn(Collections.<VdsStatic> singletonList(mock(VdsStatic.class)));
         when(dbFacade.getVdsStaticDao()).thenReturn(hostStaticDao);
         validator = new HostValidator(dbFacade, host);
@@ -340,7 +340,7 @@ public class HostValidatorTest {
 
     @Test
     public void testValidateXmlProtocolForCluster() {
-        VDSGroup cluster = mock(VDSGroup.class);
+        Cluster cluster = mock(Cluster.class);
         when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
         validator = mockHostForProtocol(VdsProtocol.XML);
         assertThat(validator.protocolIsNotXmlrpc(cluster),
@@ -349,7 +349,7 @@ public class HostValidatorTest {
 
     @Test
     public void testValidateJsonProtocolForCluster() {
-        VDSGroup cluster = mock(VDSGroup.class);
+        Cluster cluster = mock(Cluster.class);
         when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
         validator = mockHostForProtocol(VdsProtocol.STOMP);
         assertThat(validator.protocolIsNotXmlrpc(cluster), isValid());

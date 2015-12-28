@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -70,7 +71,6 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -268,8 +268,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void initStoragePoolId() {
-        if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId() != null ? getCluster().getStoragePoolId()
                     : Guid.Empty);
         }
     }
@@ -354,9 +354,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void setDefaultMigrationPolicy() {
-        if (getVdsGroup() != null) {
+        if (getCluster() != null) {
             boolean isMigrationSupported =
-                    FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(),
+                    FeatureSupported.isMigrationSupported(getCluster().getArchitecture(),
                             getEffectiveCompatibilityVersion());
 
             MigrationSupport migrationSupport =
@@ -504,7 +504,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Override
     protected boolean validate() {
         macPool = getMacPool();
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
@@ -529,7 +529,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // A VM cannot be added in a cluster without a defined architecture
-        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+        if (getCluster().getArchitecture() == ArchitectureType.undefined) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
@@ -541,13 +541,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
@@ -564,7 +564,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // check if the selected template is compatible with Cluster architecture.
         if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
-                && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+                && getCluster().getArchitecture() != getVmTemplate().getClusterArch()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
@@ -606,7 +606,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // check if the OS type is supported
-        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(), getVdsGroup().getArchitecture(),
+        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -614,7 +614,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!VmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
-                getVdsGroup().getCpuName(),
+                getCluster().getCpuName(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -628,7 +628,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())
+        if (!FeatureSupported.isMigrationSupported(getCluster().getArchitecture(), getEffectiveCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failValidation(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
@@ -1026,8 +1026,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(clusterId);
-        boolean legalClusterId = (vdsGroup != null);
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(clusterId);
+        boolean legalClusterId = (cluster != null);
         if (!legalClusterId) {
             reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());
         }
@@ -1040,7 +1040,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (vmStaticData != null) {
 
-            returnValue = isLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
+            returnValue = isLegalClusterId(vmStaticData.getClusterId(), reasons);
 
             if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;
@@ -1250,8 +1250,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.add(new PermissionSubject(getVdsGroupId(),
-                VdcObjectType.VdsGroups,
+        permissionList.add(new PermissionSubject(getClusterId(),
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
         permissionList.add(new PermissionSubject(getVmTemplateId(),
                 VdcObjectType.VmTemplate,
@@ -1306,7 +1306,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      */
     private boolean checkCreateInstancePermission(PermissionSubject permSubject) {
         final List<VdcObjectType> overriddenPermissionObjectTypes = Arrays.asList(
-                VdcObjectType.VdsGroups,
+                VdcObjectType.Cluster,
                 VdcObjectType.VmTemplate);
         final boolean instanceCreateObjectType = overriddenPermissionObjectTypes.contains(permSubject.getObjectType());
         if (!instanceCreateObjectType) {
@@ -1346,8 +1346,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (vmFromParams != null && getVmTemplate() != null) {
             // user needs specific permission to change custom properties
             if (!Objects.equals(vmFromParams.getCustomProperties(), getVmTemplate().getCustomProperties())) {
-                permissionList.add(new PermissionSubject(getVdsGroupId(),
-                        VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+                permissionList.add(new PermissionSubject(getClusterId(),
+                        VdcObjectType.Cluster, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
             }
 
             Set<Guid> dedicatedVmForVdsFromUser = new HashSet<>(vmFromParams.getDedicatedVmForVdsList());
@@ -1355,8 +1355,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             // host-specific parameters can be changed by administration role only
             if (!dedicatedVmForVdsFromUser.equals(dedicatedVmForVdsFromTemplate)
                     || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
-                permissionList.add(new PermissionSubject(getVdsGroupId(),
-                        VdcObjectType.VdsGroups, ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
+                permissionList.add(new PermissionSubject(getClusterId(),
+                        VdcObjectType.Cluster, ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
             }
         }
     }
@@ -1545,18 +1545,18 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // Choose a proper default OS according to the cluster architecture
         if (getParameters().getVmStaticData().getOsId() == OsRepository.AUTO_SELECT_OS) {
-            if (getVdsGroup().getArchitecture() != ArchitectureType.undefined) {
-                Integer defaultOs = osRepository.getDefaultOSes().get(getVdsGroup().getArchitecture());
+            if (getCluster().getArchitecture() != ArchitectureType.undefined) {
+                Integer defaultOs = osRepository.getDefaultOSes().get(getCluster().getArchitecture());
 
                 getParameters().getVmStaticData().setOsId(defaultOs);
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getVdsGroup());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getCluster());
         // Choose a proper default display type according to the cluster architecture
         VmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
             getParameters().getVmStaticData(),
-            getVdsGroup(),
+            getCluster(),
             getParameters().getGraphicsDevices());
 
         // If not set by user, choose proper graphics device according to the cluster architecture
@@ -1565,7 +1565,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void autoSelectGraphicsDevice() {
         if (getParameters().getGraphicsDevices().isEmpty() // if not set by user in params
-                && getVdsGroup() != null) { // and VdsGroup is known
+                && getCluster() != null) { // and Cluster is known
             DisplayType defaultDisplayType = getParameters().getVmStaticData().getDefaultDisplayType();
 
             int osId = getParameters().getVmStaticData().getOsId();
@@ -1605,7 +1605,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected void updateProfileOnNic(VmNic iface) {
         Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-        if (network != null && !NetworkHelper.isNetworkInCluster(network, getVdsGroupId())) {
+        if (network != null && !NetworkHelper.isNetworkInCluster(network, getClusterId())) {
             iface.setVnicProfileId(null);
         }
     }

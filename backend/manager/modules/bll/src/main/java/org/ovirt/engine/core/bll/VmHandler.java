@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
@@ -42,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -522,7 +522,7 @@ public class VmHandler {
      * @param architectureType
      *            The architecture type.
      * @param reasons
-     *            The reasons.VdsGroups
+     *            The reasons.Cluster
      * @return
      */
     public static boolean isOsTypeSupported(int osId,
@@ -546,7 +546,7 @@ public class VmHandler {
      * @param displayType
      *            Display type.
      * @param reasons
-     *            The reasons.VdsGroups
+     *            The reasons.Cluster
      * @param clusterVersion
      *            The cluster version.
      * @return
@@ -698,7 +698,6 @@ public class VmHandler {
      *
      * @param usbPolicy
      * @param osId
-     * @param vdsGroup
      * @param messages
      *            - Messages for Validate()
      * @return
@@ -909,7 +908,7 @@ public class VmHandler {
     public static List<PermissionSubject> getPermissionsNeededToChangeCluster(Guid vmId, Guid clusterId) {
         List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(vmId, VdcObjectType.VM, ActionGroup.EDIT_VM_PROPERTIES));
-        permissionList.add(new PermissionSubject(clusterId, VdcObjectType.VdsGroups, ActionGroup.CREATE_VM));
+        permissionList.add(new PermissionSubject(clusterId, VdcObjectType.Cluster, ActionGroup.CREATE_VM));
         return permissionList;
     }
 
@@ -970,7 +969,7 @@ public class VmHandler {
                     validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
                 }
                 result = false;
-            } else if (!Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId())) {
+            } else if (!Objects.equals(vm.getClusterId(), vds.getClusterId())) {
                 if (validationMessages != null) {
                     validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
                 }
@@ -1075,7 +1074,7 @@ public class VmHandler {
         return true;
     }
 
-    public static void autoSelectUsbPolicy(VmBase fromParams, VDSGroup cluster) {
+    public static void autoSelectUsbPolicy(VmBase fromParams, Cluster cluster) {
         if (fromParams.getUsbPolicy() == null) {
             Version compatibilityVersion = CompatibilityVersionUtils.getEffective(fromParams, cluster);
             UsbPolicy usbPolicy = compatibilityVersion.compareTo(Version.v3_1) >= 0 ?
@@ -1092,7 +1091,7 @@ public class VmHandler {
      */
     public static void autoSelectDefaultDisplayType(Guid srcEntityId,
                                                 VmBase parametersStaticData,
-                                                VDSGroup cluster,
+                                                Cluster cluster,
                                                 Map<GraphicsType, GraphicsDevice> graphicsDevices) {
         if (parametersStaticData.getOsId() == OsRepository.AUTO_SELECT_OS) {
             return;

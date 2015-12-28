@@ -11,8 +11,8 @@ public class MigrateVmToServerParameters extends MigrateVmParameters {
     public MigrateVmToServerParameters() {
     }
 
-    public MigrateVmToServerParameters(boolean forceMigration, Guid vmId, Guid serverId, Guid targetVdsGroupId) {
-        super(forceMigration, vmId, targetVdsGroupId);
+    public MigrateVmToServerParameters(boolean forceMigration, Guid vmId, Guid serverId, Guid targetClusterId) {
+        super(forceMigration, vmId, targetClusterId);
         vdsId = serverId;
     }
 

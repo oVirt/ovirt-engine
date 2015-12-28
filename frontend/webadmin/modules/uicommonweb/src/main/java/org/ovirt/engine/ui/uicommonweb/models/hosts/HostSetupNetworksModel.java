@@ -343,7 +343,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             : logicalNetworkModel.getAttachedToNic().getIface();
 
             final HostInterfaceModel networkDialogModel;
-            String version = getEntity().getVdsGroupCompatibilityVersion().getValue();
+            String version = getEntity().getClusterCompatibilityVersion().getValue();
             final Network network = logicalNetworkModel.getNetwork();
             final String logicalNetworkModelName = network.getName();
 
@@ -1116,7 +1116,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         };
 
         VDS vds = getEntity();
-        AsyncDataProvider.getInstance().getClusterNetworkList(asyncQuery, vds.getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(asyncQuery, vds.getClusterId());
     }
 
     private void initDcNetworkParams() {

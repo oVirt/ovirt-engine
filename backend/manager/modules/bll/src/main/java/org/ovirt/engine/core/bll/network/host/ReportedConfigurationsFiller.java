@@ -47,7 +47,7 @@ public class ReportedConfigurationsFiller {
         Map<String, VdsNetworkInterface> networkNameToNicMap = nicsByNetworkId(allInterfacesForHost);
 
         BusinessEntityMap<Network> networkMap =
-            new BusinessEntityMap<>(networkDao.getAllForCluster(vdsDao.get(hostId).getVdsGroupId()));
+            new BusinessEntityMap<>(networkDao.getAllForCluster(vdsDao.get(hostId).getClusterId()));
 
         for (NetworkAttachment networkAttachment : networkAttachments) {
             fillReportedConfigurations(networkNameToNicMap, networkMap, networkAttachment);

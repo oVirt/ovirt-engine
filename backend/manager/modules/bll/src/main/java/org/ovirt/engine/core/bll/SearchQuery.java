@@ -19,6 +19,7 @@ import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -176,7 +176,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         List<VDS> data = genericSearch(getDbFacade().getVdsDao(), true);
         for (VDS vds : data) {
             vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
-                    vds.getVdsGroupCompatibilityVersion()));
+                    vds.getClusterCompatibilityVersion()));
         }
         return data;
     }
@@ -267,8 +267,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getVmPoolDao(), true);
     }
 
-    private List<VDSGroup> searchClusters() {
-        return genericSearch(getDbFacade().getVdsGroupDao(), true);
+    private List<Cluster> searchClusters() {
+        return genericSearch(getDbFacade().getClusterDao(), true);
     }
 
     private List<StoragePool> searchStoragePool() {

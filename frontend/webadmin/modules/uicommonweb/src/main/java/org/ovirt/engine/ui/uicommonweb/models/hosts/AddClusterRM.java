@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -54,7 +54,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
-                            context.clusterFoundByName = Linq.firstOrNull((Iterable<VDSGroup>) returnValue);
+                            context.clusterFoundByName = Linq.firstOrNull((Iterable<Cluster>) returnValue);
                             prepare2();
                         }
                     }),
@@ -71,14 +71,14 @@ public class AddClusterRM extends IEnlistmentNotification {
         HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        VDSGroup candidate = configureModel.getCandidateCluster();
+        Cluster candidate = configureModel.getCandidateCluster();
         ClusterModel clusterModel = configureModel.getCluster();
         String clusterName = clusterModel.getName().getEntity();
 
         if (candidate == null || !Objects.equals(candidate.getName(), clusterName)) {
 
             // Try to find existing cluster with the specified name.
-            VDSGroup cluster = context.clusterFoundByName;
+            Cluster cluster = context.clusterFoundByName;
 
             if (cluster != null) {
 
@@ -90,7 +90,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
                 Version version = clusterModel.getVersion().getSelectedItem();
 
-                cluster = new VDSGroup();
+                cluster = new Cluster();
                 cluster.setName(clusterName);
                 cluster.setDescription(clusterModel.getDescription().getEntity());
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
@@ -101,16 +101,16 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
                 cluster.setCompatibilityVersion(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
-                VdsGroupOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
+                ClusterOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
-                Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, parameters,
+                Frontend.getInstance().runAction(VdcActionType.AddCluster, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
 
                                 VdcReturnValueBase returnValue = result.getReturnValue();
 
-                                context.addVDSGroupReturnValue = returnValue;
+                                context.addClusterReturnValue = returnValue;
                                 prepare3();
                             }
                         });
@@ -128,7 +128,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        VdcReturnValueBase returnValue = context.addVDSGroupReturnValue;
+        VdcReturnValueBase returnValue = context.addClusterReturnValue;
 
         context.enlistment = null;
 
@@ -159,7 +159,7 @@ public class AddClusterRM extends IEnlistmentNotification {
     public static final class Context {
 
         public Enlistment enlistment;
-        public VDSGroup clusterFoundByName;
-        public VdcReturnValueBase addVDSGroupReturnValue;
+        public Cluster clusterFoundByName;
+        public VdcReturnValueBase addClusterReturnValue;
     }
 }

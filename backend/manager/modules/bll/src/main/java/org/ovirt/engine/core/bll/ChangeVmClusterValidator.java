@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -22,7 +22,7 @@ public class ChangeVmClusterValidator {
 
     private VmCommand parentCommand;
 
-    private VDSGroup targetCluster;
+    private Cluster targetCluster;
 
     public ChangeVmClusterValidator(VmCommand parentCommand, Guid targetClusterId) {
         this.parentCommand = parentCommand;
@@ -35,7 +35,7 @@ public class ChangeVmClusterValidator {
             parentCommand.addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
-            targetCluster = DbFacade.getInstance().getVdsGroupDao().get(targetClusterId);
+            targetCluster = DbFacade.getInstance().getClusterDao().get(targetClusterId);
             if (targetCluster == null) {
                 parentCommand.addValidationMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
                 return false;

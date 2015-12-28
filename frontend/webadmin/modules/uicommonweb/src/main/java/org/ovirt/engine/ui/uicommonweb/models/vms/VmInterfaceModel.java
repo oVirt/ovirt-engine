@@ -432,7 +432,7 @@ public abstract class VmInterfaceModel extends Model {
             }
         };
 
-        profileBehavior.initProfiles(hotUpdateSupported, getVm().getVdsGroupId(), dcId, _asyncQuery);
+        profileBehavior.initProfiles(hotUpdateSupported, getVm().getClusterId(), dcId, _asyncQuery);
     }
 
     protected void initCommands() {

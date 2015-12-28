@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VDSGroup> {
+public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, Cluster> {
 
     @Inject
     public CpuProfileListModel(final PermissionListModel<CpuProfile> permissionListModel) {
@@ -23,12 +23,12 @@ public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VD
     }
 
     @Override
-    protected ProfileBaseModel<CpuProfile, CpuQos, VDSGroup> getNewProfileModel() {
+    protected ProfileBaseModel<CpuProfile, CpuQos, Cluster> getNewProfileModel() {
         return new NewCpuProfileModel(this, getStoragePoolId());
     }
 
     @Override
-    protected ProfileBaseModel<CpuProfile, CpuQos, VDSGroup> getEditProfileModel() {
+    protected ProfileBaseModel<CpuProfile, CpuQos, Cluster> getEditProfileModel() {
         return new EditCpuProfileModel(this, getSelectedItem(), getStoragePoolId());
     }
 

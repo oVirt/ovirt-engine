@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -20,7 +20,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterPermissionPresenter
-    extends AbstractSubTabClusterPresenter<PermissionListModel<VDSGroup>, SubTabClusterPermissionPresenter.ViewDef,
+    extends AbstractSubTabClusterPresenter<PermissionListModel<Cluster>, SubTabClusterPermissionPresenter.ViewDef,
         SubTabClusterPermissionPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
@@ -30,19 +30,19 @@ public class SubTabClusterPermissionPresenter
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterPermissionPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Cluster> {
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(
-            SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>> modelProvider) {
+            SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> modelProvider) {
         return new ModelBoundTabData(constants.clusterPermissionSubTabLabel(), 8, modelProvider);
     }
 
     @Inject
     public SubTabClusterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>> modelProvider) {
+            SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

@@ -28,16 +28,16 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     private boolean countThreadsAsCores;
     private List<FenceAgent> fenceAgents;
     private VdsSpmStatus spmStatus;
-    private Version vdsGroupCompatibilityVersion;
-    private String vdsGroupName;
-    private String vdsGroupDescription;
-    private String vdsGroupCpuName;
-    private Boolean vdsGroupVirtService;
+    private Version clusterCompatibilityVersion;
+    private String clusterName;
+    private String clusterDescription;
+    private String clusterCpuName;
+    private Boolean clusterVirtService;
     private Guid storagePoolId;
     private String storagePoolName;
     private int maxVdsMemoryOverCommit;
     private ArrayList<VDSDomainsData> privateDomains;
-    private Boolean vdsGroupGlusterService;
+    private Boolean clusterGlusterService;
     private Double imagesLastCheck;
     private Double imagesLastDelay;
     private ServerCpu cpuName;
@@ -75,12 +75,12 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
                 vdsSpmId,
                 storagePoolId,
                 storagePoolName,
-                vdsGroupCompatibilityVersion,
-                vdsGroupCpuName,
-                vdsGroupDescription,
-                vdsGroupName,
-                vdsGroupVirtService,
-                vdsGroupGlusterService,
+                clusterCompatibilityVersion,
+                clusterCpuName,
+                clusterDescription,
+                clusterName,
+                clusterVirtService,
+                clusterGlusterService,
                 balloonEnabled,
                 countThreadsAsCores
         );
@@ -108,20 +108,20 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
                 && Objects.equals(vdsSpmId, other.vdsSpmId)
                 && Objects.equals(storagePoolId, other.storagePoolId)
                 && Objects.equals(storagePoolName, other.storagePoolName)
-                && Objects.equals(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
-                && Objects.equals(vdsGroupCpuName, other.vdsGroupCpuName)
-                && Objects.equals(vdsGroupDescription, other.vdsGroupDescription)
-                && Objects.equals(vdsGroupName, other.vdsGroupName)
-                && Objects.equals(vdsGroupVirtService, other.vdsGroupVirtService)
-                && Objects.equals(vdsGroupGlusterService, other.vdsGroupGlusterService));
+                && Objects.equals(clusterCompatibilityVersion, other.clusterCompatibilityVersion)
+                && Objects.equals(clusterCpuName, other.clusterCpuName)
+                && Objects.equals(clusterDescription, other.clusterDescription)
+                && Objects.equals(clusterName, other.clusterName)
+                && Objects.equals(clusterVirtService, other.clusterVirtService)
+                && Objects.equals(clusterGlusterService, other.clusterGlusterService));
     }
 
     public VDS clone() {
         VDS vds = new VDS();
-        vds.setVdsGroupId(getVdsGroupId());
-        vds.setVdsGroupCpuName(getVdsGroupCpuName());
+        vds.setClusterId(getClusterId());
+        vds.setClusterCpuName(getClusterCpuName());
         vds.setCpuName(getCpuName());
-        vds.setVdsGroupDescription(getVdsGroupDescription());
+        vds.setClusterDescription(getClusterDescription());
         vds.setId(getId());
         vds.setVdsName(getName());
         vds.setHostName(getHostName());
@@ -194,14 +194,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setNumaNodeList(getNumaNodeList());
         vds.setAutoNumaBalancing(getAutoNumaBalancing());
         vds.setFenceAgents(getFenceAgents());
-        vds.setVdsGroupCompatibilityVersion(getVdsGroupCompatibilityVersion());
+        vds.setClusterCompatibilityVersion(getClusterCompatibilityVersion());
         vds.setUpdateAvailable(isUpdateAvailable());
         vds.setHostDevicePassthroughEnabled(isHostDevicePassthroughEnabled());
         return vds;
     }
 
-    public Version getVdsGroupCompatibilityVersion() {
-        return vdsGroupCompatibilityVersion;
+    public Version getClusterCompatibilityVersion() {
+        return clusterCompatibilityVersion;
     }
 
     public boolean isContainingHooks() {
@@ -220,56 +220,56 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         return getDynamicData().getHooksStr();
     }
 
-    public void setVdsGroupCompatibilityVersion(Version value) {
-        vdsGroupCompatibilityVersion = value;
+    public void setClusterCompatibilityVersion(Version value) {
+        clusterCompatibilityVersion = value;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsStatic.getVdsGroupId();
+    public Guid getClusterId() {
+        return vdsStatic.getClusterId();
     }
 
-    public void setVdsGroupId(Guid value) {
-        vdsStatic.setVdsGroupId(value);
+    public void setClusterId(Guid value) {
+        vdsStatic.setClusterId(value);
     }
 
-    public String getVdsGroupName() {
-        return vdsGroupName;
+    public String getClusterName() {
+        return clusterName;
     }
 
-    public void setVdsGroupName(String value) {
-        vdsGroupName = value;
+    public void setClusterName(String value) {
+        clusterName = value;
     }
 
-    public String getVdsGroupDescription() {
-        return vdsGroupDescription;
+    public String getClusterDescription() {
+        return clusterDescription;
     }
 
-    public void setVdsGroupDescription(String value) {
-        vdsGroupDescription = value;
+    public void setClusterDescription(String value) {
+        clusterDescription = value;
     }
 
-    public String getVdsGroupCpuName() {
-        return vdsGroupCpuName;
+    public String getClusterCpuName() {
+        return clusterCpuName;
     }
 
-    public void setVdsGroupCpuName(String value) {
-        vdsGroupCpuName = value;
+    public void setClusterCpuName(String value) {
+        clusterCpuName = value;
     }
 
-    public Boolean getVdsGroupSupportsVirtService() {
-        return vdsGroupVirtService;
+    public Boolean getClusterSupportsVirtService() {
+        return clusterVirtService;
     }
 
-    public void setVdsGroupSupportsVirtService(Boolean value) {
-        vdsGroupVirtService = value;
+    public void setClusterSupportsVirtService(Boolean value) {
+        clusterVirtService = value;
     }
 
-    public Boolean getVdsGroupSupportsGlusterService() {
-        return vdsGroupGlusterService;
+    public Boolean getClusterSupportsGlusterService() {
+        return clusterGlusterService;
     }
 
-    public void setVdsGroupSupportsGlusterService(Boolean value) {
-        vdsGroupGlusterService = value;
+    public void setClusterSupportsGlusterService(Boolean value) {
+        clusterGlusterService = value;
     }
 
     @Override

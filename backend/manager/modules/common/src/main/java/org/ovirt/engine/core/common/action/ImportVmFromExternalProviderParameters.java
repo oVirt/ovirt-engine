@@ -19,8 +19,8 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     public ImportVmFromExternalProviderParameters() {
     }
 
-    public ImportVmFromExternalProviderParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid vdsGroupId) {
-        super(vm, destStorageDomainId, storagePoolId, vdsGroupId);
+    public ImportVmFromExternalProviderParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid clusterId) {
+        super(vm, destStorageDomainId, storagePoolId, clusterId);
     }
 
     public String getUrl() {

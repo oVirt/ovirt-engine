@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -11,12 +11,12 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 public class VmSerialNumberBuilder {
 
     private VM vm;
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     private Map<String, Object> createInfo;
 
-    public VmSerialNumberBuilder(VM vm, VDSGroup vdsGroup, Map<String, Object> createInfo) {
+    public VmSerialNumberBuilder(VM vm, Cluster cluster, Map<String, Object> createInfo) {
         this.vm = vm;
-        this.vdsGroup = vdsGroup;
+        this.cluster = cluster;
         this.createInfo = createInfo;
     }
 
@@ -29,8 +29,8 @@ public class VmSerialNumberBuilder {
     }
 
     private void buildVmSerialNumberFromCluster() {
-        if (vdsGroup.getSerialNumberPolicy() != null) {
-            setSerialNumber(getSerialNumberFromPolicy(vdsGroup.getSerialNumberPolicy(), vdsGroup.getCustomSerialNumber()));
+        if (cluster.getSerialNumberPolicy() != null) {
+            setSerialNumber(getSerialNumberFromPolicy(cluster.getSerialNumberPolicy(), cluster.getCustomSerialNumber()));
         } else {
             buildVmSerialNumberFromConfig();
         }

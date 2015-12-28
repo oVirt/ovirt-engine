@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -32,7 +32,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, Network, ClusterListModel<Void>, ClusterNetworkListModel>
+public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, Network, ClusterListModel<Void>, ClusterNetworkListModel>
         implements SubTabClusterNetworkPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterNetworkView> {

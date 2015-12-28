@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -50,7 +50,7 @@ public class CpuProfilePopupView extends AbstractModelBoundPopupView<CpuProfileB
 
     @UiField(provided = true)
     @Path("parentListModel.selectedItem")
-    ListModelListBoxEditor<VDSGroup> clusterEditor;
+    ListModelListBoxEditor<Cluster> clusterEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -59,7 +59,7 @@ public class CpuProfilePopupView extends AbstractModelBoundPopupView<CpuProfileB
     @Inject
     public CpuProfilePopupView(EventBus eventBus) {
         super(eventBus);
-        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
         qosEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuQos>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();

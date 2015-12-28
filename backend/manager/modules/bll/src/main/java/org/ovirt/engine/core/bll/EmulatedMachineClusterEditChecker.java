@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @RequestScoped
@@ -17,7 +17,7 @@ public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS
     private Set<String> emulatedMachines;
 
     @Override
-    public boolean isApplicable(VDSGroup oldCluster, VDSGroup newCluster) {
+    public boolean isApplicable(Cluster oldCluster, Cluster newCluster) {
         emulatedMachines = getClusterEmulatedMachines(newCluster);
         emulatedMachines.removeAll(getClusterEmulatedMachines(oldCluster));
 
@@ -45,7 +45,7 @@ public class EmulatedMachineClusterEditChecker implements ClusterEditChecker<VDS
         return StringUtils.join(missing, ",");
     }
 
-    private static Set<String> getClusterEmulatedMachines(VDSGroup cluster) {
+    private static Set<String> getClusterEmulatedMachines(Cluster cluster) {
         if (cluster.getEmulatedMachine() == null) {
             return new HashSet<>();
         } else {

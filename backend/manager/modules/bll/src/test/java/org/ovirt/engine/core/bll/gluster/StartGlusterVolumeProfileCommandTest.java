@@ -42,7 +42,7 @@ public class StartGlusterVolumeProfileCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("server1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }

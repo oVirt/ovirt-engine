@@ -15,15 +15,14 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDao;
-
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
@@ -34,19 +33,19 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     RefreshGlusterHooksCommand<GlusterClusterParameters> cmd;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private GlusterHookSyncJob hookSyncJob;
 
     public void setupMocks() {
-        when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        when(clusterDao.get(CLUSTER_ID)).thenReturn(getCluster());
+        doReturn(clusterDao).when(cmd).getClusterDao();
         when(cmd.getSyncJobInstance()).thenReturn(hookSyncJob);
     }
 
-    private VDSGroup getVdsGroup() {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID);
         cluster.setName("TestCluster");
         return cluster;
@@ -57,7 +56,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
         server.setId(Guid.newGuid());
         server.setVdsName("VDS1");
         server.setStatus(VDSStatus.Up);
-        server.setVdsGroupId(CLUSTER_ID);
+        server.setClusterId(CLUSTER_ID);
         return server;
     }
 
@@ -65,7 +64,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     public void executeCommand() {
         cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
-        doNothing().when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
+        doNothing().when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
         cmd.executeCommand();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REFRESH);
     }
@@ -74,7 +73,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
-        doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
+        doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
         try {
             cmd.executeCommand();
             fail("Expected EngineException");

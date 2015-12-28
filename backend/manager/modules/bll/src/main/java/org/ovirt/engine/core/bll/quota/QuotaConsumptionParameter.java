@@ -48,6 +48,6 @@ public abstract class QuotaConsumptionParameter implements Cloneable{
     public abstract QuotaConsumptionParameter clone() throws CloneNotSupportedException;
 
     public enum ParameterType {
-        STORAGE, VDS_GROUP, SANITY
+        STORAGE, CLUSTER, SANITY
     }
 }

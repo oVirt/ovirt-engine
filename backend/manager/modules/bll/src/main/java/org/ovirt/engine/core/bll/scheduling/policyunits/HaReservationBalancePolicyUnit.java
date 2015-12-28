@@ -11,9 +11,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -42,7 +42,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {

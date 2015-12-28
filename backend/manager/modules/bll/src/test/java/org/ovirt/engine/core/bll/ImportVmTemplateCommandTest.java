@@ -26,12 +26,12 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -138,11 +138,10 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             VolumeType volumeType,
             StorageType storageType) {
         ImportVmTemplateCommand command = createImportVmTemplateCommandSpy(createParameters());
-
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
         doReturn(false).when(command).isVmTemplateWithSameNameExist();
-        doReturn(true).when(command).isVDSGroupCompatible();
+        doReturn(true).when(command).isClusterCompatible();
         doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
@@ -316,7 +315,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         ImportVmTemplateCommand spy = spy(new ImportVmTemplateCommand(parameters) {
 
             @Override
-            public VDSGroup getVdsGroup() {
+            public Cluster getCluster() {
                 return null;
             }
         });

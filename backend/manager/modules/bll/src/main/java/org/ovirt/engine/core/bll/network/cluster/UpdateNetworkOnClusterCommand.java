@@ -45,7 +45,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     private Version getClusterVersion() {
-        return getVdsGroupDao().get(getNetworkCluster().getClusterId()).getCompatibilityVersion();
+        return getClusterDao().get(getNetworkCluster().getClusterId()).getCompatibilityVersion();
     }
 
     @Override
@@ -71,28 +71,28 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         final Network managementNetwork;
 
         if (getNetworkCluster().isManagement() && !getOldNetworkCluster().isManagement()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsManagement(getVdsGroupId(), getPersistedNetwork().getId());
+            getNetworkClusterDao().setNetworkExclusivelyAsManagement(getClusterId(), getPersistedNetwork().getId());
             managementNetwork = getPersistedNetwork();
         } else {
-            managementNetwork = managementNetworkUtil.getManagementNetwork(getVdsGroupId());
+            managementNetwork = managementNetworkUtil.getManagementNetwork(getClusterId());
         }
 
         if (getNetworkCluster().isDisplay() != getOldNetworkCluster().isDisplay()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(getVdsGroupId(),
+            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(getClusterId(),
                     getNetworkCluster().isDisplay() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         if (getNetworkCluster().isMigration() != getOldNetworkCluster().isMigration()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsMigration(getVdsGroupId(),
+            getNetworkClusterDao().setNetworkExclusivelyAsMigration(getClusterId(),
                     getNetworkCluster().isMigration() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         if (getNetworkCluster().isGluster() != getOldNetworkCluster().isGluster()) {
-            getNetworkClusterDao().setNetworkExclusivelyAsGluster(getVdsGroupId(),
+            getNetworkClusterDao().setNetworkExclusivelyAsGluster(getClusterId(),
                     getNetworkCluster().isGluster() ? getPersistedNetwork().getId() : null);
         }
 
-        NetworkClusterHelper.setStatus(getVdsGroupId(), getPersistedNetwork());
+        NetworkClusterHelper.setStatus(getClusterId(), getPersistedNetwork());
         setSucceeded(true);
     }
 
@@ -105,7 +105,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     private boolean validateAttachment() {
         final UpdateNetworkClusterValidator networkClusterValidator = createNetworkClusterValidator();
         return validate(networkClusterValidator.managementNetworkUnset()) &&
-                validate(networkClusterValidator.glusterNetworkInUseAndUnset(getVdsGroup())) &&
+                validate(networkClusterValidator.glusterNetworkInUseAndUnset(getCluster())) &&
                 validateAttachment(networkClusterValidator);
     }
 
@@ -122,7 +122,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return permissionsChecker.findPermissionCheckSubjects(getNetworkId(), getVdsGroupId(), getActionType());
+        return permissionsChecker.findPermissionCheckSubjects(getNetworkId(), getClusterId(), getActionType());
     }
 
     private Guid getNetworkId() {

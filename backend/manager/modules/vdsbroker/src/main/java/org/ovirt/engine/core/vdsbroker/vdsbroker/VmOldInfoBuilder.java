@@ -216,7 +216,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         if (!vmSoundDevices.isEmpty()) {
             createInfo.put(VdsProperties.soundDevice,
                     osRepository.getSoundDevice(vm.getStaticData().getOsId(),
-                            vm.getVdsGroupCompatibilityVersion()));
+                            vm.getClusterCompatibilityVersion()));
         }
     }
 

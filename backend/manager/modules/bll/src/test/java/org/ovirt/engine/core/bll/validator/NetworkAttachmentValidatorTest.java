@@ -86,7 +86,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         host = new VDS();
         host.getStaticData().setName("hostName");
         host.setId(Guid.newGuid());
-        host.setVdsGroupId(CLUSTER_ID);
+        host.setClusterId(CLUSTER_ID);
     }
 
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachment) {
@@ -205,7 +205,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
 
-        NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), attachment.getNetworkId());
+        NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), attachment.getNetworkId());
         when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(new NetworkCluster());
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
@@ -220,7 +220,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         NetworkAttachment attachment = new NetworkAttachment();
         attachment.setNetworkId(network.getId());
 
-        NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), network.getId());
+        NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), network.getId());
         when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(null);
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
@@ -294,7 +294,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         networkCluster.setMigration(migrationNetwork);
         networkCluster.setGluster(glusterNetwork);
 
-        NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), attachment.getNetworkId());
+        NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), attachment.getNetworkId());
         when(networkClusterDaoMock.get(eq(networkClusterId))).thenReturn(networkCluster);
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
@@ -527,7 +527,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
             boolean multipleGatewaysSupported,
             Matcher<ValidationResult> resultMatcher) {
 
-        host.setVdsGroupCompatibilityVersion(multipleGatewaysSupported ? Version.v3_6 : Version.v3_5);
+        host.setClusterCompatibilityVersion(multipleGatewaysSupported ? Version.v3_6 : Version.v3_5);
         Network network = createNetwork();
 
         NetworkAttachment attachment = createNetworkAttachmentWithIpConfiguration(NetworkBootProtocol.NONE, null, null);
@@ -577,7 +577,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         Network network = new Network();
         network.setId(Guid.newGuid());
         network.setName("name");
-        host.setVdsGroupCompatibilityVersion(Version.v3_5);
+        host.setClusterCompatibilityVersion(Version.v3_5);
 
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkId(network.getId());
@@ -610,7 +610,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
 
-        host.setVdsGroupCompatibilityVersion(Version.v3_5);
+        host.setClusterCompatibilityVersion(Version.v3_5);
 
         assertThat(validator.networkNotUsedByVms(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE));
     }
@@ -625,7 +625,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         networkAttachment.setNetworkId(network.getId());
 
         when(networkDaoMock.get(eq(network.getId()))).thenReturn(network);
-        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+        host.setClusterCompatibilityVersion(Version.v3_6);
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(networkAttachment);
 

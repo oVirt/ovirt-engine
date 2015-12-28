@@ -635,7 +635,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_mem_size_mb INT,
     v_num_of_io_threads INT,
     v_os INT,
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_vm_guid UUID,
     v_vm_name VARCHAR(255),
     v_vmt_guid UUID,
@@ -712,7 +712,7 @@ INSERT INTO vm_static(description,
                       mem_size_mb,
                       num_of_io_threads,
                       os,
-                      vds_group_id,
+                      cluster_id,
                       vm_guid,
                       vm_name,
                       vmt_guid,
@@ -782,7 +782,7 @@ INSERT INTO vm_static(description,
            v_mem_size_mb,
            v_num_of_io_threads,
            v_os,
-           v_vds_group_id,
+           v_cluster_id,
            v_vm_guid,
            v_vm_name,
            v_vmt_guid,
@@ -857,8 +857,8 @@ INSERT INTO vm_static(description,
         SELECT
             v_vm_guid,
             storage_pool_id
-        FROM vds_groups vg
-        WHERE vg.vds_group_id = v_vds_group_id
+        FROM cluster vg
+        WHERE vg.cluster_id = v_cluster_id
            AND v_origin != 4;
 
     -- add connections to dedicated hosts
@@ -914,7 +914,7 @@ RETURNS VOID
    AS $procedure$
 DECLARE
      curs CURSOR FOR SELECT vms.vm_guid FROM vm_static vms
-                     WHERE vms.vds_group_id IN (SELECT vgs.vds_group_id FROM vds_groups vgs
+                     WHERE vms.cluster_id IN (SELECT vgs.cluster_id FROM cluster vgs
                                                 WHERE vgs.storage_pool_id=v_storage_pool_id)
                      ORDER BY vm_guid;
      id UUID;
@@ -949,8 +949,8 @@ BEGIN
                                AND vd.snapshot_id IS NULL
                                WHERE i.disk_storage_type in (0, 2)  -- Filter VMs with Images (0) or Cinder (2) disks.
                                  AND i.shareable = v_shareable)
-      AND vs.vds_group_id IN (SELECT vg.vds_group_id
-                              FROM vds_groups vg, storage_pool sp
+      AND vs.cluster_id IN (SELECT vg.cluster_id
+                              FROM cluster vg, storage_pool sp
                               WHERE vg.storage_pool_id = v_storage_pool_id);
 END; $procedure$
 LANGUAGE plpgsql;
@@ -965,7 +965,7 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_mem_size_mb INTEGER,
  v_num_of_io_threads INTEGER,
  v_os INTEGER,
- v_vds_group_id UUID,
+ v_cluster_id UUID,
  v_vm_guid UUID,
  v_vm_name VARCHAR(255),
  v_vmt_guid UUID,
@@ -1043,7 +1043,7 @@ BEGIN
      mem_size_mb = v_mem_size_mb,
      num_of_io_threads = v_num_of_io_threads,
      os = v_os,
-     vds_group_id = v_vds_group_id,
+     cluster_id = v_cluster_id,
      vm_name = v_vm_name,
      vmt_guid = v_vmt_guid,
      creation_date = v_creation_date,
@@ -1232,9 +1232,9 @@ Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETUR
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static INNER JOIN
-        vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
-        storage_pool ON vm_static.vds_group_id = vds_groups.vds_group_id
-        AND vds_groups.storage_pool_id = storage_pool.id
+        cluster ON vm_static.cluster_id = cluster.cluster_id LEFT OUTER JOIN
+        storage_pool ON vm_static.cluster_id = cluster.cluster_id
+        AND cluster.storage_pool_id = storage_pool.id
    WHERE v_sp_id = storage_pool.id
        AND   entity_type = 'VM';
 
@@ -1258,12 +1258,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByVdsGroup(v_vds_group_id UUID) RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetVmStaticByCluster(v_cluster_id UUID) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
    FROM vm_static
-   WHERE vds_group_id = v_vds_group_id
+   WHERE cluster_id = v_cluster_id
        AND   entity_type = 'VM';
 
 END; $procedure$
@@ -1710,12 +1710,12 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vms STABLE
+Create or replace FUNCTION GetVmsByClusterId(v_cluster_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vms.*
       FROM vms
-      WHERE vds_group_id = v_vds_group_id;
+      WHERE cluster_id = v_cluster_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -1749,7 +1749,7 @@ BEGIN
     RETURN QUERY SELECT DISTINCT vms.*
     FROM vms
     WHERE run_on_vds IS NOT NULL
-        AND vds_group_id = v_cluster_id;
+        AND cluster_id = v_cluster_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -1948,7 +1948,7 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_static
     SET cpu_profile_id = v_cpu_profile_id
-    WHERE vds_group_id = v_cluster_id;
+    WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

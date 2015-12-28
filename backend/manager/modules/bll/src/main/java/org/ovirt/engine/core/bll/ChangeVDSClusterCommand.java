@@ -26,10 +26,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -79,7 +79,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private StoragePool targetStoragePool;
 
-    private VDSGroup targetCluster;
+    private Cluster targetCluster;
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_UPDATE_VDS;
 
@@ -109,7 +109,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
             return false;
         }
-        if (!ObjectIdentityChecker.canUpdateField(vds, "vdsGroupId", vds.getStatus())) {
+        if (!ObjectIdentityChecker.canUpdateField(vds, "clusterId", vds.getStatus())) {
             addValidationMessage(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
@@ -119,15 +119,15 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
 
-        targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(getTargetCluster().getId());
+        targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForCluster(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.isLocal()) {
-            if (!DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
+            if (!DbFacade.getInstance().getVdsStaticDao().getAllForCluster(getParameters().getClusterId()).isEmpty()) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;
             }
         }
 
-        if (getVdsGroup().supportsGlusterService()) {
+        if (getCluster().supportsGlusterService()) {
             if (getGlusterUtils().hasBricks(getVdsId())) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 return false;
@@ -244,7 +244,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return hostNics;
     }
 
-    private boolean hasUpServer(VDSGroup cluster) {
+    private boolean hasUpServer(Cluster cluster) {
         if (getClusterUtils().hasMultipleServers(cluster.getId())
                 && getClusterUtils().getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
@@ -253,12 +253,12 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return true;
     }
 
-    private void addNoUpServerMessage(VDSGroup cluster) {
+    private void addNoUpServerMessage(Cluster cluster) {
         addValidationMessageVariable("clusterName", cluster.getName());
         addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
     }
 
-    private boolean hasUpServerInTarget(VDSGroup cluster) {
+    private boolean hasUpServerInTarget(Cluster cluster) {
         if (getClusterUtils().hasServers(cluster.getId())
                 && getClusterUtils().getUpServer(cluster.getId()) == null) {
             addNoUpServerMessage(cluster);
@@ -280,7 +280,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         TransactionSupport.executeInNewTransaction(() -> {
             VdsStatic staticData = getVds().getStaticData();
             getCompensationContext().snapshotEntity(staticData);
-            staticData.setVdsGroupId(targetClusterId);
+            staticData.setClusterId(targetClusterId);
             DbFacade.getInstance().getVdsStaticDao().update(staticData);
             getCompensationContext().stateChanged();
             // remove the server from resource manager and add it back
@@ -392,7 +392,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             permissionList.add(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS, getActionType().getActionGroup()));
         }
 
-        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.Cluster, getActionType().getActionGroup()));
         List<PermissionSubject> unmodifiableList = Collections.unmodifiableList(permissionList);
         return unmodifiableList;
     }
@@ -470,13 +470,13 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return GlusterDBUtils.getInstance();
     }
 
-    private VDSGroup getSourceCluster() {
-        return getVdsGroup();
+    private Cluster getSourceCluster() {
+        return getCluster();
     }
 
-    private VDSGroup getTargetCluster() {
+    private Cluster getTargetCluster() {
         if (targetCluster == null) {
-            targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
+            targetCluster = DbFacade.getInstance().getClusterDao().get(getParameters().getClusterId());
         }
         return targetCluster;
     }

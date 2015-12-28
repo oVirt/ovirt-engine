@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -139,12 +139,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         // find clusters for hosts that should move to maintenance
         Set<Guid> clusters = new HashSet<>();
         for (VDS vds : vdssToMaintenance.values()) {
-            if (!clusters.contains(vds.getVdsGroupId())) {
-                clusters.add(vds.getVdsGroupId());
+            if (!clusters.contains(vds.getClusterId())) {
+                clusters.add(vds.getClusterId());
                 // set network to operational / non-operational
-                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vds.getClusterId());
                 for (Network net : networks) {
-                    NetworkClusterHelper.setStatus(vds.getVdsGroupId(), net);
+                    NetworkClusterHelper.setStatus(vds.getClusterId(), net);
                 }
             }
         }
@@ -207,7 +207,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         if (vms.size() > 0) {
                             vdsWithRunningVMs.add(vdsId);
                         }
-                        clustersAsSet.add(vds.getVdsGroupId());
+                        clustersAsSet.add(vds.getClusterId());
 
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<>();
                         for (VM vm : vms) {
@@ -281,7 +281,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 List<String> problematicClusters = new ArrayList<>();
                 List<String> allHostsWithRunningVms = new ArrayList<>();
                 for (Guid clusterID : clustersAsSet) {
-                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(clusterID);
+                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForCluster(clusterID);
                     boolean vdsForMigrationExists =
                             checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
 
@@ -421,11 +421,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         }
     }
 
-    private void addClusterDetails(Guid vdsGroupID, List<String> clustersWithRunningVms) {
-        if (vdsGroupID != null && !vdsGroupID.equals(Guid.Empty)) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().getWithRunningVms(vdsGroupID);
-            if (vdsGroup != null) {
-                clustersWithRunningVms.add(vdsGroup.getName());
+    private void addClusterDetails(Guid clusterID, List<String> clustersWithRunningVms) {
+        if (clusterID != null && !clusterID.equals(Guid.Empty)) {
+            Cluster cluster = DbFacade.getInstance().getClusterDao().getWithRunningVms(clusterID);
+            if (cluster != null) {
+                clustersWithRunningVms.add(cluster.getName());
             }
         }
     }

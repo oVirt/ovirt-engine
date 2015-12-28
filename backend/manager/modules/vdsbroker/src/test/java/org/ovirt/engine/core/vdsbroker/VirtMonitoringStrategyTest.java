@@ -11,21 +11,21 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class VirtMonitoringStrategyTest {
 
     private VDS vdsFromDb = new VDS();
 
     public VirtMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup(), mockVdsDao()));
+        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao()));
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
     }
 
@@ -100,7 +100,7 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testNeedToProcessHardwareCapsFalse() {
         VDS oldVds = new VDS();
-        oldVds.setVdsGroupId(Guid.newGuid());
+        oldVds.setClusterId(Guid.newGuid());
         oldVds.setId(Guid.newGuid());
         oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
@@ -110,7 +110,7 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testNeedToProcessHardwareCapsTrue() {
         VDS oldVds = new VDS();
-        oldVds.setVdsGroupId(Guid.newGuid());
+        oldVds.setClusterId(Guid.newGuid());
         oldVds.setId(Guid.newGuid());
         oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
@@ -118,9 +118,9 @@ public class VirtMonitoringStrategyTest {
         assertTrue(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
 
-    private VdsGroupDao mockVdsGroup() {
-        VdsGroupDao mock = mock(VdsGroupDao.class);
-        VDSGroup value = new VDSGroup();
+    private ClusterDao mockCluster() {
+        ClusterDao mock = mock(ClusterDao.class);
+        Cluster value = new Cluster();
         value.setEmulatedMachine("pc-1.0");
         value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
         org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
@@ -129,7 +129,7 @@ public class VirtMonitoringStrategyTest {
 
     private VdsDao mockVdsDao() {
         VdsDao mock = mock(VdsDao.class);
-        when(mock.getFirstUpRhelForVdsGroup(any(Guid.class))).thenReturn(vdsFromDb);
+        when(mock.getFirstUpRhelForCluster(any(Guid.class))).thenReturn(vdsFromDb);
         return mock;
     }
 }

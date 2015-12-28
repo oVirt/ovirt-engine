@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -46,7 +46,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         volume = getParameters().getVolume();
 
         if (volume != null) {
-            setVdsGroupId(volume.getClusterId());
+            setClusterId(volume.getClusterId());
         }
     }
 
@@ -92,7 +92,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        VDSGroup cluster = getVdsGroup();
+        Cluster cluster = getCluster();
         if (cluster == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
@@ -114,7 +114,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getCompatibilityVersion(),
+        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getCluster().getCompatibilityVersion(),
                 getParameters().isForce()))) {
             return false;
         }
@@ -123,7 +123,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     private boolean volumeNameExists(String volumeName) {
-        GlusterVolumeEntity volumeEntity = getGlusterVolumeDao().getByName(getVdsGroupId(), volumeName);
+        GlusterVolumeEntity volumeEntity = getGlusterVolumeDao().getByName(getClusterId(), volumeName);
         return (volumeEntity == null) ? false : true;
     }
 
@@ -155,7 +155,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                 VDSCommandType.CreateGlusterVolume,
                         new CreateGlusterVolumeVDSParameters(upServer.getId(),
                                 volume,
-                                upServer.getVdsGroupCompatibilityVersion(),
+                                upServer.getClusterCompatibilityVersion(),
                                 getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
 
@@ -252,7 +252,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     private Map<String, String> getOptionValues(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {
         Map<String, String> values = new HashMap<>();
-        values.put(GlusterConstants.CLUSTER, getVdsGroupName());
+        values.put(GlusterConstants.CLUSTER, getClusterName());
         values.put(GlusterConstants.VOLUME, volume.getName());
         values.put(GlusterConstants.OPTION_KEY, option.getKey());
         values.put(GlusterConstants.OPTION_VALUE, option.getValue());
@@ -335,7 +335,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     private void addVolumeToDb(final GlusterVolumeEntity createdVolume) {
         // volume fetched from VDSM doesn't contain cluster id as
         // GlusterFS is not aware of multiple clusters
-        createdVolume.setClusterId(getVdsGroupId());
+        createdVolume.setClusterId(getClusterId());
         getGlusterVolumeDao().save(createdVolume);
     }
 

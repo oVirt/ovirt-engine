@@ -10,7 +10,7 @@ public class IsClusterEmptyQuery<P extends IdQueryParameters> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-        Boolean isEmpty = getDbFacade().getVdsGroupDao().getIsEmpty(getParameters().getId());
+        Boolean isEmpty = getDbFacade().getClusterDao().getIsEmpty(getParameters().getId());
 
         getQueryReturnValue().setReturnValue(isEmpty);
     }

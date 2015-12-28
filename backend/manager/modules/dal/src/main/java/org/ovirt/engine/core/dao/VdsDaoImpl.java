@@ -109,11 +109,11 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
-    public List<VDS> getAllForVdsGroupWithoutMigrating(Guid id) {
-        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByVdsGroupId",
+    public List<VDS> getAllForClusterWithoutMigrating(Guid clusterId) {
+        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByClusterId",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", id));
+                        .addValue("cluster_id", clusterId));
         return uniteAgents(vdsList);
     }
 
@@ -137,16 +137,16 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
-    public List<VDS> getAllForVdsGroup(Guid vdsGroupID) {
-        return getAllForVdsGroup(vdsGroupID, null, false);
+    public List<VDS> getAllForCluster(Guid cluster) {
+        return getAllForCluster(cluster, null, false);
     }
 
     @Override
-    public List<VDS> getAllForVdsGroup(Guid vdsGroupID, Guid userID, boolean isFiltered) {
-        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByVdsGroupId",
+    public List<VDS> getAllForCluster(Guid cluster, Guid userID, boolean isFiltered) {
+        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByClusterId",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vdsGroupID)
+                        .addValue("cluster_id", cluster)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered));
         return uniteAgents(vdsList);
@@ -167,11 +167,11 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
-    public VDS getFirstUpRhelForVdsGroup(Guid vdsGroupId) {
-        List<VDS> vds = getCallsHandler().executeReadList("getFirstUpRhelForVdsGroupId",
+    public VDS getFirstUpRhelForCluster(Guid clsuterId) {
+        List<VDS> vds = getCallsHandler().executeReadList("getFirstUpRhelForClusterId",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vdsGroupId));
+                        .addValue("cluster_id", clsuterId));
 
         return vds.size() != 0 ? vds.iterator().next() : null;
     }
@@ -193,11 +193,11 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
-    public List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status) {
-        List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForVdsGroupWithStatus",
+    public List<VDS> getAllForClusterWithStatus(Guid clusterId, VDSStatus status) {
+        List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForClusterWithStatus",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vdsGroupId)
+                        .addValue("cluster_id", clusterId)
                         .addValue("status", status.getValue()));
         return uniteAgents(vdsList);
     }
@@ -261,10 +261,10 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
-            entity.setVdsGroupDescription(rs
-                    .getString("vds_group_description"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+            entity.setClusterName(rs.getString("cluster_name"));
+            entity.setClusterDescription(rs
+                    .getString("cluster_description"));
             entity.setVdsName(rs.getString("vds_name"));
             entity.setComment(rs.getString("free_text_comment"));
             entity.setUniqueId(rs.getString("vds_unique_id"));
@@ -317,7 +317,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setMemFree(rs.getLong("mem_free"));
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setCpuFlags(rs.getString("cpu_flags"));
-            entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
+            entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
             entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setPendingVcpusCount((Integer) rs
@@ -347,10 +347,10 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
             entity.setSupportedClusterLevels(rs
                     .getString("supported_cluster_levels"));
             entity.setSupportedEngines(rs.getString("supported_engines"));
-            entity.setVdsGroupCompatibilityVersion(new Version(rs
-                    .getString("vds_group_compatibility_version")));
-            entity.setVdsGroupSupportsVirtService(rs.getBoolean("vds_group_virt_service"));
-            entity.setVdsGroupSupportsGlusterService(rs.getBoolean("vds_group_gluster_service"));
+            entity.setClusterCompatibilityVersion(new Version(rs
+                    .getString("cluster_compatibility_version")));
+            entity.setClusterSupportsVirtService(rs.getBoolean("cluster_virt_service"));
+            entity.setClusterSupportsGlusterService(rs.getBoolean("cluster_gluster_service"));
             entity.setHostOs(rs.getString("host_os"));
             entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
             entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));

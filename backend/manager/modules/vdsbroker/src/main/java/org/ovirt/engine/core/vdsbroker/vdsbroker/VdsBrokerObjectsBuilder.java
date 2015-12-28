@@ -1100,7 +1100,7 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces != null) {
             int networkUsage = 0;
             Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(vds.getInterfaces());
-            NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(vds.getVdsGroupCompatibilityVersion());
+            NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(vds.getClusterCompatibilityVersion());
             for (Entry<String, Object> entry : interfaces.entrySet()) {
                 if (nicsByName.containsKey(entry.getKey())) {
                     VdsNetworkInterface existingIface = nicsByName.get(entry.getKey());
@@ -1711,7 +1711,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> networks =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORKS);
         Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(host.getInterfaces());
-        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(host.getVdsGroupCompatibilityVersion());
+        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(host.getClusterCompatibilityVersion());
         if (networks != null) {
             host.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
@@ -1746,7 +1746,7 @@ public class VdsBrokerObjectsBuilder {
                         iface.setQos(qos);
 
                         // set the management ip
-                        if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())) {
+                        if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getClusterId())) {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
                         }
 
@@ -1863,7 +1863,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> bonds =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
-            boolean cfgEntriesDeprecated = FeatureSupported.cfgEntriesDeprecated(vds.getVdsGroupCompatibilityVersion());
+            boolean cfgEntriesDeprecated = FeatureSupported.cfgEntriesDeprecated(vds.getClusterCompatibilityVersion());
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
                 VdsNetworkInterface bond = new Bond();
                 updateCommonInterfaceData(bond, vds, entry);
@@ -2076,7 +2076,7 @@ public class VdsBrokerObjectsBuilder {
 
     private static void addBootProtocol(Map<String, Object> entry, VDS host, VdsNetworkInterface iface) {
         BootProtocolResolver resolver =
-                FeatureSupported.cfgEntriesDeprecated(host.getVdsGroupCompatibilityVersion())
+                FeatureSupported.cfgEntriesDeprecated(host.getClusterCompatibilityVersion())
                         ? new NoCfgBootProtocolResolver(entry, iface, host)
                         : new CfgBootProtocolResolver(entry, iface, host);
         resolver.resolve();
@@ -2112,8 +2112,8 @@ public class VdsBrokerObjectsBuilder {
      */
     public static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
         final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
-        if (FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion())
-                || managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())
+        if (FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion())
+                || managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), host.getClusterId())
                 || iface.getName().equals(host.getActiveNic())) {
             iface.setGateway(gateway);
         }

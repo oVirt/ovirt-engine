@@ -10,10 +10,10 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ClusterEditParameters;
@@ -46,24 +46,24 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
 
     @Override
     protected void executeQueryCommand() {
-        final VDSGroup oldCluster = backend.runQuery(VdcQueryType.GetVdsGroupById, getParameters()).getReturnValue();
-        VDSGroup newCluster = getParameters().getNewCluster();
+        final Cluster oldCluster = backend.runQuery(VdcQueryType.GetClusterById, getParameters()).getReturnValue();
+        Cluster newCluster = getParameters().getNewCluster();
 
         List<ClusterEditWarnings.Warning> hostWarnings = getProblematicEntities(oldCluster, newCluster, hostCheckers,
-                cluster -> vdsDao.getAllForVdsGroup(cluster.getId()));
+                cluster -> vdsDao.getAllForCluster(cluster.getId()));
 
         List<ClusterEditWarnings.Warning> vmWarnings =  new ArrayList<>();
 
         if (oldCluster.supportsVirtService() && newCluster.supportsVirtService()) {
             vmWarnings = getProblematicEntities(oldCluster, newCluster, vmCheckers,
-                    cluster -> vmDao.getAllForVdsGroup(cluster.getId()));
+                    cluster -> vmDao.getAllForCluster(cluster.getId()));
         }
         setReturnValue(new ClusterEditWarnings(hostWarnings, vmWarnings));
     }
 
     private static <T extends Nameable> List<ClusterEditWarnings.Warning> getProblematicEntities(
-            VDSGroup oldCluster,
-            VDSGroup newCluster,
+            Cluster oldCluster,
+            Cluster newCluster,
             Iterable<ClusterEditChecker<T>> checkers,
             ClusterEntityResolver<T> entityResolver) {
 
@@ -90,6 +90,6 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
 
     @FunctionalInterface
     private interface ClusterEntityResolver<T> {
-        List<T> getClusterEntities(VDSGroup cluster);
+        List<T> getClusterEntities(Cluster cluster);
     }
 }

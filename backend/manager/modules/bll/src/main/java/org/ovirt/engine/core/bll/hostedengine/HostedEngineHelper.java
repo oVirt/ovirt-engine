@@ -74,7 +74,7 @@ public class HostedEngineHelper {
                 getBackupConfPath());
         params.put(
                 "host_id",
-                offerHostId(hostedEngineVm.getVdsGroupId()));
+                offerHostId(hostedEngineVm.getClusterId()));
         params.put(
                 "domainType",
                 getStorageType());
@@ -137,12 +137,12 @@ public class HostedEngineHelper {
      *
      * The reason it is a best effort is because 2 concurrent host deploy may run, competing on the id
      *
-     * @param vdsGroupId
+     * @param clusterId
      * @return
      */
-    private String offerHostId(Guid vdsGroupId) {
+    private String offerHostId(Guid clusterId) {
         int i = 0;
-        for (VDS host : dbFacade.getVdsDao().getAllForVdsGroup(vdsGroupId)) {
+        for (VDS host : dbFacade.getVdsDao().getAllForCluster(clusterId)) {
             if (host.getHighlyAvailableScore() > 0) {
                 // count as HE Host
                 i++;

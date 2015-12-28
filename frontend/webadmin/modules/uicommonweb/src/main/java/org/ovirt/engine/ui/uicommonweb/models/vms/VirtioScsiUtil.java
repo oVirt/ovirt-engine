@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,7 +27,7 @@ public class VirtioScsiUtil {
     public void updateVirtioScsiEnabled(final Guid vmId, int osId, VirtioScasiEnablingFinished finishedCallback) {
         this.finishedCallback = finishedCallback;
 
-        final VDSGroup cluster = model.getSelectedCluster();
+        final Cluster cluster = model.getSelectedCluster();
         if (cluster == null) {
             return;
         }
@@ -48,7 +48,7 @@ public class VirtioScsiUtil {
                             callAfterUpdates();
                         } else {
                             if (Guid.isNullOrEmpty(vmId)) {
-                                VDSGroup cluster = model.getSelectedCluster();
+                                Cluster cluster = model.getSelectedCluster();
                                 boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                                         ConfigurationValues.VirtIoScsiEnabled, cluster.getCompatibilityVersion().getValue());
                                 model.getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);

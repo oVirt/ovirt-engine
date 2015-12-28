@@ -84,11 +84,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -212,8 +212,8 @@ public class BackendVmResource
 
     protected Guid lookupClusterId(Vm vm) {
         return vm.getCluster().isSetId() ? asGuid(vm.getCluster().getId())
-                : getEntity(VDSGroup.class,
-                        VdcQueryType.GetVdsGroupByName,
+                : getEntity(Cluster.class,
+                        VdcQueryType.GetClusterByName,
                                                        new NameQueryParameters(vm.getCluster().getName()),
                         "Cluster: name=" + vm.getCluster().getName()).getId();
     }
@@ -652,8 +652,8 @@ public class BackendVmResource
         }
     }
 
-    private VDSGroup lookupCluster(Guid id) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
+    private Cluster lookupCluster(Guid id) {
+        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
     }
 
     private Guid lookupInstanceTypeId(Template template) {

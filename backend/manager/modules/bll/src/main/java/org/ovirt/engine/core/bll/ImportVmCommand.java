@@ -995,10 +995,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private void checkTrustedService() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmName", getVmName());
-        if (getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+        if (getVm().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
-        else if (!getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+        else if (!getVm().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
@@ -1087,8 +1087,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 getActionType().getActionGroup()));
         // special permission is needed to use custom properties
         if (getVm() != null && !StringUtils.isEmpty(getVm().getCustomProperties())) {
-            permissionList.add(new PermissionSubject(getVdsGroupId(),
-                    VdcObjectType.VdsGroups,
+            permissionList.add(new PermissionSubject(getClusterId(),
+                    VdcObjectType.Cluster,
                     ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
         }
         return permissionList;

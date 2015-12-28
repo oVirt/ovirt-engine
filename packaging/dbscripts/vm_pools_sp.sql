@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION InsertVm_pools (
     v_vm_pool_type INT,
     v_parameters VARCHAR(200),
     v_prestarted_vms INT,
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
     v_spice_proxy VARCHAR(255)
     )
@@ -25,7 +25,7 @@ BEGIN
         vm_pool_type,
         parameters,
         prestarted_vms,
-        vds_group_id,
+        cluster_id,
         max_assigned_vms_per_user,
         spice_proxy
         )
@@ -37,7 +37,7 @@ BEGIN
         v_vm_pool_type,
         v_parameters,
         v_prestarted_vms,
-        v_vds_group_id,
+        v_cluster_id,
         v_max_assigned_vms_per_user,
         v_spice_proxy
         );
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION UpdateVm_pools (
     v_vm_pool_type INT,
     v_parameters VARCHAR(200),
     v_prestarted_vms INT,
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_max_assigned_vms_per_user SMALLINT,
     v_spice_proxy VARCHAR(255)
     )
@@ -67,7 +67,7 @@ BEGIN
         vm_pool_type = v_vm_pool_type,
         parameters = v_parameters,
         prestarted_vms = v_prestarted_vms,
-        vds_group_id = v_vds_group_id,
+        cluster_id = v_cluster_id,
         max_assigned_vms_per_user = v_max_assigned_vms_per_user,
         spice_proxy = v_spice_proxy
     WHERE vm_pool_id = v_vm_pool_id;
@@ -123,8 +123,8 @@ DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
         vm_pool_type INT,
         parameters VARCHAR(200),
         prestarted_vms INT,
-        vds_group_id UUID,
-        vds_group_name VARCHAR(40),
+        cluster_id UUID,
+        cluster_name VARCHAR(40),
         max_assigned_vms_per_user SMALLINT,
         spice_proxy VARCHAR(255),
         is_being_destroyed BOOLEAN
@@ -224,8 +224,8 @@ BEGIN
             vm_pool_type INT,
             parameters VARCHAR(200),
             prestarted_vms INT,
-            vds_group_id UUID,
-            vds_group_name VARCHAR(40),
+            cluster_id UUID,
+            cluster_name VARCHAR(40),
             max_assigned_vms_per_user SMALLINT,
             spice_proxy VARCHAR(255),
             is_being_destroyed BOOLEAN
@@ -247,8 +247,8 @@ BEGIN
         vm_pool_type,
         parameters,
         prestarted_vms,
-        vds_group_id,
-        vds_group_name,
+        cluster_id,
+        cluster_name,
         max_assigned_vms_per_user,
         spice_proxy,
         is_being_destroyed
@@ -262,8 +262,8 @@ BEGIN
         p.vm_pool_type,
         p.parameters,
         p.prestarted_vms,
-        p.vds_group_id,
-        p.vds_group_name,
+        p.cluster_id,
+        p.cluster_name,
         p.max_assigned_vms_per_user,
         p.spice_proxy,
         p.is_being_destroyed

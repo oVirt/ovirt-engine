@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotConfigInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
@@ -50,23 +50,23 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     public void refreshSnapshotList() {
         // get all clusters
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             refreshSnapshotsInCluster(cluster);
         }
     }
 
     public void refreshSnapshotConfig() {
         // get all clusters
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             refreshSnapshotConfigInCluster(cluster);
         }
     }
 
-    private void refreshSnapshotsInCluster(VDSGroup cluster) {
+    private void refreshSnapshotsInCluster(Cluster cluster) {
         if (!supportsGlusterSnapshotFeature(cluster)) {
             return;
         }
@@ -98,7 +98,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
     }
 
-    public void refreshSnapshotConfigInCluster(VDSGroup cluster) {
+    public void refreshSnapshotConfigInCluster(Cluster cluster) {
         if (!supportsGlusterSnapshotFeature(cluster)) {
             return;
         }
@@ -126,7 +126,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
             fetchedSnapshotsMap.put(fetchedSnapshot.getId(), fetchedSnapshot);
         }
 
-        VDSGroup cluster = getClusterDao().get(clusterId);
+        Cluster cluster = getClusterDao().get(clusterId);
         List<GlusterVolumeSnapshotEntity> existingSnapshots =
                 getGlusterVolumeSnapshotDao().getAllByClusterId(clusterId);
         Map<Guid, GlusterVolumeSnapshotEntity> existingSnapshotsMap = new HashMap<>();
@@ -200,7 +200,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
     }
 
     private void addOrUpdateSnapshotsConfig(Guid clusterId, GlusterSnapshotConfigInfo configInfo) {
-        VDSGroup cluster = getClusterDao().get(clusterId);
+        Cluster cluster = getClusterDao().get(clusterId);
         try (EngineLock lock = acquireVolumeSnapshotLock(clusterId)) {
             for (Map.Entry<String, String> entry : configInfo.getClusterConfigOptions().entrySet()) {
                 if (entry.getValue() != null) {
@@ -242,7 +242,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
     }
 
-    private void addOrUpdateClusterConfig(VDSGroup cluster, final String paramName, final String paramValue) {
+    private void addOrUpdateClusterConfig(Cluster cluster, final String paramName, final String paramValue) {
         GlusterVolumeSnapshotConfig param = new GlusterVolumeSnapshotConfig();
         param.setClusterId(cluster.getId());
         param.setVolumeId(null);
@@ -274,7 +274,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
     }
 
-    private void addOrUpdateVolumeConfig(VDSGroup cluster,
+    private void addOrUpdateVolumeConfig(Cluster cluster,
             final GlusterVolumeEntity volume,
             final String paramName,
             final String paramValue) {
@@ -329,7 +329,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         getGlusterVolumeSnapshotDao().removeAll(deletedIds);
     }
 
-    private boolean supportsGlusterSnapshotFeature(VDSGroup cluster) {
+    private boolean supportsGlusterSnapshotFeature(Cluster cluster) {
         return cluster.supportsGlusterService()
                 && getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), cluster.getId());
     }

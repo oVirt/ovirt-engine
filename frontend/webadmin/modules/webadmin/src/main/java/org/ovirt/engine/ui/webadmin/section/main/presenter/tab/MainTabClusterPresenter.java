@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<VDSGroup, ClusterListModel<Void>, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
+public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<Cluster, ClusterListModel<Void>, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class ClusterSelectionChange {
 
-        List<VDSGroup> selectedItems;
+        List<Cluster> selectedItems;
 
     }
 
@@ -39,18 +39,18 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
     public interface ProxyDef extends TabContentProxyPlace<MainTabClusterPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VDSGroup> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Cluster> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
+            MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider) {
         return new ModelBoundTabData(constants.clusterMainTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public MainTabClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

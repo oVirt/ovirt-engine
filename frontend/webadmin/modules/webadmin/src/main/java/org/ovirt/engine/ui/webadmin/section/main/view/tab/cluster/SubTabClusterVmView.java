@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, ClusterListModel<Void>, ClusterVmListModel>
+public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, ClusterListModel<Void>, ClusterVmListModel>
         implements SubTabClusterVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterVmView> {

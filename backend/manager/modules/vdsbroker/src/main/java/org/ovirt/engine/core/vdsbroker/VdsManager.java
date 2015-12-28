@@ -188,7 +188,7 @@ public class VdsManager {
         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
         vdsProxy = TransportFactory.createVdsServer(
                 cachedVds.getProtocol(),
-                cachedVds.getVdsGroupCompatibilityVersion(),
+                cachedVds.getClusterCompatibilityVersion(),
                 cachedVds.getHostName(),
                 cachedVds.getPort(),
                 clientTimeOut,
@@ -320,12 +320,12 @@ public class VdsManager {
         return cachedVds.getName();
     }
 
-    public Guid getVdsGroupId() {
-        return cachedVds.getVdsGroupId();
+    public Guid getClusterId() {
+        return cachedVds.getClusterId();
     }
 
     public Version getGroupCompatibilityVersion() {
-        return cachedVds.getVdsGroupCompatibilityVersion();
+        return cachedVds.getClusterCompatibilityVersion();
     }
 
     private void logFailureMessage(RuntimeException ex) {
@@ -646,7 +646,7 @@ public class VdsManager {
         if (caps.getSucceeded()) {
             // Verify version capabilities
             HashSet<Version> hostVersions = null;
-            Version clusterCompatibility = vds.getVdsGroupCompatibilityVersion();
+            Version clusterCompatibility = vds.getClusterCompatibilityVersion();
             if (FeatureSupported.hardwareInfo(clusterCompatibility) &&
                 // If the feature is enabled in cluster level, we continue by verifying that this VDS also
                 // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the
@@ -664,7 +664,7 @@ public class VdsManager {
             // For gluster nodes, SELinux needs to be in enforcing mode,
             // hence warning in case of permissive as well.
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
-                    || (vds.getVdsGroupSupportsGlusterService()
+                    || (vds.getClusterSupportsGlusterService()
                             && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
                 auditLogDirector.log(new AuditLogableBase(vds.getId()).addCustomValue("Mode",
                         vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name()),
@@ -1008,7 +1008,7 @@ public class VdsManager {
     }
 
     public Version getCompatibilityVersion() {
-        return cachedVds.getVdsGroupCompatibilityVersion();
+        return cachedVds.getClusterCompatibilityVersion();
     }
 
     public String getVdsHostname() {

@@ -18,13 +18,13 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -35,7 +35,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     private GlusterGeoRepDao geoRepDao;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private GlusterVolumeDao volumeDao;
@@ -52,9 +52,9 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(Guid.class), anyString());
         doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
-        doReturn(vdsGroupDao).when(getQuery()).getVdsGroupDao();
-        baseTest.setupMock(geoRepUtil, geoRepDao, vdsGroupDao);
-        doReturn(getClustersByServiceAndCompatibilityVersion()).when(vdsGroupDao).getClustersByServiceAndCompatibilityVersion(true, false, baseTest.getCLUSTER_COMPATIBILITY_VERSION().getValue());
+        doReturn(clusterDao).when(getQuery()).getClusterDao();
+        baseTest.setupMock(geoRepUtil, geoRepDao, clusterDao);
+        doReturn(getClustersByServiceAndCompatibilityVersion()).when(clusterDao).getClustersByServiceAndCompatibilityVersion(true, false, baseTest.getCLUSTER_COMPATIBILITY_VERSION().getValue());
         doReturn(getVolumesByClusterId()).when(volumeDao).getByClusterId(baseTest.getSLAVE_CLUSTER_ID());
         doReturn(baseTest.getMasterVolume()).when(volumeDao).getById(baseTest.getMASTER_VOLUME_ID());
     }
@@ -70,13 +70,13 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
         return volumeInCluster;
     }
 
-    private List<VDSGroup> getClustersByServiceAndCompatibilityVersion() {
-        List<VDSGroup> possiblyEligibleClusters = new ArrayList<>();
+    private List<Cluster> getClustersByServiceAndCompatibilityVersion() {
+        List<Cluster> possiblyEligibleClusters = new ArrayList<>();
 
-        VDSGroup possiblyEligibleVDSGroup = new VDSGroup();
-        possiblyEligibleVDSGroup.setId(baseTest.getSLAVE_CLUSTER_ID());
+        Cluster possiblyEligibleCluster = new Cluster();
+        possiblyEligibleCluster.setId(baseTest.getSLAVE_CLUSTER_ID());
 
-        possiblyEligibleClusters.add(possiblyEligibleVDSGroup);
+        possiblyEligibleClusters.add(possiblyEligibleCluster);
         return possiblyEligibleClusters;
     }
 

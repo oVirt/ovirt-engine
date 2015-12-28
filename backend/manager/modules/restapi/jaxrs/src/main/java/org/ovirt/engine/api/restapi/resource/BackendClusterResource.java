@@ -6,7 +6,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
@@ -17,11 +16,11 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -29,28 +28,28 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterResource<P extends BackendClustersResource>
-        extends AbstractBackendActionableResource<Cluster, VDSGroup> implements ClusterResource {
+        extends AbstractBackendActionableResource<org.ovirt.engine.api.model.Cluster, Cluster> implements ClusterResource {
 
     protected final P parent;
     private final ManagementNetworkFinder managementNetworkFinder;
 
     public BackendClusterResource(String id, P parent) {
-        super(id, Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
+        super(id, org.ovirt.engine.api.model.Cluster.class, Cluster.class, SUB_COLLECTIONS);
         this.parent = parent;
         managementNetworkFinder = new ManagementNetworkFinder(this);
     }
 
     @Override
-    public Cluster get() {
-        return performGet(VdcQueryType.GetVdsGroupById, new IdQueryParameters(guid));
+    public org.ovirt.engine.api.model.Cluster get() {
+        return performGet(VdcQueryType.GetClusterById, new IdQueryParameters(guid));
     }
 
     @Override
-    public Cluster update(Cluster incoming) {
-        validateEnums(Cluster.class, incoming);
+    public org.ovirt.engine.api.model.Cluster update(org.ovirt.engine.api.model.Cluster incoming) {
+        validateEnums(org.ovirt.engine.api.model.Cluster.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver<>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class),
-                             VdcActionType.UpdateVdsGroup,
+                             new QueryIdResolver<>(VdcQueryType.GetClusterById, IdQueryParameters.class),
+                             VdcActionType.UpdateCluster,
                              new UpdateParametersProvider());
     }
 
@@ -64,14 +63,14 @@ public class BackendClusterResource<P extends BackendClustersResource>
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              VdcQueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
-                                                             Cluster.class,
-                                                             VdcObjectType.VdsGroups));
+                                                             org.ovirt.engine.api.model.Cluster.class,
+                                                             VdcObjectType.Cluster));
     }
 
-    private class UpdateParametersProvider implements ParametersProvider<Cluster, VDSGroup> {
+    private class UpdateParametersProvider implements ParametersProvider<org.ovirt.engine.api.model.Cluster, Cluster> {
         @Override
-        public VdcActionParametersBase getParameters(Cluster incoming, VDSGroup entity) {
-            final VDSGroup cluster = map(incoming, entity);
+        public VdcActionParametersBase getParameters(org.ovirt.engine.api.model.Cluster incoming, Cluster entity) {
+            final Cluster cluster = map(incoming, entity);
             final ManagementNetworkOnClusterOperationParameters managementNetworkOnClusterOperationParameters;
             final Guid dcId = getDataCenterId(cluster);
             if (dcId == null) {
@@ -93,7 +92,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     }
 
     @Override
-    protected Cluster doPopulate(Cluster cluster, VDSGroup entity) {
+    protected org.ovirt.engine.api.model.Cluster doPopulate(org.ovirt.engine.api.model.Cluster cluster, Cluster entity) {
         return parent.doPopulate(cluster, entity);
     }
 
@@ -112,17 +111,17 @@ public class BackendClusterResource<P extends BackendClustersResource>
         return inject(new BackendAssignedCpuProfilesResource(id));
     }
 
-    protected Guid getDataCenterId(VDSGroup cluster) {
+    protected Guid getDataCenterId(Cluster cluster) {
         return cluster.getStoragePoolId();
     }
 
     @Override
     public Response resetEmulatedMachine(Action action) {
-        VdcQueryReturnValue result = runQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(guid));
+        VdcQueryReturnValue result = runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(guid));
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters((VDSGroup)result.getReturnValue());
+            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters((Cluster)result.getReturnValue());
             param.setForceResetEmulatedMachine(true);
-            return doAction(VdcActionType.UpdateVdsGroup, param, action);
+            return doAction(VdcActionType.UpdateCluster, param, action);
 
         } else {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
@@ -132,6 +131,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(asGuid(id)));
+        return performAction(VdcActionType.RemoveCluster, new ClusterParametersBase(asGuid(id)));
     }
 }

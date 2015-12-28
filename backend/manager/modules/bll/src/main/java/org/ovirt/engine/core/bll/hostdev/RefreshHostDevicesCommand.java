@@ -62,7 +62,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     @Override
     protected void executeCommand() {
-        if (!FeatureSupported.hostDevicePassthrough(getVds().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.hostDevicePassthrough(getVds().getClusterCompatibilityVersion())) {
             // Do nothing if the host doesn't support the HostDevListByCaps verb
             setSucceeded(true);
             return;

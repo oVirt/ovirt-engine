@@ -33,9 +33,9 @@ public class VmPoolMapper {
         }
         if (model.isSetCluster()) {
             if (model.getCluster().isSetId()) {
-                entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
+                entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
             } else if (model.getCluster().isSetName()) {
-                entity.setVdsGroupName(model.getCluster().getName());
+                entity.setClusterName(model.getCluster().getName());
             }
         }
         if (model.isSetPrestartedVms()) {
@@ -76,7 +76,7 @@ public class VmPoolMapper {
         }
         if (model.isSetCluster() &&
                 model.getCluster().isSetId()) {
-            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
+            entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetUseLatestTemplateVersion()) {
             entity.setUseLatestVersion(model.isUseLatestTemplateVersion());
@@ -93,10 +93,10 @@ public class VmPoolMapper {
         model.setComment(entity.getComment());
         model.setSize(entity.getAssignedVmsCount());
         model.setPrestartedVms(entity.getPrestartedVms());
-        if (entity.getVdsGroupId() != null ||
-            entity.getVdsGroupName() != null) {
+        if (entity.getClusterId() != null ||
+            entity.getClusterName() != null) {
             model.setCluster(new Cluster());
-            model.getCluster().setId(entity.getVdsGroupId().toString());
+            model.getCluster().setId(entity.getClusterId().toString());
         }
         model.setMaxUserVms(entity.getMaxAssignedVmsPerUser());
         if (StringUtils.isNotBlank(entity.getSpiceProxy())) {

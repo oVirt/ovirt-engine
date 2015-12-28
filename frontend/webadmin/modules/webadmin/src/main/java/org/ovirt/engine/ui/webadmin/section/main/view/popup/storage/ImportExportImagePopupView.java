@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -64,7 +64,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId
-    public ListModelListBoxEditor<VDSGroup> clusterEditor;
+    public ListModelListBoxEditor<Cluster> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "storageDomain.selectedItem")
@@ -100,7 +100,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         dataCenterEditor.setLabel(constants.dataCenter());
 
-        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
 
         storageDomainEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageDomain>());

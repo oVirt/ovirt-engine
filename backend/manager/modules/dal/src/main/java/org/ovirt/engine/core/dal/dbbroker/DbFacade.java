@@ -72,6 +72,7 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.BookmarkDao;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.Dao;
@@ -120,7 +121,6 @@ import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.dao.VdsCpuStatisticsDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
@@ -501,12 +501,12 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link VdsGroupDao}.
+     * Returns the singleton instance of {@link org.ovirt.engine.core.dao.ClusterDao}.
      *
      * @return the dao
      */
-    public VdsGroupDao getVdsGroupDao() {
-        return getDao(VdsGroupDao.class);
+    public ClusterDao getClusterDao() {
+        return getDao(ClusterDao.class);
     }
 
     /**

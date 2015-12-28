@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -27,7 +27,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
         DataCenterWithCluster selectedDCWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         Guid clusterId =
                 selectedDCWithCluster != null ? selectedDCWithCluster.getCluster().getId()
-                        : selectedTemplate.getVdsGroupId();
+                        : selectedTemplate.getClusterId();
 
         VmTemplate baseTemplate = null;
         if (selectedTemplate.isBaseTemplate()) {
@@ -38,7 +38,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
         List<VmTemplate> relatedTemplates = new ArrayList<>();
         for (VmTemplate template : templates) {
             if (template.getBaseTemplateId().equals(baseTemplateId)) {
-                if (template.getVdsGroupId() == null || template.getVdsGroupId().equals(clusterId)) {
+                if (template.getClusterId() == null || template.getClusterId().equals(clusterId)) {
                     relatedTemplates.add(template);
                 }
 
@@ -56,7 +56,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
         initTemplateWithVersion(relatedTemplates, null, false);
 
         if (selectedDCWithCluster != null && selectedDCWithCluster.getCluster() != null) {
-            if (selectedTemplate.getVdsGroupId() == null || selectedTemplate.getVdsGroupId().equals(selectedDCWithCluster.getCluster().getId())) {
+            if (selectedTemplate.getClusterId() == null || selectedTemplate.getClusterId().equals(selectedDCWithCluster.getCluster().getId())) {
                 TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, selectedTemplate);
                 getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
             }
@@ -99,15 +99,15 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
 
-                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                        List<Cluster> clusters = (List<Cluster>) returnValue;
 
-                        List<VDSGroup> filteredClusters =
+                        List<Cluster> filteredClusters =
                                 AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                         selectedTemplate.getClusterArch());
 
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
-                                filteredClusters, selectedTemplate.getVdsGroupId());
+                                filteredClusters, selectedTemplate.getClusterId());
                         initCdImage();
                     }
                 }),

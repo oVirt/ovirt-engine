@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -65,7 +65,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
+public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Cluster> implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 
@@ -135,8 +135,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
         else {
             ArrayList<Object> items = new ArrayList<>();
-            for (VDSGroup vdsGroup : getSelectedItems()) {
-                items.add(vdsGroup.getId());
+            for (Cluster cluster : getSelectedItems()) {
+                items.add(cluster.getId());
             }
             return items.toArray(new Object[] {});
         }
@@ -188,7 +188,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
             final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<VDSGroup> permissionListModel) {
+            final PermissionListModel<Cluster> permissionListModel) {
         this.clusterVmListModel = clusterVmListModel;
         this.clusterServiceModel = clusterServiceModel;
         this.clusterGlusterHookListModel = clusterGlusterHookListModel;
@@ -226,7 +226,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.setHashName("new_cluster_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
-            VDSGroup cluster = getSelectedItem();
+            Cluster cluster = getSelectedItem();
             setGuideContext(cluster.getId());
         }
 
@@ -236,7 +236,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterListModel<Void> clusterListModel = (ClusterListModel<Void>) target;
                         ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
-                        model.setEntity((VDSGroup) returnValue);
+                        model.setEntity((Cluster) returnValue);
 
                         UICommand tempVar = new UICommand("Cancel", clusterListModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
@@ -249,8 +249,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
     private void setDetailList(final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<VDSGroup> permissionListModel) {
-        List<HasEntity<VDSGroup>> list = new ArrayList<>();
+            final PermissionListModel<Cluster> permissionListModel) {
+        List<HasEntity<Cluster>> list = new ArrayList<>();
         list.add(clusterGeneralModel);
         list.add(clusterNetworkListModel);
         list.add(clusterHostListModel);
@@ -266,16 +266,16 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        VDSGroup vdsGroup = getSelectedItem();
-        getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
-        getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getCompatibilityVersion()));
-        getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getCompatibilityVersion()));
-        getAffinityGroupListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
-        getCpuProfileListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService()
+        Cluster cluster = getSelectedItem();
+        getClusterVmListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
+        getClusterServiceModel().setIsAvailable(cluster != null && cluster.supportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(cluster.getCompatibilityVersion()));
+        getClusterGlusterHookListModel().setIsAvailable(cluster != null && cluster.supportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterHookSupported(cluster.getCompatibilityVersion()));
+        getAffinityGroupListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
+        getCpuProfileListModel().setIsAvailable(cluster != null && cluster.supportsVirtService()
                 && Boolean.TRUE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                vdsGroup.getCompatibilityVersion().getValue())));
+                cluster.getCompatibilityVersion().getValue())));
     }
 
     @Override
@@ -345,7 +345,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     }
 
     public void edit() {
-        final VDSGroup cluster = getSelectedItem();
+        final Cluster cluster = getSelectedItem();
 
         if (getWindow() != null) {
             return;
@@ -454,7 +454,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.setHashName("remove_cluster"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems())) {
+        for (Cluster a : Linq.<Cluster> cast(getSelectedItems())) {
             list.add(a.getName());
         }
         model.setItems(list);
@@ -478,8 +478,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.setHashName("reset_cluster_emulated_machine"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (VDSGroup vdsGroup : Linq.<VDSGroup> cast(getSelectedItems())) {
-            list.add(vdsGroup.getName());
+        for (Cluster cluster : Linq.<Cluster> cast(getSelectedItems())) {
+            list.add(cluster.getName());
         }
         model.setItems(list);
 
@@ -495,15 +495,15 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
-        for (VDSGroup vdsGroup : getSelectedItems()) {
-            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters((vdsGroup));
+        for (Cluster cluster : getSelectedItems()) {
+            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters((cluster));
             currentParam.setForceResetEmulatedMachine(true);
             prms.add(currentParam);
         }
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVdsGroup, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateCluster, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -524,12 +524,12 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (Object a : getSelectedItems()) {
-            prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
+            prms.add(new ClusterParametersBase(((Cluster) a).getId()));
         }
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVdsGroup, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveCluster, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -608,10 +608,10 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         }
     }
 
-    private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
+    private ServerCpu getClusterServerCpu(ClusterModel model, Cluster cluster) {
         ServerCpu retVal = null;
         for (ServerCpu cpu : model.getCPU().getItems()) {
-            if (Objects.equals(cpu.getCpuName(), vdsGroup.getCpuName())) {
+            if (Objects.equals(cpu.getCpuName(), cluster.getCpuName())) {
                 retVal = cpu;
                 break;
             }
@@ -624,7 +624,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         ClusterModel model = (ClusterModel) getWindow();
         cancelConfirmation();
 
-        VDSGroup cluster = buildCluster(model);
+        Cluster cluster = buildCluster(model);
         AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -682,8 +682,8 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         onSaveInternalWithModel(model);
     }
 
-    private VDSGroup buildCluster(ClusterModel model) {
-        VDSGroup cluster = model.getIsNew() ? new VDSGroup() : (VDSGroup) Cloner.clone(getSelectedItem());
+    private Cluster buildCluster(ClusterModel model) {
+        Cluster cluster = model.getIsNew() ? new Cluster() : (Cluster) Cloner.clone(getSelectedItem());
 
         Version version = model.getVersion().getSelectedItem();
 
@@ -759,14 +759,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
     }
 
     private void onSaveInternalWithModel(final ClusterModel model) {
-        VDSGroup cluster = buildCluster(model);
+        Cluster cluster = buildCluster(model);
 
         model.startProgress();
 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
         final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
                 new ManagementNetworkOnClusterOperationParameters(cluster, managementNetwork.getId());
-        final VdcActionType actionType = model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup;
+        final VdcActionType actionType = model.getIsNew() ? VdcActionType.AddCluster : VdcActionType.UpdateCluster;
         Frontend.getInstance().runAction(
                 actionType,
                 clusterOperationParameters,
@@ -919,7 +919,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
             host.setSshPort(22); // TODO: get from UI, till then using defaults.
             host.setSshUsername("root"); //$NON-NLS-1$
 
-            host.setVdsGroupId(hostsModel.getClusterModel().getClusterId());
+            host.setClusterId(hostsModel.getClusterModel().getClusterId());
             host.setPmEnabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();
@@ -985,9 +985,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         // Try to select an item corresponding to the system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
-            VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
+            Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.firstOrNull(Linq.<VDSGroup> cast(getItems()),
+            setSelectedItem(Linq.firstOrNull(Linq.<Cluster> cast(getItems()),
                     new Linq.IdPredicate<>(cluster.getId())));
         }
     }

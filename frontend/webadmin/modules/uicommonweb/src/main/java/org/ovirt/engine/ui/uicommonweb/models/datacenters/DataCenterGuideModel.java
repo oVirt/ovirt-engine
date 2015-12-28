@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -133,7 +133,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     private Guid hostId = Guid.Empty;
     private String path;
     private boolean removeConnection;
-    private ArrayList<VDSGroup> clusters;
+    private ArrayList<Cluster> clusters;
     private ArrayList<StorageDomain> allStorageDomains;
     private ArrayList<StorageDomain> attachedStorageDomains;
     private ArrayList<StorageDomain> isoStorageDomains;
@@ -165,7 +165,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
                         dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
@@ -225,7 +225,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
                         dataCenterGuideModel.updateOptionsLocalFS();
                     }
@@ -273,7 +273,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         ArrayList<VDS> availableHosts = new ArrayList<>();
         ArrayList<VDS> upHosts = new ArrayList<>();
         for (VDS vds : allHosts) {
-            if (Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId())) {
+            if (Linq.isClusterItemExistInList(clusters, vds.getClusterId())) {
                 hosts.add(vds);
             }
 
@@ -282,7 +282,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 availableHosts.add(vds);
             }
 
-            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId())) {
+            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getClusterId())) {
                 upHosts.add(vds);
             }
         }
@@ -435,8 +435,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         }
     }
 
-    private boolean doesHostSupportAnyCluster(List<VDSGroup> clusterList, VDS host){
-        for (VDSGroup cluster : clusterList){
+    private boolean doesHostSupportAnyCluster(List<Cluster> clusterList, VDS host){
+        for (Cluster cluster : clusterList){
             if (host.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion())){
                 return true;
             }
@@ -1273,7 +1273,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
     public void onAddCluster() {
         ClusterModel model = (ClusterModel) getWindow();
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
 
         if (model.getProgress() != null) {
             return;
@@ -1311,7 +1311,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new ManagementNetworkOnClusterOperationParameters(cluster),
+        Frontend.getInstance().runAction(VdcActionType.AddCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1357,7 +1357,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         Object[] array = (Object[]) target;
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
                         MoveHost moveHostModel = (MoveHost) array[1];
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
 
                         moveHostModel.getCluster().setItems(clusters);
                         moveHostModel.getCluster().setSelectedItem(Linq.firstOrNull(clusters));
@@ -1388,12 +1388,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             }
         }
 
-        VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
+        Cluster cluster = (Cluster) model.getCluster().getSelectedItem();
         final List<VdcActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
-            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId())) {
+            if (host.getClusterId() != null && !host.getClusterId().equals(cluster.getId())) {
                 parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
             }
@@ -1464,9 +1464,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ListModel<VDSGroup> clusterModel = model.getCluster();
+                ListModel<Cluster> clusterModel = model.getCluster();
                 if (clusterModel.getSelectedItem() != null) {
-                    VDSGroup cluster = clusterModel.getSelectedItem();
+                    Cluster cluster = clusterModel.getSelectedItem();
                     if (clusterModel.getSelectedItem() != null) {
                         if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
                             model.getProtocol().setIsAvailable(false);
@@ -1538,7 +1538,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
-        host.setVdsGroupId(model.getCluster().getSelectedItem().getId());
+        host.setClusterId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save other PM parameters.

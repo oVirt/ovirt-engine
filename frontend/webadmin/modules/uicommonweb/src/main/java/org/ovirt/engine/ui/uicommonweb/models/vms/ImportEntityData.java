@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public abstract class ImportEntityData<E> extends EntityModel<E> {
     boolean isExistsInSystem;
     private EntityModel<Boolean> clone;
-    private ListModel<VDSGroup> cluster;
+    private ListModel<Cluster> cluster;
     private ListModel<Quota> clusterQuota;
 
     public ImportEntityData() {
         setClone(new EntityModel<>(false));
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
         setClusterQuota(new ListModel<Quota>());
     }
 
@@ -37,11 +37,11 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
         this.clone = clone;
     }
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return cluster;
     }
 
-    public void setCluster(ListModel<VDSGroup> cluster) {
+    public void setCluster(ListModel<Cluster> cluster) {
         this.cluster = cluster;
     }
 
@@ -54,9 +54,9 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
     }
 
     public void selectClusterByName(String name) {
-        for (VDSGroup vdsGroup : getCluster().getItems()) {
-            if (vdsGroup.getName().equals(name)) {
-                getCluster().setSelectedItem(vdsGroup);
+        for (Cluster cluster : getCluster().getItems()) {
+            if (cluster.getName().equals(name)) {
+                getCluster().setSelectedItem(cluster);
                 break;
             }
         }
@@ -65,8 +65,8 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
     public List<String> getClusterNames() {
         List<String> names = new ArrayList<>();
         if (getCluster().getItems() != null) {
-            for (VDSGroup vdsGroup : getCluster().getItems()) {
-                names.add(vdsGroup.getName());
+            for (Cluster cluster : getCluster().getItems()) {
+                names.add(cluster.getName());
             }
         }
         return names;

@@ -444,17 +444,17 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
--- [numa_node_with_vds_group_view] View
+-- [numa_node_with_cluster_view] View
 --
-CREATE OR REPLACE FUNCTION GetVmNumaNodeByVdsGroup (v_vds_group_id UUID)
-RETURNS SETOF numa_node_with_vds_group_view STABLE AS $PROCEDURE$
+CREATE OR REPLACE FUNCTION GetVmNumaNodeByCluster (v_cluster_id UUID)
+RETURNS SETOF numa_node_with_cluster_view STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
         RETURN QUERY
 
-        SELECT numa_node_with_vds_group_view.*
-        FROM numa_node_with_vds_group_view
-        WHERE vds_group_id = v_vds_group_id;
+        SELECT numa_node_with_cluster_view.*
+        FROM numa_node_with_cluster_view
+        WHERE cluster_id = v_cluster_id;
     END;
 
     RETURN;

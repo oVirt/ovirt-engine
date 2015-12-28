@@ -573,7 +573,7 @@ public class IrsProxyData {
         setmIrsPort(vds.getPort());
         privatemCurrentIrsHost = vds.getHostName();
         setProtocol(vds.getProtocol());
-        setVersion(vds.getVdsGroupCompatibilityVersion());
+        setVersion(vds.getClusterCompatibilityVersion());
     }
 
     public boolean failover() {
@@ -1199,7 +1199,7 @@ public class IrsProxyData {
         // NOTE - if this condition is ever updated, every place that acts upon the reporting
         // should be updated as well, only hosts the we collect the report from should be affected
         // from it.
-        return vds.getVdsGroupSupportsVirtService() &&
+        return vds.getClusterSupportsVirtService() &&
                 (StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus.contains(vds.getStatus()) ||
                 StoragePoolDomainHelper.vdsDomainsMaintenanceMonitoringStatus.contains(vds.getStatus()));
     }

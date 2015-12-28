@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -51,17 +51,17 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         quota = new Quota();
         quota.setId(Guid.newGuid());
 
-        int numQutoaVdsGroups = RandomUtils.instance().nextInt(10);
-        List<QuotaVdsGroup> quotaVdsGroups = new ArrayList<>(numQutoaVdsGroups);
-        for (int i = 0; i < numQutoaVdsGroups; ++i) {
-            quotaVdsGroups.add(new QuotaVdsGroup());
+        int numQutoaClusters = RandomUtils.instance().nextInt(10);
+        List<QuotaCluster> quotaClusters = new ArrayList<>(numQutoaClusters);
+        for (int i = 0; i < numQutoaClusters; ++i) {
+            quotaClusters.add(new QuotaCluster());
         }
 
-        quota.setQuotaVdsGroups(quotaVdsGroups);
+        quota.setQuotaClusters(quotaClusters);
 
         int numQutoaStorages = RandomUtils.instance().nextInt(10);
         List<QuotaStorage> quotaStorages = new ArrayList<>(numQutoaStorages);
-        for (int i = 0; i < numQutoaVdsGroups; ++i) {
+        for (int i = 0; i < numQutoaClusters; ++i) {
             quotaStorages.add(new QuotaStorage());
         }
 
@@ -79,9 +79,9 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
             assertEquals("Wrong Qutoa ID on Quota Storage", quotaId, quotaStorage.getQuotaId());
         }
 
-        for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
-            assertNotNull("Quota VdsGroup should have been assigned an ID", quotaVdsGroup.getQuotaVdsGroupId());
-            assertEquals("Wrong Qutoa ID on Quota VdsGroup", quotaId, quotaVdsGroup.getQuotaId());
+        for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
+            assertNotNull("Quota Cluster should have been assigned an ID", quotaCluster.getQuotaClusterId());
+            assertEquals("Wrong Qutoa ID on Quota Cluster", quotaId, quotaCluster.getQuotaId());
         }
 
         // Verify the quota was updated in the database

@@ -18,9 +18,9 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -40,7 +40,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     private GlusterUtil glusterUtil;
 
     @Mock
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
 
     /**
      * The command under test.
@@ -133,7 +133,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     }
 
     protected <T extends CreateBrickCommand> void prepareMocks(T command, VDSStatus status) {
-        when(command.getVdsGroup()).thenReturn(vdsGroup);
+        when(command.getCluster()).thenReturn(cluster);
         doReturn(vds).when(command).getVds();
         doReturn(status).when(vds).getStatus();
         mockIsGlusterEnabled(true);
@@ -144,11 +144,11 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     }
 
     private void mockIsGlusterEnabled(boolean glusterService) {
-        when(vdsGroup.supportsGlusterService()).thenReturn(glusterService);
+        when(cluster.supportsGlusterService()).thenReturn(glusterService);
     }
 
     private void mockCompatibilityVersion(Version version) {
-        when(vdsGroup.getCompatibilityVersion()).thenReturn(version);
+        when(cluster.getCompatibilityVersion()).thenReturn(version);
     }
 
     private StorageDevice getStorageDevice(String name, Guid id) {

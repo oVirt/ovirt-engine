@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -41,7 +41,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         // If specific Quota for cluster is specific
         if (!checkQuotaNameExisting(quota, messages) ||
                 !validateQuotaStorageLimitation(quota, messages) ||
-                !validateQuotaVdsGroupLimitation(quota, messages)) {
+                !validateQuotaClusterLimitation(quota, messages)) {
             return false;
         }
 
@@ -85,20 +85,20 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
      *            - Messages of can do action.
      * @return Boolean value if the quota is valid or not.
      */
-    private static boolean validateQuotaVdsGroupLimitation(Quota quota, List<String> messages) {
+    private static boolean validateQuotaClusterLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;
-        List<QuotaVdsGroup> quotaVdsGroupList = quota.getQuotaVdsGroups();
-        if (quotaVdsGroupList != null && !quotaVdsGroupList.isEmpty()) {
+        List<QuotaCluster> quotaClusterList = quota.getQuotaClusters();
+        if (quotaClusterList != null && !quotaClusterList.isEmpty()) {
             boolean isSpecificVirtualCpu = false;
             boolean isSpecificVirtualRam = false;
 
-            for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
-                isSpecificVirtualCpu = quotaVdsGroup.getVirtualCpu() != null;
-                isSpecificVirtualRam = quotaVdsGroup.getMemSizeMB() != null;
+            for (QuotaCluster quotaCluster : quotaClusterList) {
+                isSpecificVirtualCpu = quotaCluster.getVirtualCpu() != null;
+                isSpecificVirtualRam = quotaCluster.getMemSizeMB() != null;
             }
 
             // if the global vds group limit was not specified, then specific limitation must be specified.
-            if (quota.isGlobalVdsGroupQuota() && (isSpecificVirtualRam || isSpecificVirtualCpu)) {
+            if (quota.isGlobalClusterQuota() && (isSpecificVirtualRam || isSpecificVirtualCpu)) {
                 messages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
                 isValid = false;
             }

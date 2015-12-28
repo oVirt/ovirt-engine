@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -75,10 +75,10 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     @OnTimerMethodAnnotation("gluster_async_task_poll_event")
     public void updateGlusterAsyncTasks() {
         log.debug("Refreshing gluster tasks list");
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
         Map<Guid, Set<Guid>> tasksFromClustersMap = new HashMap<>();
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster)) {
                 continue;
             }
@@ -96,7 +96,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         cleanUpOrphanTasks(tasksFromClustersMap);
     }
 
-    private void updateTasksInCluster(final VDSGroup cluster, final Map<Guid, GlusterAsyncTask> runningTasks) {
+    private void updateTasksInCluster(final Cluster cluster, final Map<Guid, GlusterAsyncTask> runningTasks) {
 
         for  (Entry<Guid, GlusterAsyncTask> entry :  runningTasks.entrySet()) {
             Guid taskId = entry.getKey();
@@ -111,7 +111,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
     }
 
-    private void createJobForTaskFromCLI(final VDSGroup cluster, final GlusterAsyncTask task) {
+    private void createJobForTaskFromCLI(final Cluster cluster, final GlusterAsyncTask task) {
         ThreadPoolUtil.execute(() -> TransactionSupport.executeInNewTransaction(() -> {
             try {
                 createJobToMonitor(cluster, task);
@@ -122,7 +122,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }));
     }
 
-    private void createJobToMonitor(VDSGroup cluster, GlusterAsyncTask task) {
+    private void createJobToMonitor(Cluster cluster, GlusterAsyncTask task) {
         if (!isTaskToBeMonitored(task)) {
             return; //there's no need to monitor jobs that are failed or completed
         }
@@ -164,7 +164,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return task.getStatus() == JobExecutionStatus.STARTED || task.getType() == GlusterTaskType.REMOVE_BRICK;
     }
 
-    private Guid addAsyncTaskStep(VDSGroup cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
+    private Guid addAsyncTaskStep(Cluster cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
         VdcReturnValueBase result;
         result = getBackend().runInternalAction(VdcActionType.AddInternalStep,
                 new AddStepParameters(execStepId, getGlusterTaskUtils().getTaskMessage(cluster, step, task), step));
@@ -191,7 +191,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return execStepId;
     }
 
-    private Guid addJob(VDSGroup cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
+    private Guid addJob(Cluster cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
 
         VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddInternalJob,
                 new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, getGlusterTaskUtils().getMessageMap(cluster, task)),
@@ -204,7 +204,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return jobId;
     }
 
-    private void updateVolumeBricksAndLock(VDSGroup cluster, GlusterAsyncTask task, final GlusterVolumeEntity vol) {
+    private void updateVolumeBricksAndLock(Cluster cluster, GlusterAsyncTask task, final GlusterVolumeEntity vol) {
 
         try {
             //acquire lock on volume
@@ -248,7 +248,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
     }
 
-    private void logTaskStartedFromCLI(VDSGroup cluster, GlusterAsyncTask task, GlusterVolumeEntity vol) {
+    private void logTaskStartedFromCLI(Cluster cluster, GlusterAsyncTask task, GlusterVolumeEntity vol) {
         Map<String, String> values = new HashMap<>();
 
         AuditLogType logType;
@@ -339,7 +339,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             //will mark job ended with status unknown.
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
             Map<String, String> values = new HashMap<>();
-            values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getVdsGroupName());
+            values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getClusterName());
             values.put(GlusterConstants.VOLUME, vol == null ? "" : vol.getName());
             values.put(GlusterConstants.JOB_STATUS, JobExecutionStatus.UNKNOWN.toString());
             values.put(GlusterConstants.JOB_INFO, " ");

@@ -81,7 +81,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = getVdsDao().get(params.getVdsId()).getVdsGroupId();
+                Guid groupId = getVdsDao().get(params.getVdsId()).getClusterId();
                 NetworkClusterHelper.setStatus(groupId, logicalNetwork);
                 setSucceeded(true);
             }
@@ -126,7 +126,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         Map<String, Network> networksByName =
-                Entities.entitiesByName(getNetworkDao().getAllForCluster(getVds().getVdsGroupId()));
+                Entities.entitiesByName(getNetworkDao().getAllForCluster(getVds().getClusterId()));
 
         // check that the network exists in current cluster
         if (!networksByName.containsKey(params.getNetwork().getName())) {
@@ -145,7 +145,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             return false;
         }
 
-        if (!managementNetworkUtil.isManagementNetwork(logicalNetwork.getName(), getVdsGroupId())
+        if (!managementNetworkUtil.isManagementNetwork(logicalNetwork.getName(), getClusterId())
                 && StringUtils.isNotEmpty(params.getGateway())) {
             addValidationMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
@@ -215,7 +215,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // Verify that only VM networks exists on the nic if the non-Vm network feature isn't supported by the cluster
-        if (!FeatureSupported.nonVmNetwork(getVds().getVdsGroupCompatibilityVersion()) && (!iface.isBridged())) {
+        if (!FeatureSupported.nonVmNetwork(getVds().getClusterCompatibilityVersion()) && (!iface.isBridged())) {
             return false;
         }
 

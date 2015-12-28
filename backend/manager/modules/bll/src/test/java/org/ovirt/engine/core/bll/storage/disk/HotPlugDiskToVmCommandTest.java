@@ -265,7 +265,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Up);
         vm.setVmOs(8);
         vm.setId(vmId);
-        vm.setVdsGroupCompatibilityVersion(Version.v3_1);
+        vm.setClusterCompatibilityVersion(Version.v3_1);
         vm.setRunOnVds(Guid.newGuid());
         doReturn(vmDao).when(command).getVmDao();
         mockVMDao(vm);
@@ -289,7 +289,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
      */
     protected void mockVds() {
         VDS vds = new VDS();
-        vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
+        vds.setClusterCompatibilityVersion(new Version("3.1"));
         doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
     }

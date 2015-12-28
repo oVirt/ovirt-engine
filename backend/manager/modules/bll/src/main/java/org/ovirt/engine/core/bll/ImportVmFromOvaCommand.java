@@ -34,7 +34,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
-        parameters.setVdsGroupId(getVdsGroupId());
+        parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         return parameters;
     }

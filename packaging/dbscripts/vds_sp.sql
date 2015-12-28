@@ -599,7 +599,7 @@ CREATE OR REPLACE FUNCTION InsertVdsStatic (
     v_vds_unique_id VARCHAR(128),
     v_port INT,
     v_protocol SMALLINT,
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_vds_name VARCHAR(255),
     v_server_SSL_enabled BOOLEAN,
     v_vds_type INT,
@@ -631,7 +631,7 @@ BEGIN
             vds_unique_id,
             port,
             protocol,
-            vds_group_id,
+            cluster_id,
             vds_name,
             server_SSL_enabled,
             vds_type,
@@ -654,7 +654,7 @@ BEGIN
             v_vds_unique_id,
             v_port,
             v_protocol,
-            v_vds_group_id,
+            v_cluster_id,
             v_vds_name,
             v_server_SSL_enabled,
             v_vds_type,
@@ -683,7 +683,7 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_vds_unique_id VARCHAR(128),
     v_port INT,
     v_protocol SMALLINT,
-    v_vds_group_id UUID,
+    v_cluster_id UUID,
     v_vds_id UUID,
     v_vds_name VARCHAR(255),
     v_server_SSL_enabled BOOLEAN,
@@ -712,7 +712,7 @@ BEGIN
             vds_unique_id = v_vds_unique_id,
             port = v_port,
             protocol = v_protocol,
-            vds_group_id = v_vds_group_id,
+            cluster_id = v_cluster_id,
             vds_name = v_vds_name,
             server_SSL_enabled = v_server_SSL_enabled,
             vds_type = v_vds_type,
@@ -844,7 +844,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsStaticByVdsGroupId (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION GetVdsStaticByClusterId (v_cluster_id UUID)
 RETURNS SETOF vds_static STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
@@ -852,7 +852,7 @@ BEGIN
 
         SELECT vds_static.*
         FROM vds_static vds_static
-        WHERE vds_group_id = v_vds_group_id;
+        WHERE cluster_id = v_cluster_id;
     END;
 
     RETURN;
@@ -870,15 +870,15 @@ BEGIN
 
         SELECT vds.*
         FROM vds vds,
-            vds_groups vdsgroup
+            cluster cluster
         WHERE (vds.status = 3)
             AND (vds.storage_pool_id = v_storage_pool_id)
             AND (
                 vds_spm_priority IS NULL
                 OR vds_spm_priority > - 1
                 )
-            AND vds.vds_group_id = vdsgroup.vds_group_id
-            AND vdsgroup.virt_service = true
+            AND vds.cluster_id = cluster.cluster_id
+            AND cluster.virt_service = true
         ORDER BY vds_spm_priority DESC, RANDOM();
     END;
 
@@ -948,7 +948,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsWithoutMigratingVmsByVdsGroupId (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION GetVdsWithoutMigratingVmsByClusterId (v_cluster_id UUID)
 RETURNS SETOF vds STABLE AS $PROCEDURE$
 BEGIN
     -- this sp returns all vds in given cluster that have no pending vms and no vms in migration states
@@ -957,7 +957,7 @@ BEGIN
 
         SELECT DISTINCT vds.*
         FROM vds
-        WHERE vds_group_id = v_vds_group_id
+        WHERE cluster_id = v_cluster_id
             AND pending_vcpus_count = 0
             AND vds.status = 3
             AND vds_id NOT IN (
@@ -1053,8 +1053,8 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVdsByVdsGroupId (
-    v_vds_group_id UUID,
+CREATE OR REPLACE FUNCTION GetVdsByClusterId (
+    v_cluster_id UUID,
     v_user_id UUID,
     v_is_filtered boolean
     )
@@ -1067,7 +1067,7 @@ BEGIN
 
         SELECT DISTINCT (rec).*
         FROM fn_db_mask_object('vds') AS q(rec vds)
-        WHERE (rec).vds_group_id = v_vds_group_id
+        WHERE (rec).cluster_id = v_cluster_id
             AND EXISTS (
                 SELECT 1
                 FROM user_vds_permissions_view
@@ -1079,7 +1079,7 @@ BEGIN
 
         SELECT DISTINCT vds.*
         FROM vds
-        WHERE vds_group_id = v_vds_group_id;
+        WHERE cluster_id = v_cluster_id;
         END IF;
 
     END;
@@ -1116,8 +1116,8 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Returns all VDS for a given cluster and having given status
-CREATE OR REPLACE FUNCTION getVdsForVdsGroupWithStatus (
-    v_vds_group_id UUID,
+CREATE OR REPLACE FUNCTION getVdsForClusterWithStatus (
+    v_cluster_id UUID,
     v_status INT
     )
 RETURNS SETOF vds STABLE AS $PROCEDURE$
@@ -1128,7 +1128,7 @@ BEGIN
         SELECT vds.*
         FROM vds
         WHERE (status = v_status)
-            AND (vds_group_id = v_vds_group_id)
+            AND (cluster_id = v_cluster_id)
         ORDER BY vds.vds_id ASC;
     END;
 
@@ -1147,14 +1147,14 @@ BEGIN
         RETURN QUERY
         SELECT vds.*
         FROM vds
-        INNER JOIN vds_groups vdsgroup
-            ON vds.vds_group_id = vdsgroup.vds_group_id
+        INNER JOIN cluster cluster
+            ON vds.cluster_id = cluster.cluster_id
         WHERE (v_statuses IS NULL
             OR vds.status IN (
                 SELECT *
                 FROM fnSplitterInteger(v_statuses)))
             AND (vds.storage_pool_id = v_storage_pool_id)
-            AND vdsgroup.virt_service = true;
+            AND cluster.virt_service = true;
     END;
     RETURN;
 END; $procedure$
@@ -1171,8 +1171,8 @@ BEGIN
 
         SELECT vds.*
         FROM vds
-        LEFT JOIN vds_groups vg
-            ON vds.vds_group_id = vg.vds_group_id
+        LEFT JOIN cluster vg
+            ON vds.cluster_id = vg.cluster_id
         LEFT JOIN storage_pool sp
             ON vds.storage_pool_id = sp.id
         WHERE (
@@ -1273,7 +1273,7 @@ BEGIN
             INNER JOIN network_cluster
                 ON network.id = network_cluster.network_id
             WHERE network_id = v_network_id
-                AND vds.vds_group_id = network_cluster.cluster_id
+                AND vds.cluster_id = network_cluster.cluster_id
                 AND vds_interface.vds_id = vds.vds_id
             );
 END;$PROCEDURE$
@@ -1287,7 +1287,7 @@ BEGIN
     SELECT vds.*
     FROM vds
     INNER JOIN network_cluster
-        ON vds.vds_group_id = network_cluster.cluster_id
+        ON vds.cluster_id = network_cluster.cluster_id
     WHERE network_cluster.network_id = v_network_id
         AND NOT EXISTS (
             SELECT 1
@@ -1297,7 +1297,7 @@ BEGIN
             INNER JOIN network_cluster
                 ON network.id = network_cluster.network_id
             WHERE network_cluster.network_id = v_network_id
-                AND vds.vds_group_id = network_cluster.cluster_id
+                AND vds.cluster_id = network_cluster.cluster_id
                 AND vds_interface.vds_id = vds.vds_id
             );
 END;$PROCEDURE$
@@ -1431,7 +1431,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getFirstUpRhelForVdsGroupId (v_vds_group_id UUID)
+CREATE OR REPLACE FUNCTION getFirstUpRhelForClusterId (v_cluster_id UUID)
 RETURNS SETOF vds STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
@@ -1446,7 +1446,7 @@ BEGIN
                 OR host_os LIKE 'RHEV Hypervisor%'
                 )
             AND status = 3
-            AND vds_group_id = v_vds_group_id LIMIT 1;
+            AND cluster_id = v_cluster_id LIMIT 1;
     END;
 
     RETURN;

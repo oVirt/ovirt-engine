@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateVersion;
@@ -19,7 +18,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -95,8 +94,8 @@ public class BackendTemplatesResourceTest
         assertNull(((Template)response.getEntity()).getCreationStatus());
     }
 
-    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
-        return new VDSGroup();
+    protected Cluster getClusterEntity() {
+        return new Cluster();
     }
 
     @Test
@@ -378,7 +377,7 @@ public class BackendTemplatesResourceTest
                 getEntity(0));
 
         Template model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
 
         Response response = collection.add(model);
@@ -392,11 +391,11 @@ public class BackendTemplatesResourceTest
     public void testAddWithClusterName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
-                getVdsGroupEntity());
+                getClusterEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -412,11 +411,11 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetBallooningExpectations(new Integer[] {0, 0});
 
-        setUpGetEntityExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpGetEntityExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
-                setUpVDSGroup(GUIDS[2]));
+                setUpCluster(GUIDS[2]));
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -434,7 +433,7 @@ public class BackendTemplatesResourceTest
                                   getEntity(0));
 
         Template model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[2]);
 
         Response response = collection.add(model);
@@ -595,7 +594,7 @@ public class BackendTemplatesResourceTest
 
     static VmTemplate setUpEntityExpectations(VmTemplate entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
@@ -625,7 +624,7 @@ public class BackendTemplatesResourceTest
         model.setDescription(DESCRIPTIONS[index]);
         model.setVm(new Vm());
         model.getVm().setId(GUIDS[1].toString());
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
         if(index == 2) {
             populateVersion(model);

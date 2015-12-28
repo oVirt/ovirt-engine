@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
@@ -38,7 +38,7 @@ public class ClusterPolicyView extends Composite {
     SimplePanel clusterPolicyTabContent;
 
     private SimpleActionTable<ClusterPolicy> table;
-    private SimpleActionTable<VDSGroup> clusterTable;
+    private SimpleActionTable<Cluster> clusterTable;
     private SplitLayoutPanel splitLayoutPanel;
 
     private final ClusterPolicyModelProvider clusterPolicyModelProvider;
@@ -169,9 +169,9 @@ public class ClusterPolicyView extends Composite {
         clusterTable = new SimpleActionTable<>(clusterPolicyClusterModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumn<VDSGroup> clusterColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> clusterColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 return object.getName();
             }
         };

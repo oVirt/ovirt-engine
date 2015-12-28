@@ -4,7 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -17,7 +17,7 @@ public class UnsupportedVmCpuClusterEditChecker implements ClusterEditChecker<VM
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Override
-    public boolean isApplicable(VDSGroup oldCluster, VDSGroup newCluster) {
+    public boolean isApplicable(Cluster oldCluster, Cluster newCluster) {
         newCpuName = newCluster.getCpuName();
         final String oldCpuName = oldCluster.getCpuName();
         return newCpuName != null && !newCpuName.equals(oldCpuName);

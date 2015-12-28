@@ -860,8 +860,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
             }
         }
 
-        if (vds.getVdsGroupCompatibilityVersion() != null
-                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
+        if (vds.getClusterCompatibilityVersion() != null
+                && Version.v3_2.compareTo(vds.getClusterCompatibilityVersion()) > 0) {
             setLogicalCores(vds.getCpuCores());
         } else {
             setLogicalCores(vds.getCpuThreads());

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -26,7 +26,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getId());
             if (storagePool != null) {
-                List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(
+                List<Cluster> clusters = DbFacade.getInstance().getClusterDao().getAllForStoragePool(
                         storagePool.getId(), getUserID(), getParameters().isFiltered());
 
                 for (Version supportedVer : Config
@@ -39,7 +39,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
 
                     boolean versionOk = true;
                     // check all clusters are not grater than this ver
-                    for (VDSGroup cluster : clusters) {
+                    for (Cluster cluster : clusters) {
                         if (supportedVer.compareTo(cluster.getCompatibilityVersion()) > 0) {
                             versionOk = false;
                             break;

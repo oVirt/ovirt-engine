@@ -11,8 +11,8 @@ public class ImportVmFromOvaParameters extends ImportVmFromExternalProviderParam
     public ImportVmFromOvaParameters() {
     }
 
-    public ImportVmFromOvaParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid vdsGroupId) {
-        super(vm, destStorageDomainId, storagePoolId, vdsGroupId);
+    public ImportVmFromOvaParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid clusterId) {
+        super(vm, destStorageDomainId, storagePoolId, clusterId);
     }
 
     public String getOvaPath() {

@@ -12,11 +12,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,6 +27,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -50,7 +51,6 @@ import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -99,8 +99,8 @@ public class AuditLogableBase extends TimeoutBase {
     private VmTemplate vmTemplate;
     private Guid storageDomainId;
     private Guid storagePoolId;
-    private Guid vdsGroupId;
-    private VDSGroup vdsGroup;
+    private Guid clusterId;
+    private Cluster cluster;
     private String correlationId;
     private Guid jobId;
     private boolean isInternalExecution = false;
@@ -151,7 +151,7 @@ public class AuditLogableBase extends TimeoutBase {
         this.jobId = auditLog.getJobId();
         this.userId = auditLog.getUserId();
         this.userName = auditLog.getUserName();
-        this.vdsGroupId = auditLog.getVdsGroupId();
+        this.clusterId = auditLog.getClusterId();
         this.vdsName = auditLog.getVdsName();
         this.vmName = auditLog.getVmName();
         this.vmTemplateId = auditLog.getVmTemplateId();
@@ -470,46 +470,46 @@ public class AuditLogableBase extends TimeoutBase {
         vmTemplate = value;
     }
 
-    public Guid getVdsGroupId() {
-        if (vdsGroupId != null) {
-            return vdsGroupId;
-        } else if (getVdsGroup() != null) {
-            vdsGroupId = getVdsGroup().getId();
-            return vdsGroupId;
+    public Guid getClusterId() {
+        if (clusterId != null) {
+            return clusterId;
+        } else if (getCluster() != null) {
+            clusterId = getCluster().getId();
+            return clusterId;
         } else {
             return Guid.Empty;
         }
     }
 
-    public void setVdsGroupId(final Guid value) {
-        vdsGroupId = value;
+    public void setClusterId(final Guid value) {
+        clusterId = value;
     }
 
-    public VDSGroup getVdsGroup() {
-        if (vdsGroup == null) {
-            if (vdsGroupId != null) {
-                vdsGroup = getVdsGroupDao().get(vdsGroupId);
+    public Cluster getCluster() {
+        if (cluster == null) {
+            if (clusterId != null) {
+                cluster = getClusterDao().get(clusterId);
             } else if (getVds() != null) {
-                vdsGroupId = getVds().getVdsGroupId();
-                vdsGroup = getVdsGroupDao().get(vdsGroupId);
+                clusterId = getVds().getClusterId();
+                cluster = getClusterDao().get(clusterId);
             } else if (getVm() != null) {
-                vdsGroupId = getVm().getVdsGroupId();
-                vdsGroup = getVdsGroupDao().get(vdsGroupId);
+                clusterId = getVm().getClusterId();
+                cluster = getClusterDao().get(clusterId);
             } else if (getVmTemplate() != null) {
-                vdsGroupId = getVmTemplate().getVdsGroupId();
-                vdsGroup = getVdsGroupDao().get(vdsGroupId);
+                clusterId = getVmTemplate().getClusterId();
+                cluster = getClusterDao().get(clusterId);
             }
         }
-        return vdsGroup;
+        return cluster;
     }
 
-    protected void setVdsGroup(final VDSGroup value) {
-        vdsGroup = value;
+    protected void setCluster(final Cluster value) {
+        cluster = value;
     }
 
-    public String getVdsGroupName() {
-        if (getVdsGroup() != null) {
-            return getVdsGroup().getName();
+    public String getClusterName() {
+        if (getCluster() != null) {
+            return getCluster().getName();
         }
         return "";
     }
@@ -697,8 +697,8 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVnicProfileDao();
     }
 
-    public VdsGroupDao getVdsGroupDao() {
-        return getDbFacade().getVdsGroupDao();
+    public ClusterDao getClusterDao() {
+        return getDbFacade().getClusterDao();
     }
 
     public RoleDao getRoleDao() {

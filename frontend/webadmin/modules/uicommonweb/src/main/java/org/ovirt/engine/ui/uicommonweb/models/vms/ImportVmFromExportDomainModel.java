@@ -13,11 +13,11 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -95,13 +95,13 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
                    @Override
                    public void onSuccess(Object model, Object returnValue) {
-                       ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                       ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
 
                        ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) model;
                        ArchitectureType targetArch = importModel.getTargetArchitecture();
 
                        if (targetArch != null) {
-                           List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
+                           List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                    targetArch);
                            getCluster().setItems(filteredClusters);
                            getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));

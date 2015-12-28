@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -49,7 +49,7 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true));
 
     @Mock
-    protected VDSGroup vdsGroup;
+    protected Cluster cluster;
 
     /**
      * The command under test.
@@ -64,15 +64,15 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
+        doReturn(cluster).when(command).getCluster();
     }
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
@@ -163,7 +163,7 @@ public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     public void validateFailsOnCompat() {
         cmd = spy(createTestCommand(volumeId1));
         prepareMocks(cmd);
-        doReturn(UNSUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(UNSUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()

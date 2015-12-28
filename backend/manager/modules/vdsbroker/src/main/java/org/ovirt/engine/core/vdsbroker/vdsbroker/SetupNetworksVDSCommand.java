@@ -68,7 +68,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         Map<String, Object> networks = new HashMap<>();
         VDS host = getParameters().getVds();
 
-        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion());
+        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getClusterCompatibilityVersion());
 
         Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
         boolean supportedClusterVersionsAvailable =
@@ -123,7 +123,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             }
 
             if (defaultRouteSupported
-                    && managementNetworkUtil.isManagementNetwork(network.getId(), host.getVdsGroupId())
+                    && managementNetworkUtil.isManagementNetwork(network.getId(), host.getClusterId())
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
                     && StringUtils.isNotEmpty(iface.getGateway())))) {

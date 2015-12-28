@@ -26,7 +26,7 @@ public class ClusterUtilsTest {
     @Before
     public void mockDbFacadeAndDao() {
         vdsDao = mock(VdsDao.class);
-        when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
+        when(vdsDao.getAllForClusterWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
 
         clusterUtils = spy(ClusterUtils.getInstance());
         doReturn(vdsDao).when(clusterUtils).getVdsDao();
@@ -42,7 +42,7 @@ public class ClusterUtilsTest {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }

@@ -7,9 +7,9 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,15 +24,15 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     @Test
     public void testAddNetwork() throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, null);
         setUpGetClusterExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 true,
                 true);
@@ -54,14 +54,14 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
         setUpGetClusterExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 valid,
                 success);
@@ -84,10 +84,10 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpEntityQueryExpectations(1, null);
         setUpGetClusterExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpVDSGroupExpectations(CLUSTER_ID);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+        setUpClusterExpectations(CLUSTER_ID);
+        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 true,
                 true);
@@ -102,10 +102,10 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpEntityQueryExpectations(1, null);
         setUpGetClusterExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpVDSGroupExpectations(CLUSTER_ID);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+        setUpClusterExpectations(CLUSTER_ID);
+        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 true,
                 true);
@@ -138,11 +138,11 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         }
     }
 
-    protected VDSGroup setUpVDSGroupExpectations(Guid id) {
-        VDSGroup group = control.createMock(VDSGroup.class);
+    protected Cluster setUpClusterExpectations(Guid id) {
+        Cluster group = control.createMock(Cluster.class);
         expect(group.getId()).andReturn(id).anyTimes();
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },
@@ -163,9 +163,9 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     protected void setUpGetClusterExpectations(int times, Object failure) {
         while (times-- > 0) {
-            VDSGroup cluster = new VDSGroup();
+            Cluster cluster = new Cluster();
             cluster.setStoragePoolId(GUIDS[2]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupById,
+            setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { CLUSTER_ID },

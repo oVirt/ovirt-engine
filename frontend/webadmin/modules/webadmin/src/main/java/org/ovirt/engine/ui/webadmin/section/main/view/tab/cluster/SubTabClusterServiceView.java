@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -33,7 +33,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, ClusterListModel<Void>, ClusterServiceModel>
+public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, ClusterListModel<Void>, ClusterServiceModel>
         implements SubTabClusterServicePresenter.ViewDef, Editor<ClusterServiceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
@@ -197,7 +197,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     }
 
     @Override
-    public void setMainTabSelectedItem(VDSGroup selectedItem) {
+    public void setMainTabSelectedItem(Cluster selectedItem) {
         servicesTable.asEditor().edit(getDetailModel().getServiceList());
         driver.edit(getDetailModel());
     }

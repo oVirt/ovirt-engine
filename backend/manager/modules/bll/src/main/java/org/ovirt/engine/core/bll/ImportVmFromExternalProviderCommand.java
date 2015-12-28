@@ -65,7 +65,7 @@ implements QuotaStorageDependent {
         setVmName(getParameters().getExternalName());
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
-        setStoragePoolId(getVdsGroup() != null ? getVdsGroup().getStoragePoolId() : null);
+        setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
     }
 
     @Override
@@ -188,8 +188,8 @@ implements QuotaStorageDependent {
     }
 
     private boolean isHostInSupportedClusterForProxyHost(VDS host) {
-        return FeatureSupported.importVmFromExternalProvider(host.getVdsGroupCompatibilityVersion())
-                && getVdsGroupDao().get(host.getVdsGroupId()).getArchitecture() != ArchitectureType.ppc64;
+        return FeatureSupported.importVmFromExternalProvider(host.getClusterCompatibilityVersion())
+                && getClusterDao().get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
     }
 
     @Override
@@ -312,7 +312,7 @@ implements QuotaStorageDependent {
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
-        parameters.setVdsGroupId(getVdsGroupId());
+        parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         return parameters;
     }

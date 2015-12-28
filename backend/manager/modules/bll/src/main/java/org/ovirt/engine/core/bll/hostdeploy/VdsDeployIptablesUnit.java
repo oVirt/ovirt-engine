@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -44,17 +44,17 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
     private VdsDeployBase _deploy;
 
     private String getIpTables() {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-            _deploy.getVds().getVdsGroupId()
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+            _deploy.getVds().getClusterId()
         );
 
         String ipTablesConfig = Config.<String> getValue(ConfigValues.IPTablesConfig);
 
         String serviceIPTablesConfig = "";
-        if (vdsGroup.supportsVirtService()) {
+        if (cluster.supportsVirtService()) {
             serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForVirt);
         }
-        if (vdsGroup.supportsGlusterService()) {
+        if (cluster.supportsGlusterService()) {
             serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForGluster);
         }
         serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigSiteCustom);

@@ -244,7 +244,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                             vm.getName(),
                             VmEntityType.VM,
                             vm.getClusterArch(),
-                            vm.getVdsGroupCompatibilityVersion(),
+                            vm.getClusterCompatibilityVersion(),
                             storageDomainId,
                             null,
                             null));
@@ -257,7 +257,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                             vmTemplate.getName(),
                             VmEntityType.TEMPLATE,
                             vmTemplate.getClusterArch(),
-                            getVdsGroupDao().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
+                            getClusterDao().get(vmTemplate.getClusterId()).getCompatibilityVersion(),
                             storageDomainId,
                             null,
                             null));

@@ -205,9 +205,9 @@ public class InstanceImageLineModel extends EntityModel {
         if (realOrFakeVm == null) {
             realOrFakeVm = new VM();
             realOrFakeVm.setId(null);
-            realOrFakeVm.setVdsGroupId(parentModel.getUnitVmModel().getSelectedCluster().getId());
+            realOrFakeVm.setClusterId(parentModel.getUnitVmModel().getSelectedCluster().getId());
             realOrFakeVm.setStoragePoolId(parentModel.getUnitVmModel().getSelectedDataCenter().getId());
-            realOrFakeVm.setVdsGroupCompatibilityVersion(compatibilityVersion);
+            realOrFakeVm.setClusterCompatibilityVersion(compatibilityVersion);
         }
 
         model.setVm(realOrFakeVm);
@@ -284,9 +284,9 @@ public class InstanceImageLineModel extends EntityModel {
         };
 
         VM vm = new VM();
-        vm.setVdsGroupId(parentModel.getUnitVmModel().getSelectedCluster().getId());
+        vm.setClusterId(parentModel.getUnitVmModel().getSelectedCluster().getId());
         vm.setStoragePoolId(parentModel.getUnitVmModel().getSelectedDataCenter().getId());
-        vm.setVdsGroupCompatibilityVersion(parentModel.getUnitVmModel().getSelectedCluster().getCompatibilityVersion());
+        vm.setClusterCompatibilityVersion(parentModel.getUnitVmModel().getSelectedCluster().getCompatibilityVersion());
         model.setVm(vm);
         model.getSizeExtend().setIsAvailable(false);
 

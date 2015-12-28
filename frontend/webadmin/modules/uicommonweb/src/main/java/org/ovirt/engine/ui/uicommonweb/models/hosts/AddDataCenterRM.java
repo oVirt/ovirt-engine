@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -262,8 +262,8 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             // Remove cluster.
             if (enlistmentContext.getClusterId() != null) {
 
-                Frontend.getInstance().runAction(VdcActionType.RemoveVdsGroup,
-                        new VdsGroupParametersBase(enlistmentContext.getClusterId()),
+                Frontend.getInstance().runAction(VdcActionType.RemoveCluster,
+                        new ClusterParametersBase(enlistmentContext.getClusterId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {

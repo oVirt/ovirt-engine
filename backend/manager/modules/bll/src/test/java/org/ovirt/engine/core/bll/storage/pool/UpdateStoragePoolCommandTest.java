@@ -30,22 +30,22 @@ import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -55,12 +55,12 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
-    private static final Guid DEFAULT_VDS_GROUP_ID = Guid.newGuid();
-    private static final Guid NON_DEFAULT_VDS_GROUP_ID = Guid.newGuid();
+    private static final Guid DEFAULT_CLUSTER_ID = Guid.newGuid();
+    private static final Guid NON_DEFAULT_CLUSTER_ID = Guid.newGuid();
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID),
+            mockConfig(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
             mockConfig(ConfigValues.NonVmNetworkSupported, false),
             mockConfig(ConfigValues.MTUOverrideSupported, false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0.getValue(), false),
@@ -82,7 +82,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainStaticDao sdDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private VdsDao vdsDao;
     @Mock
@@ -95,7 +95,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     public void setUp() {
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<StorageDomainStatic>emptyList());
-        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
         spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
     }
@@ -109,7 +109,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
                 .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDao();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(networkDao).when(cmd).getNetworkDao();
         doReturn(managementNetworkUtil).when(cmd).getManagementNetworkUtil();
@@ -213,21 +213,21 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @Test
     public void testValidateAllClustersLevel() {
         storagePoolWithVersionHigherThanCluster();
-        List<VDSGroup> clusterList = createClusterList();
+        List<Cluster> clusterList = createClusterList();
         // Create new supported cluster.
-        VDSGroup secondCluster = new VDSGroup();
+        Cluster secondCluster = new Cluster();
         secondCluster.setCompatibilityVersion(VERSION_1_2);
         secondCluster.setName("secondCluster");
         clusterList.add(secondCluster);
 
         // Create new unsupported cluster.
-        VDSGroup thirdCluster = new VDSGroup();
+        Cluster thirdCluster = new Cluster();
         thirdCluster.setCompatibilityVersion(VERSION_1_1);
         thirdCluster.setName("thirdCluster");
         clusterList.add(thirdCluster);
 
         // Test upgrade
-        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
         assertFalse(cmd.checkAllClustersLevel());
         List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue(messages.contains(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
@@ -238,13 +238,13 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void poolHasDefaultCluster() {
-        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
+        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID);
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
         doReturn(new ValidationResult
-                (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS))
+                (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))
                 .when(poolValidator).isNotLocalfsWithDefaultCluster();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS);
     }
 
     @Test
@@ -400,9 +400,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         return pool;
     }
 
-    private static List<VDSGroup> createClusterList() {
-        List<VDSGroup> clusters = new ArrayList<>();
-        VDSGroup cluster = new VDSGroup();
+    private static List<Cluster> createClusterList() {
+        List<Cluster> clusters = new ArrayList<>();
+        Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(VERSION_1_0);
         cluster.setName("firstCluster");
         clusters.add(cluster);
@@ -410,21 +410,21 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     }
 
     private void addDefaultClusterToPool() {
-        VDSGroup defaultCluster = new VDSGroup();
+        Cluster defaultCluster = new Cluster();
         defaultCluster.setCompatibilityVersion(VERSION_1_1);
-        defaultCluster.setId(DEFAULT_VDS_GROUP_ID);
-        List<VDSGroup> clusters = new ArrayList<>();
+        defaultCluster.setId(DEFAULT_CLUSTER_ID);
+        List<Cluster> clusters = new ArrayList<>();
         clusters.add(defaultCluster);
-        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
     }
 
     private void addNonDefaultClusterToPool() {
-        VDSGroup defaultCluster = new VDSGroup();
+        Cluster defaultCluster = new Cluster();
         defaultCluster.setCompatibilityVersion(VERSION_1_1);
-        defaultCluster.setId(NON_DEFAULT_VDS_GROUP_ID);
-        List<VDSGroup> clusters = new ArrayList<>();
+        defaultCluster.setId(NON_DEFAULT_CLUSTER_ID);
+        List<Cluster> clusters = new ArrayList<>();
         clusters.add(defaultCluster);
-        when(vdsGroupDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);
     }
 
     private void addHostsToCluster() {

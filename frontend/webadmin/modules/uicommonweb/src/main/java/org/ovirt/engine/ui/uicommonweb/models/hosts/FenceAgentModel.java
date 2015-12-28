@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -292,7 +292,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         setMessage(ConstantsManager.getInstance().getConstants().testingInProgressItWillTakeFewSecondsPleaseWaitMsg());
         getTestCommand().setIsExecutionAllowed(false);
 
-        VDSGroup cluster = getHost().getCluster().getSelectedItem();
+        Cluster cluster = getHost().getCluster().getSelectedItem();
 
         GetFenceAgentStatusParameters param = new GetFenceAgentStatusParameters();
         FenceAgent agent = new FenceAgent();
@@ -313,7 +313,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         param.setVdsName(getHost().getName().getEntity());
         param.setHostName(getHost().getHost().getEntity());
 
-        param.setVdsGroupId(cluster.getId());
+        param.setClusterId(cluster.getId());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery(this,
                 new INewAsyncCallback() {

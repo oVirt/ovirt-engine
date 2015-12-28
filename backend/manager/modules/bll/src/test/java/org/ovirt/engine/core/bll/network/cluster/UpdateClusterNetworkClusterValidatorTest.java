@@ -38,7 +38,7 @@ public class UpdateClusterNetworkClusterValidatorTest extends
     private void testUpdateManagementNetworkChange(boolean emptyCluster,
                                                    Matcher<ValidationResult> expectedResult) {
         when(networkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
-        when(vdsDao.getAllForVdsGroup(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
+        when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
                 Collections.<VDS>emptyList() :
                 Collections.<VDS>singletonList(null));
         assertThat(validator.managementNetworkChange(), expectedResult);

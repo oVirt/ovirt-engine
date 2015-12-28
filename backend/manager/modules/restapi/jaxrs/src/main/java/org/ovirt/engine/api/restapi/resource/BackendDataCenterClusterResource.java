@@ -2,8 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 
 public class BackendDataCenterClusterResource extends BackendClusterResource<BackendDataCenterClustersResource> {
 
@@ -12,17 +11,17 @@ public class BackendDataCenterClusterResource extends BackendClusterResource<Bac
     }
 
     @Override
-    public Cluster get() {
-        VDSGroup entity = getVdsGroup();
+    public org.ovirt.engine.api.model.Cluster get() {
+        Cluster entity = getCluster();
         if (entity == null) {
             return notFound();
         }
         return addLinks(map(entity));
     }
 
-    private VDSGroup getVdsGroup() {
-        List<VDSGroup> vdsGroups = parent.getVdsGroups();
-        for (VDSGroup entity : vdsGroups) {
+    private Cluster getCluster() {
+        List<Cluster> clusters = parent.getClusters();
+        for (Cluster entity : clusters) {
             if (entity.getId().toString().equals(id)) {
                 return entity;
             }

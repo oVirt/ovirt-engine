@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -69,9 +69,9 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -92,7 +92,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final String CPU_ID = "0";
     private VmTemplate vmTemplate;
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     private StoragePool storagePool;
     protected StorageDomainValidator storageDomainValidator;
 
@@ -123,7 +123,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     VmDao vmDao;
 
     @Mock
-    VdsGroupDao vdsGroupDao;
+    ClusterDao clusterDao;
 
     @Mock
     BackendInternal backend;
@@ -161,7 +161,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
         mockStorageDomainDaoGetForStoragePool();
-        mockVdsGroupDaoReturnVdsGroup();
+        mockClusterDaoReturnCluster();
         mockVmTemplateDaoReturnVmTemplate();
         mockVerifyAddVM(cmd);
         mockConfig();
@@ -252,8 +252,8 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-        vdsGroup = createVdsGroup();
-        vm.setVdsGroupId(vdsGroup.getId());
+        cluster = createCluster();
+        vm.setClusterId(cluster.getId());
 
         mockStorageDomainDaoGetForStoragePool();
         mockVmTemplateDaoReturnVmTemplate();
@@ -266,7 +266,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         mockGraphicsDevices(vm.getId());
         doReturn(true).when(cmd).checkCpuSockets();
 
-        doReturn(vdsGroup).when(cmd).getVdsGroup();
+        doReturn(cluster).when(cmd).getCluster();
         doReturn(createStoragePool()).when(cmd).getStoragePool();
         cmd.getParameters().setVirtioScsiEnabled(true);
         when(osRepository.isSoundDeviceEnabled(any(Integer.class), any(Version.class))).thenReturn(true);
@@ -283,9 +283,9 @@ public class AddVmCommandTest extends BaseCommandTest {
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0);
-        VDSGroup vdsGroup = createVdsGroup();
-        doReturn(vdsGroup).when(cmd).getVdsGroup();
-        cmd.getParameters().getVm().setVdsGroupId(vdsGroup.getId());
+        Cluster cluster = createCluster();
+        doReturn(cluster).when(cmd).getCluster();
+        cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.initEffectiveCompatibilityVersion();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
@@ -329,9 +329,9 @@ public class AddVmCommandTest extends BaseCommandTest {
         // prepare a command to pass validate
         VM vm = createVm();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
-        vdsGroup = createVdsGroup();
-        vm.setVdsGroupId(vdsGroup.getId());
-        when(vdsGroupDao.get(vdsGroup.getId())).thenReturn(vdsGroup);
+        cluster = createCluster();
+        vm.setClusterId(cluster.getId());
+        when(clusterDao.get(cluster.getId())).thenReturn(cluster);
 
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
@@ -351,9 +351,9 @@ public class AddVmCommandTest extends BaseCommandTest {
         Map<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
         Set<String> value = new HashSet<>();
         value.add(CPU_ID);
-        unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getCompatibilityVersion()), value);
+        unsupported.put(new Pair<>(vm.getVmOsId(), cluster.getCompatibilityVersion()), value);
 
-        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
+        when(osRepository.isCpuSupported(vm.getVmOsId(), cluster.getCompatibilityVersion(), CPU_ID)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         ValidateTestUtils.runAndAssertValidateFailure(
@@ -498,7 +498,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(vmTemplateDao).when(cmd).getVmTemplateDao();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(deviceDao).when(cmd).getVmDeviceDao();
 
     }
@@ -532,8 +532,8 @@ public class AddVmCommandTest extends BaseCommandTest {
         when(vmTemplateDao.get(any(Guid.class))).thenReturn(createVmTemplate());
     }
 
-    private void mockVdsGroupDaoReturnVdsGroup() {
-        when(vdsGroupDao.get(any(Guid.class))).thenReturn(createVdsGroup());
+    private void mockClusterDaoReturnCluster() {
+        when(clusterDao.get(any(Guid.class))).thenReturn(createCluster());
     }
 
     private VmTemplate createVmTemplate() {
@@ -550,16 +550,16 @@ public class AddVmCommandTest extends BaseCommandTest {
         return vmTemplate;
     }
 
-    private VDSGroup createVdsGroup() {
-        if (vdsGroup == null) {
-            vdsGroup = new VDSGroup();
-            vdsGroup.setVdsGroupId(Guid.newGuid());
-            vdsGroup.setCompatibilityVersion(Version.v3_3);
-            vdsGroup.setCpuName("Intel Conroe Family");
-            vdsGroup.setArchitecture(ArchitectureType.x86_64);
+    private Cluster createCluster() {
+        if (cluster == null) {
+            cluster = new Cluster();
+            cluster.setClusterId(Guid.newGuid());
+            cluster.setCompatibilityVersion(Version.v3_3);
+            cluster.setCpuName("Intel Conroe Family");
+            cluster.setArchitecture(ArchitectureType.x86_64);
         }
 
-        return vdsGroup;
+        return cluster;
     }
 
     private StoragePool createStoragePool() {
@@ -655,7 +655,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         cmd = spy(cmd);
         mockDaos(cmd);
         mockBackend(cmd);
-        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+        doReturn(new Cluster()).when(cmd).getCluster();
         generateStorageToDisksMap(cmd);
         initDestSDs(cmd);
         storageDomainValidator = mock(StorageDomainValidator.class);
@@ -720,7 +720,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(false).when(spy).isVmWithSameNameExists(anyString(), any(Guid.class));
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
-        doReturn(createVdsGroup()).when(spy).getVdsGroup();
+        doReturn(createCluster()).when(spy).getCluster();
         doReturn(true).when(spy).areParametersLegal(anyListOf(String.class));
         doReturn(Collections.<VmNetworkInterface> emptyList()).when(spy).getVmInterfaces();
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
@@ -745,7 +745,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void refuseBalloonOnPPC() {
         AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
         cmd.getParameters().setBalloonEnabled(true);
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
     }
@@ -754,7 +754,7 @@ public class AddVmCommandTest extends BaseCommandTest {
     public void refuseSoundDeviceOnPPC() {
         AddVmCommand<AddVmParameters> cmd = setupCanAddPpcTest();
         cmd.getParameters().setSoundDeviceEnabled(true);
-        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
 
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
@@ -767,10 +767,10 @@ public class AddVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateSpaceRequirements();
         doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(cmd).getVdsGroup();
+        doReturn(cluster).when(cmd).getCluster();
 
         return cmd;
     }

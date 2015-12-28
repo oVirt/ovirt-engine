@@ -43,12 +43,12 @@ public class VmDaoTest extends BaseDaoTestCase {
 
         newVm = new VM();
         newVm.setId(Guid.newGuid());
-        newVm.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        newVm.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         newVm.setVmtGuid(vmtemplate.getId());
 
         newVmStatic = new VmStatic();
         newVmStatic.setName("New Virtual Machine");
-        newVmStatic.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        newVmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         newVmStatic.setVmtGuid(vmtemplate.getId());
     }
 
@@ -361,11 +361,11 @@ public class VmDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Ensure that all VMS are belongs to VdsGroup return correct
+     * Ensure that all VMS are belongs to Cluster return correct
      */
     @Test
-    public void testGetAllForVdsGroup() {
-        List<VM> result = dao.getAllForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+    public void testGetAllForCluster() {
+        List<VM> result = dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -522,7 +522,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testAllRunningByCluster() {
-        List<VM> result = dao.getAllRunningByCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        List<VM> result = dao.getAllRunningByCluster(FixturesTool.CLUSTER_RHEL6_ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

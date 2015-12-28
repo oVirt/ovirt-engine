@@ -59,17 +59,17 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         super(parameters);
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
-        setVdsGroupId(getVmTemplate().getVdsGroupId());
+        setClusterId(getVmTemplate().getClusterId());
         oldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
 
-        if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId() != null ? getCluster().getStoragePoolId()
                     : Guid.Empty);
         }
 
         Version compatibilityVersion = isBlankTemplate() || isInstanceType()
-                ? Version.getLast() : CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getVdsGroup);
-        if (getVdsGroup() != null || isBlankTemplate()) {
+                ? Version.getLast() : CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster);
+        if (getCluster() != null || isBlankTemplate()) {
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                     parameters.getVmTemplateData());
             if (oldTemplate != null) {
@@ -78,11 +78,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData(), getVdsGroup());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmTemplateData(), getCluster());
         VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
         VmHandler.autoSelectDefaultDisplayType(getVmTemplateId(),
                 getParameters().getVmTemplateData(),
-                getVdsGroup(),
+                getCluster(),
                 getParameters().getGraphicsDevices());
     }
 
@@ -91,7 +91,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         boolean isInstanceType = isInstanceType();
         boolean isBlankTemplate = isBlankTemplate();
 
-        if (getVdsGroup() == null && !(isInstanceType || isBlankTemplate)) {
+        if (getCluster() == null && !(isInstanceType || isBlankTemplate)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
@@ -120,7 +120,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     }
                 } else {
                     if (isVmTemlateWithSameNameExist(getVmTemplateName(), isBlankTemplate ? null
-                            : getVdsGroup().getStoragePoolId())) {
+                            : getCluster().getStoragePoolId())) {
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                     }
                 }
@@ -188,7 +188,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
             returnValue =
                     VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
-                            getVdsGroup().getArchitecture(),
+                            getCluster().getArchitecture(),
                             getReturnValue().getValidationMessages());
         }
 
@@ -259,7 +259,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             boolean balloonEnabled = Boolean.TRUE.equals(getParameters().isBalloonEnabled());
             if (balloonEnabled && !osRepository.isBalloonEnabled(getParameters().getVmTemplateData().getOsId(),
                     getVmTemplate().getCompatibilityVersion())) {
-                addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+                addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
                 return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
             }
         }
@@ -267,7 +267,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         boolean soundDeviceEnabled = Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled());
         if (soundDeviceEnabled && !osRepository.isSoundDeviceEnabled(getParameters().getVmTemplateData().getOsId(),
                 getVmTemplate().getCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
@@ -334,15 +334,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void checkTrustedService() {
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return;
         }
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
-        if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+        if (getVmTemplate().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
-        else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+        else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

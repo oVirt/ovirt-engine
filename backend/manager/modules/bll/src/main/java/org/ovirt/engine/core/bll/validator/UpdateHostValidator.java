@@ -86,11 +86,11 @@ public class UpdateHostValidator extends HostValidator {
 
     /**
      * Forbids updating group id - this must be done through {@code ChangeVDSClusterCommand}. This is due to permission
-     * check that must be done both on the VDS and on the VDSGroup
+     * check that must be done both on the VDS and on the Cluster
      */
     public ValidationResult clusterNotChanged() {
         return ValidationResult.failWith(EngineMessage.VDS_CANNOT_UPDATE_CLUSTER)
-                .unless(oldHost.getVdsGroupId().equals(getHost().getVdsGroupId()));
+                .unless(oldHost.getClusterId().equals(getHost().getClusterId()));
     }
 
     public ValidationResult changeProtocolAllowed() {

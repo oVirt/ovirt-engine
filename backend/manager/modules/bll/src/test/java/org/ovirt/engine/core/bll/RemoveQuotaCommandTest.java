@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -117,12 +117,12 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
         storageQuota.setStorageSizeGBUsage(0d);
         generalQuota.setGlobalQuotaStorage(storageQuota);
 
-        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
-        vdsGroupQuota.setVirtualCpu(0);
-        vdsGroupQuota.setVirtualCpuUsage(0);
-        vdsGroupQuota.setMemSizeMB(0L);
-        vdsGroupQuota.setMemSizeMBUsage(0L);
-        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+        QuotaCluster clusterQuota = new QuotaCluster();
+        clusterQuota.setVirtualCpu(0);
+        clusterQuota.setVirtualCpuUsage(0);
+        clusterQuota.setMemSizeMB(0L);
+        clusterQuota.setMemSizeMBUsage(0L);
+        generalQuota.setGlobalQuotaCluster(clusterQuota);
 
         generalQuota.setId(generalGuidQuota);
         generalQuota.setStoragePoolId(storagePoolUUID);

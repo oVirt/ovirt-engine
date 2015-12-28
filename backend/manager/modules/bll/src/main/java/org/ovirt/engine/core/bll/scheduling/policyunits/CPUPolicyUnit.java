@@ -10,14 +10,14 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CPUPolicyUnit.class);
 
     @Inject
-    VdsGroupDao vdsGroupDao;
+    ClusterDao clusterDao;
 
     public CPUPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -42,7 +42,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         List<VDS> list = new ArrayList<>();
         for (VDS vds : hosts) {
-            VDSGroup cluster = vdsGroupDao.get(vds.getVdsGroupId());
+            Cluster cluster = clusterDao.get(vds.getClusterId());
             Integer cores = SlaValidator.getEffectiveCpuCores(vds,
                     cluster != null && cluster.getCountThreadsAsCores());
             if (cores != null && vm.getNumOfCpus(false) > cores) {

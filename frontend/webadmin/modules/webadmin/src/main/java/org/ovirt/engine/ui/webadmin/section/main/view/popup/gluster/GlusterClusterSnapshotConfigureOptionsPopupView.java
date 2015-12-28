@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -48,7 +48,7 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     @UiField(provided = true)
     @Path(value = "clusters.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<VDSGroup> clusterEditor;
+    ListModelListBoxEditor<Cluster> clusterEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -70,7 +70,7 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     }
 
     private void initEditors() {
-        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
 
         configsTable = new EntityModelCellTable<>(false, true);
         configsTable.setSelectionModel(new NoSelectionModel());

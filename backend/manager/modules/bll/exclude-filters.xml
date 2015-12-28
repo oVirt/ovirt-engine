@@ -30,7 +30,7 @@
       CN: clone method does not call super.clone() (CN_IDIOM_NO_SUPER_CALL)
      -->
      <Match>
-       <Class name="org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter" />
+       <Class name="org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter" />
        <Method name="clone"/>
        <Bug code="CN"/>
      </Match>

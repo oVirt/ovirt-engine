@@ -8,8 +8,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -70,7 +70,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
     }
 
     @Override
-    protected List<VDS> getPrimarySources(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
+    protected List<VDS> getPrimarySources(Cluster cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
         final int highVmCountUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_VM_COUNT.getDbName()),
                 highVmCountDefault);
 
@@ -87,7 +87,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
     }
 
     @Override
-    protected List<VDS> getPrimaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
+    protected List<VDS> getPrimaryDestinations(Cluster cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
         final int migrationThreshold = NumberUtils.toInt(parameters.get(PolicyUnitParameter.MIGRATION_THRESHOLD.getDbName()),
                 migrationThresholdDefault);
 
@@ -109,12 +109,12 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
     }
 
     @Override
-    protected List<VDS> getSecondarySources(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+    protected List<VDS> getSecondarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         return null;
     }
 
     @Override
-    protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+    protected List<VDS> getSecondaryDestinations(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         return null;
     }
 }

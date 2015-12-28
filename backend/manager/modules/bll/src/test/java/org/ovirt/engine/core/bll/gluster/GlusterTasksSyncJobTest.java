@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -44,8 +44,8 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -75,7 +75,7 @@ public class GlusterTasksSyncJobTest {
     private StepDao stepDao;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private GlusterVolumeDao volumeDao;
@@ -126,7 +126,7 @@ public class GlusterTasksSyncJobTest {
         doNothing().when(taskUtils).releaseLock(any(Guid.class));
         doNothing().when(taskUtils).endStepJob(any(Step.class));
         doReturn(null).when(provider).getMonitoredTaskIDsInDB();
-        doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(VDSGroup.class));
+        doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(Cluster.class));
         doNothing().when(logUtil).logAuditMessage(any(Guid.class),
                 any(GlusterVolumeEntity.class),
                 any(VDS.class),
@@ -294,15 +294,15 @@ public class GlusterTasksSyncJobTest {
         return task;
     }
 
-    private List<VDSGroup> getClusters() {
-        List<VDSGroup> list = new ArrayList<>();
+    private List<Cluster> getClusters() {
+        List<Cluster> list = new ArrayList<>();
         list.add(createCluster(0, Version.v3_2));
         list.add(createCluster(1, Version.v3_3));
         return list;
     }
 
-    private VDSGroup createCluster(int index, Version v) {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster createCluster(int index, Version v) {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_GUIDS[index]);
         cluster.setName("cluster");
         cluster.setGlusterService(true);

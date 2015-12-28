@@ -12,7 +12,7 @@ public class GetHostsByClusterIdQuery<P extends IdQueryParameters> extends Queri
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                         .getVdsDao()
-                        .getAllForVdsGroup(getParameters().getId(), getUserID(), getParameters().isFiltered()));
+                        .getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 
 }

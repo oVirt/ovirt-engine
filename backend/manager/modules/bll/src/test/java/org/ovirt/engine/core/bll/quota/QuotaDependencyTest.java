@@ -33,7 +33,7 @@ public class QuotaDependencyTest {
             }
 
             switch (vdcActionType.getQuotaDependency()) {
-            case VDS_GROUP:
+            case CLUSTER:
                 assertCommandIsQuotaVdsDependent(commandClass);
                 break;
             case STORAGE:

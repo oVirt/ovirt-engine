@@ -23,12 +23,12 @@ public class VmAffinityGroupListModel extends AffinityGroupListModel<VM> {
 
     @Override
     protected Guid getClusterId() {
-        return getEntity().getVdsGroupId();
+        return getEntity().getClusterId();
     }
 
     @Override
     protected String getClusterName() {
-        return getEntity().getVdsGroupName();
+        return getEntity().getClusterName();
     }
 
 }

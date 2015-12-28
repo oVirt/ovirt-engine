@@ -85,7 +85,7 @@ public class NetworkAttachmentValidator {
 
     private ValidationResult networkNotUsedByVms(String networkName) {
 
-        if (FeatureSupported.changeNetworkUsedByVmSupported(host.getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.changeNetworkUsedByVmSupported(host.getClusterCompatibilityVersion())) {
             return ValidationResult.VALID;
         }
 
@@ -189,8 +189,8 @@ public class NetworkAttachmentValidator {
 
             && ipConfiguration.hasPrimaryAddressSet()
             && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway())
-            && !managementNetworkUtil.isManagementNetwork(getNetwork().getId(), host.getVdsGroupId())
-            && !FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion()));
+            && !managementNetworkUtil.isManagementNetwork(getNetwork().getId(), host.getClusterId())
+            && !FeatureSupported.multipleGatewaysSupported(host.getClusterCompatibilityVersion()));
     }
 
     public ValidationResult networkNotAttachedToHost() {
@@ -229,7 +229,7 @@ public class NetworkAttachmentValidator {
 
     private NetworkCluster getNetworkCluster() {
         if (networkCluster == null) {
-            NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), attachment.getNetworkId());
+            NetworkClusterId networkClusterId = new NetworkClusterId(host.getClusterId(), attachment.getNetworkId());
             networkCluster = networkClusterDao.get(networkClusterId);
         }
 

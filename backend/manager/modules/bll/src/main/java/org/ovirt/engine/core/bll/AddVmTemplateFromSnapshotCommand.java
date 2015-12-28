@@ -57,16 +57,16 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         if (getParameters().getVm() == null) {
             return;
         }
-        setVdsGroupId(getParameters().getVm().getVdsGroupId());
-        if (getVdsGroup() == null) {
+        setClusterId(getParameters().getVm().getClusterId());
+        if (getCluster() == null) {
             return;
         }
-        setStoragePoolId(getVdsGroup().getStoragePoolId());
+        setStoragePoolId(getCluster().getStoragePoolId());
         VM vm = getVmFromConfiguration();
         if (vm == null) {
             return;
         }
-        vm.setVdsGroupId(getVdsGroupId());
+        vm.setClusterId(getClusterId());
         vm.setStoragePoolId(getStoragePoolId());
         setVm(vm);
         getParameters().setVm(vm);
@@ -88,7 +88,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                     String.format("$SnapshotName %1$s", getSnapshotName()));
         }
 
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
         }
 

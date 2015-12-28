@@ -268,7 +268,7 @@ public class SetupNetworksHelperTest {
 
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
+        when(vds.getClusterCompatibilityVersion()).thenReturn(Version.v3_3);
         when(vds.getHostName()).thenReturn(RandomUtils.instance().nextString(10));
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
@@ -290,7 +290,7 @@ public class SetupNetworksHelperTest {
         when(vds.getId()).thenReturn(Guid.Empty);
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_2);
+        when(vds.getClusterCompatibilityVersion()).thenReturn(Version.v3_2);
 
         validateAndExpectViolation(helper, EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
     }
@@ -2193,7 +2193,7 @@ public class SetupNetworksHelperTest {
 
     @SuppressWarnings("deprecation")
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds, Version compatibilityVersion) {
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(compatibilityVersion);
+        when(vds.getClusterCompatibilityVersion()).thenReturn(compatibilityVersion);
         final HashSet<Version> supportedClusterVersions = new HashSet<>();
         when(vds.getSupportedClusterVersionsSet()).thenReturn(supportedClusterVersions);
         when(networkExclusivenessValidatorResolver.resolveNetworkExclusivenessValidator(same(supportedClusterVersions)))

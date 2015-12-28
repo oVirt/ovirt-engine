@@ -80,7 +80,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                                                    UserConfiguredNetworkData userConfiguredData) {
 
         List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
-        List<Network> clusterNetworks = networkDao.getAllForCluster(host.getVdsGroupId());
+        List<Network> clusterNetworks = networkDao.getAllForCluster(host.getClusterId());
 
         persistTopology(host, dbIfaces, clusterNetworks, userConfiguredData);
         NonOperationalReason nonOperationalReason =
@@ -94,7 +94,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                                           List<Network> clusterNetworks) {
         if (host.getStatus() != VDSStatus.Maintenance) {
             if (skipManagementNetwork) {
-                skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks, host.getVdsGroupId());
+                skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks, host.getClusterId());
             }
 
             Map<String, String> customLogValues;
@@ -164,7 +164,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                           Collection<VdsNetworkInterface> engineInterfaces) {
 
         if (isVmRunningOnHost(host.getId())) {
-            final Network engineDisplayNetwork = findDisplayNetwork(host.getVdsGroupId(), engineHostNetworks);
+            final Network engineDisplayNetwork = findDisplayNetwork(host.getClusterId(), engineHostNetworks);
 
             if (engineDisplayNetwork == null) {
                 return;

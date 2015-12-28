@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -61,7 +61,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
     private String xmlOvfData;
     @Mock
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     private StoragePool storagePool;
 
     private ImportVmFromConfigurationCommand<ImportVmParameters> cmd;
@@ -115,7 +115,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a"),
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
         }});
-        mockVdsGroup();
+        mockCluster();
         mockDisplayTypes();
         setXmlOvfData();
     }
@@ -205,7 +205,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ImportVmParameters params = new ImportVmParameters();
         params.setContainerId(vmId);
         params.setStorageDomainId(storageDomainId);
-        params.setVdsGroupId(clusterId);
+        params.setClusterId(clusterId);
         params.setImagesExistOnTargetStorageDomain(true);
         return params;
     }
@@ -225,8 +225,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             protected void initUser() {
             }
 
-            public VDSGroup getVdsGroup() {
-                return vdsGroup;
+            public Cluster getCluster() {
+                return cluster;
             }
 
             @Override
@@ -258,12 +258,12 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         return ovfEntity;
     }
 
-    private void mockVdsGroup() {
-        vdsGroup = mock(VDSGroup.class);
-        doReturn(clusterId).when(vdsGroup).getId();
-        doReturn(storagePoolId).when(vdsGroup).getStoragePoolId();
-        doReturn(ArchitectureType.x86_64).when(vdsGroup).getArchitecture();
-        doReturn(null).when(vdsGroup).getCompatibilityVersion();
+    private void mockCluster() {
+        cluster = mock(Cluster.class);
+        doReturn(clusterId).when(cluster).getId();
+        doReturn(storagePoolId).when(cluster).getStoragePoolId();
+        doReturn(ArchitectureType.x86_64).when(cluster).getArchitecture();
+        doReturn(null).when(cluster).getCompatibilityVersion();
     }
 
     private void mockStoragePool() {

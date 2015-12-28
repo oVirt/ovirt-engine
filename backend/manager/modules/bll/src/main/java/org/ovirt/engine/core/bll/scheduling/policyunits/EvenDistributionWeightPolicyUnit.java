@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -70,8 +70,8 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
-        boolean countThreadsAsCores = vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false;
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(hosts.get(0).getClusterId());
+        boolean countThreadsAsCores = cluster != null ? cluster.getCountThreadsAsCores() : false;
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             scores.add(new Pair<>(vds.getId(), calcEvenDistributionScore(vds, vm, countThreadsAsCores)));

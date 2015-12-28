@@ -55,7 +55,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         super(parameters, commandContext);
         // set group id for logging and job
         if (getVmPool() != null) {
-            setVdsGroupId(getVmPool().getVdsGroupId());
+            setClusterId(getVmPool().getClusterId());
         }
     }
 
@@ -274,7 +274,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
+            jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
     }

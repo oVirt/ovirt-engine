@@ -50,7 +50,7 @@ BEGIN
     END;$PROCEDURE$
 LANGUAGE plpgsql;
 
--- Updates service types(gluster and virt) in vds_groups table
+-- Updates service types(gluster and virt) in cluster table
 CREATE OR REPLACE FUNCTION inst_update_service_type (
     v_cluster_id uuid,
     v_virt_service boolean,
@@ -58,10 +58,10 @@ CREATE OR REPLACE FUNCTION inst_update_service_type (
     )
 RETURNS void AS $PROCEDURE$
 BEGIN
-    UPDATE vds_groups
+    UPDATE cluster
     SET virt_service = v_virt_service,
         gluster_service = v_gluster_service
-    WHERE vds_group_id = v_cluster_id;
+    WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

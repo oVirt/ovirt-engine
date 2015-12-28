@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -23,7 +23,7 @@ public class VdsArchitectureHelper {
      *            The host architecture type
      */
     public ArchitectureType getArchitecture(VdsStatic host) {
-        VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(host.getVdsGroupId());
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(host.getClusterId());
         VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(host.getId());
         if (vdsDynamic != null) {
             ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(vdsDynamic.getCpuFlags(),

@@ -61,7 +61,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
         }
         else {
             if (getVds().shouldVdsBeFenced()) {
-                boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
+                boolean result = executeSshSoftFencingCommand(getVds().getClusterCompatibilityVersion().toString());
                 if (result) {
                     // SSH Soft Fencing executed successfully, check if host become Up
                     result = checkIfHostBecomeUp();

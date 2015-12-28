@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.config.Config;
@@ -46,9 +46,9 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
 
     private boolean checkAndDisableCliScheduler() {
         GlusterVolumeEntity metaVolume =
-                getGlusterVolumeDao().getByName(getVdsGroupId(),
+                getGlusterVolumeDao().getByName(getClusterId(),
                         Config.<String> getValue(ConfigValues.GlusterMetaVolumeName));
-        VDSGroup cluster = getVdsGroup();
+        Cluster cluster = getCluster();
         if (metaVolume != null && cluster.isGlusterCliBasedSchedulingOn()) {
             VdcReturnValueBase returnValue =
                     runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,
@@ -76,9 +76,9 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
         }
 
         if (!getParameters().getForce()) {
-            if (getGlusterVolumeDao().getByName(getVdsGroupId(),
+            if (getGlusterVolumeDao().getByName(getClusterId(),
                     Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)) != null
-                    && getVdsGroup().isGlusterCliBasedSchedulingOn()) {
+                    && getCluster().isGlusterCliBasedSchedulingOn()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_CLI_SCHEDULING_ENABLED);
             }
         }

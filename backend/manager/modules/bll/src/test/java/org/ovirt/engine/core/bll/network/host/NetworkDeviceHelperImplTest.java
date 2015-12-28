@@ -628,7 +628,7 @@ public class NetworkDeviceHelperImplTest {
     private void mockHostSupportsSriov(boolean support) {
         final VDS host = new VDS();
         final Version version = Version.v3_6;
-        host.setVdsGroupCompatibilityVersion(version);
+        host.setClusterCompatibilityVersion(version);
         mockConfigRule.mockConfigValue(ConfigValues.NetworkSriovSupported, version, support);
         when(vdsDao.get(HOST_ID)).thenReturn(host);
     }

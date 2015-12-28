@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -33,7 +33,7 @@ public abstract class RegisterEntityModel<T> extends Model {
 
     private UICommand cancelCommand;
     private ListModel<ImportEntityData<T>> entities;
-    private ListModel<VDSGroup> cluster;
+    private ListModel<Cluster> cluster;
     private EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap;
     private EntityModel<Map<Guid, Quota>> diskQuotaMap;
     private ListModel<Quota> storageQuota;
@@ -42,7 +42,7 @@ public abstract class RegisterEntityModel<T> extends Model {
 
     public RegisterEntityModel() {
         setEntities(new ListModel<ImportEntityData<T>>());
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
 
         setClusterQuotasMap(new EntityModel<Map<Guid, List<Quota>>>());
         getClusterQuotasMap().setEntity(new HashMap<Guid, List<Quota>>());
@@ -78,10 +78,10 @@ public abstract class RegisterEntityModel<T> extends Model {
                 AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(target, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
 
                         for (ImportEntityData<T> entityData : entities.getItems()) {
-                            List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
+                            List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                             entityData.getCluster().setItems(filteredClusters);
                             entityData.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
                         }
@@ -114,15 +114,15 @@ public abstract class RegisterEntityModel<T> extends Model {
                 }));
     }
 
-    private void updateClusterQuota(ArrayList<VDSGroup> clusters) {
+    private void updateClusterQuota(ArrayList<Cluster> clusters) {
         if (!isQuotaEnabled()) {
             return;
         }
 
         List<VdcQueryType> queries = new ArrayList<>();
         List<VdcQueryParametersBase> params = new ArrayList<>();
-        for (VDSGroup cluster : clusters) {
-            queries.add(VdcQueryType.GetAllRelevantQuotasForVdsGroup);
+        for (Cluster cluster : clusters) {
+            queries.add(VdcQueryType.GetAllRelevantQuotasForCluster);
             params.add(new IdQueryParameters(cluster.getId()));
         }
 
@@ -211,11 +211,11 @@ public abstract class RegisterEntityModel<T> extends Model {
         this.entities = entities;
     }
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return cluster;
     }
 
-    private void setCluster(ListModel<VDSGroup> value) {
+    private void setCluster(ListModel<Cluster> value) {
         cluster = value;
     }
 

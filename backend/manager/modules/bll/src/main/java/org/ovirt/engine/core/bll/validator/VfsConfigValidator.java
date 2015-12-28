@@ -57,7 +57,7 @@ public class VfsConfigValidator {
     public ValidationResult sriovFeatureSupported() {
 
         VDS host = getDbFacade().getVdsDao().get(getNic().getVdsId());
-        Version clusterCompVer = host.getVdsGroupCompatibilityVersion();
+        Version clusterCompVer = host.getClusterCompatibilityVersion();
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_SRIOV_FEATURE_NOT_SUPPORTED)
                 .unless(FeatureSupported.sriov(clusterCompVer));

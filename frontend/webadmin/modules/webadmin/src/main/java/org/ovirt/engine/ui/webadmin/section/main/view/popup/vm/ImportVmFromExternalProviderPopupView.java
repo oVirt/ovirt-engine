@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -93,7 +93,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
-    ListModelListBoxEditor<VDSGroup> destClusterEditor;
+    ListModelListBoxEditor<Cluster> destClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "cpuProfiles.selectedItem")
@@ -281,9 +281,9 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     private void initListBoxEditors() {
-        destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VDSGroup>() {
+        destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Cluster>() {
             @Override
-            public String renderNullSafe(VDSGroup object) {
+            public String renderNullSafe(Cluster object) {
                 return object.getName();
             }
         });

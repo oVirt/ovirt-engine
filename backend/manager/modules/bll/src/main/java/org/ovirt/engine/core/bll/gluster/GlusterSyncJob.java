@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
@@ -100,9 +100,9 @@ public class GlusterSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("refreshLightWeightData")
     public void refreshLightWeightData() {
         log.debug("Refreshing Gluster Data [lightweight]");
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (cluster.supportsGlusterService()) {
                 try {
                     refreshClusterData(cluster);
@@ -116,10 +116,10 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void refreshClusterData(VDSGroup cluster) {
+    private void refreshClusterData(Cluster cluster) {
         log.debug("Refreshing Gluster lightweight Data for cluster '{}'", cluster.getName());
 
-        List<VDS> existingServers = getVdsDao().getAllForVdsGroup(cluster.getId());
+        List<VDS> existingServers = getVdsDao().getAllForCluster(cluster.getId());
         VDS upServer = getClusterUtils().getUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
@@ -140,7 +140,7 @@ public class GlusterSyncJob extends GlusterJob {
      * @param upServer
      * @param existingServers
      */
-    private void refreshServerData(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
+    private void refreshServerData(Cluster cluster, VDS upServer, List<VDS> existingServers) {
         if (cluster.supportsVirtService()) {
             // If the cluster supports virt service as well, we should not be removing any servers from it, even if they
             // have been removed from the Gluster cluster using the Gluster cli, as they could potentially be used for
@@ -245,7 +245,7 @@ public class GlusterSyncJob extends GlusterJob {
                     StringUtils.isNotBlank(iface.getAddress())
                     && !glusterServer.getKnownAddresses().contains(iface.getAddress())) {
                 // get another server in the cluster
-                VDS upServer = getAlternateUpServerInCluster(host.getVdsGroupId(), host.getId());
+                VDS upServer = getAlternateUpServerInCluster(host.getClusterId(), host.getId());
                 if (upServer != null) {
                     boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getAddress());
                     if (peerProbed) {
@@ -269,7 +269,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private VDS getAlternateUpServerInCluster(Guid clusterId, Guid vdsId) {
-        List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
+        List<VDS> vdsList = getVdsDao().getAllForClusterWithStatus(clusterId, VDSStatus.Up);
         // If the cluster already having Gluster servers, get an up server
         if (vdsList.isEmpty()) {
             return null;
@@ -337,7 +337,7 @@ public class GlusterSyncJob extends GlusterJob {
      * @return GlusterServerInfo
      */
     private GlusterServerInfo findGlusterServer(VDS server, List<GlusterServerInfo> fetchedServers) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getVdsGroupCompatibilityVersion())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getClusterCompatibilityVersion())) {
             // compare gluster host uuid stored in server with the ones fetched from list
             GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
             for (GlusterServerInfo fetchedServer : fetchedServers) {
@@ -367,7 +367,7 @@ public class GlusterSyncJob extends GlusterJob {
         return vdsIps;
     }
 
-    private List<GlusterServerInfo> fetchServers(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
+    private List<GlusterServerInfo> fetchServers(Cluster cluster, VDS upServer, List<VDS> existingServers) {
         // Create a copy of the existing servers as the fetchServer method can potentially remove elements from it
         List<VDS> tempServers = new ArrayList<>(existingServers);
         List<GlusterServerInfo> fetchedServers = fetchServers(upServer, tempServers);
@@ -407,7 +407,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private boolean isSameServer(VDS upServer, GlusterServerInfo server) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(upServer.getVdsGroupCompatibilityVersion())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(upServer.getClusterCompatibilityVersion())) {
             GlusterServer glusterUpServer = getGlusterServerDao().getByServerId(upServer.getId());
             return glusterUpServer.getGlusterServerUuid().equals(server.getUuid());
         } else {
@@ -469,7 +469,7 @@ public class GlusterSyncJob extends GlusterJob {
         return null;
     }
 
-    private void refreshVolumeData(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
+    private void refreshVolumeData(Cluster cluster, VDS upServer, List<VDS> existingServers) {
         acquireLock(cluster.getId());
         try {
             // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
@@ -518,7 +518,7 @@ public class GlusterSyncJob extends GlusterJob {
     protected Map<Guid, GlusterVolumeEntity> fetchVolumes(VDS upServer) {
         VDSReturnValue result =
                 runVdsCommand(VDSCommandType.GlusterVolumesList, new GlusterVolumesListVDSParameters(upServer.getId(),
-                        upServer.getVdsGroupId()));
+                        upServer.getClusterId()));
 
         return result.getSucceeded() ? (Map<Guid, GlusterVolumeEntity>) result.getReturnValue() : null;
     }
@@ -534,7 +534,7 @@ public class GlusterSyncJob extends GlusterJob {
 
                 // Set the gluster cli schedule enabled flag back to true
                 if (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName).equalsIgnoreCase(volume.getName())) {
-                    VDSGroup cluster = getClusterDao().get(clusterId);
+                    Cluster cluster = getClusterDao().get(clusterId);
                     cluster.setGlusterCliBasedSchedulingOn(true);
                     getClusterDao().update(cluster);
                 }
@@ -551,7 +551,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void updateExistingAndNewVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
-        VDSGroup cluster = getClusterDao().get(clusterId);
+        Cluster cluster = getClusterDao().get(clusterId);
 
         for (Entry<Guid, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
             GlusterVolumeEntity volume = entry.getValue();
@@ -581,7 +581,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void disableCliSnapshotSchedulingFlag(VDSGroup cluster, GlusterVolumeEntity volume) {
+    private void disableCliSnapshotSchedulingFlag(Cluster cluster, GlusterVolumeEntity volume) {
         if (getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), cluster.getId())
                 && cluster.isGlusterCliBasedSchedulingOn()
                 && (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)).equalsIgnoreCase(volume.getName())) {
@@ -949,7 +949,7 @@ public class GlusterSyncJob extends GlusterJob {
     public void refreshHeavyWeightData() {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
-        for (VDSGroup cluster : getClusterDao().getAll()) {
+        for (Cluster cluster : getClusterDao().getAll()) {
             if (GlusterFeatureSupported.refreshHeavyWeight(cluster.getCompatibilityVersion())
                     && cluster.supportsGlusterService()) {
                 try {
@@ -964,7 +964,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void refreshClusterHeavyWeightData(VDSGroup cluster) {
+    private void refreshClusterHeavyWeightData(Cluster cluster) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());

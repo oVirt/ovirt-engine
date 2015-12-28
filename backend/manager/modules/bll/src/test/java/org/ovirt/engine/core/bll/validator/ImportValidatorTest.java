@@ -106,7 +106,7 @@ public class ImportValidatorTest {
 
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
         v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
-        v.setVdsGroupId(Guid.Empty);
+        v.setClusterId(Guid.Empty);
 
         return v;
     }

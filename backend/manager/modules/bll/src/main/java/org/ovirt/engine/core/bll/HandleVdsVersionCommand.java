@@ -14,10 +14,10 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -61,7 +61,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
     @Override
     protected void executeCommand() {
         VDS vds = getVds();
-        VDSGroup cluster = getVdsGroup();
+        Cluster cluster = getCluster();
         boolean isEngineSupportedByVdsm = false;
 
         // partialVdcVersion will hold the engine's version (minor and major parts),
@@ -94,7 +94,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         setSucceeded(true);
     }
 
-    private void checkClusterAdditionalFeaturesSupported(VDSGroup cluster, VDS vds) {
+    private void checkClusterAdditionalFeaturesSupported(Cluster cluster, VDS vds) {
         Set<SupportedAdditionalClusterFeature> clusterSupportedFeatures =
                 clusterFeatureDao.getSupportedFeaturesByClusterId(cluster.getId());
         Set<String> hostSupportedFeatures =

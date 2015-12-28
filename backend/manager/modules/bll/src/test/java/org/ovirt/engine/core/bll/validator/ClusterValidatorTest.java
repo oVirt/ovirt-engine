@@ -21,16 +21,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice.Source;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -45,13 +45,13 @@ public class ClusterValidatorTest {
     private DbFacade dbFacade;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private StoragePoolDao dataCenterDao;
 
     @Mock
-    private VDSGroup cluster;
+    private Cluster cluster;
 
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -67,8 +67,8 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameNotUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<VDSGroup> emptyList());
-        when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
+        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<Cluster> emptyList());
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.nameNotUsed(), isValid());
@@ -76,11 +76,11 @@ public class ClusterValidatorTest {
 
     @Test
     public void nameIsAlreadyUsed() {
-        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<VDSGroup> singletonList(mock(VDSGroup.class)));
-        when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
+        when(clusterDao.getByName(any(String.class), any(Boolean.class))).thenReturn(Collections.<Cluster> singletonList(mock(Cluster.class)));
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
-        assertThat(validator.nameNotUsed(), failsWith(EngineMessage.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE));
+        assertThat(validator.nameNotUsed(), failsWith(EngineMessage.CLUSTER_CANNOT_DO_ACTION_NAME_IN_USE));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.dataCenterVersionMismatch(),
-                failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
+                failsWith(EngineMessage.CLUSTER_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
     }
 
     @Test
@@ -199,8 +199,8 @@ public class ClusterValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<VDSGroup> emptyList());
-        when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<Cluster> emptyList());
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(), isValid());
@@ -213,12 +213,12 @@ public class ClusterValidatorTest {
         when(dataCenter.isLocal()).thenReturn(true);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<VDSGroup> singletonList(mock(VDSGroup.class)));
-        when(dbFacade.getVdsGroupDao()).thenReturn(clusterDao);
+        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.<Cluster> singletonList(mock(Cluster.class)));
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.localStoragePoolAttachedToSingleCluster(),
-                failsWith(EngineMessage.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
+                failsWith(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class ClusterValidatorTest {
     @Test
     public void noClusterServiceDefined() {
         assertThat(validator.clusterServiceDefined(),
-                failsWith(EngineMessage.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED));
+                failsWith(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED));
     }
 
     @Test
@@ -316,7 +316,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.mixedClusterServicesSupported(),
-                failsWith(EngineMessage.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
+                failsWith(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
     }
 
     @Test
@@ -340,7 +340,7 @@ public class ClusterValidatorTest {
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
         assertThat(validator.attestationServerConfigured(),
-                failsWith(EngineMessage.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
+                failsWith(EngineMessage.CLUSTER_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
     }
 
     @Test

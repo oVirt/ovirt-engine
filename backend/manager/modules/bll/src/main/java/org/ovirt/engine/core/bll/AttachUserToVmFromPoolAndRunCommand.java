@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -332,10 +332,10 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
             setStoragePoolId(vm.getStoragePoolId());
 
-            list.add(new QuotaVdsGroupConsumptionParameter(vm.getQuotaId(),
+            list.add(new QuotaClusterConsumptionParameter(vm.getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    vm.getVdsGroupId(),
+                    vm.getClusterId(),
                     vm.getCpuPerSocket() * vm.getNumOfSockets(),
                     vm.getMemSizeMb()));
         }

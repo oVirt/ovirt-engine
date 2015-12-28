@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 
 public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
-    private VDSGroup cluster;
+    private Cluster cluster;
 
     public CpuProfileValidator(CpuProfile profile) {
         super(profile);
@@ -27,7 +27,7 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     @Override
     public ValidationResult parentEntityExists() {
-        if (DbFacade.getInstance().getVdsGroupDao().get(getProfile().getClusterId()) == null) {
+        if (DbFacade.getInstance().getClusterDao().get(getProfile().getClusterId()) == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
         return ValidationResult.VALID;
@@ -42,9 +42,9 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
         return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_PROFILE);
     }
 
-    protected VDSGroup getCluster() {
+    protected Cluster getCluster() {
         if (cluster == null) {
-            cluster = getDbFacade().getVdsGroupDao().get(getProfile().getClusterId());
+            cluster = getDbFacade().getClusterDao().get(getProfile().getClusterId());
         }
 
         return cluster;

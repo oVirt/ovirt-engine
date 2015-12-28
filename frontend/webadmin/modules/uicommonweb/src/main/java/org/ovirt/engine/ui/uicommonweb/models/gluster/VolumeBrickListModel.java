@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -327,7 +327,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                     return;
                 }
             }
-        }), volumeEntity.getVdsGroupName());
+        }), volumeEntity.getClusterName());
     }
 
     private void addBricks(GlusterVolumeEntity volumeEntity) {
@@ -354,7 +354,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                VDSGroup cluster = (VDSGroup) result;
+                Cluster cluster = (Cluster) result;
                 volumeBrickModel.getForce()
                         .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion()));
                 volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion()));
@@ -998,7 +998,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                         setWindow(removeBrickStatusModel);
 
                         removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
-                        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
+                        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
 
                         removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
                         removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
@@ -1134,7 +1134,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result) {
-                VDSGroup cluster = (VDSGroup) result;
+                Cluster cluster = (Cluster) result;
 
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
@@ -1212,8 +1212,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                VDSGroup vdsGroup = (VDSGroup) returnValue;
-                if (Version.v3_2.compareTo(vdsGroup.getCompatibilityVersion()) <= 0) {
+                Cluster cluster = (Cluster) returnValue;
+                if (Version.v3_2.compareTo(cluster.getCompatibilityVersion()) <= 0) {
                     onShowBrickAdvancedDetails(volumeEntity);
                 }
                 else {
@@ -1222,7 +1222,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                     model.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
                     model.setMessage(ConstantsManager.getInstance()
                             .getMessages()
-                            .brickDetailsNotSupportedInClusterCompatibilityVersion(vdsGroup.getCompatibilityVersion() != null ? vdsGroup.getCompatibilityVersion()
+                            .brickDetailsNotSupportedInClusterCompatibilityVersion(
+                                    cluster.getCompatibilityVersion() != null ? cluster.getCompatibilityVersion()
                                     .toString()
                                     : "")); //$NON-NLS-1$
                     model.setHelpTag(HelpTag.brick_details_not_supported);

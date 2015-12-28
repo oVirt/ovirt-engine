@@ -48,7 +48,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     private List<VDS> getServersInCluster() {
         if (serversInCluster == null) {
-            serversInCluster = getVdsDao().getAllForVdsGroup(getGlusterHook().getClusterId());
+            serversInCluster = getVdsDao().getAllForCluster(getGlusterHook().getClusterId());
         }
         return serversInCluster;
     }

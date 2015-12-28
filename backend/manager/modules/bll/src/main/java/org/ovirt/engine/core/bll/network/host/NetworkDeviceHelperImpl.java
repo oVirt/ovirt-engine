@@ -299,7 +299,7 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
     @Override
     public Map<Guid, Guid> getVfMap(final Guid hostId) {
         final VDS host = vdsDao.get(hostId);
-        if (!FeatureSupported.sriov(host.getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.sriov(host.getClusterCompatibilityVersion())) {
             return Collections.emptyMap();
         }
 

@@ -8,21 +8,20 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendClustersResourceTest extends
-        AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendClustersResource> {
+        AbstractBackendCollectionResourceTest<org.ovirt.engine.api.model.Cluster, Cluster, BackendClustersResource> {
 
     public BackendClustersResourceTest() {
         super(new BackendClustersResource(), SearchType.Cluster, "Clusters : ");
@@ -44,26 +43,26 @@ public class BackendClustersResourceTest extends
                                    new Object[] { GUIDS[0] },
                                    null);
 
-        setUpCreationExpectations(VdcActionType.AddVdsGroup,
+        setUpCreationExpectations(VdcActionType.AddCluster,
                                   ManagementNetworkOnClusterOperationParameters.class,
-                                  new String[] { "VdsGroup.CompatibilityVersion" },
+                                  new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsGroupById,
+                                  VdcQueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
-        Cluster model = getModel(0);
+        org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setId(GUIDS[1].toString());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Cluster);
-        verifyModel((Cluster) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof org.ovirt.engine.api.model.Cluster);
+        verifyModel((org.ovirt.engine.api.model.Cluster) response.getEntity(), 0);
     }
 
     @Test
@@ -81,20 +80,20 @@ public class BackendClustersResourceTest extends
                                    new Object[] { GUIDS[0] },
                                    null);
 
-        setUpCreationExpectations(VdcActionType.AddVdsGroup,
+        setUpCreationExpectations(VdcActionType.AddCluster,
                                   ManagementNetworkOnClusterOperationParameters.class,
-                                  new String[] { "VdsGroup.CompatibilityVersion" },
+                                  new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsGroupById,
+                                  VdcQueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
-        Cluster model = getModel(0);
+        org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setId(GUIDS[1].toString());
         model.setVersion(new Version());
         model.getVersion().setMajor(2);
@@ -102,8 +101,8 @@ public class BackendClustersResourceTest extends
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Cluster);
-        verifyModel((Cluster) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof org.ovirt.engine.api.model.Cluster);
+        verifyModel((org.ovirt.engine.api.model.Cluster) response.getEntity(), 0);
     }
 
     @Test
@@ -124,13 +123,13 @@ public class BackendClustersResourceTest extends
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
+        setUriInfo(setUpActionExpectations(VdcActionType.AddCluster,
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            valid,
                                            success));
-        Cluster model = getModel(0);
+        org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setId(GUIDS[1].toString());
 
         try {
@@ -157,26 +156,26 @@ public class BackendClustersResourceTest extends
                 new Object[] { GUIDS[0] },
                 null);
 
-        setUpCreationExpectations(VdcActionType.AddVdsGroup,
+        setUpCreationExpectations(VdcActionType.AddCluster,
                                   ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] {},
                                   new Object[] {},
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsGroupById,
+                                  VdcQueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
-        Cluster model = getModel(0);
+        org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setName(NAMES[1]);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Cluster);
-        verifyModel((Cluster) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof org.ovirt.engine.api.model.Cluster);
+        verifyModel((org.ovirt.engine.api.model.Cluster) response.getEntity(), 0);
     }
 
     @Test
@@ -197,13 +196,13 @@ public class BackendClustersResourceTest extends
                 new Object[] { NAMES[1] },
                 setUpStoragePool(1));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
+        setUriInfo(setUpActionExpectations(VdcActionType.AddCluster,
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            valid,
                                            success));
-        Cluster model = getModel(0);
+        org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setName(NAMES[1]);
 
         try {
@@ -216,7 +215,7 @@ public class BackendClustersResourceTest extends
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
-        Cluster model = new Cluster();
+        org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -240,19 +239,19 @@ public class BackendClustersResourceTest extends
     }
 
     @Override
-    protected VDSGroup getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VDSGroup.class), index);
+    protected Cluster getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(Cluster.class), index);
     }
 
-    static VDSGroup setUpEntityExpectations(VDSGroup entity, int index) {
+    static Cluster setUpEntityExpectations(Cluster entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         return entity;
     }
 
-    static Cluster getModel(int index) {
-        Cluster model = new Cluster();
+    static org.ovirt.engine.api.model.Cluster getModel(int index) {
+        org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         model.setDataCenter(new DataCenter());
@@ -262,7 +261,7 @@ public class BackendClustersResourceTest extends
     }
 
     @Override
-    protected List<Cluster> getCollection() {
+    protected List<org.ovirt.engine.api.model.Cluster> getCollection() {
         return collection.list().getClusters();
     }
 

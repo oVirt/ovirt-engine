@@ -14,6 +14,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -1704,20 +1704,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private String getDefaultEmulatedMachineLabel() {
-        VDSGroup vdsGroup = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
         String newClusterEmulatedMachine = constants.clusterDefaultOption();
-        if (vdsGroup != null) {
-            String emulatedMachine = (vdsGroup.getEmulatedMachine() == null) ? "" : vdsGroup.getEmulatedMachine(); //$NON-NLS-1$
+        if (cluster != null) {
+            String emulatedMachine = (cluster.getEmulatedMachine() == null) ? "" : cluster.getEmulatedMachine(); //$NON-NLS-1$
             newClusterEmulatedMachine +=  "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return newClusterEmulatedMachine;
     }
 
     private String getDefaultCpuTypeLabel() {
-        VDSGroup vdsGroup = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
         String newClusterCpuModel = constants.clusterDefaultOption();
-        if (vdsGroup != null) {
-            String cpuName = (vdsGroup.getCpuName() == null) ? "" : vdsGroup.getCpuName(); //$NON-NLS-1$
+        if (cluster != null) {
+            String cpuName = (cluster.getCpuName() == null) ? "" : cluster.getCpuName(); //$NON-NLS-1$
             newClusterCpuModel += "(" + cpuName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return newClusterCpuModel;

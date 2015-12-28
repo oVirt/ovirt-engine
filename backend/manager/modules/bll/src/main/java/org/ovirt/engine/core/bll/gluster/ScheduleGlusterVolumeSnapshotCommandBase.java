@@ -28,7 +28,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         this.force = getParameters().getForce();
 
         if (this.schedule != null) {
-            setVdsGroupId(schedule.getClusterId());
+            setClusterId(schedule.getClusterId());
             setGlusterVolumeId(schedule.getVolumeId());
         }
     }

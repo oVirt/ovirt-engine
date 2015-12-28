@@ -75,7 +75,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
         if (!vdsInterfaces.isEmpty()) {
             VdsStatic vdsStatic = vdsStaticDao.get(getParameters().getId());
             Map<String, Network> networks =
-                Entities.entitiesByName(networkDao.getAllForCluster(vdsStatic.getVdsGroupId()));
+                Entities.entitiesByName(networkDao.getAllForCluster(vdsStatic.getClusterId()));
 
             for (final VdsNetworkInterface nic : vdsInterfaces) {
                 if (!nic.isBond() || nicDoesHaveSlaves(vdsInterfaces, nic)) {

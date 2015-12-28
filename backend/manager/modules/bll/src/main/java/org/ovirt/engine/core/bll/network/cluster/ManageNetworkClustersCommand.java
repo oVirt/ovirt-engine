@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToVdsGroup;
-import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToVdsGroup;
+import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToCluster;
+import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToCluster;
 import static org.ovirt.engine.core.common.action.VdcActionType.UpdateNetworkOnCluster;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -40,7 +40,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     private Predicate<NetworkCluster> managementNetworkAppointmentPredicate;
 
     @Inject @Named
-    private Function<NetworkCluster, AttachNetworkToVdsGroupParameter> networkClusterToAttachNetworkToVdsGroupParameterTransformer;
+    private Function<NetworkCluster, AttachNetworkToClusterParameter> networkClusterToAttachNetworkToClusterParameterTransformer;
 
     @Inject @Named
     private Function<NetworkCluster, NetworkClusterParameters> networkClusterParameterTransformer;
@@ -98,14 +98,14 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
         return runNetworkClusterCommands(
                 attachments,
                 VdcActionType.AttachNetworkToClusterInternal,
-                networkClusterToAttachNetworkToVdsGroupParameterTransformer);
+                networkClusterToAttachNetworkToClusterParameterTransformer);
     }
 
     private boolean detachNetworks(Collection<NetworkCluster> detachments) {
         return runNetworkClusterCommands(
                 detachments,
                 VdcActionType.DetachNetworkFromClusterInternal,
-                networkClusterToAttachNetworkToVdsGroupParameterTransformer);
+                networkClusterToAttachNetworkToClusterParameterTransformer);
     }
 
     private boolean updateNetworkAttachments(Collection<NetworkCluster> updates) {
@@ -158,13 +158,13 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             result.addAll(
                     attachPermissionChecker.findPermissionCheckSubjects(
                             attachment,
-                            VdcActionType.AttachNetworkToVdsGroup));
+                            VdcActionType.AttachNetworkToCluster));
         }
         for (NetworkCluster detachment : getParameters().getDetachments()) {
             result.addAll(
                     detachPermissionFinder.findPermissionCheckSubjects(
                             detachment.getNetworkId(),
-                            VdcActionType.DetachNetworkToVdsGroup));
+                            VdcActionType.DetachNetworkToCluster));
         }
         for (NetworkCluster update : getParameters().getUpdates()) {
             result.addAll(
@@ -186,7 +186,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             final boolean isUserAllowed = attachPermissionChecker.checkPermissions(
                     this,
                     attachment,
-                    AttachNetworkToVdsGroup);
+                    AttachNetworkToCluster);
             if (!isUserAllowed) {
                 return false;
             }
@@ -199,7 +199,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             final List<PermissionSubject> permissionCheckSubjects =
                     detachPermissionFinder.findPermissionCheckSubjects(
                             detachment.getNetworkId(),
-                            DetachNetworkToVdsGroup);
+                            DetachNetworkToCluster);
             for (PermissionSubject permissionSubject : permissionCheckSubjects) {
                 final ArrayList<String> messages = new ArrayList<>();
                 final boolean isUserAllowed = checkSinglePermission(permissionSubject, messages);

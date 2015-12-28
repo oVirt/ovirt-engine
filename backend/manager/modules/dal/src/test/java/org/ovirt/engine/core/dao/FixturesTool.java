@@ -96,33 +96,33 @@ public class FixturesTool {
     /**
      * Predefined vds group.
      */
-    public static final Guid VDS_GROUP_RHEL6_ISCSI = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    public static final Guid CLUSTER_RHEL6_ISCSI = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     /**
      * Predefined vds group.
      */
-    protected static final Guid VDS_GROUP_RHEL6_NFS = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
+    protected static final Guid CLUSTER_RHEL6_NFS = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
 
     /**
      * Predefined vds group.
      */
-    protected static final Guid VDS_GROUP_RHEL6_NFS_2 = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7c");
+    protected static final Guid CLUSTER_RHEL6_NFS_2 = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7c");
 
     /**
      * Predefined vds group for LocalFS storage pool
      */
-    protected static final Guid VDS_GROUP_RHEL6_LOCALFS = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7f");
+    protected static final Guid CLUSTER_RHEL6_LOCALFS = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7f");
 
     /**
      * Predefined vds group, with no specific quotas associated to it.
      */
-    protected static final Guid VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS =
+    protected static final Guid CLUSTER_RHEL6_NFS_NO_SPECIFIC_QUOTAS =
             new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7e");
 
     /**
      * Predefined vds group with no running VMs
      */
-    protected static final Guid VDS_GROUP_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
+    protected static final Guid CLUSTER_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
 
     /**
      * Predefined NFS storage pool.
@@ -156,8 +156,8 @@ public class FixturesTool {
      * <ul>Global limitation:
      * <li>virtual_cpu = 100</li></ul>
      * Specific storage ID c2211b56-8869-41cd-84e1-78d7cb96f31d(STORAGE_DOAMIN_NFS_MASTER) <ul><li>storage_size_gb = 1000</li></ul>
-     * Specific vdsGroup ID b399944a-81ab-4ec5-8266-e19ba7c3c9d1(VDS_GROUP_RHEL6_ISCSI) <ul><li>virtual_cpu = 10</li><li>mem_size_mb = -1</li></ul>
-     * Specific vdsGroup ID 0e57070e-2469-4b38-84a2-f111aaabd49d(VDS_GROUP_RHEL6_NFS) <ul><li>virtual_cpu = null</li><li>mem_size_mb = -1</li></ul>
+     * Specific cluster ID b399944a-81ab-4ec5-8266-e19ba7c3c9d1(CLUSTER_RHEL6_ISCSI) <ul><li>virtual_cpu = 10</li><li>mem_size_mb = -1</li></ul>
+     * Specific cluster ID 0e57070e-2469-4b38-84a2-f111aaabd49d(CLUSTER_RHEL6_NFS) <ul><li>virtual_cpu = null</li><li>mem_size_mb = -1</li></ul>
      */
     protected static final Guid QUOTA_SPECIFIC = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4400");
 
@@ -741,8 +741,8 @@ public class FixturesTool {
     /**
      * Number of VMs on clusters
      */
-    public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_NFS_CLUSTER = 0;
-    public static final int NUMBER_OF_VMS_IN_VDS_GROUP_RHEL6_ISCSI = 7;
+    public static final int NUMBER_OF_VMS_IN_CLUSTER_RHEL6_NFS_CLUSTER = 0;
+    public static final int NUMBER_OF_VMS_IN_CLUSTER_RHEL6_ISCSI = 7;
 
     public static final Guid NON_DEFAULT_MAC_POOL = new Guid("c248552d-64d4-4a77-ab1d-4c5eea00be6b");
     public static final Guid NOT_USED_MAC_POOL_ID = new Guid("17baf4e3-4347-4f81-915f-7762a108b81a");

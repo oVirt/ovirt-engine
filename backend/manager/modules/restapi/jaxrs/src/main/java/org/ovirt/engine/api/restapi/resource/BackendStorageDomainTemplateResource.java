@@ -45,7 +45,7 @@ public class BackendStorageDomainTemplateResource
         ImportVmTemplateParameters params = new ImportVmTemplateParameters();
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
-        params.setVdsGroupId(getClusterId(action));
+        params.setClusterId(getClusterId(action));
         params.setImagesExistOnTargetStorageDomain(true);
 
         if (action.isSetClone()) {

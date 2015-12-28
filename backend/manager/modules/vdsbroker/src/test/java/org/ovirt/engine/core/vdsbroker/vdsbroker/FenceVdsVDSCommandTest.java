@@ -61,7 +61,7 @@ public class FenceVdsVDSCommandTest {
 
         when(vdsDao.get(eq(PROXY_HOST_ID))).thenReturn(proxyHost);
         when(proxyHost.getId()).thenReturn(PROXY_HOST_ID);
-        when(proxyHost.getVdsGroupCompatibilityVersion()).thenReturn(Version.getLast());
+        when(proxyHost.getClusterCompatibilityVersion()).thenReturn(Version.getLast());
     }
 
     private void setupCommand(FenceVdsVDSCommandParameters params) {

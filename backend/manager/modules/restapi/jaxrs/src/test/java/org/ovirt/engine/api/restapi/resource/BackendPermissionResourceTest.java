@@ -30,7 +30,7 @@ public class BackendPermissionResourceTest
                                                                                    VdcQueryType.GetPermissionsForObject,
                                                                                    new GetPermissionsForObjectParameters(GUIDS[0]),
                                                                                    Cluster.class,
-                                                                                   VdcObjectType.VdsGroups),
+                                                                                   VdcObjectType.Cluster),
                                             User.class));
     }
 

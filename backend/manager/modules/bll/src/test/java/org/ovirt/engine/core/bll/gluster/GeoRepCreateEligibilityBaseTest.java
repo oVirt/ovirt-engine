@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeIn
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 public class GeoRepCreateEligibilityBaseTest {
@@ -42,14 +42,14 @@ public class GeoRepCreateEligibilityBaseTest {
     }
 
     @Before
-    public void setupMock(GlusterGeoRepUtil geoRepUtil, GlusterGeoRepDao geoRepDao, VdsGroupDao vdsGroupDao) {
+    public void setupMock(GlusterGeoRepUtil geoRepUtil, GlusterGeoRepDao geoRepDao, ClusterDao clusterDao) {
         doReturn(geoRepDao).when(geoRepUtil).getGeoRepDao();
         doReturn(getGeoRepSessions()).when(geoRepDao).getAllSessions();
-        doReturn(vdsGroupDao).when(geoRepUtil).getVdsGroupDao();
+        doReturn(clusterDao).when(geoRepUtil).getClusterDao();
 
-        doReturn(getVdsGroup(MASTER_CLUSTER_ID, CLUSTER_COMPATIBILITY_VERSION)).when(vdsGroupDao).get(MASTER_CLUSTER_ID);
+        doReturn(getCluster(MASTER_CLUSTER_ID, CLUSTER_COMPATIBILITY_VERSION)).when(clusterDao).get(MASTER_CLUSTER_ID);
 
-        doReturn(getVdsGroup(SLAVE_CLUSTER_ID, CLUSTER_COMPATIBILITY_VERSION)).when(vdsGroupDao).get(SLAVE_CLUSTER_ID);
+        doReturn(getCluster(SLAVE_CLUSTER_ID, CLUSTER_COMPATIBILITY_VERSION)).when(clusterDao).get(SLAVE_CLUSTER_ID);
     }
 
     protected GlusterVolumeEntity getGlusterVolume(Guid volumeId, Guid clusterId, GlusterStatus status, GlusterVolumeSizeInfo sizeInfo) {
@@ -63,11 +63,11 @@ public class GeoRepCreateEligibilityBaseTest {
         return volume;
     }
 
-    protected VDSGroup getVdsGroup(Guid vdsGroupId, Version compatibilityVersion) {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(vdsGroupId);
-        vdsGroup.setCompatibilityVersion(compatibilityVersion);
-        return vdsGroup;
+    protected Cluster getCluster(Guid clusterId, Version compatibilityVersion) {
+        Cluster cluster = new Cluster();
+        cluster.setId(clusterId);
+        cluster.setCompatibilityVersion(compatibilityVersion);
+        return cluster;
     }
 
     protected GlusterGeoRepSession getSession(Guid slaveVolumeId) {

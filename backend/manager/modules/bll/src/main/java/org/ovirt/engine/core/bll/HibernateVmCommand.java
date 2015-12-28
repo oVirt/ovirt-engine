@@ -153,7 +153,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         if (!FeatureSupported.isSuspendSupportedByArchitecture(getVm().getClusterArch(),
-                getVm().getVdsGroupCompatibilityVersion())) {
+                getVm().getClusterCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SUSPEND_NOT_SUPPORTED);
         }
 

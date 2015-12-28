@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 /**
  * Parameters which contain a {@link NetworkCluster} entity to work on.
  */
-public class NetworkClusterParameters extends VdsGroupParametersBase {
+public class NetworkClusterParameters extends ClusterParametersBase {
 
     /** Used for serialization. */
     private static final long serialVersionUID = -2902181240270944176L;

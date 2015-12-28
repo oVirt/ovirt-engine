@@ -41,7 +41,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     @Override
     protected void executeCommand() {
         setVdsStatus(VDSStatus.NonOperational, getParameters().getNonOperationalReason());
-        if (getVdsGroup() != null && getVdsGroup().supportsGlusterService()) {
+        if (getCluster() != null && getCluster().supportsGlusterService()) {
             updateBrickStatusDown();
         }
 
@@ -50,7 +50,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             orderListOfRunningVmsOnVds(getVdsId());
             ThreadPoolUtil.execute(() -> {
                 // migrate vms according to cluster migrateOnError option
-                switch (getVdsGroup().getMigrateOnError()) {
+                switch (getCluster().getMigrateOnError()) {
                 case YES:
                     migrateAllVms(getExecutionContext());
                     break;

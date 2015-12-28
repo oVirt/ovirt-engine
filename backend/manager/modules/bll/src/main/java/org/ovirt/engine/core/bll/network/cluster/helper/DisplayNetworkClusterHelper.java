@@ -52,7 +52,7 @@ public final class DisplayNetworkClusterHelper {
 
     private AuditLogableBase createLoggable() {
         AuditLogableBase loggable = new AuditLogableBase();
-        loggable.setVdsGroupId(networkCluster.getClusterId());
+        loggable.setClusterId(networkCluster.getClusterId());
         loggable.addCustomValue("NetworkName", networkName);
         return loggable;
     }

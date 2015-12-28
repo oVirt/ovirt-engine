@@ -10,13 +10,13 @@ import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -591,7 +591,7 @@ public abstract class RunOnceModel extends Model {
         setCustomPropertySheet(new KeyValueModel());
 
         setBootMenuEnabled(new EntityModel<>(false));
-        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.getInstance().isBootMenuSupported(vm.getVdsGroupCompatibilityVersion().toString()));
+        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.getInstance().isBootMenuSupported(vm.getClusterCompatibilityVersion().toString()));
         setRunAndPause(new EntityModel<>(false));
         setRunAsStateless(new EntityModel<>(false));
 
@@ -608,13 +608,13 @@ public abstract class RunOnceModel extends Model {
 
         setSpiceFileTransferEnabled(new EntityModel<Boolean>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-        boolean spiceFileTransferToggle = AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        boolean spiceFileTransferToggle = AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getClusterCompatibilityVersion().toString());
         getSpiceFileTransferEnabled().setIsChangeable(spiceFileTransferToggle);
         getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        boolean spiceCopyPasteToggle = AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        boolean spiceCopyPasteToggle = AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getClusterCompatibilityVersion().toString());
         getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
         getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
 
@@ -689,7 +689,7 @@ public abstract class RunOnceModel extends Model {
         EntityModel<DisplayType> qxlProtocol = new EntityModel<>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
-        boolean hasSpiceSupport = AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+        boolean hasSpiceSupport = AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getClusterCompatibilityVersion());
 
         if (hasSpiceSupport) {
             getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
@@ -714,7 +714,7 @@ public abstract class RunOnceModel extends Model {
                 }
 
             }
-        }), vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+        }), vm.getOs(), vm.getClusterCompatibilityVersion());
     }
 
     private void initVmInitEnabled(VmInit vmInit, boolean isInitialized) {
@@ -987,7 +987,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     private void updateSystemTabLists() {
-        Guid clusterId = vm.getVdsGroupId();
+        Guid clusterId = vm.getClusterId();
 
         if (clusterId != null) {
 
@@ -1011,7 +1011,7 @@ public abstract class RunOnceModel extends Model {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
                             if (returnValue != null) {
-                                VDSGroup cluster = (VDSGroup) returnValue;
+                                Cluster cluster = (Cluster) returnValue;
 
                                 // update cpu names list
                                 if (cluster.getCpuName() != null) {
@@ -1048,14 +1048,14 @@ public abstract class RunOnceModel extends Model {
     // replace 'cluster emulated machine' with the explicit run-time value
     private void convertEmulatedMachineField() {
         if (StringHelper.isNullOrEmpty(getEmulatedMachine().getSelectedItem())) {
-            Guid clusterId = vm.getVdsGroupId();
+            Guid clusterId = vm.getClusterId();
             if (clusterId != null) {
                 AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object model, Object returnValue) {
                                 if (returnValue != null) {
-                                    VDSGroup cluster = (VDSGroup) returnValue;
+                                    Cluster cluster = (Cluster) returnValue;
 
                                     if (cluster.getEmulatedMachine() != null) {
                                         getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());

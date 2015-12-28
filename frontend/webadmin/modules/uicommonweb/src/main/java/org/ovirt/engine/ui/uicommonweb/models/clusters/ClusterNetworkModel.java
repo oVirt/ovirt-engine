@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -11,7 +11,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
     private final NetworkCluster originalNetworkCluster;
 
     private boolean attached = true;
-    private VDSGroup cluster = null;
+    private Cluster cluster = null;
 
     public ClusterNetworkModel(Network network) {
         setEntity(network);
@@ -33,11 +33,11 @@ public class ClusterNetworkModel extends EntityModel<Network> {
         return getEntity().getName();
     }
 
-    public VDSGroup getCluster() {
+    public Cluster getCluster() {
         return cluster;
     }
 
-    public void setCluster(VDSGroup cluster){
+    public void setCluster(Cluster cluster){
         this.cluster = cluster;
     }
 

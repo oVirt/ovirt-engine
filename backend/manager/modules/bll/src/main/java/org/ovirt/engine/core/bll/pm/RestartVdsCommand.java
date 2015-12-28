@@ -76,7 +76,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         List<String> messages = getReturnValue().getValidationMessages();
         boolean valid =
                 fenceValidator.isHostExists(getVds(), messages)
-                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getVdsGroup(), messages)
+                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getCluster(), messages)
                         && fenceValidator.isStartupTimeoutPassed(messages)
                         && isQuietTimeFromLastActionPassed()
                         && fenceValidator.isProxyHostAvailable(getVds(), messages);

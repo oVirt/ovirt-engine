@@ -114,8 +114,8 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getVdsGroupId(),
-                VdcObjectType.VdsGroups,
+        permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getClusterId(),
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
         permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate,
                                                  ActionGroup.CREATE_VM));

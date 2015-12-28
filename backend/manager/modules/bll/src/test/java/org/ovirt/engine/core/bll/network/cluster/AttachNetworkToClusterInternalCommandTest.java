@@ -13,14 +13,14 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,15 +32,15 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
      * cannot be spied from here. Instead, will override them manually.
      */
     private class TestAttachNetworkToClusterCommand extends
-                                                   AttachNetworkToClusterInternalCommand<AttachNetworkToVdsGroupParameter> {
+                                                   AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> {
 
-        private TestAttachNetworkToClusterCommand(AttachNetworkToVdsGroupParameter parameters) {
+        private TestAttachNetworkToClusterCommand(AttachNetworkToClusterParameter parameters) {
             super(parameters);
         }
 
         @Override
-        public VdsGroupDao getVdsGroupDao() {
-            return mockVdsGroupDao;
+        public ClusterDao getClusterDao() {
+            return mockClusterDao;
         }
 
         @Override
@@ -58,28 +58,28 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     private NetworkClusterDao mockNetworkClusterDao;
 
     @Mock
-    private VdsGroupDao mockVdsGroupDao;
+    private ClusterDao mockClusterDao;
 
     @Mock
     private NetworkDao mockNetworkDao;
 
-    private AttachNetworkToClusterInternalCommand<AttachNetworkToVdsGroupParameter> underTest;
+    private AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> underTest;
 
-    private VDSGroup existingGroup = new VDSGroup();
+    private Cluster existingGroup = new Cluster();
     private Network network = createNetwork();
-    private AttachNetworkToVdsGroupParameter param;
+    private AttachNetworkToClusterParameter param;
 
     @Before
     public void setup() {
         existingGroup.setCompatibilityVersion(Version.v3_1);
-        param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroup(), getNetwork());
+        param = new AttachNetworkToClusterParameter(getExistingCluster(), getNetwork());
 
         underTest = new TestAttachNetworkToClusterCommand(param);
     }
 
     @Test
     public void networkExists() {
-        simulateVdsGroupExists();
+        simulateClusterExists();
         when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
         when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
         assertValidateFailure(EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
@@ -87,20 +87,20 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
 
     @Test
     public void networkDoesntExist() {
-        simulateVdsGroupExists();
+        simulateClusterExists();
         assertValidateFailure(EngineMessage.NETWORK_NOT_EXISTS.toString());
     }
 
     @Test
-    public void noVdsGroup() {
-        simulateVdsGroupDoesNotExist();
+    public void noCluster() {
+        simulateClusterDoesNotExist();
         assertValidateFailure(EngineMessage.VDS_CLUSTER_IS_NOT_VALID.toString());
     }
 
     @Test
-    public void raceConditionVdsGroupRemoved() {
-        simulateVdsGroupExists();
-        simulateVdsGroupWasRemoved();
+    public void raceConditionClusterRemoved() {
+        simulateClusterExists();
+        simulateClusterWasRemoved();
         assertExecuteActionFailure();
     }
 
@@ -110,24 +110,24 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         return network;
     }
 
-    private void simulateVdsGroupExists() {
-        dbFacadeReturnVdsGroup();
+    private void simulateClusterExists() {
+        dbFacadeReturnCluster();
     }
 
-    private void simulateVdsGroupDoesNotExist() {
-        dbFacadeReturnNoVdsGroup();
+    private void simulateClusterDoesNotExist() {
+        dbFacadeReturnNoCluster();
     }
 
-    private void simulateVdsGroupWasRemoved() {
+    private void simulateClusterWasRemoved() {
         dbFacadeThrowOnNetworkClusterSave();
     }
 
-    private void dbFacadeReturnNoVdsGroup() {
-        when(mockVdsGroupDao.get(any(Guid.class))).thenReturn(null);
+    private void dbFacadeReturnNoCluster() {
+        when(mockClusterDao.get(any(Guid.class))).thenReturn(null);
     }
 
-    private void dbFacadeReturnVdsGroup() {
-        when(mockVdsGroupDao.get(any(Guid.class))).thenReturn(existingGroup);
+    private void dbFacadeReturnCluster() {
+        when(mockClusterDao.get(any(Guid.class))).thenReturn(existingGroup);
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {
@@ -139,7 +139,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         return network;
     }
 
-    private VDSGroup getExistingVdsGroup() {
+    private Cluster getExistingCluster() {
         return existingGroup;
     }
 
@@ -156,6 +156,6 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
         }
 
         assertFalse(underTest.getReturnValue().getSucceeded());
-        assertEquals(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, underTest.getAuditLogTypeValue());
+        assertEquals(AuditLogType.NETWORK_ATTACH_NETWORK_TO_CLUSTER_FAILED, underTest.getAuditLogTypeValue());
     }
 }

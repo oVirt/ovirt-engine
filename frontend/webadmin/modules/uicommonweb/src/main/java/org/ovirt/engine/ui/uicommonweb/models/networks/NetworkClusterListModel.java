@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkClusterListModel extends SearchableListModel<NetworkView, PairQueryable<VDSGroup, NetworkCluster>> {
+public class NetworkClusterListModel extends SearchableListModel<NetworkView, PairQueryable<Cluster, NetworkCluster>> {
     private UICommand manageCommand;
 
     private final Comparator<ClusterNetworkModel> manageModelComparator =
@@ -42,11 +42,11 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
         setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
 
-        setComparator(new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
+        setComparator(new Comparator<PairQueryable<Cluster, NetworkCluster>>() {
 
             @Override
-            public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
-                               PairQueryable<VDSGroup, NetworkCluster> arg1) {
+            public int compare(PairQueryable<Cluster, NetworkCluster> arg0,
+                               PairQueryable<Cluster, NetworkCluster> arg1) {
                 return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
             }
         });
@@ -68,9 +68,9 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
 
     private ClusterNetworkManageModel createManageList() {
         List<ClusterNetworkModel> networkManageModelList = new ArrayList<>();
-        Iterable<PairQueryable<VDSGroup, NetworkCluster>> items = getItems();
+        Iterable<PairQueryable<Cluster, NetworkCluster>> items = getItems();
 
-        for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
+        for (PairQueryable<Cluster, NetworkCluster> item : items) {
             Network network = (Network) Cloner.clone(getEntity());
             if (item.getSecond() != null) {
                 network.setCluster((NetworkCluster) Cloner.clone(item.getSecond()));
@@ -81,7 +81,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
                     return getCluster().getName();
                 }
             };
-            networkManageModel.setCluster((VDSGroup) Cloner.clone(item.getFirst()));
+            networkManageModel.setCluster((Cluster) Cloner.clone(item.getFirst()));
 
             networkManageModelList.add(networkManageModel);
         }
@@ -123,13 +123,13 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-                setItems((Collection<PairQueryable<VDSGroup, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection<PairQueryable<Cluster, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetClustersAndNetworksByNetworkId, params, asyncQuery);
     }
 
     @Override

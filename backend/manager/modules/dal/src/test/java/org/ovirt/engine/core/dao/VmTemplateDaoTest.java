@@ -30,7 +30,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
@@ -60,7 +60,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.newGuid());
         newVmTemplate.setName("NewVmTemplate");
-        newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
+        newVmTemplate.setClusterId(CLUSTER_ID);
         newVmTemplate.setClusterArch(ArchitectureType.x86_64);
         newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         newVmTemplate.setSmallIconId(SMALL_ICON_ID);
@@ -248,12 +248,12 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      * Ensures that the templates for the given vds group are returned.
      */
     @Test
-    public void testGetAllForVdsGroup() {
-        List<VmTemplate> result = dao.getAllForVdsGroup(VDS_GROUP_ID);
+    public void testGetAllForCluster() {
+        List<VmTemplate> result = dao.getAllForCluster(CLUSTER_ID);
 
         assertGetAllResult(result);
         for (VmTemplate template : result) {
-            assertEquals(VDS_GROUP_ID, template.getVdsGroupId());
+            assertEquals(CLUSTER_ID, template.getClusterId());
         }
     }
 

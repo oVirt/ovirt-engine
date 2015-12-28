@@ -7,8 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -28,7 +28,7 @@ public class NoneBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {

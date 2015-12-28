@@ -151,7 +151,7 @@ public abstract class HostSetupNetworksParametersBuilder {
     }
 
     protected NetworkCluster getNetworkCluster(VdsNetworkInterface nic, Network network) {
-        Guid clusterId = vdsStaticDao.get(nic.getVdsId()).getVdsGroupId();
+        Guid clusterId = vdsStaticDao.get(nic.getVdsId()).getClusterId();
         return networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
     }
 

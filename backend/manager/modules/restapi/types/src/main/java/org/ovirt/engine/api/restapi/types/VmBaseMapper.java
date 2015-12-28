@@ -119,7 +119,7 @@ public class VmBaseMapper {
             entity.setComment(model.getComment());
         }
         if (model.isSetCluster() && model.getCluster().getId() != null) {
-            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
+            entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
@@ -283,9 +283,9 @@ public class VmBaseMapper {
         mapCommonEntityToModel(model, entity);
         model.setComment(entity.getComment());
 
-        if (entity.getVdsGroupId() != null) {
+        if (entity.getClusterId() != null) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getVdsGroupId().toString());
+            cluster.setId(entity.getClusterId().toString());
             model.setCluster(cluster);
         }
 

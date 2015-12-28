@@ -19,7 +19,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
@@ -42,9 +41,9 @@ import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -181,7 +180,7 @@ public class BackendHostResourceTest
                 true,
                 true));
 
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         Host host = getModel(0);
         host.setCluster(cluster);
@@ -193,11 +192,11 @@ public class BackendHostResourceTest
         String clusterName = "Default";
         setUpGetEntityExpectations(3);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { clusterName },
-                getVdsGroup(clusterName, GUIDS[1]));
+                getCluster(clusterName, GUIDS[1]));
 
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
@@ -215,18 +214,18 @@ public class BackendHostResourceTest
                 true,
                 true));
 
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setName(clusterName);
         Host host = getModel(0);
         host.setCluster(cluster);
         verifyModel(resource.update(host), 0);
     }
 
-    private VDSGroup getVdsGroup(String name, Guid id) {
-        VDSGroup vdsGroup = control.createMock(VDSGroup.class);
-        expect(vdsGroup.getId()).andReturn(id).anyTimes();
-        expect(vdsGroup.getName()).andReturn(name).anyTimes();
-        return vdsGroup;
+    private Cluster getCluster(String name, Guid id) {
+        Cluster cluster = control.createMock(Cluster.class);
+        expect(cluster.getId()).andReturn(id).anyTimes();
+        expect(cluster.getName()).andReturn(name).anyTimes();
+        return cluster;
     }
 
     @Test
@@ -349,7 +348,7 @@ public class BackendHostResourceTest
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
 
-        verifyActionResponse(resource.approve(new Action() {{ setCluster(new Cluster()); getCluster().setId(GUIDS[0].toString()); }}));
+        verifyActionResponse(resource.approve(new Action() {{ setCluster(new org.ovirt.engine.api.model.Cluster()); getCluster().setId(GUIDS[0].toString()); }}));
     }
 
     @Test

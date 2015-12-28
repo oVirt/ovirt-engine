@@ -510,7 +510,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         ArrayList<VDS> list = new ArrayList<>();
         if (getCurrentStorageItem() != null && getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
             for (VDS host : hosts) {
-                if (host.getVdsGroupCompatibilityVersion().compareTo(new Version("2.2")) >= 0) { //$NON-NLS-1$
+                if (host.getClusterCompatibilityVersion().compareTo(new Version("2.2")) >= 0) { //$NON-NLS-1$
                     list.add(host);
                 }
             }

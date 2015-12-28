@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.ClusterConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -33,7 +33,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
-public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel<Void>> implements
+public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Cluster, ClusterListModel<Void>> implements
     MainTabClusterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabClusterView> {
@@ -47,7 +47,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
 
     @Inject
-    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
+    public MainTabClusterView(MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
@@ -57,41 +57,41 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<VDSGroup> nameColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> nameColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 return object.getName();
             }
         };
         nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
-        CommentColumn<VDSGroup> commentColumn = new CommentColumn<>();
+        CommentColumn<Cluster> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            AbstractTextColumn<VDSGroup> dataCenterColumn = new AbstractTextColumn<VDSGroup>() {
+            AbstractTextColumn<Cluster> dataCenterColumn = new AbstractTextColumn<Cluster>() {
                 @Override
-                public String getValue(VDSGroup object) {
+                public String getValue(Cluster object) {
                     return object.getStoragePoolName();
                 }
             };
             getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
         }
 
-        AbstractTextColumn<VDSGroup> versionColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> versionColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 return object.getCompatibilityVersion().getValue();
             }
         };
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDSGroup> descColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> descColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 return object.getDescription();
             }
         };
@@ -99,18 +99,18 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            AbstractTextColumn<VDSGroup> cpuTypeColumn = new AbstractTextColumn<VDSGroup>() {
+            AbstractTextColumn<Cluster> cpuTypeColumn = new AbstractTextColumn<Cluster>() {
                 @Override
-                public String getValue(VDSGroup object) {
+                public String getValue(Cluster object) {
                     return object.getCpuName();
                 }
             };
             getTable().addColumn(cpuTypeColumn, constants.cpuTypeCluster(), "150px"); //$NON-NLS-1$
         }
 
-        AbstractTextColumn<VDSGroup> hostCountColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> hostCountColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 if (object.getGroupHostsAndVms() == null) {
                     return ""; //$NON-NLS-1$
                 }
@@ -120,9 +120,9 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
         getTable().addColumn(hostCountColumn, constants.hostCount(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDSGroup> vmCountColumn = new AbstractTextColumn<VDSGroup>() {
+        AbstractTextColumn<Cluster> vmCountColumn = new AbstractTextColumn<Cluster>() {
             @Override
-            public String getValue(VDSGroup object) {
+            public String getValue(Cluster object) {
                 if (object.getGroupHostsAndVms() == null) {
                     return ""; //$NON-NLS-1$
                 }
@@ -132,19 +132,19 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
         getTable().addColumn(vmCountColumn, constants.vmCount(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.editCluster()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.editCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.removeCluster()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.removeCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
@@ -162,7 +162,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             });
         }
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>(constants.guideMeCluster(),
+        getTable().addActionButton(new WebAdminImageButtonDefinition<Cluster>(constants.guideMeCluster(),
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {
@@ -170,7 +170,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.resetClusterEmulatedMachine(),
+        getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.resetClusterEmulatedMachine(),
                 CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
@@ -182,7 +182,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     public void updateReportsAvailability() {
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
+            List<ActionButtonDefinition<Cluster>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.showReportCluster(),

@@ -14,9 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -49,7 +49,7 @@ public abstract class VmInfoBuilderBase {
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
 
     protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
 
     private static class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
         private static final long serialVersionUID = 4732164571328497830L;
@@ -71,12 +71,12 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.vm_name, vm.getName());
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
 
-        if (FeatureSupported.hotPlugMemory(vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
+        if (FeatureSupported.hotPlugMemory(vm.getClusterCompatibilityVersion(), vm.getClusterArch())) {
             if (osRepository.get64bitOss().contains(vm.getOs())) {
                 ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
                         ConfigValues.VMPpc64BitMaxMemorySizeInMB :
                         ConfigValues.VM64BitMaxMemorySizeInMB;
-                createInfo.put(VdsProperties.maxMemSize, Config.getValue(config, vm.getVdsGroupCompatibilityVersion().getValue()));
+                createInfo.put(VdsProperties.maxMemSize, Config.getValue(config, vm.getClusterCompatibilityVersion().getValue()));
             } else {
                 createInfo.put(VdsProperties.maxMemSize, Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB));
             }
@@ -95,14 +95,14 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.threads_per_core, (Integer.toString(vm.getThreadsPerCpu())));
             if (FeatureSupported.supportedInConfig(
                     ConfigValues.HotPlugCpuSupported,
-                    vm.getVdsGroupCompatibilityVersion(),
+                    vm.getClusterCompatibilityVersion(),
                     vm.getClusterArch())) {
                 createInfo.put(
                         VdsProperties.max_number_of_cpus,
                         calcMaxVCpu().toString());
             }
         }
-        final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
+        final String compatibilityVersion = vm.getClusterCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
         if(vm.getEmulatedMachine() != null) {
             createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
@@ -122,7 +122,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.BOOT_MENU_ENABLE, Boolean.toString(vm.isBootMenuEnabled()));
 
         createInfo.put(VdsProperties.Custom,
-                VmPropertiesUtils.getInstance().getVMProperties(vm.getVdsGroupCompatibilityVersion(),
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getClusterCompatibilityVersion(),
                         vm.getStaticData()));
         createInfo.put(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
         if (vm.isRunAndPause()) {
@@ -167,7 +167,7 @@ public abstract class VmInfoBuilderBase {
         // ensure compatibility with VDSM <= 4.16
         addVmSpiceOptions(vm.getGraphicsInfos(), createInfo);
 
-        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getVdsGroupCompatibilityVersion())) {
+        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getClusterCompatibilityVersion())) {
             createInfo.put(VdsProperties.hypervEnable, "true");
         }
     }
@@ -184,10 +184,10 @@ public abstract class VmInfoBuilderBase {
     private Integer calcMaxVCpu() {
         Integer maxSockets = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmSockets,
-                vm.getVdsGroupCompatibilityVersion().getValue());
+                vm.getClusterCompatibilityVersion().getValue());
         Integer maxVCpus = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmCpus,
-                vm.getVdsGroupCompatibilityVersion().getValue());
+                vm.getClusterCompatibilityVersion().getValue());
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
@@ -213,7 +213,7 @@ public abstract class VmInfoBuilderBase {
     protected void buildVmNetworkCluster() {
         // set Display network
         List<NetworkCluster> all = DbFacade.getInstance()
-                .getNetworkClusterDao().getAllForCluster(vm.getVdsGroupId());
+                .getNetworkClusterDao().getAllForCluster(vm.getClusterId());
         NetworkCluster networkCluster = null;
         for (NetworkCluster tempNetworkCluster : all) {
             if (tempNetworkCluster.isDisplay()) {
@@ -311,9 +311,9 @@ public abstract class VmInfoBuilderBase {
 
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vm.getId());
-        event.setVdsGroupId(vm.getVdsGroupId());
+        event.setClusterId(vm.getClusterId());
         event.setCustomId(nic.getId().toString());
-        event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
+        event.setCompatibilityVersion(vm.getClusterCompatibilityVersion().toString());
         event.addCustomValue("NicName", nic.getName());
         event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
         String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
@@ -331,7 +331,7 @@ public abstract class VmInfoBuilderBase {
     }
 
     public void buildVmSerialNumber() {
-        new VmSerialNumberBuilder(vm, getVdsGroup(), createInfo).buildVmSerialNumber();
+        new VmSerialNumberBuilder(vm, getCluster(), createInfo).buildVmSerialNumber();
     }
 
     protected abstract void buildVmVideoCards();
@@ -390,11 +390,11 @@ public abstract class VmInfoBuilderBase {
         }
     };
 
-    protected VDSGroup getVdsGroup() {
-        if (vdsGroup == null) {
-            vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
+    protected Cluster getCluster() {
+        if (cluster == null) {
+            cluster = DbFacade.getInstance().getClusterDao().get(vm.getClusterId());
         }
-        return vdsGroup;
+        return cluster;
     }
 
 

@@ -129,13 +129,13 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        Version compatibilityVersion = getVm().getVdsGroupCompatibilityVersion();
+        Version compatibilityVersion = getVm().getClusterCompatibilityVersion();
         VmNicValidator nicValidator = new VmNicValidator(getInterface(), compatibilityVersion, getVm().getOs());
 
         if (!validate(nicValidator.linkedOnlyIfSupported())
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
-                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))
+                || !validate(nicValidator.profileValid(vm.getClusterId()))
                 || !validate(nicValidator.typeMatchesProfile())
                 || !validate(nicValidator.passthroughIsLinked())) {
             return false;

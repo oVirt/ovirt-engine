@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 
@@ -20,7 +20,7 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
         if (!checkRemoveEditValidations()) {
             return false;
         }
-        if (getVdsGroupDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
+        if (getClusterDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId()).size() > 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE,
                     String.format("$clusters %1$s", clustersListIntoTokenizedString()));
         }
@@ -28,11 +28,11 @@ public class RemoveClusterPolicyCommand extends ClusterPolicyCRUDCommand {
     }
 
     private String clustersListIntoTokenizedString() {
-        List<VDSGroup> attachedClustersList =
-                getVdsGroupDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId());
+        List<Cluster> attachedClustersList =
+                getClusterDao().getClustersByClusterPolicyId(getParameters().getClusterPolicyId());
         List<String> clusterNamesList = new LinkedList<>();
-        for (VDSGroup vdsGroup : attachedClustersList)
-            clusterNamesList.add(vdsGroup.getName());
+        for (Cluster cluster : attachedClustersList)
+            clusterNamesList.add(cluster.getName());
         return StringUtils.join(clusterNamesList, ',');
     }
 

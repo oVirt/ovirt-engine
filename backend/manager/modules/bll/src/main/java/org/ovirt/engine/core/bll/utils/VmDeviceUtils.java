@@ -16,10 +16,10 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -1188,7 +1188,7 @@ public class VmDeviceUtils {
             }
             VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vmId));
             VmHandler.updateNetworkInterfacesFromDb(vm);
-            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getClusterCompatibilityVersion());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
             dao.updateBootOrderInBatch(devices);
         }
@@ -1284,7 +1284,7 @@ public class VmDeviceUtils {
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, newVmBase);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
-        updateSoundDevice(oldVmBase, newVmBase, oldVm.getVdsGroupCompatibilityVersion(),
+        updateSoundDevice(oldVmBase, newVmBase, oldVm.getClusterCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
         updateSmartcardDevice(oldVm, newVmBase);
         updateConsoleDevice(newVmBase.getId(), params.isConsoleEnabled());
@@ -1344,9 +1344,9 @@ public class VmDeviceUtils {
         boolean hasBalloon = false;
         boolean hasRng = hasRngDevice(dstId);
 
-        VDSGroup cluster = null;
-        if (dstVmBase.getVdsGroupId() != null) {
-            cluster = DbFacade.getInstance().getVdsGroupDao().get(dstVmBase.getVdsGroupId());
+        Cluster cluster = null;
+        if (dstVmBase.getClusterId() != null) {
+            cluster = DbFacade.getInstance().getClusterDao().get(dstVmBase.getClusterId());
         }
 
         for (VmDevice device : srcDevices) {

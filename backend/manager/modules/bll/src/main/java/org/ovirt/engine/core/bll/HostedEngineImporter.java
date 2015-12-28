@@ -14,13 +14,13 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
@@ -32,8 +32,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class HostedEngineImporter {
     @Inject
     private DiskProfileDao diskProfileDao;
     @Inject
-    private VdsGroupDao vdsGroupDAO;
+    private ClusterDao clusterDAO;
     @Inject
     private VmStaticDao vmStaticDAO;
     @Inject
@@ -70,9 +70,9 @@ public class HostedEngineImporter {
      * @param vm         the VM to import
      */
     public void doImport(VM vm) {
-        StoragePool storagePool = storagePoolDao.getForVdsGroup(vm.getVdsGroupId());
-        VDSGroup vdsGroup = vdsGroupDAO.get(vm.getVdsGroupId());
-        if (!importSupported(storagePool.getCompatibilityVersion(), vdsGroup.getCompatibilityVersion())) {
+        StoragePool storagePool = storagePoolDao.getForCluster(vm.getClusterId());
+        Cluster cluster = clusterDAO.get(vm.getClusterId());
+        if (!importSupported(storagePool.getCompatibilityVersion(), cluster.getCompatibilityVersion())) {
             return;
         }
         VdcReturnValueBase heVmImported;
@@ -108,9 +108,9 @@ public class HostedEngineImporter {
 
     }
 
-    private boolean importSupported(Version spVersion, Version vdsGroupVersion) {
+    private boolean importSupported(Version spVersion, Version clusterVersion) {
         return spVersion.greaterOrEquals(Version.v3_5)
-                && vdsGroupVersion.greaterOrEquals(Version.v3_6)
+                && clusterVersion.greaterOrEquals(Version.v3_6)
                 && Config.<Boolean> getValue(ConfigValues.AutoImportHostedEngine);
     }
 
@@ -134,7 +134,7 @@ public class HostedEngineImporter {
                 sd.getId(),
                 sd.getId(),
                 sd.getStoragePoolId(),
-                vm.getVdsGroupId());
+                vm.getClusterId());
         // assumption is that there's only 1 profile for hosted engine domain. its an unmanged domain.
         Guid sdProfileId = diskProfileDao.getAllForStorageDomain(sd.getId()).get(0).getId();
         for (DiskImage image : vm.getImages()) {
@@ -147,8 +147,8 @@ public class HostedEngineImporter {
         // distinguish from "regular" he vm.
         vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
         // architecture is a missing attribute from vdsm structure. relying on the cluster is perfectly reliable.
-        VDSGroup vdsGroup = vdsGroupDAO.get(vm.getVdsGroupId());
-        vm.setClusterArch(vdsGroup.getArchitecture());
+        Cluster cluster = clusterDAO.get(vm.getClusterId());
+        vm.setClusterArch(cluster.getArchitecture());
         vm.setVmCreationDate(new Date());
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
         return parameters;

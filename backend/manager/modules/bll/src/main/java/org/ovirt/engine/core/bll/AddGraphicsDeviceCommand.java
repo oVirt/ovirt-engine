@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -47,7 +47,7 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
 
             if (devices.size() > 0) {
                 // it means that with the one to be added it would be more than one, need to check if supported
-                VDSGroup cluster = getVdsGroup();
+                Cluster cluster = getCluster();
                 if (cluster == null) {
                     // instance type - supported
                     return true;

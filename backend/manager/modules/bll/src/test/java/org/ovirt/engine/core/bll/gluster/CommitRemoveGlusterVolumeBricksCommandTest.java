@@ -72,8 +72,8 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         doReturn(getVolumeWithRemoveBricksTaskNull(volumeWithRemoveBricksTaskNull)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTaskNull);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
+        doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 
@@ -176,7 +176,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
                         getBricks(volumeWithRemoveBricksTask))));
 
         prepareMocks(cmd);
-        doReturn(UNSUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(UNSUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()

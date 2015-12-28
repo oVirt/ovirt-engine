@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
@@ -92,7 +92,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     protected abstract void verifyBuiltModel(UnitVmModel model);
 
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
-        final VDSGroup cluster = new VDSGroup();
+        final Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(CLUSTER_VERSION);
 
         UnitVmModel model = new UnitVmModel(behavior, null) {
@@ -102,7 +102,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
             }
 
             @Override
-            public VDSGroup getSelectedCluster() {
+            public Cluster getSelectedCluster() {
                 return cluster;
             }
         };

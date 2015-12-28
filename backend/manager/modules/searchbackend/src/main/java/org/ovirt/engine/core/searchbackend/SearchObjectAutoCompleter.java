@@ -168,19 +168,19 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // audit - cluster
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
-                "vds_group_id",
+                "cluster_id",
                 SearchObjects.AUDIT_OBJ_NAME,
-                "vds_group_id");
+                "cluster_id");
 
         // gluster volume - cluster
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
                 "cluster_id",
                 SearchObjects.VDC_CLUSTER_OBJ_NAME,
-                "vds_group_id");
+                "cluster_id");
 
         // cluster - network
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
-                "vds_group_id",
+                "cluster_id",
                 SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
                 "cluster_id");
 
@@ -222,9 +222,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // cluster - vm pool
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
-                "vds_group_id",
+                "cluster_id",
                 SearchObjects.VDC_POOL_OBJ_NAME,
-                "vds_group_id");
+                "cluster_id");
 
         // provider - network
         addJoin(SearchObjects.PROVIDER_OBJ_NAME,
@@ -328,9 +328,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_name ASC "));
                     put(SearchObjects.VDC_CLUSTER_OBJ_NAME, new EntitySearchInfo(new ClusterCrossRefAutoCompleter(),
                             new ClusterConditionFieldAutoCompleter(),
-                            "vds_groups_view",
-                            "vds_groups_storage_domain",
-                            "vds_group_id",
+                            "cluster_view",
+                            "clusters_storage_domain",
+                            "cluster_id",
                             "name ASC"));
                     put(SearchObjects.QUOTA_OBJ_NAME, new EntitySearchInfo(new QuotaConditionFieldAutoCompleter(),
                             new QuotaConditionFieldAutoCompleter(),
@@ -401,8 +401,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             new NetworkClusterConditionFieldAutoCompleter(),
                             "network_cluster_view",
                             "network_cluster_view",
-                            "vds_group_id",
-                            "vds_group_name ASC"));
+                            "cluster_id",
+                            "cluster_name ASC"));
                     put(SearchObjects.NETWORK_HOST_OBJ_NAME, new EntitySearchInfo(null,
                             new NetworkHostConditionFieldAutoCompleter(),
                             "network_vds_view",

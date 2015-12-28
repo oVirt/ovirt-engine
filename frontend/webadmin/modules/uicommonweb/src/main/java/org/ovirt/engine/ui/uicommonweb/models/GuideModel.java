@@ -117,7 +117,7 @@ public class GuideModel extends EntityModel {
                                 List<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                 boolean succeeded = true;
                                 for (VDS host : hosts) {
-                                    if (!host.getVdsGroupId().equals(hostClusterIdMap.get(host.getId()))) {
+                                    if (!host.getClusterId().equals(hostClusterIdMap.get(host.getId()))) {
                                         succeeded = false;
                                     }
                                 }

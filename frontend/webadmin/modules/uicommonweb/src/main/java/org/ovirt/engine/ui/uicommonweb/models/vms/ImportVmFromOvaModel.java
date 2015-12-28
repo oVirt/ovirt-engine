@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -65,7 +65,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 vm,
                 getStorage().getSelectedItem().getId(),
                 getStoragePool().getId(),
-                ((VDSGroup) getCluster().getSelectedItem()).getId());
+                ((Cluster) getCluster().getSelectedItem()).getId());
         prm.setOvaPath(ovaPath);
         prm.setProxyHostId(hostId);
         prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);

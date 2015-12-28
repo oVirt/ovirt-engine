@@ -12,9 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -56,13 +56,13 @@ public class HostMonitoringTest {
     private HostMonitoring updater;
 
     @Mock
-    VdsGroupDao groupDao;
+    ClusterDao groupDao;
     @Mock
     InterfaceDao interfaceDao;
     @Mock
     DbFacade dbFacade;
     @Mock
-    VDSGroup cluster;
+    Cluster cluster;
     @Mock
     ResourceManager resourceManager;
     @Mock
@@ -87,7 +87,7 @@ public class HostMonitoringTest {
     }
 
     private void initConditions() {
-        when(dbFacade.getVdsGroupDao()).thenReturn(groupDao);
+        when(dbFacade.getClusterDao()).thenReturn(groupDao);
         when(groupDao.get((Guid) any())).thenReturn(cluster);
         when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
         when(interfaceDao.getAllInterfacesForVds(((Guid) any()))).thenReturn(Collections.<VdsNetworkInterface>emptyList());
@@ -96,7 +96,7 @@ public class HostMonitoringTest {
     private void initVds() {
         vds = new VDS();
         vds.setId(new Guid("00000000-0000-0000-0000-000000000012"));
-        vds.setVdsGroupCompatibilityVersion(Version.v3_4);
+        vds.setClusterCompatibilityVersion(Version.v3_4);
     }
 
     /**

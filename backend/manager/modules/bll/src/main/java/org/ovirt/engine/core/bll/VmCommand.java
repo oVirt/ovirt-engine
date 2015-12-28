@@ -407,7 +407,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isHotPlugSupported() {
-        if (FeatureSupported.hotPlug(getVm().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.hotPlug(getVm().getClusterCompatibilityVersion())) {
             return true;
         }
 
@@ -419,7 +419,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isNicSupportedForPlugUnPlug() {
-        if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getVdsGroupCompatibilityVersion())) {
+        if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getClusterCompatibilityVersion())) {
             return true;
         }
 
@@ -438,7 +438,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
         }
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
-                getVm().getVdsGroupCompatibilityVersion());
+                getVm().getClusterCompatibilityVersion());
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
                 || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {

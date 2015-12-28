@@ -42,7 +42,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
             public int compare(PairQueryable<VmNetworkInterface, VM> paramT1,
                     PairQueryable<VmNetworkInterface, VM> paramT2) {
                 int compareValue =
-                        paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
+                        paramT1.getSecond().getClusterName().compareTo(paramT2.getSecond().getClusterName());
 
                 if (compareValue != 0) {
                     return compareValue;

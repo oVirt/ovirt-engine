@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -90,7 +90,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
-    ListModelListBoxEditor<VDSGroup> destClusterEditor;
+    ListModelListBoxEditor<Cluster> destClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "cpuProfiles.selectedItem")
@@ -664,7 +664,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void initListBoxEditors() {
-        destClusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        destClusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
         destClusterQuotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
 
         cpuProfileEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());

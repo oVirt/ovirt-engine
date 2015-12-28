@@ -45,7 +45,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return false;
         }
 
-        if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+        if (getParameters().getTargetClusterId() != null && !getParameters().getTargetClusterId().equals(getDestinationVds().getClusterId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
         }
 
@@ -53,7 +53,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
         }
 
-        if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId()) && getParameters().getTargetVdsGroupId() == null) {
+        if (!getVm().getClusterId().equals(getDestinationVds().getClusterId()) && getParameters().getTargetClusterId() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 

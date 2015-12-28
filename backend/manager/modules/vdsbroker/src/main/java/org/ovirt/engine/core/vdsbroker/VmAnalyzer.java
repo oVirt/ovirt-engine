@@ -782,7 +782,7 @@ public class VmAnalyzer {
 
         dbVm.setUsageNetworkPercent(0);
 
-        NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(dbVm.getVdsGroupCompatibilityVersion());
+        NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(dbVm.getClusterCompatibilityVersion());
 
         for (VmNetworkInterface ifStats : vdsmVm.getVmStatistics().getInterfaceStatistics()) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());

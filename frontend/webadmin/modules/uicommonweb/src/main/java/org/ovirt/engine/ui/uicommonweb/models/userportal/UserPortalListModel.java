@@ -15,11 +15,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -1046,7 +1046,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         final UnitVmModel model = (UnitVmModel) getWindow();
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
 
-        Guid oldClusterID = ((VM) selectedItem.getEntity()).getVdsGroupId();
+        Guid oldClusterID = ((VM) selectedItem.getEntity()).getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
         if (oldClusterID.equals(newClusterID) == false) {
             Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
@@ -1121,7 +1121,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
 
             if (candidate.getDataCenter().getId().equals(vm.getStoragePoolId())
-                    && candidate.getCluster().getId().equals(vm.getVdsGroupId())) {
+                    && candidate.getCluster().getId().equals(vm.getClusterId())) {
                 selectedDataCenterWithCluster = candidate;
                 break;
             }
@@ -1142,11 +1142,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         public void onSuccess(Object model, Object loadedCluster) {
                             DataCenterWithCluster newItem =
                                     new DataCenterWithCluster((StoragePool) loadedDataCenter,
-                                            (VDSGroup) loadedCluster);
+                                            (Cluster) loadedCluster);
                             unitModel.getDataCenterWithClustersList().setItems(Arrays.asList(newItem));
                             unitModel.getDataCenterWithClustersList().setSelectedItem(newItem);
                         }
-                    }), vm.getVdsGroupId());
+                    }), vm.getClusterId());
                 }
             };
             AsyncDataProvider.getInstance().getDataCenterById(_asyncQuery, vm.getStoragePoolId());

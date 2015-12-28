@@ -204,12 +204,12 @@ public class VnicProfileHelper {
             }
         }
 
-        if (vm.getVdsGroupId() == null) {
+        if (vm.getClusterId() == null) {
             return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         // if the network was provided with changed name, resolve a suitable profile for it
-        Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getVdsGroupId());
+        Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getClusterId());
         if (network == null) {
             return new ValidationResult(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }

@@ -125,7 +125,7 @@ public class HostSetupNetworksValidatorTest {
     public void setUp() throws Exception {
         host = new VDS();
         host.setId(Guid.newGuid());
-        host.setVdsGroupCompatibilityVersion(Version.v3_5);
+        host.setClusterCompatibilityVersion(Version.v3_5);
         final VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setSupportedClusterLevels(TEST_VERSION);
         host.setDynamicData(vdsDynamic);
@@ -629,7 +629,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     private void addNetworkToClusterDaoMock(Guid guid) {
-        when(networkClusterDaoMock.get(new NetworkClusterId(host.getVdsGroupId(), guid)))
+        when(networkClusterDaoMock.get(new NetworkClusterId(host.getClusterId(), guid)))
                 .thenReturn(mock(NetworkCluster.class));
     }
 
@@ -1083,7 +1083,7 @@ public class HostSetupNetworksValidatorTest {
         customProperties.put("a", "b");
         networkAttachment.setProperties(customProperties);
 
-        host.setVdsGroupCompatibilityVersion(Version.v3_4);
+        host.setClusterCompatibilityVersion(Version.v3_4);
 
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setNetworkAttachments(Collections.singletonList(networkAttachment));
@@ -1335,7 +1335,7 @@ public class HostSetupNetworksValidatorTest {
         EngineMessage hostNetworkQosValidatorFailure =
             EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES;
 
-        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+        host.setClusterCompatibilityVersion(Version.v3_6);
         Network network = createNetworkWithName("network");
         HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
 
@@ -1361,7 +1361,7 @@ public class HostSetupNetworksValidatorTest {
         EngineMessage hostNetworkQosValidatorFailure =
             EngineMessage.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES;
 
-        host.setVdsGroupCompatibilityVersion(Version.v3_6);
+        host.setClusterCompatibilityVersion(Version.v3_6);
         Network network = createNetworkWithName("network");
         HostSetupNetworksValidator validator = createValidatorForTestingValidateQosOverridden(network);
 

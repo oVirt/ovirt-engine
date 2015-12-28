@@ -16,7 +16,7 @@ public class ClusterPermissionsFinder {
     public List<PermissionSubject> findPermissionCheckSubjects(Guid clusterId, VdcActionType actionType) {
         List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(clusterId,
-                VdcObjectType.VdsGroups,
+                VdcObjectType.Cluster,
                 actionType.getActionGroup()));
         return permissionList;
     }

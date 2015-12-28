@@ -933,7 +933,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
                 StoragePool dataCenter = (StoragePool) returnValue;
 
-                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
+                Version minClusterVersion = vm.getClusterCompatibilityVersion();
                 Version minDcVersion = dataCenter.getCompatibilityVersion();
 
                 AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {

@@ -15,13 +15,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,7 +33,7 @@ public class CPUPolicyUnitTest {
     );
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @InjectMocks
     private final CPUPolicyUnit cpuPolicyUnit = new CPUPolicyUnit(null, null);
@@ -44,7 +44,7 @@ public class CPUPolicyUnitTest {
 
     private VM vm;
 
-    private VDSGroup cluster;
+    private Cluster cluster;
 
     @Before
     public void setUp() {
@@ -63,9 +63,9 @@ public class CPUPolicyUnitTest {
         vdsWithCores.setCpuCores(2);
         vdsWithCores.setCpuThreads(4);
 
-        cluster = new VDSGroup();
+        cluster = new Cluster();
         cluster.setId(Guid.newGuid());
-        when(vdsGroupDao.get(any(Guid.class))).thenReturn(cluster);
+        when(clusterDao.get(any(Guid.class))).thenReturn(cluster);
     }
 
     /**

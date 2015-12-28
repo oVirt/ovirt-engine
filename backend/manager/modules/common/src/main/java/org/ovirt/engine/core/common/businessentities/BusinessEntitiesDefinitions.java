@@ -5,7 +5,7 @@ public final class BusinessEntitiesDefinitions {
     // Data Center (storage_pool)
     public static final int DATACENTER_NAME_SIZE = 40;
 
-    // CLUSTER (vds_groups)
+    // CLUSTER
     public static final int CLUSTER_NAME_SIZE = 40;
     public static final int CLUSTER_CPU_NAME_SIZE = 255;
 

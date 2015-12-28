@@ -250,7 +250,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         VDS proxyHost = setupLocator().findProxyHost(false);
 
         assertNotNull(proxyHost);
-        assertEquals(proxyHost.getVdsGroupId(), FENCED_HOST_CLUSTER_ID);
+        assertEquals(proxyHost.getClusterId(), FENCED_HOST_CLUSTER_ID);
     }
 
     /**
@@ -308,7 +308,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private void mockFencedHost() {
         fencedHost = mock(VDS.class);
         when(fencedHost.getId()).thenReturn(FENCECD_HOST_ID);
-        when(fencedHost.getVdsGroupId()).thenReturn(FENCED_HOST_CLUSTER_ID);
+        when(fencedHost.getClusterId()).thenReturn(FENCED_HOST_CLUSTER_ID);
         when(fencedHost.getStoragePoolId()).thenReturn(FENCED_HOST_DATACENTER_ID);
         when(fencedHost.getHostName()).thenReturn("fencedHost");
         when(fencedHost.getFenceAgents()).thenReturn(Arrays.asList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
@@ -358,9 +358,9 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private VDS createHost(VDSStatus status, Guid clusterId, Guid dcId) {
         VDS host = new VDS();
         host.setId(Guid.newGuid());
-        host.setVdsGroupId(clusterId);
+        host.setClusterId(clusterId);
         host.setStoragePoolId(dcId);
-        host.setVdsGroupCompatibilityVersion(Version.v3_0);
+        host.setClusterCompatibilityVersion(Version.v3_0);
         host.setStatus(status);
         host.setHostName("host-" + host.getId());
         return host;

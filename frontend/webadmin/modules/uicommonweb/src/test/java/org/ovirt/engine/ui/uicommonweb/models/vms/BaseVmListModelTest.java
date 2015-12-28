@@ -126,7 +126,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(VM_TYPE, vm.getVmType());
         assertEquals(OS_TYPE, vm.getOsId());
         assertEquals(TIMEZONE, vm.getTimeZone());
-        assertEquals(CLUSTER_ID, vm.getVdsGroupId());
+        assertEquals(CLUSTER_ID, vm.getClusterId());
         assertEquals(BOOT_SEQUENCE, vm.getDefaultBootSequence());
         assertTrue(vm.isBootMenuEnabled());
         assertEquals(ISO_NAME, vm.getIsoPath());

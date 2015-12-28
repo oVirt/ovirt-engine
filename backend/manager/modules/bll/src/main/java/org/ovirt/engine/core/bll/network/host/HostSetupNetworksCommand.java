@@ -457,7 +457,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConectivityTimeout(timeout);
-        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion());
+        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getClusterCompatibilityVersion());
         hostCmdParams.setHostNetworkQosSupported(hostNetworkQosSupported);
         hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
         return hostCmdParams;
@@ -476,7 +476,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private boolean defaultRouteRequired(Network network, IpConfiguration ipConfiguration) {
-        return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getVdsGroupId())
+        return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getClusterId())
                 && ipConfiguration != null
                 && ipConfiguration.hasPrimaryAddressSet()
                 && (ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
@@ -769,7 +769,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             // Update cluster networks (i.e. check if need to activate each new network)
             for (Network net : getModifiedNetworks()) {
-                NetworkClusterHelper.setStatus(getVdsGroupId(), net);
+                NetworkClusterHelper.setStatus(getClusterId(), net);
             }
 
             return null;
@@ -786,13 +786,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private List<Network> getClusterNetworks() {
         if (clusterNetworks == null) {
-            clusterNetworks = getNetworkDao().getAllForCluster(getVdsGroupId());
+            clusterNetworks = getNetworkDao().getAllForCluster(getClusterId());
         }
         return clusterNetworks;
     }
 
     private boolean isManagementNetworkChanged(){
-        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getVdsGroupId()).getName();
+        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getClusterId()).getName();
         for (HostNetwork network : getNetworksToConfigure()) {
             if (mgmtNetworkName.equals(network.getNetworkName())){
                 return true;

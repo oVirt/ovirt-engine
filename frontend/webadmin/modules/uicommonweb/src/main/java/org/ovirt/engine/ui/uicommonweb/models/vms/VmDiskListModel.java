@@ -553,7 +553,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             boolean isDiskHotpluggableInterface = false;
             if (getEntity() != null) {
                 isDiskHotpluggableInterface = AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(getEntity().getOs(),
-                        getEntity().getVdsGroupCompatibilityVersion()).contains(disk.getDiskInterface());
+                        getEntity().getClusterCompatibilityVersion()).contains(disk.getDiskInterface());
             }
 
             if (disk.getPlugged() == plug
@@ -688,7 +688,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     protected void updateIsDiskHotPlugAvailable() {
         VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion();
+        Version clusterCompatibilityVersion = vm.getClusterCompatibilityVersion();
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
@@ -718,7 +718,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                             }
                         }),
                         VdcActionType.LiveMigrateVmDisks,
-                        vm.getVdsGroupCompatibilityVersion(),
+                        vm.getClusterCompatibilityVersion(),
                         dcCompatibilityVersion);
             }
         }), vm.getStoragePoolId());
@@ -760,7 +760,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             }
         });
         AsyncDataProvider.getInstance().isCommandCompatible(query, VdcActionType.ExtendImageSize,
-                vm.getVdsGroupCompatibilityVersion(), dataCenterVersion);
+                vm.getClusterCompatibilityVersion(), dataCenterVersion);
     }
 
 

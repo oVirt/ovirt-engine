@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -231,10 +231,10 @@ public class DbFacadeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForCluster() {
-        VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(CLUSTER_ID);
-        assertNotNull(vdsGroup);
-        String name = vdsGroup.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.VdsGroups)));
+        Cluster cluster = dbFacade.getClusterDao().get(CLUSTER_ID);
+        assertNotNull(cluster);
+        String name = cluster.getName();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster)));
     }
 
     @Test

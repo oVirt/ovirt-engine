@@ -49,14 +49,14 @@ public class BackendVmPoolsResourceTest extends
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getVmPoolDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getVmPoolType()).andReturn(VmPoolType.AUTOMATIC).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
         return entity;
     }
 
     protected org.ovirt.engine.core.common.businessentities.VmTemplate getTemplateEntity() {
         VmTemplate entity = control.createMock(VmTemplate.class);
         expect(entity.getId()).andReturn(GUIDS[1]).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[1]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[1]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();

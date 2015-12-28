@@ -30,7 +30,7 @@ public class ResetDefaultGeoRepConfigCommand extends GeoRepSessionCommandBase<Gl
                                 getParameters().getConfigKey(),
                                 null,
                                 session.getUserName()));
-        GlusterGeoRepSyncJob.getInstance().updateDiscoveredSessionConfig(getVdsGroup(), session);
+        GlusterGeoRepSyncJob.getInstance().updateDiscoveredSessionConfig(getCluster(), session);
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_GEOREP_CONFIG_SET_DEFAULT_FAILED, returnValue.getVdsError()

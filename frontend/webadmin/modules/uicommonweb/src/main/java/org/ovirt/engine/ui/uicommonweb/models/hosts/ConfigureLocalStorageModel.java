@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -84,13 +84,13 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         candidateDataCenter = value;
     }
 
-    private VDSGroup candidateCluster;
+    private Cluster candidateCluster;
 
-    public VDSGroup getCandidateCluster() {
+    public Cluster getCandidateCluster() {
         return candidateCluster;
     }
 
-    public void setCandidateCluster(VDSGroup value) {
+    public void setCandidateCluster(Cluster value) {
         candidateCluster = value;
     }
 
@@ -183,7 +183,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         VDS host = context.host;
         ArrayList<StoragePool> dataCenters = context.dataCenterList;
-        ArrayList<VDSGroup> clusters = context.clusterList;
+        ArrayList<Cluster> clusters = context.clusterList;
 
         setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
@@ -241,10 +241,10 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
             // If we use current settings there is no need to create cluster.
             if (useCurrentSettings) {
 
-                getCluster().setClusterId(host.getVdsGroupId());
-                getCluster().getName().setEntity(host.getVdsGroupName());
+                getCluster().setClusterId(host.getClusterId());
+                getCluster().getName().setEntity(host.getClusterName());
 
-                VDSGroup cluster = context.hostCluster;
+                Cluster cluster = context.hostCluster;
                 if (cluster != null) {
 
                     getCluster().getDescription().setEntity(cluster.getDescription());
@@ -268,8 +268,8 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
                     names = new ArrayList<>();
 
-                    ArrayList<VDSGroup> listClusters = context.clusterList;
-                    for (VDSGroup cluster : listClusters) {
+                    ArrayList<Cluster> listClusters = context.clusterList;
+                    for (Cluster cluster : listClusters) {
                         names.add(cluster.getName());
                     }
 
@@ -277,7 +277,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 } else {
 
                     // Use the DC cluster.
-                    VDSGroup cluster = Linq.firstOrNull(clusters);
+                    Cluster cluster = Linq.firstOrNull(clusters);
 
                     getCluster().setClusterId(cluster.getId());
                     getCluster().getName().setEntity(cluster.getName());
@@ -335,7 +335,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
             names = new ArrayList<>();
             if (clusters != null) {
-                for (VDSGroup cluster : clusters) {
+                for (Cluster cluster : clusters) {
                     names.add(cluster.getName());
                 }
             }
@@ -405,7 +405,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                     @Override
                     public boolean match(StoragePool item, Object value) {
 
-                        context.clusterListByDataCenterMap.put(item, (ArrayList<VDSGroup>) value);
+                        context.clusterListByDataCenterMap.put(item, (ArrayList<Cluster>) value);
                         return false;
                     }
                 });
@@ -469,7 +469,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                                                                           @Override
                                                                           public void onSuccess(Object target, Object returnValue) {
 
-                                                                              context.clusterList = (ArrayList<VDSGroup>) returnValue;
+                                                                              context.clusterList = (ArrayList<Cluster>) returnValue;
                                                                               setDefaultNames4();
                                                                           }
                                                                       }));
@@ -480,17 +480,17 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         VDS host = context.host;
 
         // Get cluster of the host.
-        if (host.getVdsGroupId() != null) {
+        if (host.getClusterId() != null) {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            context.hostCluster = (VDSGroup) returnValue;
+                            context.hostCluster = (Cluster) returnValue;
                             setDefaultNames3();
                         }
                     }),
-                    host.getVdsGroupId());
+                    host.getClusterId());
         } else {
             setDefaultNames3();
         }
@@ -578,11 +578,11 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         public VDS host;
         public StoragePool hostDataCenter;
-        public VDSGroup hostCluster;
+        public Cluster hostCluster;
         public ArrayList<StoragePool> dataCenterList;
-        public ArrayList<VDSGroup> clusterList;
+        public ArrayList<Cluster> clusterList;
         public ArrayList<StorageDomain> storageList;
         public HashMap<StoragePool, VDS> localStorageHostByDataCenterMap;
-        public HashMap<StoragePool, ArrayList<VDSGroup>> clusterListByDataCenterMap;
+        public HashMap<StoragePool, ArrayList<Cluster>> clusterListByDataCenterMap;
     }
 }

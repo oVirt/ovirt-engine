@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
 import java.util.Collection;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class ClusterPolicyClusterListModel extends SearchableListModel<ClusterPolicy, VDSGroup> {
+public class ClusterPolicyClusterListModel extends SearchableListModel<ClusterPolicy, Cluster> {
     public ClusterPolicyClusterListModel() {
         setSearchPageSize(1000);
     }

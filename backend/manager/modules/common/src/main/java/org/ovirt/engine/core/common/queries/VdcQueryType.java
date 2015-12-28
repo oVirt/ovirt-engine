@@ -112,7 +112,7 @@ public enum VdcQueryType implements Serializable {
     GetTemplateInterfacesByTemplateId(VdcQueryAuthType.User),
 
     // Networks
-    GetVdsGroupsAndNetworksByNetworkId,
+    GetClustersAndNetworksByNetworkId,
     GetVdsAndNetworkInterfacesByNetworkId,
     GetVdsWithoutNetwork,
     GetVmsAndNetworkInterfacesByNetworkId,
@@ -142,18 +142,18 @@ public enum VdcQueryType implements Serializable {
     // NUMA
     GetVdsNumaNodesByVdsId(VdcQueryAuthType.User),
     GetVmNumaNodesByVmId(VdcQueryAuthType.User),
-    GetAllVmsWithNumaByVdsGroupId(VdcQueryAuthType.User),
+    GetAllVmsWithNumaByClusterId(VdcQueryAuthType.User),
 
-    // VdsGroups
+    // Cluster
     GetVdsCertificateSubjectByVdsId(VdcQueryAuthType.User),
     GetVdsCertificateSubjectByVmId(VdcQueryAuthType.User),
-    GetAllVdsGroups(VdcQueryAuthType.User),
-    GetVdsGroupByVdsGroupId(VdcQueryAuthType.User), // needed when updating VM
-    GetVdsGroupById(VdcQueryAuthType.User),
-    GetVdsGroupByName(VdcQueryAuthType.User),
-    GetVdsGroupsByStoragePoolId(VdcQueryAuthType.User),
-    GetNumberOfActiveVmsInVdsGroupByVdsGroupId,
-    GetNumberOfVmsInVdsGroupByVdsGroupId,
+    GetAllClusters(VdcQueryAuthType.User),
+    GetClusterByClusterId(VdcQueryAuthType.User), // needed when updating VM
+    GetClusterById(VdcQueryAuthType.User),
+    GetClusterByName(VdcQueryAuthType.User),
+    GetClustersByStoragePoolId(VdcQueryAuthType.User),
+    GetNumberOfActiveVmsInClusterByClusterId,
+    GetNumberOfVmsInClusterByClusterId,
     GetClusterFeaturesByVersionAndCategory,
     GetClusterFeaturesByClusterId,
     GetClusterEditWarnings,
@@ -360,7 +360,7 @@ public enum VdcQueryType implements Serializable {
     // Quota
     GetQuotaByStoragePoolId,
     GetQuotaByQuotaId(VdcQueryAuthType.User),
-    GetQuotaVdsGroupByQuotaId,
+    GetQuotaClusterByQuotaId,
     GetQuotaStorageByQuotaId,
     GetVmsRelatedToQuotaId,
     GetTemplatesRelatedToQuotaId,
@@ -368,7 +368,7 @@ public enum VdcQueryType implements Serializable {
     GetQuotasByAdElementId,
     GetQuotasConsumptionForCurrentUser(VdcQueryAuthType.User),
     GetAllRelevantQuotasForStorage(VdcQueryAuthType.User),
-    GetAllRelevantQuotasForVdsGroup(VdcQueryAuthType.User),
+    GetAllRelevantQuotasForCluster(VdcQueryAuthType.User),
 
     // Jobs
     GetJobByJobId,

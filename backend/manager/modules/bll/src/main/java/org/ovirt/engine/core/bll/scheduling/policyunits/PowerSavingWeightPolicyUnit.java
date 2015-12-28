@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -31,16 +31,16 @@ public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUni
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        VDSGroup vdsGroup = null;
+        Cluster cluster = null;
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             int score = MaxSchedulerWeight - 1;
             if (vds.getVmCount() > 0) {
-                if (vdsGroup == null) {
-                    vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
+                if (cluster == null) {
+                    cluster = DbFacade.getInstance().getClusterDao().get(hosts.get(0).getClusterId());
                 }
                 score -=
-                        calcEvenDistributionScore(vds, vm, vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false);
+                        calcEvenDistributionScore(vds, vm, cluster != null ? cluster.getCountThreadsAsCores() : false);
             }
             scores.add(new Pair<>(vds.getId(), score));
         }

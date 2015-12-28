@@ -19,9 +19,9 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
 
     @Override
     protected void executeVdsBrokerCommand() {
-        Boolean includeUserData = Config.<Boolean>getValue(ConfigValues.SendVmTicketUID, getVds().getVdsGroupCompatibilityVersion().toString());
+        Boolean includeUserData = Config.<Boolean>getValue(ConfigValues.SendVmTicketUID, getVds().getClusterCompatibilityVersion().toString());
 
-        if (FeatureSupported.graphicsDeviceEnabled(getVds().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.graphicsDeviceEnabled(getVds().getClusterCompatibilityVersion())) {
             setTicketUsingUpdateDevice(includeUserData);
         } else {
             setTicketLegacy(includeUserData);

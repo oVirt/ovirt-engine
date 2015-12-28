@@ -131,9 +131,9 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetVmNumaNodeInfoByVdsGroupId() {
-        Guid vdsGroupId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-        List<Pair<Guid, VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByVdsGroupId(vdsGroupId);
+    public void testGetVmNumaNodeInfoByClusterId() {
+        Guid clusterId = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        List<Pair<Guid, VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(clusterId);
         assertNotNull(result);
         assertEquals(2, result.size());
     }

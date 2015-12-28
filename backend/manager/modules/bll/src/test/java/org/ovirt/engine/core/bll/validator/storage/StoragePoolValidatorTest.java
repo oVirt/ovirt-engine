@@ -36,7 +36,7 @@ public class StoragePoolValidatorTest {
         storagePool.setIsLocal(true);
         doReturn(true).when(validator).containsDefaultCluster();
         assertThat(validator.isNotLocalfsWithDefaultCluster(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS));
     }
 
     @Test

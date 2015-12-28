@@ -24,9 +24,9 @@ import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
+import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
@@ -178,11 +178,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                 getVm().getClusterArch(),
-                getVm().getVdsGroupCompatibilityVersion())) {
+                getVm().getClusterCompatibilityVersion())) {
             return StringUtils.EMPTY;
         }
 
-        if (!FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.memorySnapshot(getVm().getClusterCompatibilityVersion())) {
             return StringUtils.EMPTY;
         }
 
@@ -787,14 +787,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().setCpuName(getVm().getCustomCpuName());
             } else {
                 // get what cpu flags should be passed to vdsm according to the cluster
-                getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(getVm().getVdsGroupCpuName(), getVm()
-                        .getVdsGroupCompatibilityVersion()));
+                getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(getVm().getClusterCpuName(), getVm()
+                        .getClusterCompatibilityVersion()));
             }
         }
         if (getVm().getEmulatedMachine() == null) {
             getVm().setEmulatedMachine((getVm().getCustomEmulatedMachine() != null ?
                     getVm().getCustomEmulatedMachine() :
-                    getVdsGroup().getEmulatedMachine()));
+                    getCluster().getEmulatedMachine()));
         }
 
         getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
@@ -849,7 +849,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected boolean getVdsToRunOn() {
         Guid vdsToRunOn =
-                schedulingManager.schedule(getVdsGroup(),
+                schedulingManager.schedule(getCluster(),
                         getVm(),
                         getRunVdssList(),
                         getVdsWhiteList(),
@@ -913,7 +913,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_CLUSTER_LEVEL));
                     int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_VERSION));
 
-                    if (clusterVer.compareTo(getVm().getVdsGroupCompatibilityVersion()) <= 0) {
+                    if (clusterVer.compareTo(getVm().getClusterCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
                                 || (clusterVer.compareTo(bestClusterVer) > 0)) {
                             bestToolVer = toolVersion;
@@ -976,7 +976,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getRunVdssList(),
                 getVdsWhiteList(),
                 getPredefinedVdsIdListToRunOn(),
-                getVdsGroup())) {
+                getCluster())) {
             return false;
         }
 
@@ -1028,8 +1028,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!VmHandler.isCpuSupported(
                 getVm().getVmOsId(),
-                getVdsGroup().getCompatibilityVersion(),
-                getVdsGroup().getCpuName(),
+                getCluster().getCompatibilityVersion(),
+                getCluster().getCpuName(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -1068,7 +1068,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (!rngDevs.isEmpty()) {
             VmRngDevice rngDev = new VmRngDevice(rngDevs.get(0));
 
-            if (!getVdsGroup().getRequiredRngSources().contains(rngDev.getSource())) {
+            if (!getCluster().getRequiredRngSources().contains(rngDev.getSource())) {
                 return false;
             }
         }
@@ -1232,10 +1232,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
-        list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+        list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getVm().getVdsGroupId(),
+                getVm().getClusterId(),
                 getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
                 getVm().getMemSizeMb()));
         return list;

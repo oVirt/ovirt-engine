@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class GlusterClusterSnapshotConfigModel extends Model {
     private EntityModel<String> dataCenter;
-    private ListModel<VDSGroup> clusters;
+    private ListModel<Cluster> clusters;
     private ListModel<EntityModel<GlusterVolumeSnapshotConfig>> clusterConfigOptions;
     private Map<String, String> existingClusterConfigs = new HashMap<>();
 
@@ -36,11 +36,11 @@ public class GlusterClusterSnapshotConfigModel extends Model {
         this.dataCenter = dataCenter;
     }
 
-    public ListModel<VDSGroup> getClusters() {
+    public ListModel<Cluster> getClusters() {
         return this.clusters;
     }
 
-    public void setClusters(ListModel<VDSGroup> clusters) {
+    public void setClusters(ListModel<Cluster> clusters) {
         this.clusters = clusters;
     }
 
@@ -62,7 +62,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
 
     private void init() {
         setDataCenter(new EntityModel<String>());
-        setClusters(new ListModel<VDSGroup>());
+        setClusters(new ListModel<Cluster>());
         getClusters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -91,7 +91,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
     }
 
     private void clusterSelectedItemChanged() {
-        VDSGroup selectedCluster = getClusters().getSelectedItem();
+        Cluster selectedCluster = getClusters().getSelectedItem();
         if (selectedCluster == null) {
             return;
         }

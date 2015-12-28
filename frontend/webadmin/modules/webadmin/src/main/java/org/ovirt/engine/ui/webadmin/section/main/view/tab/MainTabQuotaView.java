@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.searchbackend.QuotaConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -73,16 +73,16 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int value;
                 long allocated = 0;
                 long used = 0;
-                if (object.getGlobalQuotaVdsGroup() != null) {
-                    allocated = object.getGlobalQuotaVdsGroup().getMemSizeMB();
-                    used = object.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
+                if (object.getGlobalQuotaCluster() != null) {
+                    allocated = object.getGlobalQuotaCluster().getMemSizeMB();
+                    used = object.getGlobalQuotaCluster().getMemSizeMBUsage();
                 } else {
-                    for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
-                            allocated += quotaVdsGroup.getMemSizeMB() != null ? quotaVdsGroup.getMemSizeMB() : 0;
-                            used += quotaVdsGroup.getMemSizeMBUsage();
+                    for (QuotaCluster quotaCluster : object.getQuotaClusters()) {
+                        if (!QuotaCluster.UNLIMITED_MEM.equals(quotaCluster.getMemSizeMB())) {
+                            allocated += quotaCluster.getMemSizeMB() != null ? quotaCluster.getMemSizeMB() : 0;
+                            used += quotaCluster.getMemSizeMBUsage();
                         } else {
-                            allocated = QuotaVdsGroup.UNLIMITED_MEM;
+                            allocated = QuotaCluster.UNLIMITED_MEM;
                             break;
                         }
                     }
@@ -102,16 +102,16 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int value;
                 long allocated = 0;
                 long used = 0;
-                if (object.getGlobalQuotaVdsGroup() != null) {
-                    allocated = object.getGlobalQuotaVdsGroup().getMemSizeMB();
-                    used = object.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
+                if (object.getGlobalQuotaCluster() != null) {
+                    allocated = object.getGlobalQuotaCluster().getMemSizeMB();
+                    used = object.getGlobalQuotaCluster().getMemSizeMBUsage();
                 } else {
-                    for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
-                            allocated += quotaVdsGroup.getMemSizeMB() != null ? quotaVdsGroup.getMemSizeMB() : 0;
-                            used += quotaVdsGroup.getMemSizeMBUsage();
+                    for (QuotaCluster quotaCluster : object.getQuotaClusters()) {
+                        if (!QuotaCluster.UNLIMITED_MEM.equals(quotaCluster.getMemSizeMB())) {
+                            allocated += quotaCluster.getMemSizeMB() != null ? quotaCluster.getMemSizeMB() : 0;
+                            used += quotaCluster.getMemSizeMBUsage();
                         } else {
-                            allocated = QuotaVdsGroup.UNLIMITED_MEM;
+                            allocated = QuotaCluster.UNLIMITED_MEM;
                             break;
                         }
                     }
@@ -137,18 +137,18 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int value;
                 int allocated = 0;
                 int used = 0;
-                if (object.getGlobalQuotaVdsGroup() != null) {
+                if (object.getGlobalQuotaCluster() != null) {
                     allocated =
-                            object.getGlobalQuotaVdsGroup().getVirtualCpu() != null ? object.getGlobalQuotaVdsGroup()
+                            object.getGlobalQuotaCluster().getVirtualCpu() != null ? object.getGlobalQuotaCluster()
                                     .getVirtualCpu() : 0;
-                    used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
+                    used = object.getGlobalQuotaCluster().getVirtualCpuUsage();
                 } else {
-                    for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
-                            allocated += quotaVdsGroup.getVirtualCpu();
-                            used += quotaVdsGroup.getVirtualCpuUsage();
+                    for (QuotaCluster quotaCluster : object.getQuotaClusters()) {
+                        if (!QuotaCluster.UNLIMITED_VCPU.equals(quotaCluster.getVirtualCpu())) {
+                            allocated += quotaCluster.getVirtualCpu();
+                            used += quotaCluster.getVirtualCpuUsage();
                         } else {
-                            allocated = QuotaVdsGroup.UNLIMITED_VCPU;
+                            allocated = QuotaCluster.UNLIMITED_VCPU;
                             break;
                         }
                     }
@@ -168,18 +168,18 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 int value;
                 int allocated = 0;
                 int used = 0;
-                if (object.getGlobalQuotaVdsGroup() != null) {
+                if (object.getGlobalQuotaCluster() != null) {
                     allocated =
-                            object.getGlobalQuotaVdsGroup().getVirtualCpu() != null ? object.getGlobalQuotaVdsGroup()
+                            object.getGlobalQuotaCluster().getVirtualCpu() != null ? object.getGlobalQuotaCluster()
                                     .getVirtualCpu() : 0;
-                    used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
+                    used = object.getGlobalQuotaCluster().getVirtualCpuUsage();
                 } else {
-                    for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
-                            allocated += quotaVdsGroup.getVirtualCpu();
-                            used += quotaVdsGroup.getVirtualCpuUsage();
+                    for (QuotaCluster quotaCluster : object.getQuotaClusters()) {
+                        if (!QuotaCluster.UNLIMITED_VCPU.equals(quotaCluster.getVirtualCpu())) {
+                            allocated += quotaCluster.getVirtualCpu();
+                            used += quotaCluster.getVirtualCpuUsage();
                         } else {
-                            allocated = QuotaVdsGroup.UNLIMITED_VCPU;
+                            allocated = QuotaCluster.UNLIMITED_VCPU;
                             break;
                         }
                     }

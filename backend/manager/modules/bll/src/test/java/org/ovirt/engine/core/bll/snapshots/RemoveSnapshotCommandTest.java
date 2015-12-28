@@ -109,7 +109,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         vm.setId(Guid.newGuid());
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(STORAGE_POOL_ID);
-        vm.setVdsGroupCompatibilityVersion(Version.v3_5);
+        vm.setClusterCompatibilityVersion(Version.v3_5);
         doReturn(vm).when(cmd).getVm();
     }
 

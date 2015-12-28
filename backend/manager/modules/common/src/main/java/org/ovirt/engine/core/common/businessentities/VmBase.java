@@ -57,7 +57,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @EditableOnVmStatusField
     @EditableOnTemplate
-    private Guid vdsGroupId;
+    private Guid clusterId;
 
     @CopyOnNewVersion
     @EditableField
@@ -435,7 +435,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
-                vmBase.getVdsGroupId(),
+                vmBase.getClusterId(),
                 vmBase.getOsId(),
                 vmBase.getCreationDate(),
                 vmBase.getDescription(),
@@ -500,7 +500,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     public VmBase(
             String name,
             Guid id,
-            Guid vdsGroupId,
+            Guid clusterId,
             int osId,
             Date creationDate,
             String description,
@@ -563,7 +563,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this();
         this.name = name;
         this.id = id;
-        this.vdsGroupId = vdsGroupId;
+        this.clusterId = clusterId;
         this.osId = osId;
         this.creationDate = creationDate;
         this.description = description;
@@ -693,12 +693,12 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
         this.id = value;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid value) {
-        this.vdsGroupId = value;
+    public void setClusterId(Guid value) {
+        this.clusterId = value;
     }
 
     public int getOsId() {
@@ -984,7 +984,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 smartcardEnabled,
                 timeZone,
                 usbPolicy,
-                vdsGroupId,
+                clusterId,
                 vmType,
                 quotaId,
                 allowConsoleReconnect,
@@ -1050,7 +1050,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
                 && deleteProtected == other.deleteProtected
                 && Objects.equals(timeZone, other.timeZone)
                 && usbPolicy == other.usbPolicy
-                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(clusterId, other.clusterId)
                 && vmType == other.vmType
                 && Objects.equals(quotaId, other.quotaId)
                 && allowConsoleReconnect == other.allowConsoleReconnect

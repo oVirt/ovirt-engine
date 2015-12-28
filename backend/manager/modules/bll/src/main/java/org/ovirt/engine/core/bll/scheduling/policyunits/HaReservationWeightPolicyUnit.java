@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -53,13 +53,13 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
         Map<Guid, Integer> hostsHaVmCount = new HashMap<>();
 
         // If the vm is not HA or the cluster is not marked as HA Reservation set default score.
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(hosts.get(0).getClusterId());
 
-        if (!vm.isAutoStartup() || !vdsGroup.supportsHaReservation()) {
+        if (!vm.isAutoStartup() || !cluster.supportsHaReservation()) {
             fillDefaultScores(hosts, scores);
         } else {
             // Use a single call to the DB to retrieve all VM in the Cluster and map them by Host id
-            Map<Guid, List<VM>> hostId2HaVmMapping = HaReservationHandling.mapHaVmToHostByCluster(vdsGroup.getId());
+            Map<Guid, List<VM>> hostId2HaVmMapping = HaReservationHandling.mapHaVmToHostByCluster(cluster.getId());
 
             int maxCount = 0;
             for (VDS host : hosts) {

@@ -88,10 +88,10 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
     }
 
     @Override
-    public StoragePool getForVdsGroup(Guid id) {
+    public StoragePool getForCluster(Guid cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("clusterId", id);
-        return getCallsHandler().executeRead("Getstorage_poolsByVdsGroupId", mapper,
+                .addValue("clusterId", cluster);
+        return getCallsHandler().executeRead("Getstorage_poolsByClusterId", mapper,
                 parameterSource);
     }
 
@@ -216,7 +216,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("supports_gluster_service", supportsGlusterService);
 
         return getCallsHandler().executeReadList(
-                "fn_perms_get_storage_pools_with_permitted_action_on_vds_groups",
+                "fn_perms_get_storage_pools_with_permitted_action_on_clusters",
                 mapper, parameterSource);
     }
 

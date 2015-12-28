@@ -45,7 +45,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetByClusterId() {
-        List<AffinityGroup> affinityGroupList = dao.getAllAffinityGroupsByClusterId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        List<AffinityGroup> affinityGroupList = dao.getAllAffinityGroupsByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         assertFalse(affinityGroupList.isEmpty());
         assertEquals(NUM_OF_AFFINITY_GROUPS_IN_CLUSTER, affinityGroupList.size());
         // empty
@@ -85,7 +85,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
         ag.setId(Guid.newGuid());
         ag.setName("testAG");
         ag.setDescription("desc");
-        ag.setClusterId(FixturesTool.VDS_GROUP_RHEL6_NFS);
+        ag.setClusterId(FixturesTool.CLUSTER_RHEL6_NFS);
         ag.setEnforcing(false);
         ag.setPositive(false);
         ag.setEntityIds(new ArrayList<>());
@@ -133,7 +133,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
         dao.remove(FixturesTool.EXISTING_AFFINITY_GROUP_ID);
         assertNull(dao.get(FixturesTool.EXISTING_AFFINITY_GROUP_ID));
         assertEquals(NUM_OF_AFFINITY_GROUPS_IN_CLUSTER - 1,
-                dao.getAllAffinityGroupsByClusterId(FixturesTool.VDS_GROUP_RHEL6_ISCSI).size());
+                dao.getAllAffinityGroupsByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI).size());
     }
 
     @Test

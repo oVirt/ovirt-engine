@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -69,7 +69,7 @@ public abstract class PolicyUnitImpl {
         return pairs;
     }
 
-    public Pair<List<Guid>, Guid> balance(VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {

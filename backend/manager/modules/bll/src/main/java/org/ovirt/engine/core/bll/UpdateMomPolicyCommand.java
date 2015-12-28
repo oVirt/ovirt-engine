@@ -27,8 +27,8 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
         boolean succeeded = false;
         try {
             succeeded = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
-                    new MomPolicyVDSParameters(getVds(), getVdsGroup().isEnableBallooning(),
-                            getVdsGroup().isEnableKsm(), getVdsGroup().isKsmMergeAcrossNumaNodes())
+                    new MomPolicyVDSParameters(getVds(), getCluster().isEnableBallooning(),
+                            getCluster().isEnableKsm(), getCluster().isKsmMergeAcrossNumaNodes())
                                               ).getSucceeded();
         } catch (EngineException e) {
             log.error("Could not update MoM policy on host '{}': {}",
@@ -49,7 +49,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
     }
 
     private ValidationResult validateMinimumVersionSupport() {
-        return FeatureSupported.momPolicyOnHost(getVdsGroup().getCompatibilityVersion())
+        return FeatureSupported.momPolicyOnHost(getCluster().getCompatibilityVersion())
                 ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION);
     }

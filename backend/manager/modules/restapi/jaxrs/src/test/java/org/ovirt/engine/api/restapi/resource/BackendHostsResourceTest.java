@@ -78,11 +78,11 @@ public class BackendHostsResourceTest
     public void testAddHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { "Default" },
-                setUpVDSGroup(GUIDS[1]));
+                setUpCluster(GUIDS[1]));
 
         setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
@@ -110,11 +110,11 @@ public class BackendHostsResourceTest
     public void testAddHostClusterByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
-                setUpVDSGroup(GUIDS[1]));
+                setUpCluster(GUIDS[1]));
 
         setUpGetCertificateInfo();
         setUpCreationExpectations(VdcActionType.AddVds,
@@ -192,11 +192,11 @@ public class BackendHostsResourceTest
     }
 
     private void doTestBadAddHost(boolean valid, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { "Default" },
-                setUpVDSGroup(GUIDS[1]));
+                setUpCluster(GUIDS[1]));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVds,
                                            AddVdsActionParameters.class,

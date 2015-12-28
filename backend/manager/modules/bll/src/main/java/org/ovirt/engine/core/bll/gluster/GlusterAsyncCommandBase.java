@@ -42,8 +42,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
             return false;
         }
 
-        if (!GlusterFeatureSupported.glusterAsyncTasks(getVdsGroup().getCompatibilityVersion())) {
-            addValidationMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
+        if (!GlusterFeatureSupported.glusterAsyncTasks(getCluster().getCompatibilityVersion())) {
+            addValidationMessageVariable("compatibilityVersion", getCluster().getCompatibilityVersion().getValue());
             return failValidation(EngineMessage.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL);
         }
 
@@ -57,12 +57,12 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     @Override
     protected void setActionMessageParameters() {
         addValidationMessageVariable("volumeName", getGlusterVolumeName());
-        addValidationMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessageVariable("cluster", getClusterName());
     }
 
     protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {
         Map<String, String> values = new HashMap<>();
-        values.put(GlusterConstants.CLUSTER, getVdsGroupName());
+        values.put(GlusterConstants.CLUSTER, getClusterName());
         values.put(GlusterConstants.VOLUME, getGlusterVolumeName());
         values.put(GlusterConstants.JOB_STATUS, status.toString());
         values.put(GlusterConstants.JOB_INFO, jobInfo == null ? " " : jobInfo);

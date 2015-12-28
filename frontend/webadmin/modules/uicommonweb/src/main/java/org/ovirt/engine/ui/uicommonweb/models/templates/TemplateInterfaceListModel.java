@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -52,7 +52,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         privateRemoveCommand = value;
     }
 
-    private VDSGroup cluster = null;
+    private Cluster cluster = null;
 
     public TemplateInterfaceListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -182,10 +182,10 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
 
                 @Override
                 public void onSuccess(Object listModel, Object returnValue) {
-                    cluster = (VDSGroup) returnValue;
+                    cluster = (Cluster) returnValue;
                     updateActionAvailability();
                 }
-            }), getEntity().getVdsGroupId());
+            }), getEntity().getClusterId());
         }
     }
 

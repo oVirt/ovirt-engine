@@ -20,8 +20,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessi
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -58,7 +58,7 @@ public class GlusterGeoRepSyncJobTest {
     private GlusterUtil glusterUtil;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private VdsDao vdsDao;
@@ -235,15 +235,15 @@ public class GlusterGeoRepSyncJobTest {
         return list;
     }
 
-    private List<VDSGroup> getClusters() {
-        List<VDSGroup> list = new ArrayList<>();
+    private List<Cluster> getClusters() {
+        List<Cluster> list = new ArrayList<>();
         list.add(createCluster(0, Version.v3_4));
         list.add(createCluster(1, Version.v3_5));
         return list;
     }
 
-    private VDSGroup createCluster(int index, Version v) {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster createCluster(int index, Version v) {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_GUIDS[index]);
         cluster.setName("cluster");
         cluster.setGlusterService(true);

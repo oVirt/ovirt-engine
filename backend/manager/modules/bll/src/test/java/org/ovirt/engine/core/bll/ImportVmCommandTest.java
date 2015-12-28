@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -61,7 +61,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -86,7 +86,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private MacPoolManagerStrategy macPoolManagerStrategy;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private MacPoolPerDc macPoolPerDc;
@@ -150,10 +150,10 @@ public class ImportVmCommandTest extends BaseCommandTest {
         final ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
 
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(cmd).getVdsGroup();
+        doReturn(cluster).when(cmd).getCluster();
         doReturn(true).when(cmd).validateImages(any(Map.class));
 
         return cmd;
@@ -164,7 +164,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
 
         addBalloonToVm(cmd.getVmFromExportDomain(null));
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
 
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -177,7 +177,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         final ImportVmCommand<ImportVmParameters> cmd = setupCanImportPpcTest();
 
         addSoundDeviceToVm(cmd.getVmFromExportDomain(null));
-        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getVdsGroup().getCompatibilityVersion())).thenReturn(false);
+        when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
 
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -192,13 +192,13 @@ public class ImportVmCommandTest extends BaseCommandTest {
         addBalloonToVm(c.getParameters().getVm());
 
         c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setId(Guid.newGuid());
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(c).getVdsGroup();
-        c.setVdsGroupId(cluster.getId());
-        c.getParameters().setVdsGroupId(cluster.getId());
+        doReturn(cluster).when(c).getCluster();
+        c.setClusterId(cluster.getId());
+        c.getParameters().setClusterId(cluster.getId());
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
                 Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
@@ -236,10 +236,10 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(parameters.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setVdsGroupId(parameters.getVdsGroupId());
-        doReturn(vdsGroup).when(cmd).getVdsGroup();
+        doReturn(clusterDao).when(cmd).getClusterDao();
+        Cluster cluster = new Cluster();
+        cluster.setClusterId(parameters.getClusterId());
+        doReturn(cluster).when(cmd).getCluster();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
         when(macPoolPerDc.poolForDataCenter(any(Guid.class))).thenReturn(macPoolManagerStrategy);
@@ -257,9 +257,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
     protected ImportVmParameters createParameters() {
         final VM vm = createVmWithSnapshots();
         vm.setName("testVm");
-        Guid vdsGroupId = Guid.newGuid();
-        vm.setVdsGroupId(vdsGroupId);
-        return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), vdsGroupId);
+        Guid clusterId = Guid.newGuid();
+        vm.setClusterId(clusterId);
+        return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), clusterId);
     }
 
     protected VM createVmWithSnapshots() {
@@ -282,7 +282,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setDiskMap(Collections.<Guid, Disk>singletonMap(activeImage.getId(), activeImage));
         v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
         v.setSnapshots(new ArrayList<>(Arrays.asList(baseSnapshot, activeSnapshot)));
-        v.setVdsGroupId(Guid.Empty);
+        v.setClusterId(Guid.Empty);
 
         return v;
     }
@@ -299,7 +299,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setImages(new ArrayList<>(Collections.singletonList(activeImage)));
         v.setSnapshots(new ArrayList<>(Collections.singletonList(activeSnapshot)));
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
-        v.setVdsGroupId(Guid.Empty);
+        v.setClusterId(Guid.Empty);
 
         return v;
     }
@@ -469,9 +469,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(params.getVm()).when(cmd).getVmFromExportDomain(any(Guid.class));
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(params.getVdsGroupId());
-        doReturn(vdsGroup).when(cmd).getVdsGroup();
+        Cluster cluster = new Cluster();
+        cluster.setId(params.getClusterId());
+        doReturn(cluster).when(cmd).getCluster();
 
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -530,7 +530,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
         doReturn(true).when(cmd).validateImages(any(Map.class));
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
-        cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
+        cmd.getCluster().setCompatibilityVersion(Version.v3_2);
         cmd.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
@@ -554,7 +554,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         }
 
         @Override
-        public VDSGroup getVdsGroup() {
+        public Cluster getCluster() {
             return null;
         }
 

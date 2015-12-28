@@ -8,29 +8,29 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
  */
 public class VirtMonitoringStrategy implements MonitoringStrategy {
 
-    private final VdsGroupDao vdsGroupDao;
+    private final ClusterDao clusterDao;
 
     private final VdsDao vdsDao;
 
-    protected VirtMonitoringStrategy(VdsGroupDao vdsGroupDao, VdsDao vdsDao) {
-        this.vdsGroupDao = vdsGroupDao;
+    protected VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao) {
+        this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
     }
 
@@ -55,16 +55,16 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         }
 
 
-        VDSGroup vdsGroup = vdsGroupDao.get(vds.getVdsGroupId());
-        if (!hostCompliesWithClusterEmulationMode(vds, vdsGroup) && vds.getStatus() != VDSStatus.NonOperational) {
+        Cluster cluster = clusterDao.get(vds.getClusterId());
+        if (!hostCompliesWithClusterEmulationMode(vds, cluster) && vds.getStatus() != VDSStatus.NonOperational) {
 
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("hostSupportedEmulatedMachines", vds.getSupportedEmulatedMachines());
-            if (vdsGroup.isDetectEmulatedMachine()) {
-                customLogValues.put("clusterEmulatedMachines", Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines, vds.getVdsGroupCompatibilityVersion().getValue()).toString());
+            if (cluster.isDetectEmulatedMachine()) {
+                customLogValues.put("clusterEmulatedMachines", Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines, vds.getClusterCompatibilityVersion().getValue()).toString());
                 vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL, customLogValues);
             } else {
-                customLogValues.put("clusterEmulatedMachines", vdsGroup.getEmulatedMachine());
+                customLogValues.put("clusterEmulatedMachines", cluster.getEmulatedMachine());
                 vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
             }
 
@@ -73,13 +73,13 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         }
 
         if (vds.getStatus() != VDSStatus.NonOperational) {
-            checkIfNotMixingRhels(vds, vdsGroup);
+            checkIfNotMixingRhels(vds, cluster);
         }
 
-        if (!hostCompliesWithRngDeviceSources(vds, vdsGroup) && vds.getStatus() != VDSStatus.NonOperational) {
+        if (!hostCompliesWithRngDeviceSources(vds, cluster) && vds.getStatus() != VDSStatus.NonOperational) {
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("hostSupportedRngSources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()));
-            customLogValues.put("clusterRequiredRngSources", VmRngDevice.sourcesToCsv(vdsGroup.getRequiredRngSources()));
+            customLogValues.put("clusterRequiredRngSources", VmRngDevice.sourcesToCsv(cluster.getRequiredRngSources()));
 
             vdsNonOperational(vds, NonOperationalReason.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
             vds.setStatus(VDSStatus.NonOperational);
@@ -91,7 +91,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
      *
      * It tries to be as non-invasive as possible and only if the above is the case, turns the host into non-operational.
      */
-    private void checkIfNotMixingRhels(VDS vds, VDSGroup vdsGroup) {
+    private void checkIfNotMixingRhels(VDS vds, Cluster cluster) {
         if (vds.getHostOs() == null) {
             return;
         }
@@ -106,7 +106,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         String newRelease = hostOsInfo[2].trim();
         // both the CentOS and RHEL has osName RHEL
         if (newOsName.equals("RHEL") || newOsName.equals("oVirt Node") || newOsName.equals("RHEV Hypervisor")) {
-            VDS beforeRhel = vdsDao.getFirstUpRhelForVdsGroup(vdsGroup.getId());
+            VDS beforeRhel = vdsDao.getFirstUpRhelForCluster(cluster.getId());
             boolean firstHostInCluster = beforeRhel == null;
             if (firstHostInCluster) {
                 // no need to do any checks
@@ -136,8 +136,8 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         }
     }
 
-    private boolean hostCompliesWithRngDeviceSources(VDS vds, VDSGroup vdsGroup) {
-        return vds.getSupportedRngSources().containsAll(vdsGroup.getRequiredRngSources());
+    private boolean hostCompliesWithRngDeviceSources(VDS vds, Cluster cluster) {
+        return vds.getSupportedRngSources().containsAll(cluster.getRequiredRngSources());
     }
 
     @Override
@@ -161,14 +161,15 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         return true;
     }
 
-    private boolean hostCompliesWithClusterEmulationMode(VDS vds, VDSGroup vdsGroup) {
+    private boolean hostCompliesWithClusterEmulationMode(VDS vds, Cluster cluster) {
 
         // the initial cluster emulated machine value is set by the first host that complies.
-        if (vdsGroup.isDetectEmulatedMachine()) {
+        if (cluster.isDetectEmulatedMachine()) {
             return hostEmulationModeMatchesTheConfigValues(vds);
         } else {
             // the cluster has the emulated machine flag set. match the host against it.
-            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(vdsGroup.getEmulatedMachine()) : false;
+            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(
+                    cluster.getEmulatedMachine()) : false;
         }
     }
 
@@ -176,7 +177,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         // match this host against the config flags by order
         String matchedEmulatedMachine =
                 Config.<List<String>> getValue(ConfigValues.ClusterEmulatedMachines,
-                        vds.getVdsGroupCompatibilityVersion().getValue())
+                        vds.getClusterCompatibilityVersion().getValue())
                 .stream().filter(getSupportedEmulatedMachinesAsSet(vds)::contains).findFirst().orElse(null);
 
         if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
@@ -192,6 +193,6 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private void setClusterEmulatedMachine(VDS vds, String matchedEmulatedMachine) {
         // host matches and its value will set the cluster emulated machine
-        DbFacade.getInstance().getVdsGroupDao().setEmulatedMachine(vds.getVdsGroupId(), matchedEmulatedMachine, false);
+        DbFacade.getInstance().getClusterDao().setEmulatedMachine(vds.getClusterId(), matchedEmulatedMachine, false);
     }
 }

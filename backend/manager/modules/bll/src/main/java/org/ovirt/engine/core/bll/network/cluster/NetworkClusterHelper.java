@@ -106,7 +106,7 @@ public class NetworkClusterHelper {
      * updates status of required network in cluster. See this {@link #setStatus(Guid, Network) javadoc} for details.
      */
     private static void updateStatusOfRequiredNetworkCluster(NetworkCluster networkCluster, Guid clusterId, String networkName) {
-        List<VDS> hostsInCluster = getVdsDao().getAllForVdsGroup(clusterId);
+        List<VDS> hostsInCluster = getVdsDao().getAllForCluster(clusterId);
         List<VDS> hostsWithUpStatusInCluster = getHostsWithUpStatus(hostsInCluster);
         boolean atLeastOneHostIsUp = !hostsWithUpStatusInCluster.isEmpty();
 

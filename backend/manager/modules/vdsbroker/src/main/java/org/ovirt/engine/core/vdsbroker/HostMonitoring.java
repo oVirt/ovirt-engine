@@ -136,7 +136,7 @@ public class HostMonitoring {
             // This should occur only if the vdsm API is not the same as the cluster API (version mismatch)
             log.error("Failure to refresh Vds '{}' runtime info. Incorrect vdsm version for cluster '{}': {}",
                     vds.getName(),
-                    vds.getVdsGroupName(), cce.getMessage());
+                    vds.getClusterName(), cce.getMessage());
             log.debug("Exception", cce);
             if (vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.Maintenance) {
                 resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -564,7 +564,7 @@ public class HostMonitoring {
         try {
             reportNicStatusChanges();
             problematicNicsWithNetworks = NetworkMonitoringHelper.determineProblematicNics(vds.getInterfaces(),
-                    getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId()));
+                    getDbFacade().getNetworkDao().getAllForCluster(vds.getClusterId()));
         } catch (Exception e) {
             log.error("Failure on checkInterfaces on update runtimeinfo for vds: '{}': {}", vds.getName(), e.getMessage());
             log.error("Exception", e);

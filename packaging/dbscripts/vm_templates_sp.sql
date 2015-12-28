@@ -19,7 +19,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_threads_per_cpu INTEGER,
  v_os INTEGER,
  v_vmt_guid UUID,
- v_vds_group_id UUID,
+ v_cluster_id UUID,
  v_num_of_monitors INTEGER,
  v_single_qxl_pci BOOLEAN,
  v_allow_console_reconnect BOOLEAN,
@@ -104,7 +104,7 @@ BEGIN
         threads_per_cpu,
         os,
         vm_guid,
-        vds_group_id,
+        cluster_id,
         num_of_monitors,
         single_qxl_pci,
         allow_console_reconnect,
@@ -172,7 +172,7 @@ BEGIN
         v_threads_per_cpu,
         v_os,
         v_vmt_guid,
-        v_vds_group_id,
+        v_cluster_id,
         v_num_of_monitors,
         v_single_qxl_pci,
         v_allow_console_reconnect,
@@ -235,8 +235,8 @@ BEGIN
     VALUES (
         v_vmt_guid,
         (SELECT storage_pool_id
-         FROM vds_groups vg
-         WHERE vg.vds_group_id = v_vds_group_id));
+         FROM cluster vg
+         WHERE vg.cluster_id = v_cluster_id));
 
     -- add connections to dedicated hosts
     PERFORM InsertDedicatedHostsToVm(
@@ -262,7 +262,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_threads_per_cpu INTEGER,
  v_os INTEGER,
  v_vmt_guid UUID,
- v_vds_group_id UUID,
+ v_cluster_id UUID,
  v_num_of_monitors INTEGER,
  v_single_qxl_pci BOOLEAN,
  v_allow_console_reconnect BOOLEAN,
@@ -332,7 +332,7 @@ BEGIN
       cpu_per_socket = v_cpu_per_socket,
       threads_per_cpu = v_threads_per_cpu,
       os = v_os,
-      vds_group_id = v_vds_group_id,
+      cluster_id = v_cluster_id,
       num_of_monitors = v_num_of_monitors,
       single_qxl_pci = v_single_qxl_pci,
       allow_console_reconnect = v_allow_console_reconnect,
@@ -580,13 +580,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplateByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vm_templates_view STABLE
+Create or replace FUNCTION GetVmTemplateByClusterId(v_cluster_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
       FROM vm_templates_view vm_templates
-      WHERE vds_group_id = v_vds_group_id;
+      WHERE cluster_id = v_cluster_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

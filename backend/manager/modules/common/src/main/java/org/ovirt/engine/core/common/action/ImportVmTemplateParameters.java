@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImportVmTemplateParameters extends MoveOrCopyParameters implements Serializable {
     private static final long serialVersionUID = -6796905699865416157L;
 
-    public ImportVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid vdsGroupId,
+    public ImportVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid clusterId,
             VmTemplate template) {
         super(template.getId(), destDomainId);
         this.setVmTemplate(template);
@@ -22,7 +22,7 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
         this.setDestDomainId(destDomainId);
         this.setStorageDomainId(this.getDestDomainId());
         this.setStoragePoolId(storagePoolId);
-        this.setVdsGroupId(vdsGroupId);
+        this.setClusterId(clusterId);
     }
 
     private Guid privateSourceDomainId;
@@ -66,14 +66,14 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
         privateImages = value;
     }
 
-    private Guid privateVdsGroupId;
+    private Guid privateClusterId;
 
-    public Guid getVdsGroupId() {
-        return privateVdsGroupId;
+    public Guid getClusterId() {
+        return privateClusterId;
     }
 
-    public void setVdsGroupId(Guid value) {
-        privateVdsGroupId = value;
+    public void setClusterId(Guid value) {
+        privateClusterId = value;
     }
 
     private HashMap<Guid, DiskImage> diskTemplateMap;

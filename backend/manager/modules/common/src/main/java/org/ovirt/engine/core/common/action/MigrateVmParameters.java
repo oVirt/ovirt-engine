@@ -18,7 +18,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     protected Date startTime;
     // Total time for migration (including retries)
     protected Date totalMigrationTime;
-    private Guid targetVdsGroupId;
+    private Guid targetClusterId;
 
     public MigrateVmParameters() {
     }
@@ -27,10 +27,10 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         this(forceMigrationForNonMigratableVM, vmId, null);
     }
 
-    public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId, Guid targetVdsGroupId) {
+    public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId, Guid targetClusterId) {
         super(vmId);
 
-        this.targetVdsGroupId = targetVdsGroupId;
+        this.targetClusterId = targetClusterId;
         setForceMigrationForNonMigratableVm(forceMigrationForNonMigratableVM);
     }
 
@@ -47,7 +47,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         return Objects.hash(
                 getVmId(),
                 forceMigrationForNonMigratableVm,
-                targetVdsGroupId
+                targetClusterId
         );
     }
 
@@ -64,7 +64,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         MigrateVmParameters other = (MigrateVmParameters) obj;
         return Objects.equals(getVmId(), other.getVmId())
                 && forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
-                && Objects.equals(targetVdsGroupId, other.targetVdsGroupId);
+                && Objects.equals(targetClusterId, other.targetClusterId);
     }
 
     public boolean isForceMigrationForNonMigratableVm() {
@@ -98,11 +98,11 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         return startTime;
     }
 
-    public Guid getTargetVdsGroupId() {
-        return targetVdsGroupId;
+    public Guid getTargetClusterId() {
+        return targetClusterId;
     }
 
-    public void setTargetVdsGroupId(Guid targetVdsGroupId) {
-        this.targetVdsGroupId = targetVdsGroupId;
+    public void setTargetClusterId(Guid targetClusterId) {
+        this.targetClusterId = targetClusterId;
     }
 }

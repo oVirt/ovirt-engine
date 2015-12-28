@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel<Void>, ClusterHostListModel>
+public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS, ClusterListModel<Void>, ClusterHostListModel>
         implements SubTabClusterHostPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterHostView> {

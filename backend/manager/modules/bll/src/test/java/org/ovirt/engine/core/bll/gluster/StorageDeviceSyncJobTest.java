@@ -25,8 +25,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -64,7 +64,7 @@ public class StorageDeviceSyncJobTest {
     private GlusterUtil glusterUtil;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private VdsDao vdsDao;
@@ -184,15 +184,15 @@ public class StorageDeviceSyncJobTest {
         Mockito.verify(storageDeviceDao, times(1)).updateAllInBatch(any(List.class));
     }
 
-    private List<VDSGroup> getClusters() {
-        List<VDSGroup> list = new ArrayList<>();
+    private List<Cluster> getClusters() {
+        List<Cluster> list = new ArrayList<>();
         list.add(createCluster(Version.v3_5, CLUSTER_GUID_3_5));
         list.add(createCluster(Version.v3_6, CLUSTER_GUID_3_6));
         return list;
     }
 
-    private VDSGroup createCluster(Version v, Guid id) {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster createCluster(Version v, Guid id) {
+        Cluster cluster = new Cluster();
         cluster.setId(id);
         cluster.setName("cluster");
         cluster.setGlusterService(true);

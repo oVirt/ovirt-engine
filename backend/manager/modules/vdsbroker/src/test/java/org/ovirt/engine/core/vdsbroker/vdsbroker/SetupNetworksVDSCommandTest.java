@@ -88,7 +88,7 @@ public class SetupNetworksVDSCommandTest {
         HashSet<Version> supportedClusters = new HashSet<>();
         supportedClusters.add(version);
         when(host.getSupportedClusterVersionsSet()).thenReturn(supportedClusters);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
+        when(host.getClusterCompatibilityVersion()).thenReturn(version);
         configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
         configRule.mockConfigValue(ConfigValues.DefaultMTU, 1500);
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, false);

@@ -17,11 +17,11 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -34,11 +34,11 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -63,7 +63,7 @@ public class SearchQueryTest extends DbDependentTestBase {
     List<VmTemplate> vmTemplateResultList = new ArrayList<>();
     List<VmTemplate> vmTemplateDaoResultList = new ArrayList<>();
     List<VDS> vdsResultList = new ArrayList<>();
-    List<VDSGroup> vdsGroupResultList = new ArrayList<>();
+    List<Cluster> clusterResultList = new ArrayList<>();
     List<StoragePool> storagePoolResultList = new ArrayList<>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<>();
     List<NetworkView> networkResultList = new ArrayList<>();
@@ -76,7 +76,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         final VmDao vmDao = mock(VmDao.class);
         final VmTemplateDao vmTemplateDao = mock(VmTemplateDao.class);
         final VdsDao vdsDao = mock(VdsDao.class);
-        final VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
+        final ClusterDao clusterDao = mock(ClusterDao.class);
         final StoragePoolDao storagePoolDao = mock(StoragePoolDao.class);
         final GlusterVolumeDao glusterVolumeDao = mock(GlusterVolumeDao.class);
         final NetworkViewDao networkViewDao = mock(NetworkViewDao.class);
@@ -86,7 +86,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         when(facadeMock.getVmDao()).thenReturn(vmDao);
         when(facadeMock.getVmTemplateDao()).thenReturn(vmTemplateDao);
         when(facadeMock.getVdsDao()).thenReturn(vdsDao);
-        when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDao);
+        when(facadeMock.getClusterDao()).thenReturn(clusterDao);
         when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
         when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
         when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
@@ -96,7 +96,7 @@ public class SearchQueryTest extends DbDependentTestBase {
         mockVMDao(vmDao);
         mockVMTemplateDao(vmTemplateDao);
         mockVdsDao(vdsDao);
-        mockVdsGroupDao(vdsGroupDao);
+        mockClusterDao(clusterDao);
         mockStoragePoolDao(storagePoolDao);
         mockGlusterVolumeDao(glusterVolumeDao);
         mockNetworkDao(networkViewDao);
@@ -139,13 +139,13 @@ public class SearchQueryTest extends DbDependentTestBase {
      * will be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
-     * @param vdsGroupDao
+     * @param clusterDao
      *            - The dao to be used
      */
-    private void mockVdsGroupDao(final VdsGroupDao vdsGroupDao) {
+    private void mockClusterDao(final ClusterDao clusterDao) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        when(vdsGroupDao.getAllWithQuery(matches(getVdsGroupRegexString(search))))
-                .thenReturn(vdsGroupResultList);
+        when(clusterDao.getAllWithQuery(matches(getClusterRegexString(search))))
+                .thenReturn(clusterResultList);
     }
 
     /**
@@ -211,7 +211,7 @@ public class SearchQueryTest extends DbDependentTestBase {
                 .thenReturn(vdsResultList);
         VDS vds = new VDS();
         vds.setCpuFlags("flag");
-        vds.setVdsGroupCompatibilityVersion(Version.getLast());
+        vds.setClusterCompatibilityVersion(Version.getLast());
         vdsResultList.add(vds);
     }
 
@@ -303,7 +303,7 @@ public class SearchQueryTest extends DbDependentTestBase {
      * Regex string which contains all of the Vds group properties.
      * @param search
      */
-    private static String getVdsGroupRegexString(SearchObjectAutoCompleter search) {
+    private static String getClusterRegexString(SearchObjectAutoCompleter search) {
         StringBuilder query = new StringBuilder();
 
         query.append(".*")
@@ -443,23 +443,23 @@ public class SearchQueryTest extends DbDependentTestBase {
     @Test
     public void testGetAllClusterSearch() throws Exception {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
-        // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
-        // vds_groups_storage_domain ))) as T1 ) as T2
+        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM
+        // clusters_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertEquals(vdsGroupResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(clusterResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test
     public void testGetAllMultiClusterSearch() throws Exception {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
-        // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
-        // vds_groups_storage_domain ))) as T1 ) as T2
+        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM
+        // clusters_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
-        assertEquals(vdsGroupResultList, searchQuery.getQueryReturnValue().getReturnValue());
+        assertEquals(clusterResultList, searchQuery.getQueryReturnValue().getReturnValue());
     }
 
     @Test

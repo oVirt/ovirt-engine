@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,8 +48,8 @@ public class AffinityRulesEnforcer {
         GET_ALL // Collect all violations
     }
 
-    public VM chooseNextVmToMigrate(VDSGroup vdsGroup) {
-        List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroups(vdsGroup);
+    public VM chooseNextVmToMigrate(Cluster cluster) {
+        List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroups(cluster);
 
         Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
                 allHardAffinityGroups);
@@ -75,7 +75,7 @@ public class AffinityRulesEnforcer {
         Set<AffinityGroup> violatedAffinityGroups =
                 checkForAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
         if (violatedAffinityGroups.isEmpty()) {
-            log.debug("No affinity group collision detected for cluster {}. Standing by.", vdsGroup.getId());
+            log.debug("No affinity group collision detected for cluster {}. Standing by.", cluster.getId());
             return null;
         }
 
@@ -101,7 +101,7 @@ public class AffinityRulesEnforcer {
 
                 // Test whether any migration is possible, this uses current AffinityGroup settings
                 // and so won't allow more breakage
-                boolean canMove = schedulingManager.canSchedule(vdsGroup, candidateVm,
+                boolean canMove = schedulingManager.canSchedule(cluster, candidateVm,
                         new ArrayList<>(), new ArrayList<>(), null, new ArrayList<>());
 
                 if (canMove) {
@@ -293,8 +293,8 @@ public class AffinityRulesEnforcer {
         return broken;
     }
 
-    public List<AffinityGroup> getAllHardAffinityGroups(VDSGroup vdsGroup) {
-        return affinityGroupDao.getAllAffinityGroupsByClusterId(vdsGroup.getId())
+    public List<AffinityGroup> getAllHardAffinityGroups(Cluster cluster) {
+        return affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId())
                 .stream().filter(AffinityGroup::isEnforcing).collect(Collectors.toList());
     }
 

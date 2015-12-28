@@ -264,16 +264,16 @@ public class UpdateHostValidatorTest {
     @Test
     public void clusterNotChanged() {
         Guid clusterId = Guid.newGuid();
-        when(oldHost.getVdsGroupId()).thenReturn(clusterId);
-        when(host.getVdsGroupId()).thenReturn(clusterId);
+        when(oldHost.getClusterId()).thenReturn(clusterId);
+        when(host.getClusterId()).thenReturn(clusterId);
 
         assertThat(validator.clusterNotChanged(), isValid());
     }
 
     @Test
     public void clusterChanged() {
-        when(oldHost.getVdsGroupId()).thenReturn(Guid.newGuid());
-        when(host.getVdsGroupId()).thenReturn(Guid.newGuid());
+        when(oldHost.getClusterId()).thenReturn(Guid.newGuid());
+        when(host.getClusterId()).thenReturn(Guid.newGuid());
 
         assertThat(validator.clusterNotChanged(), failsWith(EngineMessage.VDS_CANNOT_UPDATE_CLUSTER));
     }

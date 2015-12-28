@@ -132,7 +132,7 @@ public class DisplayNetworkClusterHelperTest {
                 Mockito.same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
         final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
-        Assert.assertEquals(TEST_CLUSTER_ID, actualLoggable.getVdsGroupId());
+        Assert.assertEquals(TEST_CLUSTER_ID, actualLoggable.getClusterId());
         Assert.assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValue("networkname"));
     }
 
@@ -148,13 +148,13 @@ public class DisplayNetworkClusterHelperTest {
         final List<VM> clusterVms = Collections.singletonList(mockVm);
 
         Mockito.when(mockNetworkCluster.getClusterId()).thenReturn(TEST_CLUSTER_ID);
-        Mockito.when(mockVmDao.getAllForVdsGroup(TEST_CLUSTER_ID)).thenReturn(clusterVms);
+        Mockito.when(mockVmDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(clusterVms);
         Mockito.when(mockVm.isRunning()).thenReturn(activeVm);
 
         underTest.warnOnActiveVm();
 
         Mockito.verify(mockNetworkCluster, Mockito.atLeastOnce()).getClusterId();
-        Mockito.verify(mockVmDao).getAllForVdsGroup(TEST_CLUSTER_ID);
+        Mockito.verify(mockVmDao).getAllForCluster(TEST_CLUSTER_ID);
         Mockito.verify(mockVm).isRunning();
     }
 }

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -166,7 +166,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     private void stopGlusterServices(VDS vds) {
-        if (vds.getVdsGroupSupportsGlusterService()) {
+        if (vds.getClusterSupportsGlusterService()) {
             // Stop glusterd service first
             boolean succeeded = resourceManagerProvider.get().runVdsCommand(VDSCommandType.ManageGlusterService,
                     new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "stop")).getSucceeded();
@@ -549,11 +549,11 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread
-    public void onMomPolicyChange(@Observes @MomPolicyUpdate final VDSGroup cluster) {
+    public void onMomPolicyChange(@Observes @MomPolicyUpdate final Cluster cluster) {
         if (cluster == null || cluster.getCompatibilityVersion().compareTo(Version.v3_4) < 0)
             return;
         List<VDS> activeHostsInCluster =
-                vdsDao.getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+                vdsDao.getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
         // collect all Active hosts into a callable list
         List<Callable<Object>> callables = new LinkedList<>();
         for (final VDS vds : activeHostsInCluster) {

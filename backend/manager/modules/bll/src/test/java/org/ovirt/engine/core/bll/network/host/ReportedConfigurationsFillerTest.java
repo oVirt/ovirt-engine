@@ -73,7 +73,7 @@ public class ReportedConfigurationsFillerTest {
 
         VDS vds = new VDS();
         vds.setId(hostId);
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
 
         baseNic = createNic("eth0");
 

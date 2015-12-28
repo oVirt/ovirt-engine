@@ -109,7 +109,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
 
-        if (getVdsGroup() == null && !isInstanceType) {
+        if (getCluster() == null && !isInstanceType) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }

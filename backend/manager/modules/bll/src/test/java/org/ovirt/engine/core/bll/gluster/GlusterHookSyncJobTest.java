@@ -24,8 +24,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookConflictFlags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -65,7 +65,7 @@ public class GlusterHookSyncJobTest {
     private GlusterHooksDao hooksDao;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     private GlusterHookSyncJob hookSyncJob;
     private GlusterAuditLogUtil logUtil;
@@ -87,7 +87,7 @@ public class GlusterHookSyncJobTest {
         doReturn(clusterDao).when(hookSyncJob).getClusterDao();
         doReturn(hooksDao).when(hookSyncJob).getHooksDao();
 
-        List<VDSGroup> clusters = new ArrayList<>();
+        List<Cluster> clusters = new ArrayList<>();
         clusters.add(createCluster(0));
         clusters.add(createCluster(1)); //to check for empty cluster
 
@@ -194,8 +194,8 @@ public class GlusterHookSyncJobTest {
         return vds;
     }
 
-    private VDSGroup createCluster(int index) {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster createCluster(int index) {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_GUIDS[index]);
         cluster.setName("cluster");
         cluster.setGlusterService(true);

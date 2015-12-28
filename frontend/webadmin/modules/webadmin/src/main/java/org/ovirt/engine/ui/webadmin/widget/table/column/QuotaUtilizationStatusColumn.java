@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -20,8 +20,8 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageRe
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
             quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
-        } else if (quota instanceof QuotaVdsGroup) {
-            quotaExceeded = getQuotaExceeded((QuotaVdsGroup)quota);
+        } else if (quota instanceof QuotaCluster) {
+            quotaExceeded = getQuotaExceeded((QuotaCluster)quota);
         } else {
             return null;
         }
@@ -34,8 +34,8 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageRe
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
             quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
-        } else if (quota instanceof QuotaVdsGroup) {
-            quotaExceeded = getQuotaExceeded((QuotaVdsGroup)quota);
+        } else if (quota instanceof QuotaCluster) {
+            quotaExceeded = getQuotaExceeded((QuotaCluster)quota);
         }
 
         if (quotaExceeded) {
@@ -53,10 +53,10 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageRe
                 && quota.getStorageSizeGB() < quota.getStorageSizeGBUsage();
     }
 
-    private boolean getQuotaExceeded(QuotaVdsGroup quota) {
-        return (quota.getMemSizeMB() != null && !quota.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)
+    private boolean getQuotaExceeded(QuotaCluster quota) {
+        return (quota.getMemSizeMB() != null && !quota.getMemSizeMB().equals(QuotaCluster.UNLIMITED_MEM)
                 && quota.getMemSizeMB() < quota.getMemSizeMBUsage())
-                || (quota.getVirtualCpu() != null && !quota.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)
+                || (quota.getVirtualCpu() != null && !quota.getVirtualCpu().equals(QuotaCluster.UNLIMITED_VCPU)
                 && quota.getVirtualCpu() < quota.getVirtualCpuUsage());
     }
 

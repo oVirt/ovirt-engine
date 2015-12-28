@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
@@ -151,7 +151,7 @@ public class GlusterTaskUtils {
         return false;
     }
 
-    public String getTaskMessage(VDSGroup cluster, StepEnum stepType, GlusterAsyncTask task) {
+    public String getTaskMessage(Cluster cluster, StepEnum stepType, GlusterAsyncTask task) {
         if (task == null) {
             return null;
         }
@@ -160,7 +160,7 @@ public class GlusterTaskUtils {
         return ExecutionMessageDirector.resolveStepMessage(stepType, values);
     }
 
-    public Map<String, String> getMessageMap(VDSGroup cluster, GlusterAsyncTask task) {
+    public Map<String, String> getMessageMap(Cluster cluster, GlusterAsyncTask task) {
         Map<String, String> values = new HashMap<>();
         values.put(GlusterConstants.CLUSTER, cluster.getName());
         GlusterTaskParameters params = task.getTaskParameters();
@@ -200,7 +200,7 @@ public class GlusterTaskUtils {
         return jobStatus;
     }
 
-    public void updateSteps(VDSGroup cluster, GlusterAsyncTask task, List<Step> steps) {
+    public void updateSteps(Cluster cluster, GlusterAsyncTask task, List<Step> steps) {
         // update status in step table
         for (Step step : steps) {
             if (step.getEndTime() != null) {
@@ -221,7 +221,7 @@ public class GlusterTaskUtils {
         }
     }
 
-    public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, VDSGroup cluster) {
+    public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, Cluster cluster) {
         GlusterVolumeEntity volume = getVolumeDao().getVolumeByGlusterTask(task.getTaskId());
         if ( volume == null){
             if(task.getTaskParameters() != null) {
@@ -239,7 +239,7 @@ public class GlusterTaskUtils {
         }
     }
 
-    public boolean supportsGlusterAsyncTasksFeature(VDSGroup cluster) {
+    public boolean supportsGlusterAsyncTasksFeature(Cluster cluster) {
         return cluster.supportsGlusterService()
                 && GlusterFeatureSupported.glusterAsyncTasks(cluster.getCompatibilityVersion());
     }

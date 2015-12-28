@@ -39,7 +39,7 @@ BEGIN
        where table_schema = 'public' and
        table_name = 'vds' and
        column_name in (
-          'vds_group_id', 'vds_group_name', 'vds_group_description',
+          'cluster_id', 'cluster_name', 'cluster_description',
           'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',
           'server_ssl_enabled', 'vds_type', 'pm_enabled', 'pm_proxy_preferences', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
           'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
@@ -49,9 +49,9 @@ BEGIN
           'guest_overhead', 'software_version', 'version_name', 'build_name', 'previous_status',
           'cpu_idle', 'cpu_load', 'cpu_sys', 'cpu_user', 'usage_mem_percent', 'usage_cpu_percent',
           'usage_network_percent', 'mem_available', 'mem_shared', 'swap_free', 'swap_total', 'ksm_cpu_percent',
-          'ksm_pages', 'ksm_state', 'cpu_flags', 'vds_group_cpu_name', 'cpu_sockets', 'vds_spm_id',
+          'ksm_pages', 'ksm_state', 'cpu_flags', 'cluster_cpu_name', 'cpu_sockets', 'vds_spm_id',
           'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
-          'vds_group_compatibility_version', 'vds_group_virt_service', 'vds_group_gluster_service', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
+          'cluster_compatibility_version', 'cluster_virt_service', 'cluster_gluster_service', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshkeyfingerprint', 'count_threads_as_cores', 'cpu_threads',
           'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family', 'ssh_port', 'ssh_username', 'boot_time',

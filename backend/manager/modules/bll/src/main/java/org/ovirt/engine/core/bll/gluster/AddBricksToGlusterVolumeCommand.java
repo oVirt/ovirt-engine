@@ -63,7 +63,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             return false;
         }
 
-        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getCompatibilityVersion(),
+        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getCluster().getCompatibilityVersion(),
                 getParameters().isForce()))) {
             return false;
         }
@@ -251,7 +251,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                                         bricksList,
                                         replicaCount,
                                         stripeCount,
-                                        upServer.getVdsGroupCompatibilityVersion(),
+                                        upServer.getClusterCompatibilityVersion(),
                                         force));
 
         setSucceeded(returnValue.getSucceeded());

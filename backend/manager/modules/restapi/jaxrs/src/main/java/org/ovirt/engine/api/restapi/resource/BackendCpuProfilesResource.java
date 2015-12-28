@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuProfiles;
 import org.ovirt.engine.api.resource.CpuProfileResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -41,8 +41,8 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
         validateParameters(cpuProfile, "name", "cluster.id");
         String clusterId = cpuProfile.getCluster().getId();
         // verify the cluster.id is well provided
-        getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupById,
+        getEntity(Cluster.class,
+                VdcQueryType.GetClusterById,
                 new IdQueryParameters(asGuid(clusterId)),
                 "cluster: id="
                         + clusterId);

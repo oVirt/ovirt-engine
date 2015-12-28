@@ -66,7 +66,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         super.init();
         setVmName(getParameters().getVmName());
         setVdsId(getParameters().getProxyHostId());
-        setVdsGroupId(getParameters().getVdsGroupId());
+        setClusterId(getParameters().getClusterId());
         setStoragePoolId(getParameters().getStoragePoolId());
         setStorageDomainId(getParameters().getStorageDomainId());
     }

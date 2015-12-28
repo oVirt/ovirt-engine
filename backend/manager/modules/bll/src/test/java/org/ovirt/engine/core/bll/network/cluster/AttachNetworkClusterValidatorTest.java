@@ -56,7 +56,7 @@ public class AttachNetworkClusterValidatorTest extends NetworkClusterValidatorTe
                                              boolean emptyCluster,
                                              Matcher<ValidationResult> expectedResult) {
         when(networkCluster.isManagement()).thenReturn(managementAfter);
-        when(vdsDao.getAllForVdsGroup(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
+        when(vdsDao.getAllForCluster(TEST_CLUSTER_ID)).thenReturn(emptyCluster ?
                                                                                Collections.<VDS> emptyList() :
                                                                                Collections.<VDS> singletonList(null));
         assertThat(validator.managementNetworkChange(), expectedResult);

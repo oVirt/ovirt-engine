@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -127,10 +127,10 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
                 && getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
-            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+            list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
-                    getVm().getVdsGroupId(),
+                    getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
                     getVm().getMemSizeMb()));
         }

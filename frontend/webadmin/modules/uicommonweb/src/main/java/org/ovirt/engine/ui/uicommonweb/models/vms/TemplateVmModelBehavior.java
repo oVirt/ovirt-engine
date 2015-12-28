@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -57,23 +57,23 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                                         @Override
                                         public void onSuccess(Object nothing, Object returnValue) {
-                                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                                            ArrayList<VDSGroup> clustersSupportingVirt = new ArrayList<>();
+                                            ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
+                                            ArrayList<Cluster> clustersSupportingVirt = new ArrayList<>();
                                             // filter clusters supporting virt service only
-                                            for (VDSGroup cluster : clusters) {
+                                            for (Cluster cluster : clusters) {
                                                 if (cluster.supportsVirtService()) {
                                                     clustersSupportingVirt.add(cluster);
                                                 }
                                             }
 
-                                            List<VDSGroup> filteredClusters =
+                                            List<Cluster> filteredClusters =
                                                     AsyncDataProvider.getInstance().filterByArchitecture(clustersSupportingVirt,
                                                             template.getClusterArch());
 
                                             getModel().setDataCentersAndClusters(getModel(),
                                                     new ArrayList<>(Arrays.asList(new StoragePool[]{dataCenter})),
                                                     filteredClusters,
-                                                    template.getVdsGroupId());
+                                                    template.getClusterId());
 
                                             AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(null,
                                                     new INewAsyncCallback() {

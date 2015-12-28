@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -66,7 +66,7 @@ public class ImportNetworksModel extends Model {
     private final UICommand addImportCommand = new UICommand(null, this);
     private final UICommand cancelImportCommand = new UICommand(null, this);
 
-    private Map<Guid, Collection<VDSGroup>> dcClusters;
+    private Map<Guid, Collection<Cluster>> dcClusters;
     private final com.google.inject.Provider<CommonModel> commonModelProvider;
 
     public ListModel<ExternalNetwork> getProviderNetworks() {
@@ -278,11 +278,11 @@ public class ImportNetworksModel extends Model {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
-                    Collection<VDSGroup> clusters =
-                            Linq.where((Collection<VDSGroup>) returnValue, new IPredicate<VDSGroup>() {
+                    Collection<Cluster> clusters =
+                            Linq.where((Collection<Cluster>) returnValue, new IPredicate<Cluster>() {
 
                         @Override
-                        public boolean match(VDSGroup source) {
+                        public boolean match(Cluster source) {
                                     return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
                                             source.getCompatibilityVersion().getValue());
                         }
@@ -294,9 +294,9 @@ public class ImportNetworksModel extends Model {
         }
     }
 
-    private void attachNetworkToClusters(final Network network, Collection<VDSGroup> clusters, final boolean publicUse) {
+    private void attachNetworkToClusters(final Network network, Collection<Cluster> clusters, final boolean publicUse) {
         List<NetworkCluster> networkAttachments = new LinkedList<>();
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             final NetworkCluster networkCluster = new NetworkCluster();
             networkCluster.setClusterId(cluster.getId());
             networkCluster.setNetworkId(network.getId());

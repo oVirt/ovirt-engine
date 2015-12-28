@@ -10,10 +10,10 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -67,7 +67,7 @@ public class BackendClusterNetworkResourceTest
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(1, false, false, false);
         setUpEntityQueryExpectations(1, true, true, true);
-        setUpVDSGroupExpectations(GUIDS[1]);
+        setUpClusterExpectations(GUIDS[1]);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
                                            new String[] {},
@@ -98,13 +98,13 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testRemove() throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+                VdcActionType.DetachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 true,
                 true
@@ -124,13 +124,13 @@ public class BackendClusterNetworkResourceTest
     }
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
-        setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
+                VdcActionType.DetachNetworkToCluster,
+                AttachNetworkToClusterParameter.class,
+                new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
                 valid,
                 success
@@ -145,11 +145,11 @@ public class BackendClusterNetworkResourceTest
         }
     }
 
-    protected VDSGroup setUpVDSGroupExpectations(Guid id) {
-        VDSGroup group = control.createMock(VDSGroup.class);
+    protected Cluster setUpClusterExpectations(Guid id) {
+        Cluster group = control.createMock(Cluster.class);
         expect(group.getId()).andReturn(id).anyTimes();
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },

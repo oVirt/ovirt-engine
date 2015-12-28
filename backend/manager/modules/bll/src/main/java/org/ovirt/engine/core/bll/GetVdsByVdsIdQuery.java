@@ -20,7 +20,7 @@ public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesComm
 
         if (vds != null) {
             vds.setCpuName(getCpuFlagsManagerHandler().findMaxServerCpuByFlags(vds.getCpuFlags(),
-                    vds.getVdsGroupCompatibilityVersion()));
+                    vds.getClusterCompatibilityVersion()));
         }
 
         getQueryReturnValue().setReturnValue(vds);

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -28,10 +28,10 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
 
     @Override
     protected boolean validate() {
-        VDSGroup cluster = getVdsGroup();
+        Cluster cluster = getCluster();
         if (!cluster.supportsGlusterService()
                 || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
-                        getVdsGroup().getId()))) {
+                        getCluster().getId()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 

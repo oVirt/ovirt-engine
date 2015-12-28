@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
@@ -26,7 +26,7 @@ public class DataCenterClusterListModel extends ClusterListModel<StoragePool> {
             ClusterGeneralModel clusterGeneralModel,
             ClusterNetworkListModel clusterNetworkListModel,
             ClusterHostListModel clusterHostListModel,
-            PermissionListModel<VDSGroup> permissionListModel) {
+            PermissionListModel<Cluster> permissionListModel) {
         super(clusterVmListModel,
                 clusterServiceModel,
                 clusterGlusterHookListModel,

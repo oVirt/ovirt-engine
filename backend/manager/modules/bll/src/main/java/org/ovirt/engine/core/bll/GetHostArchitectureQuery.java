@@ -20,7 +20,7 @@ public class GetHostArchitectureQuery<P extends IdQueryParameters> extends Queri
 
         ServerCpu sc =
                 cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(),
-                        host.getVdsGroupCompatibilityVersion());
+                        host.getClusterCompatibilityVersion());
 
         getQueryReturnValue().setReturnValue(sc == null ? ArchitectureType.undefined : sc.getArchitecture());
     }

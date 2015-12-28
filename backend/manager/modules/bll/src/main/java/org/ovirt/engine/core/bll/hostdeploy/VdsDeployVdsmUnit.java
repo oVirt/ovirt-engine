@@ -7,8 +7,8 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -94,22 +94,22 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _deploy.getVds().getVdsGroupId()
+            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+                _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(
                 VdsmEnv.CHECK_VIRT_HARDWARE,
-                vdsGroup.supportsVirtService()
+                cluster.supportsVirtService()
             );
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _deploy.getVds().getVdsGroupId()
+            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+                _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(
                 VirtEnv.ENABLE,
-                vdsGroup.supportsVirtService()
+                cluster.supportsVirtService()
             );
             return true;
         }}

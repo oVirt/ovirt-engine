@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
@@ -124,7 +124,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     @Override
     protected void executeCommand() {
-        VDSGroup vdsGroup = getVdsGroup();
+        Cluster cluster = getCluster();
 
         boolean initSucceeded = true;
 
@@ -136,15 +136,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 getVds().getId(),
                 getVds().isPowerManagementControlledByPolicy());
 
-        if (vdsGroup.supportsTrustedService()) {
+        if (cluster.supportsTrustedService()) {
             initSucceeded = initTrustedService();
         }
 
-        if (initSucceeded && vdsGroup.supportsVirtService()) {
+        if (initSucceeded && cluster.supportsVirtService()) {
             initSucceeded = initVirtResources();
         }
 
-        if (initSucceeded && vdsGroup.supportsGlusterService()) {
+        if (initSucceeded && cluster.supportsGlusterService()) {
             initSucceeded = initGlusterHost();
         }
 
@@ -162,7 +162,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (initializeStorage()) {
             processFence();
             processStoragePoolStatus();
-            runUpdateMomPolicy(getVdsGroup(), getVds());
+            runUpdateMomPolicy(getCluster(), getVds());
             refreshHostDeviceList();
         } else {
             Map<String, String> customLogValues = new HashMap<>();
@@ -300,7 +300,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return result;
     }
 
-    private VDSReturnValue runUpdateMomPolicy(final VDSGroup cluster, final VDS vds) {
+    private VDSReturnValue runUpdateMomPolicy(final Cluster cluster, final VDS vds) {
         VDSReturnValue returnValue = new VDSReturnValue();
         if (cluster.getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
             try {
@@ -355,7 +355,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     public AuditLogType getAuditLogTypeValue() {
         AuditLogType type = AuditLogType.UNASSIGNED;
 
-        if (getVdsGroup().supportsVirtService()) {
+        if (getCluster().supportsVirtService()) {
             if (!connectPoolSucceeded) {
                 type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
             } else if (getVds().isPmEnabled() && fenceSucceeded) {
@@ -380,7 +380,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             }
         }
 
-        if (type == AuditLogType.UNASSIGNED && getVdsGroup().supportsGlusterService()) {
+        if (type == AuditLogType.UNASSIGNED && getCluster().supportsGlusterService()) {
             if (!glusterHostUuidFound) {
                 type = AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
             } else if (!glusterPeerListSucceeded) {
@@ -395,7 +395,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initGlusterHost() {
         glusterHostUuidFound = true;
-        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getCompatibilityVersion())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(getCluster().getCompatibilityVersion())) {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
                     new VdsIdVDSCommandParametersBase(getVds().getId()));
             if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
@@ -416,7 +416,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private void refreshGlusterStorageDevices() {
-        if(getGlusterUtil().isGlusterBrickProvisioningSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())){
+        if(getGlusterUtil().isGlusterBrickProvisioningSupported(getCluster().getCompatibilityVersion(), getCluster().getId())){
             try{
                 runInternalAction(VdcActionType.SyncStorageDevices, new SyncGlusterStorageDevicesParameter(getVds().getId(), true));
             } catch (EngineException e) {
@@ -439,11 +439,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
        // If "gluster peer probe" and "gluster peer status" are executed simultaneously, the results
        // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
        // condition.
-        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getVds().getVdsGroupId())) {
+        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getVds().getClusterId())) {
             glusterPeerListSucceeded = true;
             glusterPeerProbeSucceeded = true;
             Map<String, String> customLogValues = new HashMap<>();
-            List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+            List<VDS> vdsList = getVdsDao().getAllForClusterWithStatus(getClusterId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
             if (vdsList != null && vdsList.size() > 0) {
                 VDS upServer = null;
@@ -512,7 +512,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private VDS getNewUpServer(VDS upServer) {
-        List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+        List<VDS> vdsList = getVdsDao().getAllForClusterWithStatus(getClusterId(), VDSStatus.Up);
         VDS newUpServer = null;
         for (VDS vds : vdsList) {
             if (!getVdsId().equals(vds.getId()) && !upServer.getId().equals(vds.getId())) {

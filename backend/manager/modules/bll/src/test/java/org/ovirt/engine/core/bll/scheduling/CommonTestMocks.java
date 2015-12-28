@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.EngineSessionDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -39,7 +39,7 @@ public class CommonTestMocks {
     @Produces
     private CpuFlagsManagerHandler cpuFlagsManagerHandler = mock(CpuFlagsManagerHandler.class);
     @Produces
-    private VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
+    private ClusterDao clusterDao = mock(ClusterDao.class);
     @Produces
     private HostDeviceManager hostDeviceManager = mock(HostDeviceManager.class);
 

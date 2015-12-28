@@ -292,7 +292,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 }
 
                 boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
-                Version clusterVersion = disk.getVm().getVdsGroupCompatibilityVersion();
+                Version clusterVersion = disk.getVm().getClusterCompatibilityVersion();
 
                 // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
                 interfaceInfoIcon.setVisible(clusterVersion.compareTo(Version.v3_3) >= 0 && !isVirtioScsiEnabled);

@@ -7,11 +7,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -92,16 +92,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
 
-                                            List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                                            List<Cluster> clusters = (List<Cluster>) returnValue;
 
-                                            List<VDSGroup> filteredClusters =
+                                            List<Cluster> filteredClusters =
                                                     AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                                             vm.getClusterArch());
 
                                             model.setDataCentersAndClusters(model,
                                                     Arrays.asList(dataCenter),
                                                     filteredClusters,
-                                                    vm.getVdsGroupId());
+                                                    vm.getClusterId());
 
                                             initTemplate();
 

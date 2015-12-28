@@ -93,9 +93,9 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     @Override
-    public List<VmStatic> getAllByVdsGroup(Guid vdsGroup) {
-        return getCallsHandler().executeReadList("GetVmStaticByVdsGroup", VMStaticRowMapper.instance, getCustomMapSqlParameterSource()
-                .addValue("vds_group_id", vdsGroup));
+    public List<VmStatic> getAllByCluster(Guid cluster) {
+        return getCallsHandler().executeReadList("GetVmStaticByCluster", VMStaticRowMapper.instance, getCustomMapSqlParameterSource()
+                .addValue("cluster_id", cluster));
     }
 
     @Override
@@ -185,7 +185,7 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
             map(rs, entity);
 
             entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
 
             entity.setName(rs.getString("vm_name"));
             entity.setVmtGuid(getGuidDefaultEmpty(rs, "vmt_guid"));

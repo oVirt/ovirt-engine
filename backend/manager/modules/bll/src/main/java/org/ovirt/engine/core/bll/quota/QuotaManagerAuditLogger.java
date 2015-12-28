@@ -23,7 +23,7 @@ public class QuotaManagerAuditLogger {
         auditLogableBase.setQuotaIdForLog(quotaId);
     }
 
-    protected void addCustomValuesVdsGroup(AuditLogableBase auditLogableBase,
+    protected void addCustomValuesCluster(AuditLogableBase auditLogableBase,
             String quotaName,
             Guid quotaId,
             double cpuCurrentPercentage,

@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -500,8 +500,8 @@ public class DataCenterModule extends AbstractGinModule {
         bind(DataCenterMainTabSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>>>(){})

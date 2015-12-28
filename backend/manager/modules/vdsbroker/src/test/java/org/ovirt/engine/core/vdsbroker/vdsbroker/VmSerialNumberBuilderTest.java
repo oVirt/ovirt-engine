@@ -10,8 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ public class VmSerialNumberBuilderTest {
     private static final String CUSTOM_CONFIG_SERIAL = "custom CONFIG serial";
 
     VM vm;
-    VDSGroup vdsGroup;
+    Cluster cluster;
     Map<String, Object> creationInfo;
 
     @Rule
@@ -37,7 +37,7 @@ public class VmSerialNumberBuilderTest {
         vm = new VM();
         vm.setId(VM_ID);
 
-        vdsGroup = new VDSGroup();
+        cluster = new Cluster();
         creationInfo = new HashMap<>();
     }
 
@@ -117,7 +117,7 @@ public class VmSerialNumberBuilderTest {
     }
 
     private void assertSerialNumber(String serialNumber) {
-        new VmSerialNumberBuilder(vm, vdsGroup, creationInfo).buildVmSerialNumber();
+        new VmSerialNumberBuilder(vm, cluster, creationInfo).buildVmSerialNumber();
 
         assertEquals(serialNumber, creationInfo.get(VdsProperties.SERIAL_NUMBER));
     }
@@ -128,8 +128,8 @@ public class VmSerialNumberBuilderTest {
     }
 
     private void setupClusterWithSerialNumber(SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
-        vdsGroup.setSerialNumberPolicy(serialNumberPolicy);
-        vdsGroup.setCustomSerialNumber(customSerialNumber);
+        cluster.setSerialNumberPolicy(serialNumberPolicy);
+        cluster.setCustomSerialNumber(customSerialNumber);
     }
 
     private void setupConfigWithSerialNumber(SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {

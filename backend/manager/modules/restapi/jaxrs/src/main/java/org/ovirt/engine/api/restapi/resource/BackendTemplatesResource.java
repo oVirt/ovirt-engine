@@ -28,8 +28,8 @@ import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -79,7 +79,7 @@ public class BackendTemplatesResource
         validateEnums(Template.class, template);
         validateIconParameters(template);
         Guid clusterId = null;
-        VDSGroup cluster = null;
+        Cluster cluster = null;
         if (namedCluster(template)) {
             clusterId = getClusterId(template);
             cluster = lookupCluster(clusterId);
@@ -89,7 +89,7 @@ public class BackendTemplatesResource
         }
         VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(cluster, template));
         if (namedCluster(template)) {
-            staticVm.setVdsGroupId(clusterId);
+            staticVm.setClusterId(clusterId);
         }
 
         staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb()));
@@ -160,8 +160,8 @@ public class BackendTemplatesResource
         }
     }
 
-    private VDSGroup lookupCluster(Guid id) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
+    private Cluster lookupCluster(Guid id) {
+        return getEntity(Cluster.class, VdcQueryType.GetClusterByClusterId, new IdQueryParameters(id), "GetClusterByClusterId");
     }
 
     protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
@@ -244,7 +244,7 @@ public class BackendTemplatesResource
         return collection;
     }
 
-    protected VmStatic getVm(VDSGroup cluster, Template template) {
+    protected VmStatic getVm(Cluster cluster, Template template) {
         org.ovirt.engine.core.common.businessentities.VM vm;
         if (template.getVm().isSetId()) {
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
@@ -272,8 +272,8 @@ public class BackendTemplatesResource
     }
 
     protected Guid getClusterId(Template template) {
-        return getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
+        return getEntity(Cluster.class,
+                VdcQueryType.GetClusterByName,
                 new NameQueryParameters(template.getCluster().getName()),
                 "Cluster: name=" + template.getCluster().getName()).getId();
     }

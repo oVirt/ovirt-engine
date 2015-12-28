@@ -58,14 +58,14 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsPort = value;
     }
 
-    private Guid privateVdsGroupId;
+    private Guid privateClusterId;
 
-    public Guid getVdsGroupId() {
-        return privateVdsGroupId;
+    public Guid getClusterId() {
+        return privateClusterId;
     }
 
-    private void setVdsGroupId(Guid value) {
-        privateVdsGroupId = value;
+    private void setClusterId(Guid value) {
+        privateClusterId = value;
     }
 
     private int privateSSHPort;
@@ -99,7 +99,7 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
     }
 
     public RegisterVdsParameters(Guid vdsId, String vds_host_name, int ssh_port, String ssh_fingerprint,
-            String ssh_user, String vds_name, String vds_unique_id, int vds_port, Guid vds_group_id) {
+            String ssh_user, String vds_name, String vds_unique_id, int vds_port, Guid cluster_id) {
         setVdsId(vdsId);
         setVdsHostName(vds_host_name);
         setSSHPort(ssh_port);
@@ -108,7 +108,7 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         setVdsName(vds_name);
         setVdsUniqueId(vds_unique_id);
         setVdsPort(vds_port);
-        setVdsGroupId(vds_group_id);
+        setClusterId(cluster_id);
     }
 
     public RegisterVdsParameters() {

@@ -267,7 +267,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
             getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
             for (Network net : getNetworks()) {
-                NetworkClusterHelper.setStatus(getVdsGroupId(), net);
+                NetworkClusterHelper.setStatus(getClusterId(), net);
             }
 
             return null;
@@ -279,7 +279,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     private boolean isManagementNetworkChanged(){
-        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getVdsGroupId()).getName();
+        String mgmtNetworkName = managementNetworkUtil.getManagementNetwork(getVds().getClusterId()).getName();
         for (Network netowrk : getNetworks()) {
             if (mgmtNetworkName.equals(netowrk.getName())){
                 return true;

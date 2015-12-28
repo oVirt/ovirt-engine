@@ -1,21 +1,21 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 
 public class ClusterEditParameters extends IdQueryParameters {
 
-    private VDSGroup newCluster;
+    private Cluster newCluster;
 
     private ClusterEditParameters() {
     }
 
-    public ClusterEditParameters(VDSGroup newCluster) {
+    public ClusterEditParameters(Cluster newCluster) {
         super(newCluster.getId());
 
         this.newCluster = newCluster;
     }
 
-    public VDSGroup getNewCluster() {
+    public Cluster getNewCluster() {
         return newCluster;
     }
 }

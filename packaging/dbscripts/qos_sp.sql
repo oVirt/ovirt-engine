@@ -342,11 +342,11 @@ BEGIN
     FROM qos
     INNER JOIN cpu_profiles
         ON qos.id = cpu_profiles.qos_id
-    INNER JOIN vds_groups
-        ON vds_groups.vds_group_id = cpu_profiles.cluster_id
+    INNER JOIN cluster
+        ON cluster.cluster_id = cpu_profiles.cluster_id
     INNER JOIN vm_static
         ON vm_static.vm_guid = v_vm_id
-    WHERE vm_static.vds_group_id = vds_groups.vds_group_id
+    WHERE vm_static.cluster_id = cluster.cluster_id
         AND vm_static.cpu_profile_id = cpu_profiles.id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

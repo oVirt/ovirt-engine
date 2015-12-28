@@ -15,7 +15,7 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     private FenceAgent agent;
     private List<FenceProxySourceType> fenceProxySources;
     private Guid storagePoolId;
-    private Guid vdsGroupId;
+    private Guid clusterId;
 
     public GetFenceAgentStatusParameters() {
         storagePoolId = Guid.Empty;
@@ -61,12 +61,12 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
         storagePoolId = value;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid vdsGroupId) {
-        this.vdsGroupId = vdsGroupId;
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
     }
 
     public List<FenceProxySourceType> getFenceProxySources() {

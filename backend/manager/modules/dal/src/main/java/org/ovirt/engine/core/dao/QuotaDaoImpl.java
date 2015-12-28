@@ -11,9 +11,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,14 +27,14 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     /**
-     * Save <code>Quota</code> entity with specific <code>Quota</code> storage and <code>Quota</code> vdsGroup
+     * Save <code>Quota</code> entity with specific <code>Quota</code> storage and <code>Quota</code> cluster
      * limitation list.
      */
     @Override
     public void save(Quota quota) {
         saveGlobalQuota(quota);
         saveStorageSpecificQuotas(quota);
-        saveVdsGroupSpecificQuotas(quota);
+        saveClusterSpecificQuotas(quota);
     }
 
     /**
@@ -79,23 +79,23 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     /**
-     * Get specific limitation for <code>VdsGroup</code>.
+     * Get specific limitation for <code>Cluster</code>.
      *
-     * @param vdsGroupId
+     * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
      *            - The <code>Quota</code> id
      * @return List of QuotaStorage
      */
     @Override
-    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId) {
-        return getQuotaVdsGroupByVdsGroupGuid(vdsGroupId, quotaId, true);
+    public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId) {
+        return getQuotaClusterByClusterGuid(clusterId, quotaId, true);
     }
 
     /**
-     * Get specific limitation for <code>VdsGroup</code>.
+     * Get specific limitation for <code>Cluster</code>.
      *
-     * @param vdsGroupId
+     * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
      *            - The <code>Quota</code> id
@@ -104,15 +104,15 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * @return List of QuotaStorage
      */
     @Override
-    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId, boolean allowEmpty) {
+    public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId, boolean allowEmpty) {
         MapSqlParameterSource parameterSource =
                 createQuotaIdParameterMapper(quotaId)
-                        .addValue("vds_group_id", vdsGroupId)
+                        .addValue("cluster_id", clusterId)
                         .addValue("allow_empty", allowEmpty);
-        List<QuotaVdsGroup> quotaVdsGroupList = getCallsHandler().executeReadList("GetQuotaVdsGroupByVdsGroupGuid",
-                getVdsGroupQuotaResultSet(),
+        List<QuotaCluster> quotaClusterList = getCallsHandler().executeReadList("GetQuotaClusterByClusterGuid",
+                getClusterQuotaResultSet(),
                 parameterSource);
-        return quotaVdsGroupList;
+        return quotaClusterList;
     }
 
     /**
@@ -184,7 +184,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 getCallsHandler().executeRead("GetQuotaByQuotaGuid", getQuotaFromResultSet(), parameterSource);
 
         if (quotaEntity != null) {
-            quotaEntity.setQuotaVdsGroups(getQuotaVdsGroupByQuotaGuid(quotaId));
+            quotaEntity.setQuotaClusters(getQuotaClusterByQuotaGuid(quotaId));
             quotaEntity.setQuotaStorages(getQuotaStorageByQuotaGuid(quotaId));
         }
         return quotaEntity;
@@ -222,7 +222,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
             }
 
             List<QuotaStorage> quotaStorageList = getAllQuotaStorageIncludingConsumption();
-            List<QuotaVdsGroup> quotaVdsGroupList = getAllQuotaVdsGroupIncludingConsumption();
+            List<QuotaCluster> quotaClusterList = getAllQuotaClusterIncludingConsumption();
 
             if (quotaStorageList != null) {
                 for (QuotaStorage quotaStorage : quotaStorageList) {
@@ -240,17 +240,17 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 }
             }
 
-            if (quotaVdsGroupList != null) {
-                for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
-                    Quota quota = allQuotaMap.get(quotaVdsGroup.getQuotaId());
+            if (quotaClusterList != null) {
+                for (QuotaCluster quotaCluster : quotaClusterList) {
+                    Quota quota = allQuotaMap.get(quotaCluster.getQuotaId());
                     if (quota != null) {
-                        if (quotaVdsGroup.getVdsGroupId() == null || quotaVdsGroup.getVdsGroupId().equals(Guid.Empty)) {
-                            quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+                        if (quotaCluster.getClusterId() == null || quotaCluster.getClusterId().equals(Guid.Empty)) {
+                            quota.setGlobalQuotaCluster(quotaCluster);
                         } else {
-                            if (quota.getQuotaVdsGroups() == null) {
-                                quota.setQuotaVdsGroups(new ArrayList<>());
+                            if (quota.getQuotaClusters() == null) {
+                                quota.setQuotaClusters(new ArrayList<>());
                             }
-                            quota.getQuotaVdsGroups().add(quotaVdsGroup);
+                            quota.getQuotaClusters().add(quotaCluster);
                         }
                     }
                 }
@@ -284,29 +284,29 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
      * Get all quota Vds groups, which belong to quota with quotaId.
      */
     @Override
-    public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId) {
+    public List<QuotaCluster> getQuotaClusterByQuotaGuid(Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId);
-        return getCallsHandler().executeReadList("GetQuotaVdsGroupByQuotaGuid",
-                getVdsGroupQuotaResultSet(),
+        return getCallsHandler().executeReadList("GetQuotaClusterByQuotaGuid",
+                getClusterQuotaResultSet(),
                 parameterSource);
     }
 
     @Override
-    public List<QuotaVdsGroup> getAllQuotaVdsGroupIncludingConsumption() {
+    public List<QuotaCluster> getAllQuotaClusterIncludingConsumption() {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        return getCallsHandler().executeReadList("calculateAllVdsGroupUsage",
-                getVdsGroupQuotaResultSet(),
+        return getCallsHandler().executeReadList("calculateAllClusterUsage",
+                getClusterQuotaResultSet(),
                 parameterSource);
     }
 
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.
-     * In case no quota Vds Groups are returned, a fictitious QuotaVdsGroup is returned,
+     * In case no quota Vds Groups are returned, a fictitious QuotaCluster is returned,
      * with an {@link Guid#Empty} Vds Id and a <code>null</code> name.
      */
     @Override
-    public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid quotaId) {
-        return getQuotaVdsGroupByVdsGroupGuid(null, quotaId, false);
+    public List<QuotaCluster> getQuotaClusterByQuotaGuidWithGeneralDefault(Guid quotaId) {
+        return getQuotaClusterByClusterGuid(null, quotaId, false);
     }
 
     @Override
@@ -323,13 +323,13 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     }
 
     @Override
-    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, long engineSessionSeqId, boolean isFiltered) {
+    public List<Quota> getAllRelevantQuotasForCluster(Guid clusterId, long engineSessionSeqId, boolean isFiltered) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("vds_group_id", vdsGroupId)
+        quotaParameterSource.addValue("cluster_id", clusterId)
                 .addValue("engine_session_seq_id", engineSessionSeqId)
                 .addValue("is_filtered", isFiltered);
         List<Quota> quotas =
-                getCallsHandler().executeReadList("getAllThinQuotasByVDSGroupId",
+                getCallsHandler().executeReadList("getAllThinQuotasByClusterId",
                         getQuotaMetaDataFromResultSet(),
                         quotaParameterSource);
         return quotas;
@@ -356,22 +356,22 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 createQuotaIdParameterMapper(quota.getId()));
         getCallsHandler().executeModification("InsertQuotaLimitation", getFullQuotaParameterMap(quota));
         saveStorageSpecificQuotas(quota);
-        saveVdsGroupSpecificQuotas(quota);
+        saveClusterSpecificQuotas(quota);
     }
 
     /**
      * Return initialized entity with quota Vds group result set.
      */
-    private RowMapper<QuotaVdsGroup> getVdsGroupQuotaResultSet() {
-        RowMapper<QuotaVdsGroup> mapperQuotaLimitation = new RowMapper<QuotaVdsGroup>() {
+    private RowMapper<QuotaCluster> getClusterQuotaResultSet() {
+        RowMapper<QuotaCluster> mapperQuotaLimitation = new RowMapper<QuotaCluster>() {
             @Override
-            public QuotaVdsGroup mapRow(ResultSet rs, int rowNum)
+            public QuotaCluster mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
-                QuotaVdsGroup entity = new QuotaVdsGroup();
+                QuotaCluster entity = new QuotaCluster();
                 entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
-                entity.setQuotaVdsGroupId(getGuidDefaultEmpty(rs, "quota_vds_group_id"));
-                entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
-                entity.setVdsGroupName(rs.getString("vds_group_name"));
+                entity.setQuotaClusterId(getGuidDefaultEmpty(rs, "quota_cluster_id"));
+                entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+                entity.setClusterName(rs.getString("cluster_name"));
                 entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
                 entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
                 entity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
@@ -418,12 +418,12 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 // not, since global limitation must be for all the quota vds group parameters.
                 if (rs.getObject("mem_size_mb") != null) {
                     // Set global vds group quota.
-                    QuotaVdsGroup vdsGroupEntity = new QuotaVdsGroup();
-                    vdsGroupEntity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
-                    vdsGroupEntity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
-                    vdsGroupEntity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
-                    vdsGroupEntity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
-                    entity.setGlobalQuotaVdsGroup(vdsGroupEntity);
+                    QuotaCluster clusterEntity = new QuotaCluster();
+                    clusterEntity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
+                    clusterEntity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
+                    clusterEntity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
+                    clusterEntity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
+                    entity.setGlobalQuotaCluster(clusterEntity);
                 }
 
                 // Check if storage limit size is not null, this is an indication if global limitation for storage
@@ -464,9 +464,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setQuotaName((String) rs.getObject("quota_name"));
         entity.setDescription((String) rs.getObject("description"));
-        entity.setThresholdVdsGroupPercentage((Integer) rs.getObject("threshold_vds_group_percentage"));
+        entity.setThresholdClusterPercentage((Integer) rs.getObject("threshold_cluster_percentage"));
         entity.setThresholdStoragePercentage((Integer) rs.getObject("threshold_storage_percentage"));
-        entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
+        entity.setGraceClusterPercentage((Integer) rs.getObject("grace_cluster_percentage"));
         entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         return entity;
@@ -492,7 +492,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 createQuotaIdParameterMapper(quotaStorage.getQuotaStorageId()).addValue("quota_id",
                         quotaId)
                         .addValue("storage_id", quotaStorage.getStorageId())
-                        .addValue("vds_group_id", null)
+                        .addValue("cluster_id", null)
                         .addValue("storage_size_gb", quotaStorage.getStorageSizeGB())
                         .addValue("virtual_cpu", null)
                         .addValue("mem_size_mb", null);
@@ -501,23 +501,23 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
 
     /**
      * Build quota vds group parameter map, for quota limitation table, to indicate specific limitation on specific
-     * <code>VdsGroup</code>.
+     * <code>Cluster</code>.
      *
      * @param quotaId
-     *            - The global quota id which the <code>VdsGroup</code> is referencing to
-     * @param quotaVdsGroup
-     *            - The business entity which reflects the limitation on the specific vdsGroup.
-     * @return - <code>VdsGroup</code> Parameter Map
+     *            - The global quota id which the <code>Cluster</code> is referencing to
+     * @param quotaCluster
+     *            - The business entity which reflects the limitation on the specific cluster.
+     * @return - <code>Cluster</code> Parameter Map
      */
-    private MapSqlParameterSource getQuotaVdsGroupParameterMap(Guid quotaId, QuotaVdsGroup quotaVdsGroup) {
-        MapSqlParameterSource vdsGroupQuotaParameterMap =
-                createQuotaIdParameterMapper(quotaVdsGroup.getQuotaVdsGroupId()).addValue("quota_id", quotaId)
-                        .addValue("vds_group_id", quotaVdsGroup.getVdsGroupId())
+    private MapSqlParameterSource getQuotaClusterParameterMap(Guid quotaId, QuotaCluster quotaCluster) {
+        MapSqlParameterSource clusterQuotaParameterMap =
+                createQuotaIdParameterMapper(quotaCluster.getQuotaClusterId()).addValue("quota_id", quotaId)
+                        .addValue("cluster_id", quotaCluster.getClusterId())
                         .addValue("storage_id", null)
                         .addValue("storage_size_gb", null)
-                        .addValue("virtual_cpu", quotaVdsGroup.getVirtualCpu())
-                        .addValue("mem_size_mb", quotaVdsGroup.getMemSizeMB());
-        return vdsGroupQuotaParameterMap;
+                        .addValue("virtual_cpu", quotaCluster.getVirtualCpu())
+                        .addValue("mem_size_mb", quotaCluster.getMemSizeMB());
+        return clusterQuotaParameterMap;
     }
 
     /**
@@ -532,16 +532,16 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
                 getCustomMapSqlParameterSource()
                         .addValue("id", quota.getId())
                         .addValue("quota_id", quota.getId())
-                        .addValue("vds_group_id", null)
+                        .addValue("cluster_id", null)
                         .addValue("storage_id", null)
                         .addValue("storage_size_gb",
                                 quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage()
                                         .getStorageSizeGB() : null)
                         .addValue("virtual_cpu",
-                                quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getVirtualCpu()
+                                quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getVirtualCpu()
                                         : null)
                         .addValue("mem_size_mb",
-                                quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getMemSizeMB()
+                                quota.getGlobalQuotaCluster() != null ? quota.getGlobalQuotaCluster().getMemSizeMB()
                                         : null);
         return quotaParameterMap;
     }
@@ -550,9 +550,9 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         return createQuotaIdParameterMapper(quota.getId()).addValue("storage_pool_id", quota.getStoragePoolId())
                 .addValue("quota_name", quota.getQuotaName())
                 .addValue("description", quota.getDescription())
-                .addValue("threshold_vds_group_percentage", quota.getThresholdVdsGroupPercentage())
+                .addValue("threshold_cluster_percentage", quota.getThresholdClusterPercentage())
                 .addValue("threshold_storage_percentage", quota.getThresholdStoragePercentage())
-                .addValue("grace_vds_group_percentage", quota.getGraceVdsGroupPercentage())
+                .addValue("grace_cluster_percentage", quota.getGraceClusterPercentage())
                 .addValue("grace_storage_percentage", quota.getGraceStoragePercentage());
     }
 
@@ -561,11 +561,11 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         getCallsHandler().executeModification("InsertQuotaLimitation", getFullQuotaParameterMap(quota));
     }
 
-    private void saveVdsGroupSpecificQuotas(Quota quota) {
+    private void saveClusterSpecificQuotas(Quota quota) {
         // Add quota specific vds group limitations.
-        for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
+        for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
             getCallsHandler().executeModification("InsertQuotaLimitation",
-                    getQuotaVdsGroupParameterMap(quota.getId(), quotaVdsGroup));
+                    getQuotaClusterParameterMap(quota.getId(), quotaCluster));
         }
     }
 

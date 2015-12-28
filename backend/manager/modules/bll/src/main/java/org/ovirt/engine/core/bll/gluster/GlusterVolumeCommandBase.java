@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
@@ -33,11 +33,11 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     }
 
     @Override
-    public VDSGroup getVdsGroup() {
+    public Cluster getCluster() {
         if (getGlusterVolume() != null) {
-            setVdsGroupId(getGlusterVolume().getClusterId());
+            setClusterId(getGlusterVolume().getClusterId());
         }
-        return super.getVdsGroup();
+        return super.getCluster();
     }
 
     @Override
@@ -46,7 +46,7 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
-        // super class validate expects cluster id (VdsGroupId).
+        // super class validate expects cluster id (ClusterId).
         if (!super.validate()) {
             return false;
         }

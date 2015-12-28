@@ -7,8 +7,8 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -39,7 +39,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         return Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute);
     }
 
-    protected FindVmAndDestinations getFindVmAndDestinations(VDSGroup cluster, Map<String, String> parameters) {
+    protected FindVmAndDestinations getFindVmAndDestinations(Cluster cluster, Map<String, String> parameters) {
         final int highCpuUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
                 getHighUtilizationDefaultValue());
         final long overUtilizedMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
@@ -49,7 +49,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     }
 
     @Override
-    protected List<VDS> getPrimarySources(VDSGroup cluster,
+    protected List<VDS> getPrimarySources(Cluster cluster,
                                           List<VDS> candidateHosts,
                                           Map<String, String> parameters) {
         final int highUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
@@ -62,7 +62,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     }
 
     @Override
-    protected List<VDS> getPrimaryDestinations(VDSGroup cluster,
+    protected List<VDS> getPrimaryDestinations(Cluster cluster,
                                                List<VDS> candidateHosts,
                                                Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION), Config
@@ -80,7 +80,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     }
 
     @Override
-    protected List<VDS> getSecondarySources(VDSGroup cluster,
+    protected List<VDS> getSecondarySources(Cluster cluster,
                                             List<VDS> candidateHosts,
                                             Map<String, String> parameters) {
         long requiredMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
@@ -90,7 +90,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     }
 
     @Override
-    protected List<VDS> getSecondaryDestinations(VDSGroup cluster,
+    protected List<VDS> getSecondaryDestinations(Cluster cluster,
                                                  List<VDS> candidateHosts,
                                                  Map<String, String> parameters) {
         long requiredMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?

@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -99,11 +99,11 @@ public class RunVmValidator {
      * @param vdsWhiteList
      *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
      * @param destVdsList
-     * @param vdsGroup
+     * @param cluster
      * @return
      */
     public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList, List<Guid> destVdsList, VDSGroup vdsGroup) {
+            List<Guid> vdsWhiteList, List<Guid> destVdsList, Cluster cluster) {
 
         if (vm.getStatus() == VMStatus.Paused) {
             // if the VM is paused, we should only check the VDS status
@@ -121,7 +121,7 @@ public class RunVmValidator {
                     &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    getSchedulingManager().canSchedule(
-                           vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+                           cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
         }
 
         return
@@ -143,7 +143,7 @@ public class RunVmValidator {
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 getSchedulingManager().canSchedule(
-                        vdsGroup, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
+                        cluster, vm, vdsBlackList, vdsWhiteList, destVdsList, messages);
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
@@ -166,7 +166,7 @@ public class RunVmValidator {
             ConfigValues config = vm.getClusterArch() == ArchitectureType.ppc64 ?
                     ConfigValues.VMPpc64BitMaxMemorySizeInMB :
                     ConfigValues.VM64BitMaxMemorySizeInMB;
-            maxSize = Config.getValue(config, vm.getVdsGroupCompatibilityVersion().getValue());
+            maxSize = Config.getValue(config, vm.getClusterCompatibilityVersion().getValue());
         } else {
             maxSize = Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
         }
@@ -181,7 +181,7 @@ public class RunVmValidator {
     public ValidationResult validateFloppy() {
 
         if (StringUtils.isNotEmpty(runVmParam.getFloppyPath()) && !VmValidationUtils.isFloppySupported(vm.getOs(),
-                vm.getVdsGroupCompatibilityVersion())) {
+                vm.getClusterCompatibilityVersion())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
         }
 
@@ -212,7 +212,7 @@ public class RunVmValidator {
 
     protected ValidationResult validateDisplayType() {
         if (!VmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
-                vm.getVdsGroupCompatibilityVersion(),
+                vm.getClusterCompatibilityVersion(),
                 getVmActiveGraphics(),
                 vm.getDefaultDisplayType())) {
             return new ValidationResult(
@@ -244,7 +244,7 @@ public class RunVmValidator {
         String customProperties = runOnceCustomProperties != null ?
                 runOnceCustomProperties : vm.getCustomProperties();
         return getVmPropertiesUtils().validateVmProperties(
-                        vm.getVdsGroupCompatibilityVersion(),
+                        vm.getClusterCompatibilityVersion(),
                         customProperties,
                         messages);
     }
@@ -442,7 +442,7 @@ public class RunVmValidator {
     protected ValidationResult validateInterfacesConfigured(VM vm) {
         for (VmNetworkInterface nic : vm.getInterfaces()) {
             if (nic.getVnicProfileId() == null) {
-                return FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion()) ?
+                return FeatureSupported.networkLinking(vm.getClusterCompatibilityVersion()) ?
                         ValidationResult.VALID:
                             new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
             }
@@ -462,7 +462,7 @@ public class RunVmValidator {
 
         Set<String> result = new HashSet<>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
-        if (FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.networkLinking(vm.getClusterCompatibilityVersion())) {
             result.remove(null);
         }
 
@@ -596,7 +596,7 @@ public class RunVmValidator {
 
     private List<Network> getClusterNetworks() {
         if (cachedClusterNetworks == null) {
-            cachedClusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
+            cachedClusterNetworks = getNetworkDao().getAllForCluster(vm.getClusterId());
         }
 
         return cachedClusterNetworks;

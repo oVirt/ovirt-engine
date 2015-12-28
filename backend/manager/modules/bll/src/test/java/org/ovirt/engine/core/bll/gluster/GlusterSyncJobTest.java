@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
@@ -66,9 +66,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -158,7 +158,7 @@ public class GlusterSyncJobTest {
     @Mock
     private VdsDynamicDao vdsDynamicDao;
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
     @Mock
     private InterfaceDao interfaceDao;
     @Mock
@@ -169,7 +169,7 @@ public class GlusterSyncJobTest {
     @Mock
     private Backend backend;
 
-    private VDSGroup existingCluster;
+    private Cluster existingCluster;
     private VDS existingServer1;
     private VDS existingServer2;
     private final List<VDS> existingServers = new ArrayList<>();
@@ -200,7 +200,7 @@ public class GlusterSyncJobTest {
     }
 
     private void createCluster(Version version) {
-        existingCluster = new VDSGroup();
+        existingCluster = new Cluster();
         existingCluster.setId(CLUSTER_ID);
         existingCluster.setName("cluster");
         existingCluster.setGlusterService(true);
@@ -215,7 +215,7 @@ public class GlusterSyncJobTest {
         vds.setId(serverId);
         vds.setHostName(hostname);
         vds.setStatus(VDSStatus.Up);
-        vds.setVdsGroupCompatibilityVersion(version);
+        vds.setClusterCompatibilityVersion(version);
         return vds;
     }
 
@@ -350,7 +350,7 @@ public class GlusterSyncJobTest {
         inOrder.verify(clusterDao, times(1)).getAll();
 
         // get servers of the cluster from db
-        inOrder.verify(vdsDao, times(1)).getAllForVdsGroup(CLUSTER_ID);
+        inOrder.verify(vdsDao, times(1)).getAllForCluster(CLUSTER_ID);
 
         // get the UP server from cluster
         inOrder.verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
@@ -429,7 +429,7 @@ public class GlusterSyncJobTest {
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingCluster).when(clusterDao).get(any(Guid.class));
-        doReturn(existingServers).when(vdsDao).getAllForVdsGroup(CLUSTER_ID);
+        doReturn(existingServers).when(vdsDao).getAllForCluster(CLUSTER_ID);
         doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
         doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
         doReturn(null).when(volumeDao).getById(NEW_VOL_ID);
@@ -443,7 +443,7 @@ public class GlusterSyncJobTest {
         doNothing().when(volumeDao).removeAll(argThat(areRemovedVolumes()));
         doNothing().when(brickDao).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
         doNothing().when(optionDao).saveAll(argThat(areAddedOptions()));
-        doNothing().when(clusterDao).update(any(VDSGroup.class));
+        doNothing().when(clusterDao).update(any(Cluster.class));
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedVolumes() {

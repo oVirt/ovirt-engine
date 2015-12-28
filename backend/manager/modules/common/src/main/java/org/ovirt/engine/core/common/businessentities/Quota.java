@@ -66,7 +66,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
      */
     @Min(0)
     @Max(100)
-    private int thresholdVdsGroupPercentage;
+    private int thresholdClusterPercentage;
 
     /**
      * The threshold of storage in percentages.
@@ -80,7 +80,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
      */
     @Min(0)
     @Max(100)
-    private int graceVdsGroupPercentage;
+    private int graceClusterPercentage;
 
     /**
      * The grace of storage in percentages.
@@ -92,7 +92,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     /**
      * The global quota vds group limit.
      */
-    private QuotaVdsGroup globalQuotaVdsGroup;
+    private QuotaCluster globalQuotaCluster;
 
     /**
      * The global quota storage limit.
@@ -105,9 +105,9 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     /**
-     * List of all the specific VdsGroups limitations.
+     * List of all the specific Cluster limitations.
      */
-    private List<QuotaVdsGroup> quotaVdsGroupList;
+    private List<QuotaCluster> quotaClusterList;
 
     /**
      * List of all the specific storage limitations.
@@ -119,7 +119,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
      */
     public Quota() {
         setQuotaStorages(new ArrayList<QuotaStorage>());
-        setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
+        setQuotaClusters(new ArrayList<QuotaCluster>());
         id = Guid.Empty;
     }
 
@@ -139,18 +139,18 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     }
 
     /**
-     * @return the thresholdVdsGroupPercentage
+     * @return the thresholdClusterPercentage
      */
-    public int getThresholdVdsGroupPercentage() {
-        return thresholdVdsGroupPercentage;
+    public int getThresholdClusterPercentage() {
+        return thresholdClusterPercentage;
     }
 
     /**
-     * @param thresholdVdsGroupPercentage
-     *            the thresholdVdsGroupPercentage to set
+     * @param thresholdClusterPercentage
+     *            the thresholdClusterPercentage to set
      */
-    public void setThresholdVdsGroupPercentage(int thresholdVdsGroupPercentage) {
-        this.thresholdVdsGroupPercentage = thresholdVdsGroupPercentage;
+    public void setThresholdClusterPercentage(int thresholdClusterPercentage) {
+        this.thresholdClusterPercentage = thresholdClusterPercentage;
     }
 
     /**
@@ -169,18 +169,18 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     }
 
     /**
-     * @return the graceVdsGroupPercentage
+     * @return the graceClusterPercentage
      */
-    public int getGraceVdsGroupPercentage() {
-        return graceVdsGroupPercentage;
+    public int getGraceClusterPercentage() {
+        return graceClusterPercentage;
     }
 
     /**
-     * @param graceVdsGroupPercentage
-     *            the graceVdsGroupPercentage to set
+     * @param graceClusterPercentage
+     *            the graceClusterPercentage to set
      */
-    public void setGraceVdsGroupPercentage(int graceVdsGroupPercentage) {
-        this.graceVdsGroupPercentage = graceVdsGroupPercentage;
+    public void setGraceClusterPercentage(int graceClusterPercentage) {
+        this.graceClusterPercentage = graceClusterPercentage;
     }
 
     /**
@@ -279,18 +279,18 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     }
 
     /**
-     * @return the quotaVdsGroups
+     * @return the quotaClusters
      */
-    public List<QuotaVdsGroup> getQuotaVdsGroups() {
-        return quotaVdsGroupList;
+    public List<QuotaCluster> getQuotaClusters() {
+        return quotaClusterList;
     }
 
     /**
-     * @param quotaVdsGroups
-     *            the quotaVdsGroups to set
+     * @param quotaClusters
+     *            the quotaClusters to set
      */
-    public void setQuotaVdsGroups(List<QuotaVdsGroup> quotaVdsGroups) {
-        this.quotaVdsGroupList = quotaVdsGroups;
+    public void setQuotaClusters(List<QuotaCluster> quotaClusters) {
+        this.quotaClusterList = quotaClusters;
     }
 
     /**
@@ -323,8 +323,8 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     /**
      * @return If this there is a global vds group limitation in the quota, returns true.
      */
-    public boolean isGlobalVdsGroupQuota() {
-        return globalQuotaVdsGroup != null;
+    public boolean isGlobalClusterQuota() {
+        return globalQuotaCluster != null;
     }
 
     /**
@@ -335,10 +335,10 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
     }
 
     /**
-     * @return If the vdsGroup quota is empty, returns true.
+     * @return If the cluster quota is empty, returns true.
      */
-    public boolean isEmptyVdsGroupQuota() {
-        return globalQuotaVdsGroup == null && (getQuotaVdsGroups() == null || getQuotaVdsGroups().isEmpty());
+    public boolean isEmptyClusterQuota() {
+        return globalQuotaCluster == null && (getQuotaClusters() == null || getQuotaClusters().isEmpty());
     }
 
     @Override
@@ -347,15 +347,15 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
                 id,
                 description,
                 globalQuotaStorage,
-                globalQuotaVdsGroup,
+                globalQuotaCluster,
                 graceStoragePercentage,
-                graceVdsGroupPercentage,
+                graceClusterPercentage,
                 quotaName,
                 quotaStorageList,
-                quotaVdsGroupList,
+                quotaClusterList,
                 storagePoolId,
                 thresholdStoragePercentage,
-                thresholdVdsGroupPercentage
+                thresholdClusterPercentage
         );
     }
 
@@ -372,23 +372,23 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
         return (Objects.equals(id, other.id)
                 && Objects.equals(description, other.description)
                 && Objects.equals(globalQuotaStorage, other.globalQuotaStorage)
-                && Objects.equals(globalQuotaVdsGroup, other.globalQuotaVdsGroup)
+                && Objects.equals(globalQuotaCluster, other.globalQuotaCluster)
                 && graceStoragePercentage == other.graceStoragePercentage
-                && graceVdsGroupPercentage == other.graceVdsGroupPercentage
+                && graceClusterPercentage == other.graceClusterPercentage
                 && Objects.equals(quotaName, other.quotaName)
                 && Objects.equals(quotaStorageList, other.quotaStorageList)
-                && Objects.equals(quotaVdsGroupList, other.quotaVdsGroupList)
+                && Objects.equals(quotaClusterList, other.quotaClusterList)
                 && Objects.equals(storagePoolId, other.storagePoolId)
                 && thresholdStoragePercentage == other.thresholdStoragePercentage
-                && thresholdVdsGroupPercentage == other.thresholdVdsGroupPercentage);
+                && thresholdClusterPercentage == other.thresholdClusterPercentage);
     }
 
-    public QuotaVdsGroup getGlobalQuotaVdsGroup() {
-        return globalQuotaVdsGroup;
+    public QuotaCluster getGlobalQuotaCluster() {
+        return globalQuotaCluster;
     }
 
-    public void setGlobalQuotaVdsGroup(QuotaVdsGroup globalQuotaVdsGroup) {
-        this.globalQuotaVdsGroup = globalQuotaVdsGroup;
+    public void setGlobalQuotaCluster(QuotaCluster globalQuotaCluster) {
+        this.globalQuotaCluster = globalQuotaCluster;
     }
 
     public QuotaStorage getGlobalQuotaStorage() {

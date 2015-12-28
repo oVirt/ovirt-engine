@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,9 +39,9 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
         if (params.getDataCenterId() != null) {
             result = params.getDataCenterId();
         } else if (params.getClusterId() != null) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(params.getClusterId());
-            if (vdsGroup != null) {
-                result = vdsGroup.getStoragePoolId();
+            Cluster cluster = DbFacade.getInstance().getClusterDao().get(params.getClusterId());
+            if (cluster != null) {
+                result = cluster.getStoragePoolId();
             }
         }
         return result;

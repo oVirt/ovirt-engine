@@ -41,7 +41,7 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(NAME, "vm_pool_name");
         columnNameDict.put(DESCRIPTION, "vm_pool_description");
         columnNameDict.put(TYPE, "vm_pool_type");
-        columnNameDict.put(CLUSTER, "vds_group_name");
+        columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(ASSIGNED_VM_COUNT, "assigned_vm_count");

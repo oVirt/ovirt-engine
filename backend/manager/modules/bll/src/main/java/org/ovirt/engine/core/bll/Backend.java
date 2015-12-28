@@ -45,9 +45,9 @@ import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -316,18 +316,18 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initAttestation() {
-        List<VDSGroup> vdsGroups = dbFacade.getVdsGroupDao().getTrustedClusters();
+        List<Cluster> clusters = dbFacade.getClusterDao().getTrustedClusters();
         List<VDS> trustedVdsList = new ArrayList<>();
         List<String> trustedVdsNames = new ArrayList<>();
 
-        if (vdsGroups == null || vdsGroups.size() == 0) {
+        if (clusters == null || clusters.size() == 0) {
             return;
         }
-        for (VDSGroup vdsGroup : vdsGroups) {
-            List<VDS> vdssInGroup = dbFacade.getVdsDao().
-                    getAllForVdsGroupWithStatus(vdsGroup.getId(), VDSStatus.Up);
-            if (vdssInGroup != null) {
-                trustedVdsList.addAll(vdssInGroup);
+        for (Cluster cluster : clusters) {
+            List<VDS> hostsInCluster = dbFacade.getVdsDao().
+                    getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
+            if (hostsInCluster != null) {
+                trustedVdsList.addAll(hostsInCluster);
             }
         }
 

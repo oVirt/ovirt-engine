@@ -114,7 +114,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected void executeCommand() {
         if (!getVm().isDown()) {
-            if (FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())) {
+            if (FeatureSupported.liveMerge(getVm().getClusterCompatibilityVersion())) {
                 if (!getVm().isQualifiedForSnapshotMerge()) {
                     log.error("Cannot remove VM snapshot. Vm is not Down, Up or Paused");
                     throw new EngineException(EngineError.VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE);
@@ -358,7 +358,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validateSnapshotType() ||
-                (FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())
+                (FeatureSupported.liveMerge(getVm().getClusterCompatibilityVersion())
                         ? (!validate(vmValidator.vmQualifiedForSnapshotMerge())
                            || !validate(vmValidator.vmHostCanLiveMerge()))
                         : !validate(vmValidator.vmDown())) ||

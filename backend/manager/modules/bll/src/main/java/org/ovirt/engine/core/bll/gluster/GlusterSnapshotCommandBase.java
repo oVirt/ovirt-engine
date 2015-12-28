@@ -31,7 +31,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT);
         addValidationMessageVariable("volumeName", getGlusterVolumeName());
-        addValidationMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessageVariable("cluster", getClusterName());
     }
 
     @Override
@@ -40,7 +40,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
             return false;
         }
 
-        if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
+        if (!getGlusterUtil().isGlusterSnapshotSupported(getCluster().getCompatibilityVersion(), getCluster().getId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 

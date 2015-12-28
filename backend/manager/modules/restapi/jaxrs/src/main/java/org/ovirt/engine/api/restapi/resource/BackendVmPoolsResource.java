@@ -14,7 +14,7 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -54,7 +54,7 @@ public class BackendVmPoolsResource
         validateParameters(pool, "name", "template.id|name", "cluster.id|name");
 
         if (namedCluster(pool)) {
-            VDSGroup cluster = getCluster(pool);
+            Cluster cluster = getCluster(pool);
             pool.getCluster().setId(cluster.getId().toString());
         }
 
@@ -148,9 +148,9 @@ public class BackendVmPoolsResource
         return pool.getCluster().isSetName() && !pool.getCluster().isSetId();
     }
 
-    protected VDSGroup getCluster(VmPool pool) {
-        return getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
+    protected Cluster getCluster(VmPool pool) {
+        return getEntity(Cluster.class,
+                VdcQueryType.GetClusterByName,
                 new NameQueryParameters(pool.getCluster().getName()),
                 "Cluster: name=" + pool.getCluster().getName());
     }

@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 
 public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQueriesParameters> extends GlusterQueriesCommandBase<P> {
@@ -71,8 +71,8 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         return GlusterTaskUtils.getInstance();
     }
 
-    public VdsGroupDao getClusterDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    public ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {

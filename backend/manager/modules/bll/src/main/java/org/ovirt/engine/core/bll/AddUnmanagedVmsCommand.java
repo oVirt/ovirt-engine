@@ -62,14 +62,14 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         super.init();
         setVdsId(getParameters().getVdsId());
         // this command is called internally within lock so the host surely exists
-        setVdsGroupId(getVds().getVdsGroupId());
+        setClusterId(getVds().getClusterId());
     }
 
     @Override
     protected void executeCommand() {
         if (!getParameters().getVmIds().isEmpty()) {
-            int defaultOsId = getDefaultOsId(getVdsGroup().getArchitecture());
-            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, getVdsGroup().getCompatibilityVersion());
+            int defaultOsId = getDefaultOsId(getCluster().getArchitecture());
+            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, getCluster().getCompatibilityVersion());
 
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
             Map<String, Object>[] vmsInfo = getVmsInfo();
@@ -86,7 +86,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 VmStatic vmStatic = new VmStatic();
                 vmStatic.setId(vmId);
                 vmStatic.setCreationDate(new Date());
-                vmStatic.setVdsGroupId(getVdsGroupId());
+                vmStatic.setClusterId(getClusterId());
                 vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
                 vmStatic.setOrigin(OriginType.EXTERNAL);
                 vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
@@ -132,7 +132,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             for (DiskImage diskImage : vm.getImages()) {
                 vm.getDiskMap().put(Guid.newGuid(), diskImage);
             }
-            vm.setVdsGroupId(getVdsGroupId());
+            vm.setClusterId(getClusterId());
             vm.setRunOnVds(getVdsId());
             importHostedEngineVm(vm);
         }
@@ -212,7 +212,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
-            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
+            jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
     }

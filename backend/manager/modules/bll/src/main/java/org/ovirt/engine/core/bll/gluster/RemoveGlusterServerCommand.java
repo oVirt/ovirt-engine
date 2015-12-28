@@ -19,7 +19,7 @@ public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGluster
 
     public RemoveGlusterServerCommand(RemoveGlusterServerParameters params) {
         super(params);
-        setVdsGroupId(getParameters().getClusterId());
+        setClusterId(getParameters().getClusterId());
         setVdsName(getParameters().getHostnameOrIp());
     }
 

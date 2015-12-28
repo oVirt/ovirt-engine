@@ -7,11 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -34,8 +34,8 @@ public final class Cloner {
         if (instance instanceof VDS) {
             return cloneVDS((VDS) instance);
         }
-        if (instance instanceof VDSGroup) {
-            return cloneVDSGroup((VDSGroup) instance);
+        if (instance instanceof Cluster) {
+            return cloneCluster((Cluster) instance);
         }
         if (instance instanceof StoragePool) {
             return cloneStoragePool((StoragePool) instance);
@@ -157,9 +157,9 @@ public final class Cloner {
         vm.setUsageNetworkPercent(instance.getUsageNetworkPercent());
         vm.setUsbPolicy(instance.getUsbPolicy());
         vm.setUtcDiff(instance.getUtcDiff());
-        vm.setVdsGroupCompatibilityVersion(instance.getVdsGroupCompatibilityVersion());
-        vm.setVdsGroupId(instance.getVdsGroupId());
-        vm.setVdsGroupName(instance.getVdsGroupName());
+        vm.setClusterCompatibilityVersion(instance.getClusterCompatibilityVersion());
+        vm.setClusterId(instance.getClusterId());
+        vm.setClusterName(instance.getClusterName());
         vm.setVmCreationDate(instance.getVmCreationDate());
         vm.setVmDescription(instance.getVmDescription());
         vm.setComment(instance.getComment());
@@ -227,7 +227,7 @@ public final class Cloner {
 
         obj.setPort(instance.getPort());
         obj.setServerSslEnabled(instance.isServerSslEnabled());
-        obj.setVdsGroupId(instance.getVdsGroupId());
+        obj.setClusterId(instance.getClusterId());
         obj.setId(instance.getId());
         obj.setVdsName(instance.getName());
         obj.setVdsStrength(instance.getVdsStrength());
@@ -284,8 +284,8 @@ public final class Cloner {
         return obj;
     }
 
-    private static VDSGroup cloneVDSGroup(VDSGroup instance) {
-        VDSGroup obj = new VDSGroup();
+    private static Cluster cloneCluster(Cluster instance) {
+        Cluster obj = new Cluster();
         obj.setId(instance.getId());
         obj.setName(instance.getName());
         obj.setDescription(instance.getDescription());
@@ -363,14 +363,14 @@ public final class Cloner {
         obj.setVmPoolId(instance.getVmPoolId());
         obj.setName(instance.getName());
         obj.setVmPoolType(instance.getVmPoolType());
-        obj.setVdsGroupId(instance.getVdsGroupId());
+        obj.setClusterId(instance.getClusterId());
 
         obj.setVmPoolType(instance.getVmPoolType());
         obj.setParameters(instance.getParameters());
         obj.setDefaultEndTime(instance.getDefaultEndTime());
         obj.setDefaultStartTime(instance.getDefaultStartTime());
         obj.setDefaultTimeInDays(instance.getDefaultTimeInDays());
-        obj.setVdsGroupName(instance.getVdsGroupName());
+        obj.setClusterName(instance.getClusterName());
         obj.setAssignedVmsCount(instance.getAssignedVmsCount());
         obj.setVmPoolDescription(instance.getVmPoolDescription());
         obj.setComment(instance.getComment());
@@ -432,9 +432,9 @@ public final class Cloner {
         obj.setStatus(instance.getStatus());
         obj.setTimeZone(instance.getTimeZone());
         obj.setUsbPolicy(instance.getUsbPolicy());
-        obj.setVdsGroupId(instance.getVdsGroupId());
-        obj.setVdsGroupName(instance.getVdsGroupName());
-        obj.setVdsGroupCompatibilityVersion(instance.getVdsGroupCompatibilityVersion());
+        obj.setClusterId(instance.getClusterId());
+        obj.setClusterName(instance.getClusterName());
+        obj.setClusterCompatibilityVersion(instance.getClusterCompatibilityVersion());
         obj.setVmType(instance.getVmType());
         obj.setId(instance.getId());
         obj.setDiskList(instance.getDiskList());
@@ -491,7 +491,7 @@ public final class Cloner {
         obj.setNumOfSockets(instance.getNumOfSockets());
         obj.setTimeZone(instance.getTimeZone());
         obj.setUsbPolicy(instance.getUsbPolicy());
-        obj.setVdsGroupId(instance.getVdsGroupId());
+        obj.setClusterId(instance.getClusterId());
         obj.setId(instance.getId());
         obj.setName(instance.getName());
         obj.setVmtGuid(instance.getVmtGuid());

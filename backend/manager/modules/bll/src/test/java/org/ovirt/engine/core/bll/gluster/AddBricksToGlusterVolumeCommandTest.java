@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -51,7 +51,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     GlusterBrickDao brickDao;
 
     @Mock
-    VdsGroupDao vdsGroupDao;
+    ClusterDao clusterDao;
 
     @Mock
     GlusterVolumeValidator validator;
@@ -134,7 +134,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setStatus(status);
         return vds;
     }
@@ -153,7 +153,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getBrick(volumeId1)).when(brickDao).getBrickByServerIdAndDirectory(serverId, BRICK_DIRECTORY);
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getVDsGroup()).when(command).getVdsGroup();
+        doReturn(getCluster()).when(command).getCluster();
         doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
                 .isForceCreateVolumeAllowed(Version.v3_1, true);
@@ -185,19 +185,19 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         return ifaces;
     }
 
-    private VDSGroup getVDsGroup() {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(clusterId);
-        vdsGroup.setVirtService(false);
-        vdsGroup.setGlusterService(true);
-        vdsGroup.setCompatibilityVersion(Version.v3_1);
-        return vdsGroup;
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
+        cluster.setId(clusterId);
+        cluster.setVirtService(false);
+        cluster.setGlusterService(true);
+        cluster.setCompatibilityVersion(Version.v3_1);
+        return cluster;
     }
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
         vds.setId(serverId);
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setHostName(serverName);
         return vds;
     }

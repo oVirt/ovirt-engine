@@ -84,7 +84,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVdsGroupName();
+                return object.getClusterName();
             }
         };
         clusterColumn.makeSortable();

@@ -45,7 +45,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         super(parameters, commandContext);
         if (parameters.getVmStaticData() != null) {
             setVmId(parameters.getVmStaticData().getId());
-            setVdsGroupId(parameters.getVmStaticData().getVdsGroupId());
+            setClusterId(parameters.getVmStaticData().getClusterId());
         }
     }
 
@@ -57,7 +57,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected void initEffectiveCompatibilityVersion() {
         setEffectiveCompatibilityVersion(
-                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getVdsGroup));
+                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
     }
 
     protected Guid getInstanceTypeId() {
@@ -137,7 +137,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setThreadsPerCpu(instanceType.getThreadsPerCpu());
             vmStatic.setAutoStartup(instanceType.isAutoStartup());
 
-            if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())) {
+            if (FeatureSupported.isMigrationSupported(getCluster().getArchitecture(), getEffectiveCompatibilityVersion())) {
                 vmStatic.setMigrationSupport(instanceType.getMigrationSupport());
             }
 

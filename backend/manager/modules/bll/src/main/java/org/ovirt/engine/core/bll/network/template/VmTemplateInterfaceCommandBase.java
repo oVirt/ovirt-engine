@@ -71,7 +71,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
             return false;
         }
 
-        if (getVdsGroup() == null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+        if (getCluster() == null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }

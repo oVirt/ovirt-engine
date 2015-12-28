@@ -133,7 +133,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
             super.setVmId(parameterMasterVm.getId());
-            setVdsGroupId(parameterMasterVm.getVdsGroupId());
+            setClusterId(parameterMasterVm.getClusterId());
 
             // API backward compatibility
             if (VmDeviceUtils.shouldOverrideSoundDevice(
@@ -147,10 +147,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 parameters.setConsoleEnabled(false);
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
-            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm(), getVdsGroup());
+            VmHandler.autoSelectUsbPolicy(getParameters().getMasterVm(), getCluster());
             VmHandler.autoSelectDefaultDisplayType(getVmId(),
                     getParameters().getMasterVm(),
-                    getVdsGroup(),
+                    getCluster(),
                     getParameters().getGraphicsDevices());
 
             separateCustomProperties(parameterMasterVm);
@@ -160,18 +160,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             images.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
-        } else if (getVdsGroup() != null && parameterMasterVm != null) {
+        } else if (getCluster() != null && parameterMasterVm != null) {
             VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
-            vm.setVdsGroupCompatibilityVersion(getVdsGroup().getCompatibilityVersion());
+            vm.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
             setVm(vm);
-            setStoragePoolId(getVdsGroup().getStoragePoolId());
+            setStoragePoolId(getCluster().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
         parameters.setUseCinderCommandCallback(!getCinderDisks().isEmpty());
     }
 
     protected void separateCustomProperties(VmStatic parameterMasterVm) {
-        if (getVdsGroup() != null) {
+        if (getCluster() != null) {
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
@@ -378,12 +378,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private boolean doClusterRelatedChecks() {
         // A Template cannot be added in a cluster without a defined architecture
-        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+        if (getCluster().getArchitecture() == ArchitectureType.undefined) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
         if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
-                getVdsGroup().getArchitecture(), getReturnValue().getValidationMessages())) {
+                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
@@ -429,7 +429,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         // Disallow cross-DC template creation
-        if (!getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
+        if (!getStoragePoolId().equals(getCluster().getStoragePoolId())) {
             addValidationMessage(EngineMessage.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
             return false;
         }
@@ -449,7 +449,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected boolean validate() {
         boolean isInstanceType = getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE;
-        if (getVdsGroup() == null && !isInstanceType) {
+        if (getCluster() == null && !isInstanceType) {
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
@@ -470,7 +470,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             } else {
-                if (isVmTemlateWithSameNameExist(getVmTemplateName(), getVdsGroup().getStoragePoolId())) {
+                if (isVmTemlateWithSameNameExist(getVmTemplateName(), getCluster().getStoragePoolId())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             }
@@ -695,7 +695,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCpuPerSocket(),
                         getParameters().getMasterVm().getThreadsPerCpu(),
                         getParameters().getMasterVm().getOsId(),
-                        getParameters().getMasterVm().getVdsGroupId(),
+                        getParameters().getMasterVm().getClusterId(),
                         getVmTemplateId(),
                         getParameters().getMasterVm().getNumOfMonitors(),
                         getParameters().getMasterVm().getSingleQxlPci(),
@@ -958,7 +958,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (permissionCheckSubject == null) {
             permissionCheckSubject = new ArrayList<>();
             if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-                Guid storagePoolId = getVdsGroup() == null ? null : getVdsGroup().getStoragePoolId();
+                Guid storagePoolId = getCluster() == null ? null : getCluster().getStoragePoolId();
                 permissionCheckSubject.add(new PermissionSubject(storagePoolId,
                         VdcObjectType.StoragePool,
                         getActionType().getActionGroup()));

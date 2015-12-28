@@ -87,7 +87,7 @@ public class AutoRecoveryManager {
 
                             Map<String, Set<String>> problematicNics =
                                     NetworkMonitoringHelper.determineProblematicNics(nics, getDbFacade().getNetworkDao()
-                                    .getAllForCluster(vds.getVdsGroupId()));
+                                    .getAllForCluster(vds.getClusterId()));
                             if (problematicNics.isEmpty()) {
                                 filtered.add(vds);
                             }

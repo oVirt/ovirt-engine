@@ -24,12 +24,12 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -45,7 +45,7 @@ public class AffinityRulesEnforcementManagerTest {
     @Mock
     private AuditLogDirector auditLogDirector;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private SchedulerUtilQuartzImpl scheduler;
     @Mock
@@ -61,32 +61,32 @@ public class AffinityRulesEnforcementManagerTest {
     @InjectMocks @Spy
     private AffinityRulesEnforcementManager arem;
 
-    private VDSGroup vdsGroup1;
+    private Cluster cluster1;
 
-    private VDSGroup vdsGroup2;
+    private Cluster cluster2;
 
     /**
      * Setup a basic scenario with two clusters:
-     * - vm1 runs on vdsGroup1
-     * - vm2 runs on vdsGroup2.
+     * - vm1 runs on cluster1
+     * - vm2 runs on cluster2.
      * In the default setup  we tell the AffinityRulesEnforcmenetManager, that in each cluster, something needs to be migrated.
      */
     @Before
     public void setup() {
-        vdsGroup1 = createVdsGroup();
-        vdsGroup2 = createVdsGroup();
-        when(vdsGroupDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(vdsGroup1, vdsGroup2));
+        cluster1 = createCluster();
+        cluster2 = createCluster();
+        when(clusterDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(cluster1, cluster2));
 
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup1))).thenReturn(vm1);
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup2))).thenReturn(vm2);
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster1))).thenReturn(vm1);
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster2))).thenReturn(vm2);
 
         arem.wakeup();
     }
 
-    protected VDSGroup createVdsGroup() {
+    protected Cluster createCluster() {
         Guid id = Guid.newGuid();
-        VDSGroup cluster = new VDSGroup();
-        cluster.setVdsGroupId(id);
+        Cluster cluster = new Cluster();
+        cluster.setClusterId(id);
         cluster.setId(id);
         cluster.setName("Default cluster");
         return cluster;
@@ -94,7 +94,7 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldMigrateOneVmPerCluster() {
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup1))).thenReturn(vm1, mock(VM.class), mock(VM.class));
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster1))).thenReturn(vm1, mock(VM.class), mock(VM.class));
         arem.refresh();
         verify(arem, times(1)).migrateVM(eq(vm1));
         verify(arem, times(1)).migrateVM(eq(vm2));
@@ -104,8 +104,8 @@ public class AffinityRulesEnforcementManagerTest {
     @Test
     public void shouldNotMigrateVmOnClusterTwoWhileMigrating() {
         final VM migratingVM = new VM();
-        migratingVM.setVdsGroupId(vdsGroup2.getId());
-        when(vdsGroupDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(vdsGroup1));
+        migratingVM.setClusterId(cluster2.getId());
+        when(clusterDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(cluster1));
         arem.refresh();
         verify(arem).migrateVM(vm1);
         verify(arem, times(1)).migrateVM(any(VM.class));
@@ -113,7 +113,7 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldNotMigrateVmOnClusterTwoWhenEnforced() {
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(vdsGroup2))).thenReturn(null);
+        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster2))).thenReturn(null);
         arem.refresh();
         verify(arem).migrateVM(vm1);
         verify(arem, times(1)).migrateVM(any(VM.class));
@@ -121,7 +121,7 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldHaveNotingToMigrate() {
-        when(rulesEnforcer.chooseNextVmToMigrate(any(VDSGroup.class))).thenReturn(null);
+        when(rulesEnforcer.chooseNextVmToMigrate(any(Cluster.class))).thenReturn(null);
         verify(arem, never()).migrateVM(any(VM.class));
     }
 

@@ -47,7 +47,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_CLUSTER_ID_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private Guid clusterId;
 
-    private String vdsGroupName;
+    private String clusterName;
 
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_NAME_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private String name;
@@ -131,12 +131,12 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
         this.name = name;
     }
 
-    public String getVdsGroupName() {
-        return vdsGroupName;
+    public String getClusterName() {
+        return clusterName;
     }
 
-    public void setVdsGroupName(String vdsGroupName) {
-        this.vdsGroupName = vdsGroupName;
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
     }
 
     public GlusterVolumeType getVolumeType() {

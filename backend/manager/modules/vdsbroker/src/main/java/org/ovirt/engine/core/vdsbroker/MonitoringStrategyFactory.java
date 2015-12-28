@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 /**
  * This class is responsible for returning the correct service strategy, according to the service the cluster supports
  */
 public class MonitoringStrategyFactory {
-    private static MonitoringStrategy virtMonitoringStrategy = new VirtMonitoringStrategy(DbFacade.getInstance().getVdsGroupDao(), DbFacade.getInstance().getVdsDao());
+    private static MonitoringStrategy virtMonitoringStrategy = new VirtMonitoringStrategy(DbFacade.getInstance().getClusterDao(), DbFacade.getInstance().getVdsDao());
     private static MonitoringStrategy glusterMonitoringStrategy = new GlusterMonitoringStrategy();
     private static MultipleServicesMonitoringStrategy multipleMonitoringStrategy = new MultipleServicesMonitoringStrategy();
 
@@ -19,21 +19,21 @@ public class MonitoringStrategyFactory {
         multipleMonitoringStrategy.addMonitoringStrategy(glusterMonitoringStrategy);
     }
 
-    private static VdsGroupDao vdsGroupDao = DbFacade.getInstance().getVdsGroupDao();
+    private static ClusterDao clusterDao = DbFacade.getInstance().getClusterDao();
 
     /**
      * This method gets the VDS, and returns the correct service strategy, according to the service the cluster that the VDS belongs to supports
      */
     public static MonitoringStrategy getMonitoringStrategyForVds(VDS vds) {
         MonitoringStrategy returnedStrategy = virtMonitoringStrategy;
-        Guid vdsGroupId = vds.getVdsGroupId();
-        VDSGroup vdsGroup = vdsGroupDao.get(vdsGroupId);
+        Guid clusterId = vds.getClusterId();
+        Cluster cluster = clusterDao.get(clusterId);
 
-        if (vdsGroup.supportsVirtService() && vdsGroup.supportsGlusterService()) {
+        if (cluster.supportsVirtService() && cluster.supportsGlusterService()) {
             returnedStrategy = multipleMonitoringStrategy;
-        } else if (vdsGroup.supportsVirtService()) {
+        } else if (cluster.supportsVirtService()) {
             returnedStrategy = virtMonitoringStrategy;
-        } else if (vdsGroup.supportsGlusterService()) {
+        } else if (cluster.supportsGlusterService()) {
             returnedStrategy = glusterMonitoringStrategy;
         }
 

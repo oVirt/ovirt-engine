@@ -41,7 +41,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         addValidationMessage(EngineMessage.VAR__ACTION__STOP);
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_VOLUME);
         addValidationMessageVariable("volumeName", getGlusterVolumeName());
-        addValidationMessageVariable("vdsGroup", getVdsGroupName());
+        addValidationMessageVariable("cluster", getClusterName());
     }
 
     @Override

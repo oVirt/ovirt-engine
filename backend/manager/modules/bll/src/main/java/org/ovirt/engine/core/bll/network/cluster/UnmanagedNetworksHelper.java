@@ -50,7 +50,7 @@ public class UnmanagedNetworksHelper {
     }
 
     private List<Network> getClusterNetworks(VDS host) {
-        return networkDao.getAllForCluster(host.getVdsGroupId());
+        return networkDao.getAllForCluster(host.getClusterId());
     }
 
     private UnmanagedNetwork createUnmanagedNetworkEntity(VdsNetworkInterface vdsNetworkInterface, String networkName) {

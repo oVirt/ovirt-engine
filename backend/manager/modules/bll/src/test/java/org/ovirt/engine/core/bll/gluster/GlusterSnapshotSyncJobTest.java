@@ -26,8 +26,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotConfigInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDS
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
@@ -79,7 +79,7 @@ public class GlusterSnapshotSyncJobTest {
     private GlusterVolumeSnapshotConfigDao snapshotConfigDao;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     private GlusterSnapshotSyncJob syncJob;
 
@@ -331,8 +331,8 @@ public class GlusterSnapshotSyncJobTest {
         return snapshots;
     }
 
-    private VDSGroup getValidCluster() {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster getValidCluster() {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID_1);
         cluster.setName("cluster");
         cluster.setGlusterService(true);
@@ -342,10 +342,10 @@ public class GlusterSnapshotSyncJobTest {
         return cluster;
     }
 
-    private List<VDSGroup> getClusters() {
-        List<VDSGroup> list = new ArrayList<>();
+    private List<Cluster> getClusters() {
+        List<Cluster> list = new ArrayList<>();
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID_1);
         cluster.setName("cluster");
         cluster.setGlusterService(true);
@@ -353,7 +353,7 @@ public class GlusterSnapshotSyncJobTest {
         cluster.setCompatibilityVersion(Version.v3_5);
         list.add(cluster);
 
-        VDSGroup cluster1 = new VDSGroup();
+        Cluster cluster1 = new Cluster();
         cluster1.setId(CLUSTER_ID_2);
         cluster1.setName("cluster1");
         cluster1.setGlusterService(true);

@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
@@ -42,7 +42,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ClusterGeneralModel extends EntityModel<VDSGroup> {
+public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
@@ -207,28 +207,28 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
     }
 
     private void updateProperties() {
-        VDSGroup vdsGroup = getEntity();
+        Cluster cluster = getEntity();
 
-        setName(vdsGroup.getName());
-        setDescription(vdsGroup.getDescription());
-        setCpuType(vdsGroup.getCpuName());
-        setDataCenterName(vdsGroup.getStoragePoolName());
-        setMemoryOverCommit(vdsGroup.getMaxVdsMemoryOverCommit());
-        setCpuThreads(vdsGroup.getCountThreadsAsCores());
-        setResiliencePolicy(vdsGroup.getMigrateOnError());
-        setEmulatedMachine(vdsGroup.getEmulatedMachine());
-        setCompatibilityVersion(vdsGroup.getCompatibilityVersion().getValue());
-        generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
+        setName(cluster.getName());
+        setDescription(cluster.getDescription());
+        setCpuType(cluster.getCpuName());
+        setDataCenterName(cluster.getStoragePoolName());
+        setMemoryOverCommit(cluster.getMaxVdsMemoryOverCommit());
+        setCpuThreads(cluster.getCountThreadsAsCores());
+        setResiliencePolicy(cluster.getMigrateOnError());
+        setEmulatedMachine(cluster.getEmulatedMachine());
+        setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
+        generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setNumberOfVms((Integer) ((VdcQueryReturnValue) returnValue).getReturnValue());
             }
-        }), vdsGroup.getId());
+        }), cluster.getId());
 
     }
 
-    private void updateConsoleAddressPartiallyOverridden(VDSGroup cluster) {
+    private void updateConsoleAddressPartiallyOverridden(Cluster cluster) {
 
         AsyncQuery query = new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -252,7 +252,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             return;
         }
 
-        VDSGroup cluster = getEntity();
+        Cluster cluster = getEntity();
         ManageGlusterSwiftModel glusterSwiftModel = new ManageGlusterSwiftModel();
         glusterSwiftModel.setTitle(ConstantsManager.getInstance().getConstants().manageGlusterSwiftTitle());
         glusterSwiftModel.setHelpTag(HelpTag.manage_gluster_swift);
@@ -472,7 +472,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             host.setSshPort(22); // TODO: get from UI, till than using defaults.
             host.setSshUsername("root"); //$NON-NLS-1$
 
-            host.setVdsGroupId(getEntity().getId());
+            host.setClusterId(getEntity().getId());
             host.setPmEnabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();

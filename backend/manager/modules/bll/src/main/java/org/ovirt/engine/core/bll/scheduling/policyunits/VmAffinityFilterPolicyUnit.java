@@ -84,7 +84,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
 
         // Get all running VMs in cluster
         Map<Guid, VM> runningVMsMap = new HashMap<>();
-        for (VM iter : getVmDao().getAllRunningByCluster(vm.getVdsGroupId())) {
+        for (VM iter : getVmDao().getAllRunningByCluster(vm.getClusterId())) {
             runningVMsMap.put(iter.getId(), iter);
         }
 

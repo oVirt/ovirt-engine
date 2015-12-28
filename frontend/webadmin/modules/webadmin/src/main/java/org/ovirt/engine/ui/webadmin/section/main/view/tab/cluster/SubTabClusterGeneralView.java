@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel<Void>, ClusterGeneralModel>
+public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, ClusterListModel<Void>, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
@@ -105,7 +105,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                VDSGroup entity = modelProvider.getModel().getEntity();
+                Cluster entity = modelProvider.getModel().getEntity();
 
                 if (entity != null) {
                     setMainTabSelectedItem(entity);
@@ -141,7 +141,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     }
 
     @Override
-    public void setMainTabSelectedItem(VDSGroup selectedItem) {
+    public void setMainTabSelectedItem(Cluster selectedItem) {
         driver.edit(getDetailModel());
         form.update();
         glusterSwiftPanel.setVisible(selectedItem.supportsGlusterService()

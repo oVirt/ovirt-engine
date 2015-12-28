@@ -70,7 +70,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     protected void init() {
         VM vmFromConfiguration = getParameters().getVm();
         if (vmFromConfiguration != null) {
-            vmFromConfiguration.getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
+            vmFromConfiguration.getStaticData().setClusterId(getParameters().getClusterId());
             if (!isImagesAlreadyOnTarget()) {
                 setDisksToBeAttached(vmFromConfiguration);
             }
@@ -79,8 +79,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             initUnregisteredVM();
         }
 
-        setVdsGroupId(getParameters().getVdsGroupId());
-        getParameters().setStoragePoolId(getVdsGroup().getStoragePoolId());
+        setClusterId(getParameters().getClusterId());
+        getParameters().setStoragePoolId(getCluster().getStoragePoolId());
         super.init();
     }
 
@@ -94,7 +94,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityDataList.get(0);
                 vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
-                vmFromConfiguration.setVdsGroupId(getParameters().getVdsGroupId());
+                vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());

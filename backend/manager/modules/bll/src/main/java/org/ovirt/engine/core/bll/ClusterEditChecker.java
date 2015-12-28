@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 
 /**
- * Contract for CDI beans implementing custom checks for {@link VDSGroup} edits
+ * Contract for CDI beans implementing custom checks for
+ * {@link org.ovirt.engine.core.common.businessentities.Cluster} edits
  * that may result in multiple non-operational hosts.
  */
 interface ClusterEditChecker<T> {
@@ -13,11 +14,13 @@ interface ClusterEditChecker<T> {
      * Checker may optionally perform some initialization from the {@code oldCluster} and/or {@code newCluster}
      * to be used in subsequent per-entity calls to {@link #check(T)}.
      */
-    boolean isApplicable(VDSGroup oldCluster, VDSGroup newCluster);
+    boolean isApplicable(Cluster oldCluster, Cluster newCluster);
 
     /**
      * Returns whether given {@code clusterEntity} passes the check.
-     * Is guaranteed to be called only after {@link #isApplicable(VDSGroup, VDSGroup)}.
+     * Is guaranteed to be called only after
+     * {@link #isApplicable(org.ovirt.engine.core.common.businessentities.Cluster,
+     *                      org.ovirt.engine.core.common.businessentities.Cluster)}.
      */
     boolean check(T clusterEntity);
 

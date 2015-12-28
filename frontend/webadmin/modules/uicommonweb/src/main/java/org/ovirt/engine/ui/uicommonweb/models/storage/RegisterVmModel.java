@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -19,13 +19,13 @@ public class RegisterVmModel extends RegisterEntityModel<VM> {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (ImportEntityData<VM> entityData : getEntities().getItems()) {
             VM vm = entityData.getEntity();
-            VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();
+            Cluster cluster = entityData.getCluster().getSelectedItem();
 
             ImportVmParameters params = new ImportVmParameters();
             params.setContainerId(vm.getId());
             params.setStorageDomainId(getStorageDomainId());
             params.setImagesExistOnTargetStorageDomain(true);
-            params.setVdsGroupId(vdsGroup != null ? vdsGroup.getId() : null);
+            params.setClusterId(cluster != null ? cluster.getId() : null);
 
             if (isQuotaEnabled()) {
                 Quota quota = entityData.getClusterQuota().getSelectedItem();

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -37,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -652,12 +652,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 clusterChanging = true;
-                ListModel<VDSGroup> clusterModel = hostModel.getCluster();
+                ListModel<Cluster> clusterModel = hostModel.getCluster();
 
                 if (clusterModel.getSelectedItem() != null) {
 
                     Version v3 = new Version(3, 0);
-                    VDSGroup cluster = clusterModel.getSelectedItem();
+                    Cluster cluster = clusterModel.getSelectedItem();
 
                     boolean isLessThan3 = cluster.getCompatibilityVersion().compareTo(v3) < 0;
 
@@ -673,9 +673,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<VDSGroup> clusterModel = hostModel.getCluster();
+                ListModel<Cluster> clusterModel = hostModel.getCluster();
                 if (clusterModel.getSelectedItem() != null) {
-                    VDSGroup cluster = clusterModel.getSelectedItem();
+                    Cluster cluster = clusterModel.getSelectedItem();
                     if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
                         hostModel.getProtocol().setIsAvailable(false);
                         hostModel.getProtocol().setIsChangeable(false);
@@ -716,7 +716,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     case Hosts:
                     case Cluster:
                     case Cluster_Gluster:
-                        VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
+                        Cluster cluster = (Cluster) hostListModel.getSystemTreeSelectedItem().getEntity();
                         for (StoragePool dc : dataCenters) {
                             if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerHostModel.getDataCenter()
@@ -903,9 +903,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
-        Guid oldClusterId = host.getVdsGroupId();
+        Guid oldClusterId = host.getClusterId();
         Guid newClusterId = model.getCluster().getSelectedItem().getId();
-        host.setVdsGroupId(newClusterId);
+        host.setClusterId(newClusterId);
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(model.getPmProxyPreferences()));
 
@@ -1070,7 +1070,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         ArrayList<String> list = new ArrayList<>();
         for (VDS item : Linq.<VDS> cast(getSelectedItems())) {
             list.add(item.getName());
-            clusters.add(item.getVdsGroupId());
+            clusters.add(item.getClusterId());
         }
         model.setItems(list);
 
@@ -1082,7 +1082,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
-                    VDSGroup cluster = (VDSGroup) returnValue;
+                    Cluster cluster = (Cluster) returnValue;
                     if (cluster != null && cluster.supportsGlusterService()) {
                         model.getForce().setIsAvailable(true);
                     }
@@ -1149,8 +1149,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         for (Object item : getSelectedItems()) {
             VDS host = (VDS) item;
             if (clusterId == null) {
-                clusterId = host.getVdsGroupId();
-            } else if (!clusterId.equals(host.getVdsGroupId())) {
+                clusterId = host.getClusterId();
+            } else if (!clusterId.equals(host.getClusterId())) {
                 clusterId = null;
                 break;
             }
@@ -1167,7 +1167,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
-                            VDSGroup cluster = (VDSGroup) returnValue;
+                            Cluster cluster = (Cluster) returnValue;
                             if (cluster != null) {
                                 maintenance(cluster.isMaintenanceReasonRequired());
                             }
@@ -1285,7 +1285,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.getUserPassword().setIsChangeable(true);
 
         Version v3 = new Version(3, 0);
-        boolean isLessThan3 = host.getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
+        boolean isLessThan3 = host.getClusterCompatibilityVersion().compareTo(v3) < 0;
 
         if (!isLessThan3) {
             model.getOverrideIpTables().setIsAvailable(true);
@@ -1357,7 +1357,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         }
                 );
             }
-        }), host.getVdsGroupId());
+        }), host.getClusterId());
 
 
     }
@@ -1630,12 +1630,12 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         VDS vds = getSelectedItem();
-        getGlusterSwiftModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
-        getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
-        getHostVmListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsVirtService());
-        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(vds.getVdsGroupCompatibilityVersion()));
+        getGlusterSwiftModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getClusterCompatibilityVersion()));
+        getHostBricksListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
+        getHostVmListModel().setIsAvailable(vds != null && vds.getClusterSupportsVirtService());
+        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(vds.getClusterCompatibilityVersion()));
     }
 
     @Override

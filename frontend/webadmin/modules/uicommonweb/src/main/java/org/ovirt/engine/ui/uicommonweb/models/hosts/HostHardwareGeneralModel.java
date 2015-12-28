@@ -229,8 +229,8 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
             setCoresPerSocket(null);
         }
 
-        if (vds.getVdsGroupCompatibilityVersion() != null
-                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
+        if (vds.getClusterCompatibilityVersion() != null
+                && Version.v3_2.compareTo(vds.getClusterCompatibilityVersion()) > 0) {
             // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
             setThreadsPerCore(constants.unsupported());
         } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null || vds.getCpuCores() == 0) {

@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -47,7 +47,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -65,7 +65,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Inject
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Inject
     private VmDao vmDao;
@@ -141,7 +141,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
         final UpdateNetworkValidator validatorOld =
-                new UpdateNetworkValidator(getOldNetwork(), vmNetworkInterfaceDao, vdsGroupDao, vmDao);
+                new UpdateNetworkValidator(getOldNetwork(), vmNetworkInterfaceDao, clusterDao, vmDao);
         return validate(validatorNew.dataCenterExists())
                 && validate(validatorNew.vmNetworkSetCorrectly())
                 && validate(validatorNew.stpForVmNetworkOnly())
@@ -214,17 +214,17 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected static class UpdateNetworkValidator extends NetworkValidator {
 
         private final VmNetworkInterfaceDao vmNetworkInterfaceDao;
-        private final VdsGroupDao vdsGroupDao;
+        private final ClusterDao clusterDao;
 
         public UpdateNetworkValidator(
                 Network network,
                 VmNetworkInterfaceDao vmNetworkInterfaceDao,
-                VdsGroupDao vdsGroupDao,
+                ClusterDao clusterDao,
                 VmDao vmDao) {
             super(vmDao, network);
 
             this.vmNetworkInterfaceDao = vmNetworkInterfaceDao;
-            this.vdsGroupDao = vdsGroupDao;
+            this.clusterDao = clusterDao;
         }
 
         public ValidationResult notRenamingLabel(String newLabel) {
@@ -313,10 +313,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
                 @Override
                 public boolean test(VM vm) {
-                    final Guid clusterId = vm.getVdsGroupId();
+                    final Guid clusterId = vm.getClusterId();
                     Version clusterVersion = clusterVersions.get(clusterId);
                     if (clusterVersion == null) {
-                        final VDSGroup cluster = vdsGroupDao.get(clusterId);
+                        final Cluster cluster = clusterDao.get(clusterId);
                         clusterVersion = cluster.getCompatibilityVersion();
                         clusterVersions.put(clusterId, clusterVersion);
                     }

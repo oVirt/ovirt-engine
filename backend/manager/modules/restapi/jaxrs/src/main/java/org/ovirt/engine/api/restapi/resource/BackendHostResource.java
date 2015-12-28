@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
@@ -56,11 +55,11 @@ import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -109,7 +108,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
-            if (!clusterId.equals(entity.getVdsGroupId())) {
+            if (!clusterId.equals(entity.getClusterId())) {
                 performAction(VdcActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(clusterId, guid));
 
@@ -353,11 +352,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return bond;
     }
 
-    private Host setCluster(Host host, Cluster cluster) {
+    private Host setCluster(Host host, org.ovirt.engine.api.model.Cluster cluster) {
         if (cluster.isSetId()) {
             host.setCluster(cluster);
         } else {
-            host.setCluster(new Cluster());
+            host.setCluster(new org.ovirt.engine.api.model.Cluster());
             host.getCluster().setId(lookupClusterByName(cluster.getName()).getId().toString());
         }
         return host;
@@ -369,9 +368,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                                            lookupClusterByName(host.getCluster().getName()).getId();
     }
 
-    protected VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
+    protected Cluster lookupClusterByName(String name) {
+        return getEntity(Cluster.class,
+                VdcQueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name);
     }

@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -54,13 +54,13 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
     VdsDao vdsDao;
 
     @Mock
-    VdsGroupDao vdsGroupDao;
+    ClusterDao clusterDao;
 
     @Mock
     GlusterGeoRepDao geoRepDao;
 
     @Mock
-    protected VDSGroup vdsGroup;
+    protected Cluster cluster;
 
     @Mock
     private GlusterUtil glusterUtil;
@@ -81,7 +81,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         null,
                         false)));
         prepareMocks();
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(vds).when(command).getSlaveHost();
@@ -91,8 +91,8 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
     private void prepareMocks() {
         doReturn(volume).when(volumeDao).getById(masterVolumeId);
         doReturn(GlusterStatus.UP).when(volume).getStatus();
-        doReturn(vdsGroup).when(command).getVdsGroup();
-        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        doReturn(cluster).when(command).getCluster();
+        doReturn(clusterDao).when(command).getClusterDao();
         doReturn(vdsDao).when(command).getVdsDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(geoRepDao).when(command).getGeoRepDao();
@@ -114,7 +114,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         false)));
         prepareMocks();
         doReturn(null).when(command).getSlaveVolume();
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(vds).when(command).getSlaveHost();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.validate());
@@ -132,7 +132,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         prepareMocks();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(vds).when(command).getSlaveHost();
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(new GlusterGeoRepSession()).when(geoRepDao).getGeoRepSession(any(Guid.class),
                 any(Guid.class),
                 any(String.class));
@@ -151,7 +151,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
         prepareMocks();
         doReturn(vds).when(command).getUpServer();
         doReturn(vds).when(command).getSlaveHost();
-        doReturn(NOT_SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(NOT_SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         assertFalse(command.validate());
@@ -168,7 +168,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         false)));
         prepareMocks();
         doReturn(vds).when(command).getUpServer();
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(null).when(geoRepDao).getGeoRepSession(any(Guid.class), any(Guid.class), any(String.class));
         doReturn(null).when(command).getSlaveHost();

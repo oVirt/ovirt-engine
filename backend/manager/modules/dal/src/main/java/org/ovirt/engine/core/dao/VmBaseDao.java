@@ -41,7 +41,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("num_of_io_threads", entity.getNumOfIoThreads())
                 .addValue("vnc_keyboard_layout", entity.getVncKeyboardLayout())
                 .addValue("tunnel_migration", entity.getTunnelMigration())
-                .addValue("vds_group_id", entity.getVdsGroupId())
+                .addValue("cluster_id", entity.getClusterId())
                 .addValue("num_of_sockets", entity.getNumOfSockets())
                 .addValue("cpu_per_socket", entity.getCpuPerSocket())
                 .addValue("threads_per_cpu", entity.getThreadsPerCpu())

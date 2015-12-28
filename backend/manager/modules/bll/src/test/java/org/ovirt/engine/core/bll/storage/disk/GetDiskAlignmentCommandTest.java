@@ -16,11 +16,11 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -32,10 +32,10 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -66,7 +66,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     private VmDeviceDao vmDeviceDao;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
@@ -77,7 +77,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
     private VmDevice vmDevice;
     private StoragePool storagePool;
     private StorageDomain storageDomain;
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
 
     @Before
     public void setUp() {
@@ -98,14 +98,14 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         vm.setId(vmId);
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(poolId);
-        vm.setVdsGroupId(groupId);
+        vm.setClusterId(groupId);
 
         VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
         vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
 
-        vdsGroup = new VDSGroup();
-        vdsGroup.setId(groupId);
+        cluster = new Cluster();
+        cluster.setId(groupId);
 
         vds = new VDS();
         vds.setId(vdsId);
@@ -118,9 +118,9 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
 
         when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
-        when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
+        when(vdsDao.getAllForClusterWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
-        when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
+        when(clusterDao.get(groupId)).thenReturn(cluster);
         when(storageDomainStaticDao.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
 
         cmd = spy(new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId)));
@@ -129,7 +129,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(spDao).when(cmd).getStoragePoolDao();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(storageDomainStaticDao).when(cmd).getStorageDomainStaticDao();
     }
 
@@ -170,7 +170,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidateVdsNotFound() {
-        when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up))
+        when(vdsDao.getAllForClusterWithStatus(groupId, VDSStatus.Up))
                 .thenReturn(Collections.<VDS>emptyList());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);

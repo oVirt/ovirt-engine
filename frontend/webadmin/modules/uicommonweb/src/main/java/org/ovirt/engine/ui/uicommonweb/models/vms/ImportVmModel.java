@@ -59,7 +59,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (getClusterQuota().getIsAvailable()) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+                Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
                     new AsyncQuery(ImportVmModel.this,
                             new INewAsyncCallback() {

@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
@@ -22,11 +22,11 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     @Override
-    public VDSGroup getVdsGroup() {
+    public Cluster getCluster() {
         if (getGlusterHook() != null) {
-            setVdsGroupId(getGlusterHook().getClusterId());
+            setClusterId(getGlusterHook().getClusterId());
         }
-        return super.getVdsGroup();
+        return super.getCluster();
     }
 
     protected GlusterHookEntity getGlusterHook() {

@@ -573,7 +573,7 @@ BEGIN
     FROM vds_static
     INNER JOIN vds_interface
         ON vds_interface.vds_id = vds_static.vds_id
-            AND vds_static.vds_group_id = v_cluster_id;
+            AND vds_static.cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -590,7 +590,7 @@ BEGIN
     INNER JOIN vds_static
         ON vds_interface_view.vds_id = vds_static.vds_id
     WHERE vds_interface_view.addr = v_addr
-        AND vds_static.vds_group_id = v_cluster_id;
+        AND vds_static.cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -630,7 +630,7 @@ BEGIN
     INNER JOIN vds
         ON vds.vds_id = vds_interface_view.vds_id
     INNER JOIN network_cluster
-        ON network_cluster.cluster_id = vds.vds_group_id
+        ON network_cluster.cluster_id = vds.cluster_id
     INNER JOIN network
         ON network.id = network_cluster.network_id
             AND network.name = vds_interface_view.network_name
@@ -673,7 +673,7 @@ BEGIN
     FROM vds_interface_view
     INNER JOIN vds_static
         ON vds_interface_view.vds_id = vds_static.vds_id
-    WHERE vds_static.vds_group_id = v_cluster_id;
+    WHERE vds_static.cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -686,9 +686,9 @@ BEGIN
     FROM vds_interface_view
     INNER JOIN vds_static
         ON vds_interface_view.vds_id = vds_static.vds_id
-    INNER JOIN vds_groups
-        ON vds_static.vds_group_id = vds_groups.vds_group_id
-    WHERE vds_groups.storage_pool_id = v_data_center_id;
+    INNER JOIN cluster
+        ON vds_static.cluster_id = cluster.cluster_id
+    WHERE cluster.storage_pool_id = v_data_center_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -866,9 +866,9 @@ BEGIN
     WHERE EXISTS (
             SELECT 1
             FROM vm_static
-            INNER JOIN vds_groups
-                ON vm_static.vds_group_id = vds_groups.vds_group_id
-            WHERE vds_groups.storage_pool_id = v_data_center_id
+            INNER JOIN cluster
+                ON vm_static.cluster_id = cluster.cluster_id
+            WHERE cluster.storage_pool_id = v_data_center_id
                 AND vm_static.vm_guid = vm_interface.vm_guid
             );
 END;$PROCEDURE$
@@ -1390,9 +1390,9 @@ BEGIN
     FROM network
     INNER JOIN network_cluster
         ON network.id = network_cluster.network_id
-    INNER JOIN vds_groups
-        ON network_cluster.cluster_id = vds_groups.vds_group_id
-    WHERE vds_groups.storage_pool_id = v_data_center_id
+    INNER JOIN cluster
+        ON network_cluster.cluster_id = cluster.cluster_id
+    WHERE cluster.storage_pool_id = v_data_center_id
         AND network_cluster.management;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1436,7 +1436,7 @@ BEGIN
     INNER JOIN vm_interface_view
         ON vm_static.vm_guid = vm_interface_view.vm_guid
             AND network_name = v_networkName
-            AND vm_static.vds_group_id = v_groupId;
+            AND vm_static.cluster_id = v_groupId;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -1752,7 +1752,7 @@ BEGIN
         AND iscsi_bonds_networks_map.network_id = network.id
         AND network.id = network_cluster.network_id
         AND network.name = vds_interface_view.network_name
-        AND network_cluster.cluster_id = vds_interface_view.vds_group_id
+        AND network_cluster.cluster_id = vds_interface_view.cluster_id
         AND vds_interface_view.vds_id = v_host_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

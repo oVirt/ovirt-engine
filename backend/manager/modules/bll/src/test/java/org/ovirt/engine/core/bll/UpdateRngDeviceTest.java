@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
@@ -33,16 +33,16 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         final VmRngDevice dev = getDevice(deviceId, vmId);
 
         final VmStatic vmMock = Mockito.mock(VmStatic.class);
-        Mockito.when(vmMock.getVdsGroupId()).thenReturn(clusterId);
+        Mockito.when(vmMock.getClusterId()).thenReturn(clusterId);
         final VmStaticDao vmDaoMock = Mockito.mock(VmStaticDao.class);
         Mockito.when(vmDaoMock.get(vmId)).thenReturn(vmMock);
         final VmDeviceDao vmDeviceDaoMock = Mockito.mock(VmDeviceDao.class);
         Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
-        final VDSGroup cluster = Mockito.mock(VDSGroup.class);
+        final Cluster cluster = Mockito.mock(Cluster.class);
         Mockito.when(cluster.getCompatibilityVersion()).thenReturn(mockCompatibilityVersion);
         Mockito.when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
-        final VdsGroupDao vdsGroupMock = Mockito.mock(VdsGroupDao.class);
-        Mockito.when(vdsGroupMock.get(clusterId)).thenReturn(cluster);
+        final ClusterDao clusterMock = Mockito.mock(ClusterDao.class);
+        Mockito.when(clusterMock.get(clusterId)).thenReturn(cluster);
 
         RngDeviceParameters params = new RngDeviceParameters(dev, true);
         UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params) {
@@ -52,8 +52,8 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
             }
 
             @Override
-            public VdsGroupDao getVdsGroupDao() {
-                return vdsGroupMock;
+            public ClusterDao getClusterDao() {
+                return clusterMock;
             }
 
             @Override
@@ -62,7 +62,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
             }
 
             @Override
-            public Guid getVdsGroupId() {
+            public Guid getClusterId() {
                 return clusterId;
             }
 

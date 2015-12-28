@@ -23,7 +23,7 @@ public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForV
             return new ArrayList<>();
         }
 
-        return doFilter(diskList, vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+        return doFilter(diskList, vm.getOs(), vm.getClusterCompatibilityVersion());
     }
 
 }

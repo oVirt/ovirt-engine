@@ -71,7 +71,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             setVdsId(serverId);
         }
         if (clusterId != null) {
-            setVdsGroupId(clusterId);
+            setClusterId(clusterId);
         }
     }
 

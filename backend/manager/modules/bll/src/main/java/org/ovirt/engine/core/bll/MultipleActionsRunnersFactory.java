@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainsMultiple
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -72,8 +72,8 @@ public final class MultipleActionsRunnersFactory {
             break;
         }
 
-        case AttachNetworkToVdsGroup:
-        case DetachNetworkToVdsGroup:
+        case AttachNetworkToCluster:
+        case DetachNetworkToCluster:
         case UpdateNetworkOnCluster:
             throw new UnsupportedOperationException("Multiple network attachments/detachments/updates should be run through ManageNetworkClustersCommand!");
 
@@ -93,12 +93,12 @@ public final class MultipleActionsRunnersFactory {
         Set<Guid> processed = new HashSet<>();
         for (VdcActionParametersBase param : parameters) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(((RemoveVdsParameters) param).getVdsId());
-            if (vds != null && !processed.contains(vds.getVdsGroupId())) {
-                VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+            if (vds != null && !processed.contains(vds.getClusterId())) {
+                Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
                 if (cluster.supportsGlusterService()) {
                     return true;
                 }
-                processed.add(vds.getVdsGroupId());
+                processed.add(vds.getClusterId());
             }
         }
 

@@ -741,7 +741,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         vm.setStatus(status);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
-        vm.setVdsGroupCompatibilityVersion(Version.v3_1);
+        vm.setClusterCompatibilityVersion(Version.v3_1);
         return vm;
     }
 
@@ -787,7 +787,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     protected void mockVds() {
         VDS vds = new VDS();
-        vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
+        vds.setClusterCompatibilityVersion(new Version("3.1"));
         command.setVdsId(Guid.Empty);
         doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);

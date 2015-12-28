@@ -15,7 +15,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
@@ -38,6 +37,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -153,11 +152,11 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(new int[] { 0 });
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetCertuficateExpectations(1, 0);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
-                getVdsGroupEntity());
+                getClusterEntity());
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
@@ -179,7 +178,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[0]},
                 getEntity(0));
         Vm model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
@@ -211,11 +210,11 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
-                getVdsGroupEntity());
+                getClusterEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
@@ -237,7 +236,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[0]},
                 getEntity(0));
         Vm model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
@@ -262,11 +261,11 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
-                setUpVDSGroup(GUIDS[1]));
+                setUpCluster(GUIDS[1]));
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      IdQueryParameters.class,
@@ -294,7 +293,7 @@ public class BackendVmsResourceTest
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Vm model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[1]);
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
@@ -326,11 +325,11 @@ public class BackendVmsResourceTest
 
         expect(osRepository.isBalloonEnabled(anyInt(), anyObject(Version.class))).andReturn(false).anyTimes();
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
-                getVdsGroupEntity());
+                getClusterEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmFromScratch,
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
@@ -338,7 +337,7 @@ public class BackendVmsResourceTest
                                            valid,
                                            success));
         Vm model = getModel(0);
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
@@ -369,11 +368,11 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
+                getClusterEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -454,11 +453,11 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
-                getVdsGroupEntity());
+                getClusterEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
@@ -495,11 +494,11 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
-                getVdsGroupEntity());
+                getClusterEntity());
 
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(2);
         vm.setVmtGuid(GUIDS[1]);
@@ -594,11 +593,11 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(new int[] { 1, 2 });
         setUpGetRngDeviceExpectations(new int[] { 1, 2 });
         setUpGetVmOvfExpectations(new int[]{2});
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
-                getVdsGroupEntity());
+                getClusterEntity());
     }
 
 
@@ -629,7 +628,7 @@ public class BackendVmsResourceTest
         Guid newId = GUIDS[3];
         setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
-                new String[] { "Vm", "VdsGroupId", "ImportAsNewEntity" },
+                new String[] { "Vm", "ClusterId", "ImportAsNewEntity" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), true},
                 true,
                 true,
@@ -673,7 +672,7 @@ public class BackendVmsResourceTest
                 returnedVM);
         setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
-                new String[] { "Vm", "VdsGroupId", "ImportAsNewEntity"},
+                new String[] { "Vm", "ClusterId", "ImportAsNewEntity"},
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), false},
                 true,
                 true,
@@ -707,13 +706,13 @@ public class BackendVmsResourceTest
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
         model.getInitialization().getConfiguration().setType("ovf");
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[1]);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
-                setUpVDSGroup(GUIDS[1]));
+                setUpCluster(GUIDS[1]));
         setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },
@@ -721,7 +720,7 @@ public class BackendVmsResourceTest
                 returnedVM);
         setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
-                new String[] { "Vm", "VdsGroupId" },
+                new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, GUIDS[1] },
                 true,
                 true,
@@ -762,7 +761,7 @@ public class BackendVmsResourceTest
                 returnedVM);
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
-                new String[] { "Vm", "VdsGroupId" },
+                new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
                 valid,
                 success));
@@ -926,11 +925,11 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
+                getClusterEntity());
     }
 
     private VdsStatic getStaticHost() {
@@ -981,11 +980,11 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
-                setUpVDSGroup(GUIDS[2]));
+                setUpCluster(GUIDS[2]));
 
         setUpCreationExpectations(VdcActionType.AddVm,
                                   AddVmParameters.class,
@@ -1003,7 +1002,7 @@ public class BackendVmsResourceTest
         Vm model = getModel(2);
         model.setTemplate(new Template());
         model.getTemplate().setId(GUIDS[1].toString());
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[2]);
 
         Response response = collection.add(model);
@@ -1042,11 +1041,11 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[2] },
-                                     getVdsGroupEntity());
+                                     getClusterEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
@@ -1099,11 +1098,11 @@ public class BackendVmsResourceTest
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-                                     setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                                     setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                                      IdQueryParameters.class,
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[2]},
-                                     getVdsGroupEntity());
+                                     getClusterEntity());
 
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
                                   AddVmParameters.class,
@@ -1245,11 +1244,11 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(new int[] { 1 });
         setUpGetRngDeviceExpectations(new int[] { 1 });
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByClusterId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
+                getClusterEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVm,
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
@@ -1389,7 +1388,7 @@ public class BackendVmsResourceTest
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index, Guid vmId) {
         entity.setId(vmId);
-        entity.setVdsGroupId(GUIDS[2]);
+        entity.setClusterId(GUIDS[2]);
         entity.setName(NAMES[index]);
         entity.setVmDescription(DESCRIPTIONS[index]);
         entity.setCpuPerSocket(4);
@@ -1415,7 +1414,7 @@ public class BackendVmsResourceTest
     static org.ovirt.engine.core.common.businessentities.VmTemplate setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VmTemplate entity, int index) {
         entity.setId(GUIDS[index]);
-        entity.setVdsGroupId(GUIDS[2]);
+        entity.setClusterId(GUIDS[2]);
         entity.setName(NAMES[index]);
         entity.setDescription(DESCRIPTIONS[index]);
         entity.setCpuPerSocket(4);
@@ -1446,7 +1445,7 @@ public class BackendVmsResourceTest
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
         model.setId(GUIDS[index].toString());
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
         return model;
     }
@@ -1491,7 +1490,7 @@ public class BackendVmsResourceTest
 
         model.setTemplate(new Template());
         model.getTemplate().setId(GUIDS[1].toString());
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[2].toString());
         if(disks != null){
             model.setDisks(disks);
@@ -1530,8 +1529,8 @@ public class BackendVmsResourceTest
         return setUpEntityExpectations(template, index);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
-        VDSGroup cluster = new VDSGroup();
+    protected Cluster getClusterEntity() {
+        Cluster cluster = new Cluster();
         cluster.setStoragePoolId(GUIDS[3]);
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());

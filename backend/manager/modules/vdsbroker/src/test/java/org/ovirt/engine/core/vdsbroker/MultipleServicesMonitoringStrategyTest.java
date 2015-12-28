@@ -16,8 +16,8 @@ import org.junit.rules.ExpectedException;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 
 public class MultipleServicesMonitoringStrategyTest {
     VirtMonitoringStrategy virtStrategy;
@@ -28,7 +28,7 @@ public class MultipleServicesMonitoringStrategyTest {
     public ExpectedException exception = ExpectedException.none();
 
     public MultipleServicesMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mock(VdsGroupDao.class), mock(VdsDao.class)));
+        virtStrategy = spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class)));
         glusterStrategy = spy(new GlusterMonitoringStrategy());
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
         strategy = spy(new MultipleServicesMonitoringStrategy());

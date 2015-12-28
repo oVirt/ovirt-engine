@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -216,13 +216,13 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         if (action.getCluster().isSetId()) {
             return asGuid(action.getCluster().getId());
         } else {
-            VDSGroup cluster = lookupClusterByName(action.getCluster().getName());
+            Cluster cluster = lookupClusterByName(action.getCluster().getName());
             return cluster != null ? cluster.getId() : null;
         }
     }
 
-    protected VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new NameQueryParameters(name), "Cluster: name=" + name);
+    protected Cluster lookupClusterByName(String name) {
+        return getEntity(Cluster.class, VdcQueryType.GetClusterByName, new NameQueryParameters(name), "Cluster: name=" + name);
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {

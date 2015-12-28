@@ -77,12 +77,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         setStoragePoolId(parameters.getStoragePoolId());
-        setVdsGroupId(parameters.getVdsGroupId());
+        setClusterId(parameters.getClusterId());
         setStorageDomainId(parameters.getStorageDomainId());
 
-        Version clusterVersion = getVdsGroup() == null
+        Version clusterVersion = getCluster() == null
                 ? null
-                : getVdsGroup().getCompatibilityVersion();
+                : getCluster().getCompatibilityVersion();
         ImportUtils.updateGraphicsDevices(getVmTemplate(), clusterVersion);
     }
 
@@ -111,7 +111,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (retVal) {
-            retVal = isVDSGroupCompatible();
+            retVal = isClusterCompatible();
         }
 
         if (retVal) {
@@ -236,8 +236,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         return retVal;
     }
 
-    protected boolean isVDSGroupCompatible () {
-        if (getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+    protected boolean isClusterCompatible () {
+        if (getCluster().getArchitecture() != getVmTemplate().getClusterArch()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
             return false;
         }
@@ -348,10 +348,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private void checkTrustedService() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
-        if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+        if (getVmTemplate().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
-        else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+        else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
@@ -407,7 +407,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected void addVmTemplateToDb() {
-        getVmTemplate().setVdsGroupId(getParameters().getVdsGroupId());
+        getVmTemplate().setClusterId(getParameters().getClusterId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
         if(!VmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
@@ -442,9 +442,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected void addVmInterfaces() {
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(getVmTemplate().getVdsGroupId(),
+                new VnicProfileHelper(getVmTemplate().getClusterId(),
                         getStoragePoolId(),
-                        getVdsGroup().getCompatibilityVersion(),
+                        getCluster().getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVmTemplate().getInterfaces()) {
@@ -575,10 +575,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected boolean setAndValidateCpuProfile() {
-        getVmTemplate().setVdsGroupId(getVdsGroupId());
+        getVmTemplate().setClusterId(getClusterId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVdsGroup().getCompatibilityVersion()));
+                getCluster().getCompatibilityVersion()));
     }
 
     @Override

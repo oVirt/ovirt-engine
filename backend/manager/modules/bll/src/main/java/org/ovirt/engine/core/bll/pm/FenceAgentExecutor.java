@@ -180,7 +180,7 @@ public class FenceAgentExecutor {
                         agent.getType(),
                         agent.getOptions() == null ? "" : agent.getOptions(),
                         getArchitectureType()),
-                proxyHost.getVdsGroupCompatibilityVersion().toString()).toInternalString();
+                proxyHost.getClusterCompatibilityVersion().toString()).toInternalString();
     }
 
     /**

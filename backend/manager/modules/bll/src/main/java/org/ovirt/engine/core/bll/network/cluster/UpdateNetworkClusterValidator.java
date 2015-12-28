@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
@@ -34,7 +34,7 @@ public class UpdateNetworkClusterValidator extends NetworkClusterValidatorBase {
                 when(oldNetworkCluster.isManagement() && !networkCluster.isManagement());
     }
 
-    public ValidationResult glusterNetworkInUseAndUnset(VDSGroup cluster) {
+    public ValidationResult glusterNetworkInUseAndUnset(Cluster cluster) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_NETWORK_INUSE).
                 when(cluster.supportsGlusterService() && oldNetworkCluster.isGluster() && !networkCluster.isGluster()
                         && isGlusterNetworkInUse());

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
@@ -54,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -471,18 +471,18 @@ public class AsyncDataProvider {
 
         boolean archMemorySnapshotSupported = isMemorySnapshotSupportedByArchitecture(
                 vm.getClusterArch(),
-                vm.getVdsGroupCompatibilityVersion());
+                vm.getClusterCompatibilityVersion());
 
         return  ((Boolean) getConfigValuePreConverted(
                 ConfigurationValues.MemorySnapshotSupported,
-                vm.getVdsGroupCompatibilityVersion().toString()))
+                vm.getClusterCompatibilityVersion().toString()))
                 && archMemorySnapshotSupported;
     }
 
     public boolean canVmsBePaused(List<VM> items) {
         for (VM vm : items) {
             if (!isSuspendSupportedByArchitecture(vm.getClusterArch(),
-                vm.getVdsGroupCompatibilityVersion())) {
+                vm.getClusterCompatibilityVersion())) {
                 return false;
             }
         }
@@ -493,7 +493,7 @@ public class AsyncDataProvider {
     public boolean isLiveMergeSupported(VM vm) {
         return (vm != null && (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.LiveMergeSupported,
-                vm.getVdsGroupCompatibilityVersion().toString()));
+                vm.getClusterCompatibilityVersion().toString()));
     }
 
     public void initNicHotplugSupportMap() {
@@ -742,7 +742,7 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(id), aQuery);
     }
 
     public void getClusterListByName(AsyncQuery aQuery, String name) {
@@ -750,7 +750,7 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
-                    return new ArrayList<VDSGroup>();
+                    return new ArrayList<Cluster>();
                 }
                 return source;
             }
@@ -989,22 +989,22 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
-                return new ArrayList<VDSGroup>();
+                return new ArrayList<Cluster>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetClustersByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
-    public List<VDSGroup> filterByArchitecture(List<VDSGroup> clusters, ArchitectureType targetArchitecture) {
-        List<VDSGroup> filteredClusters = new ArrayList<>();
+    public List<Cluster> filterByArchitecture(List<Cluster> clusters, ArchitectureType targetArchitecture) {
+        List<Cluster> filteredClusters = new ArrayList<>();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (cluster.getArchitecture().equals(targetArchitecture)) {
                 filteredClusters.add(cluster);
             }
@@ -1012,10 +1012,10 @@ public class AsyncDataProvider {
         return filteredClusters;
     }
 
-    public List<VDSGroup> filterClustersWithoutArchitecture(List<VDSGroup> clusters) {
-        List<VDSGroup> filteredClusters = new ArrayList<>();
+    public List<Cluster> filterClustersWithoutArchitecture(List<Cluster> clusters) {
+        List<Cluster> filteredClusters = new ArrayList<>();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (cluster.getArchitecture() != ArchitectureType.undefined) {
                 filteredClusters.add(cluster);
             }
@@ -1029,13 +1029,13 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
-                    return new ArrayList<VDSGroup>();
+                    return new ArrayList<Cluster>();
                 }
-                final ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                final ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                 return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetClustersByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
@@ -1075,17 +1075,17 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<VDSGroup> list =
-                            getClusterByServiceList((ArrayList<VDSGroup>) source,
+                    ArrayList<Cluster> list =
+                            getClusterByServiceList((ArrayList<Cluster>) source,
                                     supportsVirtService,
                                     supportsGlusterService);
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
-                return new ArrayList<VDSGroup>();
+                return new ArrayList<Cluster>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, new VdcQueryParametersBase(), aQuery);
     }
 
     public void getClusterList(AsyncQuery aQuery) {
@@ -1097,14 +1097,14 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
-                return new ArrayList<VDSGroup>();
+                return new ArrayList<Cluster>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, doRefresh ? new VdcQueryParametersBase() :
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, doRefresh ? new VdcQueryParametersBase() :
                 new VdcQueryParametersBase().withoutRefresh(), aQuery);
     }
 
@@ -1958,10 +1958,10 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                     return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
                 }
-                return new ArrayList<VDSGroup>();
+                return new ArrayList<Cluster>();
             }
         };
 
@@ -1976,11 +1976,11 @@ public class AsyncDataProvider {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
                 if (source != null) {
-                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                    ArrayList<Cluster> list = (ArrayList<Cluster>) source;
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
-                return new ArrayList<VDSGroup>();
+                return new ArrayList<Cluster>();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllClustersHavingHosts,
@@ -2642,7 +2642,7 @@ public class AsyncDataProvider {
         GetFilteredAttachableDisksParameters params = new GetFilteredAttachableDisksParameters(storagePoolId);
         params.setVmId(vmId);
         params.setOs(os);
-        params.setVdsGroupCompatibilityVersion(compatibilityVersion);
+        params.setClusterCompatibilityVersion(compatibilityVersion);
         Frontend.getInstance().runQuery(VdcQueryType.GetFilteredAttachableDisks, params, aQuery);
     }
 
@@ -3754,11 +3754,11 @@ public class AsyncDataProvider {
                 }
             };
         }
-        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInClusterByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
     public void getNumberOfVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId),
+        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfVmsInClusterByClusterId, new IdQueryParameters(clusterId),
                 aQuery);
     }
 
@@ -3775,11 +3775,11 @@ public class AsyncDataProvider {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.MaxIoThreadsPerVm);
     }
 
-    public ArrayList<VDSGroup> getClusterByServiceList(List<VDSGroup> list,
+    public ArrayList<Cluster> getClusterByServiceList(List<Cluster> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
-        final ArrayList<VDSGroup> filteredList = new ArrayList<>();
-        for (VDSGroup cluster : list) {
+        final ArrayList<Cluster> filteredList = new ArrayList<>();
+        for (Cluster cluster : list) {
             if ((supportsVirtService && cluster.supportsVirtService())
                     || (supportsGlusterService && cluster.supportsGlusterService())) {
                 filteredList.add(cluster);
@@ -3864,7 +3864,7 @@ public class AsyncDataProvider {
         }
 
         for (VM vm : vms) {
-            Version version = vm.getVdsGroupCompatibilityVersion();
+            Version version = vm.getClusterCompatibilityVersion();
             Version anyDcVersion = new Version();
             boolean compatibleCluster = isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion);
             boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getVmIp());
@@ -4049,7 +4049,7 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsWithNumaByVdsGroupId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsWithNumaByClusterId,
                 new IdQueryParameters(clusterId),
                 asyncQuery);
     }
@@ -4114,7 +4114,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getClusterEditWarnings(AsyncQuery aQuery, Guid clusterId, VDSGroup cluster) {
+    public void getClusterEditWarnings(AsyncQuery aQuery, Guid clusterId, Cluster cluster) {
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 

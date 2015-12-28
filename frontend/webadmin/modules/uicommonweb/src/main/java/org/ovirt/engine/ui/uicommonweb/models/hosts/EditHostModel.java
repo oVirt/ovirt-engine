@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -76,10 +76,10 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected void updateModelClusterFromVds(ArrayList<VDSGroup> clusters, VDS vds) {
+    protected void updateModelClusterFromVds(ArrayList<Cluster> clusters, VDS vds) {
         if (clusters != null) {
             getCluster().setSelectedItem(Linq.firstOrNull(clusters,
-                    new Linq.IdPredicate<>(vds.getVdsGroupId())));
+                    new Linq.IdPredicate<>(vds.getClusterId())));
         }
     }
 
@@ -97,16 +97,16 @@ public class EditHostModel extends HostModel {
     }
 
     public void setSelectedCluster(VDS host) {
-        ArrayList<VDSGroup> clusters;
+        ArrayList<Cluster> clusters;
         if (getCluster().getItems() == null) {
-            VDSGroup tempVar = new VDSGroup();
-            tempVar.setName(host.getVdsGroupName());
-            tempVar.setId(host.getVdsGroupId());
-            tempVar.setCompatibilityVersion(host.getVdsGroupCompatibilityVersion());
+            Cluster tempVar = new Cluster();
+            tempVar.setName(host.getClusterName());
+            tempVar.setId(host.getClusterId());
+            tempVar.setCompatibilityVersion(host.getClusterCompatibilityVersion());
             getCluster()
-                    .setItems(new ArrayList<>(Arrays.asList(new VDSGroup[]{tempVar})));
+                    .setItems(new ArrayList<>(Arrays.asList(new Cluster[]{tempVar})));
         }
-        clusters = (ArrayList<VDSGroup>) getCluster().getItems();
+        clusters = (ArrayList<Cluster>) getCluster().getItems();
         updateModelClusterFromVds(clusters, host);
         if (getCluster().getSelectedItem() == null) {
             getCluster().setSelectedItem(Linq.firstOrNull(clusters));

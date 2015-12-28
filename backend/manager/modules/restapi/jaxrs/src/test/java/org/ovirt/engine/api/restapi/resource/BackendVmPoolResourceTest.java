@@ -187,7 +187,7 @@ public class BackendVmPoolResourceTest
     private org.ovirt.engine.core.common.businessentities.VmPool setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.VmPool entity,
             int index) {
         expect(entity.getVmPoolId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getClusterId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getVmPoolType()).andReturn(VmPoolType.AUTOMATIC).anyTimes();
         expect(entity.getVmPoolDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();

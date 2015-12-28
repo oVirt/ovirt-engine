@@ -121,7 +121,7 @@ public class VfsConfigValidatorTest {
         simulateNicExists();
         when(nic.getVdsId()).thenReturn(HOST_ID);
         when(vdsDao.get(HOST_ID)).thenReturn(host);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
+        when(host.getClusterCompatibilityVersion()).thenReturn(version);
         when(version.getValue()).thenReturn(CLUSTER_VERSION);
 
         mockConfigRule.mockConfigValue(ConfigValues.NetworkSriovSupported, version, isSupported);

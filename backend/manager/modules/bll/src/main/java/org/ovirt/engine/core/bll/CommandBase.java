@@ -751,7 +751,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 case STORAGE:
                     consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
                     break;
-                case VDS_GROUP:
+                case CLUSTER:
                     consumptionParameters = getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters();
                     break;
                 default:
@@ -933,7 +933,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         // if actionVersionMap not null check cluster level
         // cluster level ok check storage_pool level
         if (actionVersionMap != null
-                && ((getVdsGroup() != null && getVdsGroup().getCompatibilityVersion().compareTo(
+                && ((getCluster() != null && getCluster().getCompatibilityVersion().compareTo(
                         new Version(actionVersionMap.getClusterMinimalVersion())) < 0) ||
                 (!"*".equals(actionVersionMap.getStoragePoolMinimalVersion()) && getStoragePool() != null && getStoragePool()
                         .getCompatibilityVersion().compareTo(

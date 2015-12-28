@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -52,7 +52,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     @Mock
     protected GlusterHooksDao hooksDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     protected BackendInternal backend;
     @Mock
@@ -81,8 +81,8 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
             when(hooksDao.getById(HOOK_ID, true)).thenReturn(hookEntity);
         }
         doReturn(hooksDao).when(cmd).getGlusterHooksDao();
-        when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        when(clusterDao.get(CLUSTER_ID)).thenReturn(getCluster());
+        doReturn(clusterDao).when(cmd).getClusterDao();
         doReturn(getGlusterServers().get(0)).when(cmd).getUpServer();
         doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
@@ -139,12 +139,12 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
         server.setId(id);
         server.setVdsName(name);
         server.setStatus(status);
-        server.setVdsGroupId(clusterId);
+        server.setClusterId(clusterId);
         return server;
     }
 
-    private VDSGroup getVdsGroup() {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID);
         cluster.setName("TestCluster");
         return cluster;

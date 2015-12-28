@@ -114,7 +114,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                             new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = getVdsDao().get(getParameters().getVdsId()).getVdsGroupId();
+                Guid groupId = getVdsDao().get(getParameters().getVdsId()).getClusterId();
                 NetworkClusterHelper.setStatus(groupId, getParameters().getNetwork());
                 setSucceeded(true);
             }
@@ -201,7 +201,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             return false;
         }
 
-        final Guid clusterId = getVdsGroupId();
+        final Guid clusterId = getClusterId();
         if (!managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getName(), clusterId)) {
             if (managementNetworkUtil.isManagementNetwork(getParameters().getOldNetworkName(), clusterId)) {
                 getReturnValue().getValidationMessages()
@@ -237,7 +237,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        Network network = getNetworkDao().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
+        Network network = getNetworkDao().getByNameAndCluster(getNetworkName(), vds.getClusterId());
         if (network != null && network.isExternal()) {
             return failValidation(EngineMessage.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }

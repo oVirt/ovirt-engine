@@ -529,8 +529,8 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
         setCustomProperties(getHasCustomProperties() ? constants.configured() : constants.notConfigured());
 
-        setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
-                vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
+        setCompatibilityVersion(vm.getClusterCompatibilityVersion() != null ?
+                vm.getClusterCompatibilityVersion().toString() : ""); //$NON-NLS-1$
 
         setVmId(vm.getId().toString());
         setFqdn(vm.getVmFQDN());
@@ -545,7 +545,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
         if (getHasDefaultHost()) {
-            Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
+            Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override

@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<VDSGroup, ClusterListModel<Void>>
+public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<Cluster, ClusterListModel<Void>>
         implements SubTabClusterPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterPermissionView> {
@@ -23,7 +23,7 @@ public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<V
 
     @Inject
     public SubTabClusterPermissionView(SearchableDetailModelProvider<Permission, ClusterListModel<Void>,
-            PermissionListModel<VDSGroup>> modelProvider, EventBus eventBus,
+            PermissionListModel<Cluster>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage);
     }

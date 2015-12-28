@@ -26,7 +26,7 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
         cpuProfile = new CpuProfile();
         cpuProfile.setId(Guid.newGuid());
         cpuProfile.setName("new_profile");
-        cpuProfile.setClusterId(FixturesTool.VDS_GROUP_RHEL6_ISCSI);
+        cpuProfile.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         cpuProfile.setQosId(FixturesTool.QOS_ID_4);
     }
 
@@ -67,14 +67,14 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForClusterFull() {
-        checkResults(dao.getAllForCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI));
+        checkResults(dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI));
     }
 
     private void checkResults(List<CpuProfile> result) {
         assertNotNull(result);
         assertEquals(2, result.size());
         for (CpuProfile cpuProfile : result) {
-            assertEquals(FixturesTool.VDS_GROUP_RHEL6_ISCSI, cpuProfile.getClusterId());
+            assertEquals(FixturesTool.CLUSTER_RHEL6_ISCSI, cpuProfile.getClusterId());
         }
     }
 
@@ -138,13 +138,13 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetFilteredByPermissions() {
-        checkResults(dao.getAllForCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI, PRIVILEGED_USER_ID, true));
+        checkResults(dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, PRIVILEGED_USER_ID, true));
     }
 
     @Test
     public void testGetFilteredByPermissionsForUnprivilegedUser() {
         List<CpuProfile> result =
-                dao.getAllForCluster(FixturesTool.VDS_GROUP_RHEL6_ISCSI, UNPRIVILEGED_USER_ID, true);
+                dao.getAllForCluster(FixturesTool.CLUSTER_RHEL6_ISCSI, UNPRIVILEGED_USER_ID, true);
         assertTrue(result.isEmpty());
     }
 }

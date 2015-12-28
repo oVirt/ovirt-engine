@@ -112,7 +112,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             blacklist.add(getVdsId());
         }
         return schedulingManager.canSchedule(
-                getVdsGroup(),
+                getCluster(),
                 vm,
                 blacklist, //blacklist only contains the host we're putting to maintenance
                 Collections.<Guid>emptyList(), //no whitelist

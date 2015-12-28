@@ -53,7 +53,7 @@ public class NetworkConfigurator {
     public NetworkConfigurator(VDS host, CommandContext commandContext) {
         this.host = host;
         this.commandContext = commandContext;
-        this.managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getVdsGroupId());
+        this.managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getClusterId());
     }
 
     public void createManagementNetworkIfRequired() {
@@ -71,7 +71,7 @@ public class NetworkConfigurator {
             return;
         }
 
-        if (!FeatureSupported.setupManagementNetwork(host.getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.setupManagementNetwork(host.getClusterCompatibilityVersion())) {
             log.warn("Cluster of host '{}' does not support normalize management network feature", host.getName());
             return;
         }

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 
 public class ExecutionMessageDirectorTest {
 
-    private static final String UPDATE_CLUSTER_VDS_GROUPS_MESSAGE = "Update Cluster ${VdsGroups}";
+    private static final String UPDATE_CLUSTER_CLUSTERS_MESSAGE = "Update Cluster ${Clusters}";
     private static String TEST_BUNDLE_NAME = "TestExecutionMessages";
     private static String INVALID_KEY_TEST_BUNDLE_NAME = "InvalidKeyExecutionMessages";
     private static String INVALID_JOB_KEY_TEST_BUNDLE_NAME = "InvalidJobKeyExecutionMessages";
@@ -60,8 +60,8 @@ public class ExecutionMessageDirectorTest {
         ExecutionMessageDirector messageDirector = ExecutionMessageDirector.getInstance();
         messageDirector.initialize(TEST_BUNDLE_NAME);
 
-        String updateVdsGroupMessage = messageDirector.getJobMessage(VdcActionType.UpdateVdsGroup);
-        assertTrue(UPDATE_CLUSTER_VDS_GROUPS_MESSAGE.equals(updateVdsGroupMessage));
+        String updateClusterMessage = messageDirector.getJobMessage(VdcActionType.UpdateCluster);
+        assertTrue(UPDATE_CLUSTER_CLUSTERS_MESSAGE.equals(updateClusterMessage));
     }
 
     /**

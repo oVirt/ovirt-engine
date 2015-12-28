@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -85,8 +85,8 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return vds.getId();
     }
 
-    protected VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    protected ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     protected Guid getRandomUpServerId(Guid clusterId) {

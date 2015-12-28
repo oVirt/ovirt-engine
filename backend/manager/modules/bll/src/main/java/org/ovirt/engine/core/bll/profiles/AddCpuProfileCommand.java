@@ -32,7 +32,7 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
         return Collections.singletonList(new PermissionSubject(getParameters().getProfile() != null ? getParameters().getProfile()
                 .getClusterId()
                 : null,
-                VdcObjectType.VdsGroups,
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
     }
 

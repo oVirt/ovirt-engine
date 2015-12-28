@@ -22,8 +22,8 @@ CREATE OR REPLACE FUNCTION InsertAuditLog (
     v_storage_pool_name VARCHAR(40),
     v_storage_domain_id UUID,
     v_storage_domain_name VARCHAR(250),
-    v_vds_group_id UUID,
-    v_vds_group_name VARCHAR(255),
+    v_cluster_id UUID,
+    v_cluster_name VARCHAR(255),
     v_quota_id UUID,
     v_quota_name VARCHAR(60),
     v_correlation_id VARCHAR(50),
@@ -60,8 +60,8 @@ BEGIN
             storage_pool_name,
             storage_domain_id,
             storage_domain_name,
-            vds_group_id,
-            vds_group_name,
+            cluster_id,
+            cluster_name,
             correlation_id,
             job_id,
             quota_id,
@@ -90,8 +90,8 @@ BEGIN
             v_storage_pool_name,
             v_storage_domain_id,
             v_storage_domain_name,
-            v_vds_group_id,
-            v_vds_group_name,
+            v_cluster_id,
+            v_cluster_name,
             v_correlation_id,
             v_job_id,
             v_quota_id,
@@ -133,8 +133,8 @@ BEGIN
             storage_pool_name,
             storage_domain_id,
             storage_domain_name,
-            vds_group_id,
-            vds_group_name,
+            cluster_id,
+            cluster_name,
             correlation_id,
             job_id,
             quota_id,
@@ -163,8 +163,8 @@ BEGIN
             v_storage_pool_name,
             v_storage_domain_id,
             v_storage_domain_name,
-            v_vds_group_id,
-            v_vds_group_name,
+            v_cluster_id,
+            v_cluster_name,
             v_correlation_id,
             v_job_id,
             v_quota_id,
@@ -209,8 +209,8 @@ CREATE OR REPLACE FUNCTION InsertExternalAuditLog (
     v_storage_pool_name VARCHAR(40),
     v_storage_domain_id UUID,
     v_storage_domain_name VARCHAR(250),
-    v_vds_group_id UUID,
-    v_vds_group_name VARCHAR(255),
+    v_cluster_id UUID,
+    v_cluster_name VARCHAR(255),
     v_quota_id UUID,
     v_quota_name VARCHAR(60),
     v_correlation_id VARCHAR(50),
@@ -263,8 +263,8 @@ BEGIN
         storage_pool_name,
         storage_domain_id,
         storage_domain_name,
-        vds_group_id,
-        vds_group_name,
+        cluster_id,
+        cluster_name,
         correlation_id,
         job_id,
         quota_id,
@@ -297,8 +297,8 @@ BEGIN
         v_storage_pool_name,
         v_storage_domain_id,
         v_storage_domain_name,
-        v_vds_group_id,
-        v_vds_group_name,
+        v_cluster_id,
+        v_cluster_name,
         v_correlation_id,
         v_job_id,
         v_quota_id,
@@ -361,7 +361,7 @@ LANGUAGE plpgsql;
 -- If the user has permissions only on a VM, the user will see only events for this VM
 -- If the user has permissions on a cluster, he will see events from the cluster, the hosts and the VMS in the cluster
 -- because each event has the cluster id of the entity that generates the event and we check to see if the user has
--- permissions on the cluster using the column vds_group_id. Same holds true for data center
+-- permissions on the cluster using the column cluster_id. Same holds true for data center
 CREATE OR REPLACE FUNCTION GetAllFromAuditLog (
     v_user_id UUID,
     v_is_filtered BOOLEAN
@@ -417,10 +417,10 @@ BEGIN
                 )
             OR EXISTS (
                 SELECT 1
-                FROM user_vds_groups_permissions_view pv,
+                FROM user_cluster_permissions_view pv,
                     user_object_permissions_view dpv
                 WHERE pv.user_id = v_user_id
-                    AND pv.entity_id = a.vds_group_id
+                    AND pv.entity_id = a.cluster_id
                     AND pv.entity_id = dpv.entity_id
                 )
             )

@@ -158,7 +158,7 @@ System XXX,
                 AdElements XXX,
                 Tags XXX,
                 Bookmarks XXX,
-                VdsGroups = 9,
+                Cluster = 9,
                 MultiLevelAdministration XXX,
                 Storage = 11,
                 EventNotification XXX,
@@ -178,7 +178,7 @@ System XXX,
 DECLARE
     v_entity_type int4 := v_object_type;
     system_root_id uuid;
-    cluster_id uuid;
+    v_cluster_id uuid;
     ds_id uuid;
     v_image_id uuid;
     v_storage_id uuid;
@@ -199,16 +199,16 @@ BEGIN
         WHEN v_entity_type = 2
             THEN -- VM
                 -- get cluster id
-                cluster_id := (
-                    SELECT vds_group_id
+                v_cluster_id := (
+                    SELECT cluster_id
                     FROM vm_static
                     WHERE vm_guid = v_entity_id
                     );
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                     );RETURN QUERY SELECT system_root_id AS id
 
             UNION
@@ -217,7 +217,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -225,16 +225,16 @@ BEGIN
         WHEN v_entity_type = 3
             THEN -- VDS
                 -- get cluster id
-                cluster_id := (
-                    SELECT vds_group_id
+                v_cluster_id := (
+                    SELECT cluster_id
                     FROM vds_static
                     WHERE vds_id = v_entity_id
                     );
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                     );RETURN QUERY SELECT system_root_id AS id
 
             UNION
@@ -243,7 +243,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -282,16 +282,16 @@ BEGIN
         WHEN v_entity_type = 5
             THEN -- VM Pool
                 -- get cluster id
-                cluster_id := (
-                    SELECT vds_group_id
+                v_cluster_id := (
+                    SELECT cluster_id
                     FROM vm_pools
                     WHERE vm_pool_id = v_entity_id
                     );
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                     );
                 RETURN QUERY SELECT system_root_id AS id
 
@@ -301,7 +301,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -311,8 +311,8 @@ BEGIN
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = v_entity_id
+                    FROM cluster
+                    WHERE cluster_id = v_entity_id
                     );
                 RETURN QUERY SELECT system_root_id AS id
 
@@ -356,7 +356,7 @@ BEGIN
         WHEN v_entity_type = 18
             THEN -- GlusterVolume
                 -- get cluster id
-                cluster_id := (
+                v_cluster_id := (
                     SELECT v.cluster_id
                     FROM gluster_volumes v
                     WHERE id = v_entity_id
@@ -364,8 +364,8 @@ BEGIN
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                     );
                 RETURN QUERY SELECT system_root_id AS id
 
@@ -375,7 +375,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -393,8 +393,8 @@ BEGIN
                 ON vm_device.device_id = images_storage_domain_view.disk_id
                 WHERE image_group_id = v_entity_id;
                 -- get cluster
-                cluster_id := (
-                    SELECT vds_group_id
+                v_cluster_id := (
+                    SELECT cluster_id
                     FROM vm_static
                     WHERE vm_guid = v_vm_id
                     );
@@ -414,7 +414,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -483,9 +483,9 @@ BEGIN
                 FROM cpu_profiles
                 WHERE cpu_profiles.id = v_entity_id;
 
-                SELECT INTO v_storage_pool_id vds_groups.storage_pool_id
-                FROM vds_groups
-                WHERE vds_groups.vds_group_id = v_cpu_profile_cluster_id;
+                SELECT INTO v_storage_pool_id cluster.storage_pool_id
+                FROM cluster
+                WHERE cluster.cluster_id = v_cpu_profile_cluster_id;
                 RETURN QUERY SELECT system_root_id AS id
 
             UNION
@@ -502,7 +502,7 @@ BEGIN
         WHEN v_entity_type = 23
             THEN -- Gluster Hook
                 -- get cluster id
-                cluster_id := (
+                v_cluster_id := (
                     SELECT cluster_id
                     FROM gluster_hooks
                     WHERE id = v_entity_id
@@ -510,8 +510,8 @@ BEGIN
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                 );
                 RETURN QUERY SELECT system_root_id AS id
 
@@ -521,7 +521,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -529,16 +529,16 @@ BEGIN
         WHEN v_entity_type = 25
             THEN -- Gluster Service
                 -- get cluster id
-                cluster_id := (
-                    SELECT vds_group_id
+                v_cluster_id := (
+                    SELECT cluster_id
                     FROM vds_static
                     WHERE vds_id = v_entity_id
                 );
                 -- get data center id
                 ds_id := (
                     SELECT storage_pool_id
-                    FROM vds_groups
-                    WHERE vds_group_id = cluster_id
+                    FROM cluster
+                    WHERE cluster_id = v_cluster_id
                 );
                 RETURN QUERY SELECT system_root_id AS id
 
@@ -548,7 +548,7 @@ BEGIN
 
             UNION
 
-                SELECT cluster_id AS id
+                SELECT v_cluster_id AS id
 
             UNION
 
@@ -779,7 +779,7 @@ AS $FUNCTION$
         AdElements XXX,
         Tags XXX,
         Bookmarks XXX,
-        VdsGroups = 9,
+        Cluster = 9,
         MultiLevelAdministration XXX,
         Storage = 11,
         EventNotification XXX,
@@ -834,8 +834,8 @@ AS $FUNCTION$
         WHEN v_entity_type = 9
             THEN result := (
                             SELECT name
-                            FROM vds_groups
-                            WHERE vds_group_id = v_entity_id
+                            FROM cluster
+                            WHERE cluster_id = v_entity_id
                            );
         WHEN v_entity_type = 11
              THEN result := (
@@ -988,8 +988,8 @@ LANGUAGE plpgsql;
 -- Quota Functions ----
 -----------------------
 DROP TYPE IF
-EXISTS vds_group_usage_rs CASCADE;
-CREATE TYPE vds_group_usage_rs AS (
+EXISTS cluster_usage_rs CASCADE;
+CREATE TYPE cluster_usage_rs AS (
                                    virtual_cpu_usage INT,
                                    mem_size_mb_usage BIGINT
                                   );
@@ -1020,11 +1020,11 @@ LANGUAGE plpgsql;
 -- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
 -- If vds group id is null, then returns the global usage of the quota, other wise returns only the summarize of all VMs in the specific cluster.
 -- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
-CREATE OR REPLACE FUNCTION CalculateVdsGroupUsage(
+CREATE OR REPLACE FUNCTION CalculateClusterUsage(
     v_quota_id UUID,
-    v_vds_group_id UUID
+    v_cluster_id UUID
     )
-RETURNS SETOF vds_group_usage_rs STABLE
+RETURNS SETOF cluster_usage_rs STABLE
 AS $FUNCTION$
 BEGIN
     RETURN QUERY
@@ -1039,18 +1039,18 @@ BEGIN
             SELECT getNonCountableQutoaVmStatuses()
         )
         AND (
-            v_vds_group_id = vm_static.vds_group_id
-            OR v_vds_group_id IS NULL
+            v_cluster_id = vm_static.cluster_id
+            OR v_cluster_id IS NULL
         );
 END;$FUNCTION$
 LANGUAGE plpgsql;
 
-DROP TYPE IF EXISTS all_vds_group_usage_rs CASCADE;
-CREATE TYPE all_vds_group_usage_rs AS (
-    quota_vds_group_id uuid,
+DROP TYPE IF EXISTS all_cluster_usage_rs CASCADE;
+CREATE TYPE all_cluster_usage_rs AS (
+    quota_cluster_id uuid,
     quota_id uuid,
-    vds_group_id uuid,
-    vds_group_name VARCHAR(40),
+    cluster_id uuid,
+    cluster_name VARCHAR(40),
     virtual_cpu INT,
     virtual_cpu_usage INT,
     mem_size_mb BIGINT,
@@ -1059,17 +1059,17 @@ CREATE TYPE all_vds_group_usage_rs AS (
 -- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
 -- If vds group id is null, then returns the global usage of the quota, otherwise returns only the sum of all VMs in the specific cluster.
 -- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
-CREATE OR REPLACE FUNCTION calculateAllVdsGroupUsage()
-RETURNS SETOF all_vds_group_usage_rs STABLE
+CREATE OR REPLACE FUNCTION calculateAllClusterUsage()
+RETURNS SETOF all_cluster_usage_rs STABLE
 AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT
-        quota_limitation.id AS quota_vds_group_id,
+        quota_limitation.id AS quota_cluster_id,
         quota_limitation.quota_id AS quota_id,
-        quota_limitation.vds_group_id AS vds_group_id,
-        vds_groups.name AS vds_group_name,
+        quota_limitation.cluster_id AS cluster_id,
+        cluster.name AS cluster_name,
         quota_limitation.virtual_cpu,
         cast(COALESCE(sum(num_of_sockets * cpu_per_socket * cast(vm_dynamic.status NOT IN (
                             SELECT getNonCountableQutoaVmStatuses()
@@ -1081,18 +1081,18 @@ BEGIN
         ON vm_static.quota_id = quota_limitation.quota_id
     LEFT JOIN vm_dynamic
         ON vm_dynamic.vm_guid = vm_static.vm_guid
-    LEFT JOIN vds_groups
-        ON vds_groups.vds_group_id = vm_static.vds_group_id
+    LEFT JOIN cluster
+        ON cluster.cluster_id = vm_static.cluster_id
     WHERE quota_limitation.virtual_cpu IS NOT NULL
         AND quota_limitation.mem_size_mb IS NOT NULL
     GROUP BY quota_limitation.quota_id,
-        quota_limitation.vds_group_id,
-        vds_group_name,
+        quota_limitation.cluster_id,
+        cluster_name,
         quota_limitation.virtual_cpu,
         quota_limitation.mem_size_mb,
         vm_static.quota_id,
-        vds_groups.vds_group_id,
-        vm_static.vds_group_id,
+        cluster.cluster_id,
+        vm_static.cluster_id,
         quota_limitation.id;
 END;$FUNCTION$
 LANGUAGE plpgsql;

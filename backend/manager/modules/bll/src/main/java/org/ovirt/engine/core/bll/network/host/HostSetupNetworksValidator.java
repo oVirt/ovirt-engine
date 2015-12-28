@@ -143,7 +143,7 @@ public class HostSetupNetworksValidator {
     }
 
     private void setSupportedFeatures() {
-        Version clusterCompatibilityVersion = host.getVdsGroupCompatibilityVersion();
+        Version clusterCompatibilityVersion = host.getClusterCompatibilityVersion();
 
         networkCustomPropertiesSupported = FeatureSupported.networkCustomProperties(clusterCompatibilityVersion);
         hostNetworkQosSupported = FeatureSupported.hostNetworkQos(clusterCompatibilityVersion);
@@ -906,7 +906,7 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult validateCustomProperties() {
-        String version = host.getVdsGroupCompatibilityVersion().getValue();
+        String version = host.getClusterCompatibilityVersion().getValue();
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
 
         Map<String, String> validPropertiesForVmNetwork =

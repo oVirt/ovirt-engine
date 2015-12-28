@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -125,12 +125,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                 } else {
                                     ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
                                     VM currentVm = behavior.vm;
-                                    VDSGroup tempVar = new VDSGroup();
-                                    tempVar.setId(currentVm.getVdsGroupId());
-                                    tempVar.setName(currentVm.getVdsGroupName());
-                                    tempVar.setCompatibilityVersion(currentVm.getVdsGroupCompatibilityVersion());
+                                    Cluster tempVar = new Cluster();
+                                    tempVar.setId(currentVm.getClusterId());
+                                    tempVar.setName(currentVm.getClusterName());
+                                    tempVar.setCompatibilityVersion(currentVm.getClusterCompatibilityVersion());
                                     tempVar.setStoragePoolId(currentVm.getStoragePoolId());
-                                    VDSGroup cluster = tempVar;
+                                    Cluster cluster = tempVar;
                                     DataCenterWithCluster dataCenterWithCluster =
                                             new DataCenterWithCluster(null, cluster);
                                     model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
@@ -152,14 +152,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
 
-                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                        List<Cluster> clusters = (List<Cluster>) returnValue;
 
-                        List<VDSGroup> filteredClusters =
+                        List<Cluster> filteredClusters =
                                 AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
-                                filteredClusters, vm.getVdsGroupId());
+                                filteredClusters, vm.getClusterId());
                         updateCompatibilityVersion();
                         initTemplate();
                         initCdImage();
@@ -215,7 +215,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     }), vm.getRunOnVds());
                 }
 
-                updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+                updateCpuProfile(vm.getClusterId(), vm.getClusterCompatibilityVersion(), vm.getCpuProfileId());
             }
         });
     }
@@ -341,7 +341,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        VDSGroup cluster = dataCenterWithCluster.getCluster();
+        Cluster cluster = dataCenterWithCluster.getCluster();
 
         if (cluster == null) {
             return;
@@ -427,7 +427,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     public boolean isHotSetCpuSupported() {
-        VDSGroup selectedCluster = getModel().getSelectedCluster();
+        Cluster selectedCluster = getModel().getSelectedCluster();
         Version compatibilityVersion = getModel().getCompatibilityVersion();
         Boolean hotplugEnabled = (Boolean)
                     AsyncDataProvider.getInstance().getConfigValuePreConverted(

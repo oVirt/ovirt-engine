@@ -6,9 +6,9 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -81,16 +81,16 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
         return lookupClusterByName(name).getId();
     }
 
-    protected VDSGroup lookupClusterByName(String name) {
-        return getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
+    protected Cluster lookupClusterByName(String name) {
+        return getEntity(Cluster.class,
+                VdcQueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name);
     }
 
-    protected VDSGroup lookupClusterById(String id) {
-        return getEntity(VDSGroup.class,
-                         VdcQueryType.GetVdsGroupById,
+    protected Cluster lookupClusterById(String id) {
+        return getEntity(Cluster.class,
+                         VdcQueryType.GetClusterById,
                          new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(id)),
                          id);
     }

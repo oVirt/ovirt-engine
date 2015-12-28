@@ -89,7 +89,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("vm_pool_type", pool.getVmPoolType())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
-                .addValue("vds_group_id", pool.getVdsGroupId())
+                .addValue("cluster_id", pool.getClusterId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
                 .addValue("is_being_destroyed", pool.isBeingDestroyed());
@@ -107,7 +107,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("vm_pool_type", pool.getVmPoolType())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
-                .addValue("vds_group_id", pool.getVdsGroupId())
+                .addValue("cluster_id", pool.getClusterId())
                 .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
                 .addValue("spice_proxy", pool.getSpiceProxy())
                 .addValue("is_being_destroyed", pool.isBeingDestroyed());
@@ -172,8 +172,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+            entity.setClusterName(rs.getString("cluster_name"));
             entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
             entity.setRunningVmsCount(rs.getInt("vm_running_count"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
@@ -198,8 +198,8 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
+            entity.setClusterName(rs.getString("cluster_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
             entity.setBeingDestroyed(rs.getBoolean("is_being_destroyed"));

@@ -27,8 +27,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -45,8 +45,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmJobDao;
@@ -81,9 +81,9 @@ public class VmAnalyzerTest {
     @Mock
     private VmDynamicDao vmDynamicDao;
     @Mock
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private VdsDao vdsDao;
     @Mock
@@ -359,7 +359,7 @@ public class VmAnalyzerTest {
     public void initMocks(VmTestPairs vmData, boolean run) {
         stubDaos();
         when(vdsManager.getVdsId()).thenReturn(VmTestPairs.SRC_HOST_ID);
-        when(vdsManager.getVdsGroupId()).thenReturn(VmTestPairs.CLUSTER_ID);
+        when(vdsManager.getClusterId()).thenReturn(VmTestPairs.CLUSTER_ID);
         when(vdsManager.getCopyVds()).thenReturn(vdsManagerVds);
         when(vmManager.isColdReboot()).thenReturn(false);
         when(vmsMonitoring.getVdsManager()).thenReturn(vdsManager);
@@ -396,7 +396,7 @@ public class VmAnalyzerTest {
         doReturn(vmStaticDao).when(dbFacade).getVmStaticDao();
         doReturn(vmNetworkInterfaceDao).when(dbFacade).getVmNetworkInterfaceDao();
         doReturn(vmJobsDao).when(dbFacade).getVmJobDao();
-        doReturn(vdsGroupDao).when(dbFacade).getVdsGroupDao();
+        doReturn(clusterDao).when(dbFacade).getClusterDao();
         doReturn(vdsDao).when(dbFacade).getVdsDao();
         doReturn(vmDao).when(dbFacade).getVmDao();
     }
@@ -420,7 +420,7 @@ public class VmAnalyzerTest {
     }
 
     private void mockCluster() {
-        when(vdsGroupDao.get(VmTestPairs.CLUSTER_ID)).thenReturn(vdsGroup);
+        when(clusterDao.get(VmTestPairs.CLUSTER_ID)).thenReturn(cluster);
     }
 
     private void mockVdsDao() {

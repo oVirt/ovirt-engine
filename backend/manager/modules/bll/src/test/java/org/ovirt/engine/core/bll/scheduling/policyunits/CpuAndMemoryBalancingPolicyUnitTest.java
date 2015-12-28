@@ -13,19 +13,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest {
     protected  <T extends CpuAndMemoryBalancingPolicyUnit> T mockUnit(
             Class<T> unitType,
-            VDSGroup cluster,
+            Cluster cluster,
             Map<Guid, VDS> hosts,
             Map<Guid, VM> vms)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
@@ -37,14 +37,14 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         doReturn(TIME_FORMAT.parse("2015-01-01 12:00:00")).when(unit).getTime();
 
         // mock cluster Dao
-        VdsGroupDao vdsGroupDao = mock(VdsGroupDao.class);
-        doReturn(vdsGroupDao).when(unit).getVdsGroupDao();
-        doReturn(cluster).when(vdsGroupDao).get(any(Guid.class));
+        ClusterDao clusterDao = mock(ClusterDao.class);
+        doReturn(clusterDao).when(unit).getClusterDao();
+        doReturn(cluster).when(clusterDao).get(any(Guid.class));
 
         // mock host Dao
         VdsDao vdsDao = mock(VdsDao.class);
         doReturn(vdsDao).when(unit).getVdsDao();
-        doReturn(new ArrayList<>(hosts.values())).when(vdsDao).getAllForVdsGroup(any(Guid.class));
+        doReturn(new ArrayList(hosts.values())).when(vdsDao).getAllForCluster(any(Guid.class));
 
         // mock VM Dao
         VmDao vmDao = mock(VmDao.class);

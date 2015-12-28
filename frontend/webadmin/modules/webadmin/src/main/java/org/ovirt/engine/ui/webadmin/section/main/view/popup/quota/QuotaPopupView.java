@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.quota;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
@@ -148,7 +148,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ScrollPanel clusterQuotaTableContainer;
 
     @Ignore
-    private ListModelObjectCellTable<QuotaVdsGroup, ListModel> quotaClusterTable;
+    private ListModelObjectCellTable<QuotaCluster, ListModel> quotaClusterTable;
 
     @Ignore
     private ListModelObjectCellTable<QuotaStorage, ListModel> quotaStorageTable;
@@ -157,7 +157,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @Ignore
     ScrollPanel storageQuotaTableContainer;
 
-    private Column<QuotaVdsGroup, Boolean> isClusterInQuotaColumn = null;
+    private Column<QuotaCluster, Boolean> isClusterInQuotaColumn = null;
     private Column<QuotaStorage, Boolean> isStorageInQuotaColumn = null;
 
     private QuotaModel model;
@@ -314,14 +314,14 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable = new ListModelObjectCellTable<>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
-        isClusterInQuotaColumn = new Column<QuotaVdsGroup, Boolean>(
+        isClusterInQuotaColumn = new Column<QuotaCluster, Boolean>(
                 new CheckboxCell(true, true)) {
             @Override
-            public Boolean getValue(QuotaVdsGroup object) {
-                if (selectedClusterGuid.contains(object.getVdsGroupId())
+            public Boolean getValue(QuotaCluster object) {
+                if (selectedClusterGuid.contains(object.getClusterId())
                         || (object.getMemSizeMB() != null && object.getVirtualCpu() != null)) {
-                    if (!selectedClusterGuid.contains(object.getVdsGroupId())) {
-                        selectedClusterGuid.add(object.getVdsGroupId());
+                    if (!selectedClusterGuid.contains(object.getClusterId())) {
+                        selectedClusterGuid.add(object.getClusterId());
                     }
                     return true;
                 }
@@ -329,15 +329,15 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         };
 
-        isClusterInQuotaColumn.setFieldUpdater(new FieldUpdater<QuotaVdsGroup, Boolean>() {
+        isClusterInQuotaColumn.setFieldUpdater(new FieldUpdater<QuotaCluster, Boolean>() {
             @Override
-            public void update(int index, QuotaVdsGroup object, Boolean value) {
+            public void update(int index, QuotaCluster object, Boolean value) {
                 if (value) {
-                    selectedClusterGuid.add(object.getVdsGroupId());
-                    object.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
-                    object.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
+                    selectedClusterGuid.add(object.getClusterId());
+                    object.setVirtualCpu(QuotaCluster.UNLIMITED_VCPU);
+                    object.setMemSizeMB(QuotaCluster.UNLIMITED_MEM);
                 } else {
-                    selectedClusterGuid.remove(object.getVdsGroupId());
+                    selectedClusterGuid.remove(object.getClusterId());
                     object.setVirtualCpu(null);
                     object.setMemSizeMB(null);
                 }
@@ -349,24 +349,24 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         });
 
-        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaVdsGroup>() {
+        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
-                if (object.getVdsGroupName() == null || object.getVdsGroupName().length() == 0) {
+            public String getValue(QuotaCluster object) {
+                if (object.getClusterName() == null || object.getClusterName().length() == 0) {
                     return constants.ultQuotaForAllClustersQuotaPopup(); //$NON-NLS-1$
                 }
-                return object.getVdsGroupName();
+                return object.getClusterName();
             }
         }, constants.clusterNameQuota(), "200px"); //$NON-NLS-1$
 
-        quotaClusterTable.addColumn(new QuotaUtilizationStatusColumn<QuotaVdsGroup>(), constants.empty(), "1px"); //$NON-NLS-1$
+        quotaClusterTable.addColumn(new QuotaUtilizationStatusColumn<QuotaCluster>(), constants.empty(), "1px"); //$NON-NLS-1$
 
-        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaVdsGroup>() {
+        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
+            public String getValue(QuotaCluster object) {
                 if (object.getMemSizeMB() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)) {
+                } else if (object.getMemSizeMB().equals(QuotaCluster.UNLIMITED_MEM)) {
                     return messages.unlimitedMemConsumption(object.getMemSizeMBUsage());
                 } else {
                     return messages.limitedMemConsumption(object.getMemSizeMBUsage(), object.getMemSizeMB());
@@ -374,12 +374,12 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         }, constants.quotaOfMemQuota());
 
-        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaVdsGroup>() {
+        quotaClusterTable.addColumn(new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
+            public String getValue(QuotaCluster object) {
                 if (object.getVirtualCpu() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
+                } else if (object.getVirtualCpu().equals(QuotaCluster.UNLIMITED_VCPU)) {
                     return messages.unlimitedVcpuConsumption(object.getVirtualCpuUsage());
                 } else {
                     return messages.limitedVcpuConsumption(object.getVirtualCpuUsage(), object.getVirtualCpu());
@@ -388,11 +388,11 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         }, constants.quotaOfVcpuQuota());
 
         NullableButtonCell editCellButton = new NullableButtonCell();
-        Column<QuotaVdsGroup, String> editColumn = new Column<QuotaVdsGroup, String>(editCellButton) {
+        Column<QuotaCluster, String> editColumn = new Column<QuotaCluster, String>(editCellButton) {
             @Override
-            public String getValue(QuotaVdsGroup object) {
+            public String getValue(QuotaCluster object) {
                 if (model.getGlobalClusterQuota().getEntity()
-                        || (model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getVdsGroupId()))) {
+                        || (model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getClusterId()))) {
                     return constants.editCellQuota();
                 }
                 return null;
@@ -400,9 +400,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         };
 
         quotaClusterTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
-        editColumn.setFieldUpdater(new FieldUpdater<QuotaVdsGroup, String>() {
+        editColumn.setFieldUpdater(new FieldUpdater<QuotaCluster, String>() {
             @Override
-            public void update(int index, QuotaVdsGroup object, String value) {
+            public void update(int index, QuotaCluster object, String value) {
                 model.editQuotaCluster(object);
             }
         });

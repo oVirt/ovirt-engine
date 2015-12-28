@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.AddVdsGroupCommand;
+import org.ovirt.engine.core.bll.AddClusterCommand;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -71,7 +71,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         Network net = new Network();
         net.setId(Guid.newGuid());
         net.setName(managementNetworkUtil.getDefaultManagementNetworkName());
-        net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
+        net.setDescription(AddClusterCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         getNetworkDao().save(net);

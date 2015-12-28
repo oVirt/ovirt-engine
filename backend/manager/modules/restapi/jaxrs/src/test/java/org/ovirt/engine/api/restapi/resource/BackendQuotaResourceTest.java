@@ -31,7 +31,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
         setUpGetEntityExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateQuota,
                 QuotaCRUDParameters.class,
-                new String[] { "QuotaId", "Quota.Description", "Quota.GraceVdsGroupPercentage" },
+                new String[] { "QuotaId", "Quota.Description", "Quota.GraceClusterPercentage" },
                 new Object[] { QUOTA_ID, DESCRIPTIONS[1], 30 },
                 true,
                 true));

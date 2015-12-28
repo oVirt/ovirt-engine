@@ -31,7 +31,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             return false;
         }
 
-        if (!isInternalExecution() && !ObjectIdentityChecker.canUpdateField(getVm(), "vdsGroupId", getVm().getStatus())) {
+        if (!isInternalExecution() && !ObjectIdentityChecker.canUpdateField(getVm(), "clusterId", getVm().getStatus())) {
             addValidationMessage(EngineMessage.VM_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
@@ -50,7 +50,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     protected void executeCommand() {
         // check that the cluster are not the same
         VM vm = getVm();
-        if (vm.getVdsGroupId().equals(getParameters().getClusterId())) {
+        if (vm.getClusterId().equals(getParameters().getClusterId())) {
             setSucceeded(true);
             return;
         }
@@ -83,7 +83,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         // the 'old' CPU profile is invalid. The update VM command is called straight after
         // will validate a right profile for VM and its cluster
         vm.setCpuProfileId(null);
-        vm.setVdsGroupId(getParameters().getClusterId());
+        vm.setClusterId(getParameters().getClusterId());
         DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
 
         // change vm cluster should remove the vm from all associated affinity groups

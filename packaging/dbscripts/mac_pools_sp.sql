@@ -104,9 +104,9 @@ BEGIN
     WHERE EXISTS (
             SELECT 1
             FROM vm_static
-            INNER JOIN vds_groups
-                ON vm_static.vds_group_id = vds_groups.vds_group_id
-            WHERE vds_groups.storage_pool_id IN (
+            INNER JOIN cluster
+                ON vm_static.cluster_id = cluster.cluster_id
+            WHERE cluster.storage_pool_id IN (
                     SELECT sp.id
                     FROM storage_pool sp
                     WHERE sp.mac_pool_id = v_id

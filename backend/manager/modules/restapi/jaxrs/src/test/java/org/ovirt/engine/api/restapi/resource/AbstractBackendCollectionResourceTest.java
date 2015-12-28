@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -277,8 +277,8 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         expect(httpHeaders.getRequestHeader(eq(name))).andReturn(asList(value));
     }
 
-    protected VDSGroup setUpVDSGroup(Guid id) {
-        VDSGroup cluster = control.createMock(VDSGroup.class);
+    protected Cluster setUpCluster(Guid id) {
+        Cluster cluster = control.createMock(Cluster.class);
         expect(cluster.getId()).andReturn(id).anyTimes();
         expect(cluster.getCompatibilityVersion()).andReturn(Version.getLast()).anyTimes();
         return cluster;

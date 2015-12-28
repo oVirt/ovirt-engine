@@ -433,7 +433,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         snapshotModel.startProgress();
 
-        snapshotModel.getClusterName().setEntity(volumeEntity.getVdsGroupName());
+        snapshotModel.getClusterName().setEntity(volumeEntity.getClusterName());
         snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
 
         AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery(this, new INewAsyncCallback() {
@@ -684,7 +684,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         }),
                 getEntity().getId());
 
-        snapshotModel.getClusterName().setEntity(getEntity().getVdsGroupName());
+        snapshotModel.getClusterName().setEntity(getEntity().getClusterName());
         snapshotModel.getVolumeName().setEntity(getEntity().getName());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onEditSnapshotSchedule", this); //$NON-NLS-1$

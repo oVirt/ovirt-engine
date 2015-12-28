@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -30,7 +30,7 @@ public class SubTabClusterGlusterHookPresenter
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterGlusterHookPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Cluster> {
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)

@@ -207,14 +207,14 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                 return false;
             }
 
-            setVdsGroupId(getParameters().getClusterId());
-            if (getVdsGroup() == null) {
+            setClusterId(getParameters().getClusterId());
+            if (getCluster() == null) {
                 addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
                 return false;
             }
 
             // A Template cannot be added in a cluster without a defined architecture
-            if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+            if (getCluster().getArchitecture() == ArchitectureType.undefined) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
             }
 

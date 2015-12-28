@@ -24,9 +24,9 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -54,12 +54,12 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
     private VM vm;
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     private Guid spId;
     @Mock
     private VmDao vmDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private StoragePoolDao storagePoolDao;
     @Mock
@@ -77,24 +77,24 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     public void setUp() {
         // The VM to use
         Guid vmId = Guid.newGuid();
-        Guid vdsGroupId = Guid.newGuid();
+        Guid clusterId = Guid.newGuid();
         spId = Guid.newGuid();
 
         vm = new VM();
         vm.setId(vmId);
-        vm.setVdsGroupId(vdsGroupId);
+        vm.setClusterId(clusterId);
         vm.setStoragePoolId(spId);
         vm.setVmOs(14);
         when(vmDao.get(vmId)).thenReturn(vm);
 
         // The cluster to use
-        vdsGroup = new VDSGroup();
-        vdsGroup.setCpuName("Intel Conroe Family");
-        vdsGroup.setArchitecture(ArchitectureType.x86_64);
-        vdsGroup.setId(vdsGroupId);
-        vdsGroup.setStoragePoolId(spId);
-        vdsGroup.setCompatibilityVersion(Version.v3_2);
-        when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
+        cluster = new Cluster();
+        cluster.setCpuName("Intel Conroe Family");
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setId(clusterId);
+        cluster.setStoragePoolId(spId);
+        cluster.setCompatibilityVersion(Version.v3_2);
+        when(clusterDao.get(clusterId)).thenReturn(cluster);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
         mockOsRepository();
@@ -127,10 +127,10 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         });
 
         doReturn(vmDao).when(cmd).getVmDao();
-        doReturn(vdsGroupDao).when(cmd).getVdsGroupDao();
+        doReturn(clusterDao).when(cmd).getClusterDao();
         cmd.postConstruct();
         cmd.setVmId(vmId);
-        cmd.setVdsGroupId(vdsGroupId);
+        cmd.setClusterId(clusterId);
     }
 
     protected void mockOsRepository() {

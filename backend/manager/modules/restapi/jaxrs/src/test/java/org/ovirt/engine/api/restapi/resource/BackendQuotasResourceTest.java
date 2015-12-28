@@ -56,8 +56,8 @@ public class BackendQuotasResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddQuota,
                 QuotaCRUDParameters.class,
-                new String[] { "Quota.StoragePoolId", "Quota.ThresholdVdsGroupPercentage",
-                        "Quota.GraceVdsGroupPercentage", "Quota.ThresholdStoragePercentage",
+                new String[] { "Quota.StoragePoolId", "Quota.ThresholdClusterPercentage",
+                        "Quota.GraceClusterPercentage", "Quota.ThresholdStoragePercentage",
                         "Quota.GraceStoragePercentage" },
                 new Object[] { DATACENTER_ID, CLUSTER_SOFT_LIMIT_PCT, CLUSTER_HARD_LIMIT_PCT, STORAGE_SOFT_LIMIT_PCT,
                         STORAGE_HARD_LIMIT_PCT },

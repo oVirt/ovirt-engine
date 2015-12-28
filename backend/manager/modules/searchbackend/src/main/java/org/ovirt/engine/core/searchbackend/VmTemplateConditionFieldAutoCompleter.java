@@ -68,7 +68,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put(MEM, "mem_size_mb");
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(STATUS, "status");
-        columnNameDict.put(CLUSTER, "vds_group_name");
+        columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(QUOTA, "quota_name");
         columnNameDict.put(VMT_ID, "vmt_guid");

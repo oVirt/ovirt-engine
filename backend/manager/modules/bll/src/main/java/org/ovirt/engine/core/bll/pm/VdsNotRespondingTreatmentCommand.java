@@ -21,10 +21,10 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -64,8 +64,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     private boolean shouldFencingBeSkipped(VDS vds) {
         // check if fencing in cluster is enabled
-        VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vds.getVdsGroupId());
-        if (vdsGroup != null && !vdsGroup.getFencingPolicy().isFencingEnabled()) {
+        Cluster cluster = getDbFacade().getClusterDao().get(vds.getClusterId());
+        if (cluster != null && !cluster.getFencingPolicy().isFencingEnabled()) {
             AuditLogableBase alb = new AuditLogableBase(vds.getId());
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
@@ -148,8 +148,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             }
 
             // load cluster fencing policy
-            FencingPolicy fencingPolicy = getDbFacade().getVdsGroupDao().get(
-                    getVds().getVdsGroupId()
+            FencingPolicy fencingPolicy = getDbFacade().getClusterDao().get(
+                    getVds().getClusterId()
             ).getFencingPolicy();
             getParameters().setFencingPolicy(fencingPolicy);
 
@@ -217,11 +217,11 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private boolean isConnectivityBrokenThresholdReached(VDS vds) {
-        VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+        Cluster cluster = DbFacade.getInstance().getClusterDao().get(vds.getClusterId());
         double percents = 0.0;
         boolean result = false;
         if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {
-            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
+            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForCluster(cluster.getId());
             double hostsNumber = hosts.size();
             double hostsWithBrokenConnectivityNumber =
                     hosts.stream().filter(h -> h.getStatus() == VDSStatus.Connecting || h.getStatus() == VDSStatus.NonResponsive).count();

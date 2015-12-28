@@ -214,7 +214,7 @@ public class BackendVmNicResourceTest
     protected void setGetVmQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             VM vm = new VM();
-            vm.setVdsGroupId(GUIDS[0]);
+            vm.setClusterId(GUIDS[0]);
             setUpEntityQueryExpectations(
                 VdcQueryType.GetVmByVmId,
                 IdQueryParameters.class,

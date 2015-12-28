@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.otopi.constants.NetEnv;
@@ -50,10 +50,10 @@ public class VdsDeployMiscUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _deploy.getVds().getVdsGroupId()
+            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+                _deploy.getVds().getClusterId()
             );
-            String tunedProfile = vdsGroup.supportsGlusterService() ? vdsGroup.getGlusterTunedProfile() : null;
+            String tunedProfile = cluster.supportsGlusterService() ? cluster.getGlusterTunedProfile() : null;
             if (tunedProfile == null || tunedProfile.isEmpty()) {
                 _deploy.getParser().cliNoop();
             } else {
@@ -62,12 +62,12 @@ public class VdsDeployMiscUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _deploy.getVds().getVdsGroupId()
+            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+                _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(
                 GlusterEnv.ENABLE,
-                vdsGroup.supportsGlusterService()
+                cluster.supportsGlusterService()
             );
             return true;
         }}

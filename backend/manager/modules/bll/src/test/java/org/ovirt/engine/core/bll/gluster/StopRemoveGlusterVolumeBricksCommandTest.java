@@ -64,8 +64,8 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         doReturn(getVolumeWithoutRemoveBricksTask(volumeWithoutRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithoutRemoveBricksTask);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
+        doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 

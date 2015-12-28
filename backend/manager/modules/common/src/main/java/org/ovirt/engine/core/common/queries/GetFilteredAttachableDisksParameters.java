@@ -9,7 +9,7 @@ public class GetFilteredAttachableDisksParameters extends GetAllAttachableDisksF
 
     private int os;
 
-    private Version vdsGroupCompatibilityVersion;
+    private Version clusterCompatibilityVersion;
 
     public GetFilteredAttachableDisksParameters() {
         super();
@@ -27,11 +27,11 @@ public class GetFilteredAttachableDisksParameters extends GetAllAttachableDisksF
         this.os = os;
     }
 
-    public Version getVdsGroupCompatibilityVersion() {
-        return vdsGroupCompatibilityVersion;
+    public Version getClusterCompatibilityVersion() {
+        return clusterCompatibilityVersion;
     }
 
-    public void setVdsGroupCompatibilityVersion(Version vdsGroupCompatibilityVersion) {
-        this.vdsGroupCompatibilityVersion = vdsGroupCompatibilityVersion;
+    public void setClusterCompatibilityVersion(Version clusterCompatibilityVersion) {
+        this.clusterCompatibilityVersion = clusterCompatibilityVersion;
     }
 }

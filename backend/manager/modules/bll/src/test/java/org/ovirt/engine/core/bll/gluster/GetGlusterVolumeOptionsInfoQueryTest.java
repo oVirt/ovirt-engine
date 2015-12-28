@@ -44,14 +44,14 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
 
     public void mockVdsDbFacadeAndDao() {
         vdsDao = mock(VdsDao.class);
-        when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
+        when(vdsDao.getAllForClusterWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(mockGetAllVdsForwithStatus(VDSStatus.Up));
 
         clusterUtils = mock(ClusterUtils.class);
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();

@@ -16,7 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -59,7 +59,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     @Mock
     protected Network currentManagementNetwork;
     @Mock
-    protected VDSGroup cluster;
+    protected Cluster cluster;
 
     @Mock
     protected Version version;

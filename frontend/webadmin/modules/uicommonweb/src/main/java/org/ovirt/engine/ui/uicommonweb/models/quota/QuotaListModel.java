@@ -6,12 +6,12 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -213,22 +213,22 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                 AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
+                        ArrayList<Cluster> clusterList = (ArrayList<Cluster>) returnValue;
                         if (clusterList == null || clusterList.size() == 0) {
-                            qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
+                            qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaCluster>());
                             return;
                         }
-                        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
-                        QuotaVdsGroup quotaVdsGroup;
-                        for (VDSGroup vdsGroup : clusterList) {
-                            quotaVdsGroup = new QuotaVdsGroup();
-                            quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
-                            quotaVdsGroup.setVdsGroupName(vdsGroup.getName());
-                            quotaVdsGroup.setMemSizeMB(null);
-                            quotaVdsGroup.setMemSizeMBUsage((long) 0);
-                            quotaVdsGroup.setVirtualCpu(null);
-                            quotaVdsGroup.setVirtualCpuUsage(0);
-                            quotaClusterList.add(quotaVdsGroup);
+                        ArrayList<QuotaCluster> quotaClusterList = new ArrayList<>();
+                        QuotaCluster quotaCluster;
+                        for (Cluster cluster : clusterList) {
+                            quotaCluster = new QuotaCluster();
+                            quotaCluster.setClusterId(cluster.getId());
+                            quotaCluster.setClusterName(cluster.getName());
+                            quotaCluster.setMemSizeMB(null);
+                            quotaCluster.setMemSizeMBUsage((long) 0);
+                            quotaCluster.setVirtualCpu(null);
+                            quotaCluster.setVirtualCpuUsage(0);
+                            quotaClusterList.add(quotaCluster);
                         }
                         qModel.getAllDataCenterClusters().setItems(quotaClusterList);
 
@@ -285,30 +285,30 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         quota.setDescription(model.getDescription().getEntity());
         quota.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
 
-        quota.setGraceVdsGroupPercentage(model.getGraceClusterAsInteger());
+        quota.setGraceClusterPercentage(model.getGraceClusterAsInteger());
         quota.setGraceStoragePercentage(model.getGraceStorageAsInteger());
-        quota.setThresholdVdsGroupPercentage(model.getThresholdClusterAsInteger());
+        quota.setThresholdClusterPercentage(model.getThresholdClusterAsInteger());
         quota.setThresholdStoragePercentage(model.getThresholdStorageAsInteger());
 
         if (model.getGlobalClusterQuota().getEntity()) {
-            QuotaVdsGroup quotaVdsGroup;
-            for (QuotaVdsGroup iter : model.getQuotaClusters().getItems()) {
-                quota.setGlobalQuotaVdsGroup(new QuotaVdsGroup());
-                quota.getGlobalQuotaVdsGroup().setMemSizeMB(iter.getMemSizeMB());
-                quota.getGlobalQuotaVdsGroup().setVirtualCpu(iter.getVirtualCpu());
-                quota.getQuotaVdsGroups().clear();
+            QuotaCluster quotaCluster;
+            for (QuotaCluster iter : model.getQuotaClusters().getItems()) {
+                quota.setGlobalQuotaCluster(new QuotaCluster());
+                quota.getGlobalQuotaCluster().setMemSizeMB(iter.getMemSizeMB());
+                quota.getGlobalQuotaCluster().setVirtualCpu(iter.getVirtualCpu());
+                quota.getQuotaClusters().clear();
             }
         } else {
-            quota.setGlobalQuotaVdsGroup(null);
-            ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
-            QuotaVdsGroup quotaVdsGroup;
-            for (QuotaVdsGroup iter : model.getAllDataCenterClusters().getItems()) {
-                quotaVdsGroup = iter;
-                if (quotaVdsGroup.getMemSizeMB() != null) {
-                    quotaClusterList.add(quotaVdsGroup);
+            quota.setGlobalQuotaCluster(null);
+            ArrayList<QuotaCluster> quotaClusterList = new ArrayList<>();
+            QuotaCluster quotaCluster;
+            for (QuotaCluster iter : model.getAllDataCenterClusters().getItems()) {
+                quotaCluster = iter;
+                if (quotaCluster.getMemSizeMB() != null) {
+                    quotaClusterList.add(quotaCluster);
                 }
             }
-            quota.setQuotaVdsGroups(quotaClusterList);
+            quota.setQuotaClusters(quotaClusterList);
         }
 
         if (model.getGlobalStorageQuota().getEntity()) {
@@ -360,9 +360,9 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
     private boolean hasUnlimitedSpecificQuota() {
         QuotaModel model = (QuotaModel) getWindow();
         if (model.getSpecificClusterQuota().getEntity()) {
-            for (QuotaVdsGroup quotaVdsGroup : model.getAllDataCenterClusters().getItems()) {
-                if (QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())
-                        || QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
+            for (QuotaCluster quotaCluster : model.getAllDataCenterClusters().getItems()) {
+                if (QuotaCluster.UNLIMITED_MEM.equals(quotaCluster.getMemSizeMB())
+                        || QuotaCluster.UNLIMITED_VCPU.equals(quotaCluster.getVirtualCpu())) {
                     return true;
                 }
             }
@@ -383,8 +383,8 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         final QuotaModel qModel = new QuotaModel();
         qModel.getName().setEntity(outer_quota.getQuotaName());
 
-        qModel.getGraceCluster().setEntity(outer_quota.getGraceVdsGroupPercentage());
-        qModel.getThresholdCluster().setEntity(outer_quota.getThresholdVdsGroupPercentage());
+        qModel.getGraceCluster().setEntity(outer_quota.getGraceClusterPercentage());
+        qModel.getThresholdCluster().setEntity(outer_quota.getThresholdClusterPercentage());
         qModel.getGraceStorage().setEntity(outer_quota.getGraceStoragePercentage());
         qModel.getThresholdStorage().setEntity(outer_quota.getThresholdStoragePercentage());
 
@@ -423,13 +423,13 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             public void onSuccess(Object model, Object returnValue) {
                 final Quota quota = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 qModel.setEntity(quota);
-                if (quota.getGlobalQuotaVdsGroup() != null) {
-                    QuotaVdsGroup cluster =
-                            ((ArrayList<QuotaVdsGroup>) qModel.getQuotaClusters().getItems()).get(0);
-                    cluster.setMemSizeMB(quota.getGlobalQuotaVdsGroup().getMemSizeMB());
-                    cluster.setVirtualCpu(quota.getGlobalQuotaVdsGroup().getVirtualCpu());
-                    cluster.setMemSizeMBUsage(quota.getGlobalQuotaVdsGroup().getMemSizeMBUsage());
-                    cluster.setVirtualCpuUsage(quota.getGlobalQuotaVdsGroup().getVirtualCpuUsage());
+                if (quota.getGlobalQuotaCluster() != null) {
+                    QuotaCluster cluster =
+                            ((ArrayList<QuotaCluster>) qModel.getQuotaClusters().getItems()).get(0);
+                    cluster.setMemSizeMB(quota.getGlobalQuotaCluster().getMemSizeMB());
+                    cluster.setVirtualCpu(quota.getGlobalQuotaCluster().getVirtualCpu());
+                    cluster.setMemSizeMBUsage(quota.getGlobalQuotaCluster().getMemSizeMBUsage());
+                    cluster.setVirtualCpuUsage(quota.getGlobalQuotaCluster().getVirtualCpuUsage());
                     qModel.getGlobalClusterQuota().setEntity(true);
                 }
                 if (quota.getGlobalQuotaStorage() != null) {
@@ -451,43 +451,43 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
 
                             @Override
                             public void onSuccess(Object model, Object returnValue) {
-                                ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
+                                ArrayList<Cluster> clusterList = (ArrayList<Cluster>) returnValue;
                                 if (clusterList == null || clusterList.size() == 0) {
-                                    qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
-                                    if (quota.getGlobalQuotaVdsGroup() == null) {
+                                    qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaCluster>());
+                                    if (quota.getGlobalQuotaCluster() == null) {
                                         qModel.getSpecificClusterQuota().setEntity(true);
                                     }
                                     return;
                                 }
-                                ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<>();
-                                QuotaVdsGroup quotaVdsGroup;
-                                for (VDSGroup vdsGroup : clusterList) {
-                                    quotaVdsGroup = new QuotaVdsGroup();
-                                    quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
-                                    quotaVdsGroup.setVdsGroupName(vdsGroup.getName());
-                                    quotaVdsGroup.setQuotaId(quota.getId());
+                                ArrayList<QuotaCluster> quotaClusterList = new ArrayList<>();
+                                QuotaCluster quotaCluster;
+                                for (Cluster cluster : clusterList) {
+                                    quotaCluster = new QuotaCluster();
+                                    quotaCluster.setClusterId(cluster.getId());
+                                    quotaCluster.setClusterName(cluster.getName());
+                                    quotaCluster.setQuotaId(quota.getId());
                                     boolean containCluster = false;
-                                    for (QuotaVdsGroup iter : quota.getQuotaVdsGroups()) {
-                                        if (quotaVdsGroup.getVdsGroupId().equals(iter.getVdsGroupId())) {
-                                            quotaVdsGroup.setQuotaVdsGroupId(iter.getQuotaVdsGroupId());
-                                            quotaVdsGroup.setMemSizeMB(iter.getMemSizeMB());
-                                            quotaVdsGroup.setVirtualCpu(iter.getVirtualCpu());
-                                            quotaVdsGroup.setMemSizeMBUsage(iter.getMemSizeMBUsage());
-                                            quotaVdsGroup.setVirtualCpuUsage(iter.getVirtualCpuUsage());
+                                    for (QuotaCluster iter : quota.getQuotaClusters()) {
+                                        if (quotaCluster.getClusterId().equals(iter.getClusterId())) {
+                                            quotaCluster.setQuotaClusterId(iter.getQuotaClusterId());
+                                            quotaCluster.setMemSizeMB(iter.getMemSizeMB());
+                                            quotaCluster.setVirtualCpu(iter.getVirtualCpu());
+                                            quotaCluster.setMemSizeMBUsage(iter.getMemSizeMBUsage());
+                                            quotaCluster.setVirtualCpuUsage(iter.getVirtualCpuUsage());
                                             containCluster = true;
                                             break;
                                         }
                                     }
                                     if (!containCluster) {
-                                        quotaVdsGroup.setMemSizeMB(null);
-                                        quotaVdsGroup.setVirtualCpu(null);
-                                        quotaVdsGroup.setMemSizeMBUsage((long) 0);
-                                        quotaVdsGroup.setVirtualCpuUsage(0);
+                                        quotaCluster.setMemSizeMB(null);
+                                        quotaCluster.setVirtualCpu(null);
+                                        quotaCluster.setMemSizeMBUsage((long) 0);
+                                        quotaCluster.setVirtualCpuUsage(0);
                                     }
-                                    quotaClusterList.add(quotaVdsGroup);
+                                    quotaClusterList.add(quotaCluster);
                                 }
                                 qModel.getAllDataCenterClusters().setItems(quotaClusterList);
-                                if (quota.getGlobalQuotaVdsGroup() == null) {
+                                if (quota.getGlobalQuotaCluster() == null) {
                                     qModel.getSpecificClusterQuota().setEntity(true);
                                 }
                             }

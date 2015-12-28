@@ -57,7 +57,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         List<String> messages = getReturnValue().getValidationMessages();
         boolean valid =
                 fenceValidator.isHostExists(getVds(), messages)
-                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getVdsGroup(), messages)
+                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getCluster(), messages)
                         && fenceValidator.isStartupTimeoutPassed(messages)
                         && isQuietTimeFromLastActionPassed()
                         && fenceValidator.isProxyHostAvailable(getVds(), messages);
@@ -211,7 +211,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     @Override
     public Map<String, String> getJobMessageProperties() {
         Map<String, String> map = super.getJobMessageProperties();
-        map.put(VdcObjectType.VdsGroups.name(), getVdsGroupName());
+        map.put(VdcObjectType.Cluster.name(), getClusterName());
         return map;
     }
 }

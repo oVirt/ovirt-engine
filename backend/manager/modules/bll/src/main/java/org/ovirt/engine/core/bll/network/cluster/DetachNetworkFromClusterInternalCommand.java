@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ClusterCommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -21,8 +21,8 @@ import org.ovirt.engine.core.dao.VmDao;
 
 @InternalCommandAttribute
 @ValidateSupportsTransaction
-public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter>
-        extends VdsGroupCommandBase<T> {
+public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToClusterParameter>
+        extends ClusterCommandBase<T> {
 
     @Inject
     private VmDao vmDao;
@@ -77,7 +77,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
 
         public ValidationResult clusterNetworkNotUsedByTemplates() {
             List<VmTemplate> templatesUsingNetwork = new ArrayList<>();
-            for (VmTemplate template : getVmTemplateDao().getAllForVdsGroup(networkCluster.getClusterId())) {
+            for (VmTemplate template : getVmTemplateDao().getAllForCluster(networkCluster.getClusterId())) {
                 for (VmNetworkInterface nic : getVmNetworkInterfaceDao().getAllForTemplate(template.getId())) {
                     if (network.getName().equals(nic.getNetworkName())) {
                         templatesUsingNetwork.add(template);

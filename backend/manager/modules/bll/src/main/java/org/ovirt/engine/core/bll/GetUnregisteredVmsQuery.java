@@ -31,7 +31,7 @@ public class GetUnregisteredVmsQuery<P extends IdQueryParameters> extends GetUnr
                 VM vm = ovfHelper.readVmFromOvf(ovf.getOvfData());
 
                 // Setting the rest of the VM attributes which are not in the OVF.
-                vm.setVdsGroupCompatibilityVersion(ovf.getLowestCompVersion());
+                vm.setClusterCompatibilityVersion(ovf.getLowestCompVersion());
                 vm.setClusterArch(ovf.getArchitecture());
                 vmList.add(vm);
             } catch (OvfReaderException e) {

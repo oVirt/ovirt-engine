@@ -93,7 +93,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected void reestablishConnectionIfNeeded() {
         VDS host = getVds();
         if (host.getProtocol() == VdsProtocol.XML
-                && FeatureSupported.jsonProtocol(host.getVdsGroupCompatibilityVersion())
+                && FeatureSupported.jsonProtocol(host.getClusterCompatibilityVersion())
                 && host.getHostOs() != null) {
             VdsStatic hostStaticData = host.getStaticData();
             hostStaticData.setProtocol(VdsProtocol.STOMP);
@@ -175,7 +175,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            The VDS static.
      */
     protected void alertIfPowerManagementNotConfigured(VdsStatic vdsStatic) {
-        if (getVdsGroup() != null && !getVdsGroup().supportsVirtService()) {
+        if (getCluster() != null && !getCluster().supportsVirtService()) {
             return;
         }
 

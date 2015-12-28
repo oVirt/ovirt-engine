@@ -8,23 +8,23 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public class NetworkClusterDaoTest extends BaseDaoTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 4;
     private NetworkClusterDao dao;
-    private VDSGroup cluster;
+    private Cluster cluster;
     private Network network;
     private NetworkCluster newNetworkCluster;
     private Network networkNoCluster;
     private NetworkCluster existingNetworkCluster;
-    private VDSGroup freeCluster;
+    private Cluster freeCluster;
 
     @Override
     public void setUp() throws Exception {
@@ -32,10 +32,10 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getNetworkClusterDao();
 
-        VdsGroupDao vdsGroupDao = dbFacade.getVdsGroupDao();
+        ClusterDao clusterDao = dbFacade.getClusterDao();
 
-        cluster = vdsGroupDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
-        freeCluster = vdsGroupDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
+        cluster = clusterDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
+        freeCluster = clusterDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
 
         NetworkDao networkDao = dbFacade.getNetworkDao();
 

@@ -83,9 +83,9 @@ There are three parts to each Java method:
             public VDS mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VDS entity = new VDS();
                 entity.setvds_id(rs.getInt("vds_id"));
-                entity.setvds_group_id(rs.getInt("vds_group_id"));
-                entity.setvds_group_name(rs.getString("vds_group_name"));
-                entity.setvds_group_description(rs.getString("vds_group_description"));
+                entity.setcluster_id(rs.getInt("cluster_id"));
+                entity.setcluster_name(rs.getString("cluster_name"));
+                entity.setcluster_description(rs.getString("cluster_description"));
                 ...
                 return entity;
             }

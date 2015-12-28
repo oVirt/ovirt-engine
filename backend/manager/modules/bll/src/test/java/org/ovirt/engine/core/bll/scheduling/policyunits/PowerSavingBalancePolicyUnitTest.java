@@ -18,8 +18,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -48,7 +48,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_mem_load.csv", cache);
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
@@ -58,7 +58,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
 
         // disable power management evaluation
-        doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
+        doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
         Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
@@ -73,7 +73,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_cpu_load.csv", cache);
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
@@ -83,7 +83,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
 
         // disable power management evaluation
-        doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
+        doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
         Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assertNotNull(result);
@@ -98,7 +98,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_cpumem_load.csv", cache);
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
@@ -108,7 +108,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
 
         // disable power management evaluation
-        doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
+        doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
         Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
@@ -120,7 +120,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_medium_load.csv", cache);
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
@@ -130,7 +130,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
 
         // disable power management evaluation
-        doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
+        doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
         Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;
@@ -142,7 +142,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_no_load.csv", cache);
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
@@ -152,7 +152,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         PowerSavingBalancePolicyUnit unit = mockUnit(PowerSavingBalancePolicyUnit.class, cluster, hosts, vms);
 
         // disable power management evaluation
-        doReturn(null).when(unit).evaluatePowerManagementSituation(any(VDSGroup.class), anyList(), anyList(), anyList(), anyMap());
+        doReturn(null).when(unit).evaluatePowerManagementSituation(any(Cluster.class), anyList(), anyList(), anyList(), anyMap());
 
         Pair<List<Guid>, Guid> result = unit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
         assert result == null;

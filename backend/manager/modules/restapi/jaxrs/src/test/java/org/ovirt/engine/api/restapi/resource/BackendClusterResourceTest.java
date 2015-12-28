@@ -10,18 +10,17 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterResourceTest
-        extends AbstractBackendSubResourceTest<Cluster, VDSGroup, BackendClusterResource<BackendClustersResource>> {
+        extends AbstractBackendSubResourceTest<org.ovirt.engine.api.model.Cluster, Cluster, BackendClusterResource<BackendClustersResource>> {
 
     private static final Guid MANAGEMENT_NETWORK_ID = Guid.newGuid();
 
@@ -67,7 +66,7 @@ public class BackendClusterResourceTest
         setUpManagementNetworkExpectation();
         control.replay();
 
-        final Cluster cluster = resource.get();
+        final org.ovirt.engine.api.model.Cluster cluster = resource.get();
         verifyModel(cluster, 0);
 
         verifyManagementNetwork(cluster);
@@ -91,21 +90,21 @@ public class BackendClusterResourceTest
         setUpGetEntityExpectations(2);
         setUpManagementNetworkExpectation();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVdsGroup,
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateCluster,
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            true,
                                            true));
 
-        final Cluster updatedCluster = resource.update(getModel(0));
+        final org.ovirt.engine.api.model.Cluster updatedCluster = resource.update(getModel(0));
 
         verifyModel(updatedCluster, 0);
 
         verifyManagementNetwork(updatedCluster);
     }
 
-    private void verifyManagementNetwork(Cluster updatedCluster) {
+    private void verifyManagementNetwork(org.ovirt.engine.api.model.Cluster updatedCluster) {
         assertEquals(String.format("%s/%s/%s/%s/%s",
                         BASE_PATH,
                         "clusters",
@@ -128,7 +127,7 @@ public class BackendClusterResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVdsGroup,
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateCluster,
                                            ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
@@ -148,7 +147,7 @@ public class BackendClusterResourceTest
         setUpGetEntityExpectations(1);
         control.replay();
 
-        Cluster model = getModel(1);
+        org.ovirt.engine.api.model.Cluster model = getModel(1);
         model.setId(GUIDS[1].toString());
         try {
             resource.update(model);
@@ -163,9 +162,9 @@ public class BackendClusterResourceTest
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVdsGroup,
-                VdsGroupParametersBase.class,
-                new String[]{"VdsGroupId"},
+                VdcActionType.RemoveCluster,
+                ClusterParametersBase.class,
+                new String[]{"ClusterId"},
                 new Object[]{GUIDS[0]},
                 true,
                 true
@@ -203,9 +202,9 @@ public class BackendClusterResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVdsGroup,
-                VdsGroupParametersBase.class,
-                new String[] { "VdsGroupId" },
+                VdcActionType.RemoveCluster,
+                ClusterParametersBase.class,
+                new String[] { "ClusterId" },
                 new Object[] { GUIDS[0] },
                 valid,
                 success
@@ -226,7 +225,7 @@ public class BackendClusterResourceTest
 
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
+            setUpGetEntityExpectations(VdcQueryType.GetClusterById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -255,7 +254,7 @@ public class BackendClusterResourceTest
     }
 
     @Override
-    protected VDSGroup getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VDSGroup.class), index);
+    protected Cluster getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(Cluster.class), index);
     }
 }

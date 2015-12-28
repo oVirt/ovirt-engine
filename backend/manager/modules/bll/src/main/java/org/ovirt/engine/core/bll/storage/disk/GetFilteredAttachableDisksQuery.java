@@ -13,7 +13,7 @@ public class GetFilteredAttachableDisksQuery<P extends GetFilteredAttachableDisk
 
     @Override
     protected List<Disk> filterDisks(List<Disk> diskList) {
-        return doFilter(diskList, getParameters().getOs(), getParameters().getVdsGroupCompatibilityVersion());
+        return doFilter(diskList, getParameters().getOs(), getParameters().getClusterCompatibilityVersion());
     }
 
 }

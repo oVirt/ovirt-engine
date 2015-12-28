@@ -238,7 +238,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String EventNotificationEntity___Host();
 
-    String EventNotificationEntity___VdsGroup();
+    String EventNotificationEntity___Cluster();
 
     String EventNotificationEntity___VirtHost();
 
@@ -563,7 +563,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___MigrateVmToServer();
 
-    String VdcActionType___UpdateDisplayToVdsGroup();
+    String VdcActionType___UpdateDisplayToCluster();
 
     String VdcActionType___ChangeDisk();
 
@@ -591,7 +591,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___AddVds();
 
-    String VdcActionType___AddVdsGroup();
+    String VdcActionType___AddCluster();
 
     String VdcActionType___AddVm();
 
@@ -609,7 +609,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___AttachActionToRole();
 
-    String VdcActionType___AttachNetworkToVdsGroup();
+    String VdcActionType___AttachNetworkToCluster();
 
     String VdcActionType___AttachNetworkToVdsInterface();
 
@@ -631,7 +631,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___DetachNetworkFromVdsInterface();
 
-    String VdcActionType___DetachNetworkToVdsGroup();
+    String VdcActionType___DetachNetworkToCluster();
 
     String VdcActionType___DetachUserFromVmFromPool();
 
@@ -669,7 +669,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___RemoveVds();
 
-    String VdcActionType___RemoveVdsGroup();
+    String VdcActionType___RemoveCluster();
 
     String VdcActionType___RemoveVm();
 
@@ -709,7 +709,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___UpdateVds();
 
-    String VdcActionType___UpdateVdsGroup();
+    String VdcActionType___UpdateCluster();
 
     String VdcActionType___UpdateVm();
 
@@ -910,7 +910,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcObjectType___VDS();
 
-    String VdcObjectType___VdsGroups();
+    String VdcObjectType___Clusters();
 
     String VdcObjectType___Network();
 

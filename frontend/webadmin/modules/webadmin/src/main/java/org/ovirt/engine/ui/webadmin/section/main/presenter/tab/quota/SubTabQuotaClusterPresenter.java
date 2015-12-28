@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -35,14 +35,14 @@ public class SubTabQuotaClusterPresenter
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
     static TabData getTabData(
-            SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider) {
+            SearchableDetailModelProvider<QuotaCluster, QuotaListModel, QuotaClusterListModel> modelProvider) {
         return new ModelBoundTabData(constants.quotaClusterSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabQuotaClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider) {
+            SearchableDetailModelProvider<QuotaCluster, QuotaListModel, QuotaClusterListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }

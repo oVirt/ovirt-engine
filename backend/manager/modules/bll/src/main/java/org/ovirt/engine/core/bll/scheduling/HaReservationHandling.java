@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -40,8 +40,8 @@ public class HaReservationHandling {
      * @return true: Cluster is HaReservation safe. false: a failover in one of the Clusters Hosts could negatively
      *         impacting performance.
      */
-    public boolean checkHaReservationStatusForCluster(VDSGroup cluster, List<VDS> failedHosts) {
-        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+    public boolean checkHaReservationStatusForCluster(Cluster cluster, List<VDS> failedHosts) {
+        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
 
         // No hosts, return true
         if (hosts == null || hosts.isEmpty()) {
@@ -80,7 +80,7 @@ public class HaReservationHandling {
         return failedHosts.isEmpty();
     }
 
-    private boolean findReplacementForHost(VDSGroup cluster, VDS host,
+    private boolean findReplacementForHost(Cluster cluster, VDS host,
             List<VM> vmList,
             List<Pair<Guid, Pair<Integer, Integer>>> hostsUnutilizedResources) {
 
@@ -198,7 +198,7 @@ public class HaReservationHandling {
 
     public static Map<Guid, List<VM>> mapHaVmToHostByCluster(Guid clusterId) {
 
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForVdsGroup(clusterId);
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForCluster(clusterId);
         if (vms == null || vms.isEmpty()) {
             log.debug("No VMs available for this cluster with id '{}'", clusterId);
             // return empty map

@@ -155,13 +155,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS();
 
     @DefaultStringValue("Cannot remove default Host Cluster.")
-    String VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP();
+    String VDS_CANNOT_REMOVE_DEFAULT_CLUSTER();
 
     @DefaultStringValue("Cannot ${action} ${type}. One or more VMs are still running on this Host. ")
     String VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cluster contains one or more Hosts")
-    String VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED();
+    String VDS_CANNOT_REMOVE_CLUSTER_VDS_DETECTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host is operational. Please switch Host to Maintenance mode first.")
     String VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL();
@@ -269,13 +269,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String TEMPLATE_IMAGE_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. One or more VMs are still assigned to the Cluster")
-    String VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED();
+    String VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. One or more Template(s) are still associated with the ${type}")
-    String VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED();
+    String VMT_CANNOT_REMOVE_CLUSTER_VMTS_DETECTED();
 
     @DefaultStringValue("Cannot ${action} ${type}.One or more VM-Pools are still associated with it")
-    String VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS();
+    String CLUSTER_CANNOT_REMOVE_HAS_VM_POOLS();
 
     @DefaultStringValue("Cannot attach VM to VM-Pool. VM-Pool is already attached to a User.")
     String VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL();
@@ -1265,40 +1265,40 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_CLUSTER_IS_NOT_VALID();
 
     @DefaultStringValue("Cannot change Cluster CPU type when there are Hosts attached to this Cluster.")
-    String VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL();
+    String CLUSTER_CANNOT_UPDATE_CPU_ILLEGAL();
 
     @DefaultStringValue("Cannot change Cluster CPU architecture when there are Hosts or VMs attached to this Cluster.")
-    String VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL();
+    String CLUSTER_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL();
 
     @DefaultStringValue("Cannot change Cluster CPU to higher CPU type when there are active Hosts with lower CPU type.\n-Please move Hosts with lower CPU to maintenance first.")
-    String VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS();
+    String CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS();
 
     @DefaultStringValue("Cannot change Cluster Compatibility Version to higher version when there are active Hosts with lower version.\n-Please move Hosts with lower version to maintenance first.")
-    String VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS();
+    String CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS();
 
     @DefaultStringValue("Cannot change Cluster Compatibility Version to higher version when there are active Hosts whose emulated machine flags are not supported at the requested version.")
-    String VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE();
+    String CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE();
 
     @DefaultStringValue("Cannot enable new Cluster feature when there are active hosts which don't support the selected feature.\n-Please move hosts with lower version to maintenance first.")
-    String VDS_GROUP_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS();
+    String CLUSTER_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS();
 
     @DefaultStringValue("Cannot change Cluster.Trying to connect Cluster to Data Center with Hosts that are up.")
-    String VDS_GROUP_CANNOT_UPDATE_VDS_UP();
+    String CLUSTER_CANNOT_UPDATE_VDS_UP();
 
     @DefaultStringValue("Cannot add Cluster with Compatibility Version that is lower than the Data Center Compatibility Version.\n-Please upgrade your Cluster to a later Compatibility version first.")
-    String VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL();
+    String CLUSTER_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL();
 
     @DefaultStringValue("Cannot ${action} Cluster. Cluster name is already in use.")
-    String VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE();
+    String CLUSTER_CANNOT_DO_ACTION_NAME_IN_USE();
 
     @DefaultStringValue("Attestation server should be configured correctly.")
-    String VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED();
+    String CLUSTER_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED();
 
     @DefaultStringValue("Cannot Cannot add Cluster. CPU type must be specified.")
-    String VDS_GROUP_CPU_TYPE_CANNOT_BE_NULL();
+    String CLUSTER_CPU_TYPE_CANNOT_BE_NULL();
 
     @DefaultStringValue("Cannot update Cluster. Clusters hosts must be down in order to perform this action.")
-    String VDS_GROUP_HOSTS_MUST_BE_DOWN();
+    String CLUSTER_HOSTS_MUST_BE_DOWN();
 
     @DefaultStringValue("Cannot ${action} ${type}. The ${type} name is already in use, please choose a unique name and try again.")
     String ACTION_TYPE_FAILED_NAME_ALREADY_USED();
@@ -1625,7 +1625,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String STORAGE_DOMAIN_DOES_NOT_EXIST();
 
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
-    String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
+    String CLUSTER_CANNOT_CHANGE_STORAGE_POOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Another Setup Networks process in progress on the host. Please try later after refreshing the host network capabilities.")
     String ACTION_TYPE_FAILED_SETUP_NETWORKS_IN_PROGRESS();
@@ -2223,13 +2223,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_CANNOT_REMOVE_LOCAL_STORAGE_ON_NON_LOCAL_HOST();
 
     @DefaultStringValue("Cannot add more than one Cluster to \"Local Storage\" Data Center")
-    String VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE();
+    String CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE();
 
     @DefaultStringValue("Selection algorithm must be set to \"None\" on \"Local Storage\" Data Center")
-    String VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE();
+    String CLUSTER_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE();
 
     @DefaultStringValue("\"Local Storage\" data domain cannot be detached from Data Center")
-    String VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE();
+    String CLUSTER_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE();
 
     @DefaultStringValue("\"File based storage\" is not supported with data center compatibility version.")
     String DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
@@ -2277,16 +2277,16 @@ public interface AppErrors extends ConstantsWithLookup {
     String PERMISSION_ADD_FAILED_VM_IN_POOL();
 
     @DefaultStringValue("CPU utilization threshold must be between 0 and 100.")
-    String VDS_GROUP_CPU_UTILIZATION_MUST_BE_IN_VALID_RANGE();
+    String CLUSTER_CPU_UTILIZATION_MUST_BE_IN_VALID_RANGE();
 
     @DefaultStringValue("The lower CPU utilization threshold must be lower than the defined upper threshold.")
-    String VDS_GROUP_CPU_LOW_UTILIZATION_PERCENTAGE_MUST_BE_LOWER_THAN_HIGH_PERCENTAGE();
+    String CLUSTER_CPU_LOW_UTILIZATION_PERCENTAGE_MUST_BE_LOWER_THAN_HIGH_PERCENTAGE();
 
     @DefaultStringValue("High CPU utilization threshold must be defined when using evenly distributed policy.")
-    String VDS_GROUP_CPU_HIGH_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_EVENLY_DISTRIBUTED();
+    String CLUSTER_CPU_HIGH_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_EVENLY_DISTRIBUTED();
 
     @DefaultStringValue("Both low and high CPU utilization thresholds must be defined when using power saving policy.")
-    String VDS_GROUP_BOTH_LOW_AND_HIGH_CPU_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_POWER_SAVING();
+    String CLUSTER_BOTH_LOW_AND_HIGH_CPU_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_POWER_SAVING();
 
     @DefaultStringValue("The default gateway should be set only on the Management Network")
     String NETWORK_ATTACH_ILLEGAL_GATEWAY();
@@ -2335,16 +2335,16 @@ public interface AppErrors extends ConstantsWithLookup {
     String VALIDATION_ROLES_NAME_MAX();
 
     @DefaultStringValue("Cluster name is required")
-    String VALIDATION_VDS_GROUP_NAME_NOT_NULL();
+    String VALIDATION_CLUSTER_NAME_NOT_NULL();
 
     @DefaultStringValue("Cluster name must not exceed 40 characters")
-    String VALIDATION_VDS_GROUP_NAME_MAX();
+    String VALIDATION_CLUSTER_NAME_MAX();
 
     @DefaultStringValue("Cluster migrate on error option is required")
-    String VALIDATION_VDS_GROUP_MIGRATE_ON_ERROR_NOT_NULL();
+    String VALIDATION_CLUSTER_MIGRATE_ON_ERROR_NOT_NULL();
 
     @DefaultStringValue("SPICE proxy address must be in form [protocol://]hostname or ip[:port]")
-    String VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP();
+    String VALIDATION_CLUSTER_SPICE_PROXY_HOSTNAME_OR_IP();
 
     @DefaultStringValue("Data Center ID is required")
     String VALIDATION_STORAGE_POOL_ID_NOT_NULL();
@@ -2395,7 +2395,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VALIDATION_ROLES_NAME_INVALID();
 
     @DefaultStringValue("Cluster name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
-    String VALIDATION_VDS_GROUP_NAME_INVALID();
+    String VALIDATION_CLUSTER_NAME_INVALID();
 
     @DefaultStringValue("Storage Domain name must be formed of 'a-z', 'A-Z', '0-9', '_' or '-' characters")
     String VALIDATION_STORAGE_DOMAIN_NAME_INVALID();
@@ -2485,10 +2485,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD();
 
     @DefaultStringValue("Cannot update Cluster and change CPU Cluster level if there are suspended VMs in the Cluster")
-    String VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS();
+    String CLUSTER_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS();
 
     @DefaultStringValue("Cannot update Cluster and change CPU Cluster name if there are hosts or virtual machines in the Cluster. This CPU name is incompatible with all other available CPUs")
-    String VDS_GROUP_CPU_IS_NOT_UPDATABLE();
+    String CLUSTER_CPU_IS_NOT_UPDATABLE();
 
     @DefaultStringValue("Authentication failed. The user is either locked or disabled")
     String USER_FAILED_TO_AUTHENTICATE_ACCOUNT_IS_LOCKED_OR_DISABLED();
@@ -2600,7 +2600,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Quota has insufficient cluster resources.")
-    String ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED();
+    String ACTION_TYPE_FAILED_QUOTA_CLUSTER_LIMIT_EXCEEDED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The user is not a consumer of the Quota assigned to the resource.")
     String USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA();
@@ -2786,7 +2786,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String MOVE_VM_CLUSTER_MISSING_NETWORK();
 
     @DefaultStringValue("Default Cluster cannot be moved to the Data Center that has local Storage.")
-    String ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS();
+    String ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS();
 
     @DefaultStringValue("Data Center containing the default Cluster does not support local Storage.")
     String DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS();
@@ -3053,10 +3053,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. No up server found in ${clusterName}.")
     String ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND();
 
-    @DefaultStringValue("Cannot ${action} ${type}. A task is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
+    @DefaultStringValue("Cannot ${action} ${type}. A task is in progress on the volume ${volumeName} in cluster ${cluster}.")
     String ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. A ${asyncTask} operation is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
+    @DefaultStringValue("Cannot ${action} ${type}. A ${asyncTask} operation is in progress on the volume ${volumeName} in cluster ${cluster}.")
     String ACTION_TYPE_FAILED_VOLUME_ASYNC_OPERATION_IN_PROGRESS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The image content could not be detected. Please try to re-import the image.")
@@ -3068,13 +3068,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Either the image is missing, or its format is corrupted or unrecognizable.")
     String ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is not running on the volume ${volumeName} in cluster ${vdsGroup}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is not running on the volume ${volumeName} in cluster ${cluster}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is running on the volume ${volumeName} in cluster ${vdsGroup}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is running on the volume ${volumeName} in cluster ${cluster}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Remove brick operation is running on the volume ${volumeName} in cluster ${vdsGroup}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Remove brick operation is running on the volume ${volumeName} in cluster ${cluster}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} already exists.")
@@ -3105,7 +3105,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_IMPORT_UNREGISTERED_NOT_COLLAPSED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Enabling both Virt and Gluster services is not allowed.")
-    String VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();
+    String CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();
 
     @DefaultStringValue("Console connection denied. Another user has already accessed the console of this VM. The VM should either be rebooted to allow another user to access it, or changed by an admin to not enforce a reboot between users accessing its console.")
     String USER_CANNOT_FORCE_RECONNECT_TO_VM();

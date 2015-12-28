@@ -45,8 +45,8 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
 
     @Override
     protected boolean validate() {
-        if (!getGlusterUtil().isGlusterGeoReplicationSupported(getVdsGroup().getCompatibilityVersion(),
-                getVdsGroup().getId())) {
+        if (!getGlusterUtil().isGlusterGeoReplicationSupported(getCluster().getCompatibilityVersion(),
+                getCluster().getId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED);
         }
         slaveHost = getSlaveHost();
@@ -82,7 +82,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     }
 
     protected GlusterVolumeEntity getSlaveVolume() {
-        return getGlusterVolumeDao().getByName(slaveHost.getVdsGroupId(),
+        return getGlusterVolumeDao().getByName(slaveHost.getClusterId(),
                 getParameters().getSlaveVolumeName());
     }
 
@@ -124,7 +124,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         if (!rootSession) {
             VdcReturnValueBase completeMountBrokerSetupOnSlaveInternalAction =
                     getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                            new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getVdsGroupId(),
+                            new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getClusterId(),
                                     new HashSet<>(Collections.singletonList(getParameters().getSlaveHostId())),
                                     getParameters().getSlaveVolumeName(),
                                     getParameters().getUserName(),
@@ -136,7 +136,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
                 if (!remoteServerIds.isEmpty()) {
                     VdcReturnValueBase mountBrokerPartialSetupInternalAction =
                             getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
-                                    new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getVdsGroupId(),
+                                    new SetUpMountBrokerParameters(getVdsDao().get(slaveHostId).getClusterId(),
                                             remoteServerIds,
                                             getParameters().getSlaveVolumeName(),
                                             getParameters().getUserName()));
@@ -153,7 +153,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             remoteServerIds.add(slaveHostId);
             VdcReturnValueBase setUpPasswordLessSSHinternalAction =
                     runInternalAction(VdcActionType.SetUpPasswordLessSSHInternal,
-                            new SetUpPasswordLessSSHParameters(upServer.getVdsGroupId(),
+                            new SetUpPasswordLessSSHParameters(upServer.getClusterId(),
                                     remoteServerIds,
                                     getParameters().getUserName()));
             succeeded = evaluateReturnValue(errorType, setUpPasswordLessSSHinternalAction);

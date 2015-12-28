@@ -34,9 +34,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -78,7 +78,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     public AddVdsCommand(T parameters) {
         super(parameters);
-        setVdsGroupId(parameters.getvds().getVdsGroupId());
+        setClusterId(parameters.getvds().getClusterId());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         // set vds spm id
-        if (getVdsGroup().getStoragePoolId() != null) {
+        if (getCluster().getStoragePoolId() != null) {
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
@@ -192,7 +192,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     protected boolean isGlusterSupportEnabled() {
-        return getVdsGroup() != null && getVdsGroup().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
+        return getCluster() != null && getCluster().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
     }
 
     /**
@@ -249,7 +249,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
         VdsStatic vdsStatic = getParameters().getVdsStaticData();
         if (vdsStatic.getProtocol() == null) {
-            VDSGroup cluster = getVdsGroup();
+            Cluster cluster = getCluster();
             if (cluster != null && FeatureSupported.jsonProtocol(cluster.getCompatibilityVersion())) {
                 vdsStatic.setProtocol(VdsProtocol.STOMP);
             } else {
@@ -287,8 +287,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         getCompensationContext().snapshotNewEntity(vdsStatistics);
     }
 
-    protected boolean validateVdsGroup() {
-        if (getVdsGroup() == null) {
+    protected boolean validateCluster() {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
         return true;
@@ -297,10 +297,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Override
     protected boolean validate() {
         T params = getParameters();
-        setVdsGroupId(params.getVdsStaticData().getVdsGroupId());
+        setClusterId(params.getVdsStaticData().getClusterId());
         params.setVdsForUniqueId(null);
         // Check if this is a valid cluster
-        boolean returnValue = validateVdsGroup();
+        boolean returnValue = validateCluster();
         if (returnValue) {
             HostValidator validator = getHostValidator();
             returnValue = validate(validator.nameNotEmpty())
@@ -319,13 +319,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     && validate(validator.passwordNotEmpty(params.isPending(),
                             params.getAuthMethod(),
                             params.getPassword()))
-                    && validate(validator.protocolIsNotXmlrpc(getVdsGroup()));
+                    && validate(validator.protocolIsNotXmlrpc(getCluster()));
         }
 
         if (!(returnValue
                 && isPowerManagementLegal(params.getVdsStaticData().isPmEnabled(),
                         params.getFenceAgents(),
-                        getVdsGroup().getCompatibilityVersion().toString())
+                        getCluster().getCompatibilityVersion().toString())
                 && canConnect(params.getvds()))) {
             return false;
         }
@@ -339,7 +339,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (isGlusterSupportEnabled() && clusterHasNonInitializingServers()) {
             // allow simultaneous installation of hosts, but if a host has completed install, only
             // allow addition of another host if it can be peer probed to cluster.
-            VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
+            VDS upServer = getClusterUtils().getUpServer(getClusterId());
             if (upServer == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }
@@ -353,11 +353,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasServers() {
-        return getClusterUtils().hasServers(getVdsGroupId());
+        return getClusterUtils().hasServers(getClusterId());
     }
 
     private boolean clusterHasNonInitializingServers() {
-        for (VDS vds : getVdsDao().getAllForVdsGroup(getVdsGroupId())) {
+        for (VDS vds : getVdsDao().getAllForCluster(getClusterId())) {
             if (vds.getStatus() != VDSStatus.Installing &&
                     vds.getStatus() != VDSStatus.InstallingOS &&
                     vds.getStatus() != VDSStatus.PendingApproval &&
@@ -434,7 +434,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
                 }
 
-                return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
+                return isValidGlusterPeer(sshclient, vds.getClusterId());
             } catch (AuthenticationException e) {
                 log.error(
                         "Failed to authenticate session with host '{}': {}",
@@ -518,7 +518,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroupId(), VdcObjectType.VdsGroups,
+        return Collections.singletonList(new PermissionSubject(getClusterId(), VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
     }
 

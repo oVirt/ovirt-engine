@@ -10,8 +10,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -471,7 +471,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
                 || type == SystemTreeItemType.System);
 
         if (type == SystemTreeItemType.Cluster_Gluster && entity != null) {
-            VDSGroup cluster = (VDSGroup) entity;
+            Cluster cluster = (Cluster) entity;
             if (!cluster.supportsVirtService()) {
                 getVmList().setIsAvailable(false);
                 getTemplateList().setIsAvailable(false);

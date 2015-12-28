@@ -181,7 +181,7 @@ public class SpiceConsoleModel extends ConsoleModel {
 
     @Override
     public boolean canBeSelected() {
-        boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.getInstance().hasSpiceSupport(getEntity().getOs(), getEntity().getVdsGroupCompatibilityVersion()));
+        boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.getInstance().hasSpiceSupport(getEntity().getOs(), getEntity().getClusterCompatibilityVersion()));
         return getEntity().getGraphicsInfos().containsKey(GraphicsType.SPICE) && hasVmSpiceSupport;
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -16,8 +16,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabClusterPresenter <D extends HasEntity<?>,
-    V extends AbstractSubTabPresenter.ViewDef<VDSGroup>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <VDSGroup, ClusterListModel<Void>, D, V, P>{
+    V extends AbstractSubTabPresenter.ViewDef<Cluster>, P extends TabContentProxyPlace<?>>
+        extends AbstractSubTabPresenter <Cluster, ClusterListModel<Void>, D, V, P>{
 
     public AbstractSubTabClusterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<ClusterListModel<Void>, D> modelProvider, ClusterMainTabSelectedItems selectedItems,

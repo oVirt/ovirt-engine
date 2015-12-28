@@ -23,13 +23,13 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -328,9 +328,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected boolean checkAllClustersLevel() {
         boolean returnValue = true;
-        List<VDSGroup> clusters = getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
+        List<Cluster> clusters = getClusterDao().getAllForStoragePool(getStoragePool().getId());
         List<String> lowLevelClusters = new ArrayList<>();
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0) {
                 lowLevelClusters.add(cluster.getName());
             }

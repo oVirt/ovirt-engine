@@ -85,12 +85,12 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
         final VDS vds1 = new VDS();
         vds1.setId(Guid.newGuid());
         vds1.setVdsName("gfs1");
-        vds1.setVdsGroupId(Guid.newGuid());
+        vds1.setClusterId(Guid.newGuid());
         vds1.setStatus(VDSStatus.Up);
         final VDS vds2 = new VDS();
         vds2.setId(Guid.newGuid());
         vds2.setVdsName("gfs2");
-        vds2.setVdsGroupId(Guid.newGuid());
+        vds2.setClusterId(Guid.newGuid());
         vds2.setStatus(VDSStatus.Up);
 
         return new ArrayList<VDS>() {

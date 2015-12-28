@@ -128,7 +128,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
                 NewVmInterfaceModel.createInstance(getEntity().getStaticData(),
                         getEntity().getStatus(),
                         getEntity().getStoragePoolId(),
-                        getEntity().getVdsGroupCompatibilityVersion(),
+                        getEntity().getClusterCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         this);
         setWindow(model);
@@ -141,7 +141,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
 
         VmInterfaceModel model =
                 EditVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity(),
-                        getEntity().getVdsGroupCompatibilityVersion(),
+                        getEntity().getClusterCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         getSelectedItem(), this);
         setWindow(model);

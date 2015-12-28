@@ -29,7 +29,7 @@ public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentComman
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroupId(), VdcObjectType.VDS,
+        return Collections.singletonList(new PermissionSubject(getClusterId(), VdcObjectType.VDS,
                 getActionType().getActionGroup()));
     }
 

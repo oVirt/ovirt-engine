@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -69,8 +69,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
-                                            List<VDSGroup> clusterList = (List<VDSGroup>) returnValue;
-                                            List<VDSGroup> filteredClusterList = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
+                                            List<Cluster> clusterList = (List<Cluster>) returnValue;
+                                            List<Cluster> filteredClusterList = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
                                             model.setDataCentersAndClusters(model,
                                                     dataCenters,
                                                     filteredClusterList, null);
@@ -233,7 +233,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     public void updateMinAllocatedMemory() {
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
-        VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
+        Cluster cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
         if (cluster == null) {
             return;
         }

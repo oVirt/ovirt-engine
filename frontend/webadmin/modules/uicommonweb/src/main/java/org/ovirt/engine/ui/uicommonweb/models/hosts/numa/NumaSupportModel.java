@@ -104,7 +104,7 @@ public class NumaSupportModel extends Model {
                         NumaSupportModel.this.modelReady();
                     }
 
-                }), NumaSupportModel.this.hosts.getSelectedItem().getVdsGroupId());
+                }), NumaSupportModel.this.hosts.getSelectedItem().getClusterId());
             }
 
         }), hosts.getSelectedItem().getId());

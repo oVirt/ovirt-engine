@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class FindVmAndDestinations {
     private static final Logger log = LoggerFactory.getLogger(FindVmAndDestinations.class);
 
-    private VDSGroup cluster;
+    private Cluster cluster;
     private int highCpuUtilization;
     private long requiredMemory;
 
@@ -45,7 +45,7 @@ public class FindVmAndDestinations {
         }
     }
 
-    public FindVmAndDestinations(VDSGroup cluster, int highCpuUtilization, long requiredMemory) {
+    public FindVmAndDestinations(Cluster cluster, int highCpuUtilization, long requiredMemory) {
         this.cluster = cluster;
         this.highCpuUtilization = highCpuUtilization;
         this.requiredMemory = requiredMemory;
@@ -122,7 +122,7 @@ public class FindVmAndDestinations {
      * @param minimalFreeMemory Memory over-utilization threshold in MB
      * @return list of hosts that satisfy the balancing contraints
      */
-    private List<VDS> getValidHosts(Collection<VDS> candidates, VDSGroup cluster, VM vm, int highCpuUtilization, long minimalFreeMemory) {
+    private List<VDS> getValidHosts(Collection<VDS> candidates, Cluster cluster, VM vm, int highCpuUtilization, long minimalFreeMemory) {
         List<VDS> result = new ArrayList<>();
 
         for (VDS vds: candidates) {

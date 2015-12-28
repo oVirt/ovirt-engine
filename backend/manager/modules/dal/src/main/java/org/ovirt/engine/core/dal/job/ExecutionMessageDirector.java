@@ -86,7 +86,7 @@ public class ExecutionMessageDirector {
      * match by name. Possible entries of (key,value) from the resource bundle:
      *
      * <pre>
-     * job.ChangeVMCluster=Change VM ${VM} Cluster to ${VdsGroups}
+     * job.ChangeVMCluster=Change VM ${VM} Cluster to ${Cluster}
      * step.VALIDATING=Validating
      * </pre>
      *

@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -68,8 +68,8 @@ public class ClusterGuideModel extends GuideModel {
     private final String noAvailableActions = ConstantsManager.getInstance().getConstants().guidePopupNoActionsLabel();
 
     @Override
-    public VDSGroup getEntity() {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
+    public Cluster getEntity() {
+        return (Cluster) ((super.getEntity() instanceof Cluster) ? super.getEntity() : null);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class ClusterGuideModel extends GuideModel {
 
         ArrayList<VDS> availableHosts = new ArrayList<>();
         for (VDS vds : allHosts) {
-            if (!getEntity().getId().equals(vds.getVdsGroupId())
+            if (!getEntity().getId().equals(vds.getClusterId())
                     && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet() != null
                     && vds.getSupportedClusterVersionsSet().contains(getEntity().getCompatibilityVersion())) {
@@ -283,9 +283,9 @@ public class ClusterGuideModel extends GuideModel {
                     ClusterGuideModel model = (ClusterGuideModel) target;
                     List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
                     @SuppressWarnings("unchecked")
-                    List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                    List<Cluster> clusters = (List<Cluster>) returnValue;
                     for (StoragePool dataCenter: localDataCenters) {
-                        for (VDSGroup cluster: clusters) {
+                        for (Cluster cluster: clusters) {
                             if (cluster.getStoragePoolId() != null &&
                                     cluster.getStoragePoolId().equals(dataCenter.getId())) {
                                 localDataCenterWithCluster.add(dataCenter);
@@ -336,7 +336,7 @@ public class ClusterGuideModel extends GuideModel {
     }
 
     public void selectHost() {
-        final ArrayList<VDSGroup> clusters = new ArrayList<>();
+        final ArrayList<Cluster> clusters = new ArrayList<>();
         clusters.add(getEntity());
 
         final MoveHost model = new MoveHost();
@@ -388,13 +388,13 @@ public class ClusterGuideModel extends GuideModel {
             }
         }
 
-        VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
+        Cluster cluster = (Cluster) model.getCluster().getSelectedItem();
 
         final List<VdcActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
-            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId())) {
+            if (host.getClusterId() != null && !host.getClusterId().equals(cluster.getId())) {
                 parameterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
             }
         }
@@ -483,9 +483,9 @@ public class ClusterGuideModel extends GuideModel {
                 public void onSuccess(Object target, Object returnValue) {
                     List<StoragePool> localDataCenterWithCluster = new ArrayList<>();
                     @SuppressWarnings("unchecked")
-                    List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                    List<Cluster> clusters = (List<Cluster>) returnValue;
                     for (StoragePool dataCenter: localDataCenters) {
-                        for (VDSGroup cluster: clusters) {
+                        for (Cluster cluster: clusters) {
                             if (cluster.getStoragePoolId() != null &&
                                     cluster.getStoragePoolId().equals(dataCenter.getId())) {
                                 localDataCenterWithCluster.add(dataCenter);
@@ -550,9 +550,9 @@ public class ClusterGuideModel extends GuideModel {
                  }
              }));
 
-        ListModel<VDSGroup> clusterModel = model.getCluster();
+        ListModel<Cluster> clusterModel = model.getCluster();
         if (clusterModel.getSelectedItem() != null) {
-            VDSGroup cluster = clusterModel.getSelectedItem();
+            Cluster cluster = clusterModel.getSelectedItem();
             if (Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0) {
                 model.getProtocol().setIsAvailable(false);
             } else {
@@ -602,11 +602,11 @@ public class ClusterGuideModel extends GuideModel {
         EntityModel<StoragePool> dataCenter = dataCentersModel.getSelectedItem();
 
         if (dataCenter != null) {
-            VDSGroup cluster = getEntity();
+            Cluster cluster = getEntity();
             cluster.setStoragePoolId(dataCenter.getEntity().getId());
             dataCentersModel.startProgress();
 
-            Frontend.getInstance().runAction(VdcActionType.UpdateVdsGroup, new ManagementNetworkOnClusterOperationParameters(cluster),
+            Frontend.getInstance().runAction(VdcActionType.UpdateCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -649,7 +649,7 @@ public class ClusterGuideModel extends GuideModel {
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
-        host.setVdsGroupId(model.getCluster().getSelectedItem().getId());
+        host.setClusterId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save other PM parameters.

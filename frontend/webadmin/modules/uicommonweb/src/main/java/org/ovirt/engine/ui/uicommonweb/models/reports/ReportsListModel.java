@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.reports;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -130,13 +130,13 @@ public class ReportsListModel extends SearchableListWithReportsModel {
                 break;
             }
             case Cluster: {
-                VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
+                Cluster cluster = (Cluster) treeItemModel.getEntity();
                 setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Hosts: {
-                VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
+                Cluster cluster = (Cluster) treeItemModel.getEntity();
                 setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;

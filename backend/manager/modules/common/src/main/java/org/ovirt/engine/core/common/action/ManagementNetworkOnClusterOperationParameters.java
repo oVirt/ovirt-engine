@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ManagementNetworkOnClusterOperationParameters extends VdsGroupOperationParameters {
+public class ManagementNetworkOnClusterOperationParameters extends ClusterOperationParameters {
 
     private static final long serialVersionUID = 1L;
 
     private Guid managementNetworkId;
 
-    public ManagementNetworkOnClusterOperationParameters(VDSGroup cluster) {
+    public ManagementNetworkOnClusterOperationParameters(Cluster cluster) {
         this(cluster, null);
     }
 
-    public ManagementNetworkOnClusterOperationParameters(VDSGroup cluster, Guid managementNetworkId) {
+    public ManagementNetworkOnClusterOperationParameters(Cluster cluster, Guid managementNetworkId) {
         super(cluster);
 
         this.managementNetworkId = managementNetworkId;

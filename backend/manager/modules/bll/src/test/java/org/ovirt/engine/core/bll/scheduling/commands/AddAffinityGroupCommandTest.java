@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -46,11 +46,11 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
-        doReturn(new VDSGroup()).when(command).getVdsGroup();
+        doReturn(new Cluster()).when(command).getCluster();
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setVdsGroupId(clusterId);
+        vmStatic.setClusterId(clusterId);
         doReturn(vmStatic).when(vmStaticDao).get(any(Guid.class));
-        doReturn(clusterId).when(command).getVdsGroupId();
+        doReturn(clusterId).when(command).getClusterId();
     }
 
     @Test
@@ -67,8 +67,8 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validate_vdsGroupNull_Test() {
-        doReturn(null).when(command).getVdsGroup();
+    public void validate_clusterNull_Test() {
+        doReturn(null).when(command).getCluster();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
     }
@@ -82,7 +82,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Test
     public void validate_vmNotInCluster_Test() {
-        doReturn(Guid.newGuid()).when(command).getVdsGroupId();
+        doReturn(Guid.newGuid()).when(command).getClusterId();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
     }

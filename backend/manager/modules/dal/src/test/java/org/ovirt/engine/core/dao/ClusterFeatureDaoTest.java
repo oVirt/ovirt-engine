@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterFeatureDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_VDS_GROUP = FixturesTool.VDS_GROUP_RHEL6_ISCSI;
+    private static final Guid EXISTING_CLUSTER = FixturesTool.CLUSTER_RHEL6_ISCSI;
 
     private static final Guid NEW_SUPPORTED_FEATURE_1 = new Guid("00000000-0000-0000-0000-000000000004");
     private static final Guid NEW_SUPPORTED_FEATURE_2 = new Guid("00000000-0000-0000-0000-000000000005");
@@ -53,7 +53,7 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetSupportedFeaturesByClusterId() {
-        Set<SupportedAdditionalClusterFeature> featuresSupportedInCluster = dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+        Set<SupportedAdditionalClusterFeature> featuresSupportedInCluster = dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         List<String> expectedFeatures = Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2", "TEST_FEATURE_3");
         assertNotNull("Failed to retrive supported additional features for the cluster", featuresSupportedInCluster);
         assertThat("Failed to retrive correct set of features for the given version and category",
@@ -76,23 +76,23 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
     @Test
     public void testAddSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> previouslySupportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
-        dao.addSupportedClusterFeature(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_VDS_GROUP, true));
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+        dao.addSupportedClusterFeature(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_CLUSTER, true));
         Set<SupportedAdditionalClusterFeature> supportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         assertThat(supportedFeatures, hasSize(previouslySupportedFeatures.size() + 1));
     }
 
     @Test
     public void testAddAllSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> previouslySupportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         Set<SupportedAdditionalClusterFeature> newFeatures = new HashSet<>();
-        newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_VDS_GROUP, true));
-        newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_2, EXISTING_VDS_GROUP, true));
+        newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_CLUSTER, true));
+        newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_2, EXISTING_CLUSTER, true));
         dao.addAllSupportedClusterFeature(newFeatures);
         Set<SupportedAdditionalClusterFeature> supportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         assertThat("Failed to add all the supported feature",
                 supportedFeatures, hasSize(previouslySupportedFeatures.size() + 2));
     }
@@ -100,7 +100,7 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdateSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> features =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         for (SupportedAdditionalClusterFeature feature : features) {
             feature.setEnabled(false);
             dao.updateSupportedClusterFeature(feature);
@@ -108,7 +108,7 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase {
             break;
         }
         Set<SupportedAdditionalClusterFeature> newFeatureSet =
-                dao.getSupportedFeaturesByClusterId(EXISTING_VDS_GROUP);
+                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         assertEquals("Failed to update the feature set", new HashSet<>(features), newFeatureSet);
     }
 }

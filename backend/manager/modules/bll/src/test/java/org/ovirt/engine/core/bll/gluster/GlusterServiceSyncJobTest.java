@@ -27,8 +27,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSPa
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
@@ -89,7 +89,7 @@ public class GlusterServiceSyncJobTest {
     private ClusterUtils clusterUtil;
 
     @Mock
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private GlusterAuditLogUtil logUtil;
@@ -161,8 +161,8 @@ public class GlusterServiceSyncJobTest {
         return service;
     }
 
-    private VDSGroup createCluster() {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster createCluster() {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID);
         cluster.setGlusterService(true);
         cluster.setCompatibilityVersion(Version.v3_3);

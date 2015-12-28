@@ -15,8 +15,8 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -45,7 +45,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     VdsStaticDao vdsStaticDao;
 
     @Mock
-    VdsGroupDao vdsGroupDao;
+    ClusterDao clusterDao;
 
     @Mock
     GlusterVolumeValidator validator;
@@ -72,29 +72,29 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setStatus(status);
         return vds;
     }
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setHostName(serverName);
         return vds;
     }
 
-    private VDSGroup getVdsGroup(boolean glusterEnabled) {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(clusterId);
-        vdsGroup.setVirtService(false);
-        vdsGroup.setGlusterService(glusterEnabled);
-        vdsGroup.setCompatibilityVersion(Version.v3_1);
-        return vdsGroup;
+    private Cluster getCluster(boolean glusterEnabled) {
+        Cluster cluster = new Cluster();
+        cluster.setId(clusterId);
+        cluster.setVirtService(false);
+        cluster.setGlusterService(glusterEnabled);
+        cluster.setCompatibilityVersion(Version.v3_1);
+        return cluster;
     }
 
     private void prepareMocks(CreateGlusterVolumeCommand command) {
-        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        doReturn(clusterDao).when(command).getClusterDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
@@ -104,7 +104,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getVdsGroup(true)).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(getCluster(true)).when(clusterDao).get(Mockito.any(Guid.class));
         doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
                 .isForceCreateVolumeAllowed(Version.v3_1, true);
@@ -150,7 +150,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     public void validateFailsWithClusterDoesNotSupportGluster() {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
-        doReturn(getVdsGroup(false)).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(getCluster(false)).when(clusterDao).get(Mockito.any(Guid.class));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);

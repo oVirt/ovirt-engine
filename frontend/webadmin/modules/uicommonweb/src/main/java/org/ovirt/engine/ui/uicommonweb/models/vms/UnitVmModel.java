@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -1570,7 +1570,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             public void setSelectedItem(Integer value) {
                 if (!AsyncDataProvider.getInstance().osNameExists(value)) {
                     DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
-                    VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
+                    Cluster cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
                     if (cluster == null) {
                         return;
                     }
@@ -2061,7 +2061,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        VDSGroup cluster = dataCenterWithCluster.getCluster();
+        Cluster cluster = dataCenterWithCluster.getCluster();
         Version version = getCompatibilityVersion();
 
         // test migration support for VM/cluster level along with the cluster architecture
@@ -2084,7 +2084,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void updateDisplayAndGraphics() {
-        VDSGroup cluster = getSelectedCluster();
+        Cluster cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
         if (cluster == null || osType == null) {
@@ -2303,7 +2303,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void updateWatchdogModels(Integer osType) {
-        VDSGroup cluster = getSelectedCluster();
+        Cluster cluster = getSelectedCluster();
         if (osType != null && cluster != null && getWatchdogModel() != null) {
             AsyncQuery asyncQuery = new AsyncQuery();
             asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -2389,7 +2389,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     protected void initGraphicsConsoles() {
-        VDSGroup cluster = getSelectedCluster();
+        Cluster cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
         if (cluster == null || osType == null) {
@@ -2549,7 +2549,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public void setDataCentersAndClusters(UnitVmModel model,
             List<StoragePool> dataCenters,
-            List<VDSGroup> clusters,
+            List<Cluster> clusters,
             Guid selectedCluster) {
 
         if (model.getBehavior().getSystemTreeSelectedItem() != null
@@ -2563,7 +2563,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void setupDataCenterWithClustersFromSystemTree(UnitVmModel model,
             List<StoragePool> dataCenters,
-            List<VDSGroup> clusters,
+            List<Cluster> clusters,
             Guid selectedCluster) {
 
         StoragePool dataCenter = getDataCenterAccordingSystemTree(model, dataCenters);
@@ -2571,7 +2571,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         // the dataCenters are the entities just downloaded from server while the dataCenter can be a cached one from the system tree
         dataCenter = dataCenter == null ? null : findDataCenterById(dataCenters, dataCenter.getId());
 
-        List<VDSGroup> possibleClusters = getClusterAccordingSystemTree(model, clusters);
+        List<Cluster> possibleClusters = getClusterAccordingSystemTree(model, clusters);
         if (dataCenter == null || possibleClusters == null) {
             getDataCenterWithClustersList().setIsChangeable(false);
             return;
@@ -2579,7 +2579,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         List<DataCenterWithCluster> dataCentersWithClusters = new ArrayList<>();
 
-        for (VDSGroup cluster : possibleClusters) {
+        for (Cluster cluster : possibleClusters) {
             if (cluster.getStoragePoolId() != null && cluster.getStoragePoolId().equals(dataCenter.getId())) {
                 dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
             }
@@ -2589,17 +2589,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void setupDataCenterWithClusters(UnitVmModel model,
             List<StoragePool> dataCenters,
-            List<VDSGroup> clusters,
+            List<Cluster> clusters,
             Guid selectedCluster) {
 
-        Map<Guid, List<VDSGroup>> dataCenterToCluster = new HashMap<>();
-        for (VDSGroup cluster : clusters) {
+        Map<Guid, List<Cluster>> dataCenterToCluster = new HashMap<>();
+        for (Cluster cluster : clusters) {
             if (cluster.getStoragePoolId() == null) {
                 continue;
             }
 
             if (!dataCenterToCluster.containsKey(cluster.getStoragePoolId())) {
-                dataCenterToCluster.put(cluster.getStoragePoolId(), new ArrayList<VDSGroup>());
+                dataCenterToCluster.put(cluster.getStoragePoolId(), new ArrayList<Cluster>());
             }
             dataCenterToCluster.get(cluster.getStoragePoolId()).add(cluster);
         }
@@ -2608,7 +2608,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         for (StoragePool dataCenter : dataCenters) {
             if (dataCenterToCluster.containsKey(dataCenter.getId())) {
-                for (VDSGroup cluster : dataCenterToCluster.get(dataCenter.getId())) {
+                for (Cluster cluster : dataCenterToCluster.get(dataCenter.getId())) {
                     dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
                 }
             }
@@ -2634,7 +2634,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             case Cluster:
             case Cluster_Gluster:
             case VMs:
-                VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                Cluster cluster = (Cluster) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 if (cluster.supportsVirtService()) {
                     return findDataCenterById(list, cluster.getStoragePoolId());
                 }
@@ -2666,19 +2666,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return null;
     }
 
-    private List<VDSGroup> getClusterAccordingSystemTree(UnitVmModel model, List<VDSGroup> clusters) {
+    private List<Cluster> getClusterAccordingSystemTree(UnitVmModel model, List<Cluster> clusters) {
         if (behavior.getSystemTreeSelectedItem() != null
                 && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
             switch (model.getBehavior().getSystemTreeSelectedItem().getType()) {
             case Cluster:
             case VMs:
-                VDSGroup cluster = (VDSGroup) behavior.getSystemTreeSelectedItem().getEntity();
+                Cluster cluster = (Cluster) behavior.getSystemTreeSelectedItem().getEntity();
                 return Arrays.asList(cluster);
 
             case Host:
                 VDS host = (VDS) behavior.getSystemTreeSelectedItem().getEntity();
-                for (VDSGroup iterCluster : clusters) {
-                    if (iterCluster.getId().equals(host.getVdsGroupId())) {
+                for (Cluster iterCluster : clusters) {
+                    if (iterCluster.getId().equals(host.getClusterId())) {
                         return Arrays.asList(iterCluster);
                     }
                 }
@@ -3098,7 +3098,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return dataCenterWithCluster.getDataCenter();
     }
 
-    public VDSGroup getSelectedCluster() {
+    public Cluster getSelectedCluster() {
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
             return null;
@@ -3202,9 +3202,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return customCompatibilityVersion.getSelectedItem();
         }
 
-        VDSGroup vdsGroup = getSelectedCluster();
-        if (vdsGroup != null) {
-            return vdsGroup.getCompatibilityVersion();
+        Cluster cluster = getSelectedCluster();
+        if (cluster != null) {
+            return cluster.getCompatibilityVersion();
         }
 
         return null;

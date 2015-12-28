@@ -50,11 +50,11 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     }
 
     @Override
-    public List<VdsStatic> getAllForVdsGroup(Guid vdsGroup) {
-        return getCallsHandler().executeReadList("GetVdsStaticByVdsGroupId",
+    public List<VdsStatic> getAllForCluster(Guid cluster) {
+        return getCallsHandler().executeReadList("GetVdsStaticByClusterId",
                 VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vdsGroup));
+                        .addValue("cluster_id", cluster));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("vds_unique_id", vds.getUniqueID())
                 .addValue("port", vds.getPort())
                 .addValue("protocol", vds.getProtocol())
-                .addValue("vds_group_id", vds.getVdsGroupId())
+                .addValue("cluster_id", vds.getClusterId())
                 .addValue("vds_id", vds.getId())
                 .addValue("vds_name", vds.getName())
                 .addValue("server_SSL_enabled", vds.isServerSslEnabled())
@@ -124,12 +124,12 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             entity.setUniqueID(rs.getString("vds_unique_id"));
             entity.setPort(rs.getInt("port"));
             entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setSshPort(rs.getInt("ssh_port"));
             entity.setSshUsername(rs.getString("ssh_username"));
-            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
+            entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs
+                    .getString("cluster_id")));
             entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_id")));
             entity.setName(rs.getString("vds_name"));

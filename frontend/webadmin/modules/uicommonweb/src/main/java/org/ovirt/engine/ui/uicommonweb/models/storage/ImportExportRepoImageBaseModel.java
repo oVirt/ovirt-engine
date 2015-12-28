@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -51,7 +51,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     }
 
     private ListModel<StoragePool> dataCenter;
-    private ListModel<VDSGroup> cluster;
+    private ListModel<Cluster> cluster;
     private ListModel<StorageDomain> storageDomain;
     private ListModel<Quota> quota;
 
@@ -78,11 +78,11 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
        dataCenter = value;
     }
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return cluster;
     }
 
-    public void setCluster(ListModel<VDSGroup> value) {
+    public void setCluster(ListModel<Cluster> value) {
         cluster = value;
     }
 
@@ -123,7 +123,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().setIsEmpty(true);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
         getCluster().setIsEmpty(true);
         getCluster().getSelectedItemChangedEvent().addListener(this);
 
@@ -207,7 +207,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<VDSGroup> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture((List<VDSGroup>) returnValue);
+                List<Cluster> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture((List<Cluster>) returnValue);
                 model.getCluster().setItems(clusters);
                 model.getCluster().setIsEmpty(clusters.isEmpty());
                 model.updateControlsAvailability();

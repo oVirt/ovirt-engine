@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -55,13 +55,13 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
         final Pair<List<Guid>, Guid> migrationRule =  super.balance(cluster, hosts, parameters, messages);
 
-        List<VDS> allHosts = getVdsDao().getAllForVdsGroup(cluster.getId());
+        List<VDS> allHosts = getVdsDao().getAllForCluster(cluster.getId());
 
         List<VDS> emptyHosts = new ArrayList<>();
         List<VDS> maintenanceHosts = new ArrayList<>();
@@ -184,7 +184,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      * @param parameters
      * @return a pair of VDS to update and the desired VDSStatus to get it to
      */
-    protected Pair<VDS, VDSStatus> evaluatePowerManagementSituation(VDSGroup cluster, List<VDS> pmDownHosts,
+    protected Pair<VDS, VDSStatus> evaluatePowerManagementSituation(Cluster cluster, List<VDS> pmDownHosts,
                                                                     List<VDS> pmMaintenanceHosts,
                                                                     List<VDS> emptyHosts,
                                                                     Map<String, String> parameters) {
@@ -271,7 +271,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    protected FindVmAndDestinations getFindVmAndDestinations(VDSGroup cluster, Map<String, String> parameters) {
+    protected FindVmAndDestinations getFindVmAndDestinations(Cluster cluster, Map<String, String> parameters) {
         final int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
                 .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final long overUtilizedMemory =
@@ -283,7 +283,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    protected List<VDS> getPrimarySources(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+    protected List<VDS> getPrimarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
                 .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
@@ -305,7 +305,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    protected List<VDS> getPrimaryDestinations(VDSGroup cluster,
+    protected List<VDS> getPrimaryDestinations(Cluster cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
@@ -325,7 +325,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    protected List<VDS> getSecondarySources(VDSGroup cluster,
+    protected List<VDS> getSecondarySources(Cluster cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
         long lowMemoryLimit = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
@@ -340,7 +340,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     @Override
-    protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+    protected List<VDS> getSecondaryDestinations(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         long notEnoughMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
         long tooMuchMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?

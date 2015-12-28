@@ -67,11 +67,11 @@ public interface StoragePoolDao extends GenericDao<StoragePool, Guid>, StatusAwa
     /**
      * Retrieves the storage pool for the specified VDS group.
      *
-     * @param vdsGroup
+     * @param cluster
      *            the VDS group
      * @return the storage pool
      */
-    StoragePool getForVdsGroup(Guid vdsGroup);
+    StoragePool getForCluster(Guid cluster);
 
     /**
      *  @param userID

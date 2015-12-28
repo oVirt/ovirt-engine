@@ -11,8 +11,8 @@ import java.util.concurrent.Callable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
@@ -51,9 +51,9 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("gluster_georep_poll_event")
     public void discoverGeoRepData() {
         // get all clusters
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
         // for every cluster that supports geo-rep monitoring
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             discoverGeoRepDataInCluster(cluster);
         }
 
@@ -62,14 +62,14 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("gluster_georepstatus_poll_event")
     public void refreshGeoRepSessionStatus() {
         // get all clusters
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
         // for every cluster that supports geo-rep monitoring
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             refreshGeoRepSessionStatusInCluster(cluster);
         }
     }
 
-    private void refreshGeoRepSessionStatusInCluster(final VDSGroup cluster) {
+    private void refreshGeoRepSessionStatusInCluster(final Cluster cluster) {
         if (!supportsGlusterGeoRepFeature(cluster)) {
             return;
         }
@@ -85,13 +85,13 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         if (volume == null) {
             throw new EngineException(EngineError.GlusterVolumeGeoRepSyncFailed, "No volume information");
         }
-        VDSGroup cluster = getClusterDao().get(volume.getClusterId());
+        Cluster cluster = getClusterDao().get(volume.getClusterId());
         discoverGeoRepDataInCluster(cluster, volume);
         List<GlusterGeoRepSession> geoRepSessions = getGeoRepDao().getGeoRepSessions(volume.getId());
         refreshGeoRepSessionStatusForSessions(cluster, geoRepSessions);
     }
 
-    private void refreshGeoRepSessionStatusForSessions(final VDSGroup cluster, List<GlusterGeoRepSession> geoRepSessions) {
+    private void refreshGeoRepSessionStatusForSessions(final Cluster cluster, List<GlusterGeoRepSession> geoRepSessions) {
         if (CollectionUtils.isEmpty(geoRepSessions)) {
             return;
         }
@@ -122,11 +122,11 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
     }
 
-    private void discoverGeoRepDataInCluster(VDSGroup cluster) {
+    private void discoverGeoRepDataInCluster(Cluster cluster) {
         discoverGeoRepDataInCluster(cluster, null);
     }
 
-    private void discoverGeoRepDataInCluster(VDSGroup cluster, GlusterVolumeEntity volume) {
+    private void discoverGeoRepDataInCluster(Cluster cluster, GlusterVolumeEntity volume) {
         if (!supportsGlusterGeoRepFeature(cluster)) {
             return;
         }
@@ -140,7 +140,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         updateDiscoveredSessions(cluster, sessionsMap, volume);
     }
 
-    private void updateDiscoveredSessions(VDSGroup cluster, Map<String, GlusterGeoRepSession> sessionsMap,
+    private void updateDiscoveredSessions(Cluster cluster, Map<String, GlusterGeoRepSession> sessionsMap,
             GlusterVolumeEntity volume) {
         removeDeletedSessions(cluster.getId(), sessionsMap, volume);
 
@@ -191,7 +191,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
     }
 
-    protected void updateDiscoveredSessionConfig(VDSGroup cluster, GlusterGeoRepSession session) {
+    protected void updateDiscoveredSessionConfig(Cluster cluster, GlusterGeoRepSession session) {
         List<GlusterGeoRepSessionConfiguration> sessionConfigList = getSessionConfigFromCLI(cluster, session);
         if (sessionConfigList == null) {
             log.info("No configuration information returned from VDS for session '{}'", session.getSessionKey());
@@ -254,7 +254,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         if (!CollectionUtils.isEmpty(slaveHosts)) {
             session.setSlaveNodeUuid(slaveHosts.get(0).getId());
             GlusterVolumeEntity slaveVol =
-                    getVolumeDao().getByName(slaveHosts.get(0).getVdsGroupId(),
+                    getVolumeDao().getByName(slaveHosts.get(0).getClusterId(),
                             session.getSlaveVolumeName());
             if (slaveVol != null) {
                 session.setSlaveVolumeId(slaveVol.getId());
@@ -388,7 +388,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         return GeoRepSessionStatus.UNKNOWN;
     }
 
-    private Map<String, GlusterGeoRepSession> getSessionsFromCLI(VDSGroup cluster, GlusterVolumeEntity volume) {
+    private Map<String, GlusterGeoRepSession> getSessionsFromCLI(Cluster cluster, GlusterVolumeEntity volume) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster '{}' for geo-rep monitoring", cluster.getName());
@@ -416,7 +416,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     }
 
-    private List<GlusterGeoRepSessionDetails> getSessionDetailFromCLI(VDSGroup cluster, GlusterGeoRepSession session) {
+    private List<GlusterGeoRepSessionDetails> getSessionDetailFromCLI(Cluster cluster, GlusterGeoRepSession session) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debug("No UP server found in cluster: {} for geo-rep monitoring", cluster.getName());
@@ -444,7 +444,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
     }
 
-    private List<GlusterGeoRepSessionConfiguration> getSessionConfigFromCLI(VDSGroup cluster,
+    private List<GlusterGeoRepSessionConfiguration> getSessionConfigFromCLI(Cluster cluster,
             GlusterGeoRepSession session) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
@@ -473,11 +473,11 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         }
     }
 
-    private GlusterVolumeEntity getVolume(VDSGroup cluster, String masterVolumeName) {
+    private GlusterVolumeEntity getVolume(Cluster cluster, String masterVolumeName) {
         return getVolumeDao().getByName(cluster.getId(), masterVolumeName);
     }
 
-    private boolean supportsGlusterGeoRepFeature(VDSGroup cluster) {
+    private boolean supportsGlusterGeoRepFeature(Cluster cluster) {
         return cluster.supportsGlusterService()
                 && getGlusterUtil().isGlusterGeoReplicationSupported(cluster.getCompatibilityVersion(), cluster.getId());
     }

@@ -117,7 +117,7 @@ public class FenceProxyLocator {
         boolean fromSelectedSource = false;
         switch (fenceProxySource) {
             case CLUSTER:
-                fromSelectedSource = proxyCandidate.getVdsGroupId().equals(fencedHost.getVdsGroupId());
+                fromSelectedSource = proxyCandidate.getClusterId().equals(fencedHost.getClusterId());
                 break;
 
             case DC:
@@ -137,7 +137,7 @@ public class FenceProxyLocator {
     }
 
     protected boolean areAgentsVersionCompatible(VDS proxyCandidate) {
-        VdsFenceOptions options = createVdsFenceOptions(proxyCandidate.getVdsGroupCompatibilityVersion().getValue());
+        VdsFenceOptions options = createVdsFenceOptions(proxyCandidate.getClusterCompatibilityVersion().getValue());
         boolean compatible = true;
         for (FenceAgent agent : fencedHost.getFenceAgents()) {
             if (!options.isAgentSupported(agent.getType())) {

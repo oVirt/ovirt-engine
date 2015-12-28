@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -60,7 +60,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    ListModelListBoxEditor<VDSGroup> clusterEditor;
+    ListModelListBoxEditor<Cluster> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "typeList.selectedItem")
@@ -175,7 +175,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
-        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
 
         typeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<GlusterVolumeType>());
     }

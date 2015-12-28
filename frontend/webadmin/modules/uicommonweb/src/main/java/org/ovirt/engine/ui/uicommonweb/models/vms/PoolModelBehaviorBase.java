@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
@@ -90,8 +90,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
-                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
-                        List<VDSGroup> filteredClusters = filterClusters(clusters);
+                        List<Cluster> clusters = (List<Cluster>) returnValue;
+                        List<Cluster> filteredClusters = filterClusters(clusters);
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
                                 filteredClusters, null);
@@ -102,7 +102,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 true, false);
     }
 
-    protected abstract List<VDSGroup> filterClusters(List<VDSGroup> clusters);
+    protected abstract List<Cluster> filterClusters(List<Cluster> clusters);
 
     protected void setupWindowModelFrom(final VmBase vmBase) {
         if (vmBase != null) {
@@ -214,7 +214,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public void updateMinAllocatedMemory() {
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
         if (cluster == null) {
             return;
         }

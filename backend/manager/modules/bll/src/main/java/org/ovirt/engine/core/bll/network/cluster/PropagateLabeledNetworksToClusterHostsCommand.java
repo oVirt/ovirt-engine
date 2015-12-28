@@ -21,7 +21,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -57,7 +57,7 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     }
 
     private boolean isSetupNetworkSupported(Guid clusterId) {
-        final VDSGroup cluster = getVdsGroupDao().get(clusterId);
+        final Cluster cluster = getClusterDao().get(clusterId);
         return NetworkHelper.setupNetworkSupported(cluster.getCompatibilityVersion());
     }
 

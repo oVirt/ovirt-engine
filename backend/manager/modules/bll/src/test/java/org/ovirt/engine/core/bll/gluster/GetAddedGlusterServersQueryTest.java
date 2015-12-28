@@ -24,8 +24,8 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
@@ -40,8 +40,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -52,7 +52,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private VDSBrokerFrontend vdsBrokerFrontend;
     private BackendInternal backendInternal;
     private VdsDao vdsDaoMock;
-    private VdsGroupDao vdsGroupDaoMock;
+    private ClusterDao clusterDaoMock;
     private GlusterDBUtils dbUtils;
     private ClusterUtils clusterUtils;
 
@@ -73,19 +73,19 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
                 mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3, true)));
     }
 
-    private VDSGroup getVdsGroup(Version ver) {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(CLUSTER_ID);
-        vdsGroup.setCompatibilityVersion(ver);
+    private Cluster getCluster(Version ver) {
+        Cluster cluster = new Cluster();
+        cluster.setId(CLUSTER_ID);
+        cluster.setCompatibilityVersion(ver);
 
-        return vdsGroup;
+        return cluster;
     }
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
@@ -97,16 +97,16 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private void setupServersList() {
         serversList = new ArrayList<>();
         VDS server = new VDS();
-        server.setVdsGroupId(CLUSTER_ID);
-        server.setVdsGroupName(CLUSTER_NAME);
+        server.setClusterId(CLUSTER_ID);
+        server.setClusterName(CLUSTER_NAME);
         server.setId(server_id1);
         server.setVdsName(TEST_SERVER1);
         server.setHostName(TEST_SERVER1);
         serversList.add(server);
 
         server = new VDS();
-        server.setVdsGroupId(CLUSTER_ID);
-        server.setVdsGroupName(CLUSTER_NAME);
+        server.setClusterId(CLUSTER_ID);
+        server.setClusterName(CLUSTER_NAME);
         server.setId(server_id2);
         server.setVdsName(TEST_SERVER2);
         server.setHostName(TEST_SERVER2);
@@ -126,7 +126,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         clusterUtils = mock(ClusterUtils.class);
         vdsDaoMock = mock(VdsDao.class);
-        vdsGroupDaoMock = mock(VdsGroupDao.class);
+        clusterDaoMock = mock(ClusterDao.class);
         dbUtils = mock(GlusterDBUtils.class);
         backendInternal = mock(BackendInternal.class);
 
@@ -146,8 +146,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         doReturn(true).when(getQueryParameters()).isServerKeyFingerprintRequired();
 
         doReturn(vdsDaoMock).when(clusterUtils).getVdsDao();
-        doReturn(vdsGroupDaoMock).when(getQuery()).getVdsGroupDao();
-        doReturn(serversList).when(vdsDaoMock).getAllForVdsGroup(CLUSTER_ID);
+        doReturn(clusterDaoMock).when(getQuery()).getClusterDao();
+        doReturn(serversList).when(vdsDaoMock).getAllForCluster(CLUSTER_ID);
     }
 
     private VdcQueryReturnValue getVdcReturnValue() {
@@ -183,7 +183,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @SuppressWarnings("unchecked")
     @Test
     public void testExecuteQueryCommand() throws IOException {
-        when(vdsGroupDaoMock.get(any(Guid.class))).thenReturn(getVdsGroup(Version.v3_3));
+        when(clusterDaoMock.get(any(Guid.class))).thenReturn(getCluster(Version.v3_3));
         getQuery().executeQueryCommand();
         Map<String, String> servers =
                 (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();
@@ -194,7 +194,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
     @Test
     public void testExecuteQueryCommandFor32Cluster() throws IOException {
-        when(vdsGroupDaoMock.get(any(Guid.class))).thenReturn(getVdsGroup(Version.v3_2));
+        when(clusterDaoMock.get(any(Guid.class))).thenReturn(getCluster(Version.v3_2));
         getQuery().executeQueryCommand();
         Map<String, String> servers =
                 (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();

@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterServiceModel extends EntityModel<VDSGroup> {
+public class ClusterServiceModel extends EntityModel<Cluster> {
 
     private ListModel<VDS> hostList;
 
@@ -109,7 +109,7 @@ public class ClusterServiceModel extends EntityModel<VDSGroup> {
         List<VDS> hostList = (List<VDS>) getHostList().getItems();
         if (hostList != null && hostList.size() > 1) {
             for(VDS vds : hostList) {
-                if (vds != null && !vds.getVdsGroupName().equals(getEntity().getName())) {
+                if (vds != null && !vds.getClusterName().equals(getEntity().getName())) {
                     refreshNeeded = true;
                     break;
                 }

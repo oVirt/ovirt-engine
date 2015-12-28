@@ -15,7 +15,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private Guid storagePoolId;
     private Guid storageDomainId;
     private Guid proxyHostId;
-    private Guid vdsGroupId;
+    private Guid clusterId;
     private String virtioIsoName;
 
     public ConvertVmParameters() {
@@ -89,12 +89,12 @@ public class ConvertVmParameters extends VmOperationParameterBase {
         this.proxyHostId = proxyHostId;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid vdsGroupId) {
-        this.vdsGroupId = vdsGroupId;
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
     }
 
     public String getVirtioIsoName() {

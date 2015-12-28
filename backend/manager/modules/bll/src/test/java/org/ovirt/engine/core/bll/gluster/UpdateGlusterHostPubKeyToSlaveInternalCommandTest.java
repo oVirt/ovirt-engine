@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -56,8 +56,8 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
                         pubKeys)));
         doReturn(null).when(command).getUpServer();
-        command.setVdsGroupId(Guid.newGuid());
-        doReturn(new VDSGroup()).when(command).getVdsGroup();
+        command.setClusterId(Guid.newGuid());
+        doReturn(new Cluster()).when(command).getCluster();
         assertFalse(command.validate());
     }
 }

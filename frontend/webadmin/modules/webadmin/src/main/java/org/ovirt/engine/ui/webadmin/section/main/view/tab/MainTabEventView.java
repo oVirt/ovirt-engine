@@ -226,7 +226,7 @@ class AdvancedViewColumns {
     public static final AbstractTextColumn<AuditLog> clusterColumn = new AbstractTextColumn<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
-            return object.getVdsGroupName();
+            return object.getClusterName();
         }
     };
 

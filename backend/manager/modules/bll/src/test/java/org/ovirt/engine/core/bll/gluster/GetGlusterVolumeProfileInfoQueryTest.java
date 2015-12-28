@@ -69,7 +69,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
@@ -82,7 +82,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     }
 
     private void mockVdsDbFacadeAndDao() {
-        doReturn(Collections.singletonList(getVds(VDSStatus.Up))).when(vdsDao).getAllForVdsGroupWithStatus(CLUSTER_ID,
+        doReturn(Collections.singletonList(getVds(VDSStatus.Up))).when(vdsDao).getAllForClusterWithStatus(CLUSTER_ID,
                 VDSStatus.Up);
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(brickDao).when(getQuery()).getGlusterBrickDao();

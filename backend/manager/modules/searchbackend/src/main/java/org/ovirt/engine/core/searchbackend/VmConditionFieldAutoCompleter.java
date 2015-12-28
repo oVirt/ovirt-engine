@@ -126,7 +126,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(MIGRATION_PROGRESS_PERCENT, "migration_progress_percent");
         columnNameDict.put(MEMORY, "mem_size_mb");
         columnNameDict.put(APPS, "app_list");
-        columnNameDict.put(CLUSTER, "vds_group_name");
+        columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(POOL, "vm_pool_name");
         columnNameDict.put(LOGGEDINUSER, "guest_cur_user_name");
         columnNameDict.put(TAG, "tag_name");
@@ -139,7 +139,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(CUSTOM_EMULATED_MACHINE, "custom_emulated_machine");
         columnNameDict.put(CUSTOM_CPU_TYPE, "custom_cpu_name");
-        columnNameDict.put(COMPATIBILITY_LEVEL, "vds_group_compatibility_version");
+        columnNameDict.put(COMPATIBILITY_LEVEL, "cluster_compatibility_version");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, "vm_ip_inet_array");

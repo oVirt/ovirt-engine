@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Certificate;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
@@ -19,8 +18,8 @@ import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -87,7 +86,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         validateEnums(Host.class, host);
         validateParameters(host, "name", "address");
         VdsStatic staticHost = getMapper(Host.class, VdsStatic.class).map(host, null);
-        staticHost.setVdsGroupId(getClusterId(host));
+        staticHost.setClusterId(getClusterId(host));
         AddVdsActionParameters addParams = new AddVdsActionParameters(staticHost, host.getRootPassword());
         if (host.isSetOverrideIptables()) {
             addParams.setOverrideFirewall(host.isOverrideIptables());
@@ -165,7 +164,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private Guid getClusterId(Host host) {
         if (host.isSetCluster()) {
-            Cluster cluster = host.getCluster();
+            org.ovirt.engine.api.model.Cluster cluster = host.getCluster();
             if (cluster.isSetId()) {
                 return asGuid(cluster.getId());
             }
@@ -177,8 +176,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     private Guid getClusterIdByName(String name) {
-        return getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
+        return getEntity(Cluster.class,
+                VdcQueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name).getId();
     }

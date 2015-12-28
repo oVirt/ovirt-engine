@@ -30,18 +30,18 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class AddVdsCommandTest {
     @Mock
     private AddVdsCommand<AddVdsActionParameters> commandMock;
     @Mock
-    private VdsGroupDao groupDaoMock;
+    private ClusterDao groupDaoMock;
     @Mock
     private VdsDao vdsDaoMock;
     @Mock
@@ -84,8 +84,8 @@ public class AddVdsCommandTest {
         newVdsData.setSshUsername("root");
         newVdsData.setSshKeyFingerprint("1234");
         newVdsData.setVdsName("BAR");
-        newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setVdsGroupId(Guid.newGuid());
+        newVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
+        newVdsData.setClusterId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
     }
@@ -105,18 +105,18 @@ public class AddVdsCommandTest {
         when(commandMock.getParameters()).thenReturn(parameters);
 
         when(commandMock.isGlusterSupportEnabled()).thenReturn(glusterEnabled);
-        when(commandMock.getVdsGroupDao()).thenReturn(groupDaoMock);
+        when(commandMock.getClusterDao()).thenReturn(groupDaoMock);
         when(commandMock.getClusterUtils()).thenReturn(clusterUtils);
 
         when(vdsDaoMock.get(vdsId)).thenReturn(null);
         when(commandMock.getVdsDao()).thenReturn(vdsDaoMock);
-        when(commandMock.validateVdsGroup()).thenReturn(true);
+        when(commandMock.validateCluster()).thenReturn(true);
         when(commandMock.isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class))).thenReturn(true);
         when(commandMock.getSSHClient()).thenReturn(sshClient);
         Version version = new Version("1.2.3");
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setCompatibilityVersion(version);
-        when(commandMock.getVdsGroup()).thenReturn(vdsGroup);
+        Cluster cluster = new Cluster();
+        cluster.setCompatibilityVersion(version);
+        when(commandMock.getCluster()).thenReturn(cluster);
         when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
                 parameters.getFenceAgents(),
                 new Version("1.2.3").toString())).thenReturn(true);
@@ -138,7 +138,7 @@ public class AddVdsCommandTest {
                 any(ExternalComputeResource.class));
         doReturn(ValidationResult.VALID).when(validator).provisioningHostGroupValid(any(Boolean.class),
                 any(ExternalHostGroup.class));
-        doReturn(ValidationResult.VALID).when(validator).protocolIsNotXmlrpc(any(VDSGroup.class));
+        doReturn(ValidationResult.VALID).when(validator).protocolIsNotXmlrpc(any(Cluster.class));
         when(validator.passwordNotEmpty(any(Boolean.class),
                 any(AuthenticationMethod.class),
                 any(String.class))).thenReturn(ValidationResult.VALID);
@@ -164,7 +164,7 @@ public class AddVdsCommandTest {
         when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
-        when(vdsDaoMock.getAllForVdsGroup(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
+        when(vdsDaoMock.getAllForCluster(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
                 : VDSStatus.Initializing));
         when(clusterUtils.getUpServer(any(Guid.class))).thenReturn(upServer);
 

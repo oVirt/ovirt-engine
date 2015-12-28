@@ -135,7 +135,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         allVmDisks.add(diskInfo);
 
         return checkPciAndIdeLimit(getVm().getOs(),
-                getVm().getVdsGroupCompatibilityVersion(),
+                getVm().getClusterCompatibilityVersion(),
                 getVm().getNumOfMonitors(),
                 vmInterfaces,
                 allVmDisks,
@@ -266,7 +266,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isHotPlugDiskSnapshotSupported() {
-        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getClusterCompatibilityVersion())) {
             return failValidation(EngineMessage.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
         }
 

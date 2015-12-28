@@ -15,8 +15,8 @@ public class SlaValidatorTest {
         VDS newVdsData = new VDS();
         newVdsData.setHostName("BUZZ");
         newVdsData.setVdsName("BAR");
-        newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setVdsGroupId(Guid.newGuid());
+        newVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
+        newVdsData.setClusterId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
     }

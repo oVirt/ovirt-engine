@@ -34,12 +34,12 @@ public interface VmNumaNodeDao extends NumaNodeDao<VmNumaNode> {
 
     /**
      * Get vm numa node information that in the vms which belong to the specified vds group
-     * @param vdsGroupId
+     * @param cluster
      *            the id of vds group
      *
      * @return pair(Guid(vm uuid), VmNumaNode) list
      */
-    List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByVdsGroupId(Guid vdsGroupId);
+    List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByClusterId(Guid cluster);
 
     /**
      * Get last pinned vds numa node index info(used for update pin info when vm migrate)

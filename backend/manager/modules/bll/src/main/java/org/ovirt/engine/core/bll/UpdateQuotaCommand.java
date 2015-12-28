@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,10 +83,10 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
                 quotaStorage.setQuotaStorageId(Guid.newGuid());
             }
         }
-        if (!quotaParameter.isEmptyVdsGroupQuota()) {
-            for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
-                quotaVdsGroup.setQuotaId(getQuotaId());
-                quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
+        if (!quotaParameter.isEmptyClusterQuota()) {
+            for (QuotaCluster quotaCluster : quotaParameter.getQuotaClusters()) {
+                quotaCluster.setQuotaId(getQuotaId());
+                quotaCluster.setQuotaClusterId(Guid.newGuid());
             }
         }
         setQuota(quotaParameter);

@@ -1,20 +1,19 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 
-public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VDSGroup, VDSGroup> {
+public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.engine.api.model.Cluster, Cluster, Cluster> {
     public ClusterMapperTest() {
-        super(Cluster.class, VDSGroup.class, VDSGroup.class);
+        super(org.ovirt.engine.api.model.Cluster.class, Cluster.class, Cluster.class);
     }
 
     @Override
-    protected Cluster postPopulate(Cluster model) {
+    protected org.ovirt.engine.api.model.Cluster postPopulate(org.ovirt.engine.api.model.Cluster model) {
         ErrorHandling errorHandling = new ErrorHandling();
         errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class).value());
         model.setErrorHandling(errorHandling);
@@ -25,7 +24,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
     }
 
     @Override
-    protected void verify(Cluster model, Cluster transform) {
+    protected void verify(org.ovirt.engine.api.model.Cluster model, org.ovirt.engine.api.model.Cluster transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());
@@ -58,35 +57,35 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
     }
 
-    private Mapper<Cluster, VDSGroup> getMapper() {
+    private Mapper<org.ovirt.engine.api.model.Cluster, Cluster> getMapper() {
         MappingLocator mappingLocator = new MappingLocator();
         mappingLocator.populate();
-        return mappingLocator.getMapper(Cluster.class, VDSGroup.class);
+        return mappingLocator.getMapper(org.ovirt.engine.api.model.Cluster.class, Cluster.class);
     }
 
     @Test
     public void thpDefaultFalseTest() {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setVersion(new org.ovirt.engine.api.model.Version() {
             {
                 setMajor(2);
                 setMinor(0);
             }
         });
-        VDSGroup transform = getMapper().map(cluster, null);
+        Cluster transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), false);
     }
 
     @Test
     public void thpDefaultTrueTest() {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setVersion(new org.ovirt.engine.api.model.Version() {
             {
                 setMajor(3);
                 setMinor(0);
             }
         });
-        VDSGroup transform = getMapper().map(cluster, null);
+        Cluster transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), true);
     }
 }

@@ -137,7 +137,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         AbstractTextColumn<VDS> clusterColumn = new AbstractTextColumn<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getVdsGroupName();
+                return object.getClusterName();
             }
         };
         clusterColumn.makeSortable(VdsConditionFieldAutoCompleter.CLUSTER);

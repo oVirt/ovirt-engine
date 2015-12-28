@@ -19,7 +19,7 @@ public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicy
     @Override
     protected void executeVdsBrokerCommand() {
         // Do not do anything when the Host's compatibility level is too old
-        if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
+        if (getVds().getClusterCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
             status = getBroker().setMOMPolicyParameters(initDeviceStructure());
             proceedProxyReturnValue();
         }

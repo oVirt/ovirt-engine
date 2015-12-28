@@ -131,7 +131,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
                 }
             };
 
-    private static final RowMapper<Pair<Guid, VmNumaNode>> vmNumaNodeInfoWithVdsGroupRowMapper =
+    private static final RowMapper<Pair<Guid, VmNumaNode>> vmNumaNodeInfoWithClusterRowMapper =
             new RowMapper<Pair<Guid, VmNumaNode>>() {
                 @Override
                 public Pair<Guid, VmNumaNode> mapRow(ResultSet rs, int rowNum)
@@ -204,13 +204,13 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoImpl<VmNumaNode> implements Vm
     }
 
     @Override
-    public List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByVdsGroupId(Guid vdsGroupId) {
+    public List<Pair<Guid, VmNumaNode>> getVmNumaNodeInfoByClusterId(Guid cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_group_id", vdsGroupId);
+                .addValue("cluster_id", cluster);
 
         List<Pair<Guid, VmNumaNode>> vmNumaNodes =
-                getCallsHandler().executeReadList("GetVmNumaNodeByVdsGroup",
-                        vmNumaNodeInfoWithVdsGroupRowMapper, parameterSource);
+                getCallsHandler().executeReadList("GetVmNumaNodeByCluster",
+                        vmNumaNodeInfoWithClusterRowMapper, parameterSource);
 
         Map<Guid, List<Integer>> numaNodesCpusMap = getAllNumaNodeCpuMap();
 

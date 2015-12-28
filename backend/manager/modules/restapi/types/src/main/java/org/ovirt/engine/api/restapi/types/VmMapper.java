@@ -101,7 +101,7 @@ public class VmMapper extends VmBaseMapper {
 
         staticVm.setId(Guid.Empty);
         staticVm.setVmtGuid(entity.getId());
-        staticVm.setVdsGroupId(entity.getVdsGroupId());
+        staticVm.setClusterId(entity.getClusterId());
         staticVm.setOsId(entity.getOsId());
         staticVm.setNiceLevel(entity.getNiceLevel());
         staticVm.setCpuShares(entity.getCpuShares());
@@ -517,8 +517,8 @@ public class VmMapper extends VmBaseMapper {
             return entity.getVmPoolSpiceProxy();
         }
 
-        if (StringUtils.isNotBlank(entity.getVdsGroupSpiceProxy())) {
-            return entity.getVdsGroupSpiceProxy();
+        if (StringUtils.isNotBlank(entity.getClusterSpiceProxy())) {
+            return entity.getClusterSpiceProxy();
         }
 
         String globalSpiceProxy = Config.getValue(ConfigValues.SpiceProxyDefault);

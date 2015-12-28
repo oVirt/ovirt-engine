@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParamet
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -354,7 +354,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     case Volumes:
                     case Cluster:
                     case Cluster_Gluster:
-                        VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
+                        Cluster cluster = (Cluster) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         for (StoragePool dc : dataCenters) {
                             if (dc.getId().equals(cluster.getStoragePoolId())) {
                                 innerVolumeModel.getDataCenter()
@@ -888,7 +888,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         rebalanceStatusModel.setHelpTag(HelpTag.volume_rebalance_status);
                         rebalanceStatusModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
                         rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
-                        rebalanceStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
+                        rebalanceStatusModel.getCluster().setEntity(volumeEntity.getClusterName());
 
                         UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
                         stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
@@ -1300,8 +1300,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             @Override
             public void onSuccess(Object model, final Object returnValue) {
                 if (getSystemTreeSelectedItem() != null) {
-                    VDSGroup selectedCluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
-                    clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue, selectedCluster);
+                    Cluster selectedCluster = (Cluster) getSystemTreeSelectedItem().getEntity();
+                    clusterSnapshotConfigModel.getClusters().setItems((List<Cluster>) returnValue, selectedCluster);
                 } else {
                     if (getSelectedItems() != null) {
                         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItems().get(0);
@@ -1311,13 +1311,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                 @Override
                                 public void onSuccess(Object model, Object returnValue1) {
                                             clusterSnapshotConfigModel.getClusters()
-                                                    .setItems((List<VDSGroup>) returnValue,
-                                                    (VDSGroup) returnValue1);
+                                                    .setItems((List<Cluster>) returnValue,
+                                                    (Cluster) returnValue1);
                                 }
                             }), volumeEntity.getClusterId());
                         }
                     } else {
-                        clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue);
+                        clusterSnapshotConfigModel.getClusters().setItems((List<Cluster>) returnValue);
                     }
                 }
             }
@@ -1430,7 +1430,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                volumeSnapshotConfigModel.getClusterName().setEntity(((VDSGroup) returnValue).getName());
+                volumeSnapshotConfigModel.getClusterName().setEntity(((Cluster) returnValue).getName());
             }
         }), volumeEntity.getClusterId());
         volumeSnapshotConfigModel.getVolumeName().setEntity(volumeEntity.getName());

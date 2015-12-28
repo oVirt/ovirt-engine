@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 public class GetAttachedClustersByClusterPolicyIdQuery extends QueriesCommandBase<IdQueryParameters> {
     public GetAttachedClustersByClusterPolicyIdQuery(IdQueryParameters parameters) {
@@ -12,11 +12,11 @@ public class GetAttachedClustersByClusterPolicyIdQuery extends QueriesCommandBas
     }
 
     @Inject
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                vdsGroupDao.getClustersByClusterPolicyId(getParameters().getId()));
+                clusterDao.getClustersByClusterPolicyId(getParameters().getId()));
     }
 }

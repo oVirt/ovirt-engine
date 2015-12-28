@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -54,11 +54,11 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
         });
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();
-        doReturn(new VDSGroup()).when(command).getVdsGroup();
+        doReturn(new Cluster()).when(command).getCluster();
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setVdsGroupId(clusterId);
+        vmStatic.setClusterId(clusterId);
         doReturn(vmStatic).when(vmStaticDao).get(any(Guid.class));
-        doReturn(clusterId).when(command).getVdsGroupId();
+        doReturn(clusterId).when(command).getClusterId();
     }
 
     @Test

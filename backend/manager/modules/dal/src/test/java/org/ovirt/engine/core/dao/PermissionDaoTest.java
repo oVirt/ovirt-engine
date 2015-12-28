@@ -35,7 +35,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid STORAGE_ENTITY_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid USER_ENTITY_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ENTITY_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS =
             new Guid("88D4301A-17AF-496C-A793-584640853D4B");
@@ -415,27 +415,27 @@ public class PermissionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetTreeForEntityWithVmType() {
-        baseTestGetTreeForEntity(VM_ENTITY_ID, VdcObjectType.VM, VDS_GROUP_ID);
+        baseTestGetTreeForEntity(VM_ENTITY_ID, VdcObjectType.VM, CLUSTER_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVdsType() {
-        baseTestGetTreeForEntity(VDS_ENTITY_ID, VdcObjectType.VDS, VDS_GROUP_ID);
+        baseTestGetTreeForEntity(VDS_ENTITY_ID, VdcObjectType.VDS, CLUSTER_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVmTemplateType() {
-        baseTestGetTreeForEntity(VM_TEMPLATE_ENTITY_ID, VdcObjectType.VmTemplate, VDS_GROUP_ID);
+        baseTestGetTreeForEntity(VM_TEMPLATE_ENTITY_ID, VdcObjectType.VmTemplate, CLUSTER_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVmPoolType() {
-        baseTestGetTreeForEntity(VM_POOL_ENTITY_ID, VdcObjectType.VmPool, VDS_GROUP_ID);
+        baseTestGetTreeForEntity(VM_POOL_ENTITY_ID, VdcObjectType.VmPool, CLUSTER_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithClusterType() {
-        baseTestGetTreeForEntity(CLUSTER_ENTITY_ID, VdcObjectType.VdsGroups, VDS_GROUP_ID);
+        baseTestGetTreeForEntity(CLUSTER_ENTITY_ID, VdcObjectType.Cluster, CLUSTER_ID);
     }
 
     @Test

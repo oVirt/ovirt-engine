@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -64,7 +64,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         Iterable<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
         DataCenterWithCluster selectDataCenterWithCluster =
                 Linq.firstOrNull(dataCenterWithClusters,
-                        new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getVdsGroupId()));
+                        new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getClusterId()));
 
         getModel().getDataCenterWithClustersList()
                 .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
@@ -174,7 +174,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
+    protected List<Cluster> filterClusters(List<Cluster> clusters) {
         return AsyncDataProvider.getInstance().filterByArchitecture(clusters, pool.getClusterArch());
     }
 

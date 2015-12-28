@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -30,13 +30,13 @@ public class QuotaMapper {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
         if (model.isSetClusterHardLimitPct()) {
-            entity.setGraceVdsGroupPercentage(model.getClusterHardLimitPct());
+            entity.setGraceClusterPercentage(model.getClusterHardLimitPct());
         }
         if (model.isSetStorageHardLimitPct()) {
             entity.setGraceStoragePercentage(model.getStorageHardLimitPct());
         }
         if (model.isSetClusterSoftLimitPct()) {
-            entity.setThresholdVdsGroupPercentage(model.getClusterSoftLimitPct());
+            entity.setThresholdClusterPercentage(model.getClusterSoftLimitPct());
         }
         if (model.isSetStorageSoftLimitPct()) {
             entity.setThresholdStoragePercentage(model.getStorageSoftLimitPct());
@@ -62,9 +62,9 @@ public class QuotaMapper {
             }
             ret.getDataCenter().setId(template.getStoragePoolId().toString());
         }
-        ret.setClusterHardLimitPct(template.getGraceVdsGroupPercentage());
+        ret.setClusterHardLimitPct(template.getGraceClusterPercentage());
         ret.setStorageHardLimitPct(template.getGraceStoragePercentage());
-        ret.setClusterSoftLimitPct(template.getThresholdVdsGroupPercentage());
+        ret.setClusterSoftLimitPct(template.getThresholdClusterPercentage());
         ret.setStorageSoftLimitPct(template.getThresholdStoragePercentage());
         return ret;
     }
@@ -138,13 +138,13 @@ public class QuotaMapper {
         Guid guid = GuidUtils.asGuid(model.getId());
         // global
         if (guid.equals(entity.getId())) {
-            map(model, entity.getGlobalQuotaVdsGroup(), null, entity.getStoragePoolId().toString(), entity.getId()
+            map(model, entity.getGlobalQuotaCluster(), null, entity.getStoragePoolId().toString(), entity.getId()
                     .toString());
         } else { // specific
-            if (entity.getQuotaVdsGroups() != null) {
-                for (QuotaVdsGroup quotaCluster : entity.getQuotaVdsGroups()) {
-                    if (quotaCluster.getVdsGroupId() != null && quotaCluster.getVdsGroupId().equals(guid)) {
-                        map(model, quotaCluster, quotaCluster.getVdsGroupId().toString(), entity.getStoragePoolId()
+            if (entity.getQuotaClusters() != null) {
+                for (QuotaCluster quotaCluster : entity.getQuotaClusters()) {
+                    if (quotaCluster.getClusterId() != null && quotaCluster.getClusterId().equals(guid)) {
+                        map(model, quotaCluster, quotaCluster.getClusterId().toString(), entity.getStoragePoolId()
                                 .toString(), entity.getId().toString());
                     }
                 }
@@ -154,7 +154,7 @@ public class QuotaMapper {
     }
 
     private static void map(QuotaClusterLimit template,
-            QuotaVdsGroup quotaCluster,
+            QuotaCluster quotaCluster,
             String clusterId,
             String dataCenterId,
             String quotaId) {
@@ -188,7 +188,7 @@ public class QuotaMapper {
             org.ovirt.engine.core.common.businessentities.Quota template) {
         org.ovirt.engine.core.common.businessentities.Quota entity =
                 template != null ? template : new org.ovirt.engine.core.common.businessentities.Quota();
-        QuotaVdsGroup quotaCluster = new QuotaVdsGroup();
+        QuotaCluster quotaCluster = new QuotaCluster();
         if (model.isSetVcpuLimit()) {
             quotaCluster.setVirtualCpu(model.getVcpuLimit());
         }
@@ -200,10 +200,10 @@ public class QuotaMapper {
 
         // specific cluster
         if (model.isSetCluster() && model.getCluster().isSetId()) {
-            quotaCluster.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
-            entity.getQuotaVdsGroups().add(quotaCluster);
+            quotaCluster.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
+            entity.getQuotaClusters().add(quotaCluster);
         } else { // global
-            entity.setGlobalQuotaVdsGroup(quotaCluster);
+            entity.setGlobalQuotaCluster(quotaCluster);
         }
         return entity;
     }

@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -31,9 +31,9 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.QuotaGraceStorage, 20),
-            mockConfig(ConfigValues.QuotaGraceVdsGroup, 20),
+            mockConfig(ConfigValues.QuotaGraceCluster, 20),
             mockConfig(ConfigValues.QuotaThresholdStorage, 80),
-            mockConfig(ConfigValues.QuotaThresholdVdsGroup, 80)
+            mockConfig(ConfigValues.QuotaThresholdCluster, 80)
             );
 
     @Before
@@ -74,12 +74,12 @@ public class AddQuotaCommandTest extends BaseCommandTest {
         storageQuota.setStorageSizeGBUsage(0d);
         generalQuota.setGlobalQuotaStorage(storageQuota);
 
-        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
-        vdsGroupQuota.setVirtualCpu(0);
-        vdsGroupQuota.setVirtualCpuUsage(0);
-        vdsGroupQuota.setMemSizeMB(0L);
-        vdsGroupQuota.setMemSizeMBUsage(0L);
-        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+        QuotaCluster clusterQuota = new QuotaCluster();
+        clusterQuota.setVirtualCpu(0);
+        clusterQuota.setVirtualCpuUsage(0);
+        clusterQuota.setMemSizeMB(0L);
+        clusterQuota.setMemSizeMBUsage(0L);
+        generalQuota.setGlobalQuotaCluster(clusterQuota);
 
         generalQuota.setId(Guid.newGuid());
         generalQuota.setStoragePoolId(Guid.newGuid());

@@ -68,7 +68,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             List<VmNic> interfacesForCheckPciLimit = new ArrayList<>(interfaces);
             interfacesForCheckPciLimit.add(getParameters().getInterface());
             if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
-                    getVdsGroup().getCompatibilityVersion(),
+                    getCluster().getCompatibilityVersion(),
                     getVmTemplate().getNumOfMonitors(),
                     interfacesForCheckPciLimit,
                     new ArrayList<>(getVmTemplate().getDiskList()),
@@ -80,13 +80,13 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 return false;
             }
 
-            Version clusterCompatibilityVersion = getVdsGroup().getCompatibilityVersion();
+            Version clusterCompatibilityVersion = getCluster().getCompatibilityVersion();
             VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
 
             return validate(nicValidator.linkedOnlyIfSupported())
                     && validate(nicValidator.isCompatibleWithOs())
                     && validate(nicValidator.emptyNetworkValid())
-                    && validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))
+                    && validate(nicValidator.profileValid(getVmTemplate().getClusterId()))
                     && validate(nicValidator.typeMatchesProfile())
                     && validate(nicValidator.passthroughIsLinked());
         }

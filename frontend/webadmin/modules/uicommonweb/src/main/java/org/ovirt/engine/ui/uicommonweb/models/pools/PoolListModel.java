@@ -233,7 +233,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                                     model.getDataCenterWithClustersList().setSelectedItem(null);
                                     model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList()
                                             .getItems(),
-                                            new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getVdsGroupId())));
+                                            new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getClusterId())));
 
                                     model.getTemplateWithVersion().setIsChangeable(false);
                                     cdImage = vm.getIsoPath();
@@ -434,7 +434,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         // Save changes.
         pool.setName(model.getName().getEntity());
         pool.setVmPoolDescription(model.getDescription().getEntity());
-        pool.setVdsGroupId(model.getSelectedCluster().getId());
+        pool.setClusterId(model.getSelectedCluster().getId());
         pool.setComment(model.getComment().getEntity());
         pool.setPrestartedVms(model.getPrestartedVms().getEntity());
         pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());

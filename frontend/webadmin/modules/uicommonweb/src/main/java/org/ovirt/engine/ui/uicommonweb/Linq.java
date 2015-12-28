@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -316,9 +316,9 @@ public final class Linq {
 
     }
 
-    public static boolean isHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host) {
-        for (VDSGroup cluster : clusters) {
-            if (cluster.getId().equals(host.getVdsGroupId())) {
+    public static boolean isHostBelongsToAnyOfClusters(ArrayList<Cluster> clusters, VDS host) {
+        for (Cluster cluster : clusters) {
+            if (cluster.getId().equals(host.getClusterId())) {
                 return true;
             }
         }
@@ -364,11 +364,11 @@ public final class Linq {
      *            IList to look in
      * @return Version MinVersion
      */
-    public static Version getMinVersionByClusters(List<VDSGroup> source) {
+    public static Version getMinVersionByClusters(List<Cluster> source) {
         Version minVersion = source != null && source.size() > 0 ? source.get(0).getCompatibilityVersion() : null;
 
         if (minVersion != null) {
-            for (VDSGroup cluster : source) {
+            for (Cluster cluster : source) {
                 minVersion =
                         cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? (Version) cluster.getCompatibilityVersion()
                                 : minVersion;
@@ -395,14 +395,14 @@ public final class Linq {
     }
 
     /**
-     * Check if VDSGroup item with specified id exist in List
+     * Check if Cluster item with specified id exist in List
      *
      * @param items
      * @param id
      * @return
      */
-    public static boolean isClusterItemExistInList(List<VDSGroup> items, Guid id) {
-        for (VDSGroup a : items) {
+    public static boolean isClusterItemExistInList(List<Cluster> items, Guid id) {
+        for (Cluster a : items) {
             if (id.equals(a.getId())) {
                 return true;
             }
@@ -1218,12 +1218,12 @@ public final class Linq {
         }
     }
 
-    public final static class VDSGroupComparator implements Comparator<VDSGroup>, Serializable {
+    public final static class ClusterComparator implements Comparator<Cluster>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
-        public int compare(VDSGroup cluster1, VDSGroup cluster2) {
+        public int compare(Cluster cluster1, Cluster cluster2) {
             return lexoNumeric.compare(cluster1.getName(), cluster2.getName());
         }
     }

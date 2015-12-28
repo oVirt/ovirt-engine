@@ -10,9 +10,9 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,12 +44,12 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("General quota");
-        quota.setThresholdVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdVdsGroup));
+        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
         quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceVdsGroup));
+        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
         quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
         setQuotaGlobalLimitations(quota);
-        quota.setQuotaVdsGroups(getQuotaVdsGroup(null));
+        quota.setQuotaClusters(getQuotaCluster(null));
         quota.setQuotaStorages(getQuotaStorage(null));
         dao.save(quota);
 
@@ -70,11 +70,11 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("Specific quota");
-        quota.setThresholdVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdVdsGroup));
+        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
         quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceVdsGroup));
+        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
         quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
-        quota.setQuotaVdsGroups(getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaId)));
+        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(getSpecificQuotaStorage(quotaId)));
         dao.save(quota);
 
@@ -92,11 +92,11 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
         quota.setDescription("General and specific quota");
-        quota.setThresholdVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdVdsGroup));
+        quota.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
         quota.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceVdsGroupPercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceVdsGroup));
+        quota.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
         quota.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
-        quota.setQuotaVdsGroups(getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaId)));
+        quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(null));
         quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000L, 0d));
         dao.save(quota);
@@ -113,18 +113,18 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testFetchVdsGroupWithUnlimitedGlobalLimitation() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
+    public void testFetchClusterWithUnlimitedGlobalLimitation() throws Exception {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
 
         // Should be two rows of specific vds group
-        assertEquals(true, quotaVdsGroupList.size() == 1);
+        assertEquals(true, quotaClusterList.size() == 1);
 
         // Get first specific vds group.
-        QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
-        assertNotNull(quotaVdsGroup);
-        assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
-        assertEquals(true, quotaVdsGroup.getVirtualCpu().equals(10));
+        QuotaCluster quotaCluster = quotaClusterList.get(0);
+        assertNotNull(quotaCluster);
+        assertEquals(quotaCluster.getMemSizeMB(), unlimited);
+        assertEquals(true, quotaCluster.getVirtualCpu().equals(10));
     }
 
     /**
@@ -135,17 +135,17 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testFetchGlobalQuotaUsageForSpecificVdsGroup() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
-        QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
-        assertNotNull(quotaVdsGroup);
-        assertEquals(true, quotaVdsGroupList.size() == 1);
-        assertEquals(true, quotaVdsGroup.getMemSizeMBUsage() > 0);
-        assertEquals(true, quotaVdsGroup.getVirtualCpuUsage() > 0);
+    public void testFetchGlobalQuotaUsageForSpecificCluster() throws Exception {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
+        QuotaCluster quotaCluster = quotaClusterList.get(0);
+        assertNotNull(quotaCluster);
+        assertEquals(true, quotaClusterList.size() == 1);
+        assertEquals(true, quotaCluster.getMemSizeMBUsage() > 0);
+        assertEquals(true, quotaCluster.getVirtualCpuUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(Integer.valueOf(100), quotaVdsGroup.getVirtualCpu());
+        assertEquals(Integer.valueOf(100), quotaCluster.getVirtualCpu());
     }
 
     /**
@@ -156,15 +156,15 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testFetchGlobalQuotaUsageForGlobalVdsGroup() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList = dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_GENERAL);
-        QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
-        assertEquals(true, quotaVdsGroupList.size() == 1);
-        assertNotNull(quotaVdsGroup);
-        assertEquals(true, quotaVdsGroup.getMemSizeMBUsage() > 0);
+    public void testFetchGlobalQuotaUsageForGlobalCluster() throws Exception {
+        List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_GENERAL);
+        QuotaCluster quotaCluster = quotaClusterList.get(0);
+        assertEquals(true, quotaClusterList.size() == 1);
+        assertNotNull(quotaCluster);
+        assertEquals(true, quotaCluster.getMemSizeMBUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(Integer.valueOf(100), quotaVdsGroup.getVirtualCpu());
+        assertEquals(Integer.valueOf(100), quotaCluster.getVirtualCpu());
     }
 
     /**
@@ -175,14 +175,14 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testCompareFetchGlobalQuotaForSpecificAndForGlobalVdsGroup() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupGlobalList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_GENERAL);
-        List<QuotaVdsGroup> quotaVdsGroupSpecificList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
+    public void testCompareFetchGlobalQuotaForSpecificAndForGlobalCluster() throws Exception {
+        List<QuotaCluster> quotaClusterGlobalList =
+                dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_GENERAL);
+        List<QuotaCluster> quotaClusterSpecificList =
+                dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(true, quotaVdsGroupGlobalList.equals(quotaVdsGroupSpecificList));
+        assertEquals(true, quotaClusterGlobalList.equals(quotaClusterSpecificList));
     }
 
     /**
@@ -193,15 +193,15 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testFetchSpecificQuotaUsageForSpecificVdsGroup() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
-        QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
-        assertNotNull(quotaVdsGroup);
-        assertEquals(true, quotaVdsGroupList.size() == 1);
+    public void testFetchSpecificQuotaUsageForSpecificCluster() throws Exception {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
+        QuotaCluster quotaCluster = quotaClusterList.get(0);
+        assertNotNull(quotaCluster);
+        assertEquals(true, quotaClusterList.size() == 1);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(10));
+        assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(10));
     }
 
     /**
@@ -212,11 +212,11 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * @throws Exception
      */
     @Test
-    public void testFetchSpecificQuotaUsageForGlobalVdsGroup() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList = dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_SPECIFIC);
-        QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
-        assertEquals(true, quotaVdsGroupList.size() == 2);
-        assertNotNull(quotaVdsGroup);
+    public void testFetchSpecificQuotaUsageForGlobalCluster() throws Exception {
+        List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
+        QuotaCluster quotaCluster = quotaClusterList.get(0);
+        assertEquals(true, quotaClusterList.size() == 2);
+        assertNotNull(quotaCluster);
     }
 
     @Test
@@ -232,67 +232,67 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testFetchAllVdsGroupForQuota() throws Exception {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_SPECIFIC);
-        assertNotNull(quotaVdsGroupList);
-        assertEquals(quotaVdsGroupList.size(), 2);
-        for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
-            if (quotaVdsGroup.getQuotaVdsGroupId()
+    public void testFetchAllClusterForQuota() throws Exception {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
+        assertNotNull(quotaClusterList);
+        assertEquals(quotaClusterList.size(), 2);
+        for (QuotaCluster quotaCluster : quotaClusterList) {
+            if (quotaCluster.getQuotaClusterId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
-                assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(10));
-                assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
+                assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(10));
+                assertEquals(quotaCluster.getMemSizeMB(), unlimited);
             }
-            else if (quotaVdsGroup.getQuotaVdsGroupId()
+            else if (quotaCluster.getQuotaClusterId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
-                assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(1000));
-                assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
+                assertEquals(quotaCluster.getVirtualCpu(), Integer.valueOf(1000));
+                assertEquals(quotaCluster.getMemSizeMB(), unlimited);
             }
         }
     }
 
     /**
-     * Asserts that when {@link QuotaDao#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * Asserts that when {@link QuotaDao#getQuotaClusterByQuotaGuidWithGeneralDefault(Guid)} is called
      * with a specific quota, all the relevant VDSs are returned
      */
     @Test
-    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultNoDefault() {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
-        assertNotNull(quotaVdsGroupList);
-        assertEquals("wrong number of quotas returned", 2, quotaVdsGroupList.size());
-        for (QuotaVdsGroup group : quotaVdsGroupList) {
-            assertNotNull("VDS ID should not be null in specific mode", group.getVdsGroupId());
-            assertNotNull("VDS name should not be null in specific mode", group.getVdsGroupName());
+    public void testQuotaClusterByQuotaGuidWithGeneralDefaultNoDefault() {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
+        assertNotNull(quotaClusterList);
+        assertEquals("wrong number of quotas returned", 2, quotaClusterList.size());
+        for (QuotaCluster group : quotaClusterList) {
+            assertNotNull("VDS ID should not be null in specific mode", group.getClusterId());
+            assertNotNull("VDS name should not be null in specific mode", group.getClusterName());
         }
     }
 
     /**
-     * Asserts that when {@link QuotaDao#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * Asserts that when {@link QuotaDao#getQuotaClusterByQuotaGuidWithGeneralDefault(Guid)} is called
      * with a non-specific quota, the general is returned
      */
     @Test
-    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultWithDefault() {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_GENERAL);
-        assertNotNull(quotaVdsGroupList);
-        assertEquals("wrong number of quotas returned", 1, quotaVdsGroupList.size());
-        for (QuotaVdsGroup group : quotaVdsGroupList) {
-            assertEquals("VDS ID should be empty in general mode", Guid.Empty, group.getVdsGroupId());
-            assertNull("VDS name should be null in general mode", group.getVdsGroupName());
+    public void testQuotaClusterByQuotaGuidWithGeneralDefaultWithDefault() {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_GENERAL);
+        assertNotNull(quotaClusterList);
+        assertEquals("wrong number of quotas returned", 1, quotaClusterList.size());
+        for (QuotaCluster group : quotaClusterList) {
+            assertEquals("VDS ID should be empty in general mode", Guid.Empty, group.getClusterId());
+            assertNull("VDS name should be null in general mode", group.getClusterName());
         }
     }
 
     /**
-     * Asserts that when {@link QuotaDao#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * Asserts that when {@link QuotaDao#getQuotaClusterByQuotaGuidWithGeneralDefault(Guid)} is called
      * with an empty quota, no vds quotas are returned
      */
     @Test
-    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultWithEmpty() {
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
-        assertNotNull(quotaVdsGroupList);
-        assertEquals("wrong number of quotas returned", 0, quotaVdsGroupList.size());
+    public void testQuotaClusterByQuotaGuidWithGeneralDefaultWithEmpty() {
+        List<QuotaCluster> quotaClusterList =
+                dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
+        assertNotNull(quotaClusterList);
+        assertEquals("wrong number of quotas returned", 0, quotaClusterList.size());
     }
 
     /**
@@ -345,7 +345,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         assertNotNull(quota);
         dao.remove(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         assertEquals(null, dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL));
-        assertEquals(0, dao.getQuotaVdsGroupByQuotaGuid(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL).size());
+        assertEquals(0, dao.getQuotaClusterByQuotaGuid(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL).size());
         assertEquals(0, dao.getQuotaStorageByQuotaGuid(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL).size());
     }
 
@@ -358,28 +358,28 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     public void testUpdateQuota() throws Exception {
         Quota quotaGeneralToSpecific = dao.getById(FixturesTool.QUOTA_GENERAL);
 
-        // Save quotaName and vdsGroup list for future check.
+        // Save quotaName and cluster list for future check.
         String quotaName = "New Temporary name";
-        List<QuotaVdsGroup> quotaVdsGroupList =
-                getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaGeneralToSpecific.getId()));
+        List<QuotaCluster> quotaClusterList =
+                getQuotaCluster(getSpecificQuotaCluster(quotaGeneralToSpecific.getId()));
         Long newStorageLimit = 2345L;
 
         // Check before the update, that the fields are not equal.
         assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), false);
-        assertEquals(quotaVdsGroupList.size() == quotaGeneralToSpecific.getQuotaVdsGroups().size(), false);
+        assertEquals(quotaClusterList.size() == quotaGeneralToSpecific.getQuotaClusters().size(), false);
         assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), false);
 
         // Update
         quotaGeneralToSpecific.setQuotaName(quotaName);
         quotaGeneralToSpecific.getGlobalQuotaStorage().setStorageSizeGB(newStorageLimit);
-        quotaGeneralToSpecific.setQuotaVdsGroups(quotaVdsGroupList);
+        quotaGeneralToSpecific.setQuotaClusters(quotaClusterList);
 
         dao.update(quotaGeneralToSpecific);
         quotaGeneralToSpecific = dao.getById(FixturesTool.QUOTA_GENERAL);
 
         // Check after the update, that the fields are equal now.
         assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), true);
-        assertEquals(quotaVdsGroupList.size() == quotaGeneralToSpecific.getQuotaVdsGroups().size(), true);
+        assertEquals(quotaClusterList.size() == quotaGeneralToSpecific.getQuotaClusters().size(), true);
         assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), true);
     }
 
@@ -507,27 +507,27 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with an existing VDS Group
      */
     @Test
-    public void testGetRelevantQuotasExistingVdsGroup() throws Exception {
+    public void testGetRelevantQuotasExistingCluster() throws Exception {
         // there is one specific quota and all the general ones defined on this VDS Group
-        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, VDS_GRUOP_NUM_QUOTAS);
+        assertGetAllRelevantQuoatsForCluster(FixturesTool.CLUSTER_RHEL6_NFS, VDS_GRUOP_NUM_QUOTAS);
     }
 
     /**
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a VDS Group domain with no specific quotas
      */
     @Test
-    public void testGetRelevantQuotasExistingVdsGroupNoSpecificQuotas() throws Exception {
+    public void testGetRelevantQuotasExistingClusterNoSpecificQuotas() throws Exception {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this group
-        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS, VDS_GRUOP_NUM_QUOTAS - 1);
+        assertGetAllRelevantQuoatsForCluster(FixturesTool.CLUSTER_RHEL6_NFS_NO_SPECIFIC_QUOTAS, VDS_GRUOP_NUM_QUOTAS - 1);
     }
 
     /**
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid)} with a non existing VDS Group
      */
     @Test
-    public void testGetRelevantQuotasNonExistingVdsGroup() throws Exception {
+    public void testGetRelevantQuotasNonExistingCluster() throws Exception {
         // There is no such storgae, so no quotas are defined on it
-        assertGetAllRelevantQuoatsForVdsGroup(Guid.newGuid(), 0);
+        assertGetAllRelevantQuoatsForCluster(Guid.newGuid(), 0);
     }
 
     /**
@@ -542,22 +542,24 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Test {@link QuotaDao#getAllRelevantQuotasForVdsGroup(Guid)} fetching quota for user
+     * Test {@link QuotaDao#getAllRelevantQuotasForCluster(Guid)} fetching quota for user
      * without privileges for quota.
      */
     @Test
-    public void testGetRelevantVdsGroupQuotaForUserWithoutPrivileges() throws Exception {
+    public void testGetRelevantClusterQuotaForUserWithoutPrivileges() throws Exception {
         assertNotNull(unprivilegedUserSession);
-        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, unprivilegedUserSession.getId(), true);
+        List<Quota> quotas = dao.getAllRelevantQuotasForCluster(FixturesTool.CLUSTER_RHEL6_NFS,
+                unprivilegedUserSession.getId(),
+                true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
 
     /**
-     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #vdsGroupId}
+     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #clusterId}
      */
-    private void assertGetAllRelevantQuoatsForVdsGroup(Guid vdsGroupId, int expectedQuotas) {
+    private void assertGetAllRelevantQuoatsForCluster(Guid clusterId, int expectedQuotas) {
         assertNotNull(privilegedUserSession);
-        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(vdsGroupId, privilegedUserSession.getId(), false);
+        List<Quota> quotas = dao.getAllRelevantQuotasForCluster(clusterId, privilegedUserSession.getId(), false);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 
@@ -572,24 +574,24 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     }
 
-    private static QuotaVdsGroup getSpecificQuotaVdsGroup(Guid quotaId) {
-        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
-        quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
-        quotaVdsGroup.setQuotaId(quotaId);
-        quotaVdsGroup.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_NFS);
-        quotaVdsGroup.setVirtualCpu(2880);
-        quotaVdsGroup.setMemSizeMB(16000000L);
-        quotaVdsGroup.setVirtualCpuUsage(0);
-        quotaVdsGroup.setMemSizeMBUsage(0L);
-        return quotaVdsGroup;
+    private static QuotaCluster getSpecificQuotaCluster(Guid quotaId) {
+        QuotaCluster quotaCluster = new QuotaCluster();
+        quotaCluster.setQuotaClusterId(Guid.newGuid());
+        quotaCluster.setQuotaId(quotaId);
+        quotaCluster.setClusterId(FixturesTool.CLUSTER_RHEL6_NFS);
+        quotaCluster.setVirtualCpu(2880);
+        quotaCluster.setMemSizeMB(16000000L);
+        quotaCluster.setVirtualCpuUsage(0);
+        quotaCluster.setMemSizeMBUsage(0L);
+        return quotaCluster;
     }
 
-    private static List<QuotaVdsGroup> getQuotaVdsGroup(QuotaVdsGroup quotaVdsGroup) {
-        List<QuotaVdsGroup> quotaVdsGroupList = new ArrayList<>();
-        if (quotaVdsGroup != null) {
-            quotaVdsGroupList.add(quotaVdsGroup);
+    private static List<QuotaCluster> getQuotaCluster(QuotaCluster quotaCluster) {
+        List<QuotaCluster> quotaClusterList = new ArrayList<>();
+        if (quotaCluster != null) {
+            quotaClusterList.add(quotaCluster);
         }
-        return quotaVdsGroupList;
+        return quotaClusterList;
     }
 
     private static List<QuotaStorage> getQuotaStorage(QuotaStorage quotaStorage) {
@@ -602,21 +604,21 @@ public class QuotaDaoTest extends BaseDaoTestCase {
 
     private static void setQuotaGlobalLimitations(Quota quota) {
         QuotaStorage quotaStorage = new QuotaStorage();
-        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+        QuotaCluster quotaCluster = new QuotaCluster();
 
         // Set Quota storage capacity definition.
         quotaStorage.setStorageSizeGB(10000L);
         quotaStorage.setStorageSizeGBUsage(0d);
 
         // Set Quota cluster virtual memory definition.
-        quotaVdsGroup.setMemSizeMB(16000000L);
-        quotaVdsGroup.setMemSizeMBUsage(0L);
+        quotaCluster.setMemSizeMB(16000000L);
+        quotaCluster.setMemSizeMBUsage(0L);
 
         // Set Quota cluster virtual CPU definition.
-        quotaVdsGroup.setVirtualCpu(2880);
-        quotaVdsGroup.setVirtualCpuUsage(0);
+        quotaCluster.setVirtualCpu(2880);
+        quotaCluster.setVirtualCpuUsage(0);
 
         quota.setGlobalQuotaStorage(quotaStorage);
-        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+        quota.setGlobalQuotaCluster(quotaCluster);
     }
 }

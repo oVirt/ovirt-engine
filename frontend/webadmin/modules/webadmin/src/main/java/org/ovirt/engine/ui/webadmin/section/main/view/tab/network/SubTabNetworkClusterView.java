@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -33,7 +33,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkView, PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>
+public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkView, PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel>
         implements SubTabNetworkClusterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabNetworkClusterView> {
@@ -50,7 +50,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
+    public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
         super(modelProvider);
         displayImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
@@ -72,33 +72,33 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> nameColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> nameColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
             @Override
-            public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+            public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 return object.getFirst().getName();
             }
         };
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> versionColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
             @Override
-            public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+            public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 return object.getFirst().getCompatibilityVersion().getValue();
             }
         };
         versionColumn.makeSortable();
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "130px"); //$NON-NLS-1$
 
-        AbstractCheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>> attachedColumn =
-                new AbstractCheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>>(true) {
+        AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>> attachedColumn =
+                new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
             @Override
-            public Boolean getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+            public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 return object.getSecond() != null;
             }
 
             @Override
-            protected boolean canEdit(PairQueryable<VDSGroup, NetworkCluster> object) {
+            protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
                 return false;
             }
         };
@@ -109,10 +109,10 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         statusColumn.makeSortable(new SimpleStatusColumnComparator<>(statusColumn));
         getTable().addColumn(statusColumn, constants.networkStatus(), "120px"); //$NON-NLS-1$
 
-        AbstractCheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>> netRequiredColumn =
-                new AbstractCheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>>(true) {
+        AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>> netRequiredColumn =
+                new AbstractCheckboxColumn<PairQueryable<Cluster, NetworkCluster>>(true) {
             @Override
-            public Boolean getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+            public Boolean getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 if (object.getSecond() != null) {
                     return object.getSecond().isRequired();
                 }
@@ -120,18 +120,18 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
             }
 
             @Override
-            protected boolean canEdit(PairQueryable<VDSGroup, NetworkCluster> object) {
+            protected boolean canEdit(PairQueryable<Cluster, NetworkCluster> object) {
                 return false;
             }
         };
         netRequiredColumn.makeSortable();
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn =
-                new AbstractSafeHtmlColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>> netRoleColumn =
+                new AbstractSafeHtmlColumn<PairQueryable<Cluster, NetworkCluster>>() {
 
                     @Override
-                    public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+                    public SafeHtml getValue(PairQueryable<Cluster, NetworkCluster> object) {
                         List<SafeHtml> images = new LinkedList<>();
 
                         if (object.getSecond() != null) {
@@ -161,7 +161,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                     }
 
                     @Override
-                    public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
+                    public SafeHtml getTooltip(PairQueryable<Cluster, NetworkCluster> object) {
                         Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         if (object.getSecond() != null) {
                             if (object.getSecond().isManagement()) {
@@ -184,7 +184,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                         return MultiImageColumnHelper.getTooltip(imagesToText);
                     }
                 };
-        netRoleColumn.makeSortable(new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
+        netRoleColumn.makeSortable(new Comparator<PairQueryable<Cluster, NetworkCluster>>() {
 
             private int calculateValue(NetworkCluster networkCluster) {
                 int res = 0;
@@ -206,22 +206,22 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
             }
 
             @Override
-            public int compare(PairQueryable<VDSGroup, NetworkCluster> o1, PairQueryable<VDSGroup, NetworkCluster> o2) {
+            public int compare(PairQueryable<Cluster, NetworkCluster> o1, PairQueryable<Cluster, NetworkCluster> o2) {
                 return calculateValue(o1.getSecond()) - calculateValue(o2.getSecond());
             }
         });
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> descriptionColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
             @Override
-            public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+            public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 return object.getFirst().getDescription();
             }
         };
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionCluster(), "400px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VDSGroup, NetworkCluster>>(constants.assignUnassignNetwork()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<Cluster, NetworkCluster>>(constants.assignUnassignNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageCommand();

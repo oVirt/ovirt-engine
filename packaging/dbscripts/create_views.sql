@@ -740,7 +740,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
     vm_templates.description AS description,
     vm_templates.free_text_comment AS free_text_comment,
-    vm_templates.vds_group_id AS vds_group_id,
+    vm_templates.cluster_id AS cluster_id,
     vm_templates.num_of_monitors AS num_of_monitors,
     vm_templates.single_qxl_pci AS single_qxl_pci,
     vm_templates.allow_console_reconnect AS allow_console_reconnect,
@@ -748,9 +748,9 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.usb_policy AS usb_policy,
     vm_templates.time_zone AS time_zone,
     vm_templates.fail_back AS fail_back,
-    vds_groups.name AS vds_group_name,
-    vds_groups.compatibility_version AS vds_group_compatibility_version,
-    vds_groups.trusted_service AS trusted_service,
+    cluster.name AS cluster_name,
+    cluster.compatibility_version AS cluster_compatibility_version,
+    cluster.trusted_service AS trusted_service,
     vm_templates.vm_type AS vm_type,
     vm_templates.nice_level AS nice_level,
     vm_templates.cpu_shares AS cpu_shares,
@@ -783,7 +783,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.created_by_user_id AS created_by_user_id,
     vm_templates.entity_type,
     vm_templates.migration_downtime AS migration_downtime,
-    vds_groups.architecture AS architecture,
+    cluster.architecture AS architecture,
     vm_templates.template_version_number AS template_version_number,
     vm_templates.vmt_guid AS base_template_id,
     vm_templates.template_version_name AS template_version_name,
@@ -805,10 +805,10 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.console_disconnect_action AS console_disconnect_action,
     vm_templates.custom_compatibility_version as custom_compatibility_version
 FROM vm_static AS vm_templates
-LEFT JOIN vds_groups
-    ON vm_templates.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN cluster
+    ON vm_templates.cluster_id = cluster.cluster_id
 LEFT JOIN storage_pool
-    ON storage_pool.id = vds_groups.storage_pool_id
+    ON storage_pool.id = cluster.storage_pool_id
 LEFT JOIN quota
     ON vm_templates.quota_id = quota.id
 WHERE entity_type = 'TEMPLATE'
@@ -843,7 +843,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
     vm_templates.description,
     vm_templates.free_text_comment,
-    vm_templates.vds_group_id,
+    vm_templates.cluster_id,
     vm_templates.num_of_monitors,
     vm_templates.single_qxl_pci,
     vm_templates.allow_console_reconnect,
@@ -851,7 +851,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.usb_policy,
     vm_templates.time_zone,
     vm_templates.fail_back,
-    vds_groups.name AS vds_group_name,
+    cluster.name AS cluster_name,
     vm_templates.vm_type,
     vm_templates.nice_level,
     vm_templates.cpu_shares,
@@ -875,7 +875,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.created_by_user_id,
     vm_templates.migration_downtime,
     vm_templates.entity_type,
-    vds_groups.architecture,
+    cluster.architecture,
     vm_templates.template_version_number AS template_version_number,
     vm_templates.vmt_guid AS base_template_id,
     vm_templates.template_version_name AS template_version_name,
@@ -891,10 +891,10 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.predefined_properties AS predefined_properties,
     vm_templates.userdefined_properties AS userdefined_properties
 FROM vm_static AS vm_templates
-LEFT JOIN vds_groups
-    ON vm_templates.vds_group_id = vds_groups.vds_group_id
+LEFT JOIN cluster
+    ON vm_templates.cluster_id = cluster.cluster_id
 LEFT JOIN storage_pool
-    ON storage_pool.id = vds_groups.storage_pool_id
+    ON storage_pool.id = cluster.storage_pool_id
 INNER JOIN vm_device
     ON vm_device.vm_id = vm_templates.vm_guid
 LEFT JOIN images
@@ -922,7 +922,7 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
     vm_templates_1.description,
     vm_templates_1.free_text_comment,
-    vm_templates_1.vds_group_id,
+    vm_templates_1.cluster_id,
     vm_templates_1.num_of_monitors,
     vm_templates_1.single_qxl_pci,
     vm_templates_1.allow_console_reconnect,
@@ -930,7 +930,7 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.usb_policy,
     vm_templates_1.time_zone,
     vm_templates_1.fail_back,
-    vds_groups_1.name AS vds_group_name,
+    cluster_1.name AS cluster_name,
     vm_templates_1.vm_type,
     vm_templates_1.nice_level,
     vm_templates_1.cpu_shares,
@@ -954,7 +954,7 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.created_by_user_id,
     vm_templates_1.migration_downtime,
     vm_templates_1.entity_type,
-    vds_groups_1.architecture,
+    cluster_1.architecture,
     vm_templates_1.template_version_number AS template_version_number,
     vm_templates_1.vmt_guid AS base_template_id,
     vm_templates_1.template_version_name AS template_version_name,
@@ -970,10 +970,10 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.predefined_properties AS predefined_properties,
     vm_templates_1.userdefined_properties AS userdefined_properties
 FROM vm_static AS vm_templates_1
-LEFT JOIN vds_groups AS vds_groups_1
-    ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id
+LEFT JOIN cluster AS cluster_1
+    ON vm_templates_1.cluster_id = cluster_1.cluster_id
 LEFT JOIN storage_pool AS storage_pool_1
-    ON storage_pool_1.id = vds_groups_1.storage_pool_id
+    ON storage_pool_1.id = cluster_1.storage_pool_id
 INNER JOIN vm_device AS vm_device_1
     ON vm_device_1.vm_id = vm_templates_1.vm_guid
 INNER JOIN images AS images_1
@@ -1091,7 +1091,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.os AS os,
     vm_static.description AS description,
     vm_static.free_text_comment AS free_text_comment,
-    vm_static.vds_group_id AS vds_group_id,
+    vm_static.cluster_id AS cluster_id,
     vm_static.creation_date AS creation_date,
     vm_static.auto_startup AS auto_startup,
     vm_static.is_stateless AS is_stateless,
@@ -1103,13 +1103,13 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.default_boot_sequence AS default_boot_sequence,
     vm_static.vm_type AS vm_type,
     vm_pool_map_view.vm_pool_spice_proxy AS vm_pool_spice_proxy,
-    vds_groups.name AS vds_group_name,
-    vds_groups.transparent_hugepages AS transparent_hugepages,
-    vds_groups.trusted_service AS trusted_service,
+    cluster.name AS cluster_name,
+    cluster.transparent_hugepages AS transparent_hugepages,
+    cluster.trusted_service AS trusted_service,
     storage_pool.id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
-    vds_groups.description AS vds_group_description,
-    vds_groups.spice_proxy AS vds_group_spice_proxy,
+    cluster.description AS cluster_description,
+    cluster.spice_proxy AS cluster_spice_proxy,
     vm_templates.vm_name AS vmt_name,
     vm_templates.mem_size_mb AS vmt_mem_size_mb,
     vm_templates.os AS vmt_os,
@@ -1170,12 +1170,12 @@ SELECT vm_static.vm_name AS vm_name,
     vm_statistics.migration_progress_percent AS migration_progress_percent,
     vm_statistics.usage_cpu_percent AS usage_cpu_percent,
     vds_static.vds_name AS run_on_vds_name,
-    vds_groups.cpu_name AS vds_group_cpu_name,
+    cluster.cpu_name AS cluster_cpu_name,
     vm_static.default_display_type AS default_display_type,
     vm_static.priority AS priority,
     vm_static.iso_path AS iso_path,
     vm_static.origin AS origin,
-    vds_groups.compatibility_version AS vds_group_compatibility_version,
+    cluster.compatibility_version AS cluster_compatibility_version,
     vm_static.initrd_url AS initrd_url,
     vm_static.kernel_url AS kernel_url,
     vm_static.kernel_params AS kernel_params,
@@ -1205,7 +1205,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.exit_reason AS exit_reason,
     vm_static.instance_type_id AS instance_type_id,
     vm_static.image_type_id AS image_type_id,
-    vds_groups.architecture AS architecture,
+    cluster.architecture AS architecture,
     vm_static.original_template_id AS original_template_id,
     vm_static.original_template_name AS original_template_name,
     vm_dynamic.last_stop_time AS last_stop_time,
@@ -1254,11 +1254,11 @@ INNER JOIN vm_static AS vm_templates
     ON vm_static.vmt_guid = vm_templates.vm_guid
 INNER JOIN vm_statistics
     ON vm_static.vm_guid = vm_statistics.vm_guid
-INNER JOIN vds_groups
-    ON vm_static.vds_group_id = vds_groups.vds_group_id
+INNER JOIN cluster
+    ON vm_static.cluster_id = cluster.cluster_id
 LEFT JOIN storage_pool
-    ON vm_static.vds_group_id = vds_groups.vds_group_id
-        AND vds_groups.storage_pool_id = storage_pool.id
+    ON vm_static.cluster_id = cluster.cluster_id
+        AND cluster.storage_pool_id = storage_pool.id
 LEFT JOIN quota
     ON vm_static.quota_id = quota.id
 LEFT JOIN vds_static
@@ -1292,7 +1292,7 @@ SELECT vms.vm_name,
     vms.os,
     vms.description,
     vms.free_text_comment,
-    vms.vds_group_id,
+    vms.cluster_id,
     vms.creation_date,
     vms.auto_startup,
     vms.is_stateless,
@@ -1303,10 +1303,10 @@ SELECT vms.vm_name,
     vms.fail_back,
     vms.default_boot_sequence,
     vms.vm_type,
-    vms.vds_group_name,
+    vms.cluster_name,
     vms.storage_pool_id,
     vms.storage_pool_name,
-    vms.vds_group_description,
+    vms.cluster_description,
     vms.vmt_name,
     vms.vmt_mem_size_mb,
     vms.vmt_os,
@@ -1360,12 +1360,12 @@ SELECT vms.vm_name,
     vms.migration_progress_percent,
     vms.usage_cpu_percent,
     vms.run_on_vds_name,
-    vms.vds_group_cpu_name,
+    vms.cluster_cpu_name,
     tags_vm_map_view.tag_name,
     tags_vm_map_view.tag_id,
     vms.default_display_type,
     vms.priority,
-    vms.vds_group_compatibility_version,
+    vms.cluster_compatibility_version,
     vms.initrd_url,
     vms.kernel_url,
     vms.kernel_params,
@@ -1386,7 +1386,7 @@ SELECT vms.vm_name,
     vms.custom_emulated_machine AS custom_emulated_machine,
     vms.custom_cpu_name AS custom_cpu_name,
     vms.vm_pool_spice_proxy AS vm_pool_spice_proxy,
-    vms.vds_group_spice_proxy AS vds_group_spice_proxy,
+    vms.cluster_spice_proxy AS cluster_spice_proxy,
     vms.instance_type_id AS instance_type_id,
     vms.image_type_id AS image_type_id,
     vms.architecture AS architecture,
@@ -1465,11 +1465,11 @@ WHERE vm_type = '0';
 
 CREATE OR REPLACE VIEW vds AS
 
-SELECT vds_groups.vds_group_id AS vds_group_id,
-    vds_groups.name AS vds_group_name,
-    vds_groups.description AS vds_group_description,
-    vds_groups.architecture AS architecture,
-    vds_groups.enable_balloon AS enable_balloon,
+SELECT cluster.cluster_id AS cluster_id,
+    cluster.name AS cluster_name,
+    cluster.description AS cluster_description,
+    cluster.architecture AS architecture,
+    cluster.enable_balloon AS enable_balloon,
     vds_static.vds_id AS vds_id,
     vds_static.vds_name AS vds_name,
     vds_static.vds_unique_id AS vds_unique_id,
@@ -1503,9 +1503,9 @@ SELECT vds_groups.vds_group_id AS vds_group_id,
     vds_dynamic.outgoing_migrations AS outgoing_migrations,
     vds_dynamic.vms_cores_count AS vms_cores_count,
     vds_statistics.cpu_over_commit_time_stamp AS cpu_over_commit_time_stamp,
-    vds_groups.max_vds_memory_over_commit AS max_vds_memory_over_commit,
+    cluster.max_vds_memory_over_commit AS max_vds_memory_over_commit,
     vds_dynamic.net_config_dirty AS net_config_dirty,
-    vds_groups.count_threads_as_cores AS count_threads_as_cores,
+    cluster.count_threads_as_cores AS count_threads_as_cores,
     storage_pool.id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
     vds_dynamic.reserved_mem AS reserved_mem,
@@ -1531,7 +1531,7 @@ SELECT vds_groups.vds_group_id AS vds_group_id,
     vds_statistics.ksm_pages AS ksm_pages,
     vds_statistics.ksm_state AS ksm_state,
     vds_dynamic.cpu_flags AS cpu_flags,
-    vds_groups.cpu_name AS vds_group_cpu_name,
+    cluster.cpu_name AS cluster_cpu_name,
     vds_dynamic.cpu_sockets AS cpu_sockets,
     vds_spm_id_map.vds_spm_id AS vds_spm_id,
     vds_static.otp_validity AS otp_validity,
@@ -1546,9 +1546,9 @@ SELECT vds_groups.vds_group_id AS vds_group_id,
         END AS spm_status,
     vds_dynamic.supported_cluster_levels AS supported_cluster_levels,
     vds_dynamic.supported_engines AS supported_engines,
-    vds_groups.compatibility_version AS vds_group_compatibility_version,
-    vds_groups.virt_service AS vds_group_virt_service,
-    vds_groups.gluster_service AS vds_group_gluster_service,
+    cluster.compatibility_version AS cluster_compatibility_version,
+    cluster.virt_service AS cluster_virt_service,
+    cluster.gluster_service AS cluster_gluster_service,
     vds_dynamic.host_os AS host_os,
     vds_dynamic.kvm_version AS kvm_version,
     vds_dynamic.libvirt_version AS libvirt_version,
@@ -1604,15 +1604,15 @@ SELECT vds_groups.vds_group_id AS vds_group_id,
     fence_agents.encrypt_options AS agent_encrypt_options,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
-FROM vds_groups
+FROM cluster
 INNER JOIN vds_static
-    ON vds_groups.vds_group_id = vds_static.vds_group_id
+    ON cluster.cluster_id = vds_static.cluster_id
 INNER JOIN vds_dynamic
     ON vds_static.vds_id = vds_dynamic.vds_id
 INNER JOIN vds_statistics
     ON vds_static.vds_id = vds_statistics.vds_id
 LEFT JOIN storage_pool
-    ON vds_groups.storage_pool_id = storage_pool.id
+    ON cluster.storage_pool_id = storage_pool.id
 LEFT JOIN fence_agents
     ON vds_static.vds_id = fence_agents.vds_id
 LEFT JOIN vds_spm_id_map
@@ -1620,10 +1620,10 @@ LEFT JOIN vds_spm_id_map
 
 CREATE OR REPLACE VIEW vds_with_tags AS
 
-SELECT vds_groups.vds_group_id,
-    vds_groups.name AS vds_group_name,
-    vds_groups.description AS vds_group_description,
-    vds_groups.architecture AS architecture,
+SELECT cluster.cluster_id,
+    cluster.name AS cluster_name,
+    cluster.description AS cluster_description,
+    cluster.architecture AS architecture,
     vds_static.vds_id,
     vds_static.vds_name,
     vds_static.vds_unique_id,
@@ -1662,8 +1662,8 @@ SELECT vds_groups.vds_group_id,
     vds_dynamic.vms_cores_count,
     vds_statistics.cpu_over_commit_time_stamp,
     vds_dynamic.net_config_dirty,
-    vds_groups.max_vds_memory_over_commit,
-    vds_groups.count_threads_as_cores,
+    cluster.max_vds_memory_over_commit,
+    cluster.count_threads_as_cores,
     storage_pool.id AS storage_pool_id,
     storage_pool.name AS storage_pool_name,
     tags_vds_map_view.tag_name,
@@ -1691,7 +1691,7 @@ SELECT vds_groups.vds_group_id,
     vds_statistics.ksm_pages,
     vds_statistics.ksm_state,
     vds_dynamic.cpu_flags,
-    vds_groups.cpu_name AS vds_group_cpu_name,
+    cluster.cpu_name AS cluster_cpu_name,
     vds_dynamic.cpu_sockets,
     vds_spm_id_map.vds_spm_id,
     vds_static.otp_validity AS otp_validity,
@@ -1707,7 +1707,7 @@ SELECT vds_groups.vds_group_id,
         END AS spm_status,
     vds_dynamic.supported_cluster_levels,
     vds_dynamic.supported_engines,
-    vds_groups.compatibility_version AS vds_group_compatibility_version,
+    cluster.compatibility_version AS cluster_compatibility_version,
     vds_dynamic.host_os,
     vds_dynamic.kvm_version,
     vds_dynamic.libvirt_version,
@@ -1751,15 +1751,15 @@ SELECT vds_groups.vds_group_id,
     vds_dynamic.maintenance_reason AS maintenance_reason,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled
-FROM vds_groups
+FROM cluster
 INNER JOIN vds_static
-    ON vds_groups.vds_group_id = vds_static.vds_group_id
+    ON cluster.cluster_id = vds_static.cluster_id
 INNER JOIN vds_dynamic
     ON vds_static.vds_id = vds_dynamic.vds_id
 INNER JOIN vds_statistics
     ON vds_static.vds_id = vds_statistics.vds_id
 LEFT JOIN storage_pool
-    ON vds_groups.storage_pool_id = storage_pool.id
+    ON cluster.storage_pool_id = storage_pool.id
 LEFT JOIN tags_vds_map_view
     ON vds_static.vds_id = tags_vds_map_view.vds_id
 LEFT JOIN fence_agents
@@ -1884,19 +1884,19 @@ SELECT vm_pools.vm_pool_id,
     vm_pools.vm_pool_type,
     vm_pools.parameters,
     vm_pools.prestarted_vms,
-    vm_pools.vds_group_id,
-    vds_groups.name AS vds_group_name,
-    vds_groups.architecture AS architecture,
+    vm_pools.cluster_id,
+    cluster.name AS cluster_name,
+    cluster.architecture AS architecture,
     storage_pool.name AS storage_pool_name,
     storage_pool.id AS storage_pool_id,
     vm_pools.max_assigned_vms_per_user AS max_assigned_vms_per_user,
     vm_pools.spice_proxy AS spice_proxy,
     vm_pools.is_being_destroyed AS is_being_destroyed
 FROM vm_pools
-INNER JOIN vds_groups
-    ON vm_pools.vds_group_id = vds_groups.vds_group_id
+INNER JOIN cluster
+    ON vm_pools.cluster_id = cluster.cluster_id
 LEFT JOIN storage_pool
-    ON storage_pool.id = vds_groups.storage_pool_id;
+    ON storage_pool.id = cluster.storage_pool_id;
 
 CREATE OR REPLACE VIEW vm_pools_full_view AS
 
@@ -1907,8 +1907,8 @@ SELECT vmp.vm_pool_id,
     vmp.vm_pool_type,
     vmp.parameters,
     vmp.prestarted_vms,
-    vmp.vds_group_id,
-    vmp.vds_group_name,
+    vmp.cluster_id,
+    vmp.cluster_name,
     vmp.architecture,
     vmp.max_assigned_vms_per_user,
     vmp.spice_proxy AS spice_proxy,
@@ -2016,7 +2016,7 @@ SELECT vds_interface_statistics.rx_rate,
     1 AS is_vds,
     vds_interface.qos_overridden AS qos_overridden,
     vds_interface.labels AS labels,
-    vds_static.vds_group_id AS vds_group_id
+    vds_static.cluster_id AS cluster_id
 FROM vds_interface_statistics
 INNER JOIN vds_interface
     ON vds_interface_statistics.id = vds_interface.id
@@ -2051,7 +2051,7 @@ SELECT vm_interface_statistics.rx_rate,
     vm_device.custom_properties,
     vnic_profiles.port_mirroring AS port_mirroring,
     vm_interface.linked,
-    vm_static.vds_group_id AS vds_group_id,
+    vm_static.cluster_id AS cluster_id,
     vm_static.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
     qos.name AS qos_name
@@ -2100,7 +2100,7 @@ SELECT vm_interface_statistics.rx_rate,
     vm_device.custom_properties AS custom_properties,
     vnic_profiles.port_mirroring AS port_mirroring,
     vm_interface.linked,
-    vm_templates.vds_group_id AS vds_group_id,
+    vm_templates.cluster_id AS cluster_id,
     vm_templates.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
     qos.name AS qos_name
@@ -2154,40 +2154,40 @@ LEFT JOIN storage_domain_static
 ----------------------------------------------
 -- Clusters
 ----------------------------------------------
-CREATE OR REPLACE VIEW vds_groups_storage_domain AS
+CREATE OR REPLACE VIEW cluster_storage_domain AS
 
-SELECT vds_groups.vds_group_id,
-    vds_groups.name,
-    vds_groups.description,
-    vds_groups.free_text_comment,
-    vds_groups.cpu_name,
-    vds_groups._create_date,
-    vds_groups._update_date,
-    vds_groups.storage_pool_id,
-    vds_groups.max_vds_memory_over_commit,
-    vds_groups.count_threads_as_cores,
-    vds_groups.compatibility_version,
-    vds_groups.transparent_hugepages,
-    vds_groups.migrate_on_error,
-    vds_groups.architecture,
+SELECT cluster.cluster_id,
+    cluster.name,
+    cluster.description,
+    cluster.free_text_comment,
+    cluster.cpu_name,
+    cluster._create_date,
+    cluster._update_date,
+    cluster.storage_pool_id,
+    cluster.max_vds_memory_over_commit,
+    cluster.count_threads_as_cores,
+    cluster.compatibility_version,
+    cluster.transparent_hugepages,
+    cluster.migrate_on_error,
+    cluster.architecture,
     storage_pool_iso_map.storage_id,
     storage_pool.name AS storage_pool_name
-FROM vds_groups
+FROM cluster
 LEFT JOIN storage_pool_iso_map
-    ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id
+    ON cluster.storage_pool_id = storage_pool_iso_map.storage_pool_id
 LEFT JOIN storage_pool
-    ON vds_groups.storage_pool_id = storage_pool.id;
+    ON cluster.storage_pool_id = storage_pool.id;
 
-CREATE OR REPLACE VIEW vds_groups_view AS
+CREATE OR REPLACE VIEW cluster_view AS
 
-SELECT vds_groups.*,
+SELECT cluster.*,
     storage_pool.name AS storage_pool_name,
     cluster_policies.name AS cluster_policy_name
-FROM vds_groups
+FROM cluster
 LEFT JOIN storage_pool
-    ON vds_groups.storage_pool_id = storage_pool.id
+    ON cluster.storage_pool_id = storage_pool.id
 LEFT JOIN cluster_policies
-    ON vds_groups.cluster_policy_id = cluster_policies.id;
+    ON cluster.cluster_policy_id = cluster_policies.id;
 
 CREATE OR REPLACE VIEW storage_domains_with_hosts_view AS
 
@@ -2207,7 +2207,7 @@ SELECT storage_domain_static.id,
     storage_domain_static.last_time_used_as_master AS last_time_used_as_master,
     storage_domain_static.wipe_after_delete AS wipe_after_delete,
     fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, storage_pool_iso_map.status, storage_domain_static.storage_domain_type) AS storage_domain_shared_status,
-    vds_groups.vds_group_id,
+    cluster.cluster_id,
     vds_static.vds_id,
     storage_pool_iso_map.storage_pool_id,
     vds_static.recoverable
@@ -2218,10 +2218,10 @@ LEFT JOIN storage_pool_iso_map
     ON storage_domain_static.id = storage_pool_iso_map.storage_id
 LEFT JOIN storage_pool
     ON storage_pool_iso_map.storage_pool_id = storage_pool.id
-LEFT JOIN vds_groups
-    ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
+LEFT JOIN cluster
+    ON storage_pool_iso_map.storage_pool_id = cluster.storage_pool_id
 LEFT JOIN vds_static
-    ON vds_groups.vds_group_id = vds_static.vds_group_id;
+    ON cluster.cluster_id = vds_static.cluster_id;
 
 CREATE OR REPLACE VIEW vm_images_storage_domains_view AS
 
@@ -2270,7 +2270,7 @@ SELECT vm_images_view.storage_id,
     storage_domains_with_hosts_view.storage_domain_type,
     storage_domains_with_hosts_view.storage_domain_format_type,
     storage_domains_with_hosts_view.storage_domain_shared_status,
-    storage_domains_with_hosts_view.vds_group_id,
+    storage_domains_with_hosts_view.cluster_id,
     storage_domains_with_hosts_view.vds_id,
     storage_domains_with_hosts_view.recoverable,
     storage_domains_with_hosts_view.storage_pool_name,
@@ -2291,9 +2291,9 @@ SELECT q.id AS quota_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
     q.description AS description,
-    q.threshold_vds_group_percentage AS threshold_vds_group_percentage,
+    q.threshold_cluster_percentage AS threshold_cluster_percentage,
     q.threshold_storage_percentage AS threshold_storage_percentage,
-    q.grace_vds_group_percentage AS grace_vds_group_percentage,
+    q.grace_cluster_percentage AS grace_cluster_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
     storage_pool.quota_enforcement_type AS quota_enforcement_type
 FROM storage_pool,
@@ -2307,14 +2307,14 @@ SELECT q_limit.quota_id AS quota_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
     q.description AS description,
-    q.threshold_vds_group_percentage AS threshold_vds_group_percentage,
+    q.threshold_cluster_percentage AS threshold_cluster_percentage,
     q.threshold_storage_percentage AS threshold_storage_percentage,
-    q.grace_vds_group_percentage AS grace_vds_group_percentage,
+    q.grace_cluster_percentage AS grace_cluster_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
     virtual_cpu,
-    (CalculateVdsGroupUsage(quota_id, NULL)).virtual_cpu_usage,
+    (CalculateClusterUsage(quota_id, NULL)).virtual_cpu_usage,
     mem_size_mb,
-    (CalculateVdsGroupUsage(quota_id, NULL)).mem_size_mb_usage,
+    (CalculateClusterUsage(quota_id, NULL)).mem_size_mb_usage,
     storage_size_gb,
     CalculateStorageUsage(quota_id, NULL) AS storage_size_gb_usage,
     storage_pool.quota_enforcement_type AS quota_enforcement_type
@@ -2323,7 +2323,7 @@ FROM storage_pool,
 LEFT JOIN quota_limitation q_limit
     ON q_limit.quota_id = q.id
 WHERE storage_pool.id = q.storage_pool_id
-    AND q_limit.vds_group_id IS NULL
+    AND q_limit.cluster_id IS NULL
     AND q_limit.storage_id IS NULL;
 
 CREATE OR REPLACE VIEW quota_limitations_view AS
@@ -2333,17 +2333,17 @@ SELECT q_limit.quota_id AS quota_id,
     storage_pool.name AS storage_pool_name,
     q.quota_name AS quota_name,
     q.description AS description,
-    q.threshold_vds_group_percentage AS threshold_vds_group_percentage,
+    q.threshold_cluster_percentage AS threshold_cluster_percentage,
     q.threshold_storage_percentage AS threshold_storage_percentage,
-    q.grace_vds_group_percentage AS grace_vds_group_percentage,
+    q.grace_cluster_percentage AS grace_cluster_percentage,
     q.grace_storage_percentage AS grace_storage_percentage,
     virtual_cpu,
     mem_size_mb,
     storage_size_gb,
     storage_pool.quota_enforcement_type AS quota_enforcement_type,
-    vds_group_id,
+    cluster_id,
     storage_id,
-    (COALESCE(vds_group_id, storage_id) IS NULL) AS is_global,
+    (COALESCE(cluster_id, storage_id) IS NULL) AS is_global,
     (COALESCE(virtual_cpu, mem_size_mb, storage_size_gb) IS NULL) AS is_empty
 FROM quota q
 INNER JOIN storage_pool
@@ -2363,27 +2363,27 @@ FROM quota_limitation q_limit,
     quota q,
     storage_domain_static
 WHERE q_limit.quota_id = q.id
-    AND q_limit.vds_group_id IS NULL
+    AND q_limit.cluster_id IS NULL
     AND q_limit.storage_id IS NOT NULL
     AND storage_domain_static.id = q_limit.storage_id;
 
-CREATE OR REPLACE VIEW quota_vds_group_view AS
+CREATE OR REPLACE VIEW quota_cluster_view AS
 
-SELECT q_limit.id AS quota_vds_group_id,
+SELECT q_limit.id AS quota_cluster_id,
     q_limit.quota_id AS quota_id,
-    q_limit.vds_group_id,
-    vds_groups.name AS vds_group_name,
+    q_limit.cluster_id,
+    cluster.name AS cluster_name,
     virtual_cpu,
-    (CalculateVdsGroupUsage(quota_id, q_limit.vds_group_id)).virtual_cpu_usage AS virtual_cpu_usage,
+    (CalculateClusterUsage(quota_id, q_limit.cluster_id)).virtual_cpu_usage AS virtual_cpu_usage,
     mem_size_mb,
-    (CalculateVdsGroupUsage(quota_id, q_limit.vds_group_id)).mem_size_mb_usage AS mem_size_mb_usage
+    (CalculateClusterUsage(quota_id, q_limit.cluster_id)).mem_size_mb_usage AS mem_size_mb_usage
 FROM quota_limitation q_limit,
     quota q,
-    vds_groups
+    cluster
 WHERE q_limit.quota_id = q.id
-    AND q_limit.vds_group_id IS NOT NULL
+    AND q_limit.cluster_id IS NOT NULL
     AND q_limit.storage_id IS NULL
-    AND vds_groups.vds_group_id = q_limit.vds_group_id;
+    AND cluster.cluster_id = q_limit.cluster_id;
 
 ----------------------------------------------
 -- Network
@@ -2397,12 +2397,12 @@ SELECT network_cluster.cluster_id AS cluster_id,
     network_cluster.required AS required,
     network_cluster.is_display AS is_display,
     network_cluster.migration AS migration,
-    vds_groups.name AS cluster_name
+    cluster.name AS cluster_name
 FROM network_cluster
 INNER JOIN network
     ON network_cluster.network_id = network.id
-INNER JOIN vds_groups
-    ON network_cluster.cluster_id = vds_groups.vds_group_id;
+INNER JOIN cluster
+    ON network_cluster.cluster_id = cluster.cluster_id;
 
 CREATE OR REPLACE VIEW network_vds_view AS
 
@@ -2416,7 +2416,7 @@ INNER JOIN network
     ON vds_interface.network_name = network.name
 INNER JOIN network_cluster
     ON network_cluster.network_id = network.id
-WHERE network_cluster.cluster_id = vds_static.vds_group_id;
+WHERE network_cluster.cluster_id = vds_static.cluster_id;
 
 CREATE OR REPLACE VIEW network_view AS
 
@@ -2499,7 +2499,7 @@ FROM engine_sessions;
 
 -- Permissions view for Clusters
 -- The user has permissions on a cluster
-CREATE OR REPLACE VIEW user_vds_groups_permissions_view_base (
+CREATE OR REPLACE VIEW user_cluster_permissions_view_base (
     entity_id,
     granted_id
     ) AS
@@ -2512,7 +2512,7 @@ WHERE object_type_id = 9
 
 UNION ALL
 
-SELECT DISTINCT vds_group_id,
+SELECT DISTINCT cluster_id,
     ad_element_id
 FROM vm_static
 INNER JOIN internal_permissions_view
@@ -2522,35 +2522,35 @@ INNER JOIN internal_permissions_view
             OR object_type_id = 4
             )
         AND role_type = 2
-        AND vds_group_id IS NOT NULL -- Or the object is the Data Center containing the Cluster
+        AND cluster_id IS NOT NULL -- Or the object is the Data Center containing the Cluster
 
 UNION ALL
 
-SELECT vds_group_id,
+SELECT cluster_id,
     ad_element_id
-FROM vds_groups
+FROM cluster
 INNER JOIN internal_permissions_view
-    ON object_id = vds_groups.storage_pool_id
+    ON object_id = cluster.storage_pool_id
         AND object_type_id = 14
         AND role_type = 2 -- Or the user has permissions on system;
 
 UNION ALL
 
-SELECT vds_group_id,
+SELECT cluster_id,
     ad_element_id
 FROM internal_permissions_view
-CROSS JOIN vds_groups
+CROSS JOIN cluster
 WHERE object_type_id = 1
     AND role_type = 2;
 
-CREATE OR REPLACE VIEW user_vds_groups_permissions_view (
+CREATE OR REPLACE VIEW user_cluster_permissions_view (
     entity_id,
     user_id
     ) AS
 
 SELECT DISTINCT entity_id,
     user_id
-FROM user_vds_groups_permissions_view_base NATURAL
+FROM user_cluster_permissions_view_base NATURAL
  JOIN engine_session_user_flat_groups;
 
 -- Permissions view for Data Center
@@ -2570,9 +2570,9 @@ UNION ALL
 
 SELECT storage_pool_id,
     ad_element_id
-FROM vds_groups
+FROM cluster
 INNER JOIN internal_permissions_view
-    ON object_id = vds_groups.vds_group_id
+    ON object_id = cluster.cluster_id
         AND object_type_id = 9
         AND role_type = 2 -- Or the object is vm pool in the data center
 
@@ -2580,9 +2580,9 @@ UNION ALL
 
 SELECT storage_pool_id,
     ad_element_id
-FROM vds_groups
+FROM cluster
 INNER JOIN vm_pools
-    ON vds_groups.vds_group_id = vm_pools.vds_group_id
+    ON cluster.cluster_id = vm_pools.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = vm_pools.vm_pool_id
         AND object_type_id = 5
@@ -2593,8 +2593,8 @@ UNION ALL
 SELECT storage_pool_id,
     ad_element_id
 FROM vm_static
-INNER JOIN vds_groups
-    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN cluster
+    ON cluster.cluster_id = vm_static.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = vm_guid
         AND object_type_id = 2
@@ -2637,10 +2637,10 @@ UNION ALL
 SELECT storage_domains.id,
     ad_element_id
 FROM storage_domains
-INNER JOIN vds_groups
-    ON vds_groups.storage_pool_id = storage_domains.storage_pool_id
+INNER JOIN cluster
+    ON cluster.storage_pool_id = storage_domains.storage_pool_id
 INNER JOIN vm_static
-    ON vds_groups.vds_group_id = vm_static.vds_group_id
+    ON cluster.cluster_id = vm_static.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = vm_static.vm_guid
         AND object_type_id = 2
@@ -2717,7 +2717,7 @@ SELECT vds_id,
 FROM vds
 INNER JOIN internal_permissions_view
     ON (
-            object_id = vds_group_id
+            object_id = cluster_id
             AND object_type_id = 9
             )
         OR (
@@ -2774,7 +2774,7 @@ SELECT vm_pool_id,
     ad_element_id
 FROM vm_pools
 INNER JOIN internal_permissions_view
-    ON object_id = vds_group_id
+    ON object_id = cluster_id
         AND object_type_id = 9
         AND allows_viewing_children
         AND role_type = 2 -- Or the user has permission on the data center containing the VM pool
@@ -2784,8 +2784,8 @@ UNION ALL
 SELECT vm_pool_id,
     ad_element_id
 FROM vm_pools
-INNER JOIN vds_groups
-    ON vm_pools.vds_group_id = vds_groups.vds_group_id
+INNER JOIN cluster
+    ON vm_pools.cluster_id = cluster.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = storage_pool_id
         AND object_type_id = 14
@@ -2840,8 +2840,8 @@ UNION ALL
 SELECT vm_guid,
     ad_element_id
 FROM vm_static
-INNER JOIN vds_groups
-    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN cluster
+    ON cluster.cluster_id = vm_static.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = storage_pool_id
         AND object_type_id = 14
@@ -2893,7 +2893,7 @@ SELECT vm_guid,
     ad_element_id
 FROM vm_static
 INNER JOIN internal_permissions_view
-    ON object_id = vds_group_id
+    ON object_id = cluster_id
         AND object_type_id = 9
         AND allows_viewing_children
         AND role_type = 2 -- Or the user has permissions on the data center containing the VM
@@ -2903,8 +2903,8 @@ UNION ALL
 SELECT vm_guid,
     ad_element_id
 FROM vm_static
-INNER JOIN vds_groups
-    ON vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN cluster
+    ON cluster.cluster_id = vm_static.cluster_id
 INNER JOIN internal_permissions_view
     ON object_id = storage_pool_id
         AND object_type_id = 14
@@ -3234,11 +3234,9 @@ FROM user_cpu_profile_permissions_view_base NATURAL
  JOIN engine_session_user_flat_groups;
 
 
-CREATE
-OR REPLACE VIEW gluster_volumes_view AS
-SELECT
-    gluster_volumes.*,
-    vds_groups.name AS vds_group_name,
+CREATE OR REPLACE VIEW gluster_volumes_view AS
+SELECT gluster_volumes.*,
+    cluster.name AS cluster_name,
     CASE
         WHEN EXISTS (
                 SELECT session_id
@@ -3253,13 +3251,13 @@ SELECT
         FROM gluster_georep_session
         INNER JOIN gluster_volumes vol
             ON master_volume_id = vol.id
-        INNER JOIN vds_groups cluster
-            ON cluster.vds_group_id = vol.cluster_id
+        INNER JOIN cluster
+            ON cluster.cluster_id = vol.cluster_id
         WHERE slave_volume_id = gluster_volumes.id
         ) AS master_vol_cluster
 FROM gluster_volumes
-INNER JOIN vds_groups
-    ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
+INNER JOIN cluster
+    ON gluster_volumes.cluster_id = cluster.cluster_id;
 
 CREATE OR REPLACE VIEW gluster_volume_snapshots_view AS
 
@@ -3448,7 +3446,7 @@ LEFT JOIN numa_node AS run_in_vds_numa_node
     ON vm_vds_numa_node_map.vds_numa_node_id = run_in_vds_numa_node.numa_node_id;
 
 -- Numa node with vds group view
-CREATE OR REPLACE VIEW numa_node_with_vds_group_view AS
+CREATE OR REPLACE VIEW numa_node_with_cluster_view AS
 
 SELECT vm_numa_node.numa_node_id AS vm_numa_node_id,
     vm_numa_node.vm_id AS vm_numa_node_vm_id,
@@ -3462,7 +3460,7 @@ SELECT vm_numa_node.numa_node_id AS vm_numa_node_id,
     vm_numa_node.cpu_idle AS vm_numa_node_cpu_idle,
     vm_numa_node.usage_cpu_percent AS vm_numa_node_usage_cpu_percent,
     vm_numa_node.distance AS vm_numa_node_distance,
-    vm_static.vds_group_id
+    vm_static.cluster_id
 FROM numa_node AS vm_numa_node
 LEFT JOIN vm_static
     ON vm_numa_node.vm_id = vm_static.vm_guid;

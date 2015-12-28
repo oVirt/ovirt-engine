@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -470,7 +470,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateDefaultHost() {
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (cluster == null) {
@@ -538,7 +538,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     /**
      * By default admin query is fired, UserPortal overrides it to fire user query
      */
-    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
         AsyncDataProvider.getInstance().getHostListByCluster(query, cluster.getName());
     }
 
@@ -759,11 +759,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateQuotaByCluster(final Guid defaultQuota, final String quotaName) {
         if (getModel().getQuota().getIsAvailable()) {
-            VDSGroup cluster = getModel().getSelectedCluster();
+            Cluster cluster = getModel().getSelectedCluster();
             if (cluster == null) {
                 return;
             }
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
                             new INewAsyncCallback() {
 
@@ -799,7 +799,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateMemoryBalloon() {
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (cluster != null && osType != null) {
@@ -1255,7 +1255,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateOSValues() {
 
         List<Integer> vmOsValues;
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster != null) {
             vmOsValues = AsyncDataProvider.getInstance().getOsIds(cluster.getArchitecture());
@@ -1274,7 +1274,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * Updates the emulated machine combobox after a cluster change occurs
      */
     protected void updateEmulatedMachines() {
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster == null) {
             return;
@@ -1300,7 +1300,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      */
 
     protected void updateCustomCpu() {
-        VDSGroup cluster = getModel().getSelectedCluster();
+        Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster == null || cluster.getCpuName() == null) {
             return;
@@ -1483,10 +1483,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return selectedInstanceType == null || selectedInstanceType instanceof CustomInstanceType;
     }
 
-    protected void updateCpuProfile(Guid clusterId, Version vdsGroupCompatibilityVersion, Guid cpuProfileId) {
+    protected void updateCpuProfile(Guid clusterId, Version clusterCompatibilityVersion, Guid cpuProfileId) {
         if (Boolean.TRUE.equals(AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                        vdsGroupCompatibilityVersion.getValue()))) {
+                        clusterCompatibilityVersion.getValue()))) {
             getModel().getCpuProfiles().setIsAvailable(true);
             fetchCpuProfiles(clusterId, cpuProfileId);
         } else {

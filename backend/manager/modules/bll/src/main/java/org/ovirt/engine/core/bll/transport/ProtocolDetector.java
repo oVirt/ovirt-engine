@@ -133,7 +133,7 @@ public class ProtocolDetector implements AutoCloseable {
             VdsDynamic host = vdsDynamicDao.get(vds.getId());
 
             // warn if host supports jsonrpc in cluster which supports only jsonrpc, and fallback was triggered
-            if (isJsonProtocolSupported(host) && vds.getVdsGroupCompatibilityVersion().greaterOrEquals(Version.v3_6)) {
+            if (isJsonProtocolSupported(host) && vds.getClusterCompatibilityVersion().greaterOrEquals(Version.v3_6)) {
                 // Report an error for protocol incompatibility
                 AuditLogableBase event = new AuditLogableBase();
                 event.setVds(vds);

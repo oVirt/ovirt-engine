@@ -15,7 +15,7 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     public RefreshGlusterHooksCommand(T params) {
         super(params);
-        setVdsGroupId(params.getClusterId());
+        setClusterId(params.getClusterId());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     @Override
     protected boolean validate() {
-        if (getParameters().getClusterId() == null || getVdsGroup() == null) {
+        if (getParameters().getClusterId() == null || getCluster() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
             return false;
         }
@@ -49,7 +49,7 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     @Override
     protected void executeCommand() {
-        getSyncJobInstance().refreshHooksInCluster(getVdsGroup(), true);
+        getSyncJobInstance().refreshHooksInCluster(getCluster(), true);
         setSucceeded(true);
 
     }

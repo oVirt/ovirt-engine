@@ -61,10 +61,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
 
-        if (migrateVmParameters.getTargetVdsGroupId() != null) {
-            setVdsGroupId(migrateVmParameters.getTargetVdsGroupId());
+        if (migrateVmParameters.getTargetClusterId() != null) {
+            setClusterId(migrateVmParameters.getTargetClusterId());
             // force reload
-            setVdsGroup(null);
+            setCluster(null);
         }
     }
 
@@ -113,7 +113,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected boolean initVdss() {
         setVdsIdRef(getVm().getRunOnVds());
         Guid vdsToRunOn =
-                schedulingManager.schedule(getVdsGroup(),
+                schedulingManager.schedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
@@ -185,7 +185,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getPort());
 
         return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, getDestinationVdsId(),
-                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion(),
+                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getClusterCompatibilityVersion(),
                 getMaximumMigrationDowntime(), getAutoConverge(), getMigrateCompressed(), getDestinationVds().getConsoleAddress());
     }
 
@@ -202,7 +202,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected void getDowntime() {
-        if (FeatureSupported.migrateDowntime(getVm().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.migrateDowntime(getVm().getClusterCompatibilityVersion())) {
             try {
                 VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
                         new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
@@ -216,22 +216,22 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void updateVmAfterMigrationToDifferentCluster() {
-        if (getVm().getVdsGroupId().equals(getParameters().getTargetVdsGroupId())) {
+        if (getVm().getClusterId().equals(getParameters().getTargetClusterId())) {
             return;
         }
 
-        ChangeVMClusterParameters params = new ChangeVMClusterParameters(getParameters().getTargetVdsGroupId(), getVmId());
+        ChangeVMClusterParameters params = new ChangeVMClusterParameters(getParameters().getTargetClusterId(), getVmId());
         setSucceeded(getBackend().runInternalAction(VdcActionType.ChangeVMCluster, params).getSucceeded());
     }
 
     private Boolean getAutoConverge() {
-        if (FeatureSupported.autoConvergence(getVm().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.autoConvergence(getVm().getClusterCompatibilityVersion())) {
             if (getVm().getAutoConverge() != null) {
                 return getVm().getAutoConverge();
             }
 
-            if (getVdsGroup().getAutoConverge() != null) {
-                return getVdsGroup().getAutoConverge();
+            if (getCluster().getAutoConverge() != null) {
+                return getCluster().getAutoConverge();
             }
 
             return Config.getValue(ConfigValues.DefaultAutoConvergence);
@@ -241,13 +241,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private Boolean getMigrateCompressed() {
-        if (FeatureSupported.migrationCompression(getVm().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.migrationCompression(getVm().getClusterCompatibilityVersion())) {
             if (getVm().getMigrateCompressed() != null) {
                 return getVm().getMigrateCompressed();
             }
 
-            if (getVdsGroup().getMigrateCompressed() != null) {
-                return getVdsGroup().getMigrateCompressed();
+            if (getCluster().getMigrateCompressed() != null) {
+                return getCluster().getMigrateCompressed();
             }
 
             return Config.getValue(ConfigValues.DefaultMigrationCompression);
@@ -265,26 +265,26 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private boolean isTunnelMigrationUsed() {
-        if (!FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.tunnelMigration(getVm().getClusterCompatibilityVersion())) {
             return false;
         }
         // if vm has no override for tunnel migration (its null),
         // use cluster's setting
         return getVm().getTunnelMigration() != null ?
                 getVm().getTunnelMigration()
-                : getVdsGroup().isTunnelMigration();
+                : getCluster().isTunnelMigration();
     }
 
     private String getMigrationNetworkIp() {
 
-        if (!FeatureSupported.migrationNetwork(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.migrationNetwork(getVm().getClusterCompatibilityVersion())) {
             return null;
         }
 
         Network migrationNetwork = null;
 
         // Find migrationNetworkCluster
-        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVm().getVdsGroupId());
+        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVm().getClusterId());
 
         for (Network tempNetwork : allNetworksInCluster) {
             if (tempNetwork.getCluster().isMigration()) {
@@ -394,7 +394,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
-        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {
+        if (!FeatureSupported.isMigrationSupported(getCluster().getArchitecture(), getCluster().getCompatibilityVersion())) {
             return failValidation(EngineMessage.MIGRATION_IS_NOT_SUPPORTED);
         }
 
@@ -433,8 +433,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
-        if (getParameters().getTargetVdsGroupId() != null) {
-            ChangeVmClusterValidator changeVmClusterValidator = new ChangeVmClusterValidator(this, getParameters().getTargetVdsGroupId());
+        if (getParameters().getTargetClusterId() != null) {
+            ChangeVmClusterValidator changeVmClusterValidator = new ChangeVmClusterValidator(this, getParameters().getTargetClusterId());
             if (!changeVmClusterValidator.validate()) {
                 return false;
             }
@@ -444,7 +444,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(ImagesHandler.getPluggedActiveImagesForVm(vm.getId())).diskImagesNotLocked())
-                && schedulingManager.canSchedule(getVdsGroup(),
+                && schedulingManager.canSchedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
                         getParameters().getInitialHosts(),
@@ -548,9 +548,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return permissionList;
         }
 
-        if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getVm().getVdsGroupId())) {
+        if (getParameters().getTargetClusterId() != null && !getParameters().getTargetClusterId().equals(getVm().getClusterId())) {
             // additional permissions needed since changing the cluster
-            permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetVdsGroupId()));
+            permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetClusterId()));
         }
 
         return permissionList;

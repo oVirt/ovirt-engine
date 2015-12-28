@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -55,8 +55,8 @@ public final class EntityObject extends JsMutableObjectWithProperties {
         }
 
         // Cluster
-        else if (businessEntity instanceof VDSGroup) {
-            obj.setValueAsString("name", ((VDSGroup) businessEntity).getName()); //$NON-NLS-1$
+        else if (businessEntity instanceof Cluster) {
+            obj.setValueAsString("name", ((Cluster) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Host

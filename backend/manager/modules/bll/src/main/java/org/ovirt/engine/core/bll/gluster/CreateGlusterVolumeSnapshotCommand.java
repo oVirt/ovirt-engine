@@ -47,7 +47,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         this.enginePausedSessions = new ArrayList<>();
 
         if (this.snapshot != null) {
-            setVdsGroupId(this.snapshot.getClusterId());
+            setClusterId(this.snapshot.getClusterId());
             setGlusterVolumeId(snapshot.getVolumeId());
             this.georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
         }

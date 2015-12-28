@@ -103,7 +103,7 @@ public class GlusterDBUtils {
         // first check for hostname
         VdsStatic server = getVdsStaticDao().getByHostName(hostnameOrIp);
         if (server != null) {
-            return server.getVdsGroupId().equals(clusterId) ? server : null;
+            return server.getClusterId().equals(clusterId) ? server : null;
         }
 
         // then for ip
@@ -179,8 +179,8 @@ public class GlusterDBUtils {
 
     public GlusterVolumeEntity getVolumeByNameAndHostId(String volumeName, Guid hostId) {
         VdsStatic vds = getVdsStaticDao().get(hostId);
-        Guid vdsGroupId = vds.getVdsGroupId();
-        return getGlusterVolumeDao().getByName(vdsGroupId, volumeName);
+        Guid clusterId = vds.getClusterId();
+        return getGlusterVolumeDao().getByName(clusterId, volumeName);
     }
 
     public boolean isVolumeSnapshotSoftLimitReached(Guid volumeId) {

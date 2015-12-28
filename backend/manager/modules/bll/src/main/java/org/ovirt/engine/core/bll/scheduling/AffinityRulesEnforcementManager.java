@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Inject
     private AffinityRulesEnforcer rulesEnforcer;
     @Inject
@@ -75,7 +75,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
         log.debug("Affinity Rules Enforcement Manager interval reached.");
 
         final List<VM> vmCandidates = new ArrayList<>();
-        for (VDSGroup cluster : vdsGroupDao.getWithoutMigratingVms()) {
+        for (Cluster cluster : clusterDao.getWithoutMigratingVms()) {
             final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
             if (candidate != null) {
                 vmCandidates.add(candidate);

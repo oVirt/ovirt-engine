@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQuer
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
@@ -39,9 +39,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -57,7 +57,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private static final Guid SERVER_UUID_1 = Guid.newGuid();
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
     private VdsDao vdsDao;
-    private VdsGroupDao clusterDao;
+    private ClusterDao clusterDao;
     private GlusterVolumeDao volumeDao;
     private GlusterServerDao glusterServerDao;
     private StepDao stepDao;
@@ -160,13 +160,13 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
 
-    private VDSGroup getVDSGroup() {
-        VDSGroup cluster = new VDSGroup();
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
         cluster.setId(CLUSTER_ID);
         return cluster;
     }
@@ -206,7 +206,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
         vdsDao = mock(VdsDao.class);
-        clusterDao = mock(VdsGroupDao.class);
+        clusterDao = mock(ClusterDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
         glusterServerDao = mock(GlusterServerDao.class);
         stepDao = mock(StepDao.class);
@@ -224,7 +224,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         when(stepDao.getStepsByExternalId(any(Guid.class))).thenReturn(getStepsList());
         when(glusterServerDao.getByGlusterServerUuid(any(Guid.class))).thenReturn(getGlusterServer());
         when(vdsDao.get(any(Guid.class))).thenReturn(getVds(VDSStatus.Up));
-        when(clusterDao.get(any(Guid.class))).thenReturn(getVDSGroup());
+        when(clusterDao.get(any(Guid.class))).thenReturn(getCluster());
 
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);

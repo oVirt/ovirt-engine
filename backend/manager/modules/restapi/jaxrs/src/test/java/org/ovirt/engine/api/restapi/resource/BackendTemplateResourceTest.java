@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -247,8 +247,8 @@ public class BackendTemplateResourceTest
         verifyModel(resource.update(getRestModel(0)), 0);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
-        return new VDSGroup();
+    protected Cluster getClusterEntity() {
+        return new Cluster();
     }
 
     @Test

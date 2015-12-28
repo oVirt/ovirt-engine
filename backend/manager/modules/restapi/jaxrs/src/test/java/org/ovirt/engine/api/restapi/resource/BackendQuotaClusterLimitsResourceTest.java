@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaClusterLimits;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
     @Test
     public void testListGlobalLimit() throws Exception {
         Quota quota = getQuota();
-        quota.setGlobalQuotaVdsGroup(getClusterGlobalCpuLimit());
+        quota.setGlobalQuotaCluster(getClusterGlobalCpuLimit());
         setUpGetEntityExpectations(quota);
         control.replay();
         QuotaClusterLimits clusterLimits = collection.list();
@@ -38,16 +38,16 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
     @Test
     public void testListNonGlobalLimit() throws Exception {
         Quota quota = getQuota();
-        List<QuotaVdsGroup> clusterLimits = new LinkedList<>();
-        QuotaVdsGroup clusterLimit1 = new QuotaVdsGroup();
+        List<QuotaCluster> clusterLimits = new LinkedList<>();
+        QuotaCluster clusterLimit1 = new QuotaCluster();
         clusterLimit1.setVirtualCpu(CPU_NUMBER);
-        clusterLimit1.setVdsGroupId(CLUSTER_ID_1);
-        QuotaVdsGroup clusterLimit2 = new QuotaVdsGroup();
+        clusterLimit1.setClusterId(CLUSTER_ID_1);
+        QuotaCluster clusterLimit2 = new QuotaCluster();
         clusterLimit2.setVirtualCpuUsage(VIRTUAL_CPU_USAGE);
-        clusterLimit2.setVdsGroupId(CLUSTER_ID_2);
+        clusterLimit2.setClusterId(CLUSTER_ID_2);
         clusterLimits.add(clusterLimit1);
         clusterLimits.add(clusterLimit2);
-        quota.setQuotaVdsGroups(clusterLimits);
+        quota.setQuotaClusters(clusterLimits);
         setUpGetEntityExpectations(quota);
         control.replay();
         QuotaClusterLimits list = collection.list();
@@ -69,10 +69,10 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
         assertEquals(clusterLimits.getQuotaClusterLimits().size(), resultsNum);
     }
 
-    private QuotaVdsGroup getClusterGlobalCpuLimit() {
-        QuotaVdsGroup clusterGlobalLimit = new QuotaVdsGroup();
+    private QuotaCluster getClusterGlobalCpuLimit() {
+        QuotaCluster clusterGlobalLimit = new QuotaCluster();
         clusterGlobalLimit.setQuotaId(GUIDS[0]);
-        clusterGlobalLimit.setVdsGroupId(CLUSTER_ID_1);
+        clusterGlobalLimit.setClusterId(CLUSTER_ID_1);
         clusterGlobalLimit.setVirtualCpu(20);
         return clusterGlobalLimit;
     }

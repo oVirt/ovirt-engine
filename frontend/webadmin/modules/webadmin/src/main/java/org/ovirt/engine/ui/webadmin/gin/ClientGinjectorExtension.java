@@ -3,20 +3,20 @@ package org.ovirt.engine.ui.webadmin.gin;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -197,7 +197,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     MainModelProvider<StoragePool, DataCenterListModel> getMainTabDataCenterModelProvider();
 
-    MainModelProvider<VDSGroup, ClusterListModel<Void>> getMainTabClusterModelProvider();
+    MainModelProvider<Cluster, ClusterListModel<Void>> getMainTabClusterModelProvider();
 
     MainModelProvider<VDS, HostListModel<Void>> getMainTabHostModelProvider();
 
@@ -241,7 +241,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel> getSubTabDataCenterIscsiBondModelProvider();
 
-    SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> getSubTabDataCenterClusterModelProvider();
+    SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel> getSubTabDataCenterClusterModelProvider();
 
     SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getSubTabDataCenterQuotaModelProvider();
 
@@ -305,7 +305,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> getSubTabClusterGlusterHookModelProvider();
 
-    SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>> getSubTabClusterPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> getSubTabClusterPermissionModelProvider();
 
     SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> getSubTabClusterCpuProfileModelProvider();
 
@@ -405,7 +405,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     // Quota
 
-    SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> getSubTabQuotaClusterModelProvider();
+    SearchableDetailModelProvider<QuotaCluster, QuotaListModel, QuotaClusterListModel> getSubTabQuotaClusterModelProvider();
 
     SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> getSubTabQuotaStorageModelProvider();
 
@@ -455,7 +455,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> getSubTabExternalSubnetModelProvider();
 
-    SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
+    SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
 
     SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getSubTabNetworkHostModelProvider();
 

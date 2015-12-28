@@ -142,7 +142,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterS
 
     private void manageSwift(String action) {
         GlusterServiceParameters parameters =
-                new GlusterServiceParameters(getEntity().getVdsGroupId(),
+                new GlusterServiceParameters(getEntity().getClusterId(),
                         getEntity().getId(),
                         ServiceType.GLUSTER_SWIFT, action);
 

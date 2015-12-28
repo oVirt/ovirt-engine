@@ -21,8 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -136,7 +136,7 @@ public class FenceValidatorTest {
     public void failWhenClusterVersionNotCompatible() {
         VDS vds = new VDS();
         vds.setPmEnabled(true);
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(Version.v3_3);
         FenceAgent agent = new FenceAgent();
         agent.setType("Some_Type");
@@ -153,7 +153,7 @@ public class FenceValidatorTest {
     public void succeedWhenClusterVersionCompatible() {
         VDS vds = new VDS();
         vds.setPmEnabled(true);
-        VDSGroup cluster = new VDSGroup();
+        Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(Version.v3_3);
         FenceAgent agent = new FenceAgent();
         agent.setType("apc");

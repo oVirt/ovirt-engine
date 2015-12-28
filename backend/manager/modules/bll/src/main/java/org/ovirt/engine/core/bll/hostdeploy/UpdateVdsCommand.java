@@ -50,7 +50,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             "ip",
             "vds_unique_id",
             "port",
-            "vds_group_id",
+            "cluster_id",
             "protocol");
     private VdcActionType actionType;
 
@@ -99,8 +99,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && validateNetworkProviderConfiguration()
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
-                        oldHost.getVdsGroupCompatibilityVersion().toString())
-                && validate(validator.protocolIsNotXmlrpc(getVdsGroup()));
+                        oldHost.getClusterCompatibilityVersion().toString())
+                && validate(validator.protocolIsNotXmlrpc(getCluster()));
     }
 
     private boolean validateNetworkProviderConfiguration() {
@@ -178,13 +178,13 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         // set clusters network to be operational (if needed)
         if (oldHost.getStatus() == VDSStatus.Up) {
             List<NetworkCluster> networkClusters = DbFacade.getInstance()
-            .getNetworkClusterDao().getAllForCluster(oldHost.getVdsGroupId());
+            .getNetworkClusterDao().getAllForCluster(oldHost.getClusterId());
             List<Network> networks = DbFacade.getInstance().getNetworkDao()
-            .getAllForCluster(oldHost.getVdsGroupId());
+            .getAllForCluster(oldHost.getClusterId());
             for (NetworkCluster item : networkClusters) {
                 for (Network net : networks) {
                     if (net.getId().equals(item.getNetworkId())) {
-                        NetworkClusterHelper.setStatus(oldHost.getVdsGroupId(), net);
+                        NetworkClusterHelper.setStatus(oldHost.getClusterId(), net);
                     }
                 }
             }

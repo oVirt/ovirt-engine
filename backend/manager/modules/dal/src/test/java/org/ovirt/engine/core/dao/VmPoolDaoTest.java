@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolDaoTest extends BaseDaoTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid DELETABLE_VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0078");
     private static final Guid EXISTING_VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
@@ -43,7 +43,7 @@ public class VmPoolDaoTest extends BaseDaoTestCase {
         newVmPool = new VmPool();
         newVmPool.setName("New VM Pool");
         newVmPool.setVmPoolDescription("This is a new VM pool.");
-        newVmPool.setVdsGroupId(VDS_GROUP_ID);
+        newVmPool.setClusterId(CLUSTER_ID);
 
         newVmPoolMap = new VmPoolMap(FREE_VM_ID, EXISTING_VM_POOL_ID);
     }

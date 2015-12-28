@@ -27,8 +27,8 @@ public class AuditLog implements IVdcQueryable {
     private String storagePoolName;
     private Guid storageDomainId;
     private String storageDomainName;
-    private Guid vdsGroupId;
-    private String vdsGroupName;
+    private Guid clusterId;
+    private String clusterName;
     private int logType;
     private int severity;
     private boolean processed;
@@ -299,20 +299,20 @@ public class AuditLog implements IVdcQueryable {
         this.storageDomainName = storageDomainName;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid vdsGroupId) {
-        this.vdsGroupId = vdsGroupId;
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
     }
 
-    public String getVdsGroupName() {
-        return vdsGroupName;
+    public String getClusterName() {
+        return clusterName;
     }
 
-    public void setVdsGroupName(String vdsGroupName) {
-        this.vdsGroupName = vdsGroupName;
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
     }
 
     public AuditLogType getLogType() {

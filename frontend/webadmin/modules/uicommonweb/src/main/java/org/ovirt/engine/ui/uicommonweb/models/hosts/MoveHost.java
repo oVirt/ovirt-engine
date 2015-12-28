@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -17,13 +17,13 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 @SuppressWarnings("unused")
 public class MoveHost extends ListModel<MoveHostData> {
-    private ListModel<VDSGroup> privateCluster;
+    private ListModel<Cluster> privateCluster;
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return privateCluster;
     }
 
-    private void setCluster(ListModel<VDSGroup> value) {
+    private void setCluster(ListModel<Cluster> value) {
         privateCluster = value;
     }
 
@@ -48,7 +48,7 @@ public class MoveHost extends ListModel<MoveHostData> {
     }
 
     public MoveHost() {
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
         getCluster().getSelectedItemChangedEvent().addListener(this);
     }
 
@@ -67,11 +67,11 @@ public class MoveHost extends ListModel<MoveHostData> {
 
     private void postGetHostList(ArrayList<VDS> hosts) {
 
-        VDSGroup cluster = getCluster().getSelectedItem();
+        Cluster cluster = getCluster().getSelectedItem();
         ArrayList<MoveHostData> items = new ArrayList<>();
 
         for (VDS vds : hosts) {
-            if (!cluster.getId().equals(vds.getVdsGroupId()) &&
+            if (!cluster.getId().equals(vds.getClusterId()) &&
                     (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion())) {
                 MoveHostData entity = new MoveHostData(vds);

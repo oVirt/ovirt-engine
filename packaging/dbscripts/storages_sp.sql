@@ -327,7 +327,7 @@ RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
 DECLARE v_clusterId UUID;
 
 BEGIN
-    SELECT vds_group_id
+    SELECT cluster_id
     INTO v_clusterId
     FROM Vds_static
     WHERE vds_id = v_vdsId;
@@ -338,13 +338,13 @@ BEGIN
     FROM storage_pool
     WHERE storage_pool.id IN (
             SELECT storage_pool_id
-            FROM vds_groups
-            WHERE vds_group_id = v_clusterId
+            FROM cluster
+            WHERE cluster_id = v_clusterId
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION Getstorage_poolsByVdsGroupId (v_clusterId UUID)
+CREATE OR REPLACE FUNCTION Getstorage_poolsByClusterId (v_clusterId UUID)
 RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
@@ -353,8 +353,8 @@ BEGIN
     FROM storage_pool
     WHERE storage_pool.id IN (
             SELECT storage_pool_id
-            FROM vds_groups
-            WHERE vds_group_id = v_clusterId
+            FROM cluster
+            WHERE cluster_id = v_clusterId
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1150,8 +1150,8 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
---This SP returns all data centers containing clusters with permissions to run the given action by user
-CREATE OR REPLACE FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups (
+--This SP returns all data centers containing cluster with permissions to run the given action by user
+CREATE OR REPLACE FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_cluster (
     v_user_id UUID,
     v_action_group_id INT,
     v_supports_virt_service boolean,
@@ -1165,9 +1165,9 @@ BEGIN
     FROM storage_pool sp
     WHERE sp.id IN (
             SELECT vg.storage_pool_id
-            FROM vds_groups vg
+            FROM cluster vg
             WHERE (
-                    SELECT get_entity_permissions(v_user_id, v_action_group_id, vg.vds_group_id, 9)
+                    SELECT get_entity_permissions(v_user_id, v_action_group_id, vg.cluster_id, 9)
                     ) IS NOT NULL
                 AND (
                     (
@@ -1238,7 +1238,7 @@ BEGIN
     FROM storage_pool SP
     WHERE EXISTS (
             SELECT 1
-            FROM vds_groups vg
+            FROM cluster vg
             WHERE (
                     (
                         v_supports_virt_service = TRUE

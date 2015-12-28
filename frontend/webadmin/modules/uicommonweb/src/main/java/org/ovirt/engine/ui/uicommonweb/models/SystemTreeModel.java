@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -141,13 +141,13 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
         privateErrata = value;
     }
 
-    private HashMap<Guid, ArrayList<VDSGroup>> privateClusterMap;
+    private HashMap<Guid, ArrayList<Cluster>> privateClusterMap;
 
-    public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap() {
+    public HashMap<Guid, ArrayList<Cluster>> getClusterMap() {
         return privateClusterMap;
     }
 
-    public void setClusterMap(HashMap<Guid, ArrayList<VDSGroup>> value) {
+    public void setClusterMap(HashMap<Guid, ArrayList<Cluster>> value) {
         privateClusterMap = value;
     }
 
@@ -249,16 +249,16 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
             @Override
             public void onSuccess(Object model, Object result) {
                 SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                List<VDSGroup> clusters = (List<VDSGroup>) result;
+                List<Cluster> clusters = (List<Cluster>) result;
 
-                systemTreeModel.setClusterMap(new HashMap<Guid, ArrayList<VDSGroup>>());
-                for (VDSGroup cluster : clusters) {
+                systemTreeModel.setClusterMap(new HashMap<Guid, ArrayList<Cluster>>());
+                for (Cluster cluster : clusters) {
                     if (cluster.getStoragePoolId() != null) {
                         Guid key = cluster.getStoragePoolId();
                         if (!systemTreeModel.getClusterMap().containsKey(key)) {
-                            systemTreeModel.getClusterMap().put(key, new ArrayList<VDSGroup>());
+                            systemTreeModel.getClusterMap().put(key, new ArrayList<Cluster>());
                         }
-                        List<VDSGroup> list = systemTreeModel.getClusterMap().get(key);
+                        List<Cluster> list = systemTreeModel.getClusterMap().get(key);
                         list.add(cluster);
                     }
                 }
@@ -281,7 +281,7 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
                 List<VDS> hosts = (List<VDS>) result;
                 systemTreeModel.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
                 for (VDS host : hosts) {
-                    Guid key = host.getVdsGroupId();
+                    Guid key = host.getClusterId();
                     if (!systemTreeModel.getHostMap().containsKey(key)) {
                         systemTreeModel.getHostMap().put(key, new ArrayList<VDS>());
                     }
@@ -527,9 +527,9 @@ public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemMod
             dataCenterItem.addChild(clustersItem);
 
             if (getClusterMap().containsKey(dataCenter.getId())) {
-                List<VDSGroup> clusters = getClusterMap().get(dataCenter.getId());
-                Collections.sort(clusters, new Linq.VDSGroupComparator());
-                for (VDSGroup cluster : clusters) {
+                List<Cluster> clusters = getClusterMap().get(dataCenter.getId());
+                Collections.sort(clusters, new Linq.ClusterComparator());
+                for (Cluster cluster : clusters) {
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);

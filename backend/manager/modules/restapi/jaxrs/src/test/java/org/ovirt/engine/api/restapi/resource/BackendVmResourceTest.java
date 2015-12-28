@@ -24,7 +24,6 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cdroms;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
@@ -65,11 +64,11 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -349,8 +348,8 @@ public class BackendVmResourceTest
         return model;
     }
 
-    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
-        return new VDSGroup();
+    protected Cluster getClusterEntity() {
+        return new Cluster();
     }
 
     @Test
@@ -489,7 +488,7 @@ public class BackendVmResourceTest
 
         Vm model = getModel(0);
         model.setId(GUIDS[0].toString());
-        model.setCluster(new Cluster());
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setId(GUIDS[1].toString());
         verifyModelOnNewCluster(resource.update(model), 0);
     }
@@ -973,11 +972,11 @@ public class BackendVmResourceTest
     public void testMigrateWithClusterId() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MigrateVm,
                 MigrateVmParameters.class,
-                new String[] { "VmId", "ForceMigrationForNonMigratableVm", "TargetVdsGroupId"},
+                new String[] { "VmId", "ForceMigrationForNonMigratableVm", "TargetClusterId"},
                 new Object[] { GUIDS[0], Boolean.FALSE, GUIDS[1]}));
 
         Action action = new Action();
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         action.setCluster(cluster);
 

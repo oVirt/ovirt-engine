@@ -12,14 +12,14 @@ public enum VdcActionType {
     AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     AddUnmanagedVms(54, QuotaDependency.NONE),
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
-    UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
+    UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.CLUSTER),
     RebootVm(6, ActionGroup.REBOOT_VM, QuotaDependency.NONE),
     StopVm(7, ActionGroup.STOP_VM, QuotaDependency.BOTH),
-    ShutdownVm(8, ActionGroup.SHUT_DOWN_VM, QuotaDependency.VDS_GROUP),
+    ShutdownVm(8, ActionGroup.SHUT_DOWN_VM, QuotaDependency.CLUSTER),
     ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),
     PauseVm(10, QuotaDependency.NONE),
     HibernateVm(11, ActionGroup.HIBERNATE_VM, QuotaDependency.NONE),
-    RunVm(12, ActionGroup.RUN_VM, QuotaDependency.VDS_GROUP),
+    RunVm(12, ActionGroup.RUN_VM, QuotaDependency.CLUSTER),
     RunVmOnce(13, ActionGroup.RUN_VM, QuotaDependency.BOTH),
     MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     InternalMigrateVm(15, QuotaDependency.NONE),
@@ -42,9 +42,9 @@ public enum VdcActionType {
     DetachDiskFromVm(181, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     HotPlugDiskToVm(182, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
-    HotSetNumberOfCpus(184, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.VDS_GROUP, true),
+    HotSetNumberOfCpus(184, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.CLUSTER, true),
     VmSlaPolicy(185, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
-    HotSetAmountOfMemory(186, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.VDS_GROUP, true),
+    HotSetAmountOfMemory(186, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.CLUSTER, true),
     ChangeFloppy(35, QuotaDependency.NONE),
     ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),
@@ -143,7 +143,7 @@ public enum VdcActionType {
 
     // VmTemplatesCommand
     AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
-    UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.VDS_GROUP),
+    UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.CLUSTER),
     RemoveVmTemplate(203, ActionGroup.DELETE_TEMPLATE, QuotaDependency.STORAGE),
     MoveOrCopyTemplate(226, ActionGroup.COPY_TEMPLATE, QuotaDependency.STORAGE),
     AddVmTemplateInterface(220, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
@@ -188,7 +188,7 @@ public enum VdcActionType {
     DetachUserFromVmFromPool(312, QuotaDependency.NONE),
     AddVmToPool(313, QuotaDependency.NONE),
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false, QuotaDependency.NONE),
-    AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
+    AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.CLUSTER),
     // UserAndGroupsCommands
     LogoutSession(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
@@ -230,13 +230,13 @@ public enum VdcActionType {
     AddBookmark(701, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
     RemoveBookmark(702, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
     UpdateBookmark(703, ActionGroup.BOOKMARK_MANAGEMENT, false, QuotaDependency.NONE),
-    // vdsGroups
-    AddVdsGroup(704, ActionGroup.CREATE_CLUSTER, false, QuotaDependency.NONE),
-    UpdateVdsGroup(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
-    RemoveVdsGroup(706, ActionGroup.DELETE_CLUSTER, false, QuotaDependency.NONE),
+    // Cluster
+    AddCluster(704, ActionGroup.CREATE_CLUSTER, false, QuotaDependency.NONE),
+    UpdateCluster(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveCluster(706, ActionGroup.DELETE_CLUSTER, false, QuotaDependency.NONE),
     AttachNetworkToClusterInternal(707, false, QuotaDependency.NONE),
-    AttachNetworkToVdsGroup(708, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
-    DetachNetworkToVdsGroup(709, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
+    AttachNetworkToCluster(708, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
+    DetachNetworkToCluster(709, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     DetachNetworkFromClusterInternal(710, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
 
@@ -581,6 +581,6 @@ public enum VdcActionType {
      * VDS=>QuotaVdsDependant, BOTH=>QuotaStorageDependant and QuotaVdsDependant
      */
     public enum QuotaDependency {
-        NONE, STORAGE, VDS_GROUP, BOTH
+        NONE, STORAGE, CLUSTER, BOTH
     }
 }

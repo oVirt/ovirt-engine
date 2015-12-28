@@ -8,8 +8,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
@@ -74,7 +74,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     }
 
     public boolean serverExists(GlusterServerInfo glusterServer) {
-        VDSGroup cluster = getVdsGroupDao().get(getParameters().getClusterId());
+        Cluster cluster = getClusterDao().get(getParameters().getClusterId());
         if (GlusterFeatureSupported.glusterHostUuidSupported(cluster.getCompatibilityVersion())) {
             return getDbUtils().serverExists(glusterServer.getUuid());
         } else {
@@ -86,8 +86,8 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return ClusterUtils.getInstance();
     }
 
-    public VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    public ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     protected BackendInternal getBackend() {

@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -69,30 +69,30 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getVDsGroup()).when(command).getVdsGroup();
+        doReturn(getCluster()).when(command).getCluster();
     }
 
-    private VDSGroup getVDsGroup() {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setId(clusterId);
-        vdsGroup.setVirtService(false);
-        vdsGroup.setGlusterService(true);
-        vdsGroup.setCompatibilityVersion(Version.v3_1);
-        return vdsGroup;
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
+        cluster.setId(clusterId);
+        cluster.setVirtService(false);
+        cluster.setGlusterService(true);
+        cluster.setCompatibilityVersion(Version.v3_1);
+        return cluster;
     }
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setStatus(status);
         return vds;
     }
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setHostName(serverName);
         return vds;
     }

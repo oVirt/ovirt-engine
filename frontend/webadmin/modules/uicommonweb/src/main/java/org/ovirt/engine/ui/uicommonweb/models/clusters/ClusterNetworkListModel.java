@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Network> {
+public class ClusterNetworkListModel extends SearchableListModel<Cluster, Network> {
 
     private UICommand privateNewNetworkCommand;
 
@@ -163,7 +163,7 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
             } else {
                 networkManageModel = new ClusterNetworkModel((Network) Cloner.clone(network));
             }
-            networkManageModel.setCluster((VDSGroup) Cloner.clone(getEntity()));
+            networkManageModel.setCluster((Cluster) Cloner.clone(getEntity()));
             networkList.add(networkManageModel);
         }
 
@@ -180,12 +180,12 @@ public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Netwo
     }
 
     @Override
-    protected void entityChanging(VDSGroup newValue, VDSGroup oldValue) {
+    protected void entityChanging(Cluster newValue, Cluster oldValue) {
         getNewNetworkCommand().setIsExecutionAllowed(!isClusterDetached(newValue));
         getManageCommand().setIsExecutionAllowed(!isClusterDetached(newValue));
     }
 
-    private boolean isClusterDetached(VDSGroup cluster) {
+    private boolean isClusterDetached(Cluster cluster) {
         return cluster == null || cluster.getStoragePoolId() == null;
     }
 

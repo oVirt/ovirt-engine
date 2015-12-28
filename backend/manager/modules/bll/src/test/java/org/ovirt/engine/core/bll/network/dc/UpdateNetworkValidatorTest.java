@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.dc.UpdateNetworkCommand.UpdateNetworkValidator;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -42,7 +42,7 @@ public class UpdateNetworkValidatorTest {
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private VM vm;
     @Mock
@@ -50,7 +50,7 @@ public class UpdateNetworkValidatorTest {
     @Mock
     private VmDao vmDao;
     @Mock
-    private VDSGroup cluster;
+    private Cluster cluster;
     @Mock
     private VmNetworkInterface vNic;
 
@@ -64,7 +64,7 @@ public class UpdateNetworkValidatorTest {
         mockConfigRule.mockConfigValue(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_5, false);
         mockConfigRule.mockConfigValue(ConfigValues.ChangeNetworkUnderBridgeInUseSupported, Version.v3_6, true);
 
-        validator = new UpdateNetworkValidator(network, vmNetworkInterfaceDao, vdsGroupDao, vmDao);
+        validator = new UpdateNetworkValidator(network, vmNetworkInterfaceDao, clusterDao, vmDao);
     }
 
     private Network mockExternalNetwork() {
@@ -186,8 +186,8 @@ public class UpdateNetworkValidatorTest {
         when(vmDao.getAllForNetwork(NETWORK_ID)).thenReturn(Collections.singletonList(vm));
         when(vm.getId()).thenReturn(VM_ID);
         when(vm.isRunningOrPaused()).thenReturn(isVmRunning);
-        when(vm.getVdsGroupId()).thenReturn(CLUSTER_ID);
-        when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(cluster);
+        when(vm.getClusterId()).thenReturn(CLUSTER_ID);
+        when(clusterDao.get(CLUSTER_ID)).thenReturn(cluster);
         when(cluster.getCompatibilityVersion()).thenReturn(clusterVersion);
     }
 }

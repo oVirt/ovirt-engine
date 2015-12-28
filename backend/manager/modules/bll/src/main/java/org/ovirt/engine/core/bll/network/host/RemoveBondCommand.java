@@ -101,7 +101,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         VDS vds = getVdsDao().get(getParameters().getVdsId());
         // check if network in cluster and vds active
         if (vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing) {
-            List<Network> networks = getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+            List<Network> networks = getNetworkDao().getAllForCluster(vds.getClusterId());
             if (networks.stream().anyMatch(n -> n.getName().equals(bond.getName()))) {
                 addValidationMessage(EngineMessage.NETWORK_CLUSTER_NETWORK_IN_USE);
                 return false;
@@ -109,7 +109,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         }
 
         // check if network in use by vm
-        List<VM> vmList = getVmDao().getAllForVdsGroup(vds.getVdsGroupId());
+        List<VM> vmList = getVmDao().getAllForCluster(vds.getClusterId());
         for (VM vm : vmList) {
             if (vm.getStatus() != VMStatus.Down) {
                 List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());

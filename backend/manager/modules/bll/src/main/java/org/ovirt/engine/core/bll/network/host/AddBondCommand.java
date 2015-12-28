@@ -63,7 +63,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 // set network status (this can change the network status to
                 // operational)
                 VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(params.getVdsId());
-                NetworkClusterHelper.setStatus(vdsStatic.getVdsGroupId(), params
+                NetworkClusterHelper.setStatus(vdsStatic.getClusterId(), params
                         .getNetwork());
                 setSucceeded(true);
             }
@@ -119,13 +119,13 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
 
         // check that the network exists in current cluster
         Network network =
-                getNetworkDao().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getVdsGroupId());
+                getNetworkDao().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getClusterId());
         if (network == null) {
             return failValidation(EngineMessage.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         if (StringUtils.isNotEmpty(getParameters().getGateway()) &&
-            !managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getId(), getVdsGroupId())) {
+            !managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getId(), getClusterId())) {
             addValidationMessage(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }

@@ -23,7 +23,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         super.build(model, vm);
         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         vm.setVmType(model.getVmType().getSelectedItem());
-        vm.setVdsGroupId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
+        vm.setClusterId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? model.getTimeZone()
                 .getSelectedItem().getTimeZoneKey() : ""); //$NON-NLS-1$
         vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$

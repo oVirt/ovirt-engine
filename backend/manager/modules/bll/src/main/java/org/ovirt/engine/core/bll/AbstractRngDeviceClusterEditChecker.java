@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
 public abstract class AbstractRngDeviceClusterEditChecker implements ClusterEditChecker<VDS> {
@@ -13,7 +13,7 @@ public abstract class AbstractRngDeviceClusterEditChecker implements ClusterEdit
     }
 
     @Override
-    public boolean isApplicable(VDSGroup oldCluster, VDSGroup newCluster) {
+    public boolean isApplicable(Cluster oldCluster, Cluster newCluster) {
         return !oldCluster.getRequiredRngSources().contains(source) && newCluster.getRequiredRngSources().contains(source);
     }
 

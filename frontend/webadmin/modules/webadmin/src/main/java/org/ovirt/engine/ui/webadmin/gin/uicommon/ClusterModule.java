@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -62,7 +62,7 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VDSGroup, ClusterListModel<Void>> getClusterListProvider(EventBus eventBus,
+    public MainModelProvider<Cluster, ClusterListModel<Void>> getClusterListProvider(EventBus eventBus,
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
@@ -72,7 +72,7 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<CommonModel> commonModelProvider,
             final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
-        MainTabModelProvider<VDSGroup, ClusterListModel<Void>> result = new MainTabModelProvider<VDSGroup, ClusterListModel<Void>>
+        MainTabModelProvider<Cluster, ClusterListModel<Void>> result = new MainTabModelProvider<Cluster, ClusterListModel<Void>>
                 (eventBus, defaultConfirmPopupProvider, commonModelProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
@@ -307,7 +307,7 @@ public class ClusterModule extends AbstractGinModule {
         bind(ClusterGlusterHookListModel.class).in(Singleton.class);
         bind(ClusterAffinityGroupListModel.class).in(Singleton.class);
         bind(CpuProfileListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VDSGroup>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<Cluster>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<CpuProfile>>(){}).in(Singleton.class);
         bind(ClusterMainTabSelectedItems.class).asEagerSingleton();
 
@@ -322,8 +322,8 @@ public class ClusterModule extends AbstractGinModule {
             .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<VDSGroup, ClusterListModel<Void>>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<Cluster, ClusterListModel<Void>>>(){}).in(Singleton.class);
         // Cpu Profile permission list model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>(){}).in(Singleton.class);

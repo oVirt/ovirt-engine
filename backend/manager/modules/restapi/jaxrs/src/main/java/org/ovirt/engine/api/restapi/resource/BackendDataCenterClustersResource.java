@@ -4,12 +4,11 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.ge
 
 import java.util.List;
 
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.ClusterResource;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,11 +23,11 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
 
     @Override
     public Clusters list() {
-        return mapCollection(getVdsGroups());
+        return mapCollection(getClusters());
     }
 
-    protected List<VDSGroup> getVdsGroups() {
-        return getBackendCollection(VdcQueryType.GetVdsGroupsByStoragePoolId,
+    protected List<Cluster> getClusters() {
+        return getBackendCollection(VdcQueryType.GetClustersByStoragePoolId,
                     new IdQueryParameters(dataCenterId));
     }
 
@@ -43,7 +42,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
     }
 
     @Override
-    protected StoragePool getDataCenter(Cluster cluster) {
+    protected StoragePool getDataCenter(org.ovirt.engine.api.model.Cluster cluster) {
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(dataCenterId.toString());
         cluster.setDataCenter(dataCenter);

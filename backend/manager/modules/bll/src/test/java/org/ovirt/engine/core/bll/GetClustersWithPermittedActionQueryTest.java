@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 /**
  * A test case for {@link GetClustersWithPermittedActionQuery}.
@@ -23,17 +23,17 @@ public class GetClustersWithPermittedActionQueryTest
     @Test
     public void testQueryExecution() {
         // Set up the expected data
-        VDSGroup expected = new VDSGroup();
+        Cluster expected = new Cluster();
 
         // Mock the Dao
-        VdsGroupDao vdsGroupDaoMock = mock(VdsGroupDao.class);
-        when(vdsGroupDaoMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDaoMock);
+        ClusterDao clusterDaoMock = mock(ClusterDao.class);
+        when(clusterDaoMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
+        when(getDbFacadeMockInstance().getClusterDao()).thenReturn(clusterDaoMock);
 
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<VDSGroup> actual = (List<VDSGroup>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Cluster> actual = (List<Cluster>) getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VDS Groups", 1, actual.size());
         assertEquals("Wrong VDS Groups", expected, actual.get(0));
     }

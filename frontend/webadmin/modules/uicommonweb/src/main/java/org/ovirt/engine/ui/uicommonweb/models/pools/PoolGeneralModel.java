@@ -411,7 +411,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                         };
 
                         Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
-                                + getvm().getVdsGroupName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
+                                + getvm().getClusterName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
                     }
                     else {
                         poolGeneralModel.setDefaultHost(ConstantsManager.getInstance()

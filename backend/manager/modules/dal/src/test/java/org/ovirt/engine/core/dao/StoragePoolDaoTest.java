@@ -27,7 +27,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
     private StoragePoolDao dao;
     private StoragePool existingPool;
     private Guid vds;
-    private Guid vdsGroup;
+    private Guid cluster;
     private Guid storageDomain;
     private StoragePool newPool;
 
@@ -40,7 +40,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
         existingPool.setStatus(StoragePoolStatus.Up);
         vds = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-        vdsGroup = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         storageDomain = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
         newPool = new StoragePool();
@@ -134,8 +134,8 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      * Ensures the right pool is returned.
      */
     @Test
-    public void testGetForVdsGroup() {
-        StoragePool result = dao.getForVdsGroup(vdsGroup);
+    public void testGetForCluster() {
+        StoragePool result = dao.getForCluster(cluster);
 
         assertNotNull(result);
     }

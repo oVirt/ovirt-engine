@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParamete
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 @Singleton
@@ -53,9 +53,9 @@ public class GlusterGeoRepUtil {
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION, slaveVolume -> !existingSessionSlavesIds.contains(slaveVolume.getId()));
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH, slaveVolume -> {
-            VdsGroupDao vdsGroupDao = getVdsGroupDao();
-            Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
-            Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
+            ClusterDao clusterDao = getClusterDao();
+            Version slaveCompatibilityVersion = clusterDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
+            Version masterCompatibilityVersion = clusterDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
             return masterCompatibilityVersion.equals(slaveCompatibilityVersion);
         });
 
@@ -93,8 +93,8 @@ public class GlusterGeoRepUtil {
         return randomUpServer == null ? null : randomUpServer.getId();
     }
 
-    public VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    public ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     public GlusterGeoRepDao getGeoRepDao() {

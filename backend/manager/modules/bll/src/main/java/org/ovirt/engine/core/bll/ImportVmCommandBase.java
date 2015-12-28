@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -82,7 +82,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     @Override
     protected boolean validate() {
         macPool = getMacPool();
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
@@ -151,10 +151,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateVdsCluster() {
-        VDSGroup vdsGroup = getVdsGroupDao().get(getVdsGroupId());
-        return vdsGroup == null ?
+        Cluster cluster = getClusterDao().get(getClusterId());
+        return cluster == null ?
                 failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID)
-                : vdsGroup.getArchitecture() != getVm().getClusterArch() ?
+                : cluster.getArchitecture() != getVm().getClusterArch() ?
                         failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER)
                         : true;
     }
@@ -204,7 +204,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected boolean setAndValidateCpuProfile() {
-        getVm().getStaticData().setVdsGroupId(getVdsGroupId());
+        getVm().getStaticData().setClusterId(getClusterId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
                 getEffectiveCompatibilityVersion()));
@@ -217,7 +217,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
@@ -231,7 +231,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         if (!osRepository.isSoundDeviceEnabled(getVm().getStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
@@ -281,14 +281,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (parameters.isImportAsNewEntity() && parameters.getVmId().equals(parameters.getVm().getId())) {
             parameters.getVm().setId(Guid.newGuid());
         }
-        setVdsGroupId(parameters.getVdsGroupId());
+        setClusterId(parameters.getClusterId());
         setVm(parameters.getVm());
         initEffectiveCompatibilityVersion();
     }
 
     protected void initEffectiveCompatibilityVersion() {
         setEffectiveCompatibilityVersion(
-                CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getVdsGroup));
+                CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getCluster));
     }
 
     /**
@@ -431,7 +431,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         logImportEvents();
         getVm().getStaticData().setId(getVmId());
         getVm().getStaticData().setCreationDate(new Date());
-        getVm().getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
+        getVm().getStaticData().setClusterId(getParameters().getClusterId());
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
 
@@ -491,7 +491,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(macPool);
 
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(getVdsGroupId(),
+                new VnicProfileHelper(getClusterId(),
                         getStoragePoolId(),
                         getEffectiveCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
@@ -570,9 +570,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return getVm().getMinAllocatedMem();
         }
 
-        VDSGroup vdsGroup = getVdsGroup();
-        if (vdsGroup != null && vdsGroup.getMaxVdsMemoryOverCommit() > 0) {
-            return (getVm().getMemSizeMb() * 100) / vdsGroup.getMaxVdsMemoryOverCommit();
+        Cluster cluster = getCluster();
+        if (cluster != null && cluster.getMaxVdsMemoryOverCommit() > 0) {
+            return (getVm().getMemSizeMb() * 100) / cluster.getMaxVdsMemoryOverCommit();
         }
 
         return getVm().getMemSizeMb();
@@ -596,7 +596,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
                     (getVmName() == null) ? "" : getVmName());
-            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
+            jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
     }

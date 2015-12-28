@@ -27,11 +27,11 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     /**
      * Retrieves all static VMs for the specified VDS group.
      *
-     * @param vdsGroup
+     * @param cluster
      *            the VDS group
      * @return the list of VMs
      */
-    List<VmStatic> getAllByVdsGroup(Guid vdsGroup);
+    List<VmStatic> getAllByCluster(Guid cluster);
 
     /**
      * Not really sure what this method's doing.

@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -32,8 +32,8 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -184,14 +184,14 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             logable.addCustomValue("VdsName1", getParameters().getVdsName());
 
-            Guid vdsGroupId = getClusterId();
-            if (Guid.isNullOrEmpty(vdsGroupId)) {
+            Guid clusterId = getClusterId();
+            if (Guid.isNullOrEmpty(clusterId)) {
                 reportClusterError();
                 return;
             }
             if (provisionedVds != null) {
                 // In provision don't set host on pending - isPending = false
-                getQueryReturnValue().setSucceeded(register(provisionedVds, vdsGroupId, false));
+                getQueryReturnValue().setSucceeded(register(provisionedVds, clusterId, false));
             } else {
                 // TODO: always add in pending state, and if auto approve call
                 // approve command action after registration
@@ -199,7 +199,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 getQueryReturnValue().setSucceeded(
                         handleOldVdssWithSameHostName(vdsByUniqueId) && handleOldVdssWithSameName(vdsByUniqueId)
                                 && checkAutoApprovalDefinitions(isPending)
-                                && register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
+                                && register(vdsByUniqueId, clusterId, isPending.argvalue.booleanValue()));
             }
             log.debug("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is '{}'",
                     getQueryReturnValue().getSucceeded());
@@ -214,24 +214,24 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     }
 
     private Guid getClusterId() {
-        Guid clusterId = getParameters().getVdsGroupId();
-        if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
+        Guid clusterId = getParameters().getClusterId();
+        if (Guid.Empty.equals(getParameters().getClusterId())) {
             clusterId = Guid.createGuidFromStringDefaultEmpty(
-                    Config.<String> getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
+                    Config.<String> getValue(ConfigValues.AutoRegistrationDefaultClusterID));
             log.debug(
                     "Cluster id was not provided for registering the host {}, the cluster id {} is taken from the config value {}",
-                    getParameters().getVdsName(), clusterId, ConfigValues.AutoRegistrationDefaultVdsGroupID.name());
+                    getParameters().getVdsName(), clusterId, ConfigValues.AutoRegistrationDefaultClusterID.name());
         }
 
         if (Guid.isNullOrEmpty(clusterId)) {
             // try to get the default cluster id
-            VdsGroupDao clusterDao = getDbFacade().getVdsGroupDao();
-            VDSGroup cluster = clusterDao.getByName("Default");
+            ClusterDao clusterDao = getDbFacade().getClusterDao();
+            Cluster cluster = clusterDao.getByName("Default");
             if (cluster != null) {
                 clusterId = cluster.getId();
             } else {
                 // this may occur when the default cluster is removed
-                List<VDSGroup> clusters = clusterDao.getAll();
+                List<Cluster> clusters = clusterDao.getAll();
                 if (!clusters.isEmpty()) {
                     clusterId = clusters.get(0).getId();
                 }
@@ -266,11 +266,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return isApprovalDispatched;
     }
 
-    private boolean register(VDS vds, Guid vdsGroupId, boolean IsPending) {
+    private boolean register(VDS vds, Guid clusterId, boolean IsPending) {
         boolean returnValue = true;
         log.debug("RegisterVdsQuery::register - Entering");
         if (vds == null) {
-            returnValue = registerNewHost(vdsGroupId, IsPending);
+            returnValue = registerNewHost(clusterId, IsPending);
         } else {
             returnValue = updateExistingHost(vds, IsPending);
         }
@@ -323,14 +323,14 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return returnValue;
     }
 
-    private boolean registerNewHost(Guid vdsGroupId, boolean pending) {
+    private boolean registerNewHost(Guid clusterId, boolean pending) {
         boolean returnValue = true;
 
         VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(),
                     getStrippedVdsUniqueId(), getParameters().getVdsPort(),
                     getParameters().getSSHPort(),
                     getParameters().getSSHUser(),
-                    vdsGroupId, Guid.Empty,
+                    clusterId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> getValue(ConfigValues.SSLEnabled),
                     VDSType.VDS, null);
         vds.setSshKeyFingerprint(getParameters().getSSHFingerprint());

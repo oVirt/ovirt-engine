@@ -5,14 +5,13 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -25,7 +24,7 @@ public class BackendClusterNetworksResource
     private String clusterId;
 
     public BackendClusterNetworksResource(String clusterId) {
-        super(VdcQueryType.GetAllNetworksByClusterId, VdcActionType.AttachNetworkToVdsGroup);
+        super(VdcQueryType.GetAllNetworksByClusterId, VdcActionType.AttachNetworkToCluster);
         this.clusterId = clusterId;
     }
 
@@ -97,7 +96,7 @@ public class BackendClusterNetworksResource
     @Override
     protected VdcActionParametersBase getAddParameters(Network network,
             org.ovirt.engine.core.common.businessentities.network.Network entity) {
-        return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
+        return new AttachNetworkToClusterParameter(getCluster(), entity);
     }
 
     protected String[] getRequiredAddFields() {
@@ -106,14 +105,14 @@ public class BackendClusterNetworksResource
 
     @Override
     public Network addParents(Network network) {
-        network.setCluster(new Cluster());
+        network.setCluster(new org.ovirt.engine.api.model.Cluster());
         network.getCluster().setId(clusterId);
         return network;
     }
 
-    protected VDSGroup getVDSGroup() {
-        return getEntity(VDSGroup.class,
-                         VdcQueryType.GetVdsGroupByVdsGroupId,
+    protected Cluster getCluster() {
+        return getEntity(Cluster.class,
+                         VdcQueryType.GetClusterByClusterId,
                          new IdQueryParameters(asGuid(clusterId)),
                          clusterId);
     }
@@ -125,8 +124,8 @@ public class BackendClusterNetworksResource
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks(String clusterId) {
         Guid dataCenterId =
-                getEntity(VDSGroup.class,
-                        VdcQueryType.GetVdsGroupById,
+                getEntity(Cluster.class,
+                        VdcQueryType.GetClusterById,
                         new IdQueryParameters(asGuid(clusterId)),
                         null).getStoragePoolId();
         IdQueryParameters params = new IdQueryParameters(dataCenterId);

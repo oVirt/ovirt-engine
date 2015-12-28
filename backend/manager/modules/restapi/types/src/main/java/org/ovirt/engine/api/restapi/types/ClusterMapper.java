@@ -4,7 +4,6 @@ import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Architecture;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
@@ -17,17 +16,17 @@ import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapper {
     static final org.ovirt.engine.core.compat.Version min_thp_version = new org.ovirt.engine.core.compat.Version(3, 0);
 
-    @Mapping(from = Cluster.class, to = VDSGroup.class)
-    public static VDSGroup map(Cluster model, VDSGroup template) {
-        VDSGroup entity = template != null ? template : new VDSGroup();
+    @Mapping(from = org.ovirt.engine.api.model.Cluster.class, to = Cluster.class)
+    public static Cluster map(org.ovirt.engine.api.model.Cluster model, Cluster template) {
+        Cluster entity = template != null ? template : new Cluster();
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -130,9 +129,9 @@ public class ClusterMapper {
         return entity;
     }
 
-    @Mapping(from = VDSGroup.class, to = Cluster.class)
-    public static Cluster map(VDSGroup entity, Cluster template) {
-        Cluster model = template != null ? template : new Cluster();
+    @Mapping(from = Cluster.class, to = org.ovirt.engine.api.model.Cluster.class)
+    public static org.ovirt.engine.api.model.Cluster map(Cluster entity, org.ovirt.engine.api.model.Cluster template) {
+        org.ovirt.engine.api.model.Cluster model = template != null ? template : new org.ovirt.engine.api.model.Cluster();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
@@ -192,7 +191,7 @@ public class ClusterMapper {
         }
 
         if (entity.getRequiredRngSources() != null) {
-            model.setRequiredRngSources(new Cluster.RequiredRngSourcesList());
+            model.setRequiredRngSources(new org.ovirt.engine.api.model.Cluster.RequiredRngSourcesList());
             model.getRequiredRngSources().getRequiredRngSources().addAll(RngDeviceMapper.mapRngSources(entity.getRequiredRngSources()));
         }
         model.setMigration(MigrationOptionsMapper.map(entity, null));
@@ -203,9 +202,9 @@ public class ClusterMapper {
         return model;
     }
 
-    @Mapping(from = MemoryPolicy.class, to = VDSGroup.class)
-    public static VDSGroup map(MemoryPolicy model, VDSGroup template) {
-        VDSGroup entity = template != null ? template : new VDSGroup();
+    @Mapping(from = MemoryPolicy.class, to = Cluster.class)
+    public static Cluster map(MemoryPolicy model, Cluster template) {
+        Cluster entity = template != null ? template : new Cluster();
         if (model.isSetOverCommit() && model.getOverCommit().getPercent()!=null) {
             entity.setMaxVdsMemoryOverCommit(model.getOverCommit().getPercent());
         }
@@ -218,8 +217,8 @@ public class ClusterMapper {
         return entity;
     }
 
-    @Mapping(from = VDSGroup.class, to = MemoryPolicy.class)
-    public static MemoryPolicy map(VDSGroup entity, MemoryPolicy template) {
+    @Mapping(from = Cluster.class, to = MemoryPolicy.class)
+    public static MemoryPolicy map(Cluster entity, MemoryPolicy template) {
         MemoryPolicy model = template != null ? template : new MemoryPolicy();
         model.setOverCommit(new MemoryOverCommit());
         model.getOverCommit().setPercent(entity.getMaxVdsMemoryOverCommit());
@@ -228,9 +227,9 @@ public class ClusterMapper {
         return model;
     }
 
-    @Mapping(from = StoragePool.class, to = VDSGroup.class)
-    public static VDSGroup map(StoragePool pool, VDSGroup template) {
-        VDSGroup entity = template != null ? template : new VDSGroup();
+    @Mapping(from = StoragePool.class, to = Cluster.class)
+    public static Cluster map(StoragePool pool, Cluster template) {
+        Cluster entity = template != null ? template : new Cluster();
         if (pool.getCompatibilityVersion() != null) {
             entity.setCompatibilityVersion(pool.getCompatibilityVersion());
         }

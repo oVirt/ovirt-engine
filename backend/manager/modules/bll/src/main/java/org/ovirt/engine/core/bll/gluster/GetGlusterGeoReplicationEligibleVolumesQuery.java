@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -40,11 +40,11 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
 
     protected List<GlusterVolumeEntity> getAllGlusterVolumesWithMasterCompatibleVersion(Guid masterVolumeId) {
         GlusterVolumeEntity masterVolume = getGlusterVolumeDao().getById(masterVolumeId);
-        VDSGroup masterCluster = getVdsGroupDao().get(masterVolume.getClusterId());
-        List<VDSGroup> clusters = getVdsGroupDao().getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
+        Cluster masterCluster = getClusterDao().get(masterVolume.getClusterId());
+        List<Cluster> clusters = getClusterDao().getClustersByServiceAndCompatibilityVersion(true, false, masterCluster.getCompatibilityVersion().getValue());
         List<GlusterVolumeEntity> volumes = new ArrayList<>();
         if(clusters != null) {
-            for(VDSGroup currentCluster : clusters) {
+            for(Cluster currentCluster : clusters) {
                 if(!currentCluster.getId().equals(masterCluster.getId())) {
                     volumes.addAll(getGlusterVolumeDao().getByClusterId(currentCluster.getId()));
                 }

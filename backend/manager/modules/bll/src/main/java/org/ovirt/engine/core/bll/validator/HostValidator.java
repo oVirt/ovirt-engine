@@ -3,11 +3,11 @@ package org.ovirt.engine.core.bll.validator;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.config.Config;
@@ -87,13 +87,13 @@ public class HostValidator {
     }
 
     public ValidationResult validateSingleHostAttachedToLocalStorage() {
-        StoragePool storagePool = storagePoolDao.getForVdsGroup(host.getVdsGroupId());
+        StoragePool storagePool = storagePoolDao.getForCluster(host.getClusterId());
         if (storagePool == null || !storagePool.isLocal()) {
             return ValidationResult.VALID;
         }
 
         return ValidationResult.failWith(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE)
-                .unless(hostStaticDao.getAllForVdsGroup(host.getVdsGroupId()).isEmpty());
+                .unless(hostStaticDao.getAllForCluster(host.getClusterId()).isEmpty());
     }
 
     public ValidationResult securityKeysExists() {
@@ -112,7 +112,7 @@ public class HostValidator {
                 .when(provisioned && hostGroup == null);
     }
 
-    public ValidationResult protocolIsNotXmlrpc(VDSGroup cluster) {
+    public ValidationResult protocolIsNotXmlrpc(Cluster cluster) {
         return ValidationResult.failWith(EngineMessage.NOT_SUPPORTED_PROTOCOL_FOR_CLUSTER_VERSION)
                 .when(VdsProtocol.XML.equals(host.getProtocol())
                         && Version.v3_6.compareTo(cluster.getCompatibilityVersion()) <= 0);

@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -59,7 +59,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isInternalExecution()) {
-            return Collections.singletonMap(getVdsGroupId().toString(),
+            return Collections.singletonMap(getClusterId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, EngineMessage.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         }
         return super.getExclusiveLocks();
@@ -74,8 +74,8 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     public List<PermissionSubject> getPermissionCheckSubjects() {
         // By default, check permissions at cluster level. Commands that need
         // more granular permissions can override this method.
-        return Collections.singletonList(new PermissionSubject(getVdsGroupId(),
-                VdcObjectType.VdsGroups,
+        return Collections.singletonList(new PermissionSubject(getClusterId(),
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
     }
 
@@ -83,8 +83,8 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = new HashMap<>();
-            VDSGroup vdsGroup = getVdsGroup();
-            jobProperties.put(GlusterConstants.CLUSTER, vdsGroup == null ? null : vdsGroup.getName());
+            Cluster cluster = getCluster();
+            jobProperties.put(GlusterConstants.CLUSTER, cluster == null ? null : cluster.getName());
         }
 
         return jobProperties;
@@ -96,7 +96,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
      * @return One of the servers in up status
      */
     protected VDS getUpServer() {
-        return getClusterUtils().getRandomUpServer(getVdsGroupId());
+        return getClusterUtils().getRandomUpServer(getClusterId());
     }
 
     protected ClusterUtils getClusterUtils() {
@@ -111,7 +111,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
         upServer = getUpServer();
         if (upServer == null) {
-            addValidationMessageVariable("clusterName", getVdsGroup().getName());
+            addValidationMessageVariable("clusterName", getCluster().getName());
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
@@ -172,7 +172,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addValidationMessage) {
         VdsStatic server = getVdsStaticDao().get(brick.getServerId());
-        if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
+        if ((server == null || !server.getClusterId().equals(getClusterId()))) {
             if (addValidationMessage) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
             }
@@ -200,7 +200,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     private Network getGlusterNetwork() {
         if (glusterNetwork == null) {
-            List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getVdsGroupId());
+            List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(getClusterId());
 
             for (Network network : allNetworksInCluster) {
                 if (network.getCluster().isGluster()) {

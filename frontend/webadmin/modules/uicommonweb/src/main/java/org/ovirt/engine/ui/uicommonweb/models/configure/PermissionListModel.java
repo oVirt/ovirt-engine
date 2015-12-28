@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -300,8 +300,8 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         if (getEntity() instanceof StoragePool) {
             return VdcObjectType.StoragePool;
         }
-        if (getEntity() instanceof VDSGroup) {
-            return VdcObjectType.VdsGroups;
+        if (getEntity() instanceof Cluster) {
+            return VdcObjectType.Cluster;
         }
         if (getEntity() instanceof VDS) {
             return VdcObjectType.VDS;

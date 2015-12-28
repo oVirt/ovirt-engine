@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -52,7 +52,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<VDSGroup> clusterListEditor;
+    ListModelListBoxEditor<Cluster> clusterListEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -73,7 +73,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     }
 
     private void initListBoxEditors() {
-        clusterListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clusterListEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
     }
 
     private void initTable() {

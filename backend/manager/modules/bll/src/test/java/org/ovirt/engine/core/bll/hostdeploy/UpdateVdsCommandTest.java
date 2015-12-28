@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -27,8 +27,8 @@ public class UpdateVdsCommandTest {
         VDS newVdsData = new VDS();
         newVdsData.setHostName("BUZZ");
         newVdsData.setVdsName("BAR");
-        newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setVdsGroupId(Guid.newGuid());
+        newVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
+        newVdsData.setClusterId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
     }
@@ -41,7 +41,7 @@ public class UpdateVdsCommandTest {
         VDS newVdsData = makeTestVds(vdsId);
         VDS oldVdsData = newVdsData.clone();
         oldVdsData.setVdsName("FOO");
-        oldVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
+        oldVdsData.setClusterCompatibilityVersion(new Version("1.2.3"));
         parameters.setvds(newVdsData);
 
         UpdateVdsCommand<UpdateVdsActionParameters> commandMock = Mockito.mock(UpdateVdsCommand.class);
@@ -49,9 +49,9 @@ public class UpdateVdsCommandTest {
         Mockito.when(commandMock.validate()).thenCallRealMethod();
         Mockito.when(commandMock.getParameters()).thenReturn(parameters);
         Version version = new Version("1.2.3");
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setCompatibilityVersion(version);
-        when(commandMock.getVdsGroup()).thenReturn(vdsGroup);
+        Cluster cluster = new Cluster();
+        cluster.setCompatibilityVersion(version);
+        when(commandMock.getCluster()).thenReturn(cluster);
         when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
                 parameters.getFenceAgents(),
                 new Version("1.2.3").toString())).thenReturn(true);

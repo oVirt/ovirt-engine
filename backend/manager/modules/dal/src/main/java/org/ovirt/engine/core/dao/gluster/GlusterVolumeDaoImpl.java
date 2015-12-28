@@ -379,7 +379,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
             GlusterVolumeEntity entity = new GlusterVolumeEntity();
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setClusterName(rs.getString("cluster_name"));
             entity.setName(rs.getString("vol_name"));
             entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));
             entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));

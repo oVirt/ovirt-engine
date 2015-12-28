@@ -28,7 +28,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
 
         // Custom Properties
         getCustomPropertySheet().setKeyValueMap(AsyncDataProvider.getInstance().getCustomPropertiesList()
-                                                        .get(vm.getVdsGroupCompatibilityVersion()));
+                                                        .get(vm.getClusterCompatibilityVersion()));
         getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
         loadHosts();
@@ -58,7 +58,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
                     setIsHostTabVisible(false);
                 }
             }
-        }), vm.getVdsGroupName());
+        }), vm.getClusterName());
     }
 
     @Override

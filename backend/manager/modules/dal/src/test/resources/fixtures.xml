@@ -797,8 +797,8 @@
         </row>
     </table>
 
-    <table name="vds_groups">
-        <column>vds_group_id</column>
+    <table name="cluster">
+        <column>cluster_id</column>
         <column>name</column>
         <column>description</column>
         <column>cpu_name</column>
@@ -1838,7 +1838,7 @@
         <column>vm_pool_type</column>
         <column>parameters</column>
         <column>prestarted_vms</column>
-        <column>vds_group_id</column>
+        <column>cluster_id</column>
         <column>max_assigned_vms_per_user</column>
         <column>spice_proxy</column>
         <column>is_being_destroyed</column>
@@ -1885,7 +1885,7 @@
         <column>vds_unique_id</column>
         <column>host_name</column>
         <column>port</column>
-        <column>vds_group_id</column>
+        <column>cluster_id</column>
         <column>server_SSL_enabled</column>
         <column>vds_type</column>
         <column>vds_strength</column>
@@ -2070,9 +2070,9 @@
         <column>description</column>
         <column>_create_date</column>
         <column>_update_date</column>
-        <column>threshold_vds_group_percentage</column>
+        <column>threshold_cluster_percentage</column>
         <column>threshold_storage_percentage</column>
-        <column>grace_vds_group_percentage</column>
+        <column>grace_cluster_percentage</column>
         <column>grace_storage_percentage</column>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -2193,7 +2193,7 @@
         <column>vmt_guid</column>
         <column>os</column>
         <column>description</column>
-        <column>vds_group_id</column>
+        <column>cluster_id</column>
         <column>creation_date</column>
         <column>child_count</column>
         <column>num_of_monitors</column>
@@ -6421,7 +6421,7 @@
         <column>id</column>
 	    <column>quota_id</column>
 		<column>storage_id</column>
-		<column>vds_group_id</column>
+		<column>cluster_id</column>
 	    <column>virtual_cpu</column>
 	    <column>mem_size_mb</column>
 		<column>storage_size_gb</column>
@@ -6537,8 +6537,8 @@
         <column>storage_pool_name</column>
         <column>storage_domain_id</column>
         <column>storage_domain_name</column>
-        <column>vds_group_id</column>
-        <column>vds_group_name</column>
+        <column>cluster_id</column>
+        <column>cluster_name</column>
         <column>correlation_id</column>
         <column>job_id</column>
         <column>quota_id</column>
@@ -6952,11 +6952,11 @@
         <row>
             <value>021e0490-6d01-4fcf-b369-ed91565e3030</value>
             <value>0dcaa6a5-16fe-4270-8614-5dd249a057e0</value>
-            <value>org.ovirt.engine.core.bll.UpdateVdsGroupCommand</value>
+            <value>org.ovirt.engine.core.bll.UpdateClusterCommand</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value>org.ovirt.engine.core.common.businessentities.VdsGroup</value>
+            <value>org.ovirt.engine.core.common.businessentities.Cluster</value>
 	    <null />
-	    <value>org.ovirt.engine.core.common.businessentities.VdsGroup</value>
+	    <value>org.ovirt.engine.core.common.businessentities.Cluster</value>
             <value>1</value>
 			<value>1</value>
         </row>

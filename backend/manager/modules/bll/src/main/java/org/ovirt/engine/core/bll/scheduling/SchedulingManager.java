@@ -37,9 +37,9 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -56,8 +56,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -259,7 +259,7 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    public Guid schedule(VDSGroup cluster,
+    public Guid schedule(Cluster cluster,
             VM vm,
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
@@ -273,7 +273,7 @@ public class SchedulingManager implements BackendService {
             checkAllowOverbooking(cluster);
             lockCluster(cluster.getId());
             List<VDS> vdsList = getVdsDao()
-                    .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+                    .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
             updateInitialHostList(vdsList, hostBlackList, true);
             updateInitialHostList(vdsList, hostWhiteList, false);
             refreshCachedPendingValues(vdsList);
@@ -374,7 +374,7 @@ public class SchedulingManager implements BackendService {
      * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
      * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
-    private Guid selectBestHost(VDSGroup cluster,
+    private Guid selectBestHost(Cluster cluster,
             VM vm,
             List<Guid> destHostIdList,
             List<VDS> availableVdsList,
@@ -429,7 +429,7 @@ public class SchedulingManager implements BackendService {
      * In case all of the above conditions are met, we release all the pending scheduling
      * requests.
      */
-    private void checkAllowOverbooking(VDSGroup cluster) {
+    private void checkAllowOverbooking(Cluster cluster) {
         if (OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType()
                 && Config.<Boolean>getValue(ConfigValues.SchedulerAllowOverBooking)
                 && clusterLockMap.get(cluster.getId()).getQueueLength() >=
@@ -452,7 +452,7 @@ public class SchedulingManager implements BackendService {
      * @param vdsList
      * @return
      */
-    private boolean shouldWeighClusterHosts(VDSGroup cluster, List<VDS> vdsList) {
+    private boolean shouldWeighClusterHosts(Cluster cluster, List<VDS> vdsList) {
         Integer threshold = Config.<Integer>getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
         // threshold is crossed only when cluster is configured for optimized for speed
         boolean crossedThreshold =
@@ -469,14 +469,14 @@ public class SchedulingManager implements BackendService {
                 && !crossedThreshold;
     }
 
-    public boolean canSchedule(VDSGroup cluster,
+    public boolean canSchedule(Cluster cluster,
             VM vm,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
             List<Guid> destVdsIdList,
             List<String> messages) {
         List<VDS> vdsList = getVdsDao()
-                .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
+                .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
         updateInitialHostList(vdsList, vdsBlackList, true);
         updateInitialHostList(vdsList, vdsWhiteList, false);
         refreshCachedPendingValues(vdsList);
@@ -497,7 +497,7 @@ public class SchedulingManager implements BackendService {
         return vdsList != null && !vdsList.isEmpty();
     }
 
-    private Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
+    private Map<String, String> createClusterPolicyParameters(Cluster cluster) {
         Map<String, String> parameters = new HashMap<>();
         if (cluster.getClusterPolicyProperties() != null) {
             parameters.putAll(cluster.getClusterPolicyProperties());
@@ -826,8 +826,8 @@ public class SchedulingManager implements BackendService {
         return dbFacade.getVdsDao();
     }
 
-    private VdsGroupDao getVdsGroupDao() {
-        return dbFacade.getVdsGroupDao();
+    private ClusterDao getClusterDao() {
+        return dbFacade.getClusterDao();
     }
 
     private PolicyUnitDao getPolicyUnitDao() {
@@ -875,10 +875,10 @@ public class SchedulingManager implements BackendService {
     public void performHaResevationCheck() {
 
         log.debug("HA Reservation check timer entered.");
-        List<VDSGroup> clusters = getVdsGroupDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
         if (clusters != null) {
             HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
-            for (VDSGroup cluster : clusters) {
+            for (Cluster cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
                     List<VDS> returnedFailedHosts = new ArrayList<>();
                     boolean clusterHaStatus =
@@ -886,7 +886,7 @@ public class SchedulingManager implements BackendService {
                     if (!clusterHaStatus) {
                         // create Alert using returnedFailedHosts
                         AuditLogableBase logable = new AuditLogableBase();
-                        logable.setVdsGroupId(cluster.getId());
+                        logable.setClusterId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
 
                         String failedHostsStr = StringUtils.join(Entities.objectNames(returnedFailedHosts), ", ");
@@ -906,7 +906,7 @@ public class SchedulingManager implements BackendService {
                     // Create Alert if the status was changed from false to true
                     if (!clusterHaStatusFromPreviousCycle && clusterHaStatus) {
                         AuditLogableBase logable = new AuditLogableBase();
-                        logable.setVdsGroupId(cluster.getId());
+                        logable.setClusterId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
                         AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
                     }
@@ -919,13 +919,13 @@ public class SchedulingManager implements BackendService {
     @OnTimerMethodAnnotation("performLoadBalancing")
     public void performLoadBalancing() {
         log.debug("Load Balancer timer entered.");
-        List<VDSGroup> clusters = getVdsGroupDao().getAll();
-        for (VDSGroup cluster : clusters) {
+        List<Cluster> clusters = getClusterDao().getAll();
+        for (Cluster cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
             Pair<List<Guid>, Guid> balanceResult = null;
             if (policyUnit.getPolicyUnit().isEnabled()) {
-                List<VDS> hosts = getVdsDao().getAllForVdsGroupWithoutMigrating(cluster.getId());
+                List<VDS> hosts = getVdsDao().getAllForClusterWithoutMigrating(cluster.getId());
                 if (policyUnit.getPolicyUnit().isInternal()) {
                     balanceResult = internalRunBalance(policyUnit, cluster, hosts);
                 } else if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
@@ -939,14 +939,14 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster, List<VDS> hosts) {
+    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
         return policyUnit.balance(cluster,
                 hosts,
                 cluster.getClusterPolicyProperties(),
                 new ArrayList<>());
     }
 
-    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster, List<VDS> hosts) {
+    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, Cluster cluster, List<VDS> hosts) {
         List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
@@ -1016,11 +1016,11 @@ public class SchedulingManager implements BackendService {
      */
     public void updateHostSchedulingStats(VDS vds) {
         if (vds.getUsageCpuPercent() != null) {
-            VDSGroup vdsGroup = getVdsGroupDao().get(vds.getVdsGroupId());
-            if (vds.getUsageCpuPercent() >= NumberUtils.toInt(vdsGroup.getClusterPolicyProperties()
+            Cluster cluster = getClusterDao().get(vds.getClusterId());
+            if (vds.getUsageCpuPercent() >= NumberUtils.toInt(cluster.getClusterPolicyProperties()
                     .get(HIGH_UTILIZATION),
                     Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute))
-                    || vds.getUsageCpuPercent() <= NumberUtils.toInt(vdsGroup.getClusterPolicyProperties()
+                    || vds.getUsageCpuPercent() <= NumberUtils.toInt(cluster.getClusterPolicyProperties()
                             .get(LOW_UTILIZATION),
                             Config.<Integer> getValue(ConfigValues.LowUtilizationForEvenlyDistribute))) {
                 if (vds.getCpuOverCommitTimestamp() == null) {
@@ -1037,14 +1037,14 @@ public class SchedulingManager implements BackendService {
      * This operation locks the cluster to make sure a possible scheduling operation is not under way.
      */
     public void clearPendingVm(VmStatic vm) {
-        prepareClusterLock(vm.getVdsGroupId());
+        prepareClusterLock(vm.getClusterId());
         try {
-            lockCluster(vm.getVdsGroupId());
+            lockCluster(vm.getClusterId());
             getPendingResourceManager().clearVm(vm);
         } catch (InterruptedException e) {
             log.warn("Interrupted.. pending counters can be out of sync");
         } finally {
-            releaseCluster(vm.getVdsGroupId());
+            releaseCluster(vm.getClusterId());
         }
     }
 }

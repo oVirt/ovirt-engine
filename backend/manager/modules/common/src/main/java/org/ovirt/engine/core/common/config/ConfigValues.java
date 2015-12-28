@@ -545,7 +545,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("99408929-82CF-4DC7-A532-9D998063FA95")
-    AutoRegistrationDefaultVdsGroupID,
+    AutoRegistrationDefaultClusterID,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolRefreshTimeInSeconds,
@@ -946,7 +946,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
-    QuotaThresholdVdsGroup,
+    QuotaThresholdCluster,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -956,7 +956,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
-    QuotaGraceVdsGroup,
+    QuotaGraceCluster,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)

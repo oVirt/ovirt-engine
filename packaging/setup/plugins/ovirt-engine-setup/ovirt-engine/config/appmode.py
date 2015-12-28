@@ -130,7 +130,7 @@ class Plugin(plugin.PluginBase):
                     statement=self.environment[
                         oenginecons.EngineDBEnv.STATEMENT
                     ]
-                ).getVdcOption(name='AutoRegistrationDefaultVdsGroupID'),
+                ).getVdcOption(name='AutoRegistrationDefaultClusterID'),
                 virt=(v in ('both', 'virt')),
                 gluster=(v == 'gluster'),
             ),

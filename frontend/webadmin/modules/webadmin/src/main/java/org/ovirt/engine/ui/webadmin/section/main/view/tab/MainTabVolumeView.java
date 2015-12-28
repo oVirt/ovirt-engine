@@ -81,7 +81,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         AbstractTextColumn<GlusterVolumeEntity> clusterColumn = new AbstractTextColumn<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
-                return object.getVdsGroupName();
+                return object.getClusterName();
             }
         };
         clusterColumn.makeSortable();

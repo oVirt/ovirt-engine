@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -14,7 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<VDSGroup, CpuProfile, ClusterListModel<Void>, CpuProfileListModel>
+public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<Cluster, CpuProfile, ClusterListModel<Void>, CpuProfileListModel>
         implements SubTabClusterCpuProfilePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterCpuProfileView> {

@@ -84,11 +84,11 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**
      * Retrieves all instances by group id.
      *
-     * @param vdsGroup
-     *            the group id
+     * @param clusterId
+     *            the cluster id
      * @return the list of instances
      */
-    List<VDS> getAllForVdsGroupWithoutMigrating(Guid vdsGroup);
+    List<VDS> getAllForClusterWithoutMigrating(Guid clusterId);
 
     /**
      * Retrieves all VDS instances.
@@ -111,22 +111,22 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**
      * Retrieves all VDS instances by vds group id (cluster ID)
      *
-     * @param vdsGroup
+     * @param cluster
      * @return the list of VDS instances
      */
-    List<VDS> getAllForVdsGroup(Guid vdsGroup);
+    List<VDS> getAllForCluster(Guid cluster);
 
     /**
      * Retrieves all VDS instances by vds group id (cluster ID) with optional filtering
      *
-     * @param vdsGroup
+     * @param cluster
      * @param userID
      *            the ID of the user requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of VDS instances
      */
-    List<VDS> getAllForVdsGroup(Guid vdsGroup, Guid userID, boolean isFiltered);
+    List<VDS> getAllForCluster(Guid cluster, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all VDS instances by storage pool ID.
@@ -175,11 +175,11 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
 
     /**
      * Retrieves all VDS instances in the given Vds group, that are in given status
-     * @param vdsGroupId
+     * @param clusterId
      * @param status
      * @return list of VDS instances
      */
-    List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status);
+    List<VDS> getAllForClusterWithStatus(Guid clusterId, VDSStatus status);
 
     /**
      * Retrieves all VDS instances that have a Network Interface that the given Network is attached to.
@@ -214,8 +214,8 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
     /**
      * Finds the first VDS which is based on RHEL and the status is UP.
      * Based on RHEL can be RHEL, CentOS, RHEV-H or ovirt-node
-     * @param vdsGroupId cluster id
+     * @param clsuterId cluster id
      * @return first host or null if there are none such hosts
      */
-    VDS getFirstUpRhelForVdsGroup(Guid vdsGroupId);
+    VDS getFirstUpRhelForCluster(Guid clsuterId);
 }

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 
@@ -19,7 +19,7 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
     protected VmModelBehaviorBase getBehavior() {
         return new PoolModelBehaviorBase() {
             @Override
-            protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
+            protected List<Cluster> filterClusters(List<Cluster> clusters) {
                 return null;
             }
         };
@@ -27,12 +27,12 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
 
     @Override
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
-        final VDSGroup cluster = new VDSGroup();
+        final Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(CLUSTER_VERSION);
 
         UnitVmModel model = new PoolModel(behavior) {
             @Override
-            public VDSGroup getSelectedCluster() {
+            public Cluster getSelectedCluster() {
                 return cluster;
             }
         };

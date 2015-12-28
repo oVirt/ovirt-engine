@@ -251,10 +251,10 @@ public interface VmDao extends Dao {
 
     /**
      * Retrieves all VMS that belong to the provided vds group
-     * @param vds_group_id
+     * @param clusterId
      * @return
      */
-    List<VM> getAllForVdsGroup(Guid vds_group_id);
+    List<VM> getAllForCluster(Guid clusterId);
 
     /**
      * Retrieves all VMS that belong to the provided vm pool

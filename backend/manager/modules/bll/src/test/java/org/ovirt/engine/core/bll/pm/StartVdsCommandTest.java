@@ -26,9 +26,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
@@ -45,9 +45,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,7 +71,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     @Mock
     private AuditLogDao auditLogDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private BackendInternal backend;
     @Mock
@@ -92,18 +92,18 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     private void mockDbFacades() {
-        mockVdsGroupDao();
+        mockClusterDao();
         mockVmDao();
         mockAuditLogDao();
         mockVdsDao();
         mockVdsDynamicDao();
     }
 
-    private void mockVdsGroupDao() {
-        when(dbFacade.getVdsGroupDao()).thenReturn(vdsGroupDao);
-        VDSGroup cluster = new VDSGroup();
+    private void mockClusterDao() {
+        when(dbFacade.getClusterDao()).thenReturn(clusterDao);
+        Cluster cluster = new Cluster();
         cluster.setId(FENCECD_HOST_CLUSTER_ID);
-        when(vdsGroupDao.get(FENCECD_HOST_CLUSTER_ID)).thenReturn(cluster);
+        when(clusterDao.get(FENCECD_HOST_CLUSTER_ID)).thenReturn(cluster);
     }
 
     private void mockVmDao() {
@@ -149,13 +149,13 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         command = spy(command);
         doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
-        command.setVdsGroupId(FENCECD_HOST_CLUSTER_ID);
+        command.setClusterId(FENCECD_HOST_CLUSTER_ID);
     }
 
     private VDS createHost() {
         VDS vds = new VDS();
         vds.setId(FENCECD_HOST_ID);
-        vds.setVdsGroupId(FENCECD_HOST_CLUSTER_ID);
+        vds.setClusterId(FENCECD_HOST_CLUSTER_ID);
         vds.setVdsName(HOST_NAME);
         vds.setStatus(VDSStatus.Up);
         List<FenceAgent> agents = new LinkedList<>();

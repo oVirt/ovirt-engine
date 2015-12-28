@@ -32,9 +32,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private VmTemplateStatus status;
 
-    private String vdsGroupName;
+    private String clusterName;
 
-    private Version vdsGroupCompatibilityVersion;
+    private Version clusterCompatibilityVersion;
 
     private Guid storagePoolId;
 
@@ -78,7 +78,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public VmTemplate(int childCount, Date creationDate, String description, String comment, int memSizeMb, String name,
                       int numOfSockets, int cpuPerSocket, int threadsPerCpu, int osId,
-                      Guid vdsGroupId, Guid vmtGuid, int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy,
+                      Guid clusterId, Guid vmtGuid, int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy,
                       String timeZone, int niceLevel, int cpuShares, boolean failBack, BootSequence defaultBootSequence,
                       VmType vmType, boolean smartcardEnabled, boolean deleteProtected, SsoMethod ssoMethod,
                       Boolean tunnelMigration, String vncKeyboardLayout, int minAllocatedMem, boolean stateless,
@@ -102,7 +102,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       Version customCompatibilityVersion) {
         super(name,
                 vmtGuid,
-                vdsGroupId,
+                clusterId,
                 osId,
                 creationDate,
                 description,
@@ -215,24 +215,24 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         status = value;
     }
 
-    public String getVdsGroupName() {
-        return vdsGroupName;
+    public String getClusterName() {
+        return clusterName;
     }
 
-    public void setVdsGroupName(String value) {
-        vdsGroupName = value;
+    public void setClusterName(String value) {
+        clusterName = value;
     }
 
-    public Version getVdsGroupCompatibilityVersion() {
-        return this.vdsGroupCompatibilityVersion;
+    public Version getClusterCompatibilityVersion() {
+        return this.clusterCompatibilityVersion;
     }
 
-    public void setVdsGroupCompatibilityVersion(Version value) {
-        this.vdsGroupCompatibilityVersion = value;
+    public void setClusterCompatibilityVersion(Version value) {
+        this.clusterCompatibilityVersion = value;
     }
 
     public Version getCompatibilityVersion() {
-        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getVdsGroupCompatibilityVersion();
+        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getClusterCompatibilityVersion();
     }
 
     public void setTrustedService(boolean trustedService) {

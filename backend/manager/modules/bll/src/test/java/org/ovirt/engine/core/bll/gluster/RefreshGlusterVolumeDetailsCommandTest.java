@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.VdsGroupDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 
@@ -51,7 +51,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     private RefreshGlusterVolumeDetailsCommand cmd;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private GlusterSyncJob syncJob;
@@ -78,7 +78,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
@@ -119,7 +119,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
         server.setId(Guid.newGuid());
         server.setVdsName("VDS1");
         server.setStatus(VDSStatus.Up);
-        server.setVdsGroupId(CLUSTER_ID);
+        server.setClusterId(CLUSTER_ID);
         return server;
     }
 

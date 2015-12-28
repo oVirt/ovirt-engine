@@ -11,10 +11,10 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -43,12 +43,12 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
     @Override
     protected void executeCommand() {
-        String vdsGroupCpuName = getVds().getVdsGroupCpuName();
+        String clusterCpuName = getVds().getClusterCpuName();
 
-        VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
+        Cluster grp = DbFacade.getInstance().getClusterDao().get(getVds().getClusterId());
 
         ServerCpu sc = getCpuFlagsManagerHandler().findMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
-                .getVdsGroupCompatibilityVersion());
+                .getClusterCompatibilityVersion());
 
         if (sc == null) {
             // if there are flags and no cpu found, mark to be non
@@ -71,7 +71,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 architectureMatch = false;
 
                 addCustomValue("VdsArchitecture", sc.getArchitecture().name());
-                addCustomValue("VdsGroupArchitecture", grp.getArchitecture().name());
+                addCustomValue("ClusterArchitecture", grp.getArchitecture().name());
 
                 SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                         NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
@@ -81,7 +81,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                         ExecutionHandler.createInternalJobContext(getContext()));
             } else {
                 // if cluster doesn't have cpu then get the cpu from the vds
-                if (StringUtils.isEmpty(vdsGroupCpuName)) {
+                if (StringUtils.isEmpty(clusterCpuName)) {
                     // update group with the cpu name
 
                     grp.setCpuName(sc.getCpuName());
@@ -95,17 +95,17 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                             new ManagementNetworkOnClusterOperationParameters(grp);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
                     tempVar.setIsInternalCommand(true);
-                    runInternalAction(VdcActionType.UpdateVdsGroup, tempVar);
+                    runInternalAction(VdcActionType.UpdateCluster, tempVar);
 
-                    vdsGroupCpuName = sc.getCpuName();
+                    clusterCpuName = sc.getCpuName();
                 }
             }
         }
 
         // If the host CPU name is not found by the CpuFlagsManagerHandler class, report an error
         if (architectureMatch) {
-            List<String> missingFlags = getCpuFlagsManagerHandler().missingServerCpuFlags(vdsGroupCpuName, getVds()
-                    .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
+            List<String> missingFlags = getCpuFlagsManagerHandler().missingServerCpuFlags(clusterCpuName, getVds()
+                    .getCpuFlags(), getVds().getClusterCompatibilityVersion());
             if (!StringUtils.isEmpty(getVds().getCpuFlags())
                     && (!foundCPU || missingFlags != null)) {
                 if (missingFlags != null) {
@@ -129,7 +129,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         setSucceeded(true);
     }
 
-    private void updateMigrateOnError(VDSGroup group) {
+    private void updateMigrateOnError(Cluster group) {
         ArchitectureType arch = getArchitecture(group);
 
         boolean isMigrationSupported = FeatureSupported.isMigrationSupported(arch, group.getCompatibilityVersion());
@@ -139,7 +139,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         }
     }
 
-    protected ArchitectureType getArchitecture(VDSGroup group) {
+    protected ArchitectureType getArchitecture(Cluster group) {
         if (StringUtils.isNotEmpty(group.getCpuName())) {
             return getCpuFlagsManagerHandler().getArchitectureByCpuName(group.getCpuName(),
                     group.getCompatibilityVersion());

@@ -27,11 +27,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -1401,7 +1401,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        VDSGroup cluster = (VDSGroup) returnValue;
+                        Cluster cluster = (Cluster) returnValue;
                         if (cluster != null) {
                             powerAction(actionName, title, message, cluster.isOptionalReasonRequired());
                         }
@@ -1419,8 +1419,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             if (clusterId == null) {
-                clusterId = a.getVdsGroupId();
-            } else if (!clusterId.equals(a.getVdsGroupId())) {
+                clusterId = a.getClusterId();
+            } else if (!clusterId.equals(a.getClusterId())) {
                 clusterId = null;
                 break;
             }
@@ -1818,7 +1818,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         // runEditVM: should be true if Cluster hasn't changed or if
         // Cluster has changed and Editing it in the Backend has succeeded:
         VM selectedItem = getSelectedItem();
-        Guid oldClusterID = selectedItem.getVdsGroupId();
+        Guid oldClusterID = selectedItem.getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
         if (oldClusterID.equals(newClusterID) == false) {
             ChangeVMClusterParameters parameters =
@@ -2052,7 +2052,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         VM vm = getSelectedItem();
         if (vm == null || !vm.isHostedEngine()
-              || vm.getVdsGroupCompatibilityVersion().compareTo(Version.v3_4) < 0) {
+              || vm.getClusterCompatibilityVersion().compareTo(Version.v3_4) < 0) {
             setHaMaintenanceAvailability(false);
         } else {
             setHaMaintenanceAvailability(true);

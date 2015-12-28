@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -60,9 +60,9 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public void update(Quota quota);
 
     /**
-     * Get specific limitation for <code>VdsGroup</code>.
+     * Get specific limitation for <code>Cluster</code>.
      *
-     * @param vdsGroupId
+     * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
      *            - The <code>Quota</code> id
@@ -70,18 +70,18 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
      *            - Whether to return empty quotas or not
      * @return List of QuotaStorage
      */
-    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId, boolean allowEmpty);
+    public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId, boolean allowEmpty);
 
     /**
-     * Get specific limitation for <code>VdsGroup</code>.
+     * Get specific limitation for <code>Cluster</code>.
      *
-     * @param vdsGroupId
+     * @param clusterId
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
      *            - The <code>Quota</code> id
      * @return List of QuotaStorage
      */
-    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId);
+    public List<QuotaCluster> getQuotaClusterByClusterGuid(Guid clusterId, Guid quotaId);
 
     /**
      * Get specific limitation for storage domain.
@@ -153,22 +153,22 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     /**
      * Get all quota vds groups, which belong to quota with quotaId.
      */
-    public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId);
+    public List<QuotaCluster> getQuotaClusterByQuotaGuid(Guid quotaId);
 
     /**
-     * Get all the QuotaVdsGroup in the system including consumption calculation. This call is very heavy and should be
+     * Get all the QuotaCluster in the system including consumption calculation. This call is very heavy and should be
      * used really and with caution. It was created to support cache initialization
      *
-     * @return all QuotaVdsGroup (including consumption calculation)
+     * @return all QuotaCluster (including consumption calculation)
      */
-    public List<QuotaVdsGroup> getAllQuotaVdsGroupIncludingConsumption();
+    public List<QuotaCluster> getAllQuotaClusterIncludingConsumption();
 
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.
-     * In case no quota Vds Groups are returned, a fictitious QuotaVdsGroup is returned,
+     * In case no quota Vds Groups are returned, a fictitious QuotaCluster is returned,
      * with an {@link Guid.Empty} Vds Id and a <code>null</code> name.
      */
-    public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid quotaId);
+    public List<QuotaCluster> getQuotaClusterByQuotaGuidWithGeneralDefault(Guid quotaId);
 
     /**
      * Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a
@@ -186,13 +186,13 @@ public interface QuotaDao extends Dao, SearchDao<Quota> {
     public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, long engineSessionSeqId, boolean isFiltered);
 
     /**
-     * Returns a list of all the quotas that are relevant to the given {@link #vdsGroupId} -
+     * Returns a list of all the quotas that are relevant to the given {@link #clusterId} -
      * be it specific quotas (i.e., defined directly on the VDS Group) or
      * general (i.e., defined on the storage pool containing the group).<br/>
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
      * not the usage data.
      */
-    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, long engineSessionSeqId, boolean isFiltered);
+    public List<Quota> getAllRelevantQuotasForCluster(Guid clusterId, long engineSessionSeqId, boolean isFiltered);
 
     /**
      * Is the Quota in use by any Image or VM (checks only for existence of the quota id in

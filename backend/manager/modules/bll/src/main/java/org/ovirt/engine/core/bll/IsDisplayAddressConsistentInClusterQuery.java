@@ -25,7 +25,7 @@ public class IsDisplayAddressConsistentInClusterQuery<P extends IdQueryParameter
         List<VDS> hosts =
                 DbFacade.getInstance()
                         .getVdsDao()
-                        .getAllForVdsGroup(getParameters().getId(), getUserID(), getParameters().isFiltered());
+                        .getAllForCluster(getParameters().getId(), getUserID(), getParameters().isFiltered());
 
         getQueryReturnValue().setReturnValue(!isDisplayAddressPartiallyOverridden(hosts));
     }

@@ -124,7 +124,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
 
     @Override
     protected boolean validate() {
-        if (getVdsGroup() == null && Guid.Empty.equals(super.getStorageDomainId())) {
+        if (getCluster() == null && Guid.Empty.equals(super.getStorageDomainId())) {
             return failValidation(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
         }
 
@@ -153,8 +153,8 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.add(new PermissionSubject(getVdsGroupId(),
-                VdcObjectType.VdsGroups,
+        permissionList.add(new PermissionSubject(getClusterId(),
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;

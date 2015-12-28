@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -87,7 +87,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         else {
             ArrayList<Object> items = new ArrayList<>();
             for (Object i : getSelectedItems()) {
-                items.add(((VDSGroup) i).getId());
+                items.add(((Cluster) i).getId());
             }
             return items.toArray(new Object[] {});
         }

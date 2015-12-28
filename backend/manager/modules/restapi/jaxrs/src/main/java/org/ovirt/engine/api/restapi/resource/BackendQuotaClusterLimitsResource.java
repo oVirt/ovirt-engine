@@ -5,7 +5,7 @@ import org.ovirt.engine.api.model.QuotaClusterLimits;
 import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
 import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotaClusterLimitsResource
@@ -20,17 +20,17 @@ public class BackendQuotaClusterLimitsResource
     public QuotaClusterLimits list() {
         Quota quota = getQuota();
         QuotaClusterLimits limits = new QuotaClusterLimits();
-        if (quota.getGlobalQuotaVdsGroup() != null) {
-            addLimit(quota.getGlobalQuotaVdsGroup(), quotaId.toString(), limits, quota);
-        } else if (quota.getQuotaVdsGroups() != null) {
-            for (QuotaVdsGroup quotaCluster : quota.getQuotaVdsGroups()) {
-                addLimit(quotaCluster, quotaCluster.getVdsGroupId().toString(), limits, quota);
+        if (quota.getGlobalQuotaCluster() != null) {
+            addLimit(quota.getGlobalQuotaCluster(), quotaId.toString(), limits, quota);
+        } else if (quota.getQuotaClusters() != null) {
+            for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
+                addLimit(quotaCluster, quotaCluster.getClusterId().toString(), limits, quota);
             }
         }
         return limits;
     }
 
-    private void addLimit(QuotaVdsGroup quotaCluster, String id, QuotaClusterLimits limits, Quota quota) {
+    private void addLimit(QuotaCluster quotaCluster, String id, QuotaClusterLimits limits, Quota quota) {
         QuotaClusterLimit limit = new QuotaClusterLimit();
         limit.setId(id);
         limits.getQuotaClusterLimits().add(addLinks(map(quota, limit)));

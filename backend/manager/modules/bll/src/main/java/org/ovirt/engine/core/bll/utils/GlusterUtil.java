@@ -255,7 +255,7 @@ public class GlusterUtil {
     }
 
     public boolean isHostExists(List<GlusterServerInfo> glusterServers, VDS server) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getVdsGroupCompatibilityVersion())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getClusterCompatibilityVersion())) {
             GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
             if (glusterServer != null) {
                 for (GlusterServerInfo glusterServerInfo : glusterServers) {
@@ -378,7 +378,7 @@ public class GlusterUtil {
                     new HashMap<String, String>() {
                         {
                             put(GlusterConstants.VOLUME_NAME, volume.getName());
-                            put(GlusterConstants.CLUSTER, volume.getVdsGroupName());
+                            put(GlusterConstants.CLUSTER, volume.getClusterName());
                         }
                     });
             return true;

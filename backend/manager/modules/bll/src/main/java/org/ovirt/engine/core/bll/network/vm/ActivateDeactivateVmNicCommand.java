@@ -360,7 +360,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected boolean checkSriovHotPlugSupported() {
-        if (!FeatureSupported.sriovHotPlugSupported(getVm().getVdsGroupCompatibilityVersion())) {
+        if (!FeatureSupported.sriovHotPlugSupported(getVm().getClusterCompatibilityVersion())) {
             return failValidation(EngineMessage.HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED);
         }
         return true;

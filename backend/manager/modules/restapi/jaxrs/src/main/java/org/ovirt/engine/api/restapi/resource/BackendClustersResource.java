@@ -6,15 +6,14 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -22,7 +21,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
+public class BackendClustersResource extends AbstractBackendCollectionResource<org.ovirt.engine.api.model.Cluster, Cluster>
         implements ClustersResource {
 
     static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes", "glusterhooks",
@@ -32,7 +31,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     private final ManagementNetworkFinder managementNetworkFinder;
 
     public BackendClustersResource() {
-        super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
+        super(org.ovirt.engine.api.model.Cluster.class, Cluster.class, SUB_COLLECTIONS);
         managementNetworkFinder = new ManagementNetworkFinder(this);
     }
 
@@ -50,7 +49,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
 
     private Clusters listVirtOnly() {
         if (isFiltered()) {
-            return mapVirtOnlyCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
+            return mapVirtOnlyCollection(getBackendCollection(VdcQueryType.GetAllClusters,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -60,7 +59,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
 
     private Clusters listAll() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllClusters,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -74,25 +73,25 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     }
 
     @Override
-    public Response add(Cluster cluster) {
+    public Response add(org.ovirt.engine.api.model.Cluster cluster) {
         validateParameters(cluster, getMandatoryParameters());
-        validateEnums(Cluster.class, cluster);
+        validateEnums(org.ovirt.engine.api.model.Cluster.class, cluster);
         StoragePool dataCenter = getDataCenter(cluster);
-        return performCreate(VdcActionType.AddVdsGroup,
+        return performCreate(VdcActionType.AddCluster,
                 createAddCommandParams(cluster, dataCenter),
-                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetClusterById, IdQueryParameters.class));
     }
 
     protected String[] getMandatoryParameters() {
         return new String[] { "name", "dataCenter.name|id" };
     }
 
-    protected StoragePool getDataCenter(Cluster cluster) {
+    protected StoragePool getDataCenter(org.ovirt.engine.api.model.Cluster cluster) {
         return getStoragePool(cluster.getDataCenter(), this);
     }
 
-    private ManagementNetworkOnClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
-        VDSGroup clusterEntity = map(cluster, map(dataCenter));
+    private ManagementNetworkOnClusterOperationParameters createAddCommandParams(org.ovirt.engine.api.model.Cluster cluster, StoragePool dataCenter) {
+        Cluster clusterEntity = map(cluster, map(dataCenter));
 
         if (!(cluster.isSetErrorHandling() && cluster.getErrorHandling().isSetOnError())) {
             clusterEntity.setMigrateOnError(null);
@@ -103,32 +102,32 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         return new ManagementNetworkOnClusterOperationParameters(clusterEntity, managementNetworkId);
     }
 
-    protected Clusters mapCollection(List<VDSGroup> entities) {
+    protected Clusters mapCollection(List<Cluster> entities) {
         Clusters collection = new Clusters();
-        for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
+        for (Cluster entity : entities) {
             collection.getClusters().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
     }
 
-    private Clusters mapVirtOnlyCollection(List<VDSGroup> entities) {
+    private Clusters mapVirtOnlyCollection(List<Cluster> entities) {
         Clusters collection = new Clusters();
-        for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
+        for (Cluster entity : entities) {
             collection.getClusters().add(addLinks(map(entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
         }
         return collection;
     }
 
     /**
-     * Map the storage pool (i.e. datacenter entity) to a VDSGroup instance
+     * Map the storage pool (i.e. datacenter entity) to a Cluster instance
      * with the same compatibility version
      */
-    protected VDSGroup map(StoragePool pool) {
-        return getMapper(StoragePool.class, VDSGroup.class).map(pool, null);
+    protected Cluster map(StoragePool pool) {
+        return getMapper(StoragePool.class, Cluster.class).map(pool, null);
     }
 
     @Override
-    protected Cluster doPopulate(Cluster cluster, VDSGroup entity) {
+    protected org.ovirt.engine.api.model.Cluster doPopulate(org.ovirt.engine.api.model.Cluster cluster, Cluster entity) {
         final Guid clusterId = entity.getId();
         final org.ovirt.engine.core.common.businessentities.network.Network network =
                 getOptionalEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,

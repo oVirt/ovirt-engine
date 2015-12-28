@@ -43,9 +43,9 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -324,7 +324,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(vmDao).when(command).getVmDao();
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        doReturn(new VDSGroup()).when(command).getVdsGroup();
+        doReturn(new Cluster()).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
         doNothing().when(command).updateCurrentCd(any(String.class));
@@ -389,7 +389,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(vm).when(command).getVm();
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
-        doReturn(new VDSGroup()).when(command).getVdsGroup();
+        doReturn(new Cluster()).when(command).getCluster();
         assertTrue(command.validate());
         assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
     }
@@ -418,9 +418,9 @@ public class RunVmCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(vm).when(command).getVm();
 
-        VDSGroup cluster = mock(VDSGroup.class);
+        Cluster cluster = mock(Cluster.class);
         when(cluster.getRequiredRngSources()).thenReturn(clusterReqSources);
-        doReturn(cluster).when(command).getVdsGroup();
+        doReturn(cluster).when(command).getCluster();
 
         VmRngDevice rngDevice = new VmRngDevice();
         rngDevice.setSource(vmRngSource);
@@ -534,7 +534,7 @@ public class RunVmCommandTest extends BaseCommandTest {
                 Matchers.anyListOf(Guid.class),
                 Matchers.anyListOf(Guid.class),
                 Matchers.anyListOf(Guid.class),
-                any(VDSGroup.class))).thenReturn(true);
+                any(Cluster.class))).thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;

@@ -101,8 +101,8 @@ public class AuditLogDirector {
         auditLog.setStorageDomainName(auditLogable.getStorageDomainName());
         auditLog.setStoragePoolId(auditLogable.getStoragePoolId());
         auditLog.setStoragePoolName(auditLogable.getStoragePoolName());
-        auditLog.setVdsGroupId(auditLogable.getVdsGroupId());
-        auditLog.setVdsGroupName(auditLogable.getVdsGroupName());
+        auditLog.setClusterId(auditLogable.getClusterId());
+        auditLog.setClusterName(auditLogable.getClusterName());
         auditLog.setCorrelationId(auditLogable.getCorrelationId());
         auditLog.setJobId(auditLogable.getJobId());
         auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
@@ -212,7 +212,7 @@ public class AuditLogDirector {
         compose(builder, "sd", nullToEmptyString(logable.getStorageDomainId()));
         compose(builder, "dc", nullToEmptyString(logable.getStoragePoolId()));
         compose(builder, "user", nullToEmptyString(logable.getUserId()));
-        compose(builder, "cluster", logable.getVdsGroupId().toString());
+        compose(builder, "cluster", logable.getClusterId().toString());
         compose(builder, "vds", logable.getVdsId().toString());
         compose(builder, "vm", emptyGuidToEmptyString(logable.getVmId()));
         compose(builder, "template", emptyGuidToEmptyString(logable.getVmTemplateId()));

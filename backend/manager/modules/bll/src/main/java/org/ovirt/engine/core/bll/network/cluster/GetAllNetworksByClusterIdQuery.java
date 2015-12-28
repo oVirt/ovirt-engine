@@ -11,9 +11,9 @@ public class GetAllNetworksByClusterIdQuery<P extends IdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        Guid vdsgroupid = getParameters().getId();
+        Guid clusterId = getParameters().getId();
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getNetworkDao()
-                .getAllForCluster(vdsgroupid, getUserID(), getParameters().isFiltered()));
+                .getAllForCluster(clusterId, getUserID(), getParameters().isFiltered()));
     }
 }

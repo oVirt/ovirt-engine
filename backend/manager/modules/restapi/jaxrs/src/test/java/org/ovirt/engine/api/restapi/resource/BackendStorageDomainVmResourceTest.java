@@ -13,7 +13,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
@@ -25,8 +24,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -105,7 +104,7 @@ public class BackendStorageDomainVmResourceTest
         Action action = new Action();
         action.setStorageDomain(new StorageDomain());
         action.getStorageDomain().setId(GUIDS[2].toString());
-        action.setCluster(new Cluster());
+        action.setCluster(new org.ovirt.engine.api.model.Cluster());
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         control.replay();
@@ -121,7 +120,7 @@ public class BackendStorageDomainVmResourceTest
     public void testImport() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false, false);
@@ -131,7 +130,7 @@ public class BackendStorageDomainVmResourceTest
     public void testImportCollapseSnapshots() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, true, false);
@@ -148,14 +147,14 @@ public class BackendStorageDomainVmResourceTest
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestImport(storageDomain, cluster, false, false);
     }
 
     @Test
     public void testImportWithClusterName() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
@@ -163,7 +162,7 @@ public class BackendStorageDomainVmResourceTest
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setName(NAMES[1]);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false, false);
@@ -173,7 +172,7 @@ public class BackendStorageDomainVmResourceTest
     public void testImportAsNewEntity() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false, true);
@@ -183,7 +182,7 @@ public class BackendStorageDomainVmResourceTest
     public void testImportWithDiskWithoutId() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
@@ -280,12 +279,12 @@ public class BackendStorageDomainVmResourceTest
         setUpGetDataCenterByStorageDomainExpectations(id, 1);
     }
 
-    public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
+    public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         UriInfo uriInfo = setUpActionExpectations(
             VdcActionType.ImportVm,
             ImportVmParameters.class,
-            new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse", "ImportAsNewEntity" },
+            new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId", "CopyCollapse", "ImportAsNewEntity" },
             new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity },
             true, // valid,
             true, // success
@@ -305,10 +304,10 @@ public class BackendStorageDomainVmResourceTest
         verifyActionResponse(resource.doImport(action));
     }
 
-    public void doTestRegister(Cluster cluster, boolean importAsNewEntity) throws Exception {
+    public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
                                            ImportVmParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "VdsGroupId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
+                                           new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
                                            new Object[] { VM_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true}));
 
         Action action = new Action();
@@ -342,14 +341,14 @@ public class BackendStorageDomainVmResourceTest
         setUriInfo(setUpActionExpectations(
                 VdcActionType.ImportVm,
                 ImportVmParameters.class,
-                new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId" },
+                new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId" },
                 new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1] },
                 asList(GUIDS[1]),
                 asList(new AsyncTaskStatus(asyncStatus))));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
 
         Action action = new Action();
@@ -377,14 +376,14 @@ public class BackendStorageDomainVmResourceTest
 
     @Test
     public void testRegisterVM() throws Exception {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, false);
     }
 
     @Test
     public void testRegisterAsNewEntity() throws Exception {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, true);
     }
@@ -491,8 +490,8 @@ public class BackendStorageDomainVmResourceTest
         return dom;
     }
 
-    protected VDSGroup getCluster(int idx) {
-        VDSGroup cluster = new VDSGroup();
+    protected Cluster getCluster(int idx) {
+        Cluster cluster = new Cluster();
         cluster.setId(GUIDS[idx]);
         return cluster;
     }

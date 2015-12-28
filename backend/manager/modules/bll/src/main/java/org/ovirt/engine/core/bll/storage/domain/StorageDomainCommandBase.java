@@ -111,7 +111,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (this.getStoragePool().isLocal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
                 && !isInternal) {
-            return failValidation(EngineMessage.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
+            return failValidation(EngineMessage.CLUSTER_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
         }
         return true;
     }

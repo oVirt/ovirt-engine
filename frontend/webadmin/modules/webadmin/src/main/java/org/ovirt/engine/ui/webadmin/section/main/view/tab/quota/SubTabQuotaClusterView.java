@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.quota;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import com.google.gwt.core.client.GWT;
 
-public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, QuotaVdsGroup, QuotaListModel, QuotaClusterListModel>
+public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, QuotaCluster, QuotaListModel, QuotaClusterListModel>
         implements SubTabQuotaClusterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabQuotaClusterView> {
@@ -27,7 +27,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider) {
+    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaCluster, QuotaListModel, QuotaClusterListModel> modelProvider) {
         super(modelProvider);
         initTable();
         initWidget(getTable());
@@ -41,22 +41,22 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     private void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<QuotaVdsGroup> nameColumn = new AbstractTextColumn<QuotaVdsGroup>() {
+        AbstractTextColumn<QuotaCluster> nameColumn = new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
-                return object.getVdsGroupName() == null || object.getVdsGroupName().equals("") ?
-                        constants.ultQuotaForAllClustersQuotaPopup() : object.getVdsGroupName();
+            public String getValue(QuotaCluster object) {
+                return object.getClusterName() == null || object.getClusterName().equals("") ?
+                        constants.ultQuotaForAllClustersQuotaPopup() : object.getClusterName();
             }
         };
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumn<QuotaVdsGroup> usedMemColumn = new AbstractTextColumn<QuotaVdsGroup>() {
+        AbstractTextColumn<QuotaCluster> usedMemColumn = new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
+            public String getValue(QuotaCluster object) {
                 if (object.getMemSizeMB() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)) {
+                } else if (object.getMemSizeMB().equals(QuotaCluster.UNLIMITED_MEM)) {
                     return messages.unlimitedMemConsumption(object.getMemSizeMBUsage());
                 } else {
                     return messages.limitedMemConsumption(object.getMemSizeMBUsage(), object.getMemSizeMB());
@@ -66,12 +66,12 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         usedMemColumn.makeSortable();
         getTable().addColumn(usedMemColumn, constants.usedMemoryTotalCluster(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumn<QuotaVdsGroup> virtualCpuColumn = new AbstractTextColumn<QuotaVdsGroup>() {
+        AbstractTextColumn<QuotaCluster> virtualCpuColumn = new AbstractTextColumn<QuotaCluster>() {
             @Override
-            public String getValue(QuotaVdsGroup object) {
+            public String getValue(QuotaCluster object) {
                 if (object.getVirtualCpu() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
+                } else if (object.getVirtualCpu().equals(QuotaCluster.UNLIMITED_VCPU)) {
                     return messages.unlimitedVcpuConsumption(object.getVirtualCpuUsage());
                 } else {
                     return messages.limitedVcpuConsumption(object.getVirtualCpuUsage(), object.getVirtualCpu());

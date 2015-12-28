@@ -131,11 +131,11 @@
         <include name="common/businessentities/VDS.java" />
         <include name="common/businessentities/VDSDomainsData.java" />
         <include name="common/businessentities/VdsDynamic.java" />
-        <include name="common/businessentities/VDSGroup.java" />
+        <include name="common/businessentities/Cluster.java" />
         <include name="common/businessentities/AdditionalFeature.java" />
         <include name="common/businessentities/SupportedAdditionalClusterFeature.java" />
         <include name="common/businessentities/FencingPolicy.java" />
-        <include name="common/businessentities/VDSGroupHostsAndVMs.java" />
+        <include name="common/businessentities/ClusterHostsAndVMs.java" />
         <include name="common/businessentities/VdsProtocol.java" />
         <include name="common/businessentities/VdsSpmStatus.java" />
         <include name="common/businessentities/VdsStatic.java" />
@@ -216,7 +216,7 @@
         <include name="common/businessentities/Quota.java"/>
         <include name="common/businessentities/QuotaEnforcementTypeEnum.java"/>
         <include name="common/businessentities/QuotaStorage.java"/>
-        <include name="common/businessentities/QuotaVdsGroup.java"/>
+        <include name="common/businessentities/QuotaCluster.java"/>
         <include name="common/businessentities/QuotaUsagePerUser.java"/>
 
         <!--QoS-->

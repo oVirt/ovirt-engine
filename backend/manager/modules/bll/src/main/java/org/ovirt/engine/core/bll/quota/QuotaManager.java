@@ -15,10 +15,10 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -333,55 +333,55 @@ public class QuotaManager implements BackendService {
 
     private boolean checkQuotaClusterLimits(QuotaEnforcementTypeEnum quotaEnforcementTypeEnum,
             Quota quota,
-            QuotaVdsGroup quotaVdsGroup,
+            QuotaCluster quotaCluster,
             long memToAdd,
             int vcpuToAdd,
             List<String> validationMessages,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        if (quotaVdsGroup.getVirtualCpu() == 0 || quotaVdsGroup.getMemSizeMB() == 0) {
+        if (quotaCluster.getVirtualCpu() == 0 || quotaCluster.getMemSizeMB() == 0) {
             return false;
         }
 
-        double vcpuToAddPercentage = (double) vcpuToAdd / (double) quotaVdsGroup.getVirtualCpu() * 100;
+        double vcpuToAddPercentage = (double) vcpuToAdd / (double) quotaCluster.getVirtualCpu() * 100;
         double vcpuCurrentPercentage =
-                (double) quotaVdsGroup.getVirtualCpuUsage() / (double) quotaVdsGroup.getVirtualCpu() * 100;
+                (double) quotaCluster.getVirtualCpuUsage() / (double) quotaCluster.getVirtualCpu() * 100;
         double newVcpuPercent = vcpuToAddPercentage + vcpuCurrentPercentage;
-        double memToAddPercentage = (double) memToAdd / (double) quotaVdsGroup.getMemSizeMB() * 100;
+        double memToAddPercentage = (double) memToAdd / (double) quotaCluster.getMemSizeMB() * 100;
         double memCurrentPercentage =
-                (double) quotaVdsGroup.getMemSizeMBUsage() / (double) quotaVdsGroup.getMemSizeMB() * 100;
+                (double) quotaCluster.getMemSizeMBUsage() / (double) quotaCluster.getMemSizeMB() * 100;
         double newMemoryPercent = memToAddPercentage + memCurrentPercentage;
-        long newMemory = memToAdd + quotaVdsGroup.getMemSizeMBUsage();
-        int newVcpu = vcpuToAdd + quotaVdsGroup.getVirtualCpuUsage();
+        long newMemory = memToAdd + quotaCluster.getMemSizeMBUsage();
+        int newVcpu = vcpuToAdd + quotaCluster.getVirtualCpuUsage();
 
-        long memLimit = quotaVdsGroup.getMemSizeMB();
-        int cpuLimit = quotaVdsGroup.getVirtualCpu();
+        long memLimit = quotaCluster.getMemSizeMB();
+        int cpuLimit = quotaCluster.getVirtualCpu();
         boolean requestIsApproved;
-        if (memLimit == QuotaVdsGroup.UNLIMITED_MEM && cpuLimit == QuotaVdsGroup.UNLIMITED_VCPU) {
+        if (memLimit == QuotaCluster.UNLIMITED_MEM && cpuLimit == QuotaCluster.UNLIMITED_VCPU) {
             // if both cpu and
             // mem are unlimited
             requestIsApproved = true;
-        } else if ((newVcpuPercent <= quota.getThresholdVdsGroupPercentage() // if cpu and mem usages are under the limit
-                && newMemoryPercent <= quota.getThresholdVdsGroupPercentage())
+        } else if ((newVcpuPercent <= quota.getThresholdClusterPercentage() // if cpu and mem usages are under the limit
+                && newMemoryPercent <= quota.getThresholdClusterPercentage())
                 || (vcpuToAdd <= 0 && memToAdd <= 0)) {
             requestIsApproved = true;
         } else if (newVcpuPercent <= 100
                 && newMemoryPercent <= 100) { // passed the threshold (not the quota limit)
-            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_THRESHOLD);
-            quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
+            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
+            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
                     quota.getQuotaName(),
                     quota.getId(),
                     vcpuCurrentPercentage + vcpuToAddPercentage,
                     vcpuToAddPercentage,
                     memCurrentPercentage + memToAddPercentage,
                     memToAddPercentage,
-                    newVcpuPercent > quota.getThresholdVdsGroupPercentage(),
-                    newMemoryPercent > quota.getThresholdVdsGroupPercentage());
+                    newVcpuPercent > quota.getThresholdClusterPercentage(),
+                    newMemoryPercent > quota.getThresholdClusterPercentage());
             requestIsApproved = true;
-        } else if (newVcpuPercent <= quota.getGraceVdsGroupPercentage() + 100
-                && newMemoryPercent <= quota.getGraceVdsGroupPercentage() + 100) { // passed the quota limit (not the
+        } else if (newVcpuPercent <= quota.getGraceClusterPercentage() + 100
+                && newMemoryPercent <= quota.getGraceClusterPercentage() + 100) { // passed the quota limit (not the
             // grace)
-            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT);
-            quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
+            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
+            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
                     quota.getQuotaName(),
                     quota.getId(),
                     vcpuCurrentPercentage + vcpuToAddPercentage,
@@ -393,19 +393,19 @@ public class QuotaManager implements BackendService {
             requestIsApproved = true;
         } else {
             auditLogPair.setFirst(quotaEnforcementTypeEnum == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT ?
-                    AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT:
-                    AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT_PERMISSIVE_MODE); // passed the grace
-            quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
+                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT:
+                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT_PERMISSIVE_MODE); // passed the grace
+            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
                     quota.getQuotaName(),
                     quota.getId(),
                     vcpuCurrentPercentage,
                     vcpuToAddPercentage,
                     memCurrentPercentage,
                     memToAddPercentage,
-                    newVcpuPercent > quota.getGraceVdsGroupPercentage() + 100,
-                    newMemoryPercent > quota.getGraceVdsGroupPercentage() + 100);
+                    newVcpuPercent > quota.getGraceClusterPercentage() + 100,
+                    newMemoryPercent > quota.getGraceClusterPercentage() + 100);
             if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
-                validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED.toString());
+                validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_CLUSTER_LIMIT_EXCEEDED.toString());
                 requestIsApproved = false;
             } else {
                 requestIsApproved = true;
@@ -413,44 +413,44 @@ public class QuotaManager implements BackendService {
         }
         // cache
         if(requestIsApproved) {
-            cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+            cacheNewValues(quotaCluster, newMemory, newVcpu);
         } else {
             auditLogPair.getSecond().setQuotaIdForLog(quota.getId());
         }
         return requestIsApproved;
     }
 
-    private void cacheNewValues(QuotaVdsGroup quotaVdsGroup, long newMemory, int newVcpu) {
-        quotaVdsGroup.setVirtualCpuUsage(newVcpu);
-        quotaVdsGroup.setMemSizeMBUsage(newMemory);
+    private void cacheNewValues(QuotaCluster quotaCluster, long newMemory, int newVcpu) {
+        quotaCluster.setVirtualCpuUsage(newVcpu);
+        quotaCluster.setMemSizeMBUsage(newMemory);
     }
 
     private boolean validateAndSetClusterQuota(QuotaConsumptionParametersWrapper parameters,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
         boolean result = true;
 
-        List<QuotaVdsGroupConsumptionParameter> executed = new ArrayList<>();
+        List<QuotaClusterConsumptionParameter> executed = new ArrayList<>();
         for (QuotaConsumptionParameter parameter : parameters.getParameters()) {
-            QuotaVdsGroupConsumptionParameter vdsGroupConsumptionParameter;
-            if (parameter.getParameterType() != QuotaConsumptionParameter.ParameterType.VDS_GROUP) {
+            QuotaClusterConsumptionParameter clusterConsumptionParameter;
+            if (parameter.getParameterType() != QuotaConsumptionParameter.ParameterType.CLUSTER) {
                 continue;
             } else {
-                vdsGroupConsumptionParameter = (QuotaVdsGroupConsumptionParameter) parameter;
+                clusterConsumptionParameter = (QuotaClusterConsumptionParameter) parameter;
             }
             Quota quota = parameter.getQuota();
-            QuotaVdsGroup quotaVdsGroup = null;
+            QuotaCluster quotaCluster = null;
 
-            if (quota.getGlobalQuotaVdsGroup() != null) { // global cluster quota
-                quotaVdsGroup = quota.getGlobalQuotaVdsGroup();
+            if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
+                quotaCluster = quota.getGlobalQuotaCluster();
             } else {
-                for (QuotaVdsGroup vdsGroup : quota.getQuotaVdsGroups()) {
-                    if (vdsGroup.getVdsGroupId().equals(vdsGroupConsumptionParameter.getVdsGroupId())) {
-                        quotaVdsGroup = vdsGroup;
+                for (QuotaCluster cluster : quota.getQuotaClusters()) {
+                    if (cluster.getClusterId().equals(clusterConsumptionParameter.getClusterId())) {
+                        quotaCluster = cluster;
                         break;
                     }
                 }
             }
-            if (quotaVdsGroup == null) {
+            if (quotaCluster == null) {
                 parameters.getValidationMessages()
                         .add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
                 result = false;
@@ -458,21 +458,21 @@ public class QuotaManager implements BackendService {
             }
 
             long requestedMemory =
-                    vdsGroupConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                    vdsGroupConsumptionParameter.getRequestedMemory() : -vdsGroupConsumptionParameter.getRequestedMemory();
+                    clusterConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
+                    clusterConsumptionParameter.getRequestedMemory() : -clusterConsumptionParameter.getRequestedMemory();
             int requestedCpu =
-                    vdsGroupConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                    vdsGroupConsumptionParameter.getRequestedCpu() : -vdsGroupConsumptionParameter.getRequestedCpu();
+                    clusterConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
+                    clusterConsumptionParameter.getRequestedCpu() : -clusterConsumptionParameter.getRequestedCpu();
 
             if (checkQuotaClusterLimits(
                     parameters.getAuditLogable().getStoragePool().getQuotaEnforcementType(),
                     quota,
-                    quotaVdsGroup,
+                    quotaCluster,
                     requestedMemory,
                     requestedCpu,
                     parameters.getValidationMessages(),
                     auditLogPair)) {
-                executed.add(vdsGroupConsumptionParameter);
+                executed.add(clusterConsumptionParameter);
             } else {
                 result = false;
                 break;
@@ -481,14 +481,14 @@ public class QuotaManager implements BackendService {
 
         //if result is false (one or more parameters did not pass) - roll back the parameters that did pass
         if(!result) {
-            rollBackVdsGroupConsumptionParameters(executed);
+            rollBackClusterConsumptionParameters(executed);
         }
 
         return result;
     }
 
-    private void rollBackVdsGroupConsumptionParameters(List<QuotaVdsGroupConsumptionParameter> executed) {
-        for (QuotaVdsGroupConsumptionParameter parameter : executed) {
+    private void rollBackClusterConsumptionParameters(List<QuotaClusterConsumptionParameter> executed) {
+        for (QuotaClusterConsumptionParameter parameter : executed) {
             long requestedMemory =
                     parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
                             -parameter.getRequestedMemory() : parameter.getRequestedMemory();
@@ -496,23 +496,23 @@ public class QuotaManager implements BackendService {
                     parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
                             -parameter.getRequestedCpu() : parameter.getRequestedCpu();
 
-            QuotaVdsGroup quotaVdsGroup = null;
+            QuotaCluster quotaCluster = null;
             Quota quota = parameter.getQuota();
-            if (quota.getGlobalQuotaVdsGroup() != null) { // global cluster quota
-                quotaVdsGroup = quota.getGlobalQuotaVdsGroup();
+            if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
+                quotaCluster = quota.getGlobalQuotaCluster();
             } else {
-                for (QuotaVdsGroup vdsGroup : quota.getQuotaVdsGroups()) {
-                    if (vdsGroup.getVdsGroupId().equals(parameter.getVdsGroupId())) {
-                        quotaVdsGroup = vdsGroup;
+                for (QuotaCluster cluster : quota.getQuotaClusters()) {
+                    if (cluster.getClusterId().equals(parameter.getClusterId())) {
+                        quotaCluster = cluster;
                         break;
                     }
                 }
             }
 
-            if (quotaVdsGroup != null) {
-                long newMemory = requestedMemory + quotaVdsGroup.getMemSizeMBUsage();
-                int newVcpu = requestedCpu + quotaVdsGroup.getVirtualCpuUsage();
-                cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+            if (quotaCluster != null) {
+                long newMemory = requestedMemory + quotaCluster.getMemSizeMBUsage();
+                int newVcpu = requestedCpu + quotaCluster.getVirtualCpuUsage();
+                cacheNewValues(quotaCluster, newMemory, newVcpu);
             }
         }
     }
@@ -673,14 +673,14 @@ public class QuotaManager implements BackendService {
         for (QuotaConsumptionParameter param : parameters.getParameters()) {
             // check that quota id is valid and fetch the quota from db (or cache). add the quota to the param
             boolean validQuotaId = checkAndFetchQuota(parameters, param, auditLogPair);
-            boolean validVdsGroup = true;
+            boolean validCluster = true;
             boolean  validStorageDomain = true;
 
             if (validQuotaId) {
                 // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
                 // vds group id which is handled by this quota
-                if (param instanceof QuotaVdsGroupConsumptionParameter) {
-                    validVdsGroup = checkVdsGroupMatchQuota(parameters, param);
+                if (param instanceof QuotaClusterConsumptionParameter) {
+                    validCluster = checkClusterMatchQuota(parameters, param);
                 }
 
                 // In case this param is a QuotaStorageConsumptionParameter - check that it has a valid
@@ -690,7 +690,7 @@ public class QuotaManager implements BackendService {
                 }
             }
 
-            if (!validQuotaId || !validVdsGroup || !validStorageDomain) {
+            if (!validQuotaId || !validCluster || !validStorageDomain) {
                 // if in hard enforcement - return false
                 if (hardEnforcement) {
                     return false;
@@ -754,29 +754,29 @@ public class QuotaManager implements BackendService {
 
     // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
     // vds group id which is handled by this quota
-    private boolean checkVdsGroupMatchQuota(QuotaConsumptionParametersWrapper parameters, QuotaConsumptionParameter param) {
+    private boolean checkClusterMatchQuota(QuotaConsumptionParametersWrapper parameters, QuotaConsumptionParameter param) {
         Quota quota = param.getQuota();
-        QuotaVdsGroupConsumptionParameter paramVds = (QuotaVdsGroupConsumptionParameter) param;
+        QuotaClusterConsumptionParameter paramVds = (QuotaClusterConsumptionParameter) param;
 
-        if (paramVds.getVdsGroupId() == null) {
+        if (paramVds.getClusterId() == null) {
             parameters.getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             log.error("Quota Vds parameters from command '{}' are missing vds group id",
                     parameters.getAuditLogable().getClass().getName());
             return false;
         }
-        boolean vdsGroupInQuota = false;
-        if(quota.getGlobalQuotaVdsGroup() != null) {
-            vdsGroupInQuota = true;
+        boolean clusterInQuota = false;
+        if(quota.getGlobalQuotaCluster() != null) {
+            clusterInQuota = true;
         } else {
-            for (QuotaVdsGroup vdsGroup : quota.getQuotaVdsGroups()) {
-                if (vdsGroup.getVdsGroupId().equals(paramVds.getVdsGroupId())) {
-                    vdsGroupInQuota = true;
+            for (QuotaCluster cluster : quota.getQuotaClusters()) {
+                if (cluster.getClusterId().equals(paramVds.getClusterId())) {
+                    clusterInQuota = true;
                     break;
                 }
             }
         }
 
-        if (!vdsGroupInQuota) {
+        if (!clusterInQuota) {
             parameters.getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             log.error("Quota Vds parameters from command '{}'. Vds group does not match quota",
                     parameters.getAuditLogable().getClass().getName());
@@ -906,8 +906,8 @@ public class QuotaManager implements BackendService {
         if (quota.getGlobalQuotaStorage() != null) {
             quotaExternal.setGlobalQuotaStorage(copyQuotaStorageUsage(quota.getGlobalQuotaStorage()));
         }
-        if (quota.getGlobalQuotaVdsGroup() != null) {
-            quotaExternal.setGlobalQuotaVdsGroup(copyQuotaVdsGroupUsage(quota.getGlobalQuotaVdsGroup()));
+        if (quota.getGlobalQuotaCluster() != null) {
+            quotaExternal.setGlobalQuotaCluster(copyQuotaClusterUsage(quota.getGlobalQuotaCluster()));
         }
 
         if (quota.getQuotaStorages() != null) {
@@ -917,10 +917,10 @@ public class QuotaManager implements BackendService {
             }
         }
 
-        if (quota.getQuotaVdsGroups() != null) {
-            quotaExternal.setQuotaVdsGroups(new ArrayList<>());
-            for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
-                quotaExternal.getQuotaVdsGroups().add(copyQuotaVdsGroupUsage(quotaVdsGroup));
+        if (quota.getQuotaClusters() != null) {
+            quotaExternal.setQuotaClusters(new ArrayList<>());
+            for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
+                quotaExternal.getQuotaClusters().add(copyQuotaClusterUsage(quotaCluster));
             }
         }
     }
@@ -931,12 +931,12 @@ public class QuotaManager implements BackendService {
                 quotaStorage.getStorageSizeGBUsage());
     }
 
-    private QuotaVdsGroup copyQuotaVdsGroupUsage(QuotaVdsGroup quotaVdsGroup) {
-        return new QuotaVdsGroup(null, null, null,
-                quotaVdsGroup.getVirtualCpu(),
-                quotaVdsGroup.getVirtualCpuUsage(),
-                quotaVdsGroup.getMemSizeMB(),
-                quotaVdsGroup.getMemSizeMBUsage());
+    private QuotaCluster copyQuotaClusterUsage(QuotaCluster quotaCluster) {
+        return new QuotaCluster(null, null, null,
+                quotaCluster.getVirtualCpu(),
+                quotaCluster.getVirtualCpuUsage(),
+                quotaCluster.getMemSizeMB(),
+                quotaCluster.getMemSizeMBUsage());
     }
 
     /**
@@ -1028,32 +1028,32 @@ public class QuotaManager implements BackendService {
             }
 
             // calc cpu and mem
-            if (quota.getGlobalQuotaVdsGroup() != null) {
-                memLimit = quota.getGlobalQuotaVdsGroup().getMemSizeMB();
-                memUsage = quota.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
-                cpuLimit = quota.getGlobalQuotaVdsGroup().getVirtualCpu();
-                cpuUsage = quota.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
+            if (quota.getGlobalQuotaCluster() != null) {
+                memLimit = quota.getGlobalQuotaCluster().getMemSizeMB();
+                memUsage = quota.getGlobalQuotaCluster().getMemSizeMBUsage();
+                cpuLimit = quota.getGlobalQuotaCluster().getVirtualCpu();
+                cpuUsage = quota.getGlobalQuotaCluster().getVirtualCpuUsage();
             } else {
-                for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
+                for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
 
                     // once mem was set unlimited it will remain so
-                    if (QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
-                        memLimit = QuotaVdsGroup.UNLIMITED_MEM; // Do not break because usage is still counting
+                    if (QuotaCluster.UNLIMITED_MEM.equals(quotaCluster.getMemSizeMB())) {
+                        memLimit = QuotaCluster.UNLIMITED_MEM; // Do not break because usage is still counting
                     }
-                    if (memLimit != QuotaVdsGroup.UNLIMITED_MEM) {
-                        memLimit += quotaVdsGroup.getMemSizeMB();
+                    if (memLimit != QuotaCluster.UNLIMITED_MEM) {
+                        memLimit += quotaCluster.getMemSizeMB();
                     }
 
                     // once cpu was set unlimited it will remain so
-                    if (QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
-                        cpuLimit = QuotaVdsGroup.UNLIMITED_VCPU; // Do not break because usage is still counting
+                    if (QuotaCluster.UNLIMITED_VCPU.equals(quotaCluster.getVirtualCpu())) {
+                        cpuLimit = QuotaCluster.UNLIMITED_VCPU; // Do not break because usage is still counting
                     }
-                    if (cpuLimit != QuotaVdsGroup.UNLIMITED_VCPU) {
-                        cpuLimit += quotaVdsGroup.getVirtualCpu();
+                    if (cpuLimit != QuotaCluster.UNLIMITED_VCPU) {
+                        cpuLimit += quotaCluster.getVirtualCpu();
                     }
 
-                    memUsage += quotaVdsGroup.getMemSizeMBUsage();
-                    cpuUsage += quotaVdsGroup.getVirtualCpuUsage();
+                    memUsage += quotaCluster.getMemSizeMBUsage();
+                    cpuUsage += quotaCluster.getVirtualCpuUsage();
                 }
             }
 

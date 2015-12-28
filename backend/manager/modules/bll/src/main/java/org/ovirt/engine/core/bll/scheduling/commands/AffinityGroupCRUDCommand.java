@@ -26,13 +26,13 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
     public AffinityGroupCRUDCommand(AffinityGroupCRUDParameters parameters) {
         super(parameters);
         if (getAffinityGroup() != null) {
-            setVdsGroupId(getAffinityGroup().getClusterId());
+            setClusterId(getAffinityGroup().getClusterId());
             addCustomValue("affinityGroupName", getAffinityGroup().getName());
         }
     }
 
     protected boolean validateParameters() {
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
         }
         if (getParameters().getAffinityGroup().getEntityIds() != null) {
@@ -43,7 +43,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
                 if (vmStatic == null) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
                 }
-                if (!Objects.equals(vmStatic.getVdsGroupId(), getVdsGroupId())) {
+                if (!Objects.equals(vmStatic.getClusterId(), getClusterId())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
                 }
                 if (vmSet.contains(vmStatic.getId())) {
@@ -94,11 +94,12 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getClusterId(),
-                VdcObjectType.VdsGroups,
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
     }
 
-    protected Guid getClusterId() {
+    @Override
+    public Guid getClusterId() {
         return getAffinityGroup().getClusterId();
     }
 

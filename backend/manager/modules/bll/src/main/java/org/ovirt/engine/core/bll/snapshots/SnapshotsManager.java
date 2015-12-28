@@ -20,11 +20,11 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -41,11 +41,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -557,17 +557,17 @@ public class SnapshotsManager {
 
             // These fields are not saved in the OVF, so get them from the current VM.
             vm.setIsoPath(oldVmStatic.getIsoPath());
-            vm.setVdsGroupId(oldVmStatic.getVdsGroupId());
+            vm.setClusterId(oldVmStatic.getClusterId());
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
             VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
             if (vmStaticFromDb != null) {
-                VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getVdsGroupId());
-                if (vdsGroup != null) {
-                    vm.setStoragePoolId(vdsGroup.getStoragePoolId());
-                    vm.setVdsGroupCompatibilityVersion(vdsGroup.getCompatibilityVersion());
-                    vm.setVdsGroupName(vdsGroup.getName());
-                    vm.setVdsGroupCpuName(vdsGroup.getCpuName());
+                Cluster cluster = getClusterDao().get(vmStaticFromDb.getClusterId());
+                if (cluster != null) {
+                    vm.setStoragePoolId(cluster.getStoragePoolId());
+                    vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
+                    vm.setClusterName(cluster.getName());
+                    vm.setClusterCpuName(cluster.getCpuName());
                 }
             }
             // if the required dedicated host is invalid -> use current VM dedicated host
@@ -616,9 +616,9 @@ public class SnapshotsManager {
     protected void synchronizeNics(VM vm, CompensationContext compensationContext, DbUser user) {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool(vm.getStoragePoolId()));
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(vm.getVdsGroupId(),
+                new VnicProfileHelper(vm.getClusterId(),
                         vm.getStoragePoolId(),
-                        vm.getVdsGroupCompatibilityVersion(),
+                        vm.getClusterCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
 
         vmInterfaceManager.removeAll(vm.getId());
@@ -630,7 +630,7 @@ public class SnapshotsManager {
             }
 
             vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, user);
-            vmInterfaceManager.add(vmInterface, compensationContext, true, vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+            vmInterfaceManager.add(vmInterface, compensationContext, true, vm.getOs(), vm.getClusterCompatibilityVersion());
         }
 
         vnicProfileHelper.auditInvalidInterfaces(vm.getName());
@@ -737,8 +737,8 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getDiskDao();
     }
 
-    protected VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    protected ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     protected VmTemplateDao getVmTemplateDao() {

@@ -31,7 +31,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
 
     public UpdateGlusterVolumeSnapshotConfigCommand(UpdateGlusterVolumeSnapshotConfigParameters params) {
         super(params);
-        setVdsGroupId(params.getClusterId());
+        setClusterId(params.getClusterId());
         failedCfgs = new ArrayList<>();
     }
 
@@ -57,7 +57,7 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
             return false;
         }
 
-        if (!getGlusterUtil().isGlusterSnapshotSupported(getVdsGroup().getCompatibilityVersion(), getVdsGroup().getId())) {
+        if (!getGlusterUtil().isGlusterSnapshotSupported(getCluster().getCompatibilityVersion(), getCluster().getId())) {
             failValidation(EngineMessage.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 

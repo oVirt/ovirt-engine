@@ -90,7 +90,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(STATUS, "status");
         columnNameDict.put(EXTERNAL_STATUS, "external_status");
-        columnNameDict.put(CLUSTER, "vds_group_name");
+        columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(ADDRESS, "host_name");
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
         columnNameDict.put(MEM_USAGE, "usage_mem_percent");

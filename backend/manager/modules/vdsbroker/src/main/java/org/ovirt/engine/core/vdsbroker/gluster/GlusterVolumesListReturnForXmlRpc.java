@@ -246,7 +246,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
     private Network getGlusterNetworkId(VdsStatic server, String networkAddress) {
         List<Network> allNetworksInCluster =
-                DbFacade.getInstance().getNetworkDao().getAllForCluster(server.getVdsGroupId());
+                DbFacade.getInstance().getNetworkDao().getAllForCluster(server.getClusterId());
 
         for (Network network : allNetworksInCluster) {
             if (network.getCluster().isGluster()

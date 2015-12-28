@@ -14,11 +14,11 @@ import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 public class CpuProfileHelper {
 
-    public static CpuProfile createCpuProfile(Guid vdsGroupId, String name) {
+    public static CpuProfile createCpuProfile(Guid clusterId, String name) {
         CpuProfile cpuProfile = new CpuProfile();
         cpuProfile.setId(Guid.newGuid());
         cpuProfile.setName(name);
-        cpuProfile.setClusterId(vdsGroupId);
+        cpuProfile.setClusterId(clusterId);
 
         return cpuProfile;
     }
@@ -32,7 +32,7 @@ public class CpuProfileHelper {
             return assignFirstCpuProfile(vmBase);
         }
 
-        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId(), userId, true).stream()
+        Optional<CpuProfile> authorizedCpuProfile = getCpuProfileDao().getAllForCluster(vmBase.getClusterId(), userId, true).stream()
                     .filter(
                             cp ->
                                     cp.getId().equals(vmBase.getCpuProfileId())
@@ -58,7 +58,7 @@ public class CpuProfileHelper {
     }
 
     private static ValidationResult assignFirstCpuProfile(VmBase vmBase) {
-        Optional<CpuProfile> cpuProfileWithPermissions = getCpuProfileDao().getAllForCluster(vmBase.getVdsGroupId()).stream()
+        Optional<CpuProfile> cpuProfileWithPermissions = getCpuProfileDao().getAllForCluster(vmBase.getClusterId()).stream()
                 .findFirst();
             /* TODO use a properly selected default CPU profile for the cluster once the API becomes available
                see bug https://bugzilla.redhat.com/show_bug.cgi?id=1262293 for the explanation. We should probably
@@ -77,7 +77,7 @@ public class CpuProfileHelper {
         if (vmBase.getCpuProfileId() == null) {
             return assignFirstCpuProfile(vmBase);
         } else {
-            return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getVdsGroupId());
+            return new CpuProfileValidator(vmBase.getCpuProfileId()).isParentEntityValid(vmBase.getClusterId());
         }
     }
 

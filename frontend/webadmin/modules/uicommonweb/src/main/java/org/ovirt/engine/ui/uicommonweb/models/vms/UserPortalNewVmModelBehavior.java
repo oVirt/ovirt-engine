@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
@@ -66,7 +66,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
-                                            List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                                            List<Cluster> clusters = (List<Cluster>) returnValue;
                                             // filter clusters without cpu name
                                             clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
                                             model.setDataCentersAndClusters(model,
@@ -149,7 +149,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     @Override
-    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(cluster.getId()),

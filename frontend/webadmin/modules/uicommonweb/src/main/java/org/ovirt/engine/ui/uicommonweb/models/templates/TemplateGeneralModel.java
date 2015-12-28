@@ -343,7 +343,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
-        setHostCluster(template.getVdsGroupName());
+        setHostCluster(template.getClusterName());
         setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
         setIsHighlyAvailable(template.isAutoStartup());
         setPriority(AsyncDataProvider.getInstance().priorityToString(template.getPriority()));

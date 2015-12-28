@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -41,7 +41,7 @@ public class VolumeModel extends Model {
     EntityModel<Boolean> tcpTransportType;
     EntityModel<Boolean> rdmaTransportType;
     ListModel<StoragePool> dataCenter;
-    ListModel<VDSGroup> cluster;
+    ListModel<Cluster> cluster;
     ListModel<EntityModel<GlusterBrickEntity>> bricks;
     EntityModel<Boolean> gluster_accecssProtocol;
     EntityModel<Boolean> nfs_accecssProtocol;
@@ -68,11 +68,11 @@ public class VolumeModel extends Model {
         this.dataCenter = dataCenter;
     }
 
-    public ListModel<VDSGroup> getCluster() {
+    public ListModel<Cluster> getCluster() {
         return cluster;
     }
 
-    public void setCluster(ListModel<VDSGroup> cluster) {
+    public void setCluster(ListModel<Cluster> cluster) {
         this.cluster = cluster;
     }
 
@@ -92,7 +92,7 @@ public class VolumeModel extends Model {
         });
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
-        setCluster(new ListModel<VDSGroup>());
+        setCluster(new ListModel<Cluster>());
         getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
@@ -294,7 +294,7 @@ public class VolumeModel extends Model {
         volumeBrickModel.getStripeCount().setIsChangeable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
 
-        VDSGroup cluster = getCluster().getSelectedItem();
+        Cluster cluster = getCluster().getSelectedItem();
         if (cluster != null) {
             boolean isForceAddBrickSupported =
                     GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion());
@@ -453,7 +453,7 @@ public class VolumeModel extends Model {
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
         if (getCluster().getSelectedItem() != null) {
-            final VDSGroup cluster = getCluster().getSelectedItem();
+            final Cluster cluster = getCluster().getSelectedItem();
 
             AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
@@ -491,11 +491,11 @@ public class VolumeModel extends Model {
                 @Override
                 public void onSuccess(Object model, Object result) {
                     VolumeModel volumeModel = (VolumeModel) model;
-                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
-                    VDSGroup oldCluster = volumeModel.getCluster().getSelectedItem();
+                    ArrayList<Cluster> clusters = (ArrayList<Cluster>) result;
+                    Cluster oldCluster = volumeModel.getCluster().getSelectedItem();
                     StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
 
-                    Iterator<VDSGroup> iterator = clusters.iterator();
+                    Iterator<Cluster> iterator = clusters.iterator();
                     while(iterator.hasNext()) {
                         if (!iterator.next().supportsGlusterService()) {
                             iterator.remove();
@@ -512,7 +512,7 @@ public class VolumeModel extends Model {
                         volumeModel.getCluster().setItems(clusters);
 
                         if (oldCluster != null) {
-                            VDSGroup newSelectedItem =
+                            Cluster newSelectedItem =
                                     Linq.firstOrNull(clusters, new Linq.IdPredicate<>(oldCluster.getId()));
                             if (newSelectedItem != null) {
                                 volumeModel.getCluster().setSelectedItem(newSelectedItem);

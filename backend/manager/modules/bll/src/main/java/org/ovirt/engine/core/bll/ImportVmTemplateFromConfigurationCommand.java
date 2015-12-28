@@ -73,7 +73,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityList.get(0);
                 vmTemplateFromConfiguration = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
-                vmTemplateFromConfiguration.setVdsGroupId(getParameters().getVdsGroupId());
+                vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
@@ -92,8 +92,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 log.debug("Exception", e);
             }
         }
-        setVdsGroupId(getParameters().getVdsGroupId());
-        setStoragePoolId(getVdsGroup().getStoragePoolId());
+        setClusterId(getParameters().getClusterId());
+        setStoragePoolId(getCluster().getStoragePoolId());
     }
 
     @Override

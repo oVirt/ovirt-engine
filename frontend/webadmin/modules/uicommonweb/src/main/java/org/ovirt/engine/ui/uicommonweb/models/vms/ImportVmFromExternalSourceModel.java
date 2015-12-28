@@ -7,8 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -74,7 +74,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
                     vm,
                     getStorage().getSelectedItem().getId(),
                     getStoragePool().getId(),
-                    ((VDSGroup) getCluster().getSelectedItem()).getId());
+                    ((Cluster) getCluster().getSelectedItem()).getId());
             prm.setUrl(url);
             prm.setUsername(username);
             prm.setPassword(password);

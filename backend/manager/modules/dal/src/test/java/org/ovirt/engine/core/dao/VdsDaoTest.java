@@ -25,9 +25,9 @@ public class VdsDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid EXISTING_VDS_ID_2 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
-    private static final Guid VDS_GROUP_WITH_FEDORA = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_WITH_FEDORA = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
-    private static final Guid VDS_GROUP_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
+    private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
     private static final String IP_ADDRESS = "192.168.122.17";
     private VdsDao dao;
@@ -215,14 +215,14 @@ public class VdsDaoTest extends BaseDaoTestCase {
      * Ensures the API works as expected.
      */
     @Test
-    public void testGetAllForVdsGroupWithoutMigrating() {
-        List<VDS> result = dao.getAllForVdsGroupWithoutMigrating(existingVds
-                .getVdsGroupId());
+    public void testGetAllForClusterWithoutMigrating() {
+        List<VDS> result = dao.getAllForClusterWithoutMigrating(existingVds
+                .getClusterId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
+            assertEquals(existingVds.getClusterId(), vds.getClusterId());
         }
     }
 
@@ -273,13 +273,13 @@ public class VdsDaoTest extends BaseDaoTestCase {
      * Ensures that all VDS related to the VDS group supplied.
      */
     @Test
-    public void testGetAllForVdsGroup() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId());
+    public void testGetAllForCluster() {
+        List<VDS> result = dao.getAllForCluster(existingVds.getClusterId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
+            assertEquals(existingVds.getClusterId(), vds.getClusterId());
         }
     }
 
@@ -297,17 +297,17 @@ public class VdsDaoTest extends BaseDaoTestCase {
      * Asserts that the right collection containing the existing host is returned for a privileged user with filtering enabled
      */
     @Test
-    public void testGetAllForVdsGroupWithPermissionsForPriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), PRIVILEGED_USER_ID, true);
-        assertGetAllForVdsGroupCorrectResult(result);
+    public void testGetAllForClusterWithPermissionsForPriviligedUser() {
+        List<VDS> result = dao.getAllForCluster(existingVds.getClusterId(), PRIVILEGED_USER_ID, true);
+        assertGetAllForClusterCorrectResult(result);
     }
 
     /**
      * Asserts that an empty collection is returned for an non privileged user with filtering enabled
      */
     @Test
-    public void testGetAllForVdsGroupWithPermissionsForUnpriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), UNPRIVILEGED_USER_ID, true);
+    public void testGetAllForClusterWithPermissionsForUnpriviligedUser() {
+        List<VDS> result = dao.getAllForCluster(existingVds.getClusterId(), UNPRIVILEGED_USER_ID, true);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -316,9 +316,9 @@ public class VdsDaoTest extends BaseDaoTestCase {
      * Asserts that the right collection containing the existing host is returned for a non privileged user with filtering disabled
      */
     @Test
-    public void testGetAllForVdsGroupWithPermissionsDisabledForUnpriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), UNPRIVILEGED_USER_ID, false);
-        assertGetAllForVdsGroupCorrectResult(result);
+    public void testGetAllForClusterWithPermissionsDisabledForUnpriviligedUser() {
+        List<VDS> result = dao.getAllForCluster(existingVds.getClusterId(), UNPRIVILEGED_USER_ID, false);
+        assertGetAllForClusterCorrectResult(result);
     }
 
     private void prepareHostWithDifferentStatus() {
@@ -347,13 +347,13 @@ public class VdsDaoTest extends BaseDaoTestCase {
         assertTrue("more than one different status expected", statuses.size() > 1);
     }
 
-    private void assertGetAllForVdsGroupCorrectResult(List<VDS> result) {
+    private void assertGetAllForClusterCorrectResult(List<VDS> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(result.iterator().next(), existingVds);
 
         for (VDS vds : result) {
-            assertEquals(vds.getVdsGroupId(), existingVds.getVdsGroupId());
+            assertEquals(vds.getClusterId(), existingVds.getClusterId());
         }
     }
 
@@ -456,7 +456,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
 
     private void assertGetHostsForStorageOperationNonGluster(List<VDS> result) {
         for (VDS vds : result) {
-            assertThat(vds.getVdsGroupId(), not(equalTo(FixturesTool.GLUSTER_CLUSTER_ID)));
+            assertThat(vds.getClusterId(), not(equalTo(FixturesTool.GLUSTER_CLUSTER_ID)));
         }
     }
 
@@ -478,16 +478,16 @@ public class VdsDaoTest extends BaseDaoTestCase {
         List<VDS> result = dao.getHostsForStorageOperation(null, true);
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(FixturesTool.VDS_GROUP_RHEL6_LOCALFS, result.get(0).getVdsGroupId());
+        assertEquals(FixturesTool.CLUSTER_RHEL6_LOCALFS, result.get(0).getClusterId());
     }
 
-    public void testGetFirstUpRhelForVdsGroupFromClusterWithRhels() {
-        VDS vds = dao.getFirstUpRhelForVdsGroup(VDS_GROUP_WITH_RHELS);
+    public void testGetFirstUpRhelForClusterFromClusterWithRhels() {
+        VDS vds = dao.getFirstUpRhelForCluster(CLUSTER_WITH_RHELS);
         assertNotNull(vds);
     }
 
-    public void testGetFirstUpRhelForVdsGroupFromClusterWithFedoras() {
-        VDS vds = dao.getFirstUpRhelForVdsGroup(VDS_GROUP_WITH_FEDORA);
+    public void testGetFirstUpRhelForClusterFromClusterWithFedoras() {
+        VDS vds = dao.getFirstUpRhelForCluster(CLUSTER_WITH_FEDORA);
         assertNull(vds);
     }
 

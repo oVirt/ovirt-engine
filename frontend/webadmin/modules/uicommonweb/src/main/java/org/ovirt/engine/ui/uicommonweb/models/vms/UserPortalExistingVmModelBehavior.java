@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,14 +43,14 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
 
                         ExistingVmModelBehavior behavior = UserPortalExistingVmModelBehavior.this;
                         UnitVmModel model = (UnitVmModel) target;
-                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                        List<Cluster> clusters = (List<Cluster>) returnValue;
 
                         // filter clusters by architecture
                         clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
                         if (containsVmCluster(clusters)) {
                             Collections.sort(clusters, new NameableComparator());
-                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
+                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getClusterId());
                         } else {
                             // Add VM's cluster if not contained in the cluster list
                             addVmCluster(dataCenters, clusters);
@@ -65,11 +65,11 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
     }
 
 
-    private boolean containsVmCluster(List<VDSGroup> clusters) {
+    private boolean containsVmCluster(List<Cluster> clusters) {
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (cluster.getStoragePoolId() != null) {
-                if (vm.getVdsGroupId().equals(cluster.getId())) {
+                if (vm.getClusterId().equals(cluster.getId())) {
                     return true;
                 }
             }
@@ -83,21 +83,21 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
         updateUserCdImage(getVm().getStoragePoolId());
     }
 
-    private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters) {
+    private void addVmCluster(final List<StoragePool> dataCenters, final List<Cluster> clusters) {
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        VDSGroup cluster = (VDSGroup) returnValue;
+                        Cluster cluster = (Cluster) returnValue;
                         if (cluster != null) {
                             clusters.add(cluster);
                         }
                         Collections.sort(clusters, new NameableComparator());
-                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
+                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getClusterId());
                     }
-                }), vm.getVdsGroupId());
+                }), vm.getClusterId());
     }
 
     /**
@@ -118,7 +118,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior {
     }
 
     @Override
-    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(cluster.getId()),

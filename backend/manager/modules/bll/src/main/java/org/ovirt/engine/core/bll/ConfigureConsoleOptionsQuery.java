@@ -315,8 +315,8 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             return getCachedVm().getVmPoolSpiceProxy();
         }
 
-        if (StringUtils.isNotBlank(getCachedVm().getVdsGroupSpiceProxy())) {
-            return getCachedVm().getVdsGroupSpiceProxy();
+        if (StringUtils.isNotBlank(getCachedVm().getClusterSpiceProxy())) {
+            return getCachedVm().getClusterSpiceProxy();
         }
 
         String globalSpiceProxy = getConfigValue(ConfigValues.SpiceProxyDefault);

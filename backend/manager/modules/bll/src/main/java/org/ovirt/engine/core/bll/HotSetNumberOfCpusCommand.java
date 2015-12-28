@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
@@ -55,26 +55,26 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (getParameters().getVm().getCpuPerSocket() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfCpuPerSocket,
-                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+                        getVm().getClusterCompatibilityVersion().getValue())) {
             valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
         }
         if (getParameters().getVm().getThreadsPerCpu() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfThreadsPerCpu,
-                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+                        getVm().getClusterCompatibilityVersion().getValue())) {
             valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU);
         }
         if (getParameters().getVm().getNumOfSockets() >
                 Config.<Integer>getValue(
                         ConfigValues.MaxNumOfVmSockets,
-                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+                        getVm().getClusterCompatibilityVersion().getValue())) {
             valid = failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
-            if (!FeatureSupported.hotPlugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
+            if (!FeatureSupported.hotPlugCpu(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
                 valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
             }
-        } else if (!FeatureSupported.hotUnplugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
+        } else if (!FeatureSupported.hotUnplugCpu(getVm().getClusterCompatibilityVersion(), getVm().getClusterArch())) {
             valid = failValidation(EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED);
         }
 
@@ -123,7 +123,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__HOT_SET_CPUS);
         addValidationMessage(EngineMessage.VAR__TYPE__VM);
-        addValidationMessageVariable("clusterVersion", getVm().getVdsGroupCompatibilityVersion());
+        addValidationMessageVariable("clusterVersion", getVm().getClusterCompatibilityVersion());
         addValidationMessageVariable("architecture", getVm().getClusterArch());
     }
 
@@ -139,19 +139,19 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
 
         if (cpuToConsume > 0) {
             // Consume CPU quota
-            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+            list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    getVm().getVdsGroupId(),
+                    getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * cpuToConsume,
                     0));
 
         } else if (cpuToConsume < 0) {
             // Release CPU quota
-            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+            list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
-                    getVm().getVdsGroupId(),
+                    getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * Math.abs(cpuToConsume),
                     0));
         }

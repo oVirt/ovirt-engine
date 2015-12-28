@@ -66,7 +66,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         AbstractTextColumn<PairQueryable<VmNetworkInterface, VmTemplate>> clusterColumn = new AbstractTextColumn<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
-                return object.getSecond().getVdsGroupName();
+                return object.getSecond().getClusterName();
             }
         };
         clusterColumn.makeSortable();

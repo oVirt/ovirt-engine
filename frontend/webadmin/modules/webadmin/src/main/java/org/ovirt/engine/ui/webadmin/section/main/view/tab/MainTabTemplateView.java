@@ -93,7 +93,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         AbstractTextColumn<VmTemplate> clusterColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return object.getVdsGroupName();
+                return object.getClusterName();
             }
         };
         clusterColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.CLUSTER);

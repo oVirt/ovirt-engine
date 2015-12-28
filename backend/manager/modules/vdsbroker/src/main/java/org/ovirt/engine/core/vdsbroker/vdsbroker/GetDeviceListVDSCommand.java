@@ -56,7 +56,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     private boolean isCheckStatusSupported() {
         return FeatureSupported.getDeviceListWithoutStatusSupported(
-                getVds().getVdsGroupCompatibilityVersion());
+                getVds().getClusterCompatibilityVersion());
     }
 
     public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList) {

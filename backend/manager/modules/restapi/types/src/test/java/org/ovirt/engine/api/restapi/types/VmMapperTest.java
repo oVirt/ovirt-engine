@@ -375,7 +375,7 @@ public class VmMapperTest extends
     @Test
     public void testClusterSpiceProxy() {
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
-        entity.setVdsGroupSpiceProxy(CLUSTER_SPICE_PROXY);
+        entity.setClusterSpiceProxy(CLUSTER_SPICE_PROXY);
         Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(CLUSTER_SPICE_PROXY, model.getDisplay().getProxy());
     }

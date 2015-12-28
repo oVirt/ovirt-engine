@@ -100,7 +100,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         // set the network object if we don't got in the parameters
         if (getParameters().getNetwork() == null || getParameters().getNetwork().getCluster() == null) {
             List<Network> networks = getDbFacade().getNetworkDao()
-                            .getAllForCluster(getVdsGroupId());
+                            .getAllForCluster(getClusterId());
             for (Network n : networks) {
                 if (n.getName().equals(iface.getNetworkName())) {
                     getParameters().setNetwork(n);
@@ -127,7 +127,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         if ((vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing)
                 && getParameters().getNetwork().getCluster() != null
                 && getParameters().getNetwork().getCluster().getStatus() == NetworkStatus.OPERATIONAL) {
-            List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+            List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getClusterId());
             if (networks.stream().anyMatch(network -> network.getName().equals(getParameters().getNetwork().getName()))) {
                 addValidationMessage(EngineMessage.NETWORK_HOST_IS_BUSY);
                 return false;

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -71,7 +71,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     @UiField(provided = true)
     @Path(value = "clusters.selectedItem")
     @WithElementId("clusters")
-    public ListModelListBoxEditor<VDSGroup> clustersEditor;
+    public ListModelListBoxEditor<Cluster> clustersEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -96,7 +96,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
         hostsListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        clustersEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        clustersEditor = new ListModelListBoxEditor<>(new NameRenderer<Cluster>());
     }
 
     void localize() {

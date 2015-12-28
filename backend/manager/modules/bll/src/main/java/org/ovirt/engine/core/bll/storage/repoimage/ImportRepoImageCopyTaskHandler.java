@@ -14,10 +14,10 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -108,8 +108,8 @@ public class ImportRepoImageCopyTaskHandler
     }
 
     // No need for null checks, as we already tested that the cluster exists in the validate of the parent command
-    public VDSGroup getVdsGroup(Guid vdsGroupId) {
-        return DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
+    public Cluster getCluster(Guid clusterId) {
+        return DbFacade.getInstance().getClusterDao().get(clusterId);
     }
 
     private Guid createTemplate() {
@@ -129,11 +129,11 @@ public class ImportRepoImageCopyTaskHandler
 
         // Setting the cluster ID, and other related properties derived from it
         if (getEnclosingCommand().getParameters().getClusterId() != null) {
-            masterVm.setVdsGroupId(getEnclosingCommand().getParameters().getClusterId());
-            VDSGroup vdsGroup = getVdsGroup(masterVm.getVdsGroupId());
-            masterVm.setOsId(osRepository.getDefaultOSes().get(vdsGroup.getArchitecture()));
+            masterVm.setClusterId(getEnclosingCommand().getParameters().getClusterId());
+            Cluster cluster = getCluster(masterVm.getClusterId());
+            masterVm.setOsId(osRepository.getDefaultOSes().get(cluster.getArchitecture()));
             Pair<GraphicsType, DisplayType> defaultDisplayType =
-                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), vdsGroup.getCompatibilityVersion()).get(0);
+                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), cluster.getCompatibilityVersion()).get(0);
             masterVm.setDefaultDisplayType(defaultDisplayType.getSecond());
         }
 

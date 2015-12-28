@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -36,7 +36,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
     }
 
     @Override
-    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(cluster.getId()),

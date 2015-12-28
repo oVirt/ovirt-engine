@@ -151,7 +151,7 @@ public class GlusterVolumeGeoRepCreateSessionPopupView extends AbstractModelBoun
 
             @Override
             public String getDisplayStringNullSafe(GlusterVolumeEntity data) {
-                return templates.typeAheadNameDescription(data.getName() == null ? constants.empty() : data.getName(), data.getVdsGroupName() == null ? constants.empty() : data.getVdsGroupName()).asString();
+                return templates.typeAheadNameDescription(data.getName() == null ? constants.empty() : data.getName(), data.getClusterName() == null ? constants.empty() : data.getClusterName()).asString();
             }
         });
     }

@@ -18,8 +18,8 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -256,8 +256,8 @@ public class BackendExportDomainDisksResourceTest
         return dom;
     }
 
-    protected VDSGroup getCluster(int idx) {
-        VDSGroup cluster = new VDSGroup();
+    protected Cluster getCluster(int idx) {
+        Cluster cluster = new Cluster();
         cluster.setId(GUIDS[idx]);
         return cluster;
     }

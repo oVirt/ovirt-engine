@@ -12,19 +12,19 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -838,97 +838,97 @@ public class AuditLogableBaseTest {
     }
 
     @Test
-    public void getVdsGroupIdDefault() {
+    public void getClusterIdDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final Guid g = b.getVdsGroupId();
+        final Guid g = b.getClusterId();
         assertEquals(Guid.Empty, g);
     }
 
     @Test
-    public void getVdsGroupId() {
+    public void getClusterId() {
         final AuditLogableBase b = new AuditLogableBase();
-        b.setVdsGroupId(GUID);
-        final Guid g = b.getVdsGroupId();
+        b.setClusterId(GUID);
+        final Guid g = b.getClusterId();
         assertEquals(GUID, g);
     }
 
     @Test
-    public void getVdsGroupIdVdsGroup() {
+    public void getClusterIdCluster() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VDSGroup gr = new VDSGroup();
+        final Cluster gr = new Cluster();
         gr.setId(GUID);
-        b.setVdsGroup(gr);
-        final Guid g = b.getVdsGroupId();
+        b.setCluster(gr);
+        final Guid g = b.getClusterId();
         assertEquals(GUID, g);
     }
 
     @Test
-    public void getVdsGroupDefault() {
+    public void getClusterDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VDSGroup g = b.getVdsGroup();
+        final Cluster g = b.getCluster();
         assertNull(g);
     }
 
     @Test
-    public void getVdsGroupNotNull() {
+    public void getClusterNotNull() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VDSGroup g = new VDSGroup();
-        b.setVdsGroup(g);
-        final VDSGroup gr = b.getVdsGroup();
+        final Cluster g = new Cluster();
+        b.setCluster(g);
+        final Cluster gr = b.getCluster();
         assertEquals(g, gr);
     }
 
     @Test
-    public void getVdsGroupWithId() {
+    public void getClusterWithId() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        b.setVdsGroupId(GUID);
-        final VDSGroup g = b.getVdsGroup();
+        b.setClusterId(GUID);
+        final Cluster g = b.getCluster();
         assertEquals(GUID, g.getId());
     }
 
     @Test
-    public void getVdsGroupWithVds() {
+    public void getClusterWithVds() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS v = new VDS();
-        v.setVdsGroupId(GUID);
+        v.setClusterId(GUID);
         b.setVds(v);
-        final VDSGroup g = b.getVdsGroup();
+        final Cluster g = b.getCluster();
         assertEquals(GUID, g.getId());
     }
 
     @Test
-    public void getVdsGroupWithVm() {
+    public void getClusterWithVm() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
-        v.setVdsGroupId(GUID);
+        v.setClusterId(GUID);
         b.setVm(v);
-        final VDSGroup g = b.getVdsGroup();
+        final Cluster g = b.getCluster();
         assertEquals(GUID, g.getId());
     }
 
     @Test
-    public void getVdsGroupNameDefault() {
+    public void getClusterNameDefault() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        final String n = b.getVdsGroupName();
+        final String n = b.getClusterName();
         assertEquals("", n);
     }
 
     @Test
-    public void getVdsGroupNameNullVds() {
+    public void getClusterNameNullVds() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        final VDSGroup g = null;
-        b.setVdsGroup(g);
-        final String n = b.getVdsGroupName();
+        final Cluster g = null;
+        b.setCluster(g);
+        final String n = b.getClusterName();
         assertEquals("", n);
     }
 
     @Test
-    public void getVdsGroupName() {
+    public void getClusterName() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        final VDSGroup g = new VDSGroup();
+        final Cluster g = new Cluster();
         g.setName(NAME);
-        b.setVdsGroup(g);
-        final String n = b.getVdsGroupName();
+        b.setCluster(g);
+        final String n = b.getClusterName();
         assertEquals(NAME, n);
     }
 
@@ -1105,10 +1105,10 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        public VdsGroupDao getVdsGroupDao() {
-            final VdsGroupDao v = mock(VdsGroupDao.class);
-            final VDSGroup g = new VDSGroup();
-            g.setVdsGroupId(GUID);
+        public ClusterDao getClusterDao() {
+            final ClusterDao v = mock(ClusterDao.class);
+            final Cluster g = new Cluster();
+            g.setClusterId(GUID);
             when(v.get(GUID)).thenReturn(g);
             return v;
         }

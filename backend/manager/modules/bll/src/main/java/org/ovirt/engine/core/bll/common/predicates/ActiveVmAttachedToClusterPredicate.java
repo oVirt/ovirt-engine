@@ -25,7 +25,7 @@ public final class ActiveVmAttachedToClusterPredicate implements Predicate<Guid>
 
     @Override
     public boolean test(Guid clusterId) {
-        final List<VM> vms = vmDao.getAllForVdsGroup(clusterId);
+        final List<VM> vms = vmDao.getAllForCluster(clusterId);
 
         return vms.stream().anyMatch(RUNNING_VM_PREDICATE);
     }

@@ -130,11 +130,11 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
     }
 
     @Override
-    public List<VmTemplate> getAllForVdsGroup(Guid id) {
-        return getCallsHandler().executeReadList("GetVmTemplateByVdsGroupId",
+    public List<VmTemplate> getAllForCluster(Guid id) {
+        return getCallsHandler().executeReadList("GetVmTemplateByClusterId",
                 VMTemplateRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", id));
+                        .addValue("cluster_id", id));
     }
 
     @Override
@@ -286,10 +286,10 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
             entity.setId(getGuidDefaultEmpty(rs, "vmt_guid"));
             entity.setChildCount(rs.getInt("child_count"));
             entity.setName(rs.getString("name"));
-            entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
+            entity.setClusterId(getGuid(rs, "cluster_id"));
             entity.setStatus(VmTemplateStatus.forValue(rs.getInt("status")));
-            entity.setVdsGroupName(rs.getString("vds_group_name"));
-            entity.setVdsGroupCompatibilityVersion(new Version(rs.getString("vds_group_compatibility_version")));
+            entity.setClusterName(rs.getString("cluster_name"));
+            entity.setClusterCompatibilityVersion(new Version(rs.getString("cluster_compatibility_version")));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setQuotaName(rs.getString("quota_name"));

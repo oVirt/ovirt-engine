@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister
 
 @InternalCommandAttribute
 @ValidateSupportsTransaction
-public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter>
+public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClusterParameter>
     extends NetworkClusterCommandBase<T> {
 
     @Inject
@@ -59,7 +59,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     @Override
     protected void executeCommand() {
 
-        attachNetwork(getVdsGroupId(), getNetworkCluster(), getNetwork());
+        attachNetwork(getClusterId(), getNetworkCluster(), getNetwork());
 
         setSucceeded(true);
     }
@@ -67,7 +67,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     @Override
     protected boolean validate() {
         return networkNotAttachedToCluster()
-                && vdsGroupExists()
+                && clusterExists()
                 && changesAreClusterCompatible()
                 && logicalNetworkExists()
                 && validateAttachment();
@@ -75,7 +75,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean validateAttachment() {
         final AttachNetworkClusterValidator attachNetworkClusterValidator = createNetworkClusterValidator();
-        return validate(attachNetworkClusterValidator.networkBelongsToClusterDataCenter(getVdsGroup(),
+        return validate(attachNetworkClusterValidator.networkBelongsToClusterDataCenter(getCluster(),
                 getPersistedNetwork())) &&
                validateAttachment(attachNetworkClusterValidator);
     }
@@ -85,7 +85,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     }
 
     private Version getClusterVersion() {
-        return getVdsGroup().getCompatibilityVersion();
+        return getCluster().getCompatibilityVersion();
     }
 
     private boolean logicalNetworkExists() {
@@ -99,7 +99,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     private boolean changesAreClusterCompatible() {
         if (!getParameters().getNetwork().isVmNetwork()) {
-            if (!FeatureSupported.nonVmNetwork(getVdsGroup().getCompatibilityVersion())) {
+            if (!FeatureSupported.nonVmNetwork(getCluster().getCompatibilityVersion())) {
                 addValidationMessage(EngineMessage.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
                 return false;
             }
@@ -119,16 +119,16 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
         return getNetworkClusterDao().get(getNetworkCluster().getId()) != null;
     }
 
-    private boolean vdsGroupExists() {
-        if (!vdsGroupInDb()) {
+    private boolean clusterExists() {
+        if (!clusterInDb()) {
             addValidationMessage(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
         return true;
     }
 
-    private boolean vdsGroupInDb() {
-        return getVdsGroup() != null;
+    private boolean clusterInDb() {
+        return getCluster() != null;
     }
 
     private void attachNetwork(Guid clusterId, NetworkCluster networkCluster, Network network) {
@@ -140,7 +140,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
                 false,
                 false));
 
-        List<VDS> hosts = vdsDao.getAllForVdsGroup(clusterId);
+        List<VDS> hosts = vdsDao.getAllForCluster(clusterId);
         List<Network> clusterNetworks = networkDao.getAllForCluster(clusterId);
         for (VDS host : hosts) {
             HostNetworkAttachmentsPersister persister = new HostNetworkAttachmentsPersister(this.networkAttachmentDao,
@@ -176,7 +176,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
     @Override
     protected String getDescription() {
         String networkName = getNetworkName() == null ? "" : getNetworkName();
-        String clusterName = getVdsGroup() == null ? "" : getVdsGroup().getName();
+        String clusterName = getCluster() == null ? "" : getCluster().getName();
         return networkName + " - " + clusterName;
     }
 
@@ -188,7 +188,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP
-                             : AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED;
+        return getSucceeded() ? AuditLogType.NETWORK_ATTACH_NETWORK_TO_CLUSTER
+                             : AuditLogType.NETWORK_ATTACH_NETWORK_TO_CLUSTER_FAILED;
     }
 }

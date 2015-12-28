@@ -102,7 +102,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getVdsGroupName();
+            return object.getSecond().getClusterName();
         }
     };
 

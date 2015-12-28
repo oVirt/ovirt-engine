@@ -32,8 +32,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -79,7 +79,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true));
 
     @Mock
-    protected VDSGroup vdsGroup;
+    protected Cluster cluster;
 
     /**
      * The command under test.
@@ -96,8 +96,8 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
         doReturn(null).when(volumeDao).getById(null);
-        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
-        doReturn(vdsGroup).when(command).getVdsGroup();
+        doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
+        doReturn(cluster).when(command).getCluster();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
     }
 
@@ -117,7 +117,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }
@@ -162,7 +162,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
             boolean isRebalancegTaskCompleted,
             EngineError errorCode) {
         doReturn(backend).when(cmd).getBackend();
-        doReturn("TestVDS").when(cmd).getVdsGroupName();
+        doReturn("TestVDS").when(cmd).getClusterName();
         doReturn("TestVolume").when(cmd).getGlusterVolumeName();
         doNothing().when(cmd).endStepJob(argThat(jobExecutionStatus(rebalanceStopStatus)),
                 argThat(anyMap()),

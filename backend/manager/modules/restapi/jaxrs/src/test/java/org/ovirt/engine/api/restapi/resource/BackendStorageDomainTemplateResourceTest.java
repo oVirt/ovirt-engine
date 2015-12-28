@@ -16,7 +16,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
@@ -26,8 +25,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -109,7 +108,7 @@ public class BackendStorageDomainTemplateResourceTest
         Action action = new Action();
         action.setStorageDomain(new StorageDomain());
         action.getStorageDomain().setId(GUIDS[2].toString());
-        action.setCluster(new Cluster());
+        action.setCluster(new org.ovirt.engine.api.model.Cluster());
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, GUIDS[2], true);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
@@ -124,22 +123,22 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testRegisterTemplate() throws Exception {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, false);
     }
 
     @Test
     public void testRegisterTemplateAsNewEntity() throws Exception {
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, true);
     }
 
-    public void doTestRegister(Cluster cluster, boolean importAsNewEntity) throws Exception {
+    public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplateFromConfiguration,
                                            ImportVmTemplateParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "VdsGroupId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
+                                           new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
                                            new Object[] { TEMPLATE_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true }));
 
         Action action = new Action();
@@ -152,7 +151,7 @@ public class BackendStorageDomainTemplateResourceTest
     public void testImport() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false);
@@ -169,14 +168,14 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestImport(storageDomain, cluster, false);
     }
 
     @Test
     public void testImportWithClusterName() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
+        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
@@ -184,7 +183,7 @@ public class BackendStorageDomainTemplateResourceTest
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setName(NAMES[1]);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, false);
@@ -194,7 +193,7 @@ public class BackendStorageDomainTemplateResourceTest
     public void testImportAsNewEntity() throws Exception {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
         doTestImport(storageDomain, cluster, true);
@@ -254,11 +253,11 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetDataCenterByStorageDomainExpectations(id, 1);
     }
 
-    public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean importAsNewEntity) throws Exception {
+    public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplate,
                                            ImportVmTemplateParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "ImportAsNewEntity" },
+                                           new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId", "ImportAsNewEntity" },
                                            new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], importAsNewEntity }));
 
         Action action = new Action();
@@ -291,14 +290,14 @@ public class BackendStorageDomainTemplateResourceTest
         setUriInfo(setUpActionExpectations(
                 VdcActionType.ImportVmTemplate,
                 ImportVmTemplateParameters.class,
-                new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId" },
+                new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId" },
                 new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1] },
                 asList(GUIDS[1]),
                 asList(new AsyncTaskStatus(asyncStatus))));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
-        Cluster cluster = new Cluster();
+        org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
 
         Action action = new Action();
@@ -424,8 +423,8 @@ public class BackendStorageDomainTemplateResourceTest
         return dom;
     }
 
-    protected VDSGroup getCluster(int idx) {
-        VDSGroup cluster = new VDSGroup();
+    protected Cluster getCluster(int idx) {
+        Cluster cluster = new Cluster();
         cluster.setId(GUIDS[idx]);
         return cluster;
     }

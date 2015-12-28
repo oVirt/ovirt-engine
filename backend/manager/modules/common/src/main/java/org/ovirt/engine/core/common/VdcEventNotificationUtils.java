@@ -23,10 +23,10 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Engine, AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED);
 
         // VDS GROUP
-        addEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
-        addEventNotificationEntry(EventNotificationEntity.VdsGroup,
+        addEventNotificationEntry(EventNotificationEntity.Cluster, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
+        addEventNotificationEntry(EventNotificationEntity.Cluster,
                 AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM);
-        addEventNotificationEntry(EventNotificationEntity.VdsGroup, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
+        addEventNotificationEntry(EventNotificationEntity.Cluster, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
         // VDS
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_FAILURE);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);

@@ -155,11 +155,11 @@ public class QuotaUsagePerUser implements IVdcQueryable {
     }
 
     public boolean isUnlimitedVcpu() {
-        return vcpuLimit == QuotaVdsGroup.UNLIMITED_VCPU;
+        return vcpuLimit == QuotaCluster.UNLIMITED_VCPU;
     }
 
     public boolean isUnlimitedMemory() {
-        return memoryLimit == QuotaVdsGroup.UNLIMITED_MEM;
+        return memoryLimit == QuotaCluster.UNLIMITED_MEM;
     }
 
     public boolean isUnlimitedStorage() {

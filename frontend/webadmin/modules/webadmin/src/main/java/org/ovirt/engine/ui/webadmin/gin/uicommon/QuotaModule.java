@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -204,8 +204,8 @@ public class QuotaModule extends AbstractGinModule {
         bind(QuotaMainTabSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel,
-                QuotaClusterListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaVdsGroup,
+        bind(new TypeLiteral<SearchableDetailModelProvider<QuotaCluster, QuotaListModel,
+                QuotaClusterListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaCluster,
                         QuotaListModel, QuotaClusterListModel>>(){}).in(Singleton.class);
         bind(new TypeLiteral<SearchableDetailModelProvider<QuotaStorage, QuotaListModel,
                 QuotaStorageListModel>>(){}).to(new TypeLiteral<SearchableDetailTabModelProvider<QuotaStorage,

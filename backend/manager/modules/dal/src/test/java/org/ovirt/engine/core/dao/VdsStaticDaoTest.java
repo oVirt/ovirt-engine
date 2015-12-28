@@ -33,7 +33,7 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setSshPort(22);
         newStaticVds.setSshUsername("root");
-        newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
+        newStaticVds.setClusterId(existingVds.getClusterId());
         newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
         newStaticVds.setProtocol(VdsProtocol.STOMP);
     }
@@ -75,14 +75,14 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
      * Ensures all the right set of VdsStatic instances are returned.
      */
     @Test
-    public void testGetAllForVdsGroup() {
-        List<VdsStatic> result = dao.getAllForVdsGroup(existingVds
-                .getVdsGroupId());
+    public void testGetAllForCluster() {
+        List<VdsStatic> result = dao.getAllForCluster(existingVds
+                .getClusterId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VdsStatic vds : result) {
-            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
+            assertEquals(existingVds.getClusterId(), vds.getClusterId());
         }
     }
 

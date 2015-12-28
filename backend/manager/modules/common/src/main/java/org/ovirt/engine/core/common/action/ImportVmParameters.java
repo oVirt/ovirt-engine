@@ -16,7 +16,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     private VM vm;
     private Guid sourceDomainId;
     private Guid destDomainId;
-    private Guid vdsGroupId;
+    private Guid clusterId;
     private Map<Guid, Disk> diskMap;
 
     private Guid storagePoolId;
@@ -34,12 +34,12 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         destDomainId = Guid.Empty;
     }
 
-    public ImportVmParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid vdsGroupId) {
-        this(vm, Guid.Empty, destStorageDomainId, storagePoolId, vdsGroupId);
+    public ImportVmParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid clusterId) {
+        this(vm, Guid.Empty, destStorageDomainId, storagePoolId, clusterId);
     }
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
-            Guid vdsGroupId) {
+            Guid clusterId) {
         super(vm.getId());
         containerId = vm.getId();
         sourceDomainId = sourceStorageDomainId;
@@ -47,7 +47,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         setVm(vm);
         setStorageDomainId(destStorageDomainId);
         this.setStoragePoolId(storagePoolId);
-        setVdsGroupId(vdsGroupId);
+        setClusterId(clusterId);
     }
 
     public VM getVm() {
@@ -66,12 +66,12 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         return destDomainId;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid vdsGroupId) {
-        this.vdsGroupId = vdsGroupId;
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
     }
 
     public void setDestDomainId(Guid destDomainId) {

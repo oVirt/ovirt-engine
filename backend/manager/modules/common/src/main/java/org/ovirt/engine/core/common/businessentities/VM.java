@@ -37,7 +37,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     @Valid
     private List<Snapshot> snapshots;
 
-    private String vdsGroupSpiceProxy;
+    private String clusterSpiceProxy;
 
     private String vmPoolSpiceProxy;
 
@@ -380,12 +380,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setDedicatedVmForVdsList(value);
     }
 
-    public Guid getVdsGroupId() {
-        return this.vmStatic.getVdsGroupId();
+    public Guid getClusterId() {
+        return this.vmStatic.getClusterId();
     }
 
-    public void setVdsGroupId(Guid value) {
-        this.vmStatic.setVdsGroupId(value);
+    public void setClusterId(Guid value) {
+        this.vmStatic.setClusterId(value);
     }
 
     public String getTimeZone() {
@@ -1051,14 +1051,14 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmtTimeZone = value;
     }
 
-    private Version vdsGroupCompatibilityVersion;
+    private Version clusterCompatibilityVersion;
 
-    public Version getVdsGroupCompatibilityVersion() {
-        return this.vdsGroupCompatibilityVersion;
+    public Version getClusterCompatibilityVersion() {
+        return this.clusterCompatibilityVersion;
     }
 
-    public void setVdsGroupCompatibilityVersion(Version value) {
-        this.vdsGroupCompatibilityVersion = value;
+    public void setClusterCompatibilityVersion(Version value) {
+        this.clusterCompatibilityVersion = value;
     }
 
     /**
@@ -1087,37 +1087,37 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
      * @return the compatibility version
      */
     public Version getCompatibilityVersion() {
-        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getVdsGroupCompatibilityVersion();
+        return getCustomCompatibilityVersion() != null ? getCustomCompatibilityVersion() : getClusterCompatibilityVersion();
     }
 
-    private String vdsGroupName;
+    private String clusterName;
 
-    public String getVdsGroupName() {
-        return this.vdsGroupName;
+    public String getClusterName() {
+        return this.clusterName;
     }
 
-    public void setVdsGroupName(String value) {
-        this.vdsGroupName = value;
+    public void setClusterName(String value) {
+        this.clusterName = value;
     }
 
-    private String vdsGroupDescription;
+    private String clusterDescription;
 
-    public String getVdsGroupDescription() {
-        return this.vdsGroupDescription;
+    public String getClusterDescription() {
+        return this.clusterDescription;
     }
 
-    public void setVdsGroupDescription(String value) {
-        this.vdsGroupDescription = value;
+    public void setClusterDescription(String value) {
+        this.clusterDescription = value;
     }
 
-    private String vdsGroupCpuName;
+    private String clusterCpuName;
 
-    public String getVdsGroupCpuName() {
-        return this.vdsGroupCpuName;
+    public String getClusterCpuName() {
+        return this.clusterCpuName;
     }
 
-    public void setVdsGroupCpuName(String value) {
-        this.vdsGroupCpuName = value;
+    public void setClusterCpuName(String value) {
+        this.clusterCpuName = value;
     }
 
     public boolean isFailBack() {
@@ -1553,10 +1553,10 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result = prime * result + (transparentHugePages ? 1231 : 1237);
         result =
-                prime * result + ((vdsGroupCompatibilityVersion == null) ? 0 : vdsGroupCompatibilityVersion.hashCode());
-        result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
-        result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
-        result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
+                prime * result + ((clusterCompatibilityVersion == null) ? 0 : clusterCompatibilityVersion.hashCode());
+        result = prime * result + ((clusterCpuName == null) ? 0 : clusterCpuName.hashCode());
+        result = prime * result + ((clusterDescription == null) ? 0 : clusterDescription.hashCode());
+        result = prime * result + ((clusterName == null) ? 0 : clusterName.hashCode());
         result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
         result = prime * result + ((vmPayload == null) ? 0 : vmPayload.hashCode());
         result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
@@ -1883,12 +1883,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmPoolSpiceProxy = vmPoolSpiceProxy;
     }
 
-    public String getVdsGroupSpiceProxy() {
-        return vdsGroupSpiceProxy;
+    public String getClusterSpiceProxy() {
+        return clusterSpiceProxy;
     }
 
-    public void setVdsGroupSpiceProxy(String vdsGroupSpiceProxy) {
-        this.vdsGroupSpiceProxy = vdsGroupSpiceProxy;
+    public void setClusterSpiceProxy(String clusterSpiceProxy) {
+        this.clusterSpiceProxy = clusterSpiceProxy;
     }
 
     public void clearDisks() {

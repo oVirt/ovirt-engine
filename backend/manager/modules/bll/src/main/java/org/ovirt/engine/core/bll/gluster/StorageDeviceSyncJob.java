@@ -14,8 +14,8 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -38,9 +38,9 @@ public class StorageDeviceSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("gluster_storage_device_pool_event")
     public void refreshStorageDevices() {
         // get all clusters
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
         // for every cluster that supports disk provisioning
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (supportsGlusterDiskProvisioning(cluster)) {
                 refreshStorageDevicesFromServers(getClusterUtils().getAllUpServers(cluster.getId()));
             }
@@ -170,11 +170,11 @@ public class StorageDeviceSyncJob extends GlusterJob {
     }
 
     private void logStorageDeviceMessage(AuditLogType logType, VDS vds, final StorageDevice device) {
-        logUtil.logAuditMessage(vds.getVdsGroupId(), null, vds,
+        logUtil.logAuditMessage(vds.getClusterId(), null, vds,
                 logType, Collections.singletonMap("storageDevice", device.getName()));
     }
 
-    private boolean supportsGlusterDiskProvisioning(VDSGroup cluster) {
+    private boolean supportsGlusterDiskProvisioning(Cluster cluster) {
         return cluster.supportsGlusterService()
                 && getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
                         cluster.getId());

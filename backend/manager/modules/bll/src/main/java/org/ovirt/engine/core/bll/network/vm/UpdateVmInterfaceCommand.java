@@ -200,13 +200,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         UpdateVmNicValidator nicValidator =
-                new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion(), getVm().getOs());
+                new UpdateVmNicValidator(getInterface(), getVm().getClusterCompatibilityVersion(), getVm().getOs());
         if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.linkedOnlyIfSupported())
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.hotUpdatePossible())
-                || !validate(nicValidator.profileValid(getVm().getVdsGroupId()))
+                || !validate(nicValidator.profileValid(getVm().getClusterId()))
                 || !validate(nicValidator.canVnicWithExternalNetworkBePlugged())
                 || !validate(nicValidator.typeMatchesProfile())
                 || !validate(nicValidator.passthroughIsLinked())) {

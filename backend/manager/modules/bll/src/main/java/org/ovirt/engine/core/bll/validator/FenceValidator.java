@@ -6,8 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -49,8 +49,8 @@ public class FenceValidator {
         return startupTimeoutPassed;
     }
 
-    public boolean isPowerManagementEnabledAndLegal(VDS vds, VDSGroup vdsGroup, List<String> messages) {
-        if (!(vds.isPmEnabled() && isPowerManagementLegal(vds.getFenceAgents(), vdsGroup, messages))) {
+    public boolean isPowerManagementEnabledAndLegal(VDS vds, Cluster cluster, List<String> messages) {
+        if (!(vds.isPmEnabled() && isPowerManagementLegal(vds.getFenceAgents(), cluster, messages))) {
             messages.add(EngineMessage.VDS_FENCE_DISABLED.name());
             return false;
         } else {
@@ -67,18 +67,18 @@ public class FenceValidator {
         }
     }
 
-    private boolean isPowerManagementLegal(List<FenceAgent> fenceAgents, VDSGroup vdsGroup, List<String> messages) {
+    private boolean isPowerManagementLegal(List<FenceAgent> fenceAgents, Cluster cluster, List<String> messages) {
         if (fenceAgents == null || fenceAgents.isEmpty()) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT.name());
             return false;
         } else {
-            return isCompatibleAgentExists(fenceAgents, vdsGroup, messages);
+            return isCompatibleAgentExists(fenceAgents, cluster, messages);
         }
     }
 
-    private boolean isCompatibleAgentExists(List<FenceAgent> fenceAgents, VDSGroup vdsGroup, List<String> messages) {
+    private boolean isCompatibleAgentExists(List<FenceAgent> fenceAgents, Cluster cluster, List<String> messages) {
         for (FenceAgent agent : fenceAgents) {
-            if (isFenceAgentVersionCompatible(agent, vdsGroup.getCompatibilityVersion().toString(), messages)) {
+            if (isFenceAgentVersionCompatible(agent, cluster.getCompatibilityVersion().toString(), messages)) {
                 return true;
             }
         }

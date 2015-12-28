@@ -60,10 +60,10 @@ public class EventMapper {
             template.setId(entity.getVmTemplateId().toString());
             model.setTemplate(template);
         }
-        if (entity.getVdsGroupId() != null
-                && !entity.getVdsGroupId().equals(Guid.Empty)) {
+        if (entity.getClusterId() != null
+                && !entity.getClusterId().equals(Guid.Empty)) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getVdsGroupId().toString());
+            cluster.setId(entity.getClusterId().toString());
             model.setCluster(cluster);
         }
         if (entity.getStoragePoolId() != null
@@ -115,7 +115,7 @@ public class EventMapper {
         }
         guid = (event.isSetCluster()) ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setVdsGroupId(guid);
+            auditLog.setClusterId(guid);
         }
         guid = (event.isSetDataCenter()) ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {

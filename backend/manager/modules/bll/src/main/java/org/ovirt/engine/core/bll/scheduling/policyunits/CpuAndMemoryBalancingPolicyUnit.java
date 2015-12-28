@@ -17,9 +17,9 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Pair<List<Guid>, Guid> balance(final VDSGroup cluster,
+    public Pair<List<Guid>, Guid> balance(final Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
@@ -196,7 +196,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * Get all hosts that are neither over- or under-utilized in terms of CPU power.
      * See getOverUtilizedCpuHosts and getUnderUtilizedCpuHosts for details.
      */
-    protected List<VDS> getNormallyUtilizedCPUHosts(VDSGroup cluster,
+    protected List<VDS> getNormallyUtilizedCPUHosts(Cluster cluster,
                                                 List<VDS> relevantHosts,
                                                 final int highUtilization,
                                                 final int cpuOverCommitDurationMinutes,
@@ -234,7 +234,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (overUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
-            VDSGroup cluster = getVdsGroupDao().get(overUtilizedHosts.get(0).getVdsGroupId());
+            Cluster cluster = getClusterDao().get(overUtilizedHosts.get(0).getClusterId());
             Collections.sort(overUtilizedHosts, new ReverseComparator(new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores())));
         }
@@ -273,7 +273,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (underUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
-            VDSGroup cluster = getVdsGroupDao().get(underUtilizedHosts.get(0).getVdsGroupId());
+            Cluster cluster = getClusterDao().get(underUtilizedHosts.get(0).getClusterId());
             Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores()));
         }
@@ -295,8 +295,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         return DbFacade.getInstance().getVmDao();
     }
 
-    protected VdsGroupDao getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDao();
+    protected ClusterDao getClusterDao() {
+        return DbFacade.getInstance().getClusterDao();
     }
 
     protected Date getTime() {
@@ -322,7 +322,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param parameters - scheduling parameters
      * @return - a configured FindVmAndDestinations instance
      */
-    protected abstract FindVmAndDestinations getFindVmAndDestinations(VDSGroup cluster,
+    protected abstract FindVmAndDestinations getFindVmAndDestinations(Cluster cluster,
                                                                       Map<String, String> parameters);
 
     /**
@@ -334,7 +334,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param parameters - scheduling parameters
      * @return - subset of hosts from candidateHosts to be used as migration sources
      */
-    protected abstract List<VDS> getPrimarySources(VDSGroup cluster,
+    protected abstract List<VDS> getPrimarySources(Cluster cluster,
                                                    List<VDS> candidateHosts,
                                                    Map<String, String> parameters);
 
@@ -347,7 +347,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param parameters - scheduling parameters
      * @return - subset of hosts from candidateHosts to be used as migration destination
      */
-    protected abstract List<VDS> getPrimaryDestinations(VDSGroup cluster,
+    protected abstract List<VDS> getPrimaryDestinations(Cluster cluster,
                                                         List<VDS> candidateHosts,
                                                         Map<String, String> parameters);
 
@@ -361,7 +361,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param parameters - scheduling parameters
      * @return - subset of hosts from candidateHosts to be used as migration sources
      */
-    protected abstract List<VDS> getSecondarySources(VDSGroup cluster,
+    protected abstract List<VDS> getSecondarySources(Cluster cluster,
                                                      List<VDS> candidateHosts,
                                                      Map<String, String> parameters);
 
@@ -375,7 +375,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param parameters - scheduling parameters
      * @return - subset of hosts from candidateHosts to be used as migration destination
      */
-    protected abstract List<VDS> getSecondaryDestinations(VDSGroup cluster,
+    protected abstract List<VDS> getSecondaryDestinations(Cluster cluster,
                                                           List<VDS> candidateHosts,
                                                           Map<String, String> parameters);
 }

@@ -47,7 +47,7 @@ public class ModelWithPinnedHost extends Model {
                 stopProgress();
                 selectCurrentPinnedHost();
             }
-        }), vm.getVdsGroupId());
+        }), vm.getClusterId());
     }
 
     private void selectCurrentPinnedHost() {

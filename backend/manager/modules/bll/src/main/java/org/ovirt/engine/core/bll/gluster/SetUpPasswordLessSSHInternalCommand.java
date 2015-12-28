@@ -30,7 +30,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
 
     public SetUpPasswordLessSSHInternalCommand(SetUpPasswordLessSSHParameters params, CommandContext commandContext) {
         super(params, commandContext);
-        setVdsGroupId(getParameters().getId());
+        setClusterId(getParameters().getId());
     }
 
     @SuppressWarnings("unchecked")

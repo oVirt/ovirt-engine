@@ -18,10 +18,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
+import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -106,8 +106,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getStoragePoolId());
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId());
         }
     }
 
@@ -124,10 +124,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         VmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
-        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getVdsGroup());
+        VmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData(), getCluster());
         VmHandler.autoSelectDefaultDisplayType(getVmId(),
                 getParameters().getVmStaticData(),
-                getVdsGroup(),
+                getCluster(),
                 getParameters().getGraphicsDevices());
 
         updateParametersVmFromInstanceType();
@@ -378,10 +378,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void checkTrustedService() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmName", getVmName());
-        if (getParameters().getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+        if (getParameters().getVm().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
-        else if (!getParameters().getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+        else if (!getParameters().getVm().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
@@ -495,9 +495,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateVmNetworks() {
         // check if the cluster has changed
-        if (!Objects.equals(getVm().getVdsGroupId(), getParameters().getVmStaticData().getVdsGroupId())) {
+        if (!Objects.equals(getVm().getClusterId(), getParameters().getVmStaticData().getClusterId())) {
             List<Network> networks =
-                    getNetworkDao().getAllForCluster(getParameters().getVmStaticData().getVdsGroupId());
+                    getNetworkDao().getAllForCluster(getParameters().getVmStaticData().getClusterId());
             List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
 
             for (final VmNic iface : interfaces) {
@@ -575,12 +575,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
-        if (vmFromDB.getVdsGroupId() == null) {
+        if (vmFromDB.getClusterId() == null) {
             failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
@@ -617,14 +617,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(),
-                getVdsGroup().getArchitecture(), getReturnValue().getValidationMessages())) {
+                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
             return false;
         }
 
         if (!VmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
-                getVdsGroup().getCpuName(),
+                getCluster().getCpuName(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -641,7 +641,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
         }
 
-        if (!vmFromDB.getVdsGroupId().equals(vmFromParams.getVdsGroupId())) {
+        if (!vmFromDB.getClusterId().equals(vmFromParams.getClusterId())) {
             return failValidation(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
         }
 
@@ -717,7 +717,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getEffectiveCompatibilityVersion())
+        if (!FeatureSupported.isMigrationSupported(getCluster().getArchitecture(), getEffectiveCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failValidation(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
@@ -769,13 +769,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
@@ -962,16 +962,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (getParameters().getVmStaticData().getQuotaId() == null
                     || getParameters().getVmStaticData().getQuotaId().equals(Guid.Empty)
                     || !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
-                list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
-                        getVdsGroupId(),
+                        getClusterId(),
                         getVm().getNumOfCpus(),
                         getVm().getMemSizeMb()));
-                list.add(new QuotaVdsGroupConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
+                list.add(new QuotaClusterConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
-                        getParameters().getVmStaticData().getVdsGroupId(),
+                        getParameters().getVmStaticData().getClusterId(),
                         getParameters().getVmStaticData().getNumOfCpus(),
                         getParameters().getVmStaticData().getMemSizeMb()));
             }

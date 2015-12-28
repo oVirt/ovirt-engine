@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage;
@@ -24,7 +24,7 @@ import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterGlusterHookView
         extends
-        AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel>
+        AbstractSubTabTableView<Cluster, GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel>
         implements SubTabClusterGlusterHookPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterGlusterHookView> {

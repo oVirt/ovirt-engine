@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public class NetworkClusterModel extends EntityModel {
@@ -8,13 +8,13 @@ public class NetworkClusterModel extends EntityModel {
     private boolean attached;
     private boolean required;
 
-    public NetworkClusterModel(VDSGroup cluster) {
+    public NetworkClusterModel(Cluster cluster) {
         setEntity(cluster);
     }
 
     @Override
-    public VDSGroup getEntity() {
-        return (VDSGroup) super.getEntity();
+    public Cluster getEntity() {
+        return (Cluster) super.getEntity();
     }
 
     public String getName() {

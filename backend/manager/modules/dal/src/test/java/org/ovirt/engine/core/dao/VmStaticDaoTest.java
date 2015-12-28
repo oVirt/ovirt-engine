@@ -31,7 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStaticDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
@@ -58,7 +58,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
-        newVmStatic.setVdsGroupId(VDS_GROUP_ID);
+        newVmStatic.setClusterId(CLUSTER_ID);
         newVmStatic.setVmtGuid(vmtemplate.getId());
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(QUOTA_ID);
@@ -107,7 +107,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllStaticByStoragePool() {
-        Guid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getVdsGroupId()).getStoragePoolId();
+        Guid spID = dbFacade.getClusterDao().get(newVmStatic.getClusterId()).getStoragePoolId();
 
         assertNotNull(spID);
 
@@ -123,12 +123,12 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllByGroupAndNetwork() {
         List<VmStatic> result = dao.getAllByGroupAndNetworkName(
-                VDS_GROUP_ID, "engine");
+                CLUSTER_ID, "engine");
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
+            assertEquals(CLUSTER_ID, vm.getClusterId());
         }
     }
 
@@ -136,13 +136,13 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      * Ensures that all static VMs for the specified VDS group are returned.
      */
     @Test
-    public void testGetAllByVdsGroup() {
-        List<VmStatic> result = dao.getAllByVdsGroup(VDS_GROUP_ID);
+    public void testGetAllByCluster() {
+        List<VmStatic> result = dao.getAllByCluster(CLUSTER_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
+            assertEquals(CLUSTER_ID, vm.getClusterId());
         }
     }
 
@@ -156,7 +156,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
+            assertEquals(CLUSTER_ID, vm.getClusterId());
         }
     }
 
@@ -517,12 +517,12 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateVmCpuProfileIdForClusterId() {
-        updateCpuProfile(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.CPU_PROFILE_2);
+        updateCpuProfile(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.CPU_PROFILE_2);
     }
 
     @Test
     public void testUpdateNullVmCpuProfileIdForClusterId() {
-        updateCpuProfile(FixturesTool.VDS_GROUP_RHEL6_ISCSI, null);
+        updateCpuProfile(FixturesTool.CLUSTER_RHEL6_ISCSI, null);
     }
 
     private void updateCpuProfile(Guid clusterId, Guid cpuProfileId) {
@@ -532,11 +532,11 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     }
 
     private void testAllCpuProfileValuesEqualTo(Guid clusterId, Guid cpuProfileId, boolean isAllNull) {
-        List<VmStatic> allByVdsGroup = dao.getAllByVdsGroup(clusterId);
-        assertNotNull(allByVdsGroup);
-        assertFalse(allByVdsGroup.isEmpty());
+        List<VmStatic> allByCluster = dao.getAllByCluster(clusterId);
+        assertNotNull(allByCluster);
+        assertFalse(allByCluster.isEmpty());
         boolean allValues = true;
-        for (VmStatic vmStatic : allByVdsGroup) {
+        for (VmStatic vmStatic : allByCluster) {
             allValues &= Objects.equals(vmStatic.getCpuProfileId(), cpuProfileId);
         }
         assertEquals(isAllNull, allValues);

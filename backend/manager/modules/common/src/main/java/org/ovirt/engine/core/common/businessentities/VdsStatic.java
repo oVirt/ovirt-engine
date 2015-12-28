@@ -72,7 +72,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String sshUsername;
 
     @EditableOnVdsStatus
-    private Guid vdsGroupId;
+    private Guid clusterId;
 
     private Boolean serverSslEnabled;
 
@@ -136,7 +136,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         hostProviderId = null;
     }
 
-    public VdsStatic(String hostName, String uniqueId, int port, int sshPort, String sshUsername, Guid vdsGroupId,
+    public VdsStatic(String hostName, String uniqueId, int port, int sshPort, String sshUsername, Guid clusterId,
             Guid vdsId, String vdsName, boolean serverSslEnabled, VDSType vdsType, Guid hostProviderId) {
         this();
         this.hostName = hostName;
@@ -148,7 +148,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         if (sshUsername != null) {
             this.sshUsername = sshUsername;
         }
-        this.vdsGroupId = vdsGroupId;
+        this.clusterId = clusterId;
         this.id = vdsId;
         this.name = vdsName;
         this.serverSslEnabled = serverSslEnabled;
@@ -220,12 +220,12 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         sshUsername = value;
     }
 
-    public Guid getVdsGroupId() {
-        return vdsGroupId;
+    public Guid getClusterId() {
+        return clusterId;
     }
 
-    public void setVdsGroupId(Guid value) {
-        vdsGroupId = value;
+    public void setClusterId(Guid value) {
+        clusterId = value;
     }
 
     @Override
@@ -381,7 +381,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 sshUsername,
                 serverSslEnabled,
                 uniqueId,
-                vdsGroupId,
+                clusterId,
                 vdsStrength,
                 vdsType,
                 disablePowerManagementPolicy,
@@ -411,7 +411,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(sshUsername, other.sshUsername)
                 && Objects.equals(serverSslEnabled, other.serverSslEnabled)
                 && Objects.equals(uniqueId, other.uniqueId)
-                && Objects.equals(vdsGroupId, other.vdsGroupId)
+                && Objects.equals(clusterId, other.clusterId)
                 && Objects.equals(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)

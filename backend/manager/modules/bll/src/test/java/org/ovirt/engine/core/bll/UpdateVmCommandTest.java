@@ -29,13 +29,13 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -55,9 +55,9 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -68,7 +68,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private VM vm;
     private VmStatic vmStatic;
     private UpdateVmCommand<VmManagementParametersBase> command;
-    private VDSGroup group;
+    private Cluster group;
 
     private static String vncKeyboardLayoutValues =
             "ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr";
@@ -82,7 +82,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VdsDao vdsDao;
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
     @Mock
     private DiskDao diskDao;
     @Mock
@@ -160,15 +160,15 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VmHandler.init();
         vm = new VM();
         vmStatic = new VmStatic();
-        group = new VDSGroup();
+        group = new Cluster();
         group.setCpuName("Intel Conroe Family");
         group.setId(Guid.newGuid());
         group.setCompatibilityVersion(version);
         group.setArchitecture(ArchitectureType.x86_64);
 
-        vm.setVdsGroupId(group.getId());
+        vm.setClusterId(group.getId());
         vm.setClusterArch(ArchitectureType.x86_64);
-        vmStatic.setVdsGroupId(group.getId());
+        vmStatic.setClusterId(group.getId());
         vmStatic.setName("my_vm");
 
         VmManagementParametersBase params = new VmManagementParametersBase();
@@ -182,7 +182,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
             }
 
             @Override
-            public VDSGroup getVdsGroup() {
+            public Cluster getCluster() {
                 return group;
             }
         });
@@ -260,7 +260,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
 
         VDS vds = new VDS();
-        vds.setVdsGroupId(group.getId());
+        vds.setClusterId(group.getId());
         doReturn(vdsDao).when(command).getVdsDao();
         when(vdsDao.get(any(Guid.class))).thenReturn(vds);
         doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
@@ -312,11 +312,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testChangeClusterForbidden() {
         prepareVmToPassValidate();
-        VDSGroup newGroup = new VDSGroup();
+        Cluster newGroup = new Cluster();
         newGroup.setId(Guid.newGuid());
         newGroup.setCompatibilityVersion(Version.v3_0);
-        vmStatic.setVdsGroupId(newGroup.getId());
-        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        vmStatic.setClusterId(newGroup.getId());
+        doReturn(clusterDao).when(command).getClusterDao();
 
         assertFalse("validate should have failed with can't change cluster.", command.validate());
         assertValidateMessage(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);

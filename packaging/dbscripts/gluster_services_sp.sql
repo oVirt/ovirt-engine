@@ -81,7 +81,7 @@ BEGIN
     FROM gluster_server_services_view s,
         vds_static v
     WHERE s.server_id = v.vds_id
-        AND v.vds_group_id = v_cluster_id;
+        AND v.cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -98,7 +98,7 @@ BEGIN
     FROM gluster_server_services_view s,
         vds_static v
     WHERE s.server_id = v.vds_id
-        AND v.vds_group_id = v_cluster_id
+        AND v.cluster_id = v_cluster_id
         AND s.service_type = v_service_type;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

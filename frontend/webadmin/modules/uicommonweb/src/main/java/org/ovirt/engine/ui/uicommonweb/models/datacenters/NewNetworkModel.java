@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -61,21 +61,21 @@ public class NewNetworkModel extends NetworkModel {
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
-                        onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
+                        onGetClusterList((ArrayList<Cluster>) ReturnValue);
                     }
                 }), getSelectedDc().getId());
     }
 
-    protected void onGetClusterList(ArrayList<VDSGroup> clusterList) {
+    protected void onGetClusterList(ArrayList<Cluster> clusterList) {
         // Cluster list
         List<NetworkClusterModel> items = new ArrayList<>();
-        for (VDSGroup cluster : clusterList) {
+        for (Cluster cluster : clusterList) {
             items.add(createNetworkClusterModel(cluster));
         }
         getNetworkClusterList().setItems(items);
     }
 
-    protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {
+    protected NetworkClusterModel createNetworkClusterModel(Cluster cluster) {
         NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
         networkClusterModel.setAttached(true);
         networkClusterModel.setRequired(!(Boolean) getExport().getEntity());

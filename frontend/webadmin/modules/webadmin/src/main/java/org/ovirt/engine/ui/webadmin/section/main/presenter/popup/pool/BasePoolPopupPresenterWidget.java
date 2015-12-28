@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -37,7 +37,7 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
         });
     }
 
-    private void setSpiceProxyOverrideExplanation(VDSGroup selectedCluster) {
+    private void setSpiceProxyOverrideExplanation(Cluster selectedCluster) {
         String spiceProxyInConfig =
                 (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         String spiceProxyOnCluster = selectedCluster.getSpiceProxy();

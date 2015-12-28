@@ -97,7 +97,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
         setVmPool(parameters.getVmPool());
-        setVdsGroupId(parameters.getVmPool().getVdsGroupId());
+        setClusterId(parameters.getVmPool().getClusterId());
     }
 
     /*
@@ -120,7 +120,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         setEffectiveCompatibilityVersion(
-                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getVdsGroup));
+                CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
 
         Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
         // if set to use latest version, get it from db and use it as template
@@ -314,12 +314,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected boolean validate() {
-        if (getVdsGroup() == null) {
+        if (getCluster() == null) {
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
         // A Pool cannot be added in a cluster without a defined architecture
-        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+        if (getCluster().getArchitecture() == ArchitectureType.undefined) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
@@ -330,14 +330,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
 
-        setStoragePoolId(getVdsGroup().getStoragePoolId());
+        setStoragePoolId(getCluster().getStoragePoolId());
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
 
         // check if the selected template is compatible with Cluster architecture.
         if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
-                && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+                && getCluster().getArchitecture() != getVmTemplate().getClusterArch()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 

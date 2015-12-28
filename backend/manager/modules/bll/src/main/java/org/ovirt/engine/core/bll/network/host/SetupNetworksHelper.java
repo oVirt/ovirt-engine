@@ -114,9 +114,9 @@ public class SetupNetworksHelper {
     }
 
     private void setSupportedFeatures() {
-        hostNetworkQosSupported = FeatureSupported.hostNetworkQos(vds.getVdsGroupCompatibilityVersion());
+        hostNetworkQosSupported = FeatureSupported.hostNetworkQos(vds.getClusterCompatibilityVersion());
         networkCustomPropertiesSupported =
-                FeatureSupported.networkCustomProperties(vds.getVdsGroupCompatibilityVersion());
+                FeatureSupported.networkCustomProperties(vds.getClusterCompatibilityVersion());
     }
 
     protected List<String> translateErrorMessages(List<String> messages) {
@@ -197,7 +197,7 @@ public class SetupNetworksHelper {
                 continue;
             }
             List<GlusterBrickEntity> bricks =
-                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getVdsGroupId(),
+                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getClusterId(),
                         removedNetwork.getId());
             if (!bricks.isEmpty()) {
                 addViolation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_NETWORK_FROM_BRICK, network);
@@ -345,7 +345,7 @@ public class SetupNetworksHelper {
     }
 
     private void validateCustomProperties() {
-        String version = vds.getVdsGroupCompatibilityVersion().getValue();
+        String version = vds.getClusterCompatibilityVersion().getValue();
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> validProperties =
                 util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties,
@@ -480,7 +480,7 @@ public class SetupNetworksHelper {
     private Map<String, Network> getExistingClusterNetworks() {
         if (existingClusterNetworks == null) {
             existingClusterNetworks = Entities.entitiesByName(
-                networkDao.getAllForCluster(vds.getVdsGroupId()));
+                networkDao.getAllForCluster(vds.getClusterId()));
         }
 
         return existingClusterNetworks;
@@ -633,7 +633,7 @@ public class SetupNetworksHelper {
     private boolean networkIpAddressUsedByBrickChanged(VdsNetworkInterface iface, Network network) {
         if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             List<GlusterBrickEntity> bricks =
-                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getVdsGroupId(), network.getId());
+                    glusterBrickDao.getAllByClusterAndNetworkId(vds.getClusterId(), network.getId());
             if (bricks.isEmpty()) {
                 return false;
             }
@@ -888,8 +888,8 @@ public class SetupNetworksHelper {
      */
     private void validateGateway(VdsNetworkInterface iface) {
         if (StringUtils.isNotEmpty(iface.getGateway())
-                && !managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), vds.getVdsGroupId())
-                && !FeatureSupported.multipleGatewaysSupported(vds.getVdsGroupCompatibilityVersion())) {
+                && !managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), vds.getClusterId())
+                && !FeatureSupported.multipleGatewaysSupported(vds.getClusterCompatibilityVersion())) {
 
             addViolation(EngineMessage.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
         }

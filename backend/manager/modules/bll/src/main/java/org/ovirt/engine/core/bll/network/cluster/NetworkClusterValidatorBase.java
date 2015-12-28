@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -95,7 +95,7 @@ public abstract class NetworkClusterValidatorBase {
      * @param network
      *            network to be checked
      */
-    public ValidationResult networkBelongsToClusterDataCenter(VDSGroup cluster, Network network) {
+    public ValidationResult networkBelongsToClusterDataCenter(Cluster cluster, Network network) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC,
                 String.format(NETWORK_NAME_REPLACEMENT, network.getName())).
                 unless(cluster.getStoragePoolId().equals(network.getDataCenterId()));
@@ -136,7 +136,7 @@ public abstract class NetworkClusterValidatorBase {
     }
 
     private boolean isClusterEmpty() {
-        return getVdsDao().getAllForVdsGroup(networkCluster.getClusterId()).isEmpty();
+        return getVdsDao().getAllForCluster(networkCluster.getClusterId()).isEmpty();
     }
 
     VdsDao getVdsDao() {

@@ -138,7 +138,7 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
 
     private boolean isNewerVersion(Version isoClusterVersion) {
         VDS vds = getVdsByVdsId(getParameters().getId());
-        Version vdsClusterVersion = vds.getVdsGroupCompatibilityVersion();
+        Version vdsClusterVersion = vds.getClusterCompatibilityVersion();
         log.debug(
             "vdsClusterVersion '{}' isoClusterVersion '{}'",
             vdsClusterVersion,

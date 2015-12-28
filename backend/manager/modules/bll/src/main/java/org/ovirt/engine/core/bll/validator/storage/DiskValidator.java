@@ -53,7 +53,7 @@ public class DiskValidator {
         }
 
         if (vm != null) {
-            if (!FeatureSupported.virtIoScsi(vm.getVdsGroupCompatibilityVersion())) {
+            if (!FeatureSupported.virtIoScsi(vm.getClusterCompatibilityVersion())) {
                 return new ValidationResult(EngineMessage.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
@@ -71,7 +71,7 @@ public class DiskValidator {
      * Validates that the OS is supported for Virtio-SCSI interface.
      */
     public ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
-        if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), DiskInterface.VirtIO_SCSI)) {
+        if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getClusterCompatibilityVersion(), DiskInterface.VirtIO_SCSI)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
 
@@ -135,7 +135,7 @@ public class DiskValidator {
 
     public ValidationResult isDiskInterfaceSupported(VM vm) {
         if (vm != null) {
-            if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), disk.getDiskInterface())) {
+            if (!VmValidationUtils.isDiskInterfaceSupportedByOs(vm.getOs(), vm.getClusterCompatibilityVersion(), disk.getDiskInterface())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
                         String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
             }

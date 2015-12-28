@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -50,9 +50,9 @@ public class GlusterServiceSyncJob extends GlusterJob {
             populateServiceMap();
         }
 
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             if (supportsGlusterServicesFeature(cluster)) {
                 try {
                     List<VDS> serversList = getClusterUtils().getAllServers(cluster.getId());
@@ -110,13 +110,13 @@ public class GlusterServiceSyncJob extends GlusterJob {
      * @param serviceStatusMaps
      *            List of service name to status maps from each (UP) server of the cluster
      */
-    private void refreshClusterServices(VDSGroup cluster, List<Map<String, GlusterServiceStatus>> serviceStatusMaps) {
+    private void refreshClusterServices(Cluster cluster, List<Map<String, GlusterServiceStatus>> serviceStatusMaps) {
         Map<ServiceType, GlusterServiceStatus> fetchedClusterServiceStatusMap =
                 createServiceTypeStatusMap(serviceStatusMaps);
         addOrUpdateClusterServices(cluster, fetchedClusterServiceStatusMap);
     }
 
-    private void addOrUpdateClusterServices(VDSGroup cluster,
+    private void addOrUpdateClusterServices(Cluster cluster,
             Map<ServiceType, GlusterServiceStatus> fetchedClusterServiceStatusMap) {
         Map<ServiceType, GlusterClusterService> existingClusterServiceMap = getClusterServiceMap(cluster);
         for (Entry<ServiceType, GlusterServiceStatus> entry : fetchedClusterServiceStatusMap.entrySet()) {
@@ -172,7 +172,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         return mergedServiceStatusMap;
     }
 
-    private Map<ServiceType, GlusterClusterService> getClusterServiceMap(VDSGroup cluster) {
+    private Map<ServiceType, GlusterClusterService> getClusterServiceMap(Cluster cluster) {
         List<GlusterClusterService> clusterServices = getGlusterClusterServiceDao().getByClusterId(cluster.getId());
         if (clusterServices == null) {
             clusterServices = new ArrayList<>();
@@ -230,7 +230,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                                     server.getHostName(),
                                     oldStatus.name(),
                                     newStatus.name());
-                            logUtil.logAuditMessage(server.getVdsGroupId(),
+                            logUtil.logAuditMessage(server.getClusterId(),
                                     null,
                                     server,
                                     AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED,
@@ -287,7 +287,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         log.info("Service '{}' was not mapped to server '{}'. Mapped it now.",
                 fetchedService.getServiceName(),
                 server.getHostName());
-        logUtil.logAuditMessage(server.getVdsGroupId(),
+        logUtil.logAuditMessage(server.getClusterId(),
                 null,
                 server,
                 AuditLogType.GLUSTER_SERVICE_ADDED_TO_SERVER,
@@ -323,7 +323,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     @SuppressWarnings("serial")
-    private GlusterClusterService addClusterServiceToDb(VDSGroup cluster,
+    private GlusterClusterService addClusterServiceToDb(Cluster cluster,
             final ServiceType serviceType,
             final GlusterServiceStatus status) {
         GlusterClusterService clusterService = new GlusterClusterService();
@@ -350,7 +350,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         return clusterService;
     }
 
-    private boolean supportsGlusterServicesFeature(VDSGroup cluster) {
+    private boolean supportsGlusterServicesFeature(Cluster cluster) {
         return cluster.supportsGlusterService()
                 && GlusterFeatureSupported.glusterServices(cluster.getCompatibilityVersion());
     }

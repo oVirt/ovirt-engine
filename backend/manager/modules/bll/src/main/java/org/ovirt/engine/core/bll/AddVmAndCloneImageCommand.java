@@ -320,8 +320,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.add(new PermissionSubject(getVdsGroupId(),
-                VdcObjectType.VdsGroups,
+        permissionList.add(new PermissionSubject(getClusterId(),
+                VdcObjectType.Cluster,
                 getActionType().getActionGroup()));
         for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
             if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
@@ -344,9 +344,9 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     @Override
     protected void addVmNetwork() {
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(getVdsGroupId(),
+                new VnicProfileHelper(getClusterId(),
                         getStoragePoolId(),
-                        getVdsGroup().getCompatibilityVersion(),
+                        getCluster().getCompatibilityVersion(),
                         AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVmFromConfiguration().getInterfaces()) {

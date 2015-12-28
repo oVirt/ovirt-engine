@@ -9,8 +9,8 @@ import org.junit.ClassRule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -41,7 +41,7 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     protected VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
-    protected VDSGroup vdsGroup;
+    protected Cluster cluster;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -94,7 +94,7 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setClusterId(CLUSTER_ID);
         vds.setStatus(status);
         return vds;
     }

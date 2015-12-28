@@ -29,12 +29,12 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -52,10 +52,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -74,13 +74,13 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
             mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
             );
 
-    private final Guid vdsGroupId = Guid.newGuid();
+    private final Guid clusterId = Guid.newGuid();
     protected final Guid firstStorageDomainId = Guid.newGuid();
     private final Guid secondStorageDomainId = Guid.newGuid();
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid vmTemplateId = Guid.newGuid();
     protected Guid vmPoolId = Guid.newGuid();
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
     protected VM testVm;
     protected VmPool vmPools;
     protected static int VM_COUNT = 5;
@@ -99,7 +99,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     protected DbFacade dbFacada;
 
     @Mock
-    protected VdsGroupDao vdsGroupDao;
+    protected ClusterDao clusterDao;
 
     @Mock
     protected DiskImageDao diskImageDao;
@@ -189,7 +189,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     private void mockGlobalParameters() {
         testVm = mockVm();
         vmPools = mockVmPools();
-        vdsGroup = mockVdsGroup();
+        cluster = mockCluster();
         vmTemplate = mockVmTemplate();
         storagePool = mockStoragePool();
     }
@@ -230,9 +230,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
                 .thenReturn(Collections.<VmNetworkInterface> emptyList());
     }
 
-    private void mockVdsGroupDao() {
-        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
-        when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
+    private void mockClusterDao() {
+        doReturn(clusterDao).when(command).getClusterDao();
+        when(clusterDao.get(clusterId)).thenReturn(cluster);
     }
 
     private void mockDiskImageDao() {
@@ -288,9 +288,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     /**
      * Mock VDS Group.
      */
-    private VDSGroup mockVdsGroup() {
-        VDSGroup group = new VDSGroup();
-        group.setVdsGroupId(vdsGroupId);
+    private Cluster mockCluster() {
+        Cluster group = new Cluster();
+        group.setClusterId(clusterId);
         group.setCompatibilityVersion(new Version());
         group.setStoragePoolId(storagePoolId);
         group.setCpuName("Intel Conroe Family");
@@ -373,13 +373,13 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract extends BaseCommand
     private VmPool mockVmPools() {
         VmPool pool = new VmPool();
         pool.setName("simplePoolName");
-        pool.setVdsGroupId(vdsGroupId);
+        pool.setClusterId(clusterId);
         pool.setVmPoolId(vmPoolId);
         return pool;
     }
 
     private void mockDbDao() {
-        mockVdsGroupDao();
+        mockClusterDao();
         mockVMPoolDao();
         mockVMTemplateDao();
         mockVmNetworkInterfaceDao();

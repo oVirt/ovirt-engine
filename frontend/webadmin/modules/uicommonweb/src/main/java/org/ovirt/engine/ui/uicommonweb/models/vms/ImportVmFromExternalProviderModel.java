@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -143,7 +143,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExternalProviderModel.this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                List<Cluster> clusters = (List<Cluster>) returnValue;
 
                 ArchitectureType targetArch = getTargetArchitecture();
                 if (targetArch != null) {

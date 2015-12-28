@@ -49,7 +49,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
                 || !validate(hostValidator.isUp())) {
             return false;
         }
-        if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_4) < 0) {
+        if (getVds().getClusterCompatibilityVersion().compareTo(Version.v3_4) < 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED);
         }
         if (!getVds().getHighlyAvailableIsConfigured()) {

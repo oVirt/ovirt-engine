@@ -24,8 +24,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -34,10 +34,10 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VdsGroupDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -60,13 +60,13 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     private VdsDao vdsDao;
 
     @Mock
-    private VDSGroup vdsGroup;
+    private Cluster cluster;
 
     @Mock
     private GlusterBrickDao glusterBrickDao;
 
     @Mock
-    private VdsGroupDao vdsGroupDao;
+    private ClusterDao clusterDao;
 
     @Mock
     private ClusterUtils clusterUtils;
@@ -110,10 +110,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(vdsDynamicDao).when(command).getVdsDynamicDao();
         doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
-        doReturn(vdsGroupDao).when(command).getVdsGroupDao();
+        doReturn(clusterDao).when(command).getClusterDao();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(hooksDao).when(command).getGlusterHooksDao();
-        doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(cluster).when(clusterDao).get(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(backend).when(command).getBackend();
         doReturn(vdsBrokerFrontend).when(command).getVdsBroker();
@@ -123,7 +123,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     private void mockHasMultipleClusters(Boolean isMultiple) {
-        when(command.getVdsGroupId()).thenReturn(clusterId);
+        when(command.getClusterId()).thenReturn(clusterId);
         when(clusterUtils.hasMultipleServers(clusterId)).thenReturn(isMultiple);
     }
 
@@ -131,7 +131,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(clusterId);
+        vds.setClusterId(clusterId);
         vds.setStatus(status);
         return vds;
     }
@@ -291,13 +291,13 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     /**
-     * Mock that {@link VDSGroup} with the given glusterservice status is returned
+     * Mock that {@link org.ovirt.engine.core.common.businessentities.Cluster} with the given glusterservice status is returned
      *
      * @param glusterService
-     *              The VDSGroup with the given glusterservice status
+     *              The Cluster with the given glusterservice status
      */
     private void mockIsGlusterEnabled(boolean glusterService) {
-        when(vdsGroup.supportsGlusterService()).thenReturn(glusterService);
+        when(cluster.supportsGlusterService()).thenReturn(glusterService);
     }
 
     /**

@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
@@ -43,19 +43,19 @@ public class GlusterHookSyncJob extends GlusterJob {
     @OnTimerMethodAnnotation("refreshHooks")
     public void refreshHooks() {
         log.debug("Refreshing hooks list");
-        List<VDSGroup> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = getClusterDao().getAll();
 
-        for (VDSGroup cluster : clusters) {
+        for (Cluster cluster : clusters) {
             refreshHooksInCluster(cluster, false);
         }
     }
 
     /**
      *
-     * @param cluster - the VDSGroup for which the gluster hook data is refreshed
+     * @param cluster - the Cluster for which the gluster hook data is refreshed
      * @param throwError - set to true if this method should throw exception.
      */
-    public void refreshHooksInCluster(VDSGroup cluster, boolean throwError) {
+    public void refreshHooksInCluster(Cluster cluster, boolean throwError) {
         if (!supportsGlusterHookFeature(cluster)) {
             return;
         }
@@ -336,7 +336,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         return serverHook;
     }
 
-    private boolean supportsGlusterHookFeature(VDSGroup cluster) {
+    private boolean supportsGlusterHookFeature(Cluster cluster) {
         return cluster.supportsGlusterService() && GlusterFeatureSupported.glusterHooks(cluster.getCompatibilityVersion());
     }
 

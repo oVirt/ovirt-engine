@@ -163,8 +163,8 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
                 .addValue("storage_pool_name", event.getStoragePoolName())
                 .addValue("storage_domain_id", event.getStorageDomainId())
                 .addValue("storage_domain_name", event.getStorageDomainName())
-                .addValue("vds_group_id", event.getVdsGroupId())
-                .addValue("vds_group_name", event.getVdsGroupName())
+                .addValue("cluster_id", event.getClusterId())
+                .addValue("cluster_name", event.getClusterName())
                 .addValue("correlation_id", event.getCorrelationId())
                 .addValue("job_id", event.getJobId())
                 .addValue("quota_id", event.getQuotaId())
@@ -299,9 +299,9 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
             entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
             entity.setStorageDomainName(rs
                     .getString("storage_domain_name"));
-            entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
-            entity.setVdsGroupName(rs
-                    .getString("vds_group_name"));
+            entity.setClusterId(getGuid(rs, "cluster_id"));
+            entity.setClusterName(rs
+                    .getString("cluster_name"));
             entity.setCorrelationId(rs.getString("correlation_id"));
             entity.setJobId(getGuid(rs, "job_id"));
             entity.setQuotaId(getGuid(rs, "quota_id"));

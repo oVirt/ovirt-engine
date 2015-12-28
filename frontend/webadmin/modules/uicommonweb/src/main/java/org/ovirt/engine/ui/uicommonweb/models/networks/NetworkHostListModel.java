@@ -41,7 +41,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
             public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
                     PairQueryable<VdsNetworkInterface, VDS> arg1) {
                 int compareValue =
-                        arg0.getSecond().getVdsGroupName().compareTo(arg1.getSecond().getVdsGroupName());
+                        arg0.getSecond().getClusterName().compareTo(arg1.getSecond().getClusterName());
 
                 if (compareValue != 0) {
                     return compareValue;
@@ -176,7 +176,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
                 && selectedItems.iterator()
                         .next()
                         .getSecond()
-                        .getVdsGroupCompatibilityVersion()
+                        .getClusterCompatibilityVersion()
                         .compareTo(Version.v3_1) >= 0);
     }
 
