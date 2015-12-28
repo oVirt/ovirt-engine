@@ -6400,6 +6400,10 @@
         <column>address</column>
         <column>netmask</column>
         <column>gateway</column>
+        <column>ipv6_boot_protocol</column>
+        <column>ipv6_address</column>
+        <column>ipv6_prefix</column>
+        <column>ipv6_gateway</column>
         <column>custom_properties</column>
         <column>_create_date</column>
         <column>_update_date</column>
@@ -6408,9 +6412,13 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
             <value>DHCP</value>
-            <null />
-            <null />
-            <null />
+            <null/>
+            <null/>
+            <null/>
+            <value>DHCP</value>
+            <null/>
+            <null/>
+            <null/>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
@@ -6420,10 +6428,14 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
             <value>NONE</value>
-            <null />
-            <null />
-            <null />
-            <null />
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
@@ -6432,6 +6444,10 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
             <value>NONE</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
             <null/>
             <null/>
             <null/>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -15,13 +16,19 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 public class IpConfiguration implements Serializable {
     private static final long serialVersionUID = -3207405803308009853L;
 
+    @Valid
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
-    @Size(min = 1,
-            max = 1,
+    @Size(max = 1,
             groups = { CreateEntity.class, UpdateEntity.class },
-            message = "Currently is supported only one IPv4 address for NIC."
-    )
+            message = "Only one IPv4 address is supported for a network attachment.")
     private List<IPv4Address> iPv4Addresses = new ArrayList<>();
+
+    @Valid
+    @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(max = 1,
+            groups = { CreateEntity.class, UpdateEntity.class },
+            message = "Only one IPv6 address is supported for a network attachment.")
+    private List<IpV6Address> ipV6Addresses = new ArrayList<>();
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -42,6 +49,10 @@ public class IpConfiguration implements Serializable {
         return iPv4Addresses != null && !iPv4Addresses.isEmpty() && iPv4Addresses.get(0) != null;
     }
 
+    public boolean hasIpv6PrimaryAddressSet() {
+        return ipV6Addresses != null && !ipV6Addresses.isEmpty() && ipV6Addresses.get(0) != null;
+    }
+
     public void setIPv4Addresses(List<IPv4Address> iPv4Addresses) {
         this.iPv4Addresses = iPv4Addresses;
     }
@@ -55,18 +66,28 @@ public class IpConfiguration implements Serializable {
             return false;
         }
         IpConfiguration other = (IpConfiguration) o;
-        return Objects.equals(iPv4Addresses, other.iPv4Addresses);
+        return Objects.equals(iPv4Addresses, other.iPv4Addresses)
+                && Objects.equals(ipV6Addresses, other.ipV6Addresses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(iPv4Addresses);
+        return Objects.hash(iPv4Addresses, ipV6Addresses);
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("ipv4Addresses", getIPv4Addresses())
+                .append("ipv6Addresses", getIpV6Addresses())
                 .build();
+    }
+
+    public List<IpV6Address> getIpV6Addresses() {
+        return ipV6Addresses;
+    }
+
+    public void setIpV6Addresses(List<IpV6Address> ipV6Addresses) {
+        this.ipV6Addresses = ipV6Addresses;
     }
 }

@@ -1883,6 +1883,10 @@ CREATE OR REPLACE FUNCTION InsertNetworkAttachment (
     v_address VARCHAR(20),
     v_netmask VARCHAR(20),
     v_gateway VARCHAR(20),
+    v_ipv6_boot_protocol VARCHAR(20),
+    v_ipv6_address VARCHAR(50),
+    v_ipv6_prefix INT,
+    v_ipv6_gateway VARCHAR(50),
     v_custom_properties TEXT
     )
 RETURNS VOID AS $PROCEDURE$
@@ -1895,6 +1899,10 @@ BEGIN
         address,
         netmask,
         gateway,
+        ipv6_boot_protocol,
+        ipv6_address,
+        ipv6_prefix,
+        ipv6_gateway,
         custom_properties
         )
     VALUES (
@@ -1905,6 +1913,10 @@ BEGIN
         v_address,
         v_netmask,
         v_gateway,
+        v_ipv6_boot_protocol,
+        v_ipv6_address,
+        v_ipv6_prefix,
+        v_ipv6_gateway,
         v_custom_properties
         );
 END;$PROCEDURE$
@@ -1918,6 +1930,10 @@ CREATE OR REPLACE FUNCTION UpdateNetworkAttachment (
     v_address VARCHAR(20),
     v_netmask VARCHAR(20),
     v_gateway VARCHAR(20),
+    v_ipv6_boot_protocol VARCHAR(20),
+    v_ipv6_address VARCHAR(50),
+    v_ipv6_prefix INT,
+    v_ipv6_gateway VARCHAR(50),
     v_custom_properties TEXT
     )
 RETURNS VOID AS $PROCEDURE$
@@ -1930,6 +1946,10 @@ BEGIN
         netmask = v_netmask,
         gateway = v_gateway,
         custom_properties = v_custom_properties,
+        ipv6_boot_protocol = v_ipv6_boot_protocol,
+        ipv6_address = v_ipv6_address,
+        ipv6_prefix = v_ipv6_prefix,
+        ipv6_gateway = v_ipv6_gateway,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
 END;$PROCEDURE$

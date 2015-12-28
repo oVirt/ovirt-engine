@@ -153,6 +153,7 @@
         <configuration>
           <excludes>
             <exclude>**/*D??Test*.java</exclude>
+            <exclude>**/*D??ImplTest*.java</exclude>
             <exclude>**/DBConfigUtilsTest.java</exclude>
             <exclude>**/BatchProcedureCallTest.java</exclude>
           </excludes>

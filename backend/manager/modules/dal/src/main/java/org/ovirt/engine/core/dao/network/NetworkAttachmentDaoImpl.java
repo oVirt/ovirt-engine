@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -92,21 +92,47 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
                 .addValue("custom_properties",
                     SerializationFactory.getSerializer().serialize(networkAttachment.getProperties()));
 
-        IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
-        mapIpConfiguration(mapper, ipConfiguration == null ? new IpConfiguration() : ipConfiguration);
+        mapIpConfiguration(networkAttachment, mapper);
 
         return mapper;
     }
 
-    private void mapIpConfiguration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
-        boolean hasPrimaryAddressSet = ipConfiguration.hasPrimaryAddressSet();
-        IPv4Address primaryAddress = hasPrimaryAddressSet ? ipConfiguration.getPrimaryAddress() : null;
+    private void mapIpConfiguration(NetworkAttachment networkAttachment, MapSqlParameterSource mapper) {
+        final IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration() == null
+                ? new IpConfiguration()
+                : networkAttachment.getIpConfiguration();
+        mapIpv4Configuration(mapper, ipConfiguration);
+        mapIpv6Configuration(mapper, ipConfiguration);
+    }
 
-        mapper.addValue("boot_protocol",
-                hasPrimaryAddressSet ? EnumUtils.nameOrNull(primaryAddress.getBootProtocol()) : null)
-                .addValue("address", hasPrimaryAddressSet ? primaryAddress.getAddress() : null)
-                .addValue("netmask", hasPrimaryAddressSet ? primaryAddress.getNetmask() : null)
-                .addValue("gateway", hasPrimaryAddressSet ? primaryAddress.getGateway() : null);
+    private void mapIpv4Configuration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
+        if (ipConfiguration.hasPrimaryAddressSet()) {
+            final IPv4Address primaryAddress = ipConfiguration.getPrimaryAddress();
+            mapper.addValue("boot_protocol", EnumUtils.nameOrNull(primaryAddress.getBootProtocol()))
+                    .addValue("address", primaryAddress.getAddress())
+                    .addValue("netmask", primaryAddress.getNetmask())
+                    .addValue("gateway", primaryAddress.getGateway());
+        } else {
+            mapper.addValue("boot_protocol", null)
+                    .addValue("address", null)
+                    .addValue("netmask", null)
+                    .addValue("gateway", null);
+        }
+    }
+
+    private void mapIpv6Configuration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
+        if (ipConfiguration.hasIpv6PrimaryAddressSet()) {
+            final IpV6Address primaryIpv6Address = ipConfiguration.getIpV6Addresses().get(0);
+            mapper.addValue("ipv6_boot_protocol", EnumUtils.nameOrNull(primaryIpv6Address.getBootProtocol()))
+                    .addValue("ipv6_address", primaryIpv6Address.getAddress())
+                    .addValue("ipv6_prefix", primaryIpv6Address.getPrefix())
+                    .addValue("ipv6_gateway", primaryIpv6Address.getGateway());
+        } else {
+            mapper.addValue("ipv6_boot_protocol", null)
+                    .addValue("ipv6_address", null)
+                    .addValue("ipv6_prefix", null)
+                    .addValue("ipv6_gateway", null);
+        }
     }
 
     @Override
@@ -180,22 +206,46 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
             entity.setNicId(getGuid(rs, "nic_id"));
             entity.setProperties(getCustomProperties(rs));
 
-            IpConfiguration ipConfiguration = new IpConfiguration();
-            String bootProtocol = rs.getString("boot_protocol");
+            final IpConfiguration ipConfiguration = new IpConfiguration();
+
+            final String bootProtocol = rs.getString("boot_protocol");
             if (bootProtocol != null) {
-                ipConfiguration.setIPv4Addresses(new ArrayList<>());
-                IPv4Address iPv4Address = new IPv4Address();
-                iPv4Address.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
-                iPv4Address.setAddress(rs.getString("address"));
-                iPv4Address.setNetmask(rs.getString("netmask"));
-                iPv4Address.setGateway(rs.getString("gateway"));
+                final IPv4Address iPv4Address = createIpv4Address(rs, bootProtocol);
                 ipConfiguration.getIPv4Addresses().add(iPv4Address);
-                entity.setIpConfiguration(ipConfiguration);
             }
 
+            final String v6BootProtocol = rs.getString("ipv6_boot_protocol");
+            if (v6BootProtocol != null) {
+                final IpV6Address ipV6Address = createIpV6Address(rs, v6BootProtocol);
+                ipConfiguration.getIpV6Addresses().add(ipV6Address);
+            }
+
+            if (bootProtocol != null || v6BootProtocol != null) {
+                entity.setIpConfiguration(ipConfiguration);
+            }
             entity.setHostNetworkQos(hostNetworkQosDao.get(entity.getId()));
 
             return entity;
+        }
+
+        private IPv4Address createIpv4Address(ResultSet rs, String bootProtocol) throws SQLException {
+            final IPv4Address iPv4Address = new IPv4Address();
+            iPv4Address.setBootProtocol(NetworkBootProtocol.valueOf(bootProtocol));
+            iPv4Address.setAddress(rs.getString("address"));
+            iPv4Address.setNetmask(rs.getString("netmask"));
+            iPv4Address.setGateway(rs.getString("gateway"));
+            return iPv4Address;
+        }
+
+        private IpV6Address createIpV6Address(ResultSet rs, String v6BootProtocol) throws SQLException {
+            final IpV6Address ipV6Address = new IpV6Address();
+            ipV6Address.setBootProtocol(NetworkBootProtocol.valueOf(v6BootProtocol));
+            ipV6Address.setAddress(rs.getString("ipv6_address"));
+            if (rs.getObject("ipv6_prefix") != null) {
+                ipV6Address.setPrefix(rs. getInt("ipv6_prefix"));
+            }
+            ipV6Address.setGateway(rs.getString("ipv6_gateway"));
+            return ipV6Address;
         }
 
         @SuppressWarnings("unchecked")
