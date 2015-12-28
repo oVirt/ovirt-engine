@@ -79,11 +79,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
-    private com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider;
+    private com.google.inject.Provider<ImportVmFromExternalSourceModel> importFromExternalSourceModelProvider;
     private com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
     private com.google.inject.Provider<ImportVmFromOvaModel> importFromOvaModelProvider;
 
-    private ImportVmFromVmwareModel importFromVmwareModel;
+    private ImportVmFromExternalSourceModel importFromExternalSourceModel;
     private ImportVmFromExportDomainModel importFromExportDomainModel;
     private ImportVmFromOvaModel importFromOvaModel;
     private ImportVmModel selectedImportVmModel;
@@ -95,10 +95,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     @Inject
     public ImportVmsModel(
             com.google.inject.Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
-            com.google.inject.Provider<ImportVmFromVmwareModel> importFromVmwareModelProvider,
+            com.google.inject.Provider<ImportVmFromExternalSourceModel> importFromExternalSourceModelProvider,
             com.google.inject.Provider<ImportVmFromOvaModel> importFromOvaModelProvider) {
         this.importFromExportDomainModelProvider = importFromExportDomainModelProvider;
-        this.importFromVmwareModelProvider = importFromVmwareModelProvider;
+        this.importFromExternalSourceModelProvider = importFromExternalSourceModelProvider;
         this.importFromOvaModelProvider = importFromOvaModelProvider;
 
         constants = ConstantsManager.getInstance().getConstants();
@@ -140,8 +140,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         importFromExportDomainModel = importFromExportDomainModelProvider.get();
         initImportModel(importFromExportDomainModel, commands);
 
-        importFromVmwareModel = importFromVmwareModelProvider.get();
-        initImportModel(importFromVmwareModel, commands);
+        importFromExternalSourceModel = importFromExternalSourceModelProvider.get();
+        initImportModel(importFromExternalSourceModel, commands);
 
         importFromOvaModel = importFromOvaModelProvider.get();
         initImportModel(importFromOvaModel, commands);
@@ -166,12 +166,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             selectedImportVmModel = importFromExportDomainModel;
             break;
         case VMWARE:
-            importFromVmwareModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
-            importFromVmwareModel.setUrl(getUrl());
-            importFromVmwareModel.setUsername(getUsername().getEntity());
-            importFromVmwareModel.setPassword(getPassword().getEntity());
-            importFromVmwareModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
-            selectedImportVmModel = importFromVmwareModel;
+            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromExternalSourceModel.setUrl(getUrl());
+            importFromExternalSourceModel.setUsername(getUsername().getEntity());
+            importFromExternalSourceModel.setPassword(getPassword().getEntity());
+            importFromExternalSourceModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
+            selectedImportVmModel = importFromExternalSourceModel;
             break;
         case OVA:
             importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
@@ -455,7 +455,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         if (!validateVmwareConfiguration()) {
             return;
         }
+        loadVMsFromExternalProvider(getUrl(), getUsername().getEntity(), getPassword().getEntity());
+    }
 
+    private void loadVMsFromExternalProvider(String uri, String username, String password) {
         startProgress();
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -484,9 +487,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 query,
                 getDataCenters().getSelectedItem().getId(),
                 getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null,
-                getUrl(),
-                getUsername().getEntity(),
-                getPassword().getEntity());
+                uri,
+                username,
+                password);
     }
 
     private boolean validateVmwareConfiguration() {

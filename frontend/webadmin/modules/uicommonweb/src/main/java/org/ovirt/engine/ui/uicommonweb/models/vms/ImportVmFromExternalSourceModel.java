@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.inject.Inject;
 
-public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
+public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProviderModel {
 
     private String url;
     private String username;
@@ -30,7 +30,7 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
     private Guid proxyHostId;
 
     @Inject
-    public ImportVmFromVmwareModel(VmImportGeneralModel vmImportGeneralModel,
+    public ImportVmFromExternalSourceModel(VmImportGeneralModel vmImportGeneralModel,
             VmImportDiskListModel importDiskListModel,
             VmImportInterfaceListModel vmImportInterfaceListModel,
             ClusterListModel<Void> cluster,
