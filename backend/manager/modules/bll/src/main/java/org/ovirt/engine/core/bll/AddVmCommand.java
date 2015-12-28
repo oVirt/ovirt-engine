@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -1337,7 +1338,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (vmFromParams != null && getVmTemplate() != null) {
             // user needs specific permission to change custom properties
-            if (!StringUtils.isEmpty(vmFromParams.getCustomProperties())) {
+            if (!Objects.equals(vmFromParams.getCustomProperties(), getVmTemplate().getCustomProperties())) {
                 permissionList.add(new PermissionSubject(getVdsGroupId(),
                         VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
             }
