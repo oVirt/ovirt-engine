@@ -7,8 +7,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -1333,15 +1335,18 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void addPermissionSubjectForAdminLevelProperties(List<PermissionSubject> permissionList) {
         VmStatic vmFromParams = getParameters().getVmStaticData();
 
-        if (vmFromParams != null) {
+        if (vmFromParams != null && getVmTemplate() != null) {
             // user needs specific permission to change custom properties
             if (!StringUtils.isEmpty(vmFromParams.getCustomProperties())) {
                 permissionList.add(new PermissionSubject(getVdsGroupId(),
                         VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
             }
 
+            Set<Guid> dedicatedVmForVdsFromUser = new HashSet<>(vmFromParams.getDedicatedVmForVdsList());
+            Set<Guid> dedicatedVmForVdsFromTemplate = new HashSet<>(getVmTemplate().getDedicatedVmForVdsList());
             // host-specific parameters can be changed by administration role only
-            if (vmFromParams.getDedicatedVmForVdsList().size() > 0 || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
+            if (!dedicatedVmForVdsFromUser.equals(dedicatedVmForVdsFromTemplate)
+                    || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
                 permissionList.add(new PermissionSubject(getVdsGroupId(),
                         VdcObjectType.VdsGroups, ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
             }
