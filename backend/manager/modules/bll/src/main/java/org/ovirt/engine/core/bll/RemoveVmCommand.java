@@ -230,10 +230,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (!validate(snapshotsValidator.vmNotInPreview(getVmId()))) {
-            return false;
-        }
-
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
