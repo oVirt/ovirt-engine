@@ -34,9 +34,7 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
         HostProviderProxy proxy = getHostProviderProxy(provider);
         List<Erratum> errata = proxy.getErrataForHost(host.getHostName());
         ErrataCounts stats = new ErrataCounts();
-        for (Erratum erratum : errata) {
-            stats.addToCounts(erratum);
-        }
+        errata.forEach(stats::addToCounts);
 
         setReturnValue(stats);
     }
