@@ -6,12 +6,12 @@ import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.host.provider.foreman.SystemProviderFinder;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class GetErratumByIdForSystemQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
+public class GetErratumByIdForEngineQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private SystemProviderFinder systemProviderFinder;
 
-    public GetErratumByIdForSystemQuery(P parameters) {
+    public GetErratumByIdForEngineQuery(P parameters) {
         super(parameters);
     }
 

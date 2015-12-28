@@ -56,7 +56,7 @@ public class BackendSystemKatelloErratumResourceTest extends AbstractBackendSubR
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetErratumByIdForSystem,
+                VdcQueryType.GetErratumByIdForEngine,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },

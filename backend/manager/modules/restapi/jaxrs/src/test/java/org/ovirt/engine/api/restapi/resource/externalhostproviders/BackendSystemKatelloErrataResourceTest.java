@@ -25,7 +25,7 @@ public class BackendSystemKatelloErrataResourceTest extends AbstractBackendColle
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(
-                VdcQueryType.GetErrataForSystem,
+                VdcQueryType.GetErrataForEngine,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},

@@ -18,7 +18,7 @@ public class BackendSystemKatelloErratumResource extends AbstractBackendSubResou
 
     @Override
     public KatelloErratum get() {
-        return performGet(VdcQueryType.GetErratumByIdForSystem, new NameQueryParameters(hex2string(id)));
+        return performGet(VdcQueryType.GetErratumByIdForEngine, new NameQueryParameters(hex2string(id)));
     }
 
     @Override

@@ -19,7 +19,7 @@ public class BackendSystemKatelloErrataResource extends AbstractBackendCollectio
 
     @Override
     public KatelloErrata list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetErrataForSystem, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(VdcQueryType.GetErrataForEngine, new VdcQueryParametersBase()));
     }
 
     private KatelloErrata mapCollection(List<Erratum> entities) {

@@ -25,6 +25,6 @@ public class EngineErrataListModel extends AbstractErrataListModel {
 
     @Override
     protected VdcQueryType getQueryType() {
-        return VdcQueryType.GetErrataForSystem;
+        return VdcQueryType.GetErrataForEngine;
     }
 }

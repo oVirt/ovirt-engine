@@ -7,13 +7,12 @@ import org.ovirt.engine.core.bll.host.provider.foreman.SystemProviderFinder;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
-// TODO rename -> GetErrataForEngineQuery
-public class GetErrataForSystemQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetErrataForEngineQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
     @Inject
     private SystemProviderFinder systemProviderFinder;
 
-    public GetErrataForSystemQuery(P parameters) {
+    public GetErrataForEngineQuery(P parameters) {
         super(parameters);
     }
 
