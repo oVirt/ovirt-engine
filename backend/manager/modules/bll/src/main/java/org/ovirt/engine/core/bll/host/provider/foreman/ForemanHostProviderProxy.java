@@ -166,11 +166,11 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     private List<VDS> mapHosts(List<ForemanHost> foremanHosts) {
         List<VDS> hosts = new ArrayList<>(foremanHosts.size());
-        for (ForemanHost host : foremanHosts) {
-            VDS vds = new VDS();
-            vds.setVdsName(host.getName());
-            vds.setHostName(host.getName());
-            hosts.add(vds);
+        for (ForemanHost foremanHost : foremanHosts) {
+            VDS host = new VDS();
+            host.setVdsName(foremanHost.getName());
+            host.setHostName(foremanHost.getName());
+            hosts.add(host);
         }
         return hosts;
     }
@@ -333,7 +333,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public void provisionHost(VDS vds,
+    public void provisionHost(VDS host,
             ExternalHostGroup hg,
             ExternalComputeResource computeResource,
             String mac,
@@ -342,7 +342,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             String ip) {
         final String entityBody = "{\n" +
                 "    \"discovered_host\": {\n" +
-                "        \"name\": \"" + vds.getName() + "\",\n" +
+                "        \"name\": \"" + host.getName() + "\",\n" +
                 "        \"hostgroup_id\": \"" + hg.getHostgroupId() + "\",\n" +
                 "        \"environment_id\": \"" + hg.getEnvironmentId() + "\",\n" +
                 "        \"mac\": \"" + mac + "\",\n" +
@@ -357,7 +357,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"host_parameters_attributes\": [\n" +
                 "           {\n" +
                 "                \"name\": \"host_ovirt_id\",\n" +
-                "                \"value\": \"" + vds.getStaticData().getId() + "\",\n" +
+                "                \"value\": \"" + host.getId() + "\",\n" +
                 "                \"_destroy\": \"false\"\n" +
                 "            },\n" +
                 "           {\n" +
