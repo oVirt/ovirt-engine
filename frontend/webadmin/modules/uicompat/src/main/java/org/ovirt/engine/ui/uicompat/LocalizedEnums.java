@@ -1164,6 +1164,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ImportSource___OVA();
 
+    String ImportSource___XEN();
+
     String ConsoleDisconnectAction___NONE();
 
     String ConsoleDisconnectAction___LOCK_SCREEN();

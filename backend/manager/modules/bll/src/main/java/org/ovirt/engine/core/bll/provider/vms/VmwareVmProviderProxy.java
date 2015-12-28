@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
@@ -43,6 +44,7 @@ public class VmwareVmProviderProxy implements ProviderProxy {
                 provider.getUrl(),
                 provider.getUsername(),
                 provider.getPassword(),
+                OriginType.VMWARE,
                 provider.getAdditionalProperties().getProxyHostId(),
                 provider.getAdditionalProperties().getStoragePoolId()
                 );

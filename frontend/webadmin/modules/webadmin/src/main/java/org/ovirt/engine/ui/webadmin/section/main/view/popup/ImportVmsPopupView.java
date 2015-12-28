@@ -90,6 +90,9 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @UiField
     UiCommandButton loadOvaButton;
 
+    @UiField
+    UiCommandButton loadXenButton;
+
     @UiField(provided = true)
     @Path("vmwareProviders.selectedItem")
     @WithElementId
@@ -145,8 +148,22 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     StringEntityModelTextBoxEditor ovaPathEditor;
 
     @UiField
+    @Path("xenUri.entity")
+    @WithElementId("xenUri")
+    StringEntityModelTextBoxEditor xenUriEditor;
+
+    @UiField(provided = true)
+    @Path("xenProxyHosts.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<VDS> xenProxyHostsEditor;
+
+    @UiField
     @Ignore
     FlowPanel ovaPanel;
+
+    @UiField
+    @Ignore
+    FlowPanel xenPanel;
 
     @UiField
     @Ignore
@@ -198,6 +215,15 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             }
         });
         hostsEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
+
+        xenProxyHostsEditor = new ListModelListBoxEditor<>(new AbstractRenderer<VDS>() {
+            @Override
+            public String render(VDS object) {
+                return object != null ? object.getName() :
+                        ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
+            }
+        });
+
         vmwareProvidersEditor = new ListModelListBoxEditor<>(new AbstractRenderer<Provider<VmwareVmProviderProperties>>() {
             @Override
             public String render(Provider<VmwareVmProviderProperties> provider) {
@@ -235,9 +261,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         hostsEditor.setLabel(constants.ovaHost());
         ovaPathEditor.setLabel(constants.ovaPath());
 
+        xenUriEditor.setLabel(constants.xenUri());
+        xenProxyHostsEditor.setLabel(constants.proxyHost());
+
         loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
         loadVmsFromVmwareButton.setLabel(constants.loadLabel());
         loadOvaButton.setLabel(constants.loadLabel());
+        loadXenButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -310,6 +340,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 model.loadVmFromOva();
             }
         });
+        loadXenButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.loadVmsFromXen();
+            }
+        });
     }
 
     private void updatePanelsVisibility(ImportVmsModel model) {
@@ -317,6 +353,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         vmwarePanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
         vmwareProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
         ovaPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.OVA);
+        xenPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.XEN);
     }
 
     @Override

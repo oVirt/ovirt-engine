@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -9,6 +10,7 @@ public class GetVmsFromExternalProviderQueryParameters extends VdcQueryParameter
     private String url;
     private String username;
     private String password;
+    private OriginType originType;
     private Guid proxyHostId;
     private Guid dataCenterId;
 
@@ -16,10 +18,11 @@ public class GetVmsFromExternalProviderQueryParameters extends VdcQueryParameter
     }
 
     public GetVmsFromExternalProviderQueryParameters(String url, String username,
-            String password, Guid proxyHost, Guid dataCenterId) {
+            String password, OriginType originType, Guid proxyHost, Guid dataCenterId) {
         this.url = url;
         this.username = username;
         this.password = password;
+        this.originType = originType;
         this.proxyHostId = proxyHost;
         this.dataCenterId = dataCenterId;
     }
@@ -46,6 +49,14 @@ public class GetVmsFromExternalProviderQueryParameters extends VdcQueryParameter
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public OriginType getOriginType() {
+        return originType;
+    }
+
+    public void setOriginType(OriginType originType) {
+        this.originType = originType;
     }
 
     public Guid getProxyHostId() {

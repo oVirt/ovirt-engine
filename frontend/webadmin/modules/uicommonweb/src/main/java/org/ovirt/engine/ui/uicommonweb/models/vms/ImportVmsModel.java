@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -48,6 +50,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 
 import com.google.inject.Inject;
 
@@ -75,6 +78,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
+
+    private EntityModel<String> xenUri;
+    private ListModel<VDS> xenProxyHosts;
 
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
@@ -124,6 +130,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         // OVA
         setHosts(new ListModel<VDS>());
         setOvaPath(new EntityModel<String>());
+
+        // Xen
+        setXenUri(new EntityModel<String>());
+        setXenProxyHosts(new ListModel<VDS>());
 
         setInfoMessage(new EntityModel<String>());
 
@@ -178,6 +188,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
             selectedImportVmModel = importFromOvaModel;
+            break;
+        case XEN:
+            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromExternalSourceModel.setUrl(getXenUri().getEntity());
+            importFromExternalSourceModel.setUsername(""); //$NON-NLS-1$
+            importFromExternalSourceModel.setPassword(""); //$NON-NLS-1$
+            importFromExternalSourceModel.setProxyHostId(getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null);
+            selectedImportVmModel = importFromExternalSourceModel;
             break;
         default:
         }
@@ -294,6 +312,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         List<VDS> hosts = (List<VDS>) returnValue;
                         List<VDS> upHosts = filterUpHosts(hosts);
                         proxyHosts.setItems(addAnyHostInCluster(upHosts));
+                        xenProxyHosts.setItems(addAnyHostInCluster(upHosts));
                         ImportVmsModel.this.hosts.setItems(upHosts);
                         stopProgress();
                     }
@@ -455,10 +474,20 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         if (!validateVmwareConfiguration()) {
             return;
         }
-        loadVMsFromExternalProvider(getUrl(), getUsername().getEntity(), getPassword().getEntity());
+        Guid proxyId = getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null;
+        loadVMsFromExternalProvider(OriginType.VMWARE, getUrl(), getUsername().getEntity(), getPassword().getEntity(), proxyId);
     }
 
-    private void loadVMsFromExternalProvider(String uri, String username, String password) {
+    public void loadVmsFromXen() {
+        clearProblem();
+        if (!validateXenConfiguration()) {
+            return;
+        }
+        Guid proxyId = getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null;
+        loadVMsFromExternalProvider(OriginType.XEN, getXenUri().getEntity(), "", "", proxyId); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private void loadVMsFromExternalProvider(final OriginType type, String uri, String username, String password, Guid proxyId) {
         startProgress();
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -486,10 +515,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         AsyncDataProvider.getInstance().getVmsFromExternalServer(
                 query,
                 getDataCenters().getSelectedItem().getId(),
-                getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null,
+                proxyId,
                 uri,
                 username,
-                password);
+                password,
+                type);
     }
 
     private boolean validateVmwareConfiguration() {
@@ -514,6 +544,13 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 && getVmwareDatacenter().getIsValid()
                 && getUsername().getIsValid()
                 && getPassword().getIsValid();
+    }
+
+    private boolean validateXenConfiguration() {
+        getXenUri().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(255)});
+        return getXenUri().getIsValid();
     }
 
     private void clearValidations() {
@@ -800,5 +837,21 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setOvaPath(EntityModel<String> ovaPath) {
         this.ovaPath = ovaPath;
+    }
+
+    public EntityModel<String> getXenUri() {
+        return xenUri;
+    }
+
+    public void setXenUri(EntityModel<String> uri) {
+        this.xenUri = uri;
+    }
+
+    public ListModel<VDS> getXenProxyHosts() {
+        return xenProxyHosts;
+    }
+
+    public void setXenProxyHosts(ListModel<VDS> proxyHosts) {
+        this.xenProxyHosts = proxyHosts;
     }
 }

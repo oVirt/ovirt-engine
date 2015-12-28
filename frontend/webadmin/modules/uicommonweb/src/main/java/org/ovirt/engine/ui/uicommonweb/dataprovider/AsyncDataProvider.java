@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -2496,7 +2497,7 @@ public class AsyncDataProvider {
     }
 
     public void getVmsFromExternalServer(AsyncQuery aQuery, Guid dataCenterId, Guid vdsId,
-            String url, String username, String password) {
+            String url, String username, String password, OriginType originType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object convert(Object source, AsyncQuery _asyncQuery) {
@@ -2508,7 +2509,7 @@ public class AsyncDataProvider {
         };
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExternalProvider,
-                new GetVmsFromExternalProviderQueryParameters(url, username, password, vdsId, dataCenterId),
+                new GetVmsFromExternalProviderQueryParameters(url, username, password, originType, vdsId, dataCenterId),
                 aQuery);
     }
 

@@ -3639,6 +3639,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Path")
     String ovaPath();
 
+    @DefaultStringValue("URI")
+    String xenUri();
+
     @DefaultStringValue("Test")
     String testProvider();
 

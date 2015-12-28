@@ -48,7 +48,8 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     private GetVmsFromExternalProviderParameters buildGetRemoteVmsInfoParameters() {
         return new GetVmsFromExternalProviderParameters(
                 getProxyHostId(), getParameters().getUrl(),
-                getParameters().getUsername(), getParameters().getPassword());
+                getParameters().getUsername(), getParameters().getPassword(),
+                getParameters().getOriginType());
     }
 
     private Guid getProxyHostId() {
