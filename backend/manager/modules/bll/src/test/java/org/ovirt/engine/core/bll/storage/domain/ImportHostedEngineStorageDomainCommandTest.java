@@ -43,6 +43,8 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -95,10 +98,29 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private BaseDiskDao baseDiskDao;
     @Mock
     private VDSBrokerFrontend vdsBroker;
+    @Mock
+    private StoragePoolDao storagePoolDao;
 
     @Before
     public void initTest() {
         prepareCommand();
+    }
+
+    @Test
+    public void failIfDcNotActive() throws Exception {
+        mockGetExistingDomain(true);
+        StoragePool pool = new StoragePool();
+        pool.setStatus(StoragePoolStatus.Uninitialized);
+        when(storagePoolDao.get(HE_SP_ID)).thenReturn(pool);
+
+        cmd.init();
+        cmd.validate();
+
+        ValidateTestUtils.assertValidationMessages(
+                "",
+                cmd,
+                EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE
+        );
     }
 
     @Test
@@ -259,6 +281,11 @@ public class ImportHostedEngineStorageDomainCommandTest {
         when(backend.runInternalAction(
                 eq(VdcActionType.RemoveDisk),
                 any(VdsActionParameters.class))).thenReturn(successfulReturnValue());
+        // Data center
+        StoragePool pool = new StoragePool();
+        pool.setStatus(StoragePoolStatus.Up);
+        pool.setId(HE_SP_ID);
+        when(storagePoolDao.get(HE_SP_ID)).thenReturn(pool);
         // compensation
         CompensationContext compensationContext = mock(CompensationContext.class);
         when(cmd.getCompensationContext()).thenReturn(compensationContext);

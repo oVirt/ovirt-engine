@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
  * <pre>
@@ -51,6 +53,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
  */
 public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManagementParameter> extends CommandBase<T> {
 
+    @Inject
+    private StoragePoolDao storagePoolDao;
     @Inject
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomain heStorageDomain;
@@ -68,11 +72,17 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
 
     @Override
     protected void init() {
+        setVdsId(getParameters().getVdsId());
         fetchStorageDomainInfo();
     }
 
     @Override
     protected boolean validate() {
+        // no point in importing this domain without an active DC. The hosted
+        // engine domain should never be the first, or master domain of a DC
+        if (storagePoolDao.get(getVds().getStoragePoolId()).getStatus() != StoragePoolStatus.Up) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE);
+        }
         // if sd imported already, fail
         if (hostedEngineHelper.getStorageDomain() != null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
@@ -93,7 +103,6 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     protected void executeCommand() {
         StorageDomainManagementParameter addSdParams =
                 new StorageDomainManagementParameter(heStorageDomain.getStorageStaticData());
-        setVdsId(getParameters().getVdsId());
         addSdParams.setVdsId(getParameters().getVdsId());
         addSdParams.setStoragePoolId(getVds().getStoragePoolId());
 
