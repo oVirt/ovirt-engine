@@ -2,9 +2,11 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
+    private static final long serialVersionUID = 3891077822520360466L;
 
     private String url;
     private String username;
@@ -15,6 +17,10 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private String externalName;
 
     public ImportVmFromExternalProviderParameters() {
+    }
+
+    public ImportVmFromExternalProviderParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid vdsGroupId) {
+        super(vm, destStorageDomainId, storagePoolId, vdsGroupId);
     }
 
     public String getUrl() {

@@ -88,6 +88,22 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return true;
     }
 
+    @Override
+    public Guid getVmId() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVm().getId();
+        }
+        return super.getVmId();
+    }
+
+    @Override
+    public VM getVm() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVm();
+        }
+        return super.getVm();
+    }
+
     protected ImportValidator getImportValidator() {
         if (importValidator == null) {
             importValidator = new ImportValidator(getParameters());
