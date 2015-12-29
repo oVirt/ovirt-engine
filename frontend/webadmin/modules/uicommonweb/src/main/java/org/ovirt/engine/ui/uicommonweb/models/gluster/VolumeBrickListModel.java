@@ -195,7 +195,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         boolean allowAdvanced = true;
         boolean allowAdd = true;
 
-        if (volumeEntity == null || volumeEntity.getVolumeType().isDispersedType()) {
+        if (volumeEntity == null || volumeEntity.getVolumeType().isDispersedType() || !volumeEntity.getVolumeType().isSupported()) {
             allowRemove = false;
             allowAdd = false;
         }

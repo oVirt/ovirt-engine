@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,13 +104,10 @@ public class VolumeModel extends Model {
         setName(new EntityModel<String>());
 
         setTypeList(new ListModel<GlusterVolumeType>());
-        ArrayList<GlusterVolumeType> list = new ArrayList<>(Arrays.asList(GlusterVolumeType.values()));
-        list.remove(GlusterVolumeType.DISPERSE);
-        list.remove(GlusterVolumeType.DISTRIBUTED_DISPERSE);
-        list.remove(GlusterVolumeType.DISTRIBUTED_STRIPE);
-        list.remove(GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE);
-        list.remove(GlusterVolumeType.STRIPE);
-        list.remove(GlusterVolumeType.STRIPED_REPLICATE);
+        ArrayList<GlusterVolumeType> list = new ArrayList<>();
+        list.add(GlusterVolumeType.DISTRIBUTE);
+        list.add(GlusterVolumeType.REPLICATE);
+        list.add(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         getTypeList().setItems(list);
 
         setReplicaCount(new EntityModel<Integer>());

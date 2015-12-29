@@ -44,7 +44,17 @@ public enum GlusterVolumeType {
     /**
      * Distributed Erasure encoded volume
      */
-    DISTRIBUTED_DISPERSE;
+    DISTRIBUTED_DISPERSE,
+
+    /**
+     * TIER volume type
+     */
+    TIER,
+
+    /**
+     * UNKNOWN volume type
+     */
+    UNKNOWN;
 
     public String value() {
         return name().toUpperCase();
@@ -54,7 +64,7 @@ public enum GlusterVolumeType {
         try {
             return valueOf(v.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return null;
+            return GlusterVolumeType.UNKNOWN;
         }
     }
 
@@ -72,5 +82,13 @@ public enum GlusterVolumeType {
 
     public boolean isDispersedType() {
         return value().contains("DISPERSE");
+    }
+
+    public boolean isSupported(){
+        if(this == GlusterVolumeType.UNKNOWN || this == GlusterVolumeType.TIER){
+            return false;
+        }else{
+            return true;
+        }
     }
 }

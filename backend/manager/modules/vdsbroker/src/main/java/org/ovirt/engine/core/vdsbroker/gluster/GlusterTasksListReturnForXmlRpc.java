@@ -42,7 +42,10 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         Map<String, Object> tasksMap = (Map<String, Object>) innerMap.get(TASKS_LIST);
         if (tasksMap != null) {
             for (Entry<String, Object> entry: tasksMap.entrySet()) {
-                tasks.add(getTask(entry.getKey(), (Map<String, Object>)entry.getValue()));
+                GlusterAsyncTask task = getTask(entry.getKey(), (Map<String, Object>)entry.getValue());
+                if(GlusterTaskType.UNKNOWN != task.getType()){
+                    tasks.add(task);
+                }
             }
         }
 
@@ -54,10 +57,12 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         task.setTaskId(Guid.createGuidFromString(taskId));
         task.setStatus(GlusterAsyncTaskStatus.from((String)map.get(STATUS)).getJobExecutionStatus());
         task.setType(GlusterTaskType.fromValue((String)map.get(TASK_TYPE)));
-        task.setMessage(getMessage((Map<String, Object>)map.get(DATA)));
-        task.setTaskParameters(new GlusterTaskParameters());
-        task.getTaskParameters().setVolumeName((String)map.get(VOLUME_NAME));
-        task.getTaskParameters().setBricks(getBrickNames(map.get(BRICK_NAMES)));
+        if(GlusterTaskType.UNKNOWN != task.getType()){
+            task.setMessage(getMessage((Map<String, Object>)map.get(DATA)));
+            task.setTaskParameters(new GlusterTaskParameters());
+            task.getTaskParameters().setVolumeName((String)map.get(VOLUME_NAME));
+            task.getTaskParameters().setBricks(getBrickNames(map.get(BRICK_NAMES)));
+        }
         return task;
     }
 

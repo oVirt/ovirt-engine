@@ -18,6 +18,7 @@ public class GlusterConstants {
     public static final String BRICK_NAME = "brickName";
     public static final String SERVER_NAME = "servername";
     public static final String VOLUME_NAME = "glustervolumename";
+    public static final String VOLUME_TYPE = "glusterVolumeType";
     public static final String VDS_NAME = "VdsName";
 
     public static final String FS_TYPE_XFS = "xfs";

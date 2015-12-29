@@ -353,6 +353,10 @@ public interface Enums extends LocalizedEnums {
 
     String GlusterVolumeType___DISTRIBUTED_DISPERSE();
 
+    String GlusterVolumeType___TIER();
+
+    String GlusterVolumeType___UNKNOWN();
+
     String GlusterStatus___UP();
 
     String GlusterStatus___DOWN();
