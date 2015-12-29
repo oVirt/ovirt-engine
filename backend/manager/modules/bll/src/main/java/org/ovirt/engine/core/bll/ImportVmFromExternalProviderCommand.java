@@ -62,6 +62,7 @@ implements QuotaStorageDependent {
     @Override
     protected void init() {
         super.init();
+        setVmName(getParameters().getExternalName());
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getVdsGroup() != null ? getVdsGroup().getStoragePoolId() : null);
