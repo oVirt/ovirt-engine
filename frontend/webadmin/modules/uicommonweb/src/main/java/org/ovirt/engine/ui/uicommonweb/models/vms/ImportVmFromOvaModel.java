@@ -69,6 +69,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         prm.setStoragePoolId(getStoragePool().getId());
         prm.setVdsGroupId(((VDSGroup) getCluster().getSelectedItem()).getId());
         prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
+        prm.setExternalName(importVmData.getName());
 
         if (getClusterQuota().getSelectedItem() != null &&
                 getClusterQuota().getIsAvailable()) {

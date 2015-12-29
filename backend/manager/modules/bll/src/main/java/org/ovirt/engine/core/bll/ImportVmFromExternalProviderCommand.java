@@ -61,6 +61,7 @@ implements QuotaStorageDependent {
     @Override
     protected void init() {
         super.init();
+        setVmName(getParameters().getExternalName());
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getVdsGroup() != null ? getVdsGroup().getStoragePoolId() : null);
@@ -88,7 +89,7 @@ implements QuotaStorageDependent {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
 
-        if (getVdsId() != null && !validate(validateRequestedProxyHost())) {
+        if (!Guid.isNullOrEmpty(getVdsId()) && !validate(validateRequestedProxyHost())) {
             return false;
         }
 

@@ -67,7 +67,8 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
         List<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : getItems()) {
-            VM vm = ((ImportVmData) item).getVm();
+            ImportVmData importVmData = ((ImportVmData) item);
+            VM vm = importVmData.getVm();
 
             ImportVmFromExternalProviderParameters prm =
                     new ImportVmFromExternalProviderParameters();
@@ -80,6 +81,7 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
             prm.setStoragePoolId(getStoragePool().getId());
             prm.setVdsGroupId(((VDSGroup) getCluster().getSelectedItem()).getId());
             prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
+            prm.setExternalName(importVmData.getName());
 
             if (getClusterQuota().getSelectedItem() != null &&
                     getClusterQuota().getIsAvailable()) {
@@ -92,7 +94,7 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
             }
 
             prm.setForceOverride(true);
-            prm.setCopyCollapse((Boolean) ((ImportVmData) item).getCollapseSnapshots().getEntity());
+            prm.setCopyCollapse((Boolean) importVmData.getCollapseSnapshots().getEntity());
 
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
@@ -109,8 +111,8 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
 
             updateNetworkInterfacesForVm(vm);
 
-            if (((ImportVmData) item).isExistsInSystem() ||
-                    (Boolean) ((ImportVmData) item).getClone().getEntity()) {
+            if (importVmData.isExistsInSystem() ||
+                    (Boolean) importVmData.getClone().getEntity()) {
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
             }
