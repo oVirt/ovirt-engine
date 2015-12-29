@@ -623,6 +623,17 @@ public class GlusterSyncJob extends GlusterJob {
         logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
         log.debugFormat("Volume {0} has been created directly using the gluster CLI. Creating it in engine as well.",
                 volume.getName());
+        if (!volume.getVolumeType().isSupported()) {
+            logUtil.logAuditMessage(volume.getClusterId(),
+                    volume,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_TYPE_UNSUPPORTED,
+                    new HashMap<String, String>() {
+                        {
+                            put(GlusterConstants.VOLUME_TYPE, volume.getVolumeType().toString());
+                        }
+                    });
+        }
         getVolumeDao().save(volume);
     }
 
@@ -877,10 +888,13 @@ public class GlusterSyncJob extends GlusterJob {
      *            Volume fetched from GlusterFS, containing latest properties
      */
     @SuppressWarnings("incomplete-switch")
-    public void updateVolumeProperties(GlusterVolumeEntity existingVolume, GlusterVolumeEntity fetchedVolume) {
+    public void updateVolumeProperties(GlusterVolumeEntity existingVolume, final GlusterVolumeEntity fetchedVolume) {
         boolean changed = false;
-
+        boolean volumeTypeUnSupported = false;
         if (existingVolume.getVolumeType() != fetchedVolume.getVolumeType()) {
+            if(existingVolume.getVolumeType().isSupported() && !fetchedVolume.getVolumeType().isSupported()){
+                volumeTypeUnSupported= true;
+            }
             existingVolume.setVolumeType(fetchedVolume.getVolumeType());
             changed = true;
         }
@@ -901,6 +915,17 @@ public class GlusterSyncJob extends GlusterJob {
             log.infoFormat("Updating volume {0} with fetched properties.", existingVolume.getName());
             getVolumeDao().updateGlusterVolume(existingVolume);
             logUtil.logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
+            if (volumeTypeUnSupported) {
+                logUtil.logAuditMessage(fetchedVolume.getClusterId(),
+                        fetchedVolume,
+                        null,
+                        AuditLogType.GLUSTER_VOLUME_TYPE_UNSUPPORTED,
+                        new HashMap<String, String>() {
+                            {
+                                put(GlusterConstants.VOLUME_TYPE, fetchedVolume.getVolumeType().toString());
+                            }
+                        });
+            }
         }
 
         if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
