@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,6 +18,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private Guid proxyHostId;
     private Guid clusterId;
     private String virtioIsoName;
+    private OriginType originType;
 
     public ConvertVmParameters() {
     }
@@ -103,5 +105,13 @@ public class ConvertVmParameters extends VmOperationParameterBase {
 
     public void setVirtioIsoName(String virtioIsoName) {
         this.virtioIsoName = virtioIsoName;
+    }
+
+    public OriginType getOriginType() {
+        return originType;
+    }
+
+    public void setOriginType(OriginType originType) {
+        this.originType = originType;
     }
 }

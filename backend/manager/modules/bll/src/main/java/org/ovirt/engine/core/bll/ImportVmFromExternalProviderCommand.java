@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -51,6 +52,7 @@ public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalP
 implements QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
+    private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -253,7 +255,7 @@ implements QuotaStorageDependent {
     }
 
     private Guid createDisk(DiskImage image) {
-        image.setDiskAlias(renameDiskAlias(image.getDiskAlias()));
+        image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
         image.setDiskInterface(DiskInterface.VirtIO);
 
         AddDiskParameters diskParameters = new AddDiskParameters(getVmId(), image);
@@ -274,10 +276,15 @@ implements QuotaStorageDependent {
         return vdcReturnValueBase.getActionReturnValue();
     }
 
-    protected static String renameDiskAlias(String alias) {
-        Matcher vmwareMatcher = VMWARE_DISK_NAME_PATTERN.matcher(alias);
-        if (vmwareMatcher.matches()) {
-            return vmwareMatcher.group(1);
+    protected static String renameDiskAlias(OriginType originType, String alias) {
+        Matcher matcher;
+        if (originType == OriginType.VMWARE) {
+            matcher = VMWARE_DISK_NAME_PATTERN.matcher(alias);
+        } else {
+            matcher = DISK_NAME_PATTERN.matcher(alias);
+        }
+        if (matcher.matches()) {
+            return matcher.group(1);
         }
 
         return alias;
@@ -309,6 +316,7 @@ implements QuotaStorageDependent {
         parameters.setUsername(getParameters().getUsername());
         parameters.setPassword(getParameters().getPassword());
         parameters.setVmName(getVmName());
+        parameters.setOriginType(getVm().getOrigin());
         parameters.setDisks(getDisks());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
