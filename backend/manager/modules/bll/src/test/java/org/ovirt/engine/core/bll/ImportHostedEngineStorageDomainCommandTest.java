@@ -61,6 +61,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -96,6 +97,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private BaseDiskDao baseDiskDao;
     @Mock
     private StoragePoolDao storagePoolDao;
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     public void initTest() {
@@ -189,6 +192,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
         cmd.canDoAction();
         cmd.executeCommand();
 
+        verify(storageServerConnectionDao, times(1))
+                .save(sd.getStorageStaticData().getConnection());
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingFileStorageDomain),
                 any(VdcActionParametersBase.class),
@@ -203,15 +208,19 @@ public class ImportHostedEngineStorageDomainCommandTest {
         sd.setStorageName(HOSTED_STORAGE_NAME);
         sd.setStorageType(StorageType.ISCSI);
         sd.setStorage(VG_ID.toString());
+        mockCommandCall(VdcActionType.RemoveDisk, false);
         mockCommandCall(VdcActionType.AddExistingBlockStorageDomain, true);
-        mockCommandCall(VdcActionType.AttachStorageDomainToPool, true);
         doReturn(createVdsReturnValue(createSdLuns()))
                 .when(cmd).runVdsCommand(eq(VDSCommandType.GetDeviceList), any(VDSParametersBase.class));
+        mockCommandCall(VdcActionType.AttachStorageDomainToPool, true);
 
         cmd.init();
         cmd.canDoAction();
         cmd.executeCommand();
 
+        verify(backend, times(1)).runInternalAction(
+                eq(VdcActionType.RemoveDisk),
+                any(VdcActionParametersBase.class));
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingBlockStorageDomain),
                 any(VdcActionParametersBase.class),
@@ -257,6 +266,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
     protected StorageDomain mockGetExistingDomain(boolean answerWithDomain) {
         if (answerWithDomain) {
             StorageDomain sd = new StorageDomain();
+            sd.getStorageStaticData().setConnection(new StorageServerConnections());
             doReturn(createQueryReturnValueWith(Arrays.asList(sd)))
                     .when(backend).runInternalQuery(
                     eq(VdcQueryType.GetExistingStorageDomainList),
