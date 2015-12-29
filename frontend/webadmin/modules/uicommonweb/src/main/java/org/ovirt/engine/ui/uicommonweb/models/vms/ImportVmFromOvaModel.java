@@ -61,13 +61,13 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         ImportVmData importVmData = (ImportVmData) getItems().iterator().next();
         VM vm = importVmData.getVm();
 
-        ImportVmFromOvaParameters prm = new ImportVmFromOvaParameters();
-        prm.setVm(vm);
+        ImportVmFromOvaParameters prm = new ImportVmFromOvaParameters(
+                vm,
+                getStorage().getSelectedItem().getId(),
+                getStoragePool().getId(),
+                ((VDSGroup) getCluster().getSelectedItem()).getId());
         prm.setOvaPath(ovaPath);
         prm.setProxyHostId(hostId);
-        prm.setDestDomainId(getStorage().getSelectedItem().getId());
-        prm.setStoragePoolId(getStoragePool().getId());
-        prm.setVdsGroupId(((VDSGroup) getCluster().getSelectedItem()).getId());
         prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
         prm.setExternalName(importVmData.getName());
 

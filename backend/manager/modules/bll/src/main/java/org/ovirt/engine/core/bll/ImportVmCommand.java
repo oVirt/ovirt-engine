@@ -133,22 +133,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    public Guid getVmId() {
-        if (getParameters().isImportAsNewEntity()) {
-            return getParameters().getVm().getId();
-        }
-        return super.getVmId();
-    }
-
-    @Override
-    public VM getVm() {
-        if (getParameters().isImportAsNewEntity()) {
-            return getParameters().getVm();
-        }
-        return super.getVm();
-    }
-
-    @Override
     protected boolean validate() {
         if (!super.validate()) {
             return false;

@@ -34,6 +34,10 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
         destDomainId = Guid.Empty;
     }
 
+    public ImportVmParameters(VM vm, Guid destStorageDomainId, Guid storagePoolId, Guid vdsGroupId) {
+        this(vm, Guid.Empty, destStorageDomainId, storagePoolId, vdsGroupId);
+    }
+
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
         super(vm.getId());

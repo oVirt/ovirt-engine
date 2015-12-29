@@ -70,16 +70,15 @@ public class ImportVmFromVmwareModel extends ImportVmFromExternalProviderModel {
             ImportVmData importVmData = ((ImportVmData) item);
             VM vm = importVmData.getVm();
 
-            ImportVmFromExternalProviderParameters prm =
-                    new ImportVmFromExternalProviderParameters();
-            prm.setVm(vm);
+            ImportVmFromExternalProviderParameters prm = new ImportVmFromExternalProviderParameters(
+                    vm,
+                    getStorage().getSelectedItem().getId(),
+                    getStoragePool().getId(),
+                    ((VDSGroup) getCluster().getSelectedItem()).getId());
             prm.setUrl(url);
             prm.setUsername(username);
             prm.setPassword(password);
             prm.setProxyHostId(proxyHostId);
-            prm.setDestDomainId(getStorage().getSelectedItem().getId());
-            prm.setStoragePoolId(getStoragePool().getId());
-            prm.setVdsGroupId(((VDSGroup) getCluster().getSelectedItem()).getId());
             prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
             prm.setExternalName(importVmData.getName());
 
