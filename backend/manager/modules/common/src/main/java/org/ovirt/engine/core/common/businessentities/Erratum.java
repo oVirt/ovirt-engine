@@ -74,6 +74,10 @@ public class Erratum implements IVdcQueryable, BusinessEntity<String> {
         return severity;
     }
 
+    public ErrataSeverity getSeverityOrDefault() {
+        return severity == null ? ErrataSeverity.UNKNOWN : severity;
+    }
+
     public void setSeverity(ErrataSeverity severity) {
         this.severity = severity;
     }

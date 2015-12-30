@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -90,8 +91,10 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
                 AbstractErrataListModel errataListModel = (AbstractErrataListModel) model;
                 VdcQueryReturnValue returnValueObject = (VdcQueryReturnValue) returnValue;
                 if (returnValueObject.getSucceeded()) {
-                    unfilteredResultList = (List<Erratum>) returnValueObject.getReturnValue();
+                    ErrataData errataData = returnValueObject.getReturnValue();
+                    unfilteredResultList = errataData.getErrata();
                     // manual client-side filter
+                    // TODO: Use filtering and pagination options by GetErrataCountsParameters.setErrataFilter(filter)
                     setItems(filter(unfilteredResultList));
                 }
                 else {
@@ -101,7 +104,7 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
             }
         };
 
-        Frontend.getInstance().runQuery(getQueryType(), new IdQueryParameters(guid), _asyncQuery);
+        Frontend.getInstance().runQuery(getQueryType(), new GetErrataCountsParameters(guid), _asyncQuery);
     }
 
     protected Collection<Erratum> filter(Collection<Erratum> resultList) {

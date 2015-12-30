@@ -1,19 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
-public class GetErrataForHostQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetErrataForHostQuery<P extends GetErrataCountsParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private VdsStaticDao hostStaticDao;
@@ -29,16 +27,18 @@ public class GetErrataForHostQuery<P extends IdQueryParameters> extends QueriesC
     protected void executeQueryCommand() {
         VdsStatic host = hostStaticDao.get(getParameters().getId());
         if (host == null || host.getHostProviderId() == null) {
-            getQueryReturnValue().setReturnValue(Collections.<Erratum> emptyList());
+            getQueryReturnValue().setReturnValue(ErrataData.emptyData());
             return;
         }
 
         Provider<?> provider = providerDao.get(host.getHostProviderId());
         if (provider != null) {
             HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
-            getQueryReturnValue().setReturnValue(proxy.getErrataForHost(host.getHostName()));
+            ErrataData errataForHost = proxy.getErrataForHost(host.getHostName(),
+                    getParameters().getErrataFilter());
+            getQueryReturnValue().setReturnValue(errataForHost);
         } else {
-            getQueryReturnValue().setReturnValue(Collections.<Erratum> emptyList());
+            getQueryReturnValue().setReturnValue(ErrataData.emptyData());
         }
     }
 }

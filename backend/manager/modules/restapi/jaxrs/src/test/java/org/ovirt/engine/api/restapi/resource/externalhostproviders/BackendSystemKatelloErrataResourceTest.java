@@ -8,8 +8,9 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendSystemKatelloErrataResourceTest extends AbstractBackendCollectionResourceTest<KatelloErratum, Erratum, BackendSystemKatelloErrataResource> {
@@ -26,12 +27,18 @@ public class BackendSystemKatelloErrataResourceTest extends AbstractBackendColle
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(
                 VdcQueryType.GetErrataForEngine,
-                VdcQueryParametersBase.class,
+                GetErrataCountsParameters.class,
                 new String[] {},
                 new Object[] {},
-                getErrata(),
+                getErrataData(),
                 failure);
         control.replay();
+    }
+
+    private ErrataData getErrataData() {
+        ErrataData errataData = new ErrataData();
+        errataData.setErrata(getErrata());
+        return errataData;
     }
 
     private List<Erratum> getErrata() {

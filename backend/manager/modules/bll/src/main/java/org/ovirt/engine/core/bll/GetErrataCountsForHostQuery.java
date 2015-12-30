@@ -1,17 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.common.businessentities.ErrataCounts;
-import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 
-public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetErrataCountsForHostQuery<P extends GetErrataCountsParameters> extends QueriesCommandBase<P> {
 
     public GetErrataCountsForHostQuery(P parameters) {
         super(parameters);
@@ -32,11 +29,8 @@ public class GetErrataCountsForHostQuery<P extends IdQueryParameters> extends Qu
         }
 
         HostProviderProxy proxy = getHostProviderProxy(provider);
-        List<Erratum> errata = proxy.getErrataForHost(host.getHostName());
-        ErrataCounts stats = new ErrataCounts();
-        errata.forEach(stats::addToCounts);
-
-        setReturnValue(stats);
+        ErrataData errataForHost = proxy.getErrataForHost(host.getHostName(), getParameters().getErrataFilter());
+        setReturnValue(errataForHost.getErrataCounts());
     }
 
     private void failWith(EngineMessage failure) {

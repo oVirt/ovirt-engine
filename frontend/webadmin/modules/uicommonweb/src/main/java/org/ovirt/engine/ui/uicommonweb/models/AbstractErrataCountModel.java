@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -124,7 +124,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
             }
         };
 
-        Frontend.getInstance().runQuery(getQueryType(), new IdQueryParameters(guid), _asyncQuery);
+        Frontend.getInstance().runQuery(getQueryType(), new GetErrataCountsParameters(guid), _asyncQuery);
     }
 
     public void setGuid(Guid id) {

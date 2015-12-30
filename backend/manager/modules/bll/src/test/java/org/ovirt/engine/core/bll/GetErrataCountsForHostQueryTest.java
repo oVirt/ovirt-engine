@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,19 +21,22 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.ErrataFilter;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryParameters, GetErrataCountsForHostQuery<IdQueryParameters>> {
+public class GetErrataCountsForHostQueryTest
+        extends AbstractQueryTest<GetErrataCountsParameters, GetErrataCountsForHostQuery<GetErrataCountsParameters>> {
 
     @Mock
     private VdsStaticDao vdsStaticDao;
@@ -94,7 +98,6 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         getQuery().executeQueryCommand();
 
         ErrataCounts counts = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals(11, counts.getTotal());
         assertEquals(5, counts.getCountByType(ErrataType.BUGFIX));
         assertEquals(4, counts.getCountByType(ErrataType.ENHANCEMENT));
         assertEquals(2, counts.getCountByType(ErrataType.SECURITY));
@@ -107,7 +110,18 @@ public class GetErrataCountsForHostQueryTest extends AbstractQueryTest<IdQueryPa
         when(vdsStaticDao.get(any(Guid.class))).thenReturn(host);
         when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
         doReturn(providerProxy).when(getQuery()).getHostProviderProxy(any(Provider.class));
-        doReturn(errata).when(providerProxy).getErrataForHost(any(String.class));
+        ErrataData errataData = mock(ErrataData.class);
+        ErrataCounts errataCounts = mock(ErrataCounts.class);
+        when(errataData.getErrataCounts()).thenReturn(errataCounts);
+        when(errataCounts.getTotalErrata()).thenReturn(errata.size());
+        when(errataCounts.getSubTotalErrata()).thenReturn(errata.size());
+        Stream.of(ErrataType.values()).forEach(type ->
+            when(errataCounts.getCountByType(type)).thenReturn((int) errata.stream()
+                    .filter(erratum -> erratum.getType() == type)
+                    .count())
+        );
+        when(errataData.getErrata()).thenReturn(errata);
+        doReturn(errataData).when(providerProxy).getErrataForHost(any(String.class), any(ErrataFilter.class));
     }
 
     private List<Erratum> expectedErrata() {

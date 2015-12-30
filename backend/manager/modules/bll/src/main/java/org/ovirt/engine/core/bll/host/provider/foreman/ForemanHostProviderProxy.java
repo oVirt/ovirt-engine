@@ -6,15 +6,21 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
+import org.ovirt.engine.core.common.businessentities.ErrataCount;
+import org.ovirt.engine.core.common.businessentities.ErrataCounts;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
@@ -25,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.queries.ErrataFilter;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
@@ -49,14 +56,9 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     private static final String KATELLO_API_ENTRY_POINT = "/katello/api/v2";
     private static final String CONTENT_HOSTS_ENTRY_POINT = KATELLO_API_ENTRY_POINT + "/systems";
-
-    /**
-     * per_page=99999 used to bypass Satellite pagination limit (20 by default), while pagination is not
-     * supported by Katello.
-     */
-    private static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT
-            + "/%1$s/errata?per_page=99999";
+    static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata";
     private static final String CONTENT_HOST_ERRATUM_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata/%2$s";
+    private static final Integer UNLIMITED_PAGE_SIZE = 999999;
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
         super(hostProvider);
@@ -419,13 +421,51 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         }
     }
 
-    private List<Erratum> runErrataListMethod(String relativeUrl) {
+    private ErrataData runErrataListMethod(String relativeUrl, String hostName) {
+        ErrataData errataData = new ErrataData();
+
         try {
             ErrataWrapper wrapper = objectMapper.readValue(runHttpGetMethod(relativeUrl), ErrataWrapper.class);
-            return mapErrata(Arrays.asList(wrapper.getResults()));
-        } catch (IOException e) {
-            return null;
+            errataData.setErrata(mapErrata(Arrays.asList(wrapper.getResults())));
+            errataData.setErrataCounts(mapErrataCounts(wrapper));
+            Stream.of(ErrataType.values()).forEach(errataType -> addErrataCountForType(errataData, errataType));
+        } catch (Exception e) {
+            log.error("Failed to retrieve errata for content host '{}' via url '{}': {}",
+                    hostName,
+                    relativeUrl,
+                    e.getMessage());
+            log.debug("Exception", e);
+            return ErrataData.emptyData();
         }
+
+        return errataData;
+    }
+
+    private void addErrataCountForType(ErrataData errataData, ErrataType errataType) {
+        Stream<Erratum> typedErrata =
+                errataData.getErrata().stream().filter(erratum -> erratum.getType() == errataType);
+        long totalCount = typedErrata.count();
+        if (totalCount > 0) {
+            Map<ErrataSeverity, Long> errataBySeverity =
+                    errataData.getErrata().stream().collect(
+                            Collectors.groupingBy(Erratum::getSeverityOrDefault, Collectors.counting()));
+
+            ErrataCount errataCount = new ErrataCount();
+            errataCount.setTotalCount((int) totalCount);
+            errataBySeverity.entrySet()
+                    .stream()
+                    .forEach(entry -> errataCount.getCountBySeverity().put(entry.getKey(),
+                            entry.getValue().intValue()));
+
+            errataData.getErrataCounts().getErrataCountByType().put(errataType, errataCount);
+        }
+    }
+
+    private ErrataCounts mapErrataCounts(ErrataWrapper wrapper) {
+        ErrataCounts errataCounts = new ErrataCounts();
+        errataCounts.setTotalErrata(wrapper.getTotalCount());
+        errataCounts.setSubTotalErrata(wrapper.getSubTotalCount());
+        return errataCounts;
     }
 
     private List<Erratum> mapErrata(List<ExternalErratum> externalErrata) {
@@ -453,17 +493,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public List<Erratum> getErrataForHost(String hostName) {
-        ContentHost contentHost = findContentHost(hostName);
-        if (contentHost == null) {
-            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
-            return Collections.emptyList();
-        }
-
-        return runErrataListMethod(String.format(CONTENT_HOST_ERRATA_ENTRY_POINT, contentHost.getUuid()));
-    }
-
-    @Override
     public Erratum getErratumForHost(String hostName, String erratumId) {
         ContentHost contentHost = findContentHost(hostName);
         if (contentHost == null) {
@@ -474,6 +503,25 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         return runErratumMethod(String.format(CONTENT_HOST_ERRATUM_ENTRY_POINT, contentHost.getUuid(), erratumId));
     }
 
+    @Override
+    public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
+        ContentHost contentHost = findContentHost(hostName);
+        if (contentHost == null) {
+            log.error("Failed to find host on provider '{}' by host name '{}' ", getProvider().getName(), hostName);
+            return ErrataData.emptyData();
+        }
+
+        if (errataFilter == null) {
+            errataFilter = new ErrataFilter();
+            errataFilter.setErrataTypes(EnumSet.allOf(ErrataType.class));
+        }
+
+        // For calculating the errata counts there is a need to fetch all of the errata information
+        errataFilter.setPageSize(UNLIMITED_PAGE_SIZE);
+        String relativeUrl = FilteredErrataRelativeUrlBuilder.create(contentHost.getUuid(), errataFilter).build();
+        return runErrataListMethod(relativeUrl, hostName);
+    }
+
     private Erratum runErratumMethod(String relativeUrl) {
         try {
             ExternalErratum erratum = objectMapper.readValue(runHttpGetMethod(relativeUrl), ExternalErratum.class);
@@ -482,4 +530,5 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             return null;
         }
     }
+
 }

@@ -8,8 +8,10 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVmKatelloErrataResource
@@ -25,7 +27,25 @@ public class BackendVmKatelloErrataResource
 
     @Override
     public KatelloErrata list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetErrataForVm, new IdQueryParameters(asGuid(vmId))));
+        ErrataData errataData = null;
+
+        try {
+            VdcQueryReturnValue returnValue =
+                    runQuery(VdcQueryType.GetErrataForVm, new GetErrataCountsParameters(asGuid(vmId)));
+            if (!returnValue.getSucceeded()) {
+                backendFailure(returnValue.getExceptionString());
+            }
+
+            errataData = returnValue.getReturnValue();
+        } catch (Exception e) {
+            handleError(e, false);
+        }
+
+        if (errataData == null) {
+            return new KatelloErrata();
+        }
+
+        return mapCollection(errataData.getErrata());
     }
 
     private KatelloErrata mapCollection(List<Erratum> entities) {

@@ -3737,6 +3737,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The selected Host is not associated with a Foreman/Satellite provider. No errata for the Host are available.")
     String NO_FOREMAN_PROVIDER_FOR_HOST();
 
+    @DefaultStringValue("The hostname of the selected VM is not reported by the guest agent and cannot be resolved within Foreman/Satellite provider.")
+    String NO_HOST_NAME_FOR_VM();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a host.")
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
 

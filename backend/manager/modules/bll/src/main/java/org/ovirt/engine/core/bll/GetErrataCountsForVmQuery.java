@@ -1,21 +1,19 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.common.businessentities.ErrataCounts;
-import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
-public class GetErrataCountsForVmQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetErrataCountsForVmQuery<P extends GetErrataCountsParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private VmDao vmDao;
@@ -42,11 +40,14 @@ public class GetErrataCountsForVmQuery<P extends IdQueryParameters> extends Quer
         }
 
         HostProviderProxy proxy = getHostProviderProxy(provider);
-        List<Erratum> errata = proxy.getErrataForHost(vm.getDynamicData().getVmHost()); // vm.getVmHost() == vm's hostname
-        ErrataCounts stats = new ErrataCounts();
-        errata.forEach(stats::addToCounts);
+        String vmHostName = vm.getDynamicData().getVmHost();
 
-        setReturnValue(stats);
+        if (StringUtils.isBlank(vmHostName)) {
+            failWith(EngineMessage.NO_HOST_NAME_FOR_VM);
+        }
+
+        ErrataData errataForVm = proxy.getErrataForHost(vmHostName, getParameters().getErrataFilter());
+        setReturnValue(errataForVm.getErrataCounts());
     }
 
     private void failWith(EngineMessage failure) {

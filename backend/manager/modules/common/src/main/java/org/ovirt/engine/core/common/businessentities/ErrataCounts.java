@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
@@ -14,69 +14,60 @@ import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 public class ErrataCounts implements Serializable {
 
     private static final long serialVersionUID = -1790668006895698912L;
-    private List<Erratum> errata;
+
+    /**
+     * The total amount of errata per content host
+     */
+    private int totalErrata;
+
+    /**
+     * The sub-total amount of errata per content host, according to the search query used to filter the errata
+     */
+    private int subTotalErrata;
+
+    /**
+     * A map of errata-type to the total amount of errata of that type
+     */
+    private Map<ErrataType, ErrataCount> errataCountByType;
 
     public ErrataCounts() {
-        errata = new ArrayList<>();
-    }
-
-    /**
-     * Adds the erratum to the counts by its type and severity
-     *
-     * @param erratum
-     *            the errata to add
-     */
-    public void addToCounts(Erratum erratum) {
-        errata.add(erratum);
-    }
-
-    /**
-     * @return the overall count of the errata
-     */
-    public int getTotal() {
-        return errata.size();
+        errataCountByType = new HashMap<>();
     }
 
     public int getCountByType(ErrataType type) {
-        if (errata == null || errata.isEmpty()) {
-            return 0;
+        if (errataCountByType.containsKey(type)) {
+            return errataCountByType.get(type).getTotalCount();
         }
 
-        int count = 0;
-        for (Erratum e : errata) {
-            if (e.getType() == type) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public int getCountBySeverity(ErrataSeverity severity) {
-        if (errata == null || errata.isEmpty()) {
-            return 0;
-        }
-
-        int count = 0;
-        for (Erratum e : errata) {
-            if (e.getSeverity() == severity) {
-                count++;
-            }
-        }
-        return count;
+        return 0;
     }
 
     public int getCountByTypeAndSeverity(ErrataType type, ErrataSeverity severity) {
-        if (errata == null || errata.isEmpty()) {
-            return 0;
+        if (errataCountByType.containsKey(type)
+                && errataCountByType.get(type).getCountBySeverity().containsKey(severity)) {
+            return errataCountByType.get(type).getCountBySeverity().get(severity);
         }
 
-        int count = 0;
-        for (Erratum e : errata) {
-            if (e.getType() == type && e.getSeverity() == severity) {
-                count++;
-            }
-        }
-        return count;
+        return 0;
     }
 
+    public int getTotalErrata() {
+        return totalErrata;
+    }
+
+    public void setTotalErrata(int totalErrata) {
+        this.totalErrata = totalErrata;
+    }
+
+    public int getSubTotalErrata() {
+        return subTotalErrata;
+    }
+
+    public void setSubTotalErrata(int subTotalErrata) {
+        this.subTotalErrata = subTotalErrata;
+    }
+
+    public Map<ErrataType, ErrataCount> getErrataCountByType() {
+        return errataCountByType;
+    }
 }

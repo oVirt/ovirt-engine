@@ -115,6 +115,7 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetFilteredAttachableDisksParameters;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
@@ -3144,7 +3145,7 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetErrataForEngine, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetErrataForEngine, new GetErrataCountsParameters(), aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
