@@ -26,10 +26,11 @@ public interface VfScheduler {
      *
      * @param hostId
      * @param vnicNetwork
+     * @param vmId
      *
      * @return the name of a free suitable vf. If there is no one, return null.
      */
-    public String findFreeVfForVnic(Guid hostId, Network vnicNetwork);
+    public String findFreeVfForVnic(Guid hostId, Network vnicNetwork, Guid vmId);
 
     /**
      * Returns the mapping between the VM interfaces to the virtual functions.

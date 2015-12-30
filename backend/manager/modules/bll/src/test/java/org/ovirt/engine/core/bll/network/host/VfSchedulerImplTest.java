@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -21,15 +21,19 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -47,6 +51,9 @@ public class VfSchedulerImplTest {
     private HostDeviceDao hostDeviceDao;
 
     @Mock
+    private VmDeviceDao vmDeviceDao;
+
+    @Mock
     private NetworkDao networkDao;
 
     @Mock
@@ -61,7 +68,7 @@ public class VfSchedulerImplTest {
 
     @Before
     public void setUp() {
-        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, networkDeviceHelper);
+        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, vmDeviceDao, networkDeviceHelper);
         expectedVnicToVfMap = new HashMap<>();
     }
 
@@ -123,9 +130,29 @@ public class VfSchedulerImplTest {
     @Test
     public void hostNicHaveOneFreeVfWhichShareIommuGroup() {
         VmNetworkInterface vnic = mockVnic(true);
-        initHostWithOneVfsConfig(Collections.singletonList(vnic), 1, true, false, false, true, true);
+        initHostWithOneVfsConfig(Collections.singletonList(vnic), 1, true, false, false, true, true, false);
 
         assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
+    }
+
+    @Test
+    public void hostNicHaveOneFreeVfWhichShouldBeDirectlyPassthrough() {
+        VmNetworkInterface vnic = mockVnic(true);
+        initHostWithOneVfsConfig(Collections.singletonList(vnic), 1, true, false, false, true, false, true);
+
+        assertHostNotValid(Collections.singletonList(vnic), Collections.singletonList(vnic.getName()));
+    }
+
+    @Test
+    public void hostNicHaveTwoFreeVfOneShouldBeDirectlyPassthrough() {
+        VmNetworkInterface vnic = mockVnic(true);
+        List<HostDevice> vfs =
+                initHostWithOneVfsConfig(Collections.singletonList(vnic), 2, true, false, false, true, false, true);
+        HostDevice freeVf = vfs.get(0);
+        mockVfDirectlyAttached(false, freeVf);
+        expectedVnicToVfMap.put(vnic.getId(), freeVf.getDeviceName());
+
+        assertHostValid(Collections.singletonList(vnic));
     }
 
     @Test
@@ -229,7 +256,7 @@ public class VfSchedulerImplTest {
 
         mockVfsConfigsOnHost(Arrays.asList(hostNicVfsConfig));
 
-        String freeVf = vfScheduler.findFreeVfForVnic(hostId, createNetwork(vnic.getNetworkName()));
+        String freeVf = vfScheduler.findFreeVfForVnic(hostId, createNetwork(vnic.getNetworkName()), vmId);
 
         if (existFreeVf) {
             assertNotNull(freeVf);
@@ -238,25 +265,29 @@ public class VfSchedulerImplTest {
         }
     }
 
-    private void initHostWithOneVfsConfig(List<VmNetworkInterface> passthroughVnics,
+    private List<HostDevice> initHostWithOneVfsConfig(List<VmNetworkInterface> passthroughVnics,
             int numOfVfs,
             boolean allNetworksAllowed,
             boolean networkInSriovConfig,
             boolean labelInSriovConfig,
             boolean hasFreeVf,
-            boolean freeVfShareIommuGroup) {
+            boolean freeVfShareIommuGroup,
+            boolean vfDirectlyAttached) {
         HostNicVfsConfig hostNicVfsConfig = new HostNicVfsConfig();
+        List<HostDevice> vfs = new ArrayList<>();
         for (VmNetworkInterface vnic : passthroughVnics) {
-            updateVfsConfig(hostNicVfsConfig,
+            vfs.add(updateVfsConfig(hostNicVfsConfig,
                     vnic,
                     numOfVfs,
                     allNetworksAllowed,
                     networkInSriovConfig,
                     labelInSriovConfig,
                     hasFreeVf,
-                    freeVfShareIommuGroup);
+                    freeVfShareIommuGroup,
+                    vfDirectlyAttached));
         }
         mockVfsConfigsOnHost(Collections.singletonList(hostNicVfsConfig));
+        return vfs;
     }
 
     private void initHostWithOneVfsConfig(List<VmNetworkInterface> passthroughVnics,
@@ -271,6 +302,7 @@ public class VfSchedulerImplTest {
                 networkInSriovConfig,
                 labelInSriovConfig,
                 hasFreeVf,
+                false,
                 false);
     }
 
@@ -288,6 +320,7 @@ public class VfSchedulerImplTest {
         Network network = createNetwork(networkName);
         when(vnic.getNetworkName()).thenReturn(network.getName());
         when(vnic.isPlugged()).thenReturn(true);
+        when(vnic.getVmId()).thenReturn(vmId);
         return vnic;
     }
 
@@ -317,7 +350,8 @@ public class VfSchedulerImplTest {
             boolean vnicNetworkInSriovConfig,
             boolean vnicLabelInSriovConfig,
             boolean hasFreeVf,
-            boolean freeVfShareIommuGroup) {
+            boolean freeVfShareIommuGroup,
+            boolean vfDirectlyAttached) {
         hostNicVfsConfig.setNicId(Guid.newGuid());
         hostNicVfsConfig.setNumOfVfs(numOfVfs);
         hostNicVfsConfig.setAllNetworksAllowed(allNetworksAllowed);
@@ -334,11 +368,38 @@ public class VfSchedulerImplTest {
             mockVfShareIommuGroup(vf, freeVfShareIommuGroup);
 
             if (!freeVfShareIommuGroup && (allNetworksAllowed || vnicNetworkInSriovConfig || vnicLabelInSriovConfig)) {
-                expectedVnicToVfMap.put(vnic.getId(), vf.getDeviceName());
+                if (!vfDirectlyAttached) {
+                    expectedVnicToVfMap.put(vnic.getId(), vf.getDeviceName());
+                }
+                mockVfDirectlyAttached(vfDirectlyAttached, vf);
             }
         }
 
         return vf;
+    }
+
+    private void mockVfDirectlyAttached(boolean vfDirectlyAttached, HostDevice vf) {
+        when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, VmDeviceGeneralType.HOSTDEV, vf.getName()))
+                .thenReturn(vfDirectlyAttached ? Collections.singletonList(new VmDevice()) : Collections.emptyList());
+    }
+
+    private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig,
+            VmNetworkInterface vnic,
+            int numOfVfs,
+            boolean allNetworksAllowed,
+            boolean vnicNetworkInSriovConfig,
+            boolean vnicLabelInSriovConfig,
+            boolean hasFreeVf,
+            boolean freeVfShareIommuGroup) {
+        return updateVfsConfig(hostNicVfsConfig,
+                vnic,
+                numOfVfs,
+                allNetworksAllowed,
+                vnicNetworkInSriovConfig,
+                vnicLabelInSriovConfig,
+                hasFreeVf,
+                freeVfShareIommuGroup,
+                false);
     }
 
     private HostDevice updateVfsConfig(HostNicVfsConfig hostNicVfsConfig, VmNetworkInterface vnic,
@@ -420,7 +481,14 @@ public class VfSchedulerImplTest {
     private HostDevice createFreeVf(VmNetworkInterface vnic,
             HostNicVfsConfig hostNicVfsConfig) {
         HostDevice vf = createVf();
-        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), anyListOf(String.class))).thenReturn(vf);
+        ArgumentMatcher<List<String>> matchNotContainVf = new ArgumentMatcher<List<String>>() {
+
+            @Override
+            public boolean matches(Object argVf) {
+                return argVf == null || !((List<String>) argVf).contains(vf.getName());
+            }
+        };
+        when(networkDeviceHelper.getFreeVf(eq(getNic(hostNicVfsConfig)), argThat(matchNotContainVf))).thenReturn(vf);
         return vf;
     }
 

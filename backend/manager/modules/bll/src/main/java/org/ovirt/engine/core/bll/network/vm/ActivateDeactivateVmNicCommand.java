@@ -140,7 +140,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private String updateFreeVf() {
-        String vfToUse = vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork());
+        String vfToUse = vfScheduler.findFreeVfForVnic(getVdsId(), getNetwork(), getVmId());
 
         if (vfToUse == null) {
             failValidation(EngineMessage.CANNOT_PLUG_PASSTHROUGH_VNIC_NO_SUITABLE_VF,
