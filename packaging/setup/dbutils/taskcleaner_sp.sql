@@ -56,6 +56,8 @@ BEGIN
     root_command_id IN (
         SELECT root_command_id FROM GetAsyncTasksZombies() t WHERE t.command_id = v_command_id
     );
+
+    PERFORM DeleteEntitySnapshotByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -74,6 +76,7 @@ BEGIN
                 DELETE FROM command_entities C WHERE command_id = root_command_id_of_deleted_cmds AND NOT EXISTS (SELECT * from COMMAND_ENTITIES WHERE root_command_id = C.command_id);
             END IF;
         END IF;
+        PERFORM DeleteEntitySnapshotByCommandId(v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -161,6 +164,13 @@ CREATE OR REPLACE FUNCTION DeleteAllEntitySnapshot() RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM business_entity_snapshot;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteEntitySnapshotByCommandId(v_command_id UUID) RETURNS VOID
+   AS $procedure$
+BEGIN
+    DELETE FROM business_entity_snapshot where command_id = v_command_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
