@@ -1696,7 +1696,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             return;
         }
 
-        generalModel.setHasUpgradeAlert(host.isUpdateAvailable());
+        generalModel.setHasUpgradeAlert(host.isUpdateAvailable() && host.getStatus() != VDSStatus.Installing);
         generalModel.setHasAnyAlert();
     }
 
