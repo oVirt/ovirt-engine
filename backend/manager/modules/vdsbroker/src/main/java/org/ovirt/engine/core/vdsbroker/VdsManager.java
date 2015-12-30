@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -162,7 +163,7 @@ public class VdsManager {
                 "availableUpdates",
                 new Class[0],
                 new Object[0],
-                rateInMinutes,
+                RandomUtils.nextInt(HOURS_TO_MINUTES) + 1,
                 rateInMinutes,
                 TimeUnit.MINUTES));
 
