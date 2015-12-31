@@ -109,6 +109,9 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHostStorageDeviceVGScanFailedException:
         case GlusterSnapshotScheduleFlagUpdateFailedException:
         case GlusterDisableSnapshotScheduleFailedException:
+        case GlusterMetaVolumeMountFailedException:
+        case GlusterMetaVolumeFstabUpdateFailedException:
+        case GlusterProcessesStopFailedException:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
             getVDSReturnValue().setSucceeded(false);
