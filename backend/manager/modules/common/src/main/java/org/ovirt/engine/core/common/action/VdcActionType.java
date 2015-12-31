@@ -10,6 +10,7 @@ public enum VdcActionType {
     AddVm(1, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     AddVmFromTemplate(2, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
+    AddUnmanagedVms(54, QuotaDependency.NONE),
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
     UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
     RebootVm(6, ActionGroup.REBOOT_VM, QuotaDependency.NONE),

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
@@ -468,16 +467,12 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void addExternallyManagedVms(List<VmStatic> externalVmList) {
-        for (VmStatic currVm : externalVmList) {
-            AddVmParameters params = new AddVmParameters(currVm);
-            VdcReturnValueBase returnValue =
-                    backend.runInternalAction(VdcActionType.AddVmFromScratch,
-                            params,
-                            ExecutionHandler.createInternalJobContext());
-            if (!returnValue.getSucceeded()) {
-                log.debug("Failed adding Externally managed VM '{}'", currVm.getName());
-            }
+    public void addUnmanagedVms(Guid hostId, List<Guid> unmanagedVmIds) {
+        if (!unmanagedVmIds.isEmpty()) {
+            backend.runInternalAction(
+                    VdcActionType.AddUnmanagedVms,
+                    new AddUnmanagedVmsParameters(hostId, unmanagedVmIds),
+                    ExecutionHandler.createInternalJobContext());
         }
     }
 

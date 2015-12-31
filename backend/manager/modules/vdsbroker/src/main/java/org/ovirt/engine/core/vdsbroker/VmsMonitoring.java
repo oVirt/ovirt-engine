@@ -3,24 +3,19 @@ package org.ovirt.engine.core.vdsbroker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -28,18 +23,13 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
@@ -47,7 +37,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -101,14 +90,11 @@ public class VmsMonitoring {
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final List<Guid> autoVmsToRun = new ArrayList<>();
     private final List<Guid> coldRebootVmsToRun = new ArrayList<>();
-    private final List<VmStatic> externalVmsToAdd = new ArrayList<>();
     private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
     private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
-    private List<Pair<VM, VmInternalData>> externalVms = new ArrayList<>();
     //*** data collectors ***//
 
-    private static final String EXTERNAL_VM_NAME_FORMAT = "external-%1$s";
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
     /**
@@ -220,14 +206,9 @@ public class VmsMonitoring {
                 VmAnalyzer vmAnalyzer = getVmAnalyzer(monitoredVm);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
-
-                if (vmAnalyzer.isExternalVm()) {
-                    externalVms.add(new Pair<>(vmAnalyzer.getDbVm(), vmAnalyzer.getVdsmVm()));
-                }
             }
         }
 
-        processExternallyManagedVms();
         processVmsWithDevicesChange();
         saveVmsToDb();
     }
@@ -348,6 +329,7 @@ public class VmsMonitoring {
     }
 
     private void saveVmsToDb() {
+        addUnmanagedVms();
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave);
 
@@ -362,86 +344,17 @@ public class VmsMonitoring {
 
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
-        getVdsEventListener().addExternallyManagedVms(externalVmsToAdd);
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
     }
 
-    protected void setOsId(VmStatic vmStatic, String guestOsNameFromVdsm, int defaultArchOsId) {
-        if (StringUtils.isEmpty(guestOsNameFromVdsm)) {
-            log.debug("VM '{}': setting default OS ID: '{}'", vmStatic.getName(), defaultArchOsId);
-            vmStatic.setOsId(defaultArchOsId);
-        }
-    }
-
-    protected void setDisplayType(VmStatic vmStatic, String displayTypeFromVdsm, DisplayType defaultDisplayType) {
-        if (StringUtils.isEmpty(displayTypeFromVdsm)) {
-            log.debug("VM '{}': setting default display type: '{}'", vmStatic.getName(), defaultDisplayType.getValue());
-            vmStatic.setDefaultDisplayType(defaultDisplayType);
-        }
-    }
-
-    private int getDefaultOsId(ArchitectureType architecture) {
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-        Integer defaultArchOsId = osRepository.getDefaultOSes().get(architecture);
-        return (defaultArchOsId == null) ? 0 : defaultArchOsId;
-    }
-
-    private DisplayType getDefaultDisplayType(int osId, Version clusterVersion) {
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-        List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, clusterVersion);
-
-        if (!pairs.isEmpty()) {
-            Pair<GraphicsType, DisplayType> graphicsDisplayPair = pairs.get(0);
-            return graphicsDisplayPair.getSecond();
-        }
-
-        return DisplayType.qxl;
-    }
-
-    protected void processExternallyManagedVms() {
-        // Fetching for details from the host
-        // and marking the VMs for addition
-        List<String> vmsToQuery = new ArrayList<>(externalVms.size());
-        for (Pair<VM, VmInternalData> pair : externalVms) {
-            vmsToQuery.add(pair.getSecond().getVmDynamic().getId().toString());
-        }
-        if (!vmsToQuery.isEmpty()) {
-            VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vdsManager.getVdsGroupId());
-            int defaultOsId = getDefaultOsId(vdsGroup.getArchitecture());
-            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, vdsGroup.getCompatibilityVersion());
-
-            // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
-            Map<String, Object>[] vmsInfo = getVmInfo(vmsToQuery);
-            for (Map<String, Object> vmInfo : vmsInfo) {
-                Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
-                VmStatic vmStatic = new VmStatic();
-                vmStatic.setId(vmId);
-                vmStatic.setCreationDate(new Date());
-                vmStatic.setVdsGroupId(vdsManager.getVdsGroupId());
-                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
-
-                if (StringUtils.equals(Config.<String>getValue(ConfigValues.HostedEngineVmName), vmNameOnHost)) {
-                    // its a hosted engine VM -> import it and skip the external VM phase
-                    importHostedEngineVM(vmInfo);
-                    continue;
-                } else {
-                    vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
-                    vmStatic.setOrigin(OriginType.EXTERNAL);
-                }
-
-                vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
-                vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
-                vmStatic.setSingleQxlPci(false);
-
-                setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
-                setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
-
-                externalVmsToAdd.add(vmStatic);
-                log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
-            }
-        }
+    protected void addUnmanagedVms() {
+        List<Guid> unmanagedVmIds = vmAnalyzers.stream()
+                .filter(VmAnalyzer::isExternalVm)
+                .map(analyzer -> analyzer.getVdsmVm().getVmDynamic().getId())
+                .collect(Collectors.toList());
+        getVdsEventListener().addUnmanagedVms(vdsManager.getVdsId(), unmanagedVmIds);
     }
 
     // ***** DB interaction *****

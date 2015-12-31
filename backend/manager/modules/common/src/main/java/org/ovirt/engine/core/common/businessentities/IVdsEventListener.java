@@ -59,7 +59,7 @@ public interface IVdsEventListener {
 
     void runColdRebootVms(List<Guid> vmIds);
 
-    void addExternallyManagedVms(List<VmStatic> externalVmList);
+    void addUnmanagedVms(Guid hostId, List<Guid> unmanagedVmIds);
 
     void handleVdsMaintenanceTimeout(Guid vdsId);
 
