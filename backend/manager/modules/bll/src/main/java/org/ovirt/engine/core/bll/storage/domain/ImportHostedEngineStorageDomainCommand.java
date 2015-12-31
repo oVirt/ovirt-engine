@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -38,7 +39,11 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * <pre>
@@ -55,6 +60,8 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
 
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomain heStorageDomain;
@@ -111,7 +118,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         case NFS:
         case GLUSTERFS:
             actionType = VdcActionType.AddExistingFileStorageDomain;
-            setSucceeded(true);
+            addStorageServerConnection();
             break;
         case ISCSI:
             discoverBlockConnectionDetails();
@@ -158,12 +165,35 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                     // found a lun. Use its connection details
                     heStorageDomain.getStorageStaticData()
                             .setConnection(lun.getLunConnections().get(0));
+                    setSucceeded(true);
                     break;
                 }
             }
-            log.error("There are no luns with VG that match the SD VG '{}'."
-                    + " Connections details are missing.  completing this automatic import");
+            if (!getSucceeded()) {
+                log.error("There are no luns with VG that match the SD VG '{}'."
+                        + " Connections details are missing.  completing this automatic import");
+            }
         }
+    }
+
+    /**
+     * For File based storage only, we need to save the connection in DB. It is implicitly called for SAN domains.
+     */
+    private void addStorageServerConnection() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                StorageServerConnections connection = heStorageDomain.getStorageStaticData().getConnection();
+                connection.setId(Guid.newGuid().toString());
+                storageServerConnectionDao.save(connection);
+                // make sure the storage domain object is full for the rest of the flow
+                heStorageDomain.setStorage(connection.getId());
+                setSucceeded(true);
+                getCompensationContext().snapshotEntity(connection);
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
     }
 
     private void removeHostedEngineLunDisk() {

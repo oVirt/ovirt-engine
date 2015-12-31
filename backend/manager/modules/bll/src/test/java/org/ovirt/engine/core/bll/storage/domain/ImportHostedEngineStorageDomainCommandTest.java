@@ -63,6 +63,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -100,6 +101,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private VDSBrokerFrontend vdsBroker;
     @Mock
     private StoragePoolDao storagePoolDao;
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     public void initTest() {
@@ -197,6 +200,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
         cmd.validate();
         cmd.executeCommand();
 
+        verify(storageServerConnectionDao, times(1))
+            .save(sd.getStorageStaticData().getConnection());
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingFileStorageDomain),
                 any(VdcActionParametersBase.class),
@@ -221,6 +226,9 @@ public class ImportHostedEngineStorageDomainCommandTest {
         cmd.validate();
         cmd.executeCommand();
 
+        verify(backend, times(1)).runInternalAction(
+                eq(VdcActionType.RemoveDisk),
+                any(VdcActionParametersBase.class));
         verify(backend, times(1)).runInternalAction(
                 eq(VdcActionType.AddExistingBlockStorageDomain),
                 any(VdcActionParametersBase.class),
@@ -319,6 +327,7 @@ public class ImportHostedEngineStorageDomainCommandTest {
         List<StorageDomain> domains = Collections.emptyList();
         if (answerWithDomain) {
             sd = new StorageDomain();
+            sd.getStorageStaticData().setConnection(new StorageServerConnections());
             domains = Arrays.asList(sd);
         }
 
