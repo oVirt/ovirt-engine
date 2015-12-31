@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -68,29 +68,27 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     @Override
     protected void executeCommand() {
         if (!getParameters().getVmIds().isEmpty()) {
-            VDSGroup vdsGroup = getVdsGroup();
-            int defaultOsId = getDefaultOsId(vdsGroup.getArchitecture());
-            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, vdsGroup.getCompatibilityVersion());
+            int defaultOsId = getDefaultOsId(getVdsGroup().getArchitecture());
+            DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, getVdsGroup().getCompatibilityVersion());
 
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
-            Map<String, Object>[] vmsInfo = getVmInfo();
+            Map<String, Object>[] vmsInfo = getVmsInfo();
             for (Map<String, Object> vmInfo : vmsInfo) {
                 Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
+                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
+
+                if (Objects.equals(vmNameOnHost, Config.<String>getValue(ConfigValues.HostedEngineVmName))) {
+                    // its a hosted engine VM -> import it and skip the external VM phase
+                    importHostedEngineVm(vmInfo);
+                    continue;
+                }
+
                 VmStatic vmStatic = new VmStatic();
                 vmStatic.setId(vmId);
                 vmStatic.setCreationDate(new Date());
                 vmStatic.setVdsGroupId(getVdsGroupId());
-                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
-
-                if (StringUtils.equals(Config.<String>getValue(ConfigValues.HostedEngineVmName), vmNameOnHost)) {
-                    // its a hosted engine VM -> import it and skip the external VM phase
-                    importHostedEngineVM(vmInfo);
-                    continue;
-                } else {
-                    vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
-                    vmStatic.setOrigin(OriginType.EXTERNAL);
-                }
-
+                vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
+                vmStatic.setOrigin(OriginType.EXTERNAL);
                 vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
                 vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
                 vmStatic.setSingleQxlPci(false);
@@ -111,7 +109,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
      * @param vmsToUpdate
      * @return
      */
-    protected Map<String, Object>[] getVmInfo() {
+    protected Map<String, Object>[] getVmsInfo() {
         List<String> vmsToUpdate = getParameters().getVmIds().stream().map(id -> id.toString()).collect(Collectors.toList());
         // TODO refactor commands to use vdsId only - the whole vds object here is useless
         VDS vds = new VDS();
@@ -126,7 +124,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         return result;
     }
 
-    private void importHostedEngineVM(Map<String, Object> vmStruct) {
+    private void importHostedEngineVm(Map<String, Object> vmStruct) {
         VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
             vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct));
