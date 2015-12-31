@@ -11,12 +11,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -31,7 +33,9 @@ public class VfSchedulerImpl implements VfScheduler {
 
     private HostDeviceDao hostDeviceDao;
 
-    private NetworkDeviceHelper vfsConfigHelper;
+    private VmDeviceDao vmDeviceDao;
+
+    private NetworkDeviceHelper networkDeviceHelper;
 
     private Map<Guid, Map<Guid, Map<Guid, String>>> vmToHostToVnicToVfMap = new ConcurrentHashMap<>();
 
@@ -39,11 +43,13 @@ public class VfSchedulerImpl implements VfScheduler {
     public VfSchedulerImpl(NetworkDao networkDao,
             InterfaceDao interfaceDao,
             HostDeviceDao hostDeviceDao,
-            NetworkDeviceHelper vfsConfigHelper) {
+            VmDeviceDao vmDeviceDao,
+            NetworkDeviceHelper networkDeviceHelper) {
         this.networkDao = networkDao;
         this.interfaceDao = interfaceDao;
         this.hostDeviceDao = hostDeviceDao;
-        this.vfsConfigHelper = vfsConfigHelper;
+        this.vmDeviceDao = vmDeviceDao;
+        this.networkDeviceHelper = networkDeviceHelper;
     }
 
     @Override
@@ -66,14 +72,15 @@ public class VfSchedulerImpl implements VfScheduler {
         Map<Guid, VdsNetworkInterface> fetchedNics = new HashMap<>();
         List<String> problematicVnics = new ArrayList<>();
         List<HostNicVfsConfig> vfsConfigs =
-                vfsConfigHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId);
+                networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId);
 
         Map<Guid, String> vnicToVfMap = new HashMap<>();
         hostToVnicToVfMap.put(hostId, vnicToVfMap);
 
         for (final VmNetworkInterface vnic : pluggedPassthroughVnics) {
             String freeVf = null;
-            freeVf = findFreeVfForVnic(vfsConfigs, vnic, nicToUsedVfs, fetchedNics);
+            freeVf = findFreeVfForVnic(vfsConfigs, vnic, nicToUsedVfs, fetchedNics, true);
+
             if (freeVf == null) {
                 problematicVnics.add(vnic.getName());
             } else {
@@ -97,14 +104,29 @@ public class VfSchedulerImpl implements VfScheduler {
    private String findFreeVfForVnic(List<HostNicVfsConfig> vfsConfigs,
             final VmNetworkInterface vnic,
             Map<Guid, List<String>> nicToUsedVfs,
-            Map<Guid, VdsNetworkInterface> fetchedNics) {
+            Map<Guid, VdsNetworkInterface> fetchedNics,
+            boolean shouldCheckDirectlyAttachedVmDevices) {
+        Guid vmId = vnic.getVmId();
         Network vnicNetwork =
                 vnic.getNetworkName() == null ? null : networkDao.getByName(vnic.getNetworkName());
         for (HostNicVfsConfig vfsConfig : vfsConfigs) {
             if (vfsConfig.getNumOfVfs() != 0 && isNetworkInVfsConfig(vnicNetwork, vfsConfig)) {
-                String freeVf = getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics);
+                List<String> skipVfs = new ArrayList<>();
+                HostDevice freeVf =
+                        getFreeVf(vfsConfig, nicToUsedVfs, fetchedNics, vmId, shouldCheckDirectlyAttachedVmDevices, skipVfs);
+                while (freeVf != null && (isSharingIommuGroup(freeVf)
+                        || (shouldCheckDirectlyAttachedVmDevices
+                                && shouldBeDirectlyAttached(freeVf.getName(), vmId)))) {
+                    skipVfs.add(freeVf.getName());
+                    freeVf = getFreeVf(vfsConfig,
+                            nicToUsedVfs,
+                            fetchedNics,
+                            vmId,
+                            shouldCheckDirectlyAttachedVmDevices,
+                            skipVfs);
+                }
                 if (freeVf != null) {
-                    return freeVf;
+                    return freeVf.getName();
                 }
             }
         }
@@ -124,27 +146,30 @@ public class VfSchedulerImpl implements VfScheduler {
         return isNetworkInConfig || isLabelInConfig;
     }
 
-    private String getFreeVf(HostNicVfsConfig hostNicVfsConfig,
+    private HostDevice getFreeVf(HostNicVfsConfig hostNicVfsConfig,
             Map<Guid, List<String>> nicToUsedVfs,
-            Map<Guid, VdsNetworkInterface> fetchedNics) {
+            Map<Guid, VdsNetworkInterface> fetchedNics,
+            Guid vmId,
+            boolean shouldCheckDirectlyAttachedVmDevices,
+            List<String> skipVfs) {
         VdsNetworkInterface nic = getNic(hostNicVfsConfig.getNicId(), fetchedNics);
         List<String> usedVfsByNic = nicToUsedVfs.get(nic.getId());
-        HostDevice freeVf = vfsConfigHelper.getFreeVf(nic, usedVfsByNic);
+
+        if (usedVfsByNic != null) {
+            skipVfs.addAll(usedVfsByNic);
+        }
+
+        HostDevice freeVf = networkDeviceHelper.getFreeVf(nic, skipVfs);
 
         if (freeVf != null) {
-            if (isSharingIommuGroup(freeVf)) {
-                return null;
-            }
-
-            String vfName = freeVf.getDeviceName();
 
             if (usedVfsByNic == null) {
                 usedVfsByNic = new ArrayList<>();
                 nicToUsedVfs.put(nic.getId(), usedVfsByNic);
             }
-            usedVfsByNic.add(vfName);
+            usedVfsByNic.add(freeVf.getDeviceName());
 
-            return vfName;
+            return freeVf;
         }
 
         return null;
@@ -181,5 +206,9 @@ public class VfSchedulerImpl implements VfScheduler {
                 hostDeviceDao.getHostDevicesByHostIdAndIommuGroup(device.getHostId(), device.getIommuGroup());
 
         return iommoGroupDevices.size() > 1;
+    }
+
+    private boolean shouldBeDirectlyAttached(String vfName, Guid vmId) {
+        return !vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId, VmDeviceGeneralType.HOSTDEV, vfName).isEmpty();
     }
 }
