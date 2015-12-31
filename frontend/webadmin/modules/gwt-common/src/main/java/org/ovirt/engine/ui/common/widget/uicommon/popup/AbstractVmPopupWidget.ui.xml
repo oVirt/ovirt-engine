@@ -479,7 +479,7 @@
                             <!-- Edit VM Pool -->
                             <g:FlowPanel addStyleNames="{style.poolEditVms} avmpw_poolEditVms_pfly_fix" ui:field="editPoolEditVmsPanel">
                                 <g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
-                                    <g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" />
+                                    <g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" text="{constants.prestartedVms}" />
                                     <d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon} avmpw_infoIcon_pfly_fix" />
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="editPrestartedVmsPanel" addStyleNames="{style.editPrestartedVms}" >
