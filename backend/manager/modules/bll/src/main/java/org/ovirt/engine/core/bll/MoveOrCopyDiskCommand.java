@@ -332,19 +332,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         switch (getActionState()) {
         case EXECUTE:
             return getSucceeded() ? (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_VM_DISK
-                    : AuditLogType.USER_COPIED_TEMPLATE_DISK
+                    : AuditLogType.USER_COPIED_DISK
                     : (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_FAILED_MOVED_VM_DISK
-                            : AuditLogType.USER_FAILED_COPY_TEMPLATE_DISK;
+                            : AuditLogType.USER_FAILED_COPY_DISK;
 
         case END_SUCCESS:
             return getSucceeded() ? (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_VM_DISK_FINISHED_SUCCESS
-                    : AuditLogType.USER_COPIED_TEMPLATE_DISK_FINISHED_SUCCESS
+                    : AuditLogType.USER_COPIED_DISK_FINISHED_SUCCESS
                     : (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE
-                            : AuditLogType.USER_COPIED_TEMPLATE_DISK_FINISHED_FAILURE;
+                            : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
 
         default:
             return (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE
-                    : AuditLogType.USER_COPIED_TEMPLATE_DISK_FINISHED_FAILURE;
+                    : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
         }
     }
 
