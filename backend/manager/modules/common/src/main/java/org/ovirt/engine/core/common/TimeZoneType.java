@@ -264,11 +264,7 @@ public enum TimeZoneType {
                 b = extractOffsetFromMatch(match2);
             }
 
-            if (a == b) {
-                return 0;
-            }
-
-            return (a > b) ? 1 : -1;
+            return Integer.compare(a, b);
         }
     }
 
