@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -104,13 +106,13 @@ public class SyntaxCheckerTest {
         res.setMaxCount(0);
 
         // check wrong config values
-        assertTrue(chkr.getPagePhrase(res, "1") == "");
+        assertEquals("", chkr.getPagePhrase(res, "1"));
 
         mcr.mockConfigValue(ConfigValues.DBPagingType, "Range");
         mcr.mockConfigValue(ConfigValues.DBPagingSyntax, " WHERE RowNum BETWEEN %1$s AND %2$s");
 
         // check valid config values
-        assertTrue(chkr.getPagePhrase(res, "1") != "");
+        assertNotEquals("", chkr.getPagePhrase(res, "1"));
     }
 
     @Test
@@ -472,6 +474,6 @@ public class SyntaxCheckerTest {
         String query = chkr.generateQueryFromSyntaxContainer(res, true);
         System.out.println(exepctedSQLResult);
         System.out.println(query);
-        Assert.assertEquals(exepctedSQLResult, query);
+        assertEquals(exepctedSQLResult, query);
     }
 }
