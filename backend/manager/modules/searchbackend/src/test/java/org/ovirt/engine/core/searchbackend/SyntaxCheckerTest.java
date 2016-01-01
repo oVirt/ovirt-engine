@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 
@@ -13,10 +14,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -26,7 +24,14 @@ public class SyntaxCheckerTest {
     private final static String TAG_NAME_WITH_CHILDREN = "'tag1','all'";
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.SearchResultsLimit, 100),
+            mockConfig(ConfigValues.DBPagingType, "Range"),
+            mockConfig(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
+            mockConfig(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
+            mockConfig(ConfigValues.PgMajorRelease, 9),
+            mockConfig(ConfigValues.DBI18NPrefix, "")
+    );
 
     public boolean contains(SyntaxContainer res, String item) {
         return Arrays.asList(res.getCompletionArray()).contains(item);
@@ -34,27 +39,12 @@ public class SyntaxCheckerTest {
 
     @Before
     public void setup() {
-        final IConfigUtilsInterface configUtils = mock(IConfigUtilsInterface.class);
-        when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn(100);
-        when(configUtils.getValue(ConfigValues.DBPagingType, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn("Range");
-        when(configUtils.getValue(ConfigValues.DBSearchTemplate, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn("SELECT * FROM (%2$s) %1$s) as T1 %3$s");
-        when(configUtils.getValue(ConfigValues.DBPagingSyntax, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn("OFFSET (%1$s -1) LIMIT %2$s");
-        when(configUtils.getValue(ConfigValues.PgMajorRelease, ConfigCommon.defaultConfigurationVersion))
-                .thenReturn(9);
-        when(configUtils.getValue(ConfigValues.DBI18NPrefix, ConfigCommon.defaultConfigurationVersion))
-        .thenReturn("");
         BaseConditionFieldAutoCompleter.tagsHandler = mock(ITagsHandler.class);
         Tags tags = new Tags();
         tags.setTagName(TAG_NAME);
         when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(anyString())).thenReturn(tags);
         when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(anyString()))
                 .thenReturn(TAG_NAME_WITH_CHILDREN);
-
-        Config.setConfigUtils(configUtils);
     }
 
     /**
