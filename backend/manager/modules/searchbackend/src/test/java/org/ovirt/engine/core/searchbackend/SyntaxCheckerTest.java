@@ -3,14 +3,15 @@ package org.ovirt.engine.core.searchbackend;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -33,24 +34,24 @@ public class SyntaxCheckerTest {
 
     @Before
     public void setup() {
-        final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Mockito.when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
+        final IConfigUtilsInterface configUtils = mock(IConfigUtilsInterface.class);
+        when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn(100);
-        Mockito.when(configUtils.getValue(ConfigValues.DBPagingType, ConfigCommon.defaultConfigurationVersion))
+        when(configUtils.getValue(ConfigValues.DBPagingType, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn("Range");
-        Mockito.when(configUtils.getValue(ConfigValues.DBSearchTemplate, ConfigCommon.defaultConfigurationVersion))
+        when(configUtils.getValue(ConfigValues.DBSearchTemplate, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn("SELECT * FROM (%2$s) %1$s) as T1 %3$s");
-        Mockito.when(configUtils.getValue(ConfigValues.DBPagingSyntax, ConfigCommon.defaultConfigurationVersion))
+        when(configUtils.getValue(ConfigValues.DBPagingSyntax, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn("OFFSET (%1$s -1) LIMIT %2$s");
-        Mockito.when(configUtils.getValue(ConfigValues.PgMajorRelease, ConfigCommon.defaultConfigurationVersion))
+        when(configUtils.getValue(ConfigValues.PgMajorRelease, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn(9);
-        Mockito.when(configUtils.getValue(ConfigValues.DBI18NPrefix, ConfigCommon.defaultConfigurationVersion))
+        when(configUtils.getValue(ConfigValues.DBI18NPrefix, ConfigCommon.defaultConfigurationVersion))
         .thenReturn("");
-        BaseConditionFieldAutoCompleter.tagsHandler = Mockito.mock(ITagsHandler.class);
+        BaseConditionFieldAutoCompleter.tagsHandler = mock(ITagsHandler.class);
         Tags tags = new Tags();
         tags.setTagName(TAG_NAME);
-        Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(Mockito.anyString())).thenReturn(tags);
-        Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(Mockito.anyString()))
+        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(anyString())).thenReturn(tags);
+        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(anyString()))
                 .thenReturn(TAG_NAME_WITH_CHILDREN);
 
         Config.setConfigUtils(configUtils);
@@ -470,7 +471,7 @@ public class SyntaxCheckerTest {
         SyntaxChecker chkr = new SyntaxChecker(20);
         ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
         SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState(dynamicQuery, true);
-        Assert.assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());
+        assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());
         String query = chkr.generateQueryFromSyntaxContainer(res, true);
         System.out.println(exepctedSQLResult);
         System.out.println(query);
