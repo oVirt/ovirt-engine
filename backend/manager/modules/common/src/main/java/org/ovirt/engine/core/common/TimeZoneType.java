@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -278,8 +277,7 @@ public enum TimeZoneType {
         Collections.sort(list, TimeZoneTimeExtractComparator.instance);
 
         Map<String, String> result = new LinkedHashMap<>();
-        for (Iterator<Map.Entry<String, String>> it = list.iterator(); it.hasNext();) {
-            Map.Entry<String, String> entry = it.next();
+        for (Map.Entry<String, String> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
