@@ -63,8 +63,7 @@ public class SyntaxCheckerTest {
     @Test
     public void testVMCompletion() {
         SyntaxChecker chkr = new SyntaxChecker(20);
-        SyntaxContainer res = null;
-        res = chkr.getCompletion("");
+        SyntaxContainer res = chkr.getCompletion("");
         assertTrue("Vms", contains(res, "Vms"));
         res = chkr.getCompletion("V");
         assertTrue("Vms2", contains(res, "Vms"));
@@ -83,8 +82,7 @@ public class SyntaxCheckerTest {
     @Test
     public void testHostCompletion() {
         SyntaxChecker chkr = new SyntaxChecker(20);
-        SyntaxContainer res = null;
-        res = chkr.getCompletion("");
+        SyntaxContainer res = chkr.getCompletion("");
         assertTrue("Hosts", contains(res, "Hosts"));
         res = chkr.getCompletion("H");
         assertTrue("Hots2", contains(res, "Hosts"));
