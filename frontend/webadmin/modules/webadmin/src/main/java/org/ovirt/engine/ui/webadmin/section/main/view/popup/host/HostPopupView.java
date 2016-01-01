@@ -615,7 +615,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         object.getPkSection().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName == "IsAvailable") { //$NON-NLS-1$
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     setPkPasswordSectionVisiblity(false);
                 }
             }

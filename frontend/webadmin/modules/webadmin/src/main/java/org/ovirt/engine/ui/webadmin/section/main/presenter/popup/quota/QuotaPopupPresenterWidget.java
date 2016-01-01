@@ -31,9 +31,9 @@ public class QuotaPopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             UICommand lastExecutedCommand, Model windowModel) {
         String lastExecutedCommandName = lastExecutedCommand.getName();
 
-        if (lastExecutedCommandName == "EditQuotaCluster") { //$NON-NLS-1$
+        if ("EditQuotaCluster".equals(lastExecutedCommandName)) { //$NON-NLS-1$
             return clusterPopupProvider.get();
-        } else if (lastExecutedCommandName == "EditQuotaStorage") { //$NON-NLS-1$
+        } else if ("EditQuotaStorage".equals(lastExecutedCommandName)) { //$NON-NLS-1$
             return storagePopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
