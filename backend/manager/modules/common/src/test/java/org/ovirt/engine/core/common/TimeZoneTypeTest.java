@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common;
 
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.Map;
@@ -23,33 +23,33 @@ public class TimeZoneTypeTest {
     public void testWindowsTimeZones() {
         Map<String, String> map = windows.getTimeZoneList();
         assertNotNull(map);
-        assertEquals(map.get("GMT Standard Time"), "(GMT) GMT Standard Time");
+        assertEquals("(GMT) GMT Standard Time", map.get("GMT Standard Time"));
     }
 
     @Test
     public void testGeneralTimeZones() {
         Map<String, String> map = general.getTimeZoneList();
         assertNotNull(map);
-        assertFalse(map.get("Asia/Riyadh78") != null);
-        assertEquals(map.get("Asia/Jerusalem"), "(GMT+02:00) Israel Standard Time");
+        assertNull(map.get("Asia/Riyadh78"));
+        assertEquals("(GMT+02:00) Israel Standard Time", map.get("Asia/Jerusalem"));
     }
 
     @Test
     public void testDefaultConfigValues() {
-        assertEquals(windows.getDefaultTimeZoneConfigKey(), ConfigValues.DefaultWindowsTimeZone);
-        assertEquals(general.getDefaultTimeZoneConfigKey(), ConfigValues.DefaultGeneralTimeZone);
+        assertEquals(ConfigValues.DefaultWindowsTimeZone, windows.getDefaultTimeZoneConfigKey());
+        assertEquals(ConfigValues.DefaultGeneralTimeZone, general.getDefaultTimeZoneConfigKey());
     }
 
     @Test
     public void testDefaultConfigurationValues() {
-        assertEquals(windows.getDefaultTimeZoneConfigurationKey(), ConfigurationValues.DefaultWindowsTimeZone);
-        assertEquals(general.getDefaultTimeZoneConfigurationKey(), ConfigurationValues.DefaultGeneralTimeZone);
+        assertEquals(ConfigurationValues.DefaultWindowsTimeZone, windows.getDefaultTimeZoneConfigurationKey());
+        assertEquals(ConfigurationValues.DefaultGeneralTimeZone, general.getDefaultTimeZoneConfigurationKey());
     }
 
     @Test
     public void testUltimateFallbackValues() {
-        assertEquals(windows.getUltimateFallback(), "GMT Standard Time");
-        assertEquals(general.getUltimateFallback(), "Etc/GMT");
+        assertEquals("GMT Standard Time", windows.getUltimateFallback());
+        assertEquals("Etc/GMT", general.getUltimateFallback());
     }
 
     @Test
