@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -244,7 +245,8 @@ public enum TimeZoneType {
     protected abstract Map<String, String> initializeTimeZoneList();
 
 
-    private static final class TimeZoneTimeExtractComperator implements Comparator<Map.Entry<String, String>> {
+    private static final class TimeZoneTimeExtractComperator implements Comparator<Map.Entry<String, String>>, Serializable {
+        private static final long serialVersionUID = 4610103441378920720L;
         public static final TimeZoneTimeExtractComperator instance = new TimeZoneTimeExtractComperator();
 
 
