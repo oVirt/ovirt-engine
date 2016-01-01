@@ -245,9 +245,9 @@ public enum TimeZoneType {
     protected abstract Map<String, String> initializeTimeZoneList();
 
 
-    private static final class TimeZoneTimeExtractComperator implements Comparator<Map.Entry<String, String>>, Serializable {
-        private static final long serialVersionUID = 4610103441378920720L;
-        public static final TimeZoneTimeExtractComperator instance = new TimeZoneTimeExtractComperator();
+    private static final class TimeZoneTimeExtractComparator implements Comparator<Map.Entry<String, String>>, Serializable {
+        private static final long serialVersionUID = 5250199634939368530L;
+        public static final TimeZoneTimeExtractComparator instance = new TimeZoneTimeExtractComparator();
 
 
         // we get a string like "(GMT-04:30) Afghanistan Standard Time"
@@ -275,7 +275,7 @@ public enum TimeZoneType {
 
     private static Map<String, String> sortMapByValue(Map<String, String> map) {
         List<Map.Entry<String, String>> list = new LinkedList<>(map.entrySet());
-        Collections.sort(list, TimeZoneTimeExtractComperator.instance);
+        Collections.sort(list, TimeZoneTimeExtractComparator.instance);
 
         Map<String, String> result = new LinkedHashMap<>();
         for (Iterator<Map.Entry<String, String>> it = list.iterator(); it.hasNext();) {
