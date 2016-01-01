@@ -66,9 +66,13 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    private double treeCollapsedHeight = 206, treeExpandedHeight = 305, lunsTreeHeight = 348;
-    private double tabContentHeight = 340, tabHeight = 194;
-    private double textTop = 80, textLeft = -92;
+    private double treeCollapsedHeight = 206;
+    private double treeExpandedHeight = 305;
+    private double lunsTreeHeight = 348;
+    private double tabContentHeight = 340;
+    private double tabHeight = 194;
+    private double textTop = 80;
+    private double textLeft = -92;
 
     private final Driver driver = GWT.create(Driver.class);
 

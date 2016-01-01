@@ -47,7 +47,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> extends CommandBase<T> {
     private Disk diskToScan;
-    private Guid vdsInPool, storagePoolId;
+    private Guid vdsInPool;
+    private Guid storagePoolId;
     private VM diskVm;
     private List<PermissionSubject> permsList;
 

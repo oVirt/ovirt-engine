@@ -254,7 +254,8 @@ public enum TimeZoneType {
         // in this sample we get -430
         @Override
         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-            int a = 0, b = 0;
+            int a = 0;
+            int b = 0;
             Match match1 = Regex.match(o1.toString(), TimeZoneExtractTimePattern);
             Match match2 = Regex.match(o2.toString(), TimeZoneExtractTimePattern);
             if (match1.success() && match1.groups().size() > 0) {

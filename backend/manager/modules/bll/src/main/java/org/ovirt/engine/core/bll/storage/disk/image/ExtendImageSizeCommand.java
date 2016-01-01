@@ -112,7 +112,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     }
 
     private VDSReturnValue extendVmDiskSize(VM vm, Long newSize) {
-        Guid vdsId, vmId;
+        Guid vdsId;
+        Guid vmId;
 
         if (vm.getStatus().isDownOrSuspended()) {
             vdsId = getStoragePool().getSpmVdsId();

@@ -157,7 +157,8 @@ public class PluginDataManager {
             long configurationLastModified = isJsonFile(cf) ? cf.lastModified() : MISSING_FILE_LAST_MODIFIED;
 
             // Check if data needs to be reloaded
-            boolean reloadDescriptor, reloadConfiguration;
+            boolean reloadDescriptor;
+            boolean reloadConfiguration;
             if (currentDataMapCopy.containsKey(descriptorFilePath)) {
                 reloadDescriptor = descriptorLastModified > currentData.getDescriptorLastModified();
                 reloadConfiguration = configurationLastModified > currentData.getConfigurationLastModified();

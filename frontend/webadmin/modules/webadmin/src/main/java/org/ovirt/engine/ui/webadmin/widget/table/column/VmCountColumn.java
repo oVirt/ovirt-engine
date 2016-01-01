@@ -81,7 +81,9 @@ public class VmCountColumn extends AbstractSafeHtmlColumn<VDS> {
     }
 
     protected SafeHtml createInOutMigrationsTemplate(int migrations, SafeHtml arrowImage) {
-        String prefix, postfix, migrationsStr;
+        String prefix;
+        String postfix;
+        String migrationsStr;
         SafeHtml image;
 
         if (migrations > 0) {

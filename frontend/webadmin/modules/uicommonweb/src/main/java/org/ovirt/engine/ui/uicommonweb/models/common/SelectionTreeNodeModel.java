@@ -131,7 +131,8 @@ public class SelectionTreeNodeModel extends EntityModel {
         if (getParent() == null || getParent().getChildren() == null) {
             return;
         }
-        int selCount = 0, nullCount = 0;
+        int selCount = 0;
+        int nullCount = 0;
         for (SelectionTreeNodeModel a : getParent().getChildren()) {
             if (a.getIsSelectedNullable() != null && a.getIsSelectedNullable().equals(true)) {
                 selCount += 1;

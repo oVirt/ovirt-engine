@@ -85,7 +85,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
-    private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
+    private boolean glusterHostUuidFound;
+    private boolean glusterPeerListSucceeded;
+    private boolean glusterPeerProbeSucceeded;
     private static Integer MAX_RETRIES_GLUSTER_PROBE_STATUS;
     @Inject
     private EventQueue eventQueue;

@@ -12,7 +12,8 @@ public class ResizableDialogBox extends DialogBox {
 
     private boolean resizeSupportEnabled;
     private boolean dragging;
-    private boolean rightEdge, bottomEdge;
+    private boolean rightEdge;
+    private boolean bottomEdge;
     private int minWidth;
     private int minHeight;
 

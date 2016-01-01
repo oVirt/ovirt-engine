@@ -60,7 +60,8 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmDrives() {
         List<Map<String, String>> drives = new ArrayList<>(vm.getDiskMap().size());
-        int ideCount = 0, pciCount = 0;
+        int ideCount = 0;
+        int pciCount = 0;
         List<Disk> disks = getSortedDisks();
         List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(), VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName());

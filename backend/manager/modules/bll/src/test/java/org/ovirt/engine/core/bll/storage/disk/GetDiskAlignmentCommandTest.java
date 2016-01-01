@@ -70,7 +70,12 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
 
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
-    private Guid vmId, diskId, poolId, storageDomainId, groupId, vdsId;
+    private Guid vmId;
+    private Guid diskId;
+    private Guid poolId;
+    private Guid storageDomainId;
+    private Guid groupId;
+    private Guid vdsId;
     private DiskImage disk;
     private VM vm;
     private VDS vds;

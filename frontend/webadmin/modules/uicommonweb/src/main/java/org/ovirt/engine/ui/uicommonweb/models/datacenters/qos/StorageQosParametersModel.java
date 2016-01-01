@@ -45,7 +45,9 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
             Integer maxRead,
             Integer maxWrite,
             StorageQosMetricParametersModel parameterModel) {
-        boolean noneSelected = false, totalSelected = false, readWriteSelected = false;
+        boolean noneSelected = false;
+        boolean totalSelected = false;
+        boolean readWriteSelected = false;
         if (!(max == null &&
                 maxRead == null && maxWrite == null)) {
             if (max != null) {

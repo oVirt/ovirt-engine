@@ -83,7 +83,8 @@ public class GlusterBrickValidator {
             replicaCount = volumeEntity.getReplicaCount();
         }
 
-        int brickIndex = 0, replicaIndex = 0;
+        int brickIndex = 0;
+        int replicaIndex = 0;
         while (brickIndex < bricks.size()) {
             for (replicaIndex = 0; replicaIndex < replicaCount; replicaIndex++) {
                 if (bricks.get(brickIndex + replicaIndex).isOnline()) {

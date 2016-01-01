@@ -38,7 +38,8 @@ public class PluginResourceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestPath = request.getPathInfo();
-        String pluginName, requestFilePath;
+        String pluginName;
+        String requestFilePath;
         final String slash = "/"; //$NON-NLS-1$
 
         // Ensure non-null request path

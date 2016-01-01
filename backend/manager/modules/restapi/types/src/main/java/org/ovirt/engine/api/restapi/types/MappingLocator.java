@@ -109,7 +109,8 @@ public class MappingLocator {
     }
 
     private static class ClassPairKey {
-        private Class<?> from, to;
+        private Class<?> from;
+        private Class<?> to;
 
         private ClassPairKey(Class<?> from, Class<?> to) {
             this.from = from;

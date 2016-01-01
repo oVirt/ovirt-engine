@@ -7,7 +7,10 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 public class GetDiskImageAlignmentVDSCommandParameters extends GetDiskAlignmentVDSCommandParameters {
-    private Guid poolId, domainId, imageGroupId, imageId;
+    private Guid poolId;
+    private Guid domainId;
+    private Guid imageGroupId;
+    private Guid imageId;
 
     public GetDiskImageAlignmentVDSCommandParameters(Guid vdsId, Guid vmId) {
         super(vdsId, vmId);
