@@ -473,8 +473,6 @@ public class SyntaxCheckerTest {
         SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState(dynamicQuery, true);
         assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());
         String query = chkr.generateQueryFromSyntaxContainer(res, true);
-        System.out.println(exepctedSQLResult);
-        System.out.println(query);
         assertEquals(exepctedSQLResult, query);
     }
 }
