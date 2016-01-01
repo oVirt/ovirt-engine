@@ -66,7 +66,8 @@ public class BackendInstanceTypeWatchdogsResourceTest
             getEntity()
         );
         Watchdog model = getModel();
-        Response response = collection.add(model); assertEquals(201, response.getStatus());
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Watchdog);
         verifyModel((Watchdog) response.getEntity());
     }

@@ -42,6 +42,7 @@
     <module name="NoWhitespaceBefore">
       <property name="tokens" value="SEMI"/>
     </module>
+    <module name="OneStatementPerLine"/>
     <module name="RedundantImport"/>
     <module name="TypeName" />
     <module name="UnusedImports"/>

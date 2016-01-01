@@ -138,9 +138,15 @@ public class GlusterServiceSyncJobTest {
 
     private List<VDS> createServers() {
         List<VDS> serverList = new ArrayList<>();
-        VDS server1 = createUpServer(SERVER1_ID); server1.setStatus(VDSStatus.Up);serverList.add(server1);
-        VDS server2 = createUpServer(SERVER2_ID); server2.setStatus(VDSStatus.Up);serverList.add(server2);
-        VDS server3 = createUpServer(SERVER3_ID); server3.setStatus(VDSStatus.Up);serverList.add(server3);
+        VDS server1 = createUpServer(SERVER1_ID);
+        server1.setStatus(VDSStatus.Up);
+        serverList.add(server1);
+        VDS server2 = createUpServer(SERVER2_ID);
+        server2.setStatus(VDSStatus.Up);
+        serverList.add(server2);
+        VDS server3 = createUpServer(SERVER3_ID);
+        server3.setStatus(VDSStatus.Up);
+        serverList.add(server3);
 
         return serverList;
     }
