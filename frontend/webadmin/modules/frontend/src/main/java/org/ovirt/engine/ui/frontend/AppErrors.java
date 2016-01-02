@@ -556,6 +556,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The storage selected contains the self hosted engine.")
     String ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE();
 
+    @DefaultStringValue("Cannot ${action} unmanaged hosted engine VM. Please upgrade the cluster level to 3.6 and wait for the hosted engine storage domain to be properly imported.")
+    String ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE();
+
     @DefaultStringValue("Cannot ${action} ${type}. source and destination is the same.")
     String ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST();
 
