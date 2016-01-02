@@ -178,7 +178,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             newVmStatic.setCreationDate(new Date());
         }
 
-        if (getVm().isRunningOrPaused()) {
+        if (getVm().isRunningOrPaused() && !getVm().isHostedEngine()) {
             if (!VmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic, isHotSetEnabled())) {
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
@@ -547,6 +547,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             vmFromParams.setVmtGuid(getVmTemplateDao().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
         }
 
+        // It is not allowed to edit hosted engine VM until it is imported to the engine properly
+        if (vmFromDB.isHostedEngine() && !vmFromDB.isManagedHostedEngine()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
+        }
+
         // pool VMs are allowed to change template id, this verifies that the change is only between template versions.
         if (!vmFromDB.getVmtGuid().equals(vmFromParams.getVmtGuid())) {
             VmTemplate origTemplate = getVmTemplateDao().get(vmFromDB.getVmtGuid());
@@ -850,17 +855,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     /**
-     * check if we need to use running-configuration
+     * check if we need to use running-configuration. Hosted Engine VM always returns false.
      * @return true if vm is running and we change field that has @EditableOnVmStatusField annotation
      *          or runningConfiguration already exist
      */
     private boolean isRunningConfigurationNeeded() {
-        return getVm().isNextRunConfigurationExists() ||
-                !VmHandler.isUpdateValid(getVm().getStaticData(),
+        return !getVm().isHostedEngine()
+                && getVm().isNextRunConfigurationExists()
+                || !VmHandler.isUpdateValid(
+                        getVm().getStaticData(),
                         getParameters().getVmStaticData(),
                         getVm().getStatus(),
-                        isHotSetEnabled()) ||
-                !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
+                        isHotSetEnabled())
+                || !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
     }
 
     private boolean isHotSetEnabled() {

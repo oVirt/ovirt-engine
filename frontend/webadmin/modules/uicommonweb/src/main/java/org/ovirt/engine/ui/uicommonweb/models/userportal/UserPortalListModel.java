@@ -979,7 +979,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             final VM selectedItem = (VM) getSelectedItem().getEntity();
             gettempVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
-            if (selectedItem.isRunningOrPaused()) {
+            if (!selectedItem.isHostedEngine() && selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, gettempVm(), getUpdateVmParameters(false), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override

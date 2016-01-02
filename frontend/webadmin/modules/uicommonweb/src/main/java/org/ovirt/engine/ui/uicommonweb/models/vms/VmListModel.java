@@ -1757,7 +1757,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
         getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
-        if (selectedItem.isRunningOrPaused()) {
+        if (selectedItem.isRunningOrPaused() && !selectedItem.isHostedEngine()) {
             AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
                     new INewAsyncCallback() {
                 @Override
