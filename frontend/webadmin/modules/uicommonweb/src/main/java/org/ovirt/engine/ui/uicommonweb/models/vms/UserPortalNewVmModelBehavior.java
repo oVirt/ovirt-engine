@@ -123,7 +123,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         }
         List<VmTemplate> templatesInDataCenter = new ArrayList<>();
         for (VmTemplate template : templates) {
-            if (Objects.equals(template.getStoragePoolId(), selectedDataCenterId)) {
+            if (Objects.equals(template.getStoragePoolId(), selectedDataCenterId) || template.isBlank()) {
                 templatesInDataCenter.add(template);
             }
         }
