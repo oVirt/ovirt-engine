@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,6 +63,8 @@ public class HostedEngineImporter {
     private VmStaticDao vmStaticDAO;
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private OsRepository osRepository;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -151,6 +154,10 @@ public class HostedEngineImporter {
         vm.setClusterArch(cluster.getArchitecture());
         vm.setVmCreationDate(new Date());
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        vm.setVmOs(osRepository.getLinuxOss().stream()
+                .sorted()
+                .findFirst().get());
+
         return parameters;
     }
 
