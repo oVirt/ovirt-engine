@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -208,6 +209,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getParameters().getVmStaticData() != null &&
                 getParameters().getVmStaticData().getMigrationSupport() == null) {
             setDefaultMigrationPolicy();
+        }
+        if (vmDisksSource != null) {
+            parameters.setUseCinderCommandCallback(!vmDisksSource.getDiskTemplateMap().isEmpty());
         }
     }
 
@@ -1645,5 +1649,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 vmStatic.setLargeIconId(getVmTemplate().getLargeIconId());
             }
         }
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
     }
 }
