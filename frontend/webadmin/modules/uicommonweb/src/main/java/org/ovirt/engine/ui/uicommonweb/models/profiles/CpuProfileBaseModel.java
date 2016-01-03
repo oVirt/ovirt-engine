@@ -68,6 +68,8 @@ public abstract class CpuProfileBaseModel extends ProfileBaseModel<CpuProfile, C
 
     @Override
     protected ProfileParametersBase<CpuProfile> getParameters() {
-        return new CpuProfileParameters(getProfile(), getProfile().getId());
+        CpuProfileParameters cpuProfileParameters = new CpuProfileParameters(getProfile(), getProfile().getId());
+        cpuProfileParameters.setAddPermissions(true);
+        return cpuProfileParameters;
     }
 }

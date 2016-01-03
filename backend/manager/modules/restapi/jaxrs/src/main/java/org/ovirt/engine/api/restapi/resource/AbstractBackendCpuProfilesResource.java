@@ -71,6 +71,7 @@ public abstract class AbstractBackendCpuProfilesResource
                 new CpuProfileParameters();
         org.ovirt.engine.core.common.businessentities.profiles.CpuProfile map = map(cpuProfile);
         parameters.setProfile(map);
+        parameters.setAddPermissions(true);
         return performCreate(VdcActionType.AddCpuProfile,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetCpuProfileById, IdQueryParameters.class));

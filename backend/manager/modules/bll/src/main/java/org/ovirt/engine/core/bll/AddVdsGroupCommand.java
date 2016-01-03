@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
@@ -13,14 +14,16 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,10 +42,10 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
 
     @Inject
-    private VdsGroupDao vdsGroupDao;
+    protected VdsGroupDao vdsGroupDao;
 
     @Inject
-    private NetworkClusterDao networkClusterDao;
+    protected NetworkClusterDao networkClusterDao;
 
     @Inject
     private NetworkDao networkDao;
@@ -61,14 +64,25 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
         updateMigrateOnError();
     }
 
+    public AddVdsGroupCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+        setStoragePoolId(getVdsGroup().getStoragePoolId());
+        updateMigrateOnError();
+    }
+
+    @Override
+    protected void init() {
+        updateMigrateOnError();
+    }
+
     @Override
     protected void executeCommand() {
-        VDSGroup cluster = getVdsGroup();
-        cluster.setArchitecture(getArchitecture());
+        VDSGroup vdsGroup = getVdsGroup();
+        vdsGroup.setArchitecture(getArchitecture());
 
         checkMaxMemoryOverCommitValue();
-        cluster.setDetectEmulatedMachine(true);
-        vdsGroupDao.save(cluster);
+        vdsGroup.setDetectEmulatedMachine(true);
+        getVdsGroupDao().save(vdsGroup);
 
         alertIfFencingDisabled();
 
@@ -78,26 +92,35 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
         }
 
         // create default CPU profile for supported clusters.
-        if (FeatureSupported.cpuQoS(getParameters().getVdsGroup().getCompatibilityVersion())) {
-            getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getVdsGroup().getId(),
-                    getParameters().getVdsGroup().getName()));
-        }
+        addDefaultCpuProfile();
 
-        if (CollectionUtils.isNotEmpty(cluster.getAddtionalFeaturesSupported())) {
-            for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
-                feature.setClusterId(cluster.getId());
+        if (CollectionUtils.isNotEmpty(vdsGroup.getAddtionalFeaturesSupported())) {
+            for (SupportedAdditionalClusterFeature feature : vdsGroup.getAddtionalFeaturesSupported()) {
+                feature.setClusterId(vdsGroup.getId());
             }
-            clusterFeatureDao.addAllSupportedClusterFeature(cluster.getAddtionalFeaturesSupported());
+            clusterFeatureDao.addAllSupportedClusterFeature(vdsGroup.getAddtionalFeaturesSupported());
         }
 
-        setActionReturnValue(cluster.getId());
+        setActionReturnValue(vdsGroup.getId());
         setSucceeded(true);
     }
 
+    private void addDefaultCpuProfile() {
+        CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(getParameters().getVdsGroup().getId(),
+                getParameters().getVdsGroup().getName());
+
+        CpuProfileParameters cpuProfileAddParameters = new CpuProfileParameters(cpuProfile, cpuProfile.getId());
+        cpuProfileAddParameters.setAddPermissions(true);
+        cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
+        cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
+
+        getBackend().runAction(VdcActionType.AddCpuProfile, cpuProfileAddParameters);
+    }
+
     private void attachManagementNetwork() {
-        final NetworkCluster networkCluster = createManagementNetworkCluster();
-        networkCluster.setClusterId(getVdsGroupId());
-        networkClusterDao.save(networkCluster);
+        final NetworkCluster networkVdsGroup = createManagementNetworkCluster();
+        networkVdsGroup.setClusterId(getVdsGroupId());
+        networkClusterDao.save(networkVdsGroup);
     }
 
     private Guid getManagementNetworkId() {
@@ -151,9 +174,9 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     }
 
     private boolean findDefaultManagementNetwork() {
-        managementNetwork =
-                defaultManagementNetworkFinder.findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
-        if (managementNetwork == null) {
+        setManagementNetwork(defaultManagementNetworkFinder.findDefaultManagementNetwork(getVdsGroup().getStoragePoolId()));
+
+        if (getManagementNetwork() == null) {
             addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
             return false;
         }
@@ -161,15 +184,17 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     }
 
     private boolean validateInputManagementNetwork() {
-        managementNetwork = getManagementNetworkById();
-        if (managementNetwork == null) {
+        setManagementNetwork(getManagementNetworkById());
+
+        if (getManagementNetwork() == null) {
             addCanDoActionMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
+
         final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();
-        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getVdsGroup(), managementNetwork))
-                && validate(networkClusterValidator.managementNetworkRequired(managementNetwork))
-                && validate(networkClusterValidator.managementNetworkNotExternal(managementNetwork));
+        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getVdsGroup(), getManagementNetwork()))
+                && validate(networkClusterValidator.managementNetworkRequired(getManagementNetwork()))
+                && validate(networkClusterValidator.managementNetworkNotExternal(getManagementNetwork()));
     }
 
     private AddClusterNetworkClusterValidator createNetworkClusterValidator() {
@@ -184,13 +209,21 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
     private NetworkCluster createManagementNetworkCluster() {
         return new NetworkCluster(
                 getVdsGroupId(),
-                managementNetwork.getId(),
+                getManagementNetwork().getId(),
                 NetworkStatus.OPERATIONAL,
                 true,
                 true,
                 true,
                 true,
                 false);
+    }
+
+    protected Network getManagementNetwork() {
+        return managementNetwork;
+    }
+
+    protected void setManagementNetwork(Network managementNetwork) {
+        this.managementNetwork = managementNetwork;
     }
 
     @Override

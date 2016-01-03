@@ -25,6 +25,11 @@ public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, 
         getParameters().getProfile().setId(Guid.newGuid());
         getProfileDao().save(getParameters().getProfile());
         getReturnValue().setActionReturnValue(getParameters().getProfile().getId());
+
+        if(getParameters().isAddPermissions()) {
+            addPermissions();
+        }
+
         setSucceeded(true);
     }
 
@@ -33,6 +38,8 @@ public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, 
         super.setActionMessageParameters();
         addCanDoActionMessage(EngineMessage.VAR__ACTION__ADD);
     }
+
+    protected abstract void addPermissions();
 
     protected abstract Q getProfileValidator();
 }

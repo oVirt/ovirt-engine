@@ -50,12 +50,7 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
     }
 
     @Override
-    protected void executeCommand() {
-        super.executeCommand();
-        addPermission();
-    }
-
-    private void addPermission() {
+    protected void addPermissions() {
         MultiLevelAdministrationHandler.addPermission(new Permission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                 PredefinedRoles.DISK_PROFILE_USER.getId(),
                 getProfileId(),

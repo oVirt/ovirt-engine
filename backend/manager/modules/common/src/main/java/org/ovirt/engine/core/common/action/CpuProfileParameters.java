@@ -7,9 +7,10 @@ public class CpuProfileParameters extends ProfileParametersBase<CpuProfile> {
     private static final long serialVersionUID = 1303388881332223324L;
 
     public CpuProfileParameters() {
+        super(false);
     }
 
     public CpuProfileParameters(CpuProfile cpuProfile, Guid cpuProfileId) {
-        super(cpuProfile, cpuProfileId);
+        super(cpuProfile, cpuProfileId, false);
     }
 }

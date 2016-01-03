@@ -24,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@CanDoActionSupportsTransaction
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
     public AddPermissionCommand(T parameters) {
