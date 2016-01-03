@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@ValidateSupportsTransaction
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
     public AddPermissionCommand(T parameters, CommandContext commandContext) {

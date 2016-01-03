@@ -15,12 +15,16 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,10 +43,10 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
 
     @Inject
-    private ClusterDao clusterDao;
+    protected ClusterDao clusterDao;
 
     @Inject
-    private NetworkClusterDao networkClusterDao;
+    protected NetworkClusterDao networkClusterDao;
 
     @Inject
     private NetworkDao networkDao;
@@ -72,7 +76,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
         checkMaxMemoryOverCommitValue();
         cluster.setDetectEmulatedMachine(true);
-        clusterDao.save(cluster);
+        getClusterDao().save(cluster);
 
         alertIfFencingDisabled();
 
@@ -81,8 +85,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
             attachManagementNetwork();
         }
 
-        getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getCluster().getId(),
-                getParameters().getCluster().getName()));
+        // create default CPU profile for supported clusters.
+        addDefaultCpuProfile();
 
         if (CollectionUtils.isNotEmpty(cluster.getAddtionalFeaturesSupported())) {
             for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
@@ -93,6 +97,20 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
         setActionReturnValue(cluster.getId());
         setSucceeded(true);
+    }
+
+    private void addDefaultCpuProfile() {
+        CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(getParameters().getCluster().getId(),
+                getParameters().getCluster().getName());
+
+        CpuProfileParameters cpuProfileAddParameters = new CpuProfileParameters(cpuProfile, cpuProfile.getId());
+        cpuProfileAddParameters.setAddPermissions(true);
+        cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
+        cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
+
+        VdcReturnValueBase addCpuProfileReturnValue = getBackend().runAction(VdcActionType.AddCpuProfile, cpuProfileAddParameters);
+        cpuProfile.setId(addCpuProfileReturnValue.getActionReturnValue());
+
     }
 
     private void attachManagementNetwork() {
@@ -152,7 +170,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private boolean findDefaultManagementNetwork() {
         managementNetwork =
                 defaultManagementNetworkFinder.findDefaultManagementNetwork(getCluster().getStoragePoolId());
-        if (managementNetwork == null) {
+        if (getManagementNetwork() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
             return false;
         }
@@ -160,15 +178,17 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     }
 
     private boolean validateInputManagementNetwork() {
-        managementNetwork = getManagementNetworkById();
-        if (managementNetwork == null) {
+        setManagementNetwork(getManagementNetworkById());
+
+        if (getManagementNetwork() == null) {
             addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
             return false;
         }
+
         final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();
-        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getCluster(), managementNetwork))
-                && validate(networkClusterValidator.managementNetworkRequired(managementNetwork))
-                && validate(networkClusterValidator.managementNetworkNotExternal(managementNetwork));
+        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getCluster(), getManagementNetwork()))
+                && validate(networkClusterValidator.managementNetworkRequired(getManagementNetwork()))
+                && validate(networkClusterValidator.managementNetworkNotExternal(getManagementNetwork()));
     }
 
     private AddClusterNetworkClusterValidator createNetworkClusterValidator() {
@@ -183,13 +203,21 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private NetworkCluster createManagementNetworkCluster() {
         return new NetworkCluster(
                 getClusterId(),
-                managementNetwork.getId(),
+                getManagementNetwork().getId(),
                 NetworkStatus.OPERATIONAL,
                 true,
                 true,
                 true,
                 true,
                 false);
+    }
+
+    protected Network getManagementNetwork() {
+        return managementNetwork;
+    }
+
+    protected void setManagementNetwork(Network managementNetwork) {
+        this.managementNetwork = managementNetwork;
     }
 
     @Override

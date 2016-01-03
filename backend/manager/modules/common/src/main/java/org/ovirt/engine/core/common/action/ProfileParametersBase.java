@@ -9,8 +9,16 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcAc
 
     private static final long serialVersionUID = 1303387921254823324L;
 
-    public ProfileParametersBase() {
+    private boolean addPermissions;
 
+    public ProfileParametersBase(boolean addPermissions) {
+        this.addPermissions = addPermissions;
+    }
+
+    public ProfileParametersBase(T profile, Guid profileId, boolean addPermissions) {
+        this.profile = profile;
+        this.profileId = profileId;
+        this.addPermissions = addPermissions;
     }
 
     public ProfileParametersBase(T profile, Guid profileId) {
@@ -21,6 +29,8 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcAc
     @Valid
     private T profile;
     private Guid profileId;
+
+    public ProfileParametersBase() {}
 
     public T getProfile() {
         return profile;
@@ -36,6 +46,14 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcAc
 
     public void setProfileId(Guid profileId) {
         this.profileId = profileId;
+    }
+
+    public boolean isAddPermissions() {
+        return addPermissions;
+    }
+
+    public void setAddPermissions(boolean addPermissions) {
+        this.addPermissions = addPermissions;
     }
 
 }
