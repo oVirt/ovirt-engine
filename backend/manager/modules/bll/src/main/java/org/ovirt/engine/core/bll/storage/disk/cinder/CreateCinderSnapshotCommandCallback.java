@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -46,18 +45,13 @@ public class CreateCinderSnapshotCommandCallback extends AbstractCinderDiskComma
         super.onFailed(cmdId, childCmdIds);
         log.error("Failed adding a Cinder snapshot. snapshot ID: {}", getDiskId());
         getCommand().getParameters().setTaskGroupSuccess(false);
-        onFinish(cmdId);
+        getCommand().endAction();
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
-        onFinish(cmdId);
-    }
-
-    private void onFinish(Guid cmdId) {
         getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
