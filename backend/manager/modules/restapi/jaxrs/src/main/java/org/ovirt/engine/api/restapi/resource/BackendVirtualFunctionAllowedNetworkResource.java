@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
+import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 
 public class BackendVirtualFunctionAllowedNetworkResource
         extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
@@ -38,6 +38,6 @@ public class BackendVirtualFunctionAllowedNetworkResource
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveVfsConfigNetwork,
-                new VfsConfigLabelParameters(parent.getNicId(), id));
+                new VfsConfigNetworkParameters(parent.getNicId(), guid));
     }
 }

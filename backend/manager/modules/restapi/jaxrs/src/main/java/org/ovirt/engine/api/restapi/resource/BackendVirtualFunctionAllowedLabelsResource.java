@@ -9,8 +9,8 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.LabelsResource;
-import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,7 +42,7 @@ public class BackendVirtualFunctionAllowedLabelsResource extends AbstractBaseHos
     @Override
     protected Response performCreate(String labelId) {
         return performCreate(VdcActionType.AddVfsConfigLabel,
-                new LabelNicParameters(nicId, labelId),
+                new VfsConfigLabelParameters(nicId, labelId),
                 new NetworkLabelIdResolver(nicId));
     }
 
