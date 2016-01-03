@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.ejb.EJB;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,6 +64,8 @@ public class HostedEngineImporter {
     private VmStaticDao vmStaticDAO;
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private OsRepository osRepository;
 
     /**
      * Import the VM into ovirt engine by removing the old, un-managed VM
@@ -151,6 +155,10 @@ public class HostedEngineImporter {
         vm.setClusterArch(vdsGroup.getArchitecture());
         vm.setVmCreationDate(new Date());
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        ArrayList<Integer> linuxOss = osRepository.getLinuxOss();
+        Collections.sort(linuxOss);
+        vm.setVmOs(linuxOss.get(0));
+
         return parameters;
     }
 
