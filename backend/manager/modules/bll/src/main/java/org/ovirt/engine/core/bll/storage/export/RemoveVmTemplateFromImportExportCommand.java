@@ -51,6 +51,10 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     }
 
     @Override
+    public void init() {
+    }
+
+    @Override
     protected boolean validate() {
         boolean retVal = validate(templateExists());
         if (retVal) {

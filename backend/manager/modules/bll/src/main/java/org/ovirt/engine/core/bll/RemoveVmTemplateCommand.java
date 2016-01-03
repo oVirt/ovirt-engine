@@ -67,17 +67,21 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
-        if (getVmTemplate() != null) {
-            setStoragePoolId(getVmTemplate().getStoragePoolId());
-        }
     }
 
     public RemoveVmTemplateCommand(Guid vmTemplateId) {
         super.setVmTemplateId(vmTemplateId);
     }
 
+    private void initStoragePoolInfo() {
+        if (getVmTemplate() != null) {
+            setStoragePoolId(getVmTemplate().getStoragePoolId());
+        }
+    }
+
     @Override
     public void init() {
+        initStoragePoolInfo();
         getParameters().setUseCinderCommandCallback(
                 !ImagesHandler.filterDisksBasedOnCinder(getImageTemplates()).isEmpty());
     }
