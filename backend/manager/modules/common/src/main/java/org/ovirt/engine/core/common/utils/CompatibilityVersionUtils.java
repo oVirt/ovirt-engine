@@ -9,8 +9,9 @@ import org.ovirt.engine.core.compat.Version;
 
 public class CompatibilityVersionUtils {
 
-    public static Version getEffective(Version vmCustomCompatibilityVersion, Version vdsGroupCompatibilityVersion,
-                                       Version defaultVersion) {
+    public static Version getEffective(Version vmCustomCompatibilityVersion,
+            Version vdsGroupCompatibilityVersion,
+            Version defaultVersion) {
         if (vmCustomCompatibilityVersion != null) {
             return vmCustomCompatibilityVersion;
         }
@@ -18,6 +19,20 @@ public class CompatibilityVersionUtils {
             return vdsGroupCompatibilityVersion;
         }
         return defaultVersion;
+    }
+
+    public static Version getEffective(Version vmCustomCompatibilityVersion,
+            Supplier<Version> vdsGroupCompatibilityVersionSupplier) {
+        if (vmCustomCompatibilityVersion != null) {
+            return vmCustomCompatibilityVersion;
+        }
+        if (vdsGroupCompatibilityVersionSupplier != null) {
+            Version vdsGroupCompatibilityVersion = vdsGroupCompatibilityVersionSupplier.get();
+            if (vdsGroupCompatibilityVersion != null) {
+                return vdsGroupCompatibilityVersion;
+            }
+        }
+        return Version.getLast();
     }
 
     public static Version getEffective(VmBase vmBase, VDSGroup cluster) {
