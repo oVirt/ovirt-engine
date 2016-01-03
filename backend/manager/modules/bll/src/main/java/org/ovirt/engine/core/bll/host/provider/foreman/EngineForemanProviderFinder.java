@@ -14,18 +14,17 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO rename EngineForemanProviderFinder
-public class SystemProviderFinder {
+public class EngineForemanProviderFinder {
 
-    private static Logger log = LoggerFactory.getLogger(SystemProviderFinder.class);
-    private String systemHostName;
+    private static Logger log = LoggerFactory.getLogger(EngineForemanProviderFinder.class);
+    private String engineHostName;
 
     @Inject
     private DbFacade dbFacade;
 
-    public HostProviderProxy findSystemProvider() {
-        systemHostName = resolveSystemHostName();
-        if (systemHostName == null) {
+    public HostProviderProxy findEngineProvider() {
+        engineHostName = resolveEngineHostName();
+        if (engineHostName == null) {
             return null;
         }
 
@@ -33,20 +32,20 @@ public class SystemProviderFinder {
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = ProviderProxyFactory.getInstance().create(provider);
-            if (proxy.findContentHost(systemHostName) != null) {
+            if (proxy.findContentHost(engineHostName) != null) {
                 return proxy;
             }
         }
 
-        log.error("Failed to find host on any provider by host name '{}' ", systemHostName);
+        log.error("Failed to find host on any provider by host name '{}' ", engineHostName);
         return null;
     }
 
-    public String getSystemHostName() {
-        return systemHostName;
+    public String getEngineHostName() {
+        return engineHostName;
     }
 
-    private String resolveSystemHostName() {
+    private String resolveEngineHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {

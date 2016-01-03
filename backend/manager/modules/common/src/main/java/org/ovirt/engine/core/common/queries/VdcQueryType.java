@@ -427,7 +427,7 @@ public enum VdcQueryType implements Serializable {
     GetAllProviders,
     GetProviderById,
     GetAllNetworksForProvider,
-    GetSystemProvider,
+    GetEngineForemanProvider,
 
     //Network QoS
     GetAllNetworkQosByStoragePoolId,
