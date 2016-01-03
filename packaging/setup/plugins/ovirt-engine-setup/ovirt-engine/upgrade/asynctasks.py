@@ -181,6 +181,12 @@ class Plugin(plugin.PluginBase):
             transaction=False,
         )
 
+        def taskinfo(task):
+            return ASYNC_TASKS_MAP.get(
+                str(task['action_type']),
+                ['Unknown', 'Unknown']
+            )
+
         return (
             [
                 _(
@@ -191,8 +197,8 @@ class Plugin(plugin.PluginBase):
                     'DC Name:           {name:30}'
                 ).format(
                     task_id=entry['task_id'],
-                    task_name=ASYNC_TASKS_MAP[str(entry['action_type'])][0],
-                    task_desc=ASYNC_TASKS_MAP[str(entry['action_type'])][1],
+                    task_name=taskinfo(entry)[0],
+                    task_desc=taskinfo(entry)[1],
                     started_at=entry['started_at'],
                     name=entry['name'],
                 )
