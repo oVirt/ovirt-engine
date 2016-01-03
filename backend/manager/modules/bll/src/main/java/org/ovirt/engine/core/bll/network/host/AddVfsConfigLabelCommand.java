@@ -20,7 +20,9 @@ public class AddVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
         super.executeCommand();
 
         getVfsConfigDao().addLabel(getVfsConfig().getId(), getLabel());
+
         setSucceeded(true);
+        setActionReturnValue(getLabel());
     }
 
     @Override
