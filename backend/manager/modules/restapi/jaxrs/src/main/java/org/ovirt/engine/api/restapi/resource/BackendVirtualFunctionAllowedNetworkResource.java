@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
+import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -52,6 +52,6 @@ public class BackendVirtualFunctionAllowedNetworkResource
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveVfsConfigNetwork,
-                new VfsConfigLabelParameters(parent.getNicId(), id));
+                new VfsConfigNetworkParameters(parent.getNicId(), guid));
     }
 }
