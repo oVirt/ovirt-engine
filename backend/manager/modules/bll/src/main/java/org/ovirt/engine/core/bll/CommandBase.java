@@ -1972,8 +1972,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
             if (exclusiveLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, null);
+                log.info("Before acquiring and wait lock '{}'", lock);
                 getLockManager().acquireLockWait(lock);
                 context.withLock(lock);
+                log.info("Lock-wait acquired to object '{}'", lock);
             }
         }
     }
