@@ -67,7 +67,7 @@ public abstract class SqlInjectionChecker {
     private String removeAllStringValuesFromSql(String sql) {
         boolean singleQuoteFound=false;
         boolean doubleQuoteFound=false;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // replace all occurrences of a quote/s inside a value with an empty string.
         final String[] QUOTES_INSIDE_VALUE_INDICATORES = {BACKSLASH_QUOTE, QUOTE_QUOTE, BACKSLASH_DOUBLE_QUOTE};
         for (String s : QUOTES_INSIDE_VALUE_INDICATORES) {

@@ -57,13 +57,13 @@ public class CustomPropertiesParser {
      * @return String representing custom properties
      */
     public static String parse(List<CustomProperty> customProperties) {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         for (CustomProperty hook : customProperties) {
             if (hook.isSetName() && hook.isSetValue()) {
-                buff.append(hook.getName() + "=" + hook.getValue() + ";");
+                builder.append(hook.getName()).append("=").append(hook.getValue()).append(";");
             }
         }
-        return buff.toString();
+        return builder.toString();
     }
 
     /**

@@ -99,7 +99,7 @@ public class GlusterHookMapper {
     }
 
     private static String mapConflicts(GlusterHookEntity hook) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (hook.isMissingHookConflict()) {
             sb.append(GlusterHookConflictFlags.MISSING_HOOK.toString());
         }

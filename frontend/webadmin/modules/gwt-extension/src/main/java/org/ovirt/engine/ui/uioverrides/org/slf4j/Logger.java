@@ -98,7 +98,7 @@ public class Logger {
 
     private void doFormat(Level level, String format, Object... arguments) {
         if (log.isLoggable(level) && format != null) {
-            StringBuffer msg = new StringBuffer();
+            StringBuilder msg = new StringBuilder();
             int i = 0;
             int last = 0;
             int current;

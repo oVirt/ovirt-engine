@@ -108,7 +108,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
     }
 
     protected String join(List<String> strings, String separator) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (strings == null) {
             return result.toString();
         }

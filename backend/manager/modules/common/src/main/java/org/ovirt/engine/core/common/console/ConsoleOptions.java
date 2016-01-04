@@ -413,7 +413,7 @@ public class ConsoleOptions implements Serializable{
     }
 
     public String disableEffectsAsString() {
-        StringBuffer disableEffectsBuffer = new StringBuffer("");
+        StringBuilder disableEffectsBuffer = new StringBuilder();
         int countdown = getWanDisableEffects().size();
         for (ConsoleOptions.WanDisableEffects disabledEffect : getWanDisableEffects()) {
             disableEffectsBuffer.append(disabledEffect.asString());
