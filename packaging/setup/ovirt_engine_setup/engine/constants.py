@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2014-2015 Red Hat, Inc.
+# Copyright (C) 2014-2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -775,6 +775,8 @@ class RPMDistroEnv(object):
     ENGINE_SETUP_PACKAGES = 'OVESETUP_RPMDISTRO/engineSetupPackages'
     UPGRADE_YUM_GROUP = 'OVESETUP_RPMDISTRO/upgradeYumGroup'
     ADDITIONAL_PACKAGES = 'OVESETUP_RPMDISTRO/additionalPackages'
+
+    ENGINE_AAA_JDBC_PACKAGE = 'OVESETUP_RPMDISTRO/aaaJdbcPackage'
 
 
 @util.export
