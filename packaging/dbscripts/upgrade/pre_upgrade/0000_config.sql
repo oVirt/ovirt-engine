@@ -718,7 +718,7 @@ select fn_db_add_config_value('GlanceImageTotalListSize','500','general');
 -- OpenStack Cinder
 select fn_db_add_config_value_for_versions_up_to('CinderProviderSupported', 'false', '3.5');
 
-select fn_db_add_config_value_for_versions_up_to('MigrateDowntime', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('MigrateDowntimeSupported', 'false', '3.5');
 
 select fn_db_add_config_value_for_versions_up_to('GlusterVolumeInfoSupported', 'false', '3.5');
 
