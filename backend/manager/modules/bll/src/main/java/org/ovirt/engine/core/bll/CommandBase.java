@@ -141,7 +141,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
-    /** Object which is representing a lock that some commands will acquire */
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
