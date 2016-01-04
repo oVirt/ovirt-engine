@@ -11,10 +11,8 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -162,12 +160,8 @@ public class HttpURLConnectionBuilder {
 
             if (!verifyHost) {
                 httpsConnection.setHostnameVerifier(
-                        new HostnameVerifier() {
-                            public boolean verify(String hostname, SSLSession session) {
-                                return true;
-                            }
-                        }
-                        );
+                        (hostname, session) -> true
+                );
             }
         }
         return (HttpURLConnection) connection;
