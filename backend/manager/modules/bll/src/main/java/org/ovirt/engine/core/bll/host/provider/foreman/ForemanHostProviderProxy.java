@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
-import org.ovirt.engine.core.common.businessentities.ExternalOperatingSystem;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -47,9 +46,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     private static final String DISCOVERED_HOSTS = "/discovered_hosts";
     private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
-
-    private static final String OPERATION_SYSTEM_ENTRY_POINT = API_ENTRY_POINT + "/operatingsystems";
-    private static final String OPERATION_SYSTEM_QUERY = OPERATION_SYSTEM_ENTRY_POINT + "?" + JSON_FORMAT;
 
     private static final String KATELLO_API_ENTRY_POINT = "/katello/api/v2";
     private static final String CONTENT_HOSTS_ENTRY_POINT = KATELLO_API_ENTRY_POINT + "/systems";
@@ -104,16 +100,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         }
     }
 
-    private List<ExternalOperatingSystem> runOperationSystemMethod(String relativeUrl) {
-        try {
-            ForemanOperatingSystemWrapper fosw =
-                    objectMapper.readValue(runHttpGetMethod(relativeUrl), ForemanOperatingSystemWrapper.class);
-            return mapOperationSystem(Arrays.asList(fosw.getResults()));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     private List<ExternalComputeResource> runComputeResourceMethod(String relativeUrl) {
         try {
             ForemanComputerResourceWrapper fcrw =
@@ -137,17 +123,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             crs.add(computeResource);
         }
         return crs;
-    }
-
-    private List<ExternalOperatingSystem> mapOperationSystem(List<ForemanOperatingSystem> foremanOss) {
-        List<ExternalOperatingSystem> oss = new ArrayList<>(foremanOss.size());
-        for (ForemanOperatingSystem os : foremanOss) {
-            ExternalOperatingSystem eos = new ExternalOperatingSystem();
-            eos.setName(os.getName());
-            eos.setId(os.getId());
-            oss.add(eos);
-        }
-        return oss;
     }
 
     private List<ExternalDiscoveredHost> mapDiscoveredHosts(List<ForemanDiscoveredHost> foremanHosts) {
@@ -326,10 +301,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     @Override
     public List<ExternalComputeResource> getComputeResources() {
         return runComputeResourceMethod(COMPUTE_RESOURCES_HOSTS_ENTRY_POINT);
-    }
-
-    private List<ExternalOperatingSystem> getOperationSystems() {
-        return runOperationSystemMethod(OPERATION_SYSTEM_QUERY);
     }
 
     @Override
