@@ -634,6 +634,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A Template with the same identifier already exists.")
     String ACTION_TYPE_FAILED_TEMPLATE_GUID_ALREADY_EXISTS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The Template can be changed for pool VMs only.")
+    String ACTION_TYPE_FAILED_TEMPLATE_ID_CANT_BE_CHANGED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Template ${templateName} (${templateId}) is being set as base template.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_SET_AS_BASE_TEMPLATE();
 

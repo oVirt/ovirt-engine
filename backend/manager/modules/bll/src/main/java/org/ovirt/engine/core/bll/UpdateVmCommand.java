@@ -565,10 +565,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             } else if (origTemplate != null && !origTemplate.getBaseTemplateId().equals(newTemplate.getBaseTemplateId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_ON_DIFFERENT_CHAIN);
 
-            // check if pool vm - if not, the field is not legal and command will fail later on
             } else if (vmFromDB.getVmPoolId() != null) {
                 isUpdateVmTemplateVersion = true;
                 return true; // no more tests are needed because no more changes are allowed in this state
+            } else {// template id can be changed for pool VMs only
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_ID_CANT_BE_CHANGED);
             }
         }
 
