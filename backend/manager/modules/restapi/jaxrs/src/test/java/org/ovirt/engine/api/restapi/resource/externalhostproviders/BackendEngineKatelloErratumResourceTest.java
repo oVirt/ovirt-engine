@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendSystemKatelloErratumResourceTest extends AbstractBackendSubResourceTest<KatelloErratum, Erratum, BackendSystemKatelloErratumResource> {
-    public BackendSystemKatelloErratumResourceTest() {
-        super(new BackendSystemKatelloErratumResource(string2hex(NAMES[1])));
+public class BackendEngineKatelloErratumResourceTest extends AbstractBackendSubResourceTest<KatelloErratum, Erratum, BackendEngineKatelloErratumResource> {
+    public BackendEngineKatelloErratumResourceTest() {
+        super(new BackendEngineKatelloErratumResource(string2hex(NAMES[1])));
     }
 
     @Test

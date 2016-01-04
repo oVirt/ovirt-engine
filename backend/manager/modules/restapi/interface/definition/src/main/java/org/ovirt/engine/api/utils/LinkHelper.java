@@ -282,6 +282,7 @@ import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.EngineKatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourceResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourcesResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostResource;
@@ -294,7 +295,6 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
-import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
@@ -668,7 +668,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
         map.add(KatelloErratumResource.class, KatelloErrataResource.class, Vm.class);
-        map.add(KatelloErratumResource.class, SystemKatelloErrataResource.class, NO_PARENT);
+        map.add(KatelloErratumResource.class, EngineKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
     }
 

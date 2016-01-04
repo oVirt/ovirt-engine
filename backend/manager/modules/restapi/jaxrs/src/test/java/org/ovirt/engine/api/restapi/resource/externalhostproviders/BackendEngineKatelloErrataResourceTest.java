@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendSystemKatelloErrataResourceTest extends AbstractBackendCollectionResourceTest<KatelloErratum, Erratum, BackendSystemKatelloErrataResource> {
-    public BackendSystemKatelloErrataResourceTest() {
-        super(new BackendSystemKatelloErrataResource(), null, "");
+public class BackendEngineKatelloErrataResourceTest extends AbstractBackendCollectionResourceTest<KatelloErratum, Erratum, BackendEngineKatelloErrataResource> {
+    public BackendEngineKatelloErrataResourceTest() {
+        super(new BackendEngineKatelloErrataResource(), null, "");
     }
 
     @Override

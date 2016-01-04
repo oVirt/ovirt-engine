@@ -23,7 +23,7 @@ import services.aaa.DomainsService;
 import services.aaa.GroupsService;
 import services.aaa.UsersService;
 import services.externalhostproviders.ExternalHostProvidersService;
-import services.externalhostproviders.SystemKatelloErrataService;
+import services.externalhostproviders.EngineKatelloErrataService;
 import services.openstack.OpenstackImageProvidersService;
 import services.openstack.OpenstackNetworkProvidersService;
 import services.openstack.OpenstackVolumeProvidersService;
@@ -62,7 +62,7 @@ public interface SystemService {
     @Service SchedulingPolicyUnitsService schedulingPolicyUnits();
     @Service StorageDomainsService storageDomains();
     @Service StorageServerConnectionsService storageConnections();
-    @Service SystemKatelloErrataService katelloErrata();
+    @Service EngineKatelloErrataService katelloErrata();
     @Service SystemPermissionsService permissions();
     @Service TagsService tags();
     @Service TemplatesService templates();

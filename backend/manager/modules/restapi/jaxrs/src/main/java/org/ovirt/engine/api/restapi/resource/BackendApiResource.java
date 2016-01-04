@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -78,16 +79,16 @@ import org.ovirt.engine.api.resource.VnicProfilesResource;
 import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.EngineKatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
-import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackImageProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendEngineKatelloErrataResource;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource;
-import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendSystemKatelloErrataResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource;
@@ -568,8 +569,8 @@ public class BackendApiResource
     }
 
     @Override
-    public SystemKatelloErrataResource getKatelloErrataResource() {
-        return inject(new BackendSystemKatelloErrataResource());
+    public EngineKatelloErrataResource getKatelloErrataResource() {
+        return inject(new BackendEngineKatelloErrataResource());
     }
 
     @Override

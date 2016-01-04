@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendSystemKatelloErratumResource extends AbstractBackendSubResource<KatelloErratum, Erratum> implements KatelloErratumResource {
+public class BackendEngineKatelloErratumResource extends AbstractBackendSubResource<KatelloErratum, Erratum> implements KatelloErratumResource {
 
-    public BackendSystemKatelloErratumResource(String id) {
+    public BackendEngineKatelloErratumResource(String id) {
         super(id, KatelloErratum.class, Erratum.class);
     }
 

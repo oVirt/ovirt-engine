@@ -20,8 +20,8 @@ import org.ovirt.api.metamodel.annotations.Service;
 
 /**
  * This service doesn't add any new methods, it is just a placeholder for the annotation that specifies the path of the
- * resource that manages the Katello errata assigned to the system object.
+ * resource that manages the Katello errata assigned to the engine.
  */
 @Service
-public interface SystemKatelloErrataService extends KatelloErrataService {
+public interface EngineKatelloErrataService extends KatelloErrataService {
 }
