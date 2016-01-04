@@ -442,14 +442,18 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private List<String> getSnapshotsNames() {
-        List<String> snapshotsNames = new LinkedList<>();
-        for (DiskImage image : getImages()) {
-            Snapshot snapshot = getSnapshotDao().get(image.getSnapshotId());
-            if (snapshot != null) {
-                snapshotsNames.add(snapshot.getDescription());
+        // The caching is done during initial command execution (called by addAuditLogCustomValues)
+        // which will prevent audit logging of '<UNKNOWN>' when the command completes.
+        if (getParameters().getSnapshotNames() == null) {
+            getParameters().setSnapshotNames(new LinkedList<String>());
+            for (DiskImage image : getImages()) {
+                Snapshot snapshot = getSnapshotDao().get(image.getSnapshotId());
+                if (snapshot != null) {
+                    getParameters().getSnapshotNames().add(snapshot.getDescription());
+                }
             }
         }
-        return snapshotsNames;
+        return getParameters().getSnapshotNames();
     }
 
     protected boolean canRunActionOnNonManagedVm() {
