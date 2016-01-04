@@ -31,20 +31,16 @@ public abstract class BaseProviderProxy implements ProviderProxy {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static interface ResponseCodeHandler {
-        void handle(final HttpURLConnection connection) throws IOException;
-    }
-
     private URL url;
     private Provider<?> hostProvider;
     private ProviderValidator providerValidator;
 
-    protected static enum HttpMethodType {
+    protected enum HttpMethodType {
         GET,
         POST,
         PUT,
         DELETE
-    };
+    }
 
     public BaseProviderProxy(Provider<?> provider) {
         try {
@@ -91,8 +87,8 @@ public abstract class BaseProviderProxy implements ProviderProxy {
     protected HttpURLConnection createConnection(String relativePath) {
 
         URL hostUrl = getUrl();
-        HttpURLConnectionBuilder builder = null;
-        HttpURLConnection result = null;
+        HttpURLConnectionBuilder builder;
+        HttpURLConnection result;
         try {
             builder = new HttpURLConnectionBuilder().appendRelativePath(hostUrl, relativePath);
             if (new File(EngineLocalConfig.getInstance().getExternalProvidersTrustStore().getAbsolutePath()).exists()) {
@@ -115,7 +111,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
     }
 
     public byte[] getResponse(HttpURLConnection connection) throws IOException {
-        byte[] response = null;
+        byte[] response;
         ByteArrayOutputStream bytesOs = new ByteArrayOutputStream();
         try (BufferedInputStream bis = new BufferedInputStream(connection.getInputStream())) {
             beforeReadResponse(connection);
@@ -152,7 +148,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                                     String.format("%1$s:%2$s", hostProvider.getUsername(), hostProvider.getPassword())
                                             .getBytes(StandardCharsets.UTF_8))
                             )
-                            .toString());
+            );
         }
     }
 
@@ -167,8 +163,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             connection.setRequestMethod(httpMethod.toString());
             if (body != null) {
                 byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
-                connection.setRequestProperty("Content-Length",
-                        new StringBuilder().append(bytes.length).toString());
+                connection.setRequestProperty("Content-Length", String.valueOf(bytes.length));
 
                 try (OutputStream outputStream = connection.getOutputStream()) {
                     outputStream.write(bytes);
