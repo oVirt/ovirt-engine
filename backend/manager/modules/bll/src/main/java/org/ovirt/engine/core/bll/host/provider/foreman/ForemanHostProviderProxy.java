@@ -71,8 +71,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         return runHttpMethod(
                 HttpMethodType.GET,
                 "application/json; charset=utf-8",
-                relativeUrl,
-                null);
+                null,
+                createConnection(relativeUrl));
     }
 
     private List<VDS> runHostListMethod(String relativeUrl) {
@@ -381,8 +381,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         runHttpMethod(
                 HttpMethodType.PUT,
                 "application/json; charset=utf-8",
-                DISCOVERED_HOSTS_ENTRY_POINT + "/" + discoverName,
-                entityBody
+                entityBody,
+                createConnection(DISCOVERED_HOSTS_ENTRY_POINT + "/" + discoverName)
                 );
     }
 

@@ -158,14 +158,6 @@ public abstract class BaseProviderProxy implements ProviderProxy {
 
     protected byte[] runHttpMethod(HttpMethodType httpMethod,
             String contentType,
-            String relativeUrl,
-            String body) {
-        return runHttpMethod(httpMethod, contentType, relativeUrl, body, createConnection(relativeUrl));
-    }
-
-    protected byte[] runHttpMethod(HttpMethodType httpMethod,
-            String contentType,
-            String relativeUrl,
             String body, HttpURLConnection connection) {
         byte[] result = null;
         try {
