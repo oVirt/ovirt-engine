@@ -82,6 +82,11 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private EntityModel<String> xenUri;
     private ListModel<VDS> xenProxyHosts;
 
+    private EntityModel<String> kvmUri;
+    private EntityModel<String> kvmUsername;
+    private EntityModel<String> kvmPassword;
+    private ListModel<VDS> kvmProxyHosts;
+
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
@@ -134,6 +139,12 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         // Xen
         setXenUri(new EntityModel<String>());
         setXenProxyHosts(new ListModel<VDS>());
+
+        // Kvm
+        setKvmUri(new EntityModel<String>());
+        setKvmUsername(new EntityModel<String>());
+        setKvmPassword(new EntityModel<String>());
+        setKvmProxyHosts(new ListModel<VDS>());
 
         setInfoMessage(new EntityModel<String>());
 
@@ -195,6 +206,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromExternalSourceModel.setUsername(""); //$NON-NLS-1$
             importFromExternalSourceModel.setPassword(""); //$NON-NLS-1$
             importFromExternalSourceModel.setProxyHostId(getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null);
+            selectedImportVmModel = importFromExternalSourceModel;
+            break;
+        case KVM:
+            importFromExternalSourceModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromExternalSourceModel.setUrl(getKvmUri().getEntity());
+            importFromExternalSourceModel.setUsername(getKvmUsername().getEntity());
+            importFromExternalSourceModel.setPassword(getKvmPassword().getEntity());
+            importFromExternalSourceModel.setProxyHostId(getKvmProxyHosts().getSelectedItem() != null ? getKvmProxyHosts().getSelectedItem().getId() : null);
             selectedImportVmModel = importFromExternalSourceModel;
             break;
         default:
@@ -313,6 +332,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         List<VDS> upHosts = filterUpHosts(hosts);
                         proxyHosts.setItems(addAnyHostInCluster(upHosts));
                         xenProxyHosts.setItems(addAnyHostInCluster(upHosts));
+                        kvmProxyHosts.setItems(addAnyHostInCluster(upHosts));
                         ImportVmsModel.this.hosts.setItems(upHosts);
                         stopProgress();
                     }
@@ -487,6 +507,15 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         loadVMsFromExternalProvider(OriginType.XEN, getXenUri().getEntity(), "", "", proxyId); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    public void loadVmsFromKvm() {
+        clearProblem();
+        if (!validateKvmConfiguration()) {
+            return;
+        }
+        Guid proxyId = getXenProxyHosts().getSelectedItem() != null ? getXenProxyHosts().getSelectedItem().getId() : null;
+        loadVMsFromExternalProvider(OriginType.KVM, getKvmUri().getEntity(), getKvmUsername().getEntity(), getKvmPassword().getEntity(), proxyId);
+    }
+
     private void loadVMsFromExternalProvider(final OriginType type, String uri, String username, String password, Guid proxyId) {
         startProgress();
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
@@ -551,6 +580,20 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 new NotEmptyValidation(),
                 new LengthValidation(255)});
         return getXenUri().getIsValid();
+    }
+
+    private boolean validateKvmConfiguration() {
+        getKvmUri().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(255)});
+        getKvmUsername().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new NameAndOptionalDomainValidation() });
+        getKvmPassword().validateEntity(new IValidation[] {
+                new NotEmptyValidation() });
+        return getKvmUri().getIsValid() &&
+               getKvmUsername().getIsValid() &&
+               getKvmPassword().getIsValid();
     }
 
     private void clearValidations() {
@@ -853,5 +896,37 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     public void setXenProxyHosts(ListModel<VDS> proxyHosts) {
         this.xenProxyHosts = proxyHosts;
+    }
+
+    public EntityModel<String> getKvmUri() {
+        return kvmUri;
+    }
+
+    public void setKvmUri(EntityModel<String> uri) {
+        this.kvmUri = uri;
+    }
+
+    public EntityModel<String> getKvmUsername() {
+        return kvmUsername;
+    }
+
+    public void setKvmUsername(EntityModel<String> username) {
+        this.kvmUsername = username;
+    }
+
+    public EntityModel<String> getKvmPassword() {
+        return kvmPassword;
+    }
+
+    public void setKvmPassword(EntityModel<String> password) {
+        this.kvmPassword = password;
+    }
+
+    public ListModel<VDS> getKvmProxyHosts() {
+        return kvmProxyHosts;
+    }
+
+    public void setKvmProxyHosts(ListModel<VDS> proxyHosts) {
+        this.kvmProxyHosts = proxyHosts;
     }
 }

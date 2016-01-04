@@ -106,6 +106,9 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @UiField
     UiCommandButton loadXenButton;
 
+    @UiField
+    UiCommandButton loadKvmButton;
+
     @UiField(provided = true)
     @Path("vmwareProviders.selectedItem")
     @WithElementId
@@ -174,12 +177,36 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     ListModelListBoxEditor<VDS> xenProxyHostsEditor;
 
     @UiField
+    @Path("kvmUri.entity")
+    @WithElementId("kvmUri")
+    StringEntityModelTextBoxEditor kvmUriEditor;
+
+    @UiField
+    @Path("kvmUsername.entity")
+    @WithElementId("kvmUsername")
+    StringEntityModelTextBoxEditor kvmUsernameEditor;
+
+    @UiField
+    @Path("kvmPassword.entity")
+    @WithElementId("kvmPassword")
+    StringEntityModelPasswordBoxEditor kvmPasswordEditor;
+
+    @UiField(provided = true)
+    @Path("kvmProxyHosts.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<VDS> kvmProxyHostsEditor;
+
+    @UiField
     @Ignore
     FlowPanel ovaPanel;
 
     @UiField
     @Ignore
     FlowPanel xenPanel;
+
+    @UiField
+    @Ignore
+    FlowPanel kvmPanel;
 
     @UiField
     @Ignore
@@ -231,9 +258,18 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                         ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
             }
         });
+
         hostsEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
         xenProxyHostsEditor = new ListModelListBoxEditor<>(new AbstractRenderer<VDS>() {
+            @Override
+            public String render(VDS object) {
+                return object != null ? object.getName() :
+                        ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
+            }
+        });
+
+        kvmProxyHostsEditor = new ListModelListBoxEditor<>(new AbstractRenderer<VDS>() {
             @Override
             public String render(VDS object) {
                 return object != null ? object.getName() :
@@ -288,10 +324,16 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         xenUriEditor.setLabel(constants.xenUri());
         xenProxyHostsEditor.setLabel(constants.proxyHost());
 
+        kvmUriEditor.setLabel(constants.kvmUri());
+        kvmUsernameEditor.setLabel(constants.usernameProvider());
+        kvmPasswordEditor.setLabel(constants.passwordProvider());
+        kvmProxyHostsEditor.setLabel(constants.proxyHost());
+
         loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
         loadVmsFromVmwareButton.setLabel(constants.loadLabel());
         loadOvaButton.setLabel(constants.loadLabel());
         loadXenButton.setLabel(constants.loadLabel());
+        loadKvmButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -370,6 +412,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 model.loadVmsFromXen();
             }
         });
+        loadKvmButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.loadVmsFromKvm();
+            }
+        });
     }
 
     private void updatePanelsVisibility(ImportVmsModel model) {
@@ -378,6 +426,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         vmwareProvidersEditor.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
         ovaPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.OVA);
         xenPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.XEN);
+        kvmPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.KVM);
     }
 
     @Override

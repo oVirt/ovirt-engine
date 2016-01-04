@@ -4,5 +4,6 @@ public enum ImportSource {
     VMWARE,
     EXPORT_DOMAIN,
     OVA,
-    XEN
+    XEN,
+    KVM
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -97,9 +98,13 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
                 DiskImage disk = (DiskImage) entry.getValue();
                 ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
                 disk.setVolumeType(getAllocation().getSelectedItem());
-                disk.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                        disk.getVolumeType(),
-                        getStorage().getSelectedItem().getStorageType()));
+                // in kvm we just copy the image, in other modes such as vmware or xen we use
+                // virt-v2v which converts the image format as well
+                if (vm.getOrigin() != OriginType.KVM) {
+                    disk.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                            disk.getVolumeType(),
+                            getStorage().getSelectedItem().getStorageType()));
+                }
 
                 if (getDiskImportData(disk.getDiskAlias()).getSelectedQuota() != null) {
                     disk.setQuotaId(importDiskData.getSelectedQuota().getId());

@@ -3711,6 +3711,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("URI")
     String xenUri();
 
+    @DefaultStringValue("URI")
+    String kvmUri();
+
     @DefaultStringValue("Test")
     String testProvider();
 

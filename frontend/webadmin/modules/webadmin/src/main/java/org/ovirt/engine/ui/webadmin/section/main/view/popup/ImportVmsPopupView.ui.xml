@@ -29,7 +29,7 @@
 			height: 165px;
 		}
 
-		.exportSectionStyle, .ovaSectionStyle, .xenSectionStyle {
+		.exportSectionStyle, .ovaSectionStyle, .xenSectionStyle, .kvmSectionStyle {
 			margin-top: 5px;
 			width: 390px;
 			height: 165px;
@@ -117,6 +117,16 @@
                     <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
                     <g:FlowPanel addStyleNames="{style.loadButtonStyle}">
                         <w:UiCommandButton ui:field="loadXenButton"/>
+                    </g:FlowPanel>
+                </g:FlowPanel>
+
+                <g:FlowPanel ui:field="kvmPanel" visible="false" addStyleNames="{style.kvmSectionStyle}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="kvmUriEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+                    <g:FlowPanel addStyleNames="{style.loadButtonStyle}">
+                        <w:UiCommandButton ui:field="loadKvmButton"/>
                     </g:FlowPanel>
                 </g:FlowPanel>
 
