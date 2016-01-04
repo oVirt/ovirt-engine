@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2015 Red Hat, Inc.
+# Copyright (C) 2015-2016 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ def _(m):
 @util.export
 class Plugin(plugin.PluginBase):
     """AAA-JDBC extension admin user setup plugin."""
+
+    PACKAGE_NAME = 'ovirt-engine-extension-aaa-jdbc'
 
     AAA_JDBC_SETUP_ADMIN_USER = 'osetup.aaa_jdbc.config.setup.admin.user'
 
@@ -297,6 +299,15 @@ class Plugin(plugin.PluginBase):
                 )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            oenginecons.RPMDistroEnv.ENGINE_AAA_JDBC_PACKAGE,
+            self.PACKAGE_NAME
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         after=(
             oenginecons.Stages.CORE_ENABLE,
@@ -315,6 +326,39 @@ class Plugin(plugin.PluginBase):
         ] = self.AAA_JDBC_AUTHZ_TYPE
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DISTRO_RPM_PACKAGE_UPDATE_CHECK,
+        ),
+    )
+    def _version_lock_customization(self):
+        self.environment[
+            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+        ].append(
+            self.environment[
+                oenginecons.RPMDistroEnv.ENGINE_AAA_JDBC_PACKAGE
+            ]
+        )
+        self.environment[
+            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+        ].append(
+            self.environment[
+                oenginecons.RPMDistroEnv.ENGINE_AAA_JDBC_PACKAGE
+            ]
+        )
+        self.environment[
+            osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
+        ].append(
+            {
+                'packages': [
+                    self.environment[
+                        oenginecons.RPMDistroEnv.ENGINE_AAA_JDBC_PACKAGE
+                    ]
+                ]
+            },
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=AAA_JDBC_SETUP_ADMIN_USER,
         after=(
@@ -329,6 +373,9 @@ class Plugin(plugin.PluginBase):
         ] == self.AAA_JDBC_AUTHZ_TYPE,
     )
     def _misc(self):
+        # TODO: if we knew that aaa-jdbc package was upgraded by engine-setup
+        # TODO: we could display summary note that custom profiles have to be
+        # TODO: upgraded manually
         self._setupSchema()
         self._setupAuth()
         self._setupAdminUser()
