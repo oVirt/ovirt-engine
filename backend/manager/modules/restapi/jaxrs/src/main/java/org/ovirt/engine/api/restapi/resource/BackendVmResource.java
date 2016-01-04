@@ -728,7 +728,7 @@ public class BackendVmResource
     }
 
     @Override
-    public VmNumaNodesResource getVirtualNumaNodesResource() {
+    public VmNumaNodesResource getNumaNodesResource() {
         return inject(new BackendVmNumaNodesResource(guid));
     }
 
