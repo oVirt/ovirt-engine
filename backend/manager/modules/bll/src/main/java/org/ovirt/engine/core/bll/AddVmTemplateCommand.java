@@ -855,9 +855,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         getVmStaticDao().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
-                    p,
-                    cloneContextAndDetachFromParent());
+            if (p.getCommandType() != VdcActionType.CloneCinderDisks) {
+                Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
+                        p,
+                        cloneContextAndDetachFromParent());
+            }
         }
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
@@ -933,9 +935,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(false);
-            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
-                    p,
-                    cloneContextAndDetachFromParent());
+            if (p.getCommandType() != VdcActionType.CloneCinderDisks) {
+                Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
+                        p,
+                        cloneContextAndDetachFromParent());
+            }
         }
 
         if (CommandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED) {
