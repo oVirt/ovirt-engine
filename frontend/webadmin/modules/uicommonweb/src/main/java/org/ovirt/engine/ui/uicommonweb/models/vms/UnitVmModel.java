@@ -2355,7 +2355,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (graphicsTypes.contains(GraphicsTypes.SPICE) && graphicsTypes.contains(GraphicsTypes.VNC)) {
-            if (AsyncDataProvider.getInstance().supportedForUnitVmModel(ConfigurationValues.MultipleGraphicsSupported, this)) {
+            if (AsyncDataProvider.getInstance().isMultipleGraphicsSupported(compatibilityVersion)) {
                 graphicsTypes.add(GraphicsTypes.SPICE_AND_VNC);
             }
         }

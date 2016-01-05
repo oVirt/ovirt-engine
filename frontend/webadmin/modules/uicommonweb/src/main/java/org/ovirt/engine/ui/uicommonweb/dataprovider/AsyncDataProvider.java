@@ -3796,6 +3796,14 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.MixedDomainTypesInDataCenter, version.toString());
     }
 
+    public boolean isMultipleGraphicsSupported(Version version) {
+        if (version == null) {
+            return false;
+        }
+
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.MultipleGraphicsSupported, version.toString());
+    }
+
     public boolean isLsmBetweenMixedStorageDomainsSupported(Version version) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.LiveStorageMigrationBetweenDifferentStorageTypes,
                 version.toString());
