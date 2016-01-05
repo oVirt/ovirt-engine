@@ -280,9 +280,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot attach VM to VM-Pool. VM-Pool is already attached to a User.")
     String VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL();
 
-    @DefaultStringValue("User is already attached to this VM-Pool.")
-    String ACTION_TYPE_FAILED_USER_ATTACHED_TO_POOL();
-
     @DefaultStringValue("VM-Pool not found")
     String VM_POOL_NOT_FOUND();
 
@@ -2215,12 +2212,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot remove Host, as it contains a local Storage Domain. Please activate the Host and remove the Data Center first.\n- If Host cannot be activated, use the Force-Remove option on the Data Center object (select the Data Center and right click on it with the mouse).\n- Please note that this action is destructive.")
     String VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE();
-
-    @DefaultStringValue("Can not add local Storage Domain to non local storage Host")
-    String VDS_CANNOT_ADD_LOCAL_STORAGE_TO_NON_LOCAL_HOST();
-
-    @DefaultStringValue("Can not remove local Storage Domain from non local storage Host")
-    String VDS_CANNOT_REMOVE_LOCAL_STORAGE_ON_NON_LOCAL_HOST();
 
     @DefaultStringValue("Cannot add more than one Cluster to \"Local Storage\" Data Center")
     String CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE();
