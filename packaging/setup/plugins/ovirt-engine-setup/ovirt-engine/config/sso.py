@@ -140,6 +140,8 @@ class Plugin(plugin.PluginBase):
                             'ovirt-ext=token:password-access',
                             'ovirt-ext=auth:sequence-priority',
                             'ovirt-ext=token:login-on-behalf',
+                            'ovirt-ext=token-info:authz-search',
+                            'ovirt-ext=token-info:public-authz-search',
                             'ovirt-ext=token-info:validate',
                             'ovirt-ext=revoke:revoke-all',
                         )

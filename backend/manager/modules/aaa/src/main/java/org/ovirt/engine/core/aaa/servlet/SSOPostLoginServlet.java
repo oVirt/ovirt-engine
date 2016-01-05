@@ -64,7 +64,10 @@ public class SSOPostLoginServlet extends HttpServlet {
             if (StringUtils.isEmpty(stateInSession) || !stateInSession.equals(state)) {
                 throw new RuntimeException("Request state does not match session state.");
             }
-            Map<String, Object> jsonResponse = FiltersHelper.getPayloadForAuthCode(code, "ovirt-app-admin ovirt-app-portal ovirt-app-api", URLEncoder.encode(postActionUrl, "UTF-8"));
+            Map<String, Object> jsonResponse = FiltersHelper.getPayloadForAuthCode(
+                    code,
+                    "ovirt-app-admin ovirt-app-portal ovirt-app-api",
+                    URLEncoder.encode(postActionUrl, "UTF-8"));
             Map<String, Object> payload = (Map<String, Object>) jsonResponse.get("ovirt");
 
             username = (String) jsonResponse.get("user_id");

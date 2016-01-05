@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -18,20 +18,26 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
 
     @Override
     protected void executeQueryCommand() {
-        String directoryName = getParameters().getDomain();
-        String id = getParameters().getId();
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
-        if (authz == null) {
+        Map<String, Object> response = findDirectoryUserById();
+        if (!response.containsKey("result")) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            for (String namespace : getParameters().constainsNamespace() ? Arrays.asList(getParameters().getNamespace()) : authz.getContext().<Collection<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                DirectoryUser user = DirectoryUtils.findDirectoryUserById(authz, namespace, id, false, false);
-                if (user != null) {
-                    getQueryReturnValue().setReturnValue(user);
-                    break;
-                }
+            Collection<DirectoryUser> users = DirectoryUtils.mapPrincipalRecordsToDirectoryUsers(
+                    getParameters().getDomain(),
+                    (List<ExtMap>) response.get("result"));
+            if (!users.isEmpty()) {
+                getQueryReturnValue().setReturnValue(users.iterator().next());
             }
         }
     }
 
+    public Map<String, Object> findDirectoryUserById() {
+        return SSOOAuthServiceUtils.findDirectoryUserById(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+                getParameters().getDomain(),
+                getParameters().getNamespace(),
+                getParameters().getId(),
+                false,
+                false);
+    }
 }

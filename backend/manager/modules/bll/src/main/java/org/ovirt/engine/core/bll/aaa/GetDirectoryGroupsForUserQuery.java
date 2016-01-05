@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
@@ -29,12 +29,19 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
 
         Collection<DirectoryGroup> groups = new ArrayList<>();
 
-        Collection<ExtMap> principalRecords = AuthzUtils.findPrincipalsByIds(
-                EngineExtensionsManager.getInstance().getExtensionByName(dbUser.getDomain()),
+        Map<String, Object> response = SSOOAuthServiceUtils.findPrincipalsByIds(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+                dbUser.getDomain(),
                 dbUser.getNamespace(),
                 Arrays.asList(dbUser.getExternalId()),
                 true,
                 true);
+
+        Collection<ExtMap> principalRecords = Collections.emptyList();
+        if (response.containsKey("result")) {
+            principalRecords = (Collection<ExtMap>) response.get("result");
+        }
+
         if (!principalRecords.isEmpty()) {
             ExtMap principalRecord = principalRecords.iterator().next();
             DirectoryUtils.flatGroups(principalRecord);

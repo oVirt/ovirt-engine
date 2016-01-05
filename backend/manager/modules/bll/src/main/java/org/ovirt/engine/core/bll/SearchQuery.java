@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,10 +13,14 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.QueryData;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -44,13 +48,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDao;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
@@ -58,6 +60,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Inject
     private QuotaManager quotaManager;
+
+    @Inject
+    private SessionDataContainer sessionDataContainer;
 
     @Inject
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
@@ -167,17 +172,27 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         if (data == null) {
             return Collections.emptyList();
         }
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getAuthz());
 
         List<DirectoryUser> results = new ArrayList<>();
-        for (String namespace : getNamespaces(data)) {
-            results.addAll(DirectoryUtils.findDirectoryUsersByQuery(authz,
-                    namespace,
-                    data.getQuery()));
+        Map<String, Object> response = SSOOAuthServiceUtils.searchUsers(
+                sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
+                getParamsMap(data));
+        if (response.containsKey("result")) {
+            List<ExtMap> users = (List<ExtMap>) response.get("result");
+            results = users.stream()
+                    .map((ExtMap u) -> DirectoryUtils.mapPrincipalRecordToDirectoryUser(data.getAuthz(), u))
+                    .collect(Collectors.toList());
         }
         return results;
     }
 
+    private static Map<String, Object> getParamsMap(QueryData queryData) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("authz", queryData.getAuthz());
+        params.put("namespace", queryData.getNamespace());
+        params.put("query", queryData.getQuery());
+        return params;
+    }
 
     private List<DirectoryGroup> searchDirectoryGroups() {
         // Parse the query:
@@ -186,27 +201,17 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getAuthz());
-
         List<DirectoryGroup> results = new ArrayList<>();
-        for (String namespace : getNamespaces(data)) {
-            results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz,
-                    namespace,
-                    data.getQuery()));
+        Map<String, Object> response = SSOOAuthServiceUtils.searchGroups(
+                sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()),
+                getParamsMap(data));
+        if (response.containsKey("result")) {
+            List<ExtMap> groups = (List<ExtMap>) response.get("result");
+            results = groups.stream()
+                    .map((ExtMap g) -> DirectoryUtils.mapGroupRecordToDirectoryGroup(data.getAuthz(), g))
+                    .collect(Collectors.toList());
         }
         return results;
-    }
-
-    private List<String> getNamespaces(QueryData data) {
-        List<String> namespaces = null;
-        if (StringUtils.isNotEmpty(data.getNamespace())) {
-            namespaces = Arrays.asList(data.getNamespace());
-        } else {
-            HashMap<String, List<String>> namespacesMap =
-                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
-            namespaces = namespacesMap.get(data.getAuthz());
-        }
-        return namespaces == null ? Collections.<String> emptyList() : namespaces;
     }
 
     private List<DbUser> searchDbUsers() {
@@ -346,7 +351,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     searchText =  m.group("content");
                     // get profile
                     List<String> profiles = getBackend().runInternalQuery(VdcQueryType.GetDomainList,
-                            new VdcQueryParametersBase()).getReturnValue();
+                            new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     for (String profile : profiles) {
                         if (searchText.startsWith(profile + COLON)) {
                             queryAuthz = profile;
@@ -360,7 +365,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     // get namespace
                     HashMap<String, List<String>> namespacesMap =
                             getBackend().runInternalQuery(VdcQueryType.GetAvailableNamespaces,
-                                    new VdcQueryParametersBase()).getReturnValue();
+                                    new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     List<String> namespaces = namespacesMap.get(queryAuthz);
                     for (String namespace : namespaces) {
                         if (searchText.startsWith(namespace + COLON)) {

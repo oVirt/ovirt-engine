@@ -1,17 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
@@ -26,16 +21,12 @@ public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeQueryCommand() {
-        HashMap<String, List<String>> namespacesMap = new HashMap<>();
-        for (ExtensionProxy authz: EngineExtensionsManager.getInstance().getExtensionsByService(Authz.class.getName())) {
-            for (String namespace : authz.getContext().<Collection<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES, Collections.<String>emptyList())) {
-                MultiValueMapUtils.addToMap(AuthzUtils.getName(authz), namespace, namespacesMap);
-
-            }
+        Map<String, List<String>> namespacesMap = (Map<String, List<String>>) SSOOAuthServiceUtils
+                .getAvailableNamespaces(getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()))
+                .get("result");
+        if (namespacesMap != null) {
+            namespacesMap.values().forEach(Collections::sort);
         }
-        for (List<String> entry : namespacesMap.values()) {
-            Collections.sort(entry);
-        }
-        setReturnValue(namespacesMap);
+        setReturnValue(namespacesMap == null ? Collections.emptyMap() : namespacesMap);
     }
 }

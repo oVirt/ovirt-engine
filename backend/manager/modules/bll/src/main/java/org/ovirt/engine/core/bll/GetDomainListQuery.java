@@ -4,13 +4,10 @@ import static java.util.Collections.sort;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class GetDomainListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
@@ -20,12 +17,10 @@ public class GetDomainListQuery<P extends VdcQueryParametersBase> extends Querie
 
     @Override
     protected void executeQueryCommand() {
-        // Get the list of authentication profile names:
-        List<ExtensionProxy> extensions =
-                getExtensionsManager().getExtensionsByService(Authz.class.getName());
-        List<String> names = new ArrayList<>(extensions.size());
-        for (ExtensionProxy extension : extensions) {
-            names.add(AuthzUtils.getName(extension));
+        Map<String, Object> response = getDomainList();
+        List<String> names = new ArrayList<>();
+        if (response.containsKey("result")) {
+            names.addAll((List<String>) response.get("result"));
         }
         sort(names);
 
@@ -33,7 +28,8 @@ public class GetDomainListQuery<P extends VdcQueryParametersBase> extends Querie
         getQueryReturnValue().setReturnValue(names);
     }
 
-    protected ExtensionsManager getExtensionsManager() {
-        return EngineExtensionsManager.getInstance();
+    public Map<String, Object> getDomainList() {
+        return SSOOAuthServiceUtils.getDomainList(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()));
     }
 }

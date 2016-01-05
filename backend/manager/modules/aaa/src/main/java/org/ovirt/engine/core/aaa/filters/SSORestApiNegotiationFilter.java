@@ -113,10 +113,12 @@ public class SSORestApiNegotiationFilter implements Filter {
                     }
                     if (authResult.username != null) {
                         log.debug("SSORestApiNegotiationFilter invoking SSOOAuthServiceUtils.loginOnBehalf for : {}", authResult.username);
-                        Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginOnBehalf(authResult.username, scope, authResult.authRecord);
+                        Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginOnBehalf(
+                                authResult.username, scope, authResult.authRecord);
                         FiltersHelper.isStatusOk(jsonResponse);
                         log.debug("SSORestApiNegotiationFilter creating user session");
-                        SSOUtils.createUserSession(req, FiltersHelper.getPayloadForToken((String) jsonResponse.get("access_token")), false);
+                        SSOUtils.createUserSession(req, FiltersHelper.getPayloadForToken(
+                                (String) jsonResponse.get("access_token")), false);
                         req.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY,
                                 req.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY));
                         req.setAttribute(FiltersHelper.Constants.REQUEST_LOGIN_FILTER_AUTHENTICATION_DONE,

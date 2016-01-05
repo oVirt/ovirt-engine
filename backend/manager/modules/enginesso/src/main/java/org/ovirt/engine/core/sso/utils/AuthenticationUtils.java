@@ -1,6 +1,12 @@
 package org.ovirt.engine.core.sso.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -15,6 +21,7 @@ import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.sso.search.AuthzUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +86,7 @@ public class AuthenticationUtils {
             HttpServletRequest request,
             Credentials credentials,
             ExtMap authRecord) throws Exception {
-        ExtensionProfile profile = getExtensionProfile(ssoContext, credentials);
+        ExtensionProfile profile = getExtensionProfile(ssoContext, credentials.getProfile());
         String user = mapUser(profile, credentials);
         if (authRecord == null) {
             log.debug("AuthenticationUtils.handleCredentials invoking AUTHENTICATE_CREDENTIALS on authn");
@@ -144,7 +151,7 @@ public class AuthenticationUtils {
 
     public static void changePassword(SSOContext context, HttpServletRequest request, Credentials credentials)
             throws AuthenticationException {
-        ExtensionProfile profile = getExtensionProfile(context, credentials);
+        ExtensionProfile profile = getExtensionProfile(context, credentials.getProfile());
         String user = mapUser(profile, credentials);
         log.debug("AuthenticationUtils.changePassword invoking CREDENTIALS_CHANGE on authn");
         ExtMap outputMap = profile.authn.invoke(new ExtMap()
@@ -173,6 +180,31 @@ public class AuthenticationUtils {
         log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn succeeded");
     }
 
+    public static Map<String, List<String>> getAvailableNamesSpaces(SSOExtensionsManager extensionsManager) {
+        Map<String, List<String>> namespacesMap = new HashMap<>();
+        extensionsManager.getExtensionsByService(Authz.class.getName())
+                .forEach(authz -> {
+                    String authzName = authz.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME);
+                    authz.getContext().<Collection<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES,
+                            Collections.<String>emptyList())
+                            .forEach(namespace -> {
+                                if (!namespacesMap.containsKey(authzName)) {
+                                    namespacesMap.put(authzName, new ArrayList<>());
+                                }
+                                namespacesMap.get(authzName).add(namespace);
+                            });
+                });
+
+        namespacesMap.values().forEach(Collections::sort);
+        return namespacesMap;
+    }
+
+    public static List<Map<String, Object>> getProfileList(SSOExtensionsManager extensionsManager) {
+        return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
+                .map((authn) -> AuthenticationUtils.getProfileEntry(extensionsManager, authn))
+                .collect(Collectors.toList());
+    }
+
     public static List<String> getAvailableProfiles(SSOExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
                 .map(AuthenticationUtils::getProfileName)
@@ -187,6 +219,26 @@ public class AuthenticationUtils {
         return getAvailableProfilesImpl(extensionsManager, Authn.Capabilities.CREDENTIALS_CHANGE);
     }
 
+    public static ExtensionProfile getExtensionProfile(SSOContext ssoContext, String profileName) {
+        Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, profileName, null);
+        if (!profile.isPresent()) {
+            log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for profile {}", profileName);
+            throw new RuntimeException(String.format("Error in obtaining profile %s", profileName));
+        }
+        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for profile %s", profileName);
+        return profile.get();
+    }
+
+    public static ExtensionProfile getExtensionProfileByAuthzName(SSOContext ssoContext, String authzName) {
+        Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, null, authzName);
+        if (!profile.isPresent()) {
+            log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for authz {}", authzName);
+            throw new RuntimeException(String.format("Error in obtaining profile for authz %s", authzName));
+        }
+        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for authz %s", authzName);
+        return profile.get();
+    }
+
     private static List<String> getAvailableProfilesImpl(SSOExtensionsManager extensionsManager,
                                                          long capability) {
         return extensionsManager.getExtensionsByService(Authn.class.getName()).stream()
@@ -197,33 +249,48 @@ public class AuthenticationUtils {
     }
 
     private static String getProfileName(ExtensionProxy proxy) {
-        return ((Properties) proxy.getContext().get(Base.ContextKeys.CONFIGURATION))
+        return proxy.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
                 .getProperty(Authn.ConfigKeys.PROFILE_NAME);
     }
 
-    private static ExtensionProfile getExtensionProfile(SSOContext ssoContext, Credentials credentials) {
+    private static Map<String, Object> getProfileEntry(SSOExtensionsManager extensionsManager, ExtensionProxy authn) {
+        Map<String, Object> profileEntry = new HashMap<>();
+        profileEntry.put("authn_name", getProfileName(authn));
+        ExtensionProxy authz = extensionsManager.getExtensionByName(getAuthzName(authn));
+        profileEntry.put("authz_name", AuthzUtils.getName(authz));
+        profileEntry.put("capability_password_auth", AuthzUtils.supportsPasswordAuthentication(authz));
+        return profileEntry;
+    }
+
+    private static String getAuthzName(ExtensionProxy proxy) {
+        return proxy.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                .getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
+    }
+
+    private static Optional<ExtensionProfile> getExtensionProfileImpl(SSOContext ssoContext,
+                                                                     final String searchProfileName,
+                                                                     final String searchAuthzName) {
+        return ssoContext.getSsoExtensionsManager().getExtensionsByService(Authn.class.getName()).stream()
+                .filter(a -> matchesSearchName(a, searchProfileName, searchAuthzName))
+                .map(a -> mapToExtensionProfile(ssoContext, a))
+                .findFirst();
+    }
+
+    private static boolean matchesSearchName(ExtensionProxy authn,
+                                             String searchProfileName,
+                                             String searchAuthzName) {
+        return (StringUtils.isNotEmpty(searchProfileName) && searchProfileName.equals(getProfileName(authn))) ||
+                (StringUtils.isNotEmpty(searchAuthzName) && searchAuthzName.equals(getAuthzName(authn)));
+    }
+
+    private static ExtensionProfile mapToExtensionProfile(SSOContext ssoContext, ExtensionProxy authn) {
         ExtensionProfile profile = new ExtensionProfile();
-        for (ExtensionProxy authn : ssoContext.getSsoExtensionsManager().getExtensionsByService(Authn.class.getName())) {
-            Properties config = authn.getContext().get(Base.ContextKeys.CONFIGURATION);
-            if (credentials.getProfile().equals(config.getProperty(Authn.ConfigKeys.PROFILE_NAME))) {
-                String mapperName = authn.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
-                        .getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
-                String authzName = authn.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
-                        .getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
-                profile.mapper = mapperName != null ?
-                        ssoContext.getSsoExtensionsManager().getExtensionByName(mapperName) : null;
-                profile.authn = authn;
-                profile.authz = ssoContext.getSsoExtensionsManager().getExtensionByName(authzName);
-                break;
-            }
-        }
-        if (profile.authn == null || profile.authz == null) {
-            log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for profile {}",
-                    credentials.getProfile());
-            throw new RuntimeException(String.format("Error in obtaining profile %s", credentials.getProfile()));
-        }
-        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for profile %s",
-                credentials.getProfile());
+        String mapperName = authn.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                .getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
+        profile.mapper = mapperName != null ?
+                ssoContext.getSsoExtensionsManager().getExtensionByName(mapperName) : null;
+        profile.authn = authn;
+        profile.authz = ssoContext.getSsoExtensionsManager().getExtensionByName(getAuthzName(authn));
         return profile;
     }
 
@@ -245,9 +312,21 @@ public class AuthenticationUtils {
         return user;
     }
 
-    static class ExtensionProfile {
-        ExtensionProxy authn;
-        ExtensionProxy authz;
-        ExtensionProxy mapper;
+    public static class ExtensionProfile {
+        private ExtensionProxy authn;
+        private ExtensionProxy authz;
+        private ExtensionProxy mapper;
+
+        public ExtensionProxy getAuthn() {
+            return authn;
+        }
+
+        public ExtensionProxy getAuthz() {
+            return authz;
+        }
+
+        public ExtensionProxy getMapper() {
+            return mapper;
+        }
     }
 }

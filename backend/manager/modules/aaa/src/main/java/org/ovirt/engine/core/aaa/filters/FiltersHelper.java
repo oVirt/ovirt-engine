@@ -117,7 +117,10 @@ public class FiltersHelper {
         return new Base64(0, new byte[0], true).encodeToString(s);
     }
 
-    public static Map<String, Object> getPayloadForAuthCode(String authCode, String scope, String redirectUri) throws Exception {
+    public static Map<String, Object> getPayloadForAuthCode(
+            String authCode,
+            String scope,
+            String redirectUri) throws Exception {
         Map<String, Object> response = SSOOAuthServiceUtils.getToken("authorization_code", authCode, scope, redirectUri);
         FiltersHelper.isStatusOk(response);
         return getPayloadForToken((String) response.get("access_token"));

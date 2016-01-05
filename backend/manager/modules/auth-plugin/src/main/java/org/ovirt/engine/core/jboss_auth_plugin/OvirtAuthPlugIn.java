@@ -50,10 +50,13 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
                         String engineSessionId = null;
                         boolean loginSucceeded = true;
                         try {
-                            Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginWithPassword(username, new String(chars), scope);
+                            Map<String, Object> jsonResponse = SSOOAuthServiceUtils.loginWithPassword(
+                                    username, new String(chars), scope);
                             FiltersHelper.isStatusOk(jsonResponse);
                             token = (String) jsonResponse.get("access_token");
-                            engineSessionId = SSOUtils.createUserSession(null, FiltersHelper.getPayloadForToken(token), false);
+                            engineSessionId = SSOUtils.createUserSession(null,
+                                    FiltersHelper.getPayloadForToken(token),
+                                    false);
                         } catch (Exception e) {
                             loginSucceeded = false;
                         }

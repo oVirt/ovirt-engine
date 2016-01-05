@@ -5,10 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,9 @@ import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 
 public class SSOOAuthServiceUtils {
+
+    private static final String authzSearchScope = "ovirt-ext=token-info:authz-search";
+    private static final String publicAuthzSearchScope = "ovirt-ext=token-info:public-authz-search";
 
     public static Map<String, Object> authenticate(HttpServletRequest req, String scope) {
         HttpURLConnection connection = null;
@@ -56,10 +62,11 @@ public class SSOOAuthServiceUtils {
         return loginWithPasswordImpl(username, password, scope, null);
     }
 
-    private static Map<String, Object> loginWithPasswordImpl(String username,
-                                                             String password,
-                                                             String scope,
-                                                             ExtMap authRecord) {
+    private static Map<String, Object> loginWithPasswordImpl(
+            String username,
+            String password,
+            String scope,
+            ExtMap authRecord) {
         HttpURLConnection connection = null;
         try {
             connection = createConnection("/oauth/token");
@@ -170,6 +177,117 @@ public class SSOOAuthServiceUtils {
         }
     }
 
+    public static Map<String, Object> fetchPrincipalRecord(
+            String token,
+            String domain,
+            String principal,
+            boolean groupsResolving,
+            boolean groupsResolvingRecursive) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("domain", domain);
+        params.put("principal", principal);
+        params.put("groups_resolving", groupsResolving);
+        params.put("groups_resolving_recursive", groupsResolvingRecursive);
+        return search(token, params, "fetch-principal-record", authzSearchScope);
+
+    }
+    public static Map<String, Object> findPrincipalsByIds(
+            String token,
+            String domain,
+            String namespace,
+            Collection<String> ids,
+            boolean groupsResolving,
+            boolean groupsResolvingRecursive) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("domain", domain);
+        params.put("namespace", namespace);
+        params.put("ids", ids);
+        params.put("groups_resolving", groupsResolving);
+        params.put("groups_resolving_recursive", groupsResolvingRecursive);
+        return search(token, params, "find-principals-by-ids", authzSearchScope);
+    }
+
+    public static Map<String, Object> findDirectoryUserById(
+            String token,
+            String domain,
+            String namespace,
+            String id,
+            boolean groupsResolving,
+            boolean groupsResolvingRecursive) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("domain", domain);
+        params.put("namespace", StringUtils.defaultIfEmpty(namespace, ""));
+        params.put("id", id);
+        params.put("groups_resolving", groupsResolving);
+        params.put("groups_resolving_recursive", groupsResolvingRecursive);
+        return search(token, params, "find-principal-by-id", authzSearchScope);
+    }
+
+    public static Map<String, Object> findDirectoryGroupById(
+            String token,
+            String domain,
+            String namespace,
+            String id,
+            boolean groupsResolving,
+            boolean groupsResolvingRecursive) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("domain", domain);
+        params.put("namespace", StringUtils.defaultIfEmpty(namespace, ""));
+        params.put("id", id);
+        params.put("groups_resolving", groupsResolving);
+        params.put("groups_resolving_recursive", groupsResolvingRecursive);
+        return search(token, params, "find-directory-group-by-id", authzSearchScope);
+    }
+
+    public static Map<String, Object> getDomainList(String token) {
+        return search(token, null, "domain-list", authzSearchScope);
+    }
+
+    public static Map<String, Object> getAvailableNamespaces(String token) {
+        return search(token, null, "available-namespaces", authzSearchScope);
+    }
+
+    public static Map<String, Object> getProfileList() {
+        return search(null, null, "profile-list", publicAuthzSearchScope);
+    }
+
+    public static Map<String, Object> searchUsers(String token, Map<String, Object> params) {
+        return search(token, params, "users", authzSearchScope);
+    }
+
+    public static Map<String, Object> searchGroups(String token, Map<String, Object> params) {
+        return search(token, params, "groups", authzSearchScope);
+    }
+
+    private static Map<String, Object> search(
+            String token,
+            Map<String, Object> params,
+            String queryType,
+            String scope) {
+        HttpURLConnection connection = null;
+        try {
+            connection = createConnection("/oauth/token-info");
+            setClientIdSecretBasicAuthHeader(connection);
+            URLBuilder urlBuilder = new URLBuilder(connection.getURL())
+                    .addParameter("query_type", queryType)
+                    .addParameter("scope", scope);
+            if (StringUtils.isNotEmpty(token)) {
+                urlBuilder.addParameter("token", token);
+            }
+            if (params != null) {
+                urlBuilder.addParameter("params", encode(new JsonObjectSerializer().serialize(params)));
+            }
+            postData(connection, urlBuilder.buildURL().getQuery());
+            return getData(connection);
+        } catch (Exception ex) {
+            return buildMapWithError("server_error", ex.getMessage());
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
     private static String[] getUserCredentialsFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         String userName = "";
@@ -250,4 +368,11 @@ public class SSOOAuthServiceUtils {
                 .setVerifyHost(EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_SERVICE_SSL_VERIFY_HOST")).create();
     }
 
+    private static String encode(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

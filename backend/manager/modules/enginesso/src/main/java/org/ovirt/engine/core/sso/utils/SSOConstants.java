@@ -9,6 +9,14 @@ public class SSOConstants {
 
     public static final String HTTP_PARAM_AUTHORIZATION_CODE = "code";
     public static final String HTTP_PARAM_AUTH_RECORD = "ovirt_auth_record";
+    public static final String HTTP_PARAM_DOMAIN = "domain";
+    public static final String HTTP_PARAM_GROUPS_RESOLVING = "groups_resolving";
+    public static final String HTTP_PARAM_GROUPS_RESOLVING_RECURSIVE = "groups_resolving_recursive";
+    public static final String HTTP_PARAM_PARAMS = "params";
+    public static final String HTTP_PARAM_PRINCIPAL = "principal";
+    public static final String HTTP_PARAM_ID = "id";
+    public static final String HTTP_PARAM_IDS = "ids";
+    public static final String HTTP_PARAM_NAMESPACE = "namespace";
     public static final String HTTP_PARAM_TOKEN = "token";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
@@ -16,6 +24,7 @@ public class SSOConstants {
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
     public static final String HTTP_PARAM_CLIENT_SECRET = "client_secret";
     public static final String HTTP_REQ_ATTR_ACCESS_TOKEN = "access_token";
+    public static final String HTTP_PARAM_SEARCH_QUERY_TYPE = "query_type";
 
     public static final String INTERACTIVE_LOGIN_NEGOTIATE_URI = "/interactive-login-negotiate/ovirt-auth";
     public static final String INTERACTIVE_LOGIN_BASIC_URI = "/interactive-login-basic";
@@ -57,4 +66,19 @@ public class SSOConstants {
             "request.";
     public static final String ERR_CODE_INVALID_SCOPE_MSG = "The requested scope '%s' is invalid, unknown, " +
             "malformed, or exceeds the scope granted by the resource owner.";
+
+    public static final String AVAILABLE_NAMESPACES_QUERY = "available-namespaces";
+    public static final String DOMAIN_LIST_QUERY = "domain-list";
+    public static final String FIND_DIRECTORY_GROUP_BY_ID_QUERY = "find-directory-group-by-id";
+    public static final String FETCH_PRINCIPAL_RECORD_QUERY = "fetch-principal-record";
+    public static final String FIND_PRINCIPAL_BY_ID_QUERY = "find-principal-by-id";
+    public static final String FIND_PRINCIPALS_BY_IDS_QUERY = "find-principals-by-ids";
+    public static final String PROFILE_LIST_QUERY = "profile-list";
+    public static final String SEARCH_GROUPS_QUERY = "groups";
+    public static final String SEARCH_USERS_QUERY = "users";
+
+    public static final String AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:authz-search";
+    public static final String PASSWORD_ACCESS_SCOPE = "ovirt-ext=token:password-access";
+    public static final String PUBLIC_AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:public-authz-search";
+    public static final String VALIDATE_SCOPE = "ovirt-ext=token-info:validate";
 }

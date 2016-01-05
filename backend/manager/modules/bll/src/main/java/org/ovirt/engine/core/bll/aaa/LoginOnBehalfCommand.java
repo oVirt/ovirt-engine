@@ -6,12 +6,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.core.aaa.AuthzUtils;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,9 +86,20 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private DbUser getDbUserForPrincipalName(String principalName, String authzName) {
-        ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(
-                EngineExtensionsManager.getInstance().getExtensionByName(authzName),
-                principalName, false, false);
+        Map<String, Object> response = SSOOAuthServiceUtils.fetchPrincipalRecord(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+                authzName,
+                principalName,
+                false,
+                false
+        );
+        ExtMap principalRecord = null;
+        if (response.containsKey("result")) {
+            List<ExtMap> records = (List<ExtMap>) response.get("result");
+            if (!records.isEmpty()) {
+                principalRecord = records.get(0);
+            }
+        }
         if (principalRecord == null) {
             throw new EngineException(EngineError.PRINCIPAL_NOT_FOUND,
                     String.format("%s in domain '%s", principalName, authzName));
@@ -99,12 +110,18 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     }
 
     private ExtMap loginOnBehalf(DbUser dbUser) {
-        Collection<ExtMap> principalRecords = AuthzUtils.findPrincipalsByIds(
-                EngineExtensionsManager.getInstance().getExtensionByName(dbUser.getDomain()),
+        Map<String, Object> response = SSOOAuthServiceUtils.findPrincipalsByIds(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+                dbUser.getDomain(),
                 dbUser.getNamespace(),
                 Arrays.asList(dbUser.getExternalId()),
                 true,
                 true);
+
+        Collection<ExtMap> principalRecords = Collections.emptyList();
+        if (response.containsKey("result")) {
+            principalRecords = (Collection<ExtMap>) response.get("result");
+        }
         if (principalRecords.isEmpty()) {
             throw new EngineException(EngineError.PRINCIPAL_NOT_FOUND,
                     String.format(" user %s in domain '%s", dbUser.getLoginName(), dbUser.getDomain()));

@@ -2,13 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.aaa.AuthenticationProfile;
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.ProfileEntry;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -19,23 +18,27 @@ public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        List<AuthenticationProfile> profiles = AuthenticationProfileRepository.getInstance().getProfiles();
-        List<ProfileEntry> names = new ArrayList<>(profiles.size());
-        for (AuthenticationProfile profile : profiles) {
-            names.add(new ProfileEntry(profile.getName(), AuthzUtils.getName(profile.getAuthz()),
-                    AuthzUtils.supportsPasswordAuthentication(profile.getAuthn())));
+        Map<String, Object> response = SSOOAuthServiceUtils.getProfileList();
+        List<ProfileEntry> names = new ArrayList<>();
+        if (response.containsKey("result")) {
+            names = ((List<Map<String, Object>>) response.get("result")).stream()
+                    .map(this::mapToProfileEntry)
+                    .collect(Collectors.toList());
         }
-        Collections.sort(names, new Comparator<ProfileEntry>() {
 
-            @Override
-            public int compare(ProfileEntry lhs, ProfileEntry rhs) {
-                return lhs.getProfile().compareTo(rhs.getProfile()) != 0 ?
+        Collections.sort(names, (lhs, rhs) ->
+                lhs.getProfile().compareTo(rhs.getProfile()) != 0 ?
                         lhs.getProfile().compareTo(rhs.getProfile())
-                        : lhs.getAuthz().compareTo(rhs.getAuthz());
+                        : lhs.getAuthz().compareTo(rhs.getAuthz())
 
-            }
-        });
+        );
         getQueryReturnValue().setReturnValue(names);
+    }
+
+    private ProfileEntry mapToProfileEntry(Map<String, Object> profileInfo) {
+        return new ProfileEntry((String) profileInfo.get("authn_name"),
+                (String) profileInfo.get("authz_name"),
+                (boolean) profileInfo.get("capability_password_auth"));
     }
 
 }

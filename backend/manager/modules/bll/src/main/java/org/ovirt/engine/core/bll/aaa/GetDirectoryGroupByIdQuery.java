@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -18,20 +18,27 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
 
     @Override
     protected void executeQueryCommand() {
-        final String directoryName = getParameters().getDomain();
-        final String id = getParameters().getId();
-        final ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
-        if (authz == null) {
+        Map<String, Object> response = findDirectoryGroupById();
+        if (!response.containsKey("result")) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            for (String namespace : getParameters().constainsNamespace() ? Arrays.asList(getParameters().getNamespace()) : authz.getContext().<Collection<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                final DirectoryGroup group = DirectoryUtils.findDirectoryGroupById(authz, namespace, id, false, false);
-                if (group != null) {
-                    getQueryReturnValue().setReturnValue(group);
-                    break;
-                }
+            Collection<DirectoryGroup> groups = DirectoryUtils.mapGroupRecordsToDirectoryGroups(
+                    getParameters().getDomain(),
+                    (Collection<ExtMap>) response.get("result"));
+            if (!groups.isEmpty()) {
+                getQueryReturnValue().setReturnValue(new ArrayList<>(groups).get(0));
             }
         }
+    }
+
+    private Map<String, Object> findDirectoryGroupById() {
+        return SSOOAuthServiceUtils.findDirectoryGroupById(
+                getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
+                getParameters().getDomain(),
+                getParameters().getNamespace(),
+                getParameters().getId(),
+                false,
+                false);
     }
 
 }

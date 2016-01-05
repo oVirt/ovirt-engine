@@ -12,6 +12,10 @@ public class JsonExtKeySerializer extends JsonSerializer<ExtKey> {
 
     @Override
     public void serialize(ExtKey extKey, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        jsonGenerator.writeFieldName(extKey.getUuid().getName() + ";" + extKey.getType().getName() + ";" + extKey.getUuid().getUuid());
+        jsonGenerator.writeFieldName(
+                String.format("%s;%s;%s",
+                        extKey.getUuid().getName(),
+                        extKey.getType().getName(),
+                        extKey.getUuid().getUuid()));
     }
 }

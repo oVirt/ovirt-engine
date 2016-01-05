@@ -190,7 +190,7 @@ public class SSOUtils {
             throws UnsupportedEncodingException {
         String value = request.getParameter(paramName);
         return value == null ?
-                null : URLDecoder.decode(new String(value.getBytes("iso-8859-1")), StandardCharsets.UTF_8.name());
+                null : decode(new String(value.getBytes("iso-8859-1")));
     }
 
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
@@ -199,6 +199,10 @@ public class SSOUtils {
             throw new OAuthException(SSOConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(SSOConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
         }
+        return value;
+    }
+
+    public static String decode(String value) throws UnsupportedEncodingException {
         return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
 
@@ -504,8 +508,9 @@ public class SSOUtils {
         try (OutputStream os = response.getOutputStream()) {
             String jsonPayload = getJson(payload);
             response.setContentType("application/json");
-            response.setContentLength(jsonPayload.length());
-            os.write(jsonPayload.getBytes(StandardCharsets.UTF_8.name()));
+            byte[] jsonPayloadBytes = jsonPayload.getBytes(StandardCharsets.UTF_8.name());
+            response.setContentLength(jsonPayloadBytes.length);
+            os.write(jsonPayloadBytes);
             log.trace("Sending json data {}", jsonPayload);
         }
     }

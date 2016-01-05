@@ -97,6 +97,7 @@
         <servlet-name>InteractiveAuthServlet</servlet-name>
         <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveAuthServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>InteractiveAuthServlet</servlet-name>
         <url-pattern>/interactive-login</url-pattern>
