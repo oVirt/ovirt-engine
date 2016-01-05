@@ -43,8 +43,7 @@ public class VmConsolesImpl extends ConsolesBase {
     }
 
     private String connectErrorMessage() {
-        return canConnectToConsole()
-                ? ""
+        return getSelectedProcotol() == null ? messages.errorConnectingToConsoleNoProtocol(getVm().getName())
                 : messages.errorConnectingToConsole(getVm().getName(), getSelectedProcotol().toString());
     }
 
