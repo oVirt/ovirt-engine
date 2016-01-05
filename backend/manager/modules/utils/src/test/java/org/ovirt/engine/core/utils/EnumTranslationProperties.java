@@ -3,10 +3,10 @@ package org.ovirt.engine.core.utils;
 import java.util.Properties;
 
 @SuppressWarnings("serial")
-public class EnumTranslationProperties extends Properties {
-    private final Class<? extends Enum> enumClass;
+public class EnumTranslationProperties<E extends Enum<E>> extends Properties {
+    private final Class<E> enumClass;
 
-    public EnumTranslationProperties(Class<? extends Enum> enumClass) {
+    public EnumTranslationProperties(Class<E> enumClass) {
         this.enumClass = enumClass;
     }
 

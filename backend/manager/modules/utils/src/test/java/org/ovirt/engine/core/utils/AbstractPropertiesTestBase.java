@@ -11,12 +11,12 @@ import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AbstractPropertiesTestBase {
-    private Class<? extends Enum> enumClass;
+public class AbstractPropertiesTestBase<E extends Enum<E>> {
+    private Class<E> enumClass;
     private String relativePath;
     private File file;
 
-    public AbstractPropertiesTestBase(Class<? extends Enum> enumClass, String relativePath) {
+    public AbstractPropertiesTestBase(Class<E> enumClass, String relativePath) {
         this.enumClass = enumClass;
         this.relativePath = relativePath;
     }
