@@ -567,7 +567,7 @@
         <host name="default-host" alias="localhost">
           <filter-ref
               name="gzip"
-              predicate='regex[pattern="(text/(css|html|javascript|json|xml))|(application/(json|xml))", value=%{o,content-type}, full-match=true]'/>
+              predicate='regex[pattern="(text/(css|html|javascript|json|xml))|(application/(json|xml))(;.*)?", value=%{o,content-type}, full-match=true]'/>
         </host>
       </server>
 
