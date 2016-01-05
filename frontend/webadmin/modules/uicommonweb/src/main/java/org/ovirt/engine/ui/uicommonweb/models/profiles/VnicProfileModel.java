@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -162,11 +163,21 @@ public abstract class VnicProfileModel extends Model {
             }
         });
 
-        initPassthroughChangeListener();
+        boolean isPassthroughSupported =
+                (Boolean) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.NetworkSriovSupported,
+                        dcCompatibilityVersion.toString());
+        if (isPassthroughSupported) {
+            initPassthroughChangeListener();
+        }
 
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);
         initCommands();
+
+        getPassthrough().setIsChangeable(isPassthroughSupported);
+        getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
+                .getMessages().passthroughPropertyNotSupported(dcCompatibilityVersion.toString()));
     }
 
     protected void initCommands() {
