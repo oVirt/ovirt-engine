@@ -347,6 +347,7 @@ public enum EngineError {
     NoUpServerFoundInRemoteCluster(856),
     FailedToStopMasterVolumeDuringVolumeSnapshotRestore(857),
     FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore(858),
+    StorageDomainIsMemberOfPool(900),
     InvalidParameterException(1000),
     InvalidDefaultExceptionException(1001),
     NotImplementedException(2000),
