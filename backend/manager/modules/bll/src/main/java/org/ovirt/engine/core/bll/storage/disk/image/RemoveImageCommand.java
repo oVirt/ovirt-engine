@@ -44,11 +44,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         initStorageDomainId();
     }
 
-    protected RemoveImageCommand(Guid commandId) {
+    public RemoveImageCommand(Guid commandId) {
         super(commandId);
     }
 
-    protected RemoveImageCommand(T parameters) {
+    public RemoveImageCommand(T parameters) {
         this(parameters, null);
     }
 
