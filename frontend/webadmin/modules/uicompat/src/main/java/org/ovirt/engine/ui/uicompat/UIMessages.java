@@ -393,6 +393,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Error connecting to {0} using {1} protocol")
     String errorConnectingToConsole(String name, String s);
 
+    @DefaultMessage("Error connecting to {0}")
+    String errorConnectingToConsoleNoProtocol(String name);
+
     @DefaultMessage("Cannot connect to the console for {0}")
     String cannotConnectToTheConsole(String vmName);
 
