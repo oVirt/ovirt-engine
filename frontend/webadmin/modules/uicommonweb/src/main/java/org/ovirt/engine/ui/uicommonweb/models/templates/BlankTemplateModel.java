@@ -22,4 +22,9 @@ public class BlankTemplateModel extends UnitVmModel {
 
         initGraphicsConsoles(osType, Version.getLast());
     }
+
+    @Override
+    public Version getCompatibilityVersion() {
+        return Version.getLast();
+    }
 }
