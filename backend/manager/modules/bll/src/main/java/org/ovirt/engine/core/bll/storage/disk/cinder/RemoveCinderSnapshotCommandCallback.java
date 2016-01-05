@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -39,14 +38,12 @@ public class RemoveCinderSnapshotCommandCallback extends AbstractCinderDiskComma
         super.onFailed(cmdId, childCmdIds);
         getCommand().getParameters().setTaskGroupSuccess(false);
         getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
         getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override

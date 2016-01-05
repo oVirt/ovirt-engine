@@ -82,7 +82,6 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentC
         getCommand().getParameters().setTaskGroupSuccess(false);
         log.error("Failed deleting volume/snapshot from Cinder. ID: {}", getDiskId());
         getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
@@ -90,7 +89,6 @@ public class RemoveCinderDiskCommandCallback<T extends RemoveCinderVolumeParentC
         super.onSucceeded(cmdId, childCmdIds);
         log.info("Volume/Snapshot has been successfully deleted from Cinder. ID: {}", getDiskId());
         getCommand().endAction();
-        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
