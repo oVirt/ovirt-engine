@@ -66,7 +66,21 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         StorageDomain storageDomainFromIrs = new StorageDomain();
         storageDomainFromIrs.setStorageStaticData(domainFromIrs.getFirst());
 
-        return concreteCheckExistingStorageDomain(domainFromIrs);
+        if (!concreteCheckExistingStorageDomain(domainFromIrs)) {
+            return false;
+        }
+        initStorageDomainProperties(domainFromIrs);
+        return true;
+    }
+
+    private void initStorageDomainProperties(Pair<StorageDomainStatic, Guid> domain) {
+        StorageDomainStatic domainFromIrs = domain.getFirst();
+        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getName())) {
+            getStorageDomain().getStorageStaticData().setStorageName(domainFromIrs.getName());
+        }
+        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getDescription())) {
+            getStorageDomain().getStorageStaticData().setDescription(domainFromIrs.getDescription());
+        }
     }
 
     protected Pair<StorageDomainStatic, Guid> executeHSMGetStorageDomainInfo(HSMGetStorageDomainInfoVDSCommandParameters parameters) {
