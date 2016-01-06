@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
@@ -247,6 +248,7 @@ public class DbFacade {
             put(VmIcon.class, VmIconDao.class);
             put(VmIconDefault.class, VmIconDefaultDao.class);
             put(LibvirtSecret.class, LibvirtSecretDao.class);
+            put(StorageServerConnections.class, StorageServerConnectionDao.class);
         }
     };
 

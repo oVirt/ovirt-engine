@@ -32,7 +32,7 @@ public class BackendIscsiBondStorageConnectionsResourceTest
     @Override
     protected StorageServerConnections getEntity(int index) {
         StorageServerConnections cnx = new StorageServerConnections();
-        cnx.setid(GUIDS[index].toString());
+        cnx.setId(GUIDS[index].toString());
         cnx.setconnection("10.11.12.13" + ":" + "/1");
         return cnx;
     }

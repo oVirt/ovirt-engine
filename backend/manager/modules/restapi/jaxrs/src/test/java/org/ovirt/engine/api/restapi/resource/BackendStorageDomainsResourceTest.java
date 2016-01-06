@@ -559,7 +559,7 @@ public class BackendStorageDomainsResourceTest
     static StorageServerConnections setUpStorageServerConnection(int idIndex, int index, StorageType storageType) {
         StorageServerConnections cnx = new StorageServerConnections();
         if (idIndex != -1) {
-            cnx.setid(GUIDS[idIndex].toString());
+            cnx.setId(GUIDS[idIndex].toString());
         }
         if (storageType == StorageType.LOCALFS) {
             cnx.setconnection(PATHS[index]);

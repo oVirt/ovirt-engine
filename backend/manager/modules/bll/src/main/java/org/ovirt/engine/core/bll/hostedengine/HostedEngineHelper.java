@@ -84,7 +84,7 @@ public class HostedEngineHelper {
                 getStorageDomainStatic().getId().toString());
         params.put(
                 "connectionUUID",
-                sdConnection.getid().toString());
+                sdConnection.getId().toString());
         params.put(
                 "iqn",
                 sdConnection.getiqn());

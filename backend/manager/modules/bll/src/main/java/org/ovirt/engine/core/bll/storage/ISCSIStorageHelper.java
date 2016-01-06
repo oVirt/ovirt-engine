@@ -92,7 +92,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             // Get list of endpoints (nics or vlans) that will initiate iscsi sessions.
             // Targets are represented by StorageServerConnections object (connection, iqn, port, portal).
             List<VdsNetworkInterface> ifaces = DbFacade.getInstance().getInterfaceDao()
-                    .getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getid());
+                    .getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getId());
 
             if (!ifaces.isEmpty()) {
                 VdsNetworkInterface removedInterface = ifaces.remove(0);
@@ -102,7 +102,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 // from more than one endpoint(initiator) we have to clone this connection per endpoint.
                 for (VdsNetworkInterface iface : ifaces) {
                     StorageServerConnections newConn = StorageServerConnections.copyOf(conn);
-                    newConn.setid(Guid.newGuid().toString());
+                    newConn.setId(Guid.newGuid().toString());
                     setInterfaceProperties(newConn, iface);
                     res.add(newConn);
                 }
@@ -170,9 +170,9 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<StorageServerConnections> toRemove = new ArrayList<>();
         for (StorageServerConnections connection : connections) {
             fillConnectionDetailsIfNeeded(connection);
-            if (connection.getid() != null) {
+            if (connection.getId() != null) {
                 List<String> list = LinqUtils.transformToList(
-                        DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
+                        DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getId()),
                         new Function<LUNs, String>() {
                             @Override
                             public String eval(LUNs a) {
@@ -210,10 +210,10 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     private void fillConnectionDetailsIfNeeded(StorageServerConnections connection) {
         // in case that the connection id is null (in case it wasn't loaded from the db before) - we can attempt to load
         // it from the db by its details.
-        if (connection.getid() == null) {
+        if (connection.getId() == null) {
             StorageServerConnections dbConnection = findConnectionWithSameDetails(connection);
             if (dbConnection != null) {
-                connection.setid(dbConnection.getid());
+                connection.setId(dbConnection.getId());
             }
         }
     }
@@ -274,7 +274,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<StorageServerConnections> list = DbFacade.getInstance()
                 .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
         for (StorageServerConnections connection : filterConnectionsUsedByOthers(list, storageDomain.getStorage(), "")) {
-            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
+            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
         }
 
         // There is no need to remove entries from lun_storage_server_connection_map,

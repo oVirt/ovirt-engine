@@ -24,7 +24,7 @@ public class FCPStorageHelper extends StorageHelperBase {
     private static final StorageServerConnections fcCon = new StorageServerConnections();
 
     static {
-        fcCon.setid(Guid.Empty.toString());
+        fcCon.setId(Guid.Empty.toString());
         fcCon.setstorage_type(StorageType.FCP);
     }
 

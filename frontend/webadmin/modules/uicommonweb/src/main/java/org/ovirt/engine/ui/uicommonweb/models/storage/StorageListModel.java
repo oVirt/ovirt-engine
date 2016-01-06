@@ -539,7 +539,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private void cleanConnection(StorageServerConnections connection, Guid hostId) {
         // if create connection command was the one to fail and didn't create a connection
         // then the id of connection will be empty, and there's nothing to delete.
-        if (connection.getid() != null && !connection.getid().equals("")) {  //$NON-NLS-1$
+        if (connection.getId() != null && !connection.getId().equals("")) {  //$NON-NLS-1$
             Frontend.getInstance().runAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
                 null, this);
         }
@@ -1111,7 +1111,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1205,7 +1205,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
         IStorageModel storageModel = model.getCurrentStorageItem();
         connection = new StorageServerConnections();
-        connection.setid(storageDomain.getStorage());
+        connection.setId(storageDomain.getStorage());
         connection.setconnection(path);
         connection.setstorage_type(storageModel.getType());
 
@@ -1289,7 +1289,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1460,7 +1460,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1734,7 +1734,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
                     VdcReturnValueBase returnVal = result.getReturnValue();
                     boolean success = returnVal != null && returnVal.getSucceeded();
                     if (success) {
-                        storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
+                        storageListModel.fileConnection.setId((String) returnVal.getActionReturnValue());
                         if (storageModel.getRole() == StorageDomainType.Data) {
                             checkFileDomainAttachedToDc("OnImportFile", storageListModel.fileConnection); //$NON-NLS-1$
                         } else {

@@ -81,11 +81,11 @@ public class BackendStorageDomainsResource
             StorageServerConnections connection) {
         Response response = null;
         boolean isConnNew = false;
-        if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getid())) {
+        if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getId())) {
             isConnNew = true;
-            connection.setid(addStorageServerConnection(connection, hostId));
+            connection.setId(addStorageServerConnection(connection, hostId));
         }
-        entity.setStorage(connection.getid());
+        entity.setStorage(connection.getId());
         if (action == VdcActionType.AddNFSStorageDomain || action == VdcActionType.AddPosixFsStorageDomain ||
                 action == VdcActionType.AddGlusterFsStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =

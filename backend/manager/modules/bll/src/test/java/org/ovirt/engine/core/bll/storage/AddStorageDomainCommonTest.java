@@ -91,7 +91,7 @@ public class AddStorageDomainCommonTest {
         when(spDao.get(spId)).thenReturn(sp);
 
         StorageServerConnections conn = new StorageServerConnections();
-        conn.setid(connId.toString());
+        conn.setId(connId.toString());
         conn.setstorage_type(StorageType.NFS);
 
         when(sscDao.get(connId.toString())).thenReturn(conn);

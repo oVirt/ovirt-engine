@@ -105,7 +105,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[3].toString());
+        connection.setId(GUIDS[3].toString());
         connection.setconnection("/data1");
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
@@ -141,7 +141,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         Host host = new Host();
         host.setId(GUIDS[1].toString());
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(GUIDS[3].toString());
+        connection.setId(GUIDS[3].toString());
         connection.setconnection("/data1");
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
@@ -196,7 +196,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
         expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
 
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {

@@ -180,7 +180,7 @@ public class StorageDomainMapper {
     public static StorageServerConnections map(StorageConnection model, StorageServerConnections template) {
         StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetId()) {
-            entity.setid(model.getId());
+            entity.setId(model.getId());
         }
         org.ovirt.engine.core.common.businessentities.storage.StorageType storageType = null;
         if (model.getType() != null) {
@@ -281,7 +281,7 @@ public class StorageDomainMapper {
             to = org.ovirt.engine.api.model.StorageConnection.class)
     public static StorageConnection map(StorageServerConnections entity, StorageConnection template) {
         StorageConnection model = template != null ? template : new StorageConnection();
-        model.setId(entity.getid());
+        model.setId(entity.getId());
         model.setType(map(entity.getstorage_type(), null));
         if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI) {
             model.setAddress(entity.getconnection());

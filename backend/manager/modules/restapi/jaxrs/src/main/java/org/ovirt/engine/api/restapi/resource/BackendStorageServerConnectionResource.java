@@ -45,7 +45,7 @@ public class BackendStorageServerConnectionResource extends
     public Response remove(Action action) {
         get();
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
+        connection.setId(id);
         Guid hostId = Guid.Empty;
 
         if (action != null && action.isSetHost()) {
@@ -90,7 +90,7 @@ public class BackendStorageServerConnectionResource extends
     public Response remove() {
         get();
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid(id);
+        connection.setId(id);
         Guid hostId = Guid.Empty;
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId);

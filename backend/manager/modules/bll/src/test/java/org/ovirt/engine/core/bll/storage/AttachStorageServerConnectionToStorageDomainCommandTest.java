@@ -114,13 +114,13 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
 
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
-       connection.setid(Guid.newGuid().toString());
+       connection.setId(Guid.newGuid().toString());
        connection.setstorage_type(StorageType.ISCSI);
        connection.setiqn("iqn.1.2.3.4.com");
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getId());
        when(lunMapDao.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
@@ -137,13 +137,13 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        doNothing().when(lunDao).save(dummyLun);
        List<StorageServerConnections> connectionsForDomain = new ArrayList<>();
        StorageServerConnections connection = new StorageServerConnections();
-       connection.setid(Guid.newGuid().toString());
+       connection.setId(Guid.newGuid().toString());
        connection.setstorage_type(StorageType.ISCSI);
        connection.setiqn("iqn.1.2.3.4.com");
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDao.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getId());
        when(lunMapDao.get(map_id)).thenReturn(null);
        LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
        doNothing().when(lunMapDao).save(map);

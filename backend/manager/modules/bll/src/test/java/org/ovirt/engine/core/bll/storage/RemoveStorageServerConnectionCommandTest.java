@@ -111,7 +111,7 @@ public class RemoveStorageServerConnectionCommandTest {
 
     private StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
-        connectionDetails.setid(id.toString());
+        connectionDetails.setId(id.toString());
         connectionDetails.setconnection(connection);
         connectionDetails.setstorage_type(type);
         return connectionDetails;
@@ -125,7 +125,7 @@ public class RemoveStorageServerConnectionCommandTest {
                 NfsVersion.V4,
                 300,
                 0);
-        newNFSConnection.setid("");
+        newNFSConnection.setId("");
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
@@ -134,7 +134,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNotExistingConnection() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(null);
+        when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
     }
@@ -142,7 +142,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNFSConnectionDomainsExist() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
+        when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(NFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(NFSConnection.getconnection());
@@ -154,7 +154,7 @@ public class RemoveStorageServerConnectionCommandTest {
         domain2.setStorageName("domain2");
         domains.add(domain1);
         domains.add(domain2);
-        doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getid());
+        doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getId());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
@@ -162,23 +162,23 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveNFSConnectionNoDomain() {
         parameters.setStorageServerConnection(NFSConnection);
-        when(storageServerConnectionDao.get(NFSConnection.getid())).thenReturn(NFSConnection);
+        when(storageServerConnectionDao.get(NFSConnection.getId())).thenReturn(NFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
-        doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getid());
+        doReturn(domains).when(command).getStorageDomainsByConnId(NFSConnection.getId());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
     public void checkRemoveIscsiConnectionDomainsExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getId())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
         lun1.setStorageDomainName("storagedomain1");
         lun1.setvolume_group_id("G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ");
         luns.add(lun1);
-        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
@@ -186,7 +186,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveIscsiConnectionDomainsAndDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getId())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -199,7 +199,7 @@ public class RemoveStorageServerConnectionCommandTest {
         lun2.setvolume_group_id("");
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
-        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS);
     }
@@ -207,7 +207,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkRemoveIscsiConnectionDisksExist() {
         parameters.setStorageServerConnection(iSCSIConnection);
-        when(storageServerConnectionDao.get(iSCSIConnection.getid())).thenReturn(iSCSIConnection);
+        when(storageServerConnectionDao.get(iSCSIConnection.getId())).thenReturn(iSCSIConnection);
         List<LUNs> luns = new ArrayList<LUNs>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -221,7 +221,7 @@ public class RemoveStorageServerConnectionCommandTest {
         lun2.setvolume_group_id("");
         lun2.setDiskAlias("disk2");
         luns.add(lun2);
-        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getid())).thenReturn(luns);
+        when(lunDao.getAllForStorageServerConnection(iSCSIConnection.getId())).thenReturn(luns);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
@@ -229,7 +229,7 @@ public class RemoveStorageServerConnectionCommandTest {
     @Test
     public void checkExecuteCommandWithVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         doReturn(true).when(command).disconnectStorage();
         command.executeCommand();
     }
@@ -238,7 +238,7 @@ public class RemoveStorageServerConnectionCommandTest {
     public void checkExecuteCommandWithEmptyVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(Guid.Empty);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();
@@ -248,7 +248,7 @@ public class RemoveStorageServerConnectionCommandTest {
     public void checkExecuteCommandWithNullVdsId() {
         parameters.setStorageServerConnection(NFSConnection);
         parameters.setVdsId(null);
-        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getid());
+        doNothing().when(storageServerConnectionDao).remove(NFSConnection.getId());
         // Test will fail if we try to disconnect
         command.executeCommand();
         verify(command, never()).disconnectStorage();

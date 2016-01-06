@@ -31,7 +31,7 @@ public class StorageConnectionHelper {
 
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
         DefaultValueMap con = new DefaultValueMap();
-        con.put("id", connection.getid(), Guid.Empty.toString());
+        con.put("id", connection.getId(), Guid.Empty.toString());
         con.put("connection", connection.getconnection(), "");
         con.putIfNotEmpty("tpgt", connection.getportal());
         con.put("port", connection.getport(), "");

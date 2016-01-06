@@ -54,7 +54,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
     @Override
     protected StorageServerConnections getEntity(int index) {
         StorageServerConnections entity = new StorageServerConnections();
-        entity.setid(GUIDS[index].toString());
+        entity.setId(GUIDS[index].toString());
         return entity;
     }
 
