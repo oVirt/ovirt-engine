@@ -1522,8 +1522,34 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setTimeZone(new NotChangableForVmInPoolListModel<TimeZoneModel>());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
 
-        setDefaultHost(new NotChangableForVmInPoolListModel<VDS>());
-        getDefaultHost().getSelectedItemChangedEvent().addListener(this);
+        setDefaultHost(new NotChangableForVmInPoolListModel<VDS>() {
+            @Override
+            public void setSelectedItem(VDS value) {
+                if (value == null) {
+                    setSelectedItems(new ArrayList<VDS>());
+                } else {
+                    setSelectedItems(new ArrayList<>(Arrays.asList(value)));
+                }
+            }
+
+            @Override
+            public void setSelectedItems(List<VDS> value) {
+                // Default implementation only checks for instance equality
+                if (value != null && !value.equals(getSelectedItems())) {
+                    super.setSelectedItems(new ArrayList<VDS>(value));
+                } else if (value != null && value.equals(getSelectedItems())) {
+                    // do nothing, nothing changed
+                } else {
+                    super.setSelectedItems(value);
+                }
+                if (value == null || value.isEmpty() || value.size() > 1) {
+                    super.setSelectedItem(null);
+                } else {
+                    super.setSelectedItem(value.get(0));
+                }
+            }
+        });
+        getDefaultHost().getSelectedItemsChangedEvent().addListener(this);
 
         setOSType(new NotChangableForVmInPoolListModel<Integer>() {
             @Override
@@ -1787,11 +1813,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             else if (sender == getTimeZone()) {
                 timeZone_SelectedItemChanged(sender, args);
             }
-            else if (sender == getDefaultHost()) {
-                defaultHost_SelectedItemChanged(sender, args);
-                behavior.updateHaAvailability();
-                behavior.updateMigrationAvailability();
-            }
             else if (sender == getOSType()) {
                 getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
                     @Override
@@ -1846,8 +1867,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             else if (sender == getWatchdogModel()) {
                 watchdogModelSelectedItemChanged(sender, args);
             }
-        }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
+            if (sender == getDefaultHost()) {
+                defaultHost_SelectedItemChanged(sender, args);
+                behavior.updateHaAvailability();
+                behavior.updateMigrationAvailability();
+                behavior.updateNumaEnabled();
+            }
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getVmInitEnabled()) {
                 vmInitEnabledChanged();
             } else if (sender == getIoThreadsEnabled()) {

@@ -1176,7 +1176,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 model.getIsAutoAssign().setEntity(true);
             }
             else {
-                model.getDefaultHost().setSelectedItem(host);
+                model.getDefaultHost().setSelectedItems(new ArrayList<>(Arrays.asList(host)));
                 model.getIsAutoAssign().setEntity(false);
             }
         }
