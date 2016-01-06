@@ -1,14 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class StorageServerConnections implements Serializable {
+public class StorageServerConnections implements BusinessEntity<String> {
     private static final long serialVersionUID = 5444293590307760809L;
 
     public static final String DEFAULT_TPGT = "1";
