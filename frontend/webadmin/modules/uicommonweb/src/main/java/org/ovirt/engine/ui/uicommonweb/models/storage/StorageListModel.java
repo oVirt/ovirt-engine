@@ -1790,7 +1790,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     public void addExistingFileStorageDomain() {
         StorageDomain sdToAdd = Linq.firstOrNull(storageDomainsToAdd);
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
-        saveDefaultedStorageProperties((StorageModel) getWindow(), sdsToAdd);
+        storageDomain = sdsToAdd;
+        saveBaseStorageProperties((StorageModel) getWindow());
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
