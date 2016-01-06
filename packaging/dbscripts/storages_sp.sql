@@ -831,7 +831,7 @@ RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT *
+    SELECT DISTINCT ON (id) *
     FROM storage_domains
     WHERE (
             NOT v_is_filtered
