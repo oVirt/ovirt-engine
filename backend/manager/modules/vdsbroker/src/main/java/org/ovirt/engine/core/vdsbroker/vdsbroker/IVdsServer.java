@@ -31,6 +31,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 
@@ -101,6 +102,10 @@ public interface IVdsServer {
     MigrateStatusReturnForXmlRpc migrateStatus(String vmId);
 
     StatusOnlyReturnForXmlRpc migrateCancel(String vmId);
+
+    PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID);
+
+    StatusReturnForXmlRpc teardownImage(String spId, String sdId, String imgGroupId, String imgId);
 
     OneVmReturnForXmlRpc changeDisk(String vmId, String imageLocation);
 

@@ -39,6 +39,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
@@ -1784,6 +1785,28 @@ public class VdsServerWrapper implements IVdsServer {
                     e.getMessage());
             logger.debug("Exception", e);
             return null;
+        }
+    }
+
+    @Override
+    public PrepareImageReturnForXmlRpc prepareImage(String spID, String sdID, String imageID, String volumeID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.prepareImage(sdID, spID, imageID, volumeID);
+            PrepareImageReturnForXmlRpc wrapper = new PrepareImageReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusReturnForXmlRpc teardownImage(String sdID, String spID, String imageID, String volumeID) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.teardownImage(sdID, spID, imageID, volumeID);
+            StatusReturnForXmlRpc wrapper = new StatusReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
         }
     }
 

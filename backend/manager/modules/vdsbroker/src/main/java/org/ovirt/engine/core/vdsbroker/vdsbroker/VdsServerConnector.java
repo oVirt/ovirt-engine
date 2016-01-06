@@ -461,4 +461,8 @@ public interface VdsServerConnector {
     public Map<String, Object> getVolumeInfo(String sdUUID, String spUUID, String imgUUID, String volUUID);
 
     public Map<String, Object> glusterProcessesStop();
+
+    public Map<String, Object> prepareImage(String sdID, String spID, String imageID, String volumeID);
+
+    public Map<String, Object> teardownImage(String sdID, String spID, String imageID, String volumeID);
 }
