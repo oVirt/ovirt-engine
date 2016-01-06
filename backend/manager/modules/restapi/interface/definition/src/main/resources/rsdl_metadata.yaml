@@ -1433,6 +1433,8 @@ actions:
           action.vm.name: xs:string
           action.vm.disks.disk--COLLECTION:
             disk.id: xs:string
+            disk.format: xs:string
+            disk.sparse: xs:string
         description: import the specified virtual machine from the source storagedomain identified by storagedomain-identifier into the destination storage domain identified by storage_domain.id|name
     urlparams:
       collapse_snapshots:
