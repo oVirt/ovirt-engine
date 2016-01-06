@@ -153,7 +153,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainNameLengthValid() {
         boolean result = true;
-        if (getStorageDomain().getStorageName().length() > Config
+        if (StringUtils.isNotEmpty(getStorageDomain().getStorageName()) &&
+                getStorageDomain().getStorageName().length() > Config
                 .<Integer> getValue(ConfigValues.StorageDomainNameSizeLimit)) {
             addCanDoActionMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             result = false;
