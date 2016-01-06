@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -170,20 +171,21 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     @Override
     public List<String> showAllLocks() {
-        List<String> returnValue;
         log.debug("All in memory locks will be shown");
         globalLock.lock();
         try {
-            returnValue = new ArrayList<>();
-            for(Map.Entry<String, InternalLockView> entry : locks.entrySet()) {
-                String lock = new StringBuilder("The object id is : ").append(entry.getKey()).append(' ').append(entry.getValue()).toString();
-                returnValue.add(lock);
-            }
+            return locks.entrySet().stream().map(this::createLockDescription).collect(Collectors.toList());
         } finally {
             globalLock.unlock();
+            log.debug("All in memory locks were shown");
         }
-        log.debug("All in memory locks were shown");
-        return returnValue;
+    }
+
+    private String createLockDescription(Entry<String, InternalLockView> e) {
+        return new StringBuilder("The object id is : ")
+                .append(e.getKey())
+                .append(' ')
+                .append(e.getValue()).toString();
     }
 
     /**
