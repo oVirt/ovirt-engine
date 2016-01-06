@@ -475,8 +475,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (cluster == null) {
             getModel().getDefaultHost().setItems(new ArrayList<VDS>());
-            getModel().getDefaultHost().setSelectedItem(null);
-
+            getModel().getDefaultHost().setSelectedItems(new ArrayList<VDS>());
             return;
         }
 
