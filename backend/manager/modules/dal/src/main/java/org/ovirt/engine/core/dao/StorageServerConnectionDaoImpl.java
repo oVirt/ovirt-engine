@@ -148,7 +148,7 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
     }
 
     private MapSqlParameterSource getFullParameterSource(final StorageServerConnections connection) {
-        return getIdParameterSource(connection.getid())
+        return getIdParameterSource(connection.getId())
                 .addValue("connection", connection.getconnection())
                 .addValue("iqn", connection.getiqn())
                 .addValue("port", connection.getport())
@@ -170,7 +170,7 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
                         throws SQLException {
                     StorageServerConnections entity = new StorageServerConnections();
                     entity.setconnection(rs.getString("connection"));
-                    entity.setid(rs.getString("id"));
+                    entity.setId(rs.getString("id"));
                     entity.setiqn(rs.getString("iqn"));
                     entity.setport(rs.getString("port"));
                     entity.setportal(rs.getString("portal"));

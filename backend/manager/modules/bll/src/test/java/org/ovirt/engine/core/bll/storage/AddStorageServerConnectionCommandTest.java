@@ -110,12 +110,12 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-        newPosixConnection.setid("");
+        newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         Pair<Boolean, Integer> connectResult = new Pair(true, 0);
         doReturn(connectResult).when(command).connectHostToStorage();
-        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
+        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
         doNothing().when(command).saveConnection(newPosixConnection);
 
         command.executeCommand();
@@ -129,11 +129,11 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-        newPosixConnection.setid("");
+        newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
-        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
+        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
         doNothing().when(command).saveConnection(newPosixConnection);
 
         command.executeCommand();
@@ -147,11 +147,11 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-        newPosixConnection.setid("");
+        newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(null);
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
-        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
+        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
         doNothing().when(command).saveConnection(newPosixConnection);
 
         command.executeCommand();
@@ -165,7 +165,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-        newPosixConnection.setid(Guid.newGuid().toString());
+        newPosixConnection.setId(Guid.newGuid().toString());
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
@@ -193,7 +193,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
     public void isConnWithSameDetailsExist() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
        StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
-       existingConn.setid(Guid.newGuid().toString());
+       existingConn.setId(Guid.newGuid().toString());
 
        when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
@@ -204,7 +204,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
     public void isLocalDomainConnWithSamePathAndPoolExist() {
         StorageServerConnections newLocalConnection = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
         StorageServerConnections existingConn = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
-        existingConn.setid(Guid.newGuid().toString());
+        existingConn.setId(Guid.newGuid().toString());
 
         Guid storagePoolId = Guid.newGuid();
         List<StorageServerConnections> connections = Collections.singletonList(existingConn);

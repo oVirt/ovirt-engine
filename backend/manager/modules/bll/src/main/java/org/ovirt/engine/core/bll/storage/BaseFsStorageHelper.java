@@ -63,7 +63,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
                 DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getStorage());
 
         if (connection != null) {
-            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
+            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
         }
 
         return true;

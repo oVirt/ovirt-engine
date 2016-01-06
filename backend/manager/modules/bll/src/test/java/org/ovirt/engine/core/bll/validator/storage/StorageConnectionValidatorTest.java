@@ -34,7 +34,7 @@ public class StorageConnectionValidatorTest {
     @Before
     public void setUp() {
         connection = new StorageServerConnections();
-        connection.setid("0cc146e8-e5ed-482c-8814-270bc48c297e");
+        connection.setId("0cc146e8-e5ed-482c-8814-270bc48c297e");
         connection.setstorage_type(StorageType.ISCSI);
         validator = spy(new StorageConnectionValidator(connection));
         domain = new StorageDomain();
@@ -108,7 +108,7 @@ public class StorageConnectionValidatorTest {
     @Test
     public void isConnectionForISCSIDomainAttached() {
         StorageServerConnections connection = new StorageServerConnections();
-        connection.setid("0cc146e8-e5ed-482c-8814-270bc48c297e");
+        connection.setId("0cc146e8-e5ed-482c-8814-270bc48c297e");
         List<StorageServerConnections> connections = getConnections();
         connections.add(connection);
         doReturn(connections).when(validator).getAllConnectionsForDomain(domain.getId());
@@ -118,11 +118,11 @@ public class StorageConnectionValidatorTest {
     private List<StorageServerConnections> getConnections() {
          List<StorageServerConnections> connectionsList = new ArrayList<>();
          StorageServerConnections connection1 = new StorageServerConnections();
-         connection1.setid("1cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection1.setId("1cc146e8-e5ed-482c-8814-270bc48c2981");
          StorageServerConnections connection2 = new StorageServerConnections();
-         connection2.setid("2cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection2.setId("2cc146e8-e5ed-482c-8814-270bc48c2981");
          StorageServerConnections connection3 = new StorageServerConnections();
-         connection3.setid("3cc146e8-e5ed-482c-8814-270bc48c2981");
+         connection3.setId("3cc146e8-e5ed-482c-8814-270bc48c2981");
          connectionsList.add(connection1);
          connectionsList.add(connection2);
          connectionsList.add(connection3);

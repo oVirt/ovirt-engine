@@ -64,7 +64,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     static StorageServerConnections setUpEntityExpectations(StorageServerConnections entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index].toString()).anyTimes();
         expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
         expect(entity.getconnection()).andReturn("/data1").anyTimes();
         if (STORAGE_TYPES_MAPPED[index].equals(StorageType.ISCSI)) {

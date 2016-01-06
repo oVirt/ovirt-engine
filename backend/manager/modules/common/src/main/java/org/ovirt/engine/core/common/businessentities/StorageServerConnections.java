@@ -1,14 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class StorageServerConnections implements Serializable {
+public class StorageServerConnections implements BusinessEntity<String> {
     private static final long serialVersionUID = 5444293590307760809L;
 
     public static final String DEFAULT_TPGT = "1";
@@ -31,7 +29,7 @@ public class StorageServerConnections implements Serializable {
             Short nfsRetrans,
             Short nfsTimeo) {
         setconnection(connection);
-        setid(id);
+        setId(id);
         setiqn(iqn);
         setpassword(password);
         setstorage_type(storageType);
@@ -68,11 +66,11 @@ public class StorageServerConnections implements Serializable {
 
     private String id;
 
-    public String getid() {
+    public String getId() {
         return this.id;
     }
 
-    public void setid(String value) {
+    public void setId(String value) {
         this.id = value;
     }
 
@@ -208,7 +206,7 @@ public class StorageServerConnections implements Serializable {
         boolean returnValue = super.equals(obj);
         if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
             returnValue =
-                    (getid() != null && !getid().isEmpty() && getid().equals(((StorageServerConnections) obj).getid()));
+                    (getId() != null && !getId().isEmpty() && getId().equals(((StorageServerConnections) obj).getId()));
         }
         return returnValue;
     }
@@ -217,7 +215,7 @@ public class StorageServerConnections implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getid() == null) ? 0 : getid().hashCode());
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         return result;
     }
 
@@ -242,7 +240,7 @@ public class StorageServerConnections implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("id", getid())
+                .append("id", getId())
                 .append("connection", getconnection())
                 .append("iqn", getiqn())
                 .append("vfsType", getVfsType())

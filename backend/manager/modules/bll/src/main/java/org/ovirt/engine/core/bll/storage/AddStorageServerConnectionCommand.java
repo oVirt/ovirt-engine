@@ -53,9 +53,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
 
         StorageServerConnections connection = getConnection();
-        connection.setid(Guid.newGuid().toString());
+        connection.setId(Guid.newGuid().toString());
         saveConnection(connection);
-        getReturnValue().setActionReturnValue(connection.getid());
+        getReturnValue().setActionReturnValue(connection.getId());
 
         setSucceeded(true);
     }
@@ -72,7 +72,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected boolean canDoAction() {
         StorageServerConnections paramConnection = getConnection();
         // if an id was sent - it's not ok since only the backend should allocate ids
-        if (StringUtils.isNotEmpty(paramConnection.getid())) {
+        if (StringUtils.isNotEmpty(paramConnection.getId())) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 

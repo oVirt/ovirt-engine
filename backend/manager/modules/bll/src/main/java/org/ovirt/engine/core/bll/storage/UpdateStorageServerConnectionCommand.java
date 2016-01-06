@@ -63,7 +63,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         }
 
         // Check if connection exists by id, otherwise there's nothing to update
-        String connectionId = newConnectionDetails.getid();
+        String connectionId = newConnectionDetails.getId();
 
         StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
 
@@ -75,7 +75,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
-        Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getid());
+        Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getId());
         if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
@@ -108,7 +108,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected List<LUNs> getLuns() {
         if (luns.isEmpty()) {
-            luns = getLunDao().getAllForStorageServerConnection(getConnection().getid());
+            luns = getLunDao().getAllForStorageServerConnection(getConnection().getId());
         }
         return luns;
     }
@@ -230,7 +230,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean doDomainsUseConnection(StorageServerConnections connection) {
         if (domains == null || domains.isEmpty()) {
-            domains = getStorageDomainsByConnId(connection.getid());
+            domains = getStorageDomainsByConnId(connection.getId());
         }
         return domains != null && !domains.isEmpty();
     }
@@ -329,7 +329,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        domains = getStorageDomainsByConnId(getConnection().getid());
+        domains = getStorageDomainsByConnId(getConnection().getId());
         if (!domains.isEmpty()) {
             for (StorageDomain domain : domains) {
                 locks.put(domain.getId().toString(),
@@ -371,7 +371,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
-        locks.put(getConnection().getid(),
+        locks.put(getConnection().getId(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface StorageServerConnectionDao extends Dao {
+public interface StorageServerConnectionDao extends GenericDao<StorageServerConnections, String> {
 
     /**
      * Get all storage connections from db

@@ -73,7 +73,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
     static StorageServerConnections setUpStorageServerConnection() {
         StorageServerConnections cnx = new StorageServerConnections();
-            cnx.setid(GUIDS[0].toString());
+            cnx.setId(GUIDS[0].toString());
             cnx.setconnection("10.11.12.13" + ":" + "/1");
         return cnx;
     }

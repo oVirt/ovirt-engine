@@ -149,7 +149,7 @@ public class IscsiBondValidator {
         List<StorageServerConnections> dcStorageConnections =
                 getDBFacade().getStorageServerConnectionDao().getConnectableStorageConnectionsByStorageType(dataCenterId, StorageType.ISCSI);
         for (StorageServerConnections conn : dcStorageConnections) {
-            existingConnIds.add(conn.getid());
+            existingConnIds.add(conn.getId());
         }
 
         for (String id : storageConnections) {

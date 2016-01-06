@@ -98,7 +98,7 @@ public class IscsiBondModel extends Model {
                         new HashSet<String>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
 
                 for (StorageServerConnections conn : conns) {
-                    if (iscsiBonded.contains(conn.getid())) {
+                    if (iscsiBonded.contains(conn.getId())) {
                         selected.add(conn);
                     }
                 }
@@ -185,7 +185,7 @@ public class IscsiBondModel extends Model {
         List<String> selectedConnections = new ArrayList<String>();
 
         for (StorageServerConnections conn : getStorageTargets().getSelectedItems()) {
-            selectedConnections.add(conn.getid());
+            selectedConnections.add(conn.getId());
         }
 
         return selectedConnections;

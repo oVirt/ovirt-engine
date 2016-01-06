@@ -87,7 +87,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             for (StorageServerConnections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
                     lun.getLUN_id())) {
-                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
+                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
             }
         }
     }
@@ -223,7 +223,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         // to import an existing domain
         Guid connectionIdGuid = Guid.createGuidFromStringDefaultEmpty(connectionId);
         for (StorageServerConnections connection : connections) {
-            Guid connectionGuid = Guid.createGuidFromStringDefaultEmpty(connection.getid());
+            Guid connectionGuid = Guid.createGuidFromStringDefaultEmpty(connection.getId());
             if (connectionGuid.equals(connectionIdGuid)) {
                 String desc = connection.getconnection();
                 if (connection.getiqn() != null) {

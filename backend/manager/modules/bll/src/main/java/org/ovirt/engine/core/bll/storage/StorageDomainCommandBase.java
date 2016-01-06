@@ -288,19 +288,19 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         for (StorageServerConnections connection : lun.getLunConnections()) {
             StorageServerConnections dbConnection = ISCSIStorageHelper.findConnectionWithSameDetails(connection);
             if (dbConnection == null) {
-                connection.setid(Guid.newGuid().toString());
+                connection.setId(Guid.newGuid().toString());
                 connection.setstorage_type(storageType);
                 DbFacade.getInstance().getStorageServerConnectionDao().save(connection);
 
             } else {
-                connection.setid(dbConnection.getid());
+                connection.setId(dbConnection.getId());
             }
             if (DbFacade.getInstance()
                     .getStorageServerConnectionLunMapDao()
                     .get(new LUNStorageServerConnectionMapId(lun.getLUN_id(),
-                            connection.getid())) == null) {
+                            connection.getId())) == null) {
                 DbFacade.getInstance().getStorageServerConnectionLunMapDao().save(
-                        new LUNStorageServerConnectionMap(lun.getLUN_id(), connection.getid()));
+                        new LUNStorageServerConnectionMap(lun.getLUN_id(), connection.getId()));
             }
         }
     }

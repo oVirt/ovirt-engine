@@ -81,7 +81,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 }
 
                 LUNStorageServerConnectionMap lunConnection = new LUNStorageServerConnectionMap(
-                        lunFromVgInfo.getLUN_id(), connectionFromDb.getid());
+                        lunFromVgInfo.getLUN_id(), connectionFromDb.getId());
                 if (getStorageServerConnectionLunMapDao().get(lunConnection.getId()) == null) {
                     getStorageServerConnectionLunMapDao().save(lunConnection);
                 }

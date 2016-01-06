@@ -186,7 +186,7 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
             StorageServerConnections cnx = lun.getLunConnections().get(0);
             assertEquals(ADDRESS, cnx.getconnection());
             assertEquals(PORT, cnx.getport());
-            assertEquals(GUIDS[i].toString(), cnx.getid());
+            assertEquals(GUIDS[i].toString(), cnx.getId());
             assertEquals(IQNS[i], cnx.getiqn());
             assertEquals(StorageType.ISCSI, cnx.getstorage_type());
             assertNotNull(lun.getPathsDictionary());

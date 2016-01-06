@@ -48,7 +48,7 @@ public abstract class StorageServerConnectionTestCommon {
     protected StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         if (id != null) {
-            connectionDetails.setid(id.toString());
+            connectionDetails.setId(id.toString());
         }
         connectionDetails.setconnection(connection);
         connectionDetails.setstorage_type(type);
@@ -141,7 +141,7 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(ValidationResult.VALID).when(getCommand()).validateMountOptions();
-        when(getCommand().getStorageConnDao().get(newPosixConnection.getid())).thenReturn(newPosixConnection);
+        when(getCommand().getStorageConnDao().get(newPosixConnection.getId())).thenReturn(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(getCommand());
     }
 

@@ -85,7 +85,7 @@ public class StorageConnectionValidator {
     public boolean isConnectionForISCSIDomainAttached(StorageDomain storageDomain) {
         List<StorageServerConnections> connectionsForDomain = getAllConnectionsForDomain(storageDomain.getId());
         for (StorageServerConnections connectionForDomain : connectionsForDomain) {
-            if (connectionForDomain.getid().equals(connection.getid())) {
+            if (connectionForDomain.getId().equals(connection.getId())) {
                 return true;
             }
         }

@@ -35,7 +35,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected boolean canDoAction() {
-        String connectionId = getConnection().getid();
+        String connectionId = getConnection().getId();
         List<StorageDomain> domains = null;
         if (StringUtils.isEmpty(connectionId) ) {
            return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
@@ -109,7 +109,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void executeCommand() {
-        String connectionId = getConnection().getid();
+        String connectionId = getConnection().getId();
         getStorageServerConnectionDao().remove(connectionId);
         log.info("Removing connection '{}' from database ", connectionId);
         if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
@@ -182,7 +182,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
-        locks.put(getConnection().getid(),
+        locks.put(getConnection().getId(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
