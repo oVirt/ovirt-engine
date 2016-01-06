@@ -1380,7 +1380,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string'}
+        optionalArguments: {action.clone: 'xs:boolean', action.exclusive: 'xs:boolean', action.template.name: 'xs:string'}
         description: Register the Template means importing the Template from the data domain, by inserting the configuration of the Template and disks into the DB without the copy process
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
   description: import the template from the export or data domain
@@ -1391,8 +1391,8 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments:
           action.storage_domain.id|name: xs:string
-          action.clone: xs:boolen
-          action.exclusive: xs:boolen
+          action.clone: xs:boolean
+          action.exclusive: xs:boolean
           action.template.name: xs:string
           action.vm.disks.disk--COLLECTION:
             disk.id: xs:string
@@ -1417,7 +1417,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.clone: 'xs:boolen', action.vm.name: 'xs:string'}
+        optionalArguments: {action.clone: 'xs:boolean', action.vm.name: 'xs:string'}
         description: Register the VM means importing the VM from the data domain, by inserting the configuration of the VM and disks into the DB without the copy process
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system
@@ -1428,8 +1428,8 @@ actions:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments:
           action.storage_domain.id|name: xs:string
-          action.clone: xs:boolen
-          action.exclusive: xs:boolen
+          action.clone: xs:boolean
+          action.exclusive: xs:boolean
           action.vm.name: xs:string
           action.vm.disks.disk--COLLECTION:
             disk.id: xs:string
