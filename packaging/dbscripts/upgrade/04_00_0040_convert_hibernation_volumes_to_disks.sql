@@ -44,7 +44,7 @@ INSERT INTO images(
 SELECT
     cast(split_part(memory_volume, ',', 4) as uuid),
     'now',
-    (mem_size_mb + 200 + (64 * num_of_monitors)) * 1024 * 1024,
+    (mem_size_mb::bigint + 200 + (64 * num_of_monitors)) * 1024 * 1024,
     '00000000-0000-0000-0000-000000000000',
     1, -- ok
     0, -- unknown (will be updated by the next step)

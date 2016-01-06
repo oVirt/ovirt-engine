@@ -46,7 +46,7 @@ INSERT INTO images(
 SELECT DISTINCT
     CAST(split_part(memory_volume, ',', 4) AS UUID),
     now(),
-    (_temp_getVirtualMemoryQuantity(vm_configuration) + 200 + (64 * _temp_getVirtualMonitorsQuantity(vm_configuration))) * 1024 * 1024,
+    (_temp_getVirtualMemoryQuantity(vm_configuration)::bigint + 200 + (64 * _temp_getVirtualMonitorsQuantity(vm_configuration))) * 1024 * 1024,
     CAST('00000000-0000-0000-0000-000000000000' AS UUID),
     1, -- ok
     0, -- unknown (will be updated by the next step)
