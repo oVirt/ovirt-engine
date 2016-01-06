@@ -340,7 +340,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
                 @Override
                 public void execute() {
-                    selectionModel.setSelected(table.getVisibleItems().get(0), true);
+                    if (table.getVisibleItemCount() > 0) {
+                        selectionModel.setSelected(table.getVisibleItems().get(0), true);
+                    }
                 }
             });
             doAutoSelect = false;
