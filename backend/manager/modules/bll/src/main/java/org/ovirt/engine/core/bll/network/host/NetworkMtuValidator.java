@@ -72,14 +72,21 @@ public class NetworkMtuValidator {
 
     private boolean networksOnNicMatchMtu(List<Network> networksOnNic) {
 
-        final Network nonVlanNetwork = networksOnNic.stream().filter(network -> !NetworkUtils.isVlan(network))
-                .findFirst().orElse(null);
+        final Network nonVlanNetwork = networksOnNic.stream()
+                .filter(network -> !NetworkUtils.isVlan(network))
+                .findFirst()
+                .orElse(null);
 
         if (nonVlanNetwork == null) {
             return true;
         }
 
-        return networksOnNic.stream().noneMatch(network -> network.getMtu() != nonVlanNetwork.getMtu());
+        int nonVlanNetworkActualMtu = getMtuActualValue(nonVlanNetwork);
+        return networksOnNic.stream().map(network -> getMtuActualValue(network)).noneMatch(
+                networkMtu -> networkMtu != nonVlanNetworkActualMtu);
     }
 
+    private int getMtuActualValue(Network network) {
+        return network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
+    }
 }
