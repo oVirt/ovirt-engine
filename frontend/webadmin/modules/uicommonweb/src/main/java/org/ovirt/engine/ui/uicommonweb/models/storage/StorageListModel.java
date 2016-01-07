@@ -1008,11 +1008,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     private void saveDefaultedStorageProperties(StorageModel model, StorageDomainStatic storageDomainStatic) {
-        // Get relevant data from Storage dialog
-        storageDomainStatic.setStorageName(model.getName().getEntity());
-        storageDomainStatic.setDescription(model.getDescription().getEntity());
-        storageDomainStatic.setComment(model.getComment().getEntity());
-        storageDomainStatic.setStorageType(storageModel.getType());
         storageDomainStatic.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
         storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
         storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
@@ -1777,7 +1772,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     public void addExistingFileStorageDomain() {
         StorageDomain sdToAdd = Linq.firstOrNull(storageDomainsToAdd);
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
-        saveDefaultedStorageProperties((StorageModel) getWindow(), sdsToAdd);
+        storageDomain = sdsToAdd;
+        saveBaseStorageProperties((StorageModel) getWindow());
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
