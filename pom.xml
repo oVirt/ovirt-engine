@@ -39,6 +39,10 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Versions of the API model and tools: -->
+    <metamodel.version>1.0.2</metamodel.version>
+    <model.version>4.0.1</model.version>
+
     <!-- Dependencies Versions -->
     <junit.version>4.11</junit.version>
     <commons-codec.version>1.4</commons-codec.version>

@@ -52,17 +52,6 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- We need the sources of the model in order to analyze them and
-         generate the XML schema: -->
-    <dependency>
-      <groupId>org.ovirt.api</groupId>
-      <artifactId>model</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <type>jar</type>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -83,9 +72,9 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>org.ovirt.api</groupId>
+                  <groupId>org.ovirt.engine.api</groupId>
                   <artifactId>model</artifactId>
-                  <version>1.0.0-SNAPSHOT</version>
+                  <version>${model.version}</version>
                   <type>jar</type>
                   <classifier>sources</classifier>
                   <outputDirectory>${project.basedir}/target/generated-resources</outputDirectory>
@@ -116,7 +105,6 @@
                 <argument>${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--version-prefix</argument>
                 <argument>V4</argument>
-                <argument>${project.basedir}/target/generated-resources/model.jar</argument>
                 <argument>--xml</argument>
                 <argument>${project.basedir}/target/generated-resources/model.xml</argument>
                 <argument>--json</argument>
@@ -126,6 +114,8 @@
                 <argument>--out-schema</argument>
                 <argument>${project.basedir}/target/generated-resources/api.xsd</argument>
                 <argument>--java</argument>
+                <argument>${project.basedir}/target/generated-sources/model</argument>
+                <argument>--jaxrs</argument>
                 <argument>${project.basedir}/target/generated-sources/model</argument>
                 <argument>--jaxrs-package</argument>
                 <argument>^services\.(.*)$=org.ovirt.engine.api.resource.$1</argument>
@@ -139,9 +129,9 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>org.ovirt.api</groupId>
+            <groupId>org.ovirt.engine.api</groupId>
             <artifactId>metamodel-tool</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${metamodel.version}</version>
           </dependency>
         </dependencies>
       </plugin>

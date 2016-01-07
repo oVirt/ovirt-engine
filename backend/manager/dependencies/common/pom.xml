@@ -88,6 +88,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>metamodel-server</artifactId>
+      <version>${metamodel.version}</version>
+    </dependency>
+
+    <dependency>
         <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
         <artifactId>vdsm-jsonrpc-java-client</artifactId>
         <version>${vdsm-jsonrpc-java.version}</version>
@@ -398,6 +404,12 @@
                 <groupId>org.ovirt.engine.api</groupId>
                 <artifactId>ovirt-engine-extensions-api</artifactId>
                 <moduleName>org.ovirt.engine.api.ovirt-engine-extensions-api</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.engine.api</groupId>
+                <artifactId>metamodel-server</artifactId>
+                <moduleName>org.ovirt.engine.api.metamodel-server</moduleName>
               </module>
 
               <module>
