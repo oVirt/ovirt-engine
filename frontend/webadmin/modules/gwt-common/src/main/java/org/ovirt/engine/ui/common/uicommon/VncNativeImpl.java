@@ -17,7 +17,7 @@ public class VncNativeImpl extends AbstractVnc implements IVncNative {
             @Override
             public void onSuccess(Object model, Object returnValue) { // todo avoid code duplication with spice
                 StringBuilder configBuilder = new StringBuilder((String) ((VdcQueryReturnValue) returnValue).getReturnValue());
-                writeOVirtSection(configBuilder);
+                writeOVirtSection(configBuilder, getOptions());
                 ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
                         "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
                         configBuilder.toString());
