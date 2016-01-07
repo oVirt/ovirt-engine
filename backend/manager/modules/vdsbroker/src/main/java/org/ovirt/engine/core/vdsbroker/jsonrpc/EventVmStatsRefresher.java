@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
-import static org.ovirt.engine.core.vdsbroker.VmsListFetcher.isDevicesChanged;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventVmStatsRefresher extends VmStatsRefresher {
+
     private static final Logger log = LoggerFactory.getLogger(EventVmStatsRefresher.class);
     private Subscription subscription;
     private DbFacade dbFacade;
@@ -58,12 +57,12 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     printEventInDebug(map);
 
                     List<Pair<VM, VmInternalData>> changedVms = new ArrayList<>();
-                    List<Pair<VM, VmInternalData>> devicesChangedVms = new ArrayList<>();
+                    convertEvent(changedVms, map);
 
-                    convertEvent(changedVms, devicesChangedVms, map);
-
-                    if (!changedVms.isEmpty() || !devicesChangedVms.isEmpty()) {
-                        getVmsMonitoring(changedVms, devicesChangedVms).perform();
+                    if (!changedVms.isEmpty()) {
+                        getVmsMonitoring(changedVms).perform();
+                        processDevices(changedVms.stream().map(pair -> pair.getSecond().getVmDynamic()),
+                                System.nanoTime());
                     }
                 } finally {
                     subscription.request(1);
@@ -80,13 +79,13 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 log.debug("processing event for host {} data:\n{}", vdsManager.getVdsName(), sb);
             }
 
-            private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms, List<Pair<VM, VmInternalData>> devicesChangedVms) {
-                return new VmsMonitoring(vdsManager, changedVms, devicesChangedVms, auditLogDirector, System.nanoTime());
+            private VmsMonitoring getVmsMonitoring(List<Pair<VM, VmInternalData>> changedVms) {
+                return new VmsMonitoring(vdsManager, changedVms, auditLogDirector, System.nanoTime());
             }
 
             @SuppressWarnings("unchecked")
             private void convertEvent(List<Pair<VM, VmInternalData>> changedVms,
-                    List<Pair<VM, VmInternalData>> devicesChangedVms, Map<String, Object> map) {
+                    Map<String, Object> map) {
                 Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
 
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -105,9 +104,6 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     }
 
                     changedVms.add(new Pair<>(dbVm, vdsmVm));
-                    if (isDevicesChanged(dbVm, vdsmVm)) {
-                        devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
-                    }
                 }
             }
 
@@ -141,4 +137,5 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
         allVmStatsOnlyRefresher.stopMonitoring();
         subscription.cancel();
     }
+
 }

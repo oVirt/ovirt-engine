@@ -462,7 +462,6 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_exit_status INT,
     v_pause_status INT,
     v_exit_message VARCHAR(4000),
-    v_hash VARCHAR(30),
     v_guest_agent_nics_hash INT,
     v_last_watchdog_event NUMERIC,
     v_last_watchdog_action VARCHAR(8),
@@ -521,7 +520,6 @@ BEGIN
         exit_status = v_exit_status,
         pause_status = v_pause_status,
         exit_message = v_exit_message,
-        HASH = v_hash,
         guest_agent_nics_hash = v_guest_agent_nics_hash,
         last_watchdog_event = v_last_watchdog_event,
         last_watchdog_action = v_last_watchdog_action,
@@ -624,6 +622,29 @@ BEGIN
     FROM vm_dynamic
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+DROP TYPE IF EXISTS GetAllHashesFromVmDynamic_rs CASCADE;
+CREATE TYPE GetAllHashesFromVmDynamic_rs AS (vm_guid UUID, hash VARCHAR);
+CREATE OR REPLACE FUNCTION GetAllHashesFromVmDynamic ()
+RETURNS SETOF GetAllHashesFromVmDynamic_rs STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+
+    SELECT vm_guid, hash
+    FROM vm_dynamic;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION SetHashByVmGuid (v_vm_guid UUID, v_hash VARCHAR(30))
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE vm_dynamic
+    SET hash = v_hash
+    WHERE vm_guid = v_vm_guid;
+END; $procedure$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------

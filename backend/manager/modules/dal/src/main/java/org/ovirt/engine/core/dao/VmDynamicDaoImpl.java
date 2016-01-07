@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -88,6 +89,23 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public List<Pair<Guid, String>> getAllDevicesHashes() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        return getCallsHandler().executeReadList("GetAllHashesFromVmDynamic",
+                (rs, i) -> new Pair<>(new Guid(rs.getString("vm_guid")), rs.getString("hash")),
+                parameterSource);
+    }
+
+    @Override
+    public void updateDevicesHashes(List<Pair<Guid, String>> vmHashes) {
+        getCallsHandler().executeStoredProcAsBatch("SetHashByVmGuid",
+                vmHashes,
+                pair -> getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", pair.getFirst())
+                        .addValue("hash", pair.getSecond()));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_guid", id);
     }
@@ -123,7 +141,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("exit_status", vm.getExitStatus().getValue())
                 .addValue("pause_status", vm.getPauseStatus().getValue())
                 .addValue("exit_message", vm.getExitMessage())
-                .addValue("hash", vm.getHash())
                 .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash())
                 .addValue("last_watchdog_event", vm.getLastWatchdogEvent())
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
@@ -192,7 +209,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
             entity.setExitMessage(rs.getString("exit_message"));
             entity.setExitStatus(exitStatus);
             entity.setPauseStatus(pauseStatus);
-            entity.setHash(rs.getString("hash"));
             entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
             entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
             entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));

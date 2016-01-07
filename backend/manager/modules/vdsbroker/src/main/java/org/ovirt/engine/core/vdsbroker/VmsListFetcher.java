@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
@@ -29,7 +28,6 @@ public class VmsListFetcher {
 
     protected VdsManager vdsManager;
     protected List<Pair<VM, VmInternalData>> changedVms;
-    private List<Pair<VM, VmInternalData>> devicesChangedVms;
     protected Map<Guid, VmInternalData> vdsmVms;
     private Map<Guid, VM> dbVms;
 
@@ -69,7 +67,6 @@ public class VmsListFetcher {
     protected void onFetchVms() {
         dbVms = getVmDao().getAllRunningByVds(vdsManager.getVdsId());
         changedVms = new ArrayList<>();
-        devicesChangedVms = new ArrayList<>();
         filterVms();
         gatherNonRunningVms(dbVms);
         saveLastVmsList(vdsmVms);
@@ -98,7 +95,6 @@ public class VmsListFetcher {
             VM dbVm = dbVms.get(vdsmVm.getVmDynamic().getId());
 
             gatherChangedVms(dbVm, vdsmVm);
-            gatherVmsWithChangedDevices(dbVm, vdsmVm);
         }
     }
 
@@ -121,13 +117,6 @@ public class VmsListFetcher {
         }
     }
 
-    private void gatherVmsWithChangedDevices(VM dbVm, VmInternalData vdsmVm) {
-        if (isDevicesChanged(dbVm, vdsmVm)) {
-            devicesChangedVms.add(new Pair<>(dbVm, vdsmVm));
-        }
-    }
-
-
     private void gatherNonRunningVms(Map<Guid, VM> dbVms) {
         for (VM dbVm : dbVms.values()) {
             if (!vdsmVms.containsKey(dbVm.getId())) {
@@ -141,17 +130,6 @@ public class VmsListFetcher {
         return dbVm == null || (dbVm.getStatus() != vdsmVm.getStatus());
     }
 
-    public static boolean isDevicesChanged(VM dbVm, VmInternalData vdsmVm) {
-        // Update only running VMs
-        VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
-        return
-                vdsmVmDynamic != null &&
-                vdsmVmDynamic.getStatus() != VMStatus.MigratingTo &&
-                vdsmVmDynamic.getHash() != null &&
-                dbVm != null &&
-                !Objects.equals(dbVm.getHash(), vdsmVmDynamic.getHash());
-    }
-
     public VmDao getVmDao() {
         return dbFacade.getVmDao();
     }
@@ -160,11 +138,12 @@ public class VmsListFetcher {
         return resourceManager;
     }
 
+    public Collection<VmInternalData> getVdsmVms() {
+        return vdsmVms.values();
+    }
+
     public List<Pair<VM, VmInternalData>> getChangedVms() {
         return changedVms;
     }
 
-    public List<Pair<VM, VmInternalData>> getVmsWithChangedDevices() {
-        return devicesChangedVms;
-    }
 }

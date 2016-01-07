@@ -42,6 +42,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
@@ -52,6 +53,9 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
 
     @Inject
     private Instance<HostedEngineImporter> hostedEngineImporterProvider;
+
+    @Inject
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     public AddUnmanagedVmsCommand(T parameters, CommandContext context) {
         super(parameters, context);
@@ -72,6 +76,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             DisplayType defaultDisplayType = getDefaultDisplayType(defaultOsId, getCluster().getCompatibilityVersion());
 
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
+            long fetchTime = System.nanoTime();
             Map<String, Object>[] vmsInfo = getVmsInfo();
             for (Map<String, Object> vmInfo : vmsInfo) {
                 Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
@@ -97,6 +102,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
 
                 addExternallyManagedVm(vmStatic);
+                addDevices(vmInfo, fetchTime);
                 log.info("Importing VM '{}' as '{}', as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
             }
         }
@@ -147,6 +153,12 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         if (!returnValue.getSucceeded()) {
             log.debug("Failed adding Externally managed VM '{}'", vmStatic.getName());
         }
+    }
+
+    private void addDevices(Map<String, Object> vmInfo, long fetchTime) {
+        VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(fetchTime);
+        change.updateVmFromFullList(vmInfo);
+        change.flush();
     }
 
     protected CommandContext createAddExternalVmContext(VmStatic vmStatic) {

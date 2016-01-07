@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDao<Guid, VMStatus>,
@@ -76,4 +77,17 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param new status
      */
     void updateGuestAgentStatus(Guid vmId, GuestAgentStatus guestAgentStatus);
+
+    /**
+     * Get value of hash field for every VM in vm_dynamic table.
+     */
+    List<Pair<Guid, String>> getAllDevicesHashes();
+
+    /**
+     * Set value of hash field for every VM in the list in one batch.
+     *
+     * @param vmHashes list of (VM id, hash value) pairs
+     */
+    void updateDevicesHashes(List<Pair<Guid, String>> vmHashes);
+
 }

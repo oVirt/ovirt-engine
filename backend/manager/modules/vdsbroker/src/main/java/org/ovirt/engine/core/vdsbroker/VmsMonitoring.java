@@ -4,27 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -34,7 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +44,7 @@ public class VmsMonitoring {
      * is the running one as reported from VDSM
      */
     private List<Pair<VM, VmInternalData>> monitoredVms;
-    /**
-     * A collection of VMs that has changes in devices.
-     */
-    private List<Pair<VM, VmInternalData>> vmsWithChangedDevices;
+
     private final AuditLogDirector auditLogDirector;
     /**
      * The managers of the monitored VMs in this cycle.
@@ -71,9 +57,6 @@ public class VmsMonitoring {
     private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
 
     //*** data collectors ***//
-    private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
-    private final List<VmDevice> newVmDevices = new ArrayList<>();
-    private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
     //*** data collectors ***//
 
@@ -88,22 +71,19 @@ public class VmsMonitoring {
     public VmsMonitoring(
             VdsManager vdsManager,
             List<Pair<VM, VmInternalData>> monitoredVms,
-            List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
             AuditLogDirector auditLogDirector,
             long fetchTime) {
-        this(vdsManager, monitoredVms, vmsWithChangedDevices, auditLogDirector, fetchTime, false);
+        this(vdsManager, monitoredVms, auditLogDirector, fetchTime, false);
     }
 
     public VmsMonitoring(
             VdsManager vdsManager,
             List<Pair<VM, VmInternalData>> monitoredVms,
-            List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
             AuditLogDirector auditLogDirector,
             long fetchTime,
             boolean timeToUpdateVmStatistics) {
         this.vdsManager = vdsManager;
         this.monitoredVms = monitoredVms;
-        this.vmsWithChangedDevices = vmsWithChangedDevices;
         this.auditLogDirector = auditLogDirector;
         this.fetchTime = fetchTime;
         this.timeToUpdateVmStatistics = timeToUpdateVmStatistics;
@@ -188,7 +168,6 @@ public class VmsMonitoring {
             }
         }
 
-        processVmsWithDevicesChange();
         addUnmanagedVms();
         flush();
     }
@@ -287,40 +266,12 @@ public class VmsMonitoring {
         }
     }
 
-    private void processVmsWithDevicesChange() {
-        // Handle VM devices were changed (for 3.1 cluster and above)
-        if (!VmDeviceCommonUtils.isOldClusterVersion(vdsManager.getGroupCompatibilityVersion())) {
-            // If there are vms that require updating,
-            // get the new info from VDSM in one call, and then update them all
-            if (!vmsWithChangedDevices.isEmpty()) {
-                ArrayList<String> vmsToUpdate = new ArrayList<>(vmsWithChangedDevices.size());
-                for (Pair<VM, VmInternalData> pair : vmsWithChangedDevices) {
-                    Guid vmId = pair.getFirst().getId();
-                    // update only if the vm marked to change, otherwise it might have skipped because data invalidated
-                    // this ensure the vmManager lock is taken
-                    VmAnalyzer vmAnalyzer = vmAnalyzers.stream()
-                            .filter(analyzer -> vmId.equals(analyzer.getVdsmVm().getVmDynamic().getId()))
-                            .findFirst().orElse(null);
-
-                    if (vmAnalyzer != null && vmAnalyzer.getVmDynamicToSave() != null) {
-                        vmAnalyzer.getVmDynamicToSave().setHash(pair.getSecond().getVmDynamic().getHash());
-                        vmsToUpdate.add(vmId.toString());
-                    } else {
-                        log.warn("VM '{}' not in changed list, skipping devices update.", vmId);
-                    }
-                }
-                updateVmDevices(vmsToUpdate);
-            }
-        }
-    }
-
     private void flush() {
         saveVmDynamic();
         saveVmStatistics();
         saveVmInterfaceStatistics();
         saveVmDiskImageStatistics();
         saveVmLunDiskStatistics();
-        saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
     }
@@ -395,26 +346,6 @@ public class VmsMonitoring {
         }
     }
 
-    private void saveVmDevicesToDb() {
-        getDbFacade().getVmDeviceDao().updateAllInBatch(vmDeviceToSave);
-
-        if (!removedDeviceIds.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    () -> {
-                        getDbFacade().getVmDeviceDao().removeAll(removedDeviceIds);
-                        return null;
-                    });
-        }
-
-        if (!newVmDevices.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    () -> {
-                        getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
-                        return null;
-                    });
-        }
-    }
-
     private void saveVmJobsToDb() {
         getDbFacade().getVmJobDao().updateAllInBatch(vmAnalyzers.stream()
                 .map(VmAnalyzer::getVmJobsToUpdate)
@@ -442,174 +373,6 @@ public class VmsMonitoring {
     // ***** Helpers and sub-methods *****
 
     /**
-     * Update the given list of VMs properties in DB
-     */
-    protected void updateVmDevices(List<String> vmsToUpdate) {
-        if (vmsToUpdate.isEmpty()) {
-            return;
-        }
-        Map[] vms = getVmInfo(vmsToUpdate);
-        if (vms != null) {
-            for (Map vm : vms) {
-                processVmDevices(vm);
-            }
-        }
-    }
-
-    /**
-     * Actually process the VM device update in DB.
-     */
-    private void processVmDevices(Map vm) {
-        if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
-            log.error("Received NULL VM or VM id when processing VM devices, abort.");
-            return;
-        }
-
-        Guid vmId = new Guid((String) vm.get(VdsProperties.vm_guid));
-        Set<Guid> processedDevices = new HashSet<>();
-        List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmId(vmId);
-        Map<VmDeviceId, VmDevice> deviceMap = Entities.businessEntitiesById(devices);
-
-        for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
-            Map device = (Map<String, Object>) o;
-            if (device.get(VdsProperties.Address) == null) {
-                logDeviceInformation(vmId, device);
-                continue;
-            }
-
-            Guid deviceId = getDeviceId(device);
-            VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
-            String logicalName = null;
-            if (deviceId != null && FeatureSupported.reportedDisksLogicalNames(getVdsManager().getGroupCompatibilityVersion()) &&
-                    VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
-                try {
-                    logicalName = getDeviceLogicalName((Map<?, ?>) vm.get(VdsProperties.GuestDiskMapping), deviceId);
-                } catch (Exception e) {
-                    log.error("error while getting device name when processing, vm '{}', device info '{}' with exception, skipping '{}'",
-                            vmId, device, e.getMessage());
-                    log.error("Exception", e);
-                }
-            }
-
-            if (deviceId == null || vmDevice == null) {
-                deviceId = addNewVmDevice(vmId, device, logicalName);
-            } else {
-                vmDevice.setIsPlugged(Boolean.TRUE);
-                vmDevice.setAddress(device.get(VdsProperties.Address).toString());
-                vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
-                vmDevice.setLogicalName(logicalName);
-                vmDevice.setHostDevice(StringUtils.defaultString((String) device.get(VdsProperties.HostDev)));
-                addVmDeviceToList(vmDevice);
-            }
-
-            processedDevices.add(deviceId);
-        }
-
-        handleRemovedDevices(vmId, processedDevices, devices);
-    }
-
-    private String getDeviceLogicalName(Map<?, ?> diskMapping, Guid deviceId) {
-        if (diskMapping == null) {
-            return null;
-        }
-
-        Map<?, ?> deviceMapping = null;
-        String modifiedDeviceId = deviceId.toString().substring(0, 20);
-        for (Map.Entry<?, ?> entry : diskMapping.entrySet()) {
-            String serial = (String) entry.getKey();
-            if (serial != null && serial.contains(modifiedDeviceId)) {
-                deviceMapping = (Map<?, ?>) entry.getValue();
-                break;
-            }
-        }
-
-        return deviceMapping == null ? null : (String) deviceMapping.get(VdsProperties.Name);
-    }
-
-    /**
-     * Removes unmanaged devices from DB if were removed by libvirt. Empties device address with isPlugged = false
-     */
-    private void handleRemovedDevices(Guid vmId, Set<Guid> processedDevices, List<VmDevice> devices) {
-        for (VmDevice device : devices) {
-            if (processedDevices.contains(device.getDeviceId())) {
-                continue;
-            }
-
-            if (deviceWithoutAddress(device)) {
-                continue;
-            }
-
-            if (device.getIsManaged()) {
-                if (device.getIsPlugged()) {
-                    device.setIsPlugged(Boolean.FALSE);
-                    device.setAddress("");
-                    addVmDeviceToList(device);
-                    log.debug("VM '{}' managed pluggable device was unplugged : '{}'", vmId, device);
-                } else if (!devicePluggable(device)) {
-                    log.error("VM '{}' managed non pluggable device was removed unexpectedly from libvirt: '{}'",
-                            vmId, device);
-                }
-            } else {
-                removedDeviceIds.add(device.getId());
-                log.debug("VM '{}' unmanaged device was marked for remove : {1}", vmId, device);
-            }
-        }
-    }
-
-    private boolean devicePluggable(VmDevice device) {
-        return VmDeviceCommonUtils.isDisk(device) || VmDeviceCommonUtils.isBridge(device);
-    }
-
-    /**
-     * Libvirt gives no address to some special devices, and we know it.
-     */
-    private boolean deviceWithoutAddress(VmDevice device) {
-        return VmDeviceCommonUtils.isGraphics(device);
-    }
-
-    /**
-     * Adds new devices recognized by libvirt
-     */
-    private Guid addNewVmDevice(Guid vmId, Map device, String logicalName) {
-        Guid newDeviceId = Guid.Empty;
-        String typeName = (String) device.get(VdsProperties.Type);
-        String deviceName = (String) device.get(VdsProperties.Device);
-
-        // do not allow null or empty device or type values
-        if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
-            log.error("Empty or NULL values were passed for a VM '{}' device, Device is skipped", vmId);
-        } else {
-            String address = device.get(VdsProperties.Address).toString();
-            String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
-            Object o = device.get(VdsProperties.SpecParams);
-            newDeviceId = Guid.newGuid();
-            VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
-            VmDevice newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
-                    0,
-                    o == null ? new HashMap<>() : (Map<String, Object>) o,
-                    false,
-                    true,
-                    Boolean.getBoolean((String) device.get(VdsProperties.ReadOnly)),
-                    alias,
-                    null,
-                    null,
-                    logicalName);
-            newVmDevices.add(newDevice);
-            log.debug("New device was marked for adding to VM '{}' Devices : '{}'", vmId, newDevice);
-        }
-
-        return newDeviceId;
-    }
-
-    /**
-     * gets the device id from the structure returned by VDSM device ids are stored in specParams map
-     */
-    private static Guid getDeviceId(Map device) {
-        String deviceId = (String) device.get(VdsProperties.DeviceId);
-        return deviceId == null ? null : new Guid(deviceId);
-    }
-
-    /**
      * gets VM full information for the given list of VMs
      */
     protected Map<String, Object>[] getVmInfo(List<String> vmsToUpdate) {
@@ -625,33 +388,10 @@ public class VmsMonitoring {
         return result;
     }
 
-    private boolean shouldLogDeviceDetails(String deviceType) {
-        return !StringUtils.equalsIgnoreCase(deviceType, VmDeviceType.FLOPPY.getName());
-    }
-
-    private void logDeviceInformation(Guid vmId, Map device) {
-        String message = "Received a {} Device without an address when processing VM {} devices, skipping device";
-        String deviceType = (String) device.get(VdsProperties.Device);
-
-        if (shouldLogDeviceDetails(deviceType)) {
-            Map<String, Object> deviceInfo = device;
-            log.info(message + ": {}", StringUtils.defaultString(deviceType), vmId, deviceInfo);
-        } else {
-            log.info(message, StringUtils.defaultString(deviceType), vmId);
-        }
-    }
-
     private Guid getVmId(Pair<VM, VmInternalData> pair) {
         return (pair.getFirst() != null) ?
                 pair.getFirst().getId() :
                 pair.getSecond() != null ? pair.getSecond().getVmDynamic().getId() : null;
-    }
-
-    /**
-     * Add or update vmDynamic to save list
-     */
-    private void addVmDeviceToList(VmDevice vmDevice) {
-        vmDeviceToSave.add(vmDevice);
     }
 
     protected DbFacade getDbFacade() {

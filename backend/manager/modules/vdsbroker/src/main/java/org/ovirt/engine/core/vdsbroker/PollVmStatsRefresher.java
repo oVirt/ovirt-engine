@@ -8,10 +8,12 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class PollVmStatsRefresher extends VmStatsRefresher {
+
     private static final Logger log = LoggerFactory.getLogger(PollVmStatsRefresher.class);
     protected static final int VMS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
     protected static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
@@ -34,16 +36,15 @@ public abstract class PollVmStatsRefresher extends VmStatsRefresher {
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
                 getVmsMonitoring(fetcher, fetchTime).perform();
+                processDevices(fetcher.getVdsmVms().stream().map(VmInternalData::getVmDynamic), fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
             }
         }
     }
-
     private VmsMonitoring getVmsMonitoring(VmsListFetcher fetcher, long fetchTime) {
         return new VmsMonitoring(vdsManager,
                 fetcher.getChangedVms(),
-                fetcher.getVmsWithChangedDevices(),
                 auditLogDirector,
                 fetchTime,
                 isTimeToRefreshStatistics());
