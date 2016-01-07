@@ -143,7 +143,7 @@ FAILURE_NOTIFIED=
 
 cleanup() {
 	ec="$?"
-	if [ -n "${ENGINE_DB_USER}" -a "${ec}" = '1' -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ]; then
+	if [ -n "${ENGINE_DB_USER}" -a "${ec}" = '1' -a "${MODE}" = "backup" -a -z "${FAILURE_NOTIFIED}" ] && [ -n "${LOG}" ]; then
 		FAILURE_NOTIFIED=1
 		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
 	fi
