@@ -14,7 +14,7 @@
         <param-value>/theme-resource</param-value>
     </context-param>
     <context-param>
-        <param-name>obrandApplicationName</param-name>
+        <param-name>applicationName</param-name>
         <param-value>webadmin</param-value>
     </context-param>
     <context-param>
@@ -97,6 +97,11 @@
     <servlet-mapping>
         <servlet-name>SSOPostLoginServlet</servlet-name>
         <url-pattern>/sso/oauth2-callback</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>remoteLogging</servlet-name>
+        <url-pattern>/remote_logging</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

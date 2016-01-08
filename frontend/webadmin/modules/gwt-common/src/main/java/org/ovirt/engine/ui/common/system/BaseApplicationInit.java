@@ -36,6 +36,7 @@ import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.logging.client.SimpleRemoteLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -98,7 +99,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     public final void onBootstrap() {
         Logger rootLogger = Logger.getLogger(""); //$NON-NLS-1$
         initLocalStorageLogHandler(rootLogger);
-        initUncaughtExceptionHandler(rootLogger);
+
+        Logger remoteLogger = Logger.getLogger("remote"); //$NON-NLS-1$
+        remoteLogger.addHandler(new SimpleRemoteLogHandler());
+        initUncaughtExceptionHandler(rootLogger, remoteLogger);
 
         // Perform actual bootstrap via deferred command to ensure that
         // UncaughtExceptionHandler is effective during the bootstrap
@@ -124,12 +128,13 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         });
     }
 
-    void initUncaughtExceptionHandler(final Logger rootLogger) {
+    void initUncaughtExceptionHandler(final Logger rootLogger, final Logger remoteLogger) {
         // Prevent uncaught exceptions from escaping application code
         GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
             @Override
             public void onUncaughtException(Throwable t) {
                 rootLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
+                remoteLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
                 alertManager.showUncaughtExceptionAlert(t);
             }
         });

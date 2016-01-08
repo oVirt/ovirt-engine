@@ -2328,4 +2328,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Groups:")
     String groups();
+
+    @DefaultStringValue("Please have your administrator check the UI logs")
+    String checkUiLogs();
 }
