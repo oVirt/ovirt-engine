@@ -295,7 +295,7 @@ Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.5.0
 Requires:	python-cheetah
 Requires:	spice-html5
-Requires:	vdsm-jsonrpc-java >= 1.1.4
+Requires:	vdsm-jsonrpc-java >= 1.1.6
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
