@@ -366,7 +366,7 @@ Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.4.0
 Requires:	python-cheetah
 Requires:	spice-html5
-Requires:	vdsm-jsonrpc-java >= 1.1.5
+Requires:	vdsm-jsonrpc-java >= 1.1.6
 Requires(pre):	shadow-utils
 
 %if %{ovirt_install_systemd}
@@ -657,7 +657,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.4.0
 Requires:	ovirt-host-deploy-offline >= 1.4.0
-Requires:	vdsm-jsonrpc-java >= 1.1.5
+Requires:	vdsm-jsonrpc-java >= 1.1.6
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
