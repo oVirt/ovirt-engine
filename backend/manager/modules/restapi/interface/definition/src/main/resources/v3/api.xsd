@@ -3403,11 +3403,6 @@
   <xs:element name="authorized_keys" type="AuthorizedKeys"/>
 
   <xs:complexType name="AuthorizedKey">
-    <xs:annotation>
-      <xs:appinfo>
-        <jaxb:class name="AuthorizedKey"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -3522,11 +3517,6 @@
   </xs:complexType>
 
   <xs:complexType name="VmBase">
-    <xs:annotation>
-      <xs:appinfo>
-        <jaxb:class name="VmBase" />
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -3577,11 +3567,6 @@
   <xs:element name="vm" type="VM"/>
 
   <xs:complexType name="VM">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="VM"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="VmBase">
         <xs:sequence>
@@ -4842,11 +4827,6 @@
   <!-- Gluster Types -->
   <xs:element name="gluster_volume" type="GlusterVolume"/>
   <xs:complexType name="GlusterVolume">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="GlusterVolume"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -4986,11 +4966,6 @@
 
   <xs:element name="brick_details" type="GlusterBrickAdvancedDetails" />
   <xs:complexType name="GlusterBrickAdvancedDetails">
-    <xs:annotation>
-      <xs:appinfo>
-        <jaxb:class name="GlusterBrickAdvancedDetails"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5008,11 +4983,6 @@
 
   <xs:element name="brick" type="GlusterBrick"/>
   <xs:complexType name="GlusterBrick">
-    <xs:annotation>
-      <xs:appinfo>
-        <jaxb:class name="GlusterBrick"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="GlusterBrickAdvancedDetails">
         <xs:sequence>
@@ -5104,11 +5074,6 @@
 
   <xs:element name="server_hook" type="GlusterServerHook"/>
   <xs:complexType name="GlusterServerHook">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="GlusterServerHook"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5123,11 +5088,6 @@
 
   <xs:element name="gluster_hook" type="GlusterHook"/>
   <xs:complexType name="GlusterHook">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="GlusterHook"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5164,11 +5124,6 @@
 
   <xs:element name="volume_profile_details" type="GlusterVolumeProfileDetails"/>
   <xs:complexType name="GlusterVolumeProfileDetails">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="GlusterVolumeProfileDetails"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5276,11 +5231,6 @@
   </xs:complexType>
 
   <xs:complexType name="Step">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="Step"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -5315,11 +5265,6 @@
 </xs:complexType>
 
   <xs:complexType name="Job">
-    <xs:annotation>
-      <xs:appinfo>
-         <jaxb:class name="Job"/>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>

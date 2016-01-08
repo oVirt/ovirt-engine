@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jaxb:bindings
+  xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  version="2.0">
+
+  <jaxb:globalBindings generateIsSetMethod="true">
+    <!-- Replace the default int JAXB parser with one that checks the
+         values don't overflow the corresponding Java types: -->
+    <jaxb:javaType
+      name="int"
+      xmlType="xs:int"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseInt"
+      />
+    <jaxb:javaType
+      name="long"
+      xmlType="xs:unsignedInt"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedInt"
+      />
+    <jaxb:javaType
+      name="short"
+      xmlType="xs:short"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseShort"
+      />
+    <jaxb:javaType
+      name="int"
+      xmlType="xs:unsignedShort"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedShort"
+      />
+
+    <!-- Replace the default JAXB boolean parser with one that only accepts
+         the values "true" and "false": -->
+    <jaxb:javaType
+      name="boolean"
+      xmlType="xs:boolean"
+      parseMethod="org.ovirt.engine.api.utils.BooleanParser.parseBoolean"
+      />
+  </jaxb:globalBindings>
+
+  <!-- Add the V3 prefix to all the generated classes: -->
+  <jaxb:bindings schemaLocation="api.xsd" node="/xsd:schema">
+    <jaxb:schemaBindings>
+      <jaxb:nameXmlTransform>
+        <jaxb:typeName prefix="V3"/>
+        <jaxb:anonymousTypeName prefix="V3"/>
+      </jaxb:nameXmlTransform>
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+
+</jaxb:bindings>
