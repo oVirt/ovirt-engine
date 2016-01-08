@@ -37,7 +37,7 @@ public class BrandingFilter implements Filter {
     /**
      * web.xml context-param name to look up.
      */
-    public static final String APPLICATION_NAME = "obrandApplicationName";
+    public static final String APPLICATION_NAME = "applicationName";
 
     /**
      * Branding theme attribute key.

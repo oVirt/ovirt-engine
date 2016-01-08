@@ -84,6 +84,9 @@ public class AlertManager {
         if (!StringUtils.isEmpty(errorDetails)) {
             alertMessage.appendEscaped(CONSTANTS.space());
             alertMessage.appendEscaped(MESSAGES.uncaughtExceptionAlertMessageDetails(errorDetails));
+            //new line
+            alertMessage.appendHtmlConstant("<br />"); //$NON-NLS-1$
+            alertMessage.appendEscaped(CONSTANTS.checkUiLogs());
         }
 
         showAlert(Type.DANGER, alertMessage.toSafeHtml());

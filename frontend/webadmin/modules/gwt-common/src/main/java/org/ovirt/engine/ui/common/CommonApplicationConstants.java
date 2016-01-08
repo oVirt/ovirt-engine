@@ -2289,4 +2289,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Provider")
     String providerLabel();
+
+    @DefaultStringValue("Please have your administrator check the UI logs")
+    String checkUiLogs();
 }

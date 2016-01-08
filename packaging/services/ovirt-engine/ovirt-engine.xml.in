@@ -140,6 +140,16 @@
         <append value="true"/>
       </file-handler>
 
+      <!-- UI exceptions go here: -->
+      <file-handler name="UI" autoflush="true">
+        <level name="ALL"/>
+        <formatter>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
+        </formatter>
+        <file path="$getstring('ENGINE_LOG')/ui.log"/>
+        <append value="true"/>
+      </file-handler>
+
       <!-- Console -->
       <console-handler name="CONSOLE" autoflush="true">
         <level name="ALL"/>
@@ -181,7 +191,14 @@
           #end if
         </handlers>
       </logger>
-      <logger category="org.ovirt.engine.core.bll">
+      <!-- Loggers for the UI -->
+      <logger category="org.ovirt.engine.ui.frontend.server.gwt.OvirtRemoteLoggingService" use-parent-handlers="false">
+        <level name="INFO"/>
+        <handlers>
+          <handler name="UI"/>
+        </handlers>
+      </logger>
+       <logger category="org.ovirt.engine.core.bll">
         <level name="INFO"/>
       </logger>
       <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect\$PostgresJdbcTemplate">
