@@ -1,64 +1,119 @@
+/*
+Copyright (c) 2014-2015 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package org.ovirt.engine.api.rsdl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+
+/**
+ * This class is a simple utility that extracts the XML schema and the RSDL files from the engine artifacts and saves
+ * it to a directory. It will be typically invoked using the {@code exec-maven-plugin} and with a command line like
+ * this:
+ *
+ * <pre>
+ * rsdl-io-manager --version=4 /tmp/myfiles
+ * </pre>
+ *
+ * The {@code version} option is new in version 4 of the engine, so in order to preserve backwards compatibility when
+ * it isn't given the default is 3.
+ */
 public class RsdlIOManager {
+    // Names of the command line options:
+    private static final String API_VERSION_OPTION = "api-version";
 
-    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-    public static final String SCHEMA_RESOURCE_NAME = "api.xsd";
-    public static final String RSDL_RESOURCE_NAME = "rsdl.xml";
-    public static final String GLUSTER_RSDL_RESOURCE_NAME = "rsdl_gluster.xml";
+    // Default values of the command line options:
+    private static final String API_VERSION_DEFAULT = "3";
+
+    // The name of the files containing the names of the resources to copy:
+    private static final String[] RESOURCE_NAMES = {
+        "api.xsd",
+        "rsdl.xml",
+        "rsdl_gluster.xml",
+    };
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Copying rsdl.xml, rsdl_gluster.xml, api.xsd to: " + args[0]);
-        copyRsdl(args[0]);
-    }
+        // Create the command line options:
+        Options options = new Options();
 
-    public static void copyRsdl(String outputDirectory) throws IOException {
-        File outputDir = createOutputDirectory(outputDirectory);
-        copy(RSDL_RESOURCE_NAME, outputDir);
-        copy(GLUSTER_RSDL_RESOURCE_NAME, outputDir);
-        copy(SCHEMA_RESOURCE_NAME, outputDir);
-    }
+        // Option for the API version:
+        options.addOption(Option.builder()
+            .longOpt(API_VERSION_OPTION)
+            .desc("The version number of the API, the default is version 3.")
+            .required(false)
+            .hasArg(true)
+            .argName("VERSION")
+            .build()
+        );
 
-    private static File createOutputDirectory(String outputDirectory) throws IOException {
-        File outputDir = new File(outputDirectory);
-        if (!outputDir.exists()) {
-            boolean success = outputDir.mkdirs();
-            if (!success) {
-                throw new IOException("Falied to create directory: " + outputDirectory
-                        + ". rsdl.xml will not be copied there.");
-            }
-        }
-        return outputDir;
-    }
-
-    private static void copy(String resourceName, File outputDirectory) throws IOException {
-        copy(loadAsStream("/" + resourceName), new FileOutputStream(new File(outputDirectory, resourceName)));
-    }
-
-    public static InputStream loadAsStream(String resourceName) {
-        return RsdlIOManager.class.getResourceAsStream(resourceName);
-    }
-
-    public static void copy(InputStream input, OutputStream output) throws IOException {
+        // Parse the command line:
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line = null;
         try {
-            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-            int n = 0;
-            while (-1 != (n = input.read(buffer))) {
-                output.write(buffer, 0, n);
-            }
-        } finally {
-            if (input != null) {
-                input.close();
-            }
-            if (output != null) {
-                output.close();
-            }
+            line = parser.parse(options, args);
         }
+        catch (ParseException exception) {
+            System.err.println(exception.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.setSyntaxPrefix("Usage: ");
+            formatter.printHelp("rsdl-io-manager [OPTIONS] DIRECTORY", options);
+            System.exit(1);
+        }
+
+        // Extract the API version:
+        String apiVersion = line.getOptionValue(API_VERSION_OPTION);
+        if (apiVersion == null || apiVersion.isEmpty()) {
+            apiVersion = API_VERSION_DEFAULT;
+        }
+
+        // Check the arguments:
+        args = line.getArgs();
+        if (args.length != 1) {
+            System.err.println("Exactly one argument containing the output directory is required.");
+            System.exit(1);
+        }
+
+        // Make sure that the output directory exists:
+        File outputDirectory = new File(args[0]);
+        FileUtils.forceMkdir(outputDirectory);
+
+        // Copy the resources to the output directory:
+        for (String resourceName : RESOURCE_NAMES) {
+            exportResource(apiVersion, resourceName, outputDirectory);
+        }
+    }
+
+    private static void exportResource(String apiVersion, String resourceName, File outputDirectory) throws IOException {
+        // Calculate the path of the resource:
+        String resourcePath = String.format("/v%s/%s", apiVersion, resourceName);
+
+        // Copy the resource to the output directory:
+        InputStream inputResource = RsdlIOManager.class.getResourceAsStream(resourcePath);
+        File outputFile = new File(outputDirectory, resourceName);
+        System.out.printf("Copying resource \"%s\" to file \"%s\"\n", resourcePath, outputFile.getAbsolutePath());
+        FileUtils.copyInputStreamToFile(inputResource, outputFile);
     }
 }

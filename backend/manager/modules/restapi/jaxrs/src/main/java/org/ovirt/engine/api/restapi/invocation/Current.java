@@ -8,6 +8,11 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
  */
 public class Current {
     /**
+     * The version of the API.
+     */
+    private String apiVersion;
+
+    /**
      * The identifier of the backend session.
      */
     private String sessionId;
@@ -21,6 +26,14 @@ public class Current {
      * This is a reference to the user that is performing the request.
      */
     private DbUser user;
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
     public String getSessionId() {
         return sessionId;

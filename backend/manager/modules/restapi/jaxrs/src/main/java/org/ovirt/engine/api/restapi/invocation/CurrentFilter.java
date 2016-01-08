@@ -27,6 +27,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
  * This filter is responsible for initializing and cleaning the information that is associated to the current request.
  */
 public class CurrentFilter implements Filter {
+    // Names of headers:
+    private static final String API_VERSION_HEADER = "Version";
+
+    // Default values of headers:
+    private static final String API_VERSION_DEFAULT = "4";
+
     /**
      * The reference to the backend bean.
      */
@@ -51,12 +57,18 @@ public class CurrentFilter implements Filter {
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
+        String apiVersion = request.getHeader(API_VERSION_HEADER);
+        if (apiVersion == null || apiVersion.isEmpty()) {
+            apiVersion = API_VERSION_DEFAULT;
+        }
+
         String sessionId = (String) request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
         if (sessionId == null) {
             throw new ServletException("Engine session missing");
         }
 
         Current current = new Current();
+        current.setApiVersion(apiVersion);
         current.setSessionId(sessionId);
         current.setApplicationMode(findApplicationMode(sessionId));
         current.setUser(findPrincipal(sessionId));

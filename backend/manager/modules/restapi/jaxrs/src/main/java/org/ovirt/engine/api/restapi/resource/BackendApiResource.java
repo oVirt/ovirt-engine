@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -123,7 +124,8 @@ public class BackendApiResource
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
 
-    private Rsdl rsdl = null;
+    // The RSDL objects, indexed by version of the API:
+    private Map<String, Rsdl> rsdlByApiVersion = new HashMap<>();
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
     ApplicationMode appMode = ApplicationMode.AllModes;
@@ -294,7 +296,9 @@ public class BackendApiResource
         byte[] buffer = new byte[4096];
         try {
             baos = new ByteArrayOutputStream();
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(API_SCHEMA);
+            String apiVersion = getCurrent().getApiVersion();
+            String resourcePath = String.format("/v%s/%s", apiVersion, API_SCHEMA);
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
             int count;
             while ((count = is.read(buffer)) != -1) {
                 baos.write(buffer, 0, count);
@@ -331,11 +335,15 @@ public class BackendApiResource
     }
 
     public synchronized Rsdl getRSDL() throws ClassNotFoundException, IOException {
+        String apiVersion = getCurrent().getApiVersion();
+        Rsdl rsdl = rsdlByApiVersion.get(apiVersion);
         if (rsdl == null) {
             rsdl = RsdlManager.loadRsdl(
+                apiVersion,
                 getCurrent().getApplicationMode(),
                 getUriInfo().getBaseUri().getPath()
             );
+            rsdlByApiVersion.put(apiVersion, rsdl);
         }
         return rsdl;
     }
