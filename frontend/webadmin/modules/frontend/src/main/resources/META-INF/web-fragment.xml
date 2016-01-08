@@ -95,6 +95,13 @@
         <servlet-name>XsrfTokenServiceServlet</servlet-name>
         <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.OvirtXsrfTokenServiceServlet</servlet-class>
     </servlet>
+
+    <!-- remote logging -->
+    <servlet>
+        <servlet-name>remoteLogging</servlet-name>
+        <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.OvirtRemoteLoggingService</servlet-class>
+    </servlet>
+
     <!-- PageNotFound Servlet -->
     <servlet>
         <servlet-name>PageNotFoundForwardServlet</servlet-name>

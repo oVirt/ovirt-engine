@@ -1,4 +1,4 @@
-"@ENGINE_LOG@/engine.log" "@ENGINE_LOG@/server.log" {
+"@ENGINE_LOG@/engine.log" "@ENGINE_LOG@/server.log" "@ENGINE_LOG@/ui.log" {
 	daily
 	minsize 10M
 	missingok
