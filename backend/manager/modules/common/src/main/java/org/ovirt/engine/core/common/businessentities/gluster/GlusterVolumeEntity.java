@@ -64,6 +64,8 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     private Integer redundancyCount;
 
+    private Boolean isArbiter;
+
     @Valid
     private Map<String, GlusterVolumeOptionEntity> options;
 
@@ -102,6 +104,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
         asyncTask = new GlusterAsyncTask();
         advancedDetails = new GlusterVolumeAdvancedDetails();
         snapshotScheduled = Boolean.valueOf(false);
+        isArbiter = Boolean.FALSE;
     }
 
     @Override
@@ -446,6 +449,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
                 stripeCount,
                 disperseCount,
                 redundancyCount,
+                isArbiter,
                 options,
                 accessProtocols,
                 transportTypes,
@@ -454,8 +458,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
                 advancedDetails,
                 snapshotsCount,
                 snapMaxLimit,
-                snapshotScheduled
-        );
+                snapshotScheduled);
     }
 
     @Override
@@ -476,6 +479,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
                 && Objects.equals(stripeCount, other.stripeCount)
                 && Objects.equals(disperseCount, other.disperseCount)
                 && Objects.equals(redundancyCount, other.redundancyCount)
+                && Objects.equals(isArbiter, other.isArbiter)
                 && ObjectUtils.haveSameElements(getOptions(), other.getOptions())
                 && ObjectUtils.haveSameElements(accessProtocols, other.accessProtocols)
                 && ObjectUtils.haveSameElements(transportTypes, other.transportTypes)
@@ -489,7 +493,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     public GlusterBrickEntity getBrickWithId(Guid brickId) {
         for(GlusterBrickEntity brick : getBricks()) {
-            if(brick.getId().equals(brickId)) {
+            if (brick.getId().equals(brickId)) {
                 return brick;
             }
         }
@@ -527,5 +531,13 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     public void setAdvancedDetails(GlusterVolumeAdvancedDetails advancedDetails) {
         this.advancedDetails = advancedDetails;
+    }
+
+    public Boolean getIsArbiter() {
+        return isArbiter;
+    }
+
+    public void setIsArbiter(Boolean isArbiter) {
+        this.isArbiter = isArbiter;
     }
 }

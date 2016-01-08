@@ -44,6 +44,7 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
         brick.setUnSyncedEntries(
                 (rs.getObject("unsynced_entries") != null) ? rs.getInt("unsynced_entries") : null);
         brick.setUnSyncedEntriesTrend(asIntList((String) rs.getObject("unsynced_entries_history")));
+        brick.setIsArbiter(rs.getBoolean("is_arbiter"));
         return brick;
     };
 
@@ -85,7 +86,9 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                         .addValue("new_server_id", newBrick.getServerId())
                         .addValue("new_brick_dir", newBrick.getBrickDirectory())
                         .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus()))
-                        .addValue("new_network_id", newBrick.getNetworkId()));
+                        .addValue("new_network_id", newBrick.getNetworkId())
+                        .addValue("is_arbiter", newBrick.getIsArbiter()));
+
     }
 
     @Override
@@ -161,7 +164,8 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                 .addValue("brick_dir", brick.getBrickDirectory())
                 .addValue("brick_order", (brick.getBrickOrder() == null) ? Integer.valueOf(0) : brick.getBrickOrder())
                 .addValue("status", EnumUtils.nameOrNull(brick.getStatus()))
-                .addValue("network_id", brick.getNetworkId());
+                .addValue("network_id", brick.getNetworkId())
+                .addValue("is_arbiter", brick.getIsArbiter());
     }
 
     private static List<Integer> asIntList(String str) {
@@ -247,7 +251,8 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                                 : "")
                 .addValue("unsynced_entries", entity.getUnSyncedEntries())
                 .addValue("unsynced_entries_history",
-                        StringUtils.join(entity.getUnSyncedEntriesTrend(), ","));
+                        StringUtils.join(entity.getUnSyncedEntriesTrend(), ","))
+                .addValue("is_arbiter", entity.getIsArbiter());
     }
 
     public MapSqlParameterMapper<GlusterBrickEntity> getBrickPropertiesMapper() {

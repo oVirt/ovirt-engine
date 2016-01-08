@@ -18,7 +18,8 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolume (
     v_replica_count INT,
     v_stripe_count INT,
     v_disperse_count INT,
-    v_redundancy_count INT
+    v_redundancy_count INT,
+    v_is_arbiter boolean
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -31,7 +32,8 @@ BEGIN
         replica_count,
         stripe_count,
         disperse_count,
-        redundancy_count
+        redundancy_count,
+        is_arbiter
         )
     VALUES (
         v_id,
@@ -42,7 +44,8 @@ BEGIN
         v_replica_count,
         v_stripe_count,
         v_disperse_count,
-        v_redundancy_count
+        v_redundancy_count,
+        v_is_arbiter
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -79,7 +82,8 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeBrick (
     v_brick_dir VARCHAR(4096),
     v_brick_order INT,
     v_status VARCHAR(32),
-    v_network_id UUID
+    v_network_id UUID,
+    v_is_arbiter boolean
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -90,7 +94,8 @@ BEGIN
         brick_dir,
         brick_order,
         status,
-        network_id
+        network_id,
+        is_arbiter
         )
     VALUES (
         v_id,
@@ -99,7 +104,8 @@ BEGIN
         v_brick_dir,
         v_brick_order,
         v_status,
-        v_network_id
+        v_network_id,
+        v_is_arbiter
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -574,7 +580,8 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolume (
     v_replica_count INT,
     v_stripe_count INT,
     v_disperse_count INT,
-    v_redundancy_count INT
+    v_redundancy_count INT,
+    v_is_arbiter boolean
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -587,6 +594,7 @@ BEGIN
         stripe_count = v_stripe_count,
         disperse_count = v_disperse_count,
         redundancy_count = v_redundancy_count,
+        is_arbiter = v_is_arbiter,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
 END;$PROCEDURE$
@@ -615,7 +623,8 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeBrick (
     v_new_server_id UUID,
     v_new_brick_dir VARCHAR(4096),
     v_new_status VARCHAR(32),
-    v_new_network_id UUID
+    v_new_network_id UUID,
+    v_is_arbiter boolean
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -627,6 +636,7 @@ BEGIN
         brick_dir = v_new_brick_dir,
         status = v_new_status,
         network_id = v_new_network_id,
+        is_arbiter = v_is_arbiter,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
 END;$PROCEDURE$

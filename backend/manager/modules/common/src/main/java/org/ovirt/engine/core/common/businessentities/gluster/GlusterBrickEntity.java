@@ -64,11 +64,14 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
 
     private Double selfHealEta;
 
+    private Boolean isArbiter;
+
     public GlusterBrickEntity() {
         status = GlusterStatus.DOWN;
         asyncTask = new GlusterAsyncTask();
         unSyncedEntriesTrend = Collections.emptyList();
         selfHealEta = 0D;
+        isArbiter = Boolean.FALSE;
     }
 
     public Guid getVolumeId() {
@@ -157,7 +160,8 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
                 asyncTask,
                 unSyncedEntries,
                 unSyncedEntriesTrend,
-                selfHealEta
+                selfHealEta,
+                isArbiter
         );
     }
 
@@ -180,7 +184,8 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
                 && Objects.equals(unSyncedEntries, other.unSyncedEntries)
                 && Objects.equals(unSyncedEntriesTrend, other.unSyncedEntriesTrend)
                 && Objects.equals(selfHealEta, other.selfHealEta)
-                && status == other.status;
+                && status == other.status
+                && Objects.equals(isArbiter, other.isArbiter);
     }
 
     public void copyFrom(GlusterBrickEntity brick) {
@@ -193,6 +198,7 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
         setUnSyncedEntries(brick.unSyncedEntries);
         setUnSyncedEntriesTrend(brick.getUnSyncedEntriesTrend());
         setStatus(brick.getStatus());
+        setIsArbiter(brick.getIsArbiter());
     }
 
     /**
@@ -244,6 +250,7 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
         }
         return null;
     }
+
     @Override
     public GlusterAsyncTask getAsyncTask() {
        return asyncTask;
@@ -323,5 +330,13 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
         }
         Double healRateAvg = healRateSum / healRates.size();
         return this.getUnSyncedEntries() / healRateAvg;
+    }
+
+    public Boolean getIsArbiter() {
+        return isArbiter;
+    }
+
+    public void setIsArbiter(Boolean isArbiter) {
+        this.isArbiter = isArbiter;
     }
 }

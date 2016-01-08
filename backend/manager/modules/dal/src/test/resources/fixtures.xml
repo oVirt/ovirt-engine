@@ -8180,6 +8180,7 @@
         <column>disperse_count</column>
         <column>redundancy_count</column>
         <column>snapshot_count</column>
+        <column>is_arbiter</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <row>
@@ -8193,6 +8194,7 @@
             <value>0</value>
             <value>0</value>
             <value>2</value>
+            <value>false</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8207,6 +8209,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>false</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8308,6 +8311,7 @@
         <column>brick_dir</column>
         <column>status</column>
         <column>brick_order</column>
+        <column>is_arbiter</column>
         <column>_create_date</column>
         <column>_update_date</column>
 
@@ -8320,6 +8324,7 @@
             <value>/export/test-vol-distribute-1/dir1</value>
             <value>UP</value>
             <value>0</value>
+            <value>false</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8331,6 +8336,7 @@
             <value>/export/test-vol-distribute-1/dir2</value>
             <value>UP</value>
             <value>1</value>
+            <value>false</value>
             <value>2010-10-22 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8344,6 +8350,7 @@
             <value>/export/test-vol-replicate-1/r1dir1</value>
             <value>UP</value>
             <value>0</value>
+            <value>false</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8355,6 +8362,7 @@
             <value>/export/test-vol-replicate-1/r1dir2</value>
             <value>UP</value>
             <value>1</value>
+            <value>false</value>
             <value>2010-10-21 03:38:23</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8366,6 +8374,7 @@
             <value>/export/test-vol-replicate-1/r2dir1</value>
             <value>UP</value>
             <value>2</value>
+            <value>false</value>
             <value>2010-10-22 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -8377,6 +8386,7 @@
             <value>/export/test-vol-replicate-1/r2dir2</value>
             <value>UP</value>
             <value>3</value>
+            <value>false</value>
             <value>2010-10-22 03:38:23</value>
             <value>2010-11-29 15:57:10</value>
         </row>

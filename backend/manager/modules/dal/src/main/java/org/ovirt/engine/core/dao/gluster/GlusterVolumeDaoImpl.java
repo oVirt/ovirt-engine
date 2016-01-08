@@ -54,6 +54,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
         entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
         entity.setIsGeoRepMaster(rs.getBoolean("is_master"));
         entity.setGeoRepMasterVolAndClusterName(rs.getString("master_vol_cluster"));
+        entity.setIsArbiter(rs.getBoolean("is_arbiter"));
         return entity;
     };
 
@@ -432,7 +433,8 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                         .addValue("replica_count", volume.getReplicaCount())
                         .addValue("stripe_count", volume.getStripeCount())
                         .addValue("disperse_count", volume.getDisperseCount())
-                        .addValue("redundancy_count", volume.getRedundancyCount()));
+                        .addValue("redundancy_count", volume.getRedundancyCount())
+                        .addValue("is_arbiter", volume.getIsArbiter()));
     }
 
     @Override
@@ -466,7 +468,8 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 .addValue("replica_count", volume.getReplicaCount())
                 .addValue("stripe_count", volume.getStripeCount())
                 .addValue("disperse_count", volume.getDisperseCount())
-                .addValue("redundancy_count", volume.getRedundancyCount());
+                .addValue("redundancy_count", volume.getRedundancyCount())
+                .addValue("is_arbiter", volume.getIsArbiter());
     }
 
     @Override
