@@ -905,6 +905,12 @@ public class VmAnalyzer {
     }
 
     protected void updateVmJobs() {
+        if (vdsmVm.getVmStatistics().getVmJobs() == null) {
+            // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
+            log.debug("No vmJob data returned from VDSM, preserving existing jobs");
+            return;
+        }
+
         Set<Guid> vmJobIdsToIgnore = new HashSet<>();
         Map<Guid, VmJob> jobsFromDb = new HashMap<>();
         for (VmJob job : getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId())) {
@@ -913,12 +919,6 @@ public class VmAnalyzer {
             if (vmsMonitoring.getExistingVmJobIds().contains(job.getId())) {
                 jobsFromDb.put(job.getId(), job);
             }
-        }
-
-        if (vdsmVm.getVmStatistics().getVmJobs() == null) {
-            // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
-            log.debug("No vmJob data returned from VDSM, preserving existing jobs");
-            return;
         }
 
         for (VmJob jobFromVds : vdsmVm.getVmStatistics().getVmJobs()) {
