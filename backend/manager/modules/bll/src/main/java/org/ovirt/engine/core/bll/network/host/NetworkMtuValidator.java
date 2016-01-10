@@ -85,14 +85,18 @@ public class NetworkMtuValidator {
             return true;
         }
 
+        final int nonVlanNetworkMtuActualValue = getMtuActualValue(nonVlanNetwork);
         final Network mismatchMtuNetwork = LinqUtils.firstOrNull(networksOnNic, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {
-                return network.getMtu() != nonVlanNetwork.getMtu();
+                return getMtuActualValue(network) != nonVlanNetworkMtuActualValue;
             }
         });
 
         return mismatchMtuNetwork == null;
     }
 
+    private int getMtuActualValue(Network network) {
+        return network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
+    }
 }
