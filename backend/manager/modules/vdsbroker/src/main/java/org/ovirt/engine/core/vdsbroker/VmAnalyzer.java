@@ -553,7 +553,9 @@ public class VmAnalyzer {
             }
         }
         // compare between vm in cache and vm from vdsm
-        removeVmsFromCache();
+        if (dbVm != null && !stable) {
+            removeVmFromCache();
+        }
     }
 
     private boolean isRunSucceeded(VmDynamic vdsmVmDynamic) {
@@ -643,47 +645,45 @@ public class VmAnalyzer {
     }
 
     // del from cache all vms that not in vdsm
-    private void removeVmsFromCache() {
-        if (dbVm != null && !stable) {
-            // marks the vm was powered down by user but not reported as Down afterwards by vdsm
-            boolean poweredDown = false;
-            proceedVmBeforeDeletion();
-            boolean migrating = dbVm.getStatus() == VMStatus.MigratingFrom;
-            if (migrating) {
-                handOverVM(dbVm);
-            } else if (dbVm.getStatus() == VMStatus.PoweringDown) {
-                poweredDown = true;
-                clearVm(VmExitStatus.Normal,
-                        String.format("VM %s shutdown complete", dbVm.getName()),
-                        VmExitReason.Success);
-            } else {
-                clearVm(VmExitStatus.Error,
-                        String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                                dbVm.getName()),
-                        VmExitReason.GenericError);
-            }
+    private void removeVmFromCache() {
+        // marks the vm was powered down by user but not reported as Down afterwards by vdsm
+        boolean poweredDown = false;
+        proceedVmBeforeDeletion();
+        boolean migrating = dbVm.getStatus() == VMStatus.MigratingFrom;
+        if (migrating) {
+            handOverVM(dbVm);
+        } else if (dbVm.getStatus() == VMStatus.PoweringDown) {
+            poweredDown = true;
+            clearVm(VmExitStatus.Normal,
+                    String.format("VM %s shutdown complete", dbVm.getName()),
+                    VmExitReason.Success);
+        } else {
+            clearVm(VmExitStatus.Error,
+                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                            dbVm.getName()),
+                    VmExitReason.GenericError);
+        }
 
-            log.info("VM '{}({}) is running in db and not running in VDS '{}'",
-                    dbVm.getId(), dbVm.getName(), getVdsManager().getVdsName());
+        log.info("VM '{}({}) is running in db and not running in VDS '{}'",
+                dbVm.getId(), dbVm.getName(), getVdsManager().getVdsName());
 
-            if (!migrating && !rerun
-                    && vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
-                rerun = true;
-                log.info("add VM '{}' to rerun treatment", dbVm.getName());
-            }
-            // vm should be auto startup
-            // not already in start up list
-            // not in reported from vdsm at all (and was not powered-down before)
-            // or reported from vdsm with error code
-            else if (dbVm.isAutoStartup()
-                    && !autoVmToRun
-                    && (vdsmVm == null || vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal)
-                    && !poweredDown) {
-                autoVmToRun = true;
-                log.info("add VM '{}' to HA rerun treatment", dbVm.getName());
-            } else if (getVmManager() != null && getVmManager().isColdReboot()) {
-                setColdRebootFlag();
-            }
+        if (!migrating && !rerun
+                && vmsMonitoring.getResourceManager().isVmInAsyncRunningList(dbVm.getId())) {
+            rerun = true;
+            log.info("add VM '{}' to rerun treatment", dbVm.getName());
+        }
+        // vm should be auto startup
+        // not already in start up list
+        // not in reported from vdsm at all (and was not powered-down before)
+        // or reported from vdsm with error code
+        else if (dbVm.isAutoStartup()
+                && !autoVmToRun
+                && (vdsmVm == null || vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal)
+                && !poweredDown) {
+            autoVmToRun = true;
+            log.info("add VM '{}' to HA rerun treatment", dbVm.getName());
+        } else if (getVmManager() != null && getVmManager().isColdReboot()) {
+            setColdRebootFlag();
         }
     }
 
