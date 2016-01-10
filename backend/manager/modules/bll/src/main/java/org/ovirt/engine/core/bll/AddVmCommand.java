@@ -112,7 +112,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * This class adds a thinly provisioned VM over a template
  */
 @DisableInPrepareMode
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
