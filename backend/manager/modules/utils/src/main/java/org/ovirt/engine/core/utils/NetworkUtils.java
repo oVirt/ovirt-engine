@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -259,18 +260,33 @@ public final class NetworkUtils {
 
     public static IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
         if (nic == null) {
-            return null;
+            return createDefaultIpConfiguration();
         }
 
         IPv4Address iPv4Address = new IPv4Address();
-        iPv4Address.setAddress(nic.getAddress());
-        iPv4Address.setNetmask(nic.getSubnet());
-        iPv4Address.setGateway(nic.getGateway());
+        if (nic.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            iPv4Address.setAddress(nic.getAddress());
+            iPv4Address.setNetmask(nic.getSubnet());
+            iPv4Address.setGateway(nic.getGateway());
+        }
         iPv4Address.setBootProtocol(nic.getBootProtocol());
 
         IpConfiguration ipConfiguration = new IpConfiguration();
         ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
 
         return ipConfiguration;
+    }
+
+    public static IpConfiguration createDefaultIpConfiguration() {
+        IpConfiguration output = new IpConfiguration();
+        IPv4Address iPv4Address = createDefaultIpAddress();
+        output.getIPv4Addresses().add(iPv4Address);
+        return output;
+    }
+
+    private static IPv4Address createDefaultIpAddress() {
+        IPv4Address output = new IPv4Address();
+        output.setBootProtocol(NetworkBootProtocol.NONE);
+        return output;
     }
 }
