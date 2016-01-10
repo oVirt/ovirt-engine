@@ -715,15 +715,16 @@ public class VmAnalyzer {
     }
 
     private boolean inMigrationTo(VmDynamic runningVm, VM vmToUpdate) {
-        boolean returnValue = false;
         if (runningVm.getStatus() == VMStatus.MigratingTo) {
             // in migration
             log.info(
                     "RefreshVmList VM id '{}' is migrating to VDS '{}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
                     getVdsManager().getVdsName());
-            returnValue = true;
-        } else if ((vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom)) {
+            return true;
+        }
+
+        if (vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom) {
             // check if the vm exists on another vds
             VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
             if (vmDynamic != null && vmDynamic.getRunOnVds() != null
@@ -733,10 +734,11 @@ public class VmAnalyzer {
                         runningVm.getId(),
                         runningVm.getStatus(),
                         getVdsManager().getVdsName());
-                returnValue = true;
+                return true;
             }
         }
-        return returnValue;
+
+        return false;
     }
 
     private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
