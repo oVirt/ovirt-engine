@@ -87,7 +87,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private Guid newActiveSnapshotId = Guid.newGuid();
     private MemoryImageBuilder memoryBuilder;
 
-    protected CreateAllSnapshotsFromVmCommand(Guid commandId) {
+    public CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
     }
 

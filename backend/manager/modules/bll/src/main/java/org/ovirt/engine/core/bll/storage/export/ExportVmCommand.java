@@ -76,7 +76,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected ExportVmCommand(Guid commandId) {
+    public ExportVmCommand(Guid commandId) {
         super(commandId);
     }
 

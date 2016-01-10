@@ -127,15 +127,8 @@ public final class CommandsFactory {
      * @return command instance or null if exception occurred.
      */
     public static CommandBase<?> createCommand(String className, Guid commandId) {
-        Constructor<?> constructor = null;
-        Boolean isAcessible = null;
         try {
-            constructor = Class.forName(className).getDeclaredConstructor(Guid.class);
-            // since this constructor is defined as protected, we must modify accessability and restore it afterwards
-            if (!constructor.isAccessible()) {
-                isAcessible = constructor.isAccessible();
-                constructor.setAccessible(true);
-            }
+            Constructor<?> constructor = Class.forName(className).getDeclaredConstructor(Guid.class);
             CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(commandId);
             return Injector.injectMembers(cmd);
         } catch (Exception e) {
@@ -145,10 +138,6 @@ public final class CommandsFactory {
                     e.getMessage());
             log.error("Exception", e);
             return null;
-        } finally {
-            if (isAcessible != null) {
-                constructor.setAccessible(isAcessible);
-            }
         }
     }
 

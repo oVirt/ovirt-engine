@@ -19,7 +19,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddExistingFileStorageDomainCommand(Guid commandId) {
+    public AddExistingFileStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

@@ -53,7 +53,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
      * Constructor for command creation when compensation is applied on startup
      */
 
-    protected DetachStorageDomainFromPoolCommand(Guid commandId) {
+    public DetachStorageDomainFromPoolCommand(Guid commandId) {
         super(commandId);
     }
 

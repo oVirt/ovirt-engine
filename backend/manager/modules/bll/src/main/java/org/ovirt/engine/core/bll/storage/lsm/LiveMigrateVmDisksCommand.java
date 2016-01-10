@@ -67,7 +67,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     // ctor for compensation
-    protected LiveMigrateVmDisksCommand(Guid commandId) {
+    public LiveMigrateVmDisksCommand(Guid commandId) {
         super(commandId);
     }
 

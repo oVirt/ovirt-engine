@@ -63,7 +63,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         this.actionType = actionType;
     }
 
-    protected UpdateVdsCommand(Guid commandId) {
+    public UpdateVdsCommand(Guid commandId) {
         this(commandId, VdcActionType.InstallVdsInternal);
     }
 

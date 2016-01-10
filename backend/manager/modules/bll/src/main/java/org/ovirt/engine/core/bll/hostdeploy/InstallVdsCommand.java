@@ -10,7 +10,7 @@ public class InstallVdsCommand<T extends UpdateVdsActionParameters> extends Upda
         super(parameters, VdcActionType.InstallVdsInternal);
     }
 
-    protected InstallVdsCommand(Guid commandId) {
+    public InstallVdsCommand(Guid commandId) {
         super(commandId, VdcActionType.InstallVdsInternal);
     }
 

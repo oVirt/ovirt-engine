@@ -72,7 +72,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         populateStorageDomainOvfData();
     }
 
-    protected ProcessOvfUpdateForStorageDomainCommand(Guid commandId) {
+    public ProcessOvfUpdateForStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

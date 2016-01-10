@@ -35,7 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
     protected DiskImage newDiskImage;
 
-    protected CreateSnapshotCommand(Guid commandId) {
+    public CreateSnapshotCommand(Guid commandId) {
         super(commandId);
     }
 

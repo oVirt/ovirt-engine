@@ -59,7 +59,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         super(parameters);
     }
 
-    protected RemoveStoragePoolCommand(Guid commandId) {
+    public RemoveStoragePoolCommand(Guid commandId) {
         super(commandId);
     }
 

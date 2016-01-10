@@ -38,7 +38,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskImage().getId()));
     }
 
-    protected RegisterDiskCommand(Guid commandId) {
+    public RegisterDiskCommand(Guid commandId) {
         super(commandId);
     }
 

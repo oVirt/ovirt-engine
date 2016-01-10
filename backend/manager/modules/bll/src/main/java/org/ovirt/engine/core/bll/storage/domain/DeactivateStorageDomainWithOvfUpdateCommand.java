@@ -44,7 +44,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
      * Constructor for command creation when compensation is applied on startup
      */
 
-    protected DeactivateStorageDomainWithOvfUpdateCommand(Guid commandId) {
+    public DeactivateStorageDomainWithOvfUpdateCommand(Guid commandId) {
         super(commandId);
 
     }

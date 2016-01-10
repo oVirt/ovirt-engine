@@ -58,7 +58,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected ActivateStorageDomainCommand(Guid commandId) {
+    public ActivateStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

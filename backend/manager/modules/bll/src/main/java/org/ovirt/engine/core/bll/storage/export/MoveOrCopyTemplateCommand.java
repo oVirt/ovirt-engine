@@ -74,7 +74,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected MoveOrCopyTemplateCommand(Guid commandId) {
+    public MoveOrCopyTemplateCommand(Guid commandId) {
         super(commandId);
     }
 

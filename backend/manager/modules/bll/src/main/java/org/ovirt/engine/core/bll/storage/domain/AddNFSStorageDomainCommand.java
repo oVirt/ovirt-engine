@@ -9,7 +9,7 @@ public class AddNFSStorageDomainCommand<T extends StorageDomainManagementParamet
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddNFSStorageDomainCommand(Guid commandId) {
+    public AddNFSStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

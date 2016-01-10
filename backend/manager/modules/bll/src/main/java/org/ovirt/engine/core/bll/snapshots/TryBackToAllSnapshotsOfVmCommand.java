@@ -63,7 +63,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected TryBackToAllSnapshotsOfVmCommand(Guid commandId) {
+    public TryBackToAllSnapshotsOfVmCommand(Guid commandId) {
         super(commandId);
     }
 

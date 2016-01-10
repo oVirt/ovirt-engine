@@ -10,7 +10,7 @@ public class UpgradeOvirtNodeCommand<T extends UpdateVdsActionParameters> extend
         super(parameters, VdcActionType.UpgradeOvirtNodeInternal);
     }
 
-    protected UpgradeOvirtNodeCommand(Guid commandId) {
+    public UpgradeOvirtNodeCommand(Guid commandId) {
         super(commandId, VdcActionType.UpgradeOvirtNodeInternal);
     }
 }

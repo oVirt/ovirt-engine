@@ -45,7 +45,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         }
     }
 
-    protected ExportVmTemplateCommand(Guid commandId) {
+    public ExportVmTemplateCommand(Guid commandId) {
         super(commandId);
     }
 

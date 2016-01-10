@@ -47,7 +47,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected ReconstructMasterDomainCommand(Guid commandId) {
+    public ReconstructMasterDomainCommand(Guid commandId) {
         super(commandId);
     }
 

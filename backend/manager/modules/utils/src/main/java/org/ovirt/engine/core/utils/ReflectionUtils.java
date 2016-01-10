@@ -70,7 +70,7 @@ public class ReflectionUtils {
      * @return <code>true</code> iff the actual parameters are the same length and are assignable from the expected
      *         ones.
      */
-    private static boolean isCompatible(Class<?>[] expected, Class<?>[] actual) {
+    public static boolean isCompatible(Class<?>[] expected, Class<?>[] actual) {
         if (expected.length != actual.length) {
             return false;
         }

@@ -19,7 +19,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddSANStorageDomainCommand(Guid commandId) {
+    public AddSANStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

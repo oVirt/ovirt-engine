@@ -54,7 +54,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected RestartVdsCommand(Guid commandId) {
+    public RestartVdsCommand(Guid commandId) {
         super(commandId);
         skippedDueToFencingPolicy = false;
     }

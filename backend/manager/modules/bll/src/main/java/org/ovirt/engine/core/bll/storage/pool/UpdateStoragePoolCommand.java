@@ -71,7 +71,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected UpdateStoragePoolCommand(Guid commandId) {
+    public UpdateStoragePoolCommand(Guid commandId) {
         super(commandId);
     }
 

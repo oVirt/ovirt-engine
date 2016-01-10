@@ -14,7 +14,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected RemoveGroupCommand(Guid commandId) {
+    public RemoveGroupCommand(Guid commandId) {
         super(commandId);
     }
 

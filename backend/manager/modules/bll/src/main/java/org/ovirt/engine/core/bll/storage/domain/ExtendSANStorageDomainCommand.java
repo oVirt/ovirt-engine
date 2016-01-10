@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
 
-    protected ExtendSANStorageDomainCommand(Guid commandId) {
+    public ExtendSANStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

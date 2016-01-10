@@ -44,7 +44,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClus
     @Inject
     private InterfaceDao interfaceDao;
 
-    AttachNetworkToClusterInternalCommand(T parameters) {
+    public AttachNetworkToClusterInternalCommand(T parameters) {
         super(parameters);
     }
 

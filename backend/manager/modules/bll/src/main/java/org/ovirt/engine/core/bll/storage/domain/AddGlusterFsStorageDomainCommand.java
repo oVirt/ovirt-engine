@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class AddGlusterFsStorageDomainCommand<T extends StorageDomainManagementParameter> extends AddStorageDomainCommon<T> {
 
-    protected AddGlusterFsStorageDomainCommand(Guid commandId) {
+    public AddGlusterFsStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

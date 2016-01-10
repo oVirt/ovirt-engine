@@ -83,7 +83,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected RestoreAllSnapshotsCommand(Guid commandId) {
+    public RestoreAllSnapshotsCommand(Guid commandId) {
         super(commandId);
     }
 

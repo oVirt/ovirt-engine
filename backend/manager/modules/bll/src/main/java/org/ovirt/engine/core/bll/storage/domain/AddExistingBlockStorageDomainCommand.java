@@ -27,7 +27,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddExistingBlockStorageDomainCommand(Guid commandId) {
+    public AddExistingBlockStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

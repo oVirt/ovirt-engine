@@ -72,7 +72,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      * Constructor for command creation when compensation is applied on startup
      */
 
-    protected DeactivateStorageDomainCommand(Guid commandId) {
+    public DeactivateStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 

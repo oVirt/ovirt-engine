@@ -70,7 +70,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     /**
      * Constructor for command creation when compensation is applied on startup
      */
-    protected AddVdsCommand(Guid commandId) {
+    public AddVdsCommand(Guid commandId) {
         super(commandId);
     }
 
