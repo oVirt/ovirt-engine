@@ -116,6 +116,11 @@ public class VmAnalyzer {
      * TODO consider throwing a checked exception or catching one inside
      */
     protected void analyze() {
+        if (vdsmVm == null) {
+            removeVmFromCache();
+            return;
+        }
+
         proceedDownVms();
         proceedWatchdogEvents();
         proceedBalloonCheck();
@@ -137,9 +142,7 @@ public class VmAnalyzer {
     }
 
     private void analyzeHostedEngineVm() {
-        if (dbVm != null
-                && vdsmVm != null
-                && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
+        if (dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
             hostedEngineUnmanaged = true;
         }
     }
@@ -148,7 +151,7 @@ public class VmAnalyzer {
      * Delete all vms with status Down
      */
     void proceedDownVms() {
-        if (vdsmVm != null && vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
+        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
             VMStatus prevStatus = VMStatus.Unassigned;
             if (dbVm != null) {
                 prevStatus = dbVm.getStatus();
@@ -334,17 +337,15 @@ public class VmAnalyzer {
     }
 
     private void proceedWatchdogEvents() {
-        if (vdsmVm != null) {
-            VmDynamic vmDynamic = vdsmVm.getVmDynamic();
-            VM vmTo = dbVm;
-            if (isNewWatchdogEvent(vmDynamic, vmTo)) {
-                AuditLogableBase auditLogable = new AuditLogableBase();
-                auditLogable.setVmId(vmDynamic.getId());
-                auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
-                // for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
-                auditLogable.addCustomValue("wdevent", new Date(vmDynamic.getLastWatchdogEvent() * 1000).toString());
-                auditLog(auditLogable, AuditLogType.WATCHDOG_EVENT);
-            }
+        VmDynamic vmDynamic = vdsmVm.getVmDynamic();
+        VM vmTo = dbVm;
+        if (isNewWatchdogEvent(vmDynamic, vmTo)) {
+            AuditLogableBase auditLogable = new AuditLogableBase();
+            auditLogable.setVmId(vmDynamic.getId());
+            auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
+            // for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
+            auditLogable.addCustomValue("wdevent", new Date(vmDynamic.getLastWatchdogEvent() * 1000).toString());
+            auditLog(auditLogable, AuditLogType.WATCHDOG_EVENT);
         }
     }
 
@@ -356,7 +357,7 @@ public class VmAnalyzer {
 
     private void proceedBalloonCheck() {
         if (getVdsManager().getCopyVds().isBalloonEnabled()) {
-            if (dbVm == null || vdsmVm == null) {
+            if (dbVm == null) {
                 return;
             }
             VmBalloonInfo balloonInfo = vdsmVm.getVmStatistics().getVmBalloonInfo();
@@ -446,7 +447,7 @@ public class VmAnalyzer {
     }
 
     private void proceedGuaranteedMemoryCheck() {
-        if (dbVm != null && vdsmVm != null) {
+        if (dbVm != null) {
             VmStatistics vmStatistics = vdsmVm.getVmStatistics();
             if (vmStatistics != null && vmStatistics.getVmBalloonInfo() != null &&
                     vmStatistics.getVmBalloonInfo().getCurrentMemory() != null &&
@@ -465,92 +466,90 @@ public class VmAnalyzer {
 
 
     private void updateRepository() {
-        if (vdsmVm != null) {
-            VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
+        VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
 
-            // if not migrating here and not down
-            if (!inMigrationTo(vdsmVmDynamic, dbVm) && vdsmVmDynamic.getStatus() != VMStatus.Down) {
-                if (dbVm != null) {
-                    if (!StringUtils.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
-                        clientIpChanged = true;
-                    }
+        // if not migrating here and not down
+        if (!inMigrationTo(vdsmVmDynamic, dbVm) && vdsmVmDynamic.getStatus() != VMStatus.Down) {
+            if (dbVm != null) {
+                if (!StringUtils.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
+                    clientIpChanged = true;
                 }
-                if (dbVm != null) {
-                    logVmStatusTransition();
+            }
+            if (dbVm != null) {
+                logVmStatusTransition();
 
-                    if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
-                            || dbVm.getStatus() != VMStatus.PoweringUp
-                            && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
-                            poweringUp = true;
-                    }
+                if (dbVm.getStatus() != VMStatus.Up && vdsmVmDynamic.getStatus() == VMStatus.Up
+                        || dbVm.getStatus() != VMStatus.PoweringUp
+                        && vdsmVmDynamic.getStatus() == VMStatus.PoweringUp) {
+                    poweringUp = true;
+                }
 
-                    // Generate an event for those machines that transition from "PoweringDown" to
-                    // "Up" as this means that the power down operation failed:
-                    if (dbVm.getStatus() == VMStatus.PoweringDown && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                // Generate an event for those machines that transition from "PoweringDown" to
+                // "Up" as this means that the power down operation failed:
+                if (dbVm.getStatus() == VMStatus.PoweringDown && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                    auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
+                }
+
+                // log vm recovered from error
+                if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
+                        && vdsmVmDynamic.getStatus() == VMStatus.Up) {
+                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                    auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
+                }
+
+                if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
+                    // Vm moved to Up status - remove its record from Async
+                    // reportedAndUnchangedVms handling
+                    log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
+                    succeededToRun = true;
+                }
+                afterMigrationFrom(vdsmVmDynamic, dbVm);
+
+                if (dbVm.getStatus() != VMStatus.NotResponding
+                        && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
+                    AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                    auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
+                }
+                // check if vm is suspended and remove it from async list
+                else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
+                    removeFromAsync = true;
+                    if (dbVm.getStatus() != VMStatus.Paused) {
                         AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                        auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
-                    }
+                        auditLog(logable, AuditLogType.VM_PAUSED);
 
-                    // log vm recovered from error
-                    if (dbVm.getStatus() == VMStatus.Paused && dbVm.getVmPauseStatus().isError()
-                            && vdsmVmDynamic.getStatus() == VMStatus.Up) {
-                        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                        auditLog(logable, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
-                    }
-
-                    if (isRunSucceeded(vdsmVmDynamic) || isMigrationSucceeded(vdsmVmDynamic)) {
-                        // Vm moved to Up status - remove its record from Async
-                        // reportedAndUnchangedVms handling
-                        log.debug("removing VM '{}' from successful run VMs list", dbVm.getId());
-                        succeededToRun = true;
-                    }
-                    afterMigrationFrom(vdsmVmDynamic, dbVm);
-
-                    if (dbVm.getStatus() != VMStatus.NotResponding
-                            && vdsmVmDynamic.getStatus() == VMStatus.NotResponding) {
-                        AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                        auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
-                    }
-                    // check if vm is suspended and remove it from async list
-                    else if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
-                        removeFromAsync = true;
-                        if (dbVm.getStatus() != VMStatus.Paused) {
-                            AuditLogableBase logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                            auditLog(logable, AuditLogType.VM_PAUSED);
-
-                            // check exit message to determine why the VM is paused
-                            if (vdsmVmDynamic.getPauseStatus().isError()) {
-                                AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
-                                logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
-                                auditLog(logable, logType);
-                            }
+                        // check exit message to determine why the VM is paused
+                        if (vdsmVmDynamic.getPauseStatus().isError()) {
+                            AuditLogType logType = vmPauseStatusToAuditLogType(vdsmVmDynamic.getPauseStatus());
+                            logable = new AuditLogableBase(getVdsManager().getVdsId(), dbVm.getId());
+                            auditLog(logable, logType);
                         }
+                    }
 
-                    }
                 }
-                if (dbVm != null || vdsmVmDynamic.getStatus() != VMStatus.MigratingFrom) {
-                    if (updateVmRunTimeInfo()) {
-                        saveDynamic(dbVm.getDynamicData());
-                    }
+            }
+            if (dbVm != null || vdsmVmDynamic.getStatus() != VMStatus.MigratingFrom) {
+                if (updateVmRunTimeInfo()) {
+                    saveDynamic(dbVm.getDynamicData());
                 }
-                if (dbVm != null) {
-                    updateVmStatistics();
-                    stable = true;
-                    if (!getVdsManager().isInitialized()) {
-                        vmsMonitoring.getResourceManager().removeVmFromDownVms(
-                                getVdsManager().getVdsId(),
-                                vdsmVmDynamic.getId());
-                    }
+            }
+            if (dbVm != null) {
+                updateVmStatistics();
+                stable = true;
+                if (!getVdsManager().isInitialized()) {
+                    vmsMonitoring.getResourceManager().removeVmFromDownVms(
+                            getVdsManager().getVdsId(),
+                            vdsmVmDynamic.getId());
                 }
-            } else {
-                if (vdsmVmDynamic.getStatus() == VMStatus.MigratingTo) {
-                    stable = true;
-                }
+            }
+        } else {
+            if (vdsmVmDynamic.getStatus() == VMStatus.MigratingTo) {
+                stable = true;
+            }
 
-                VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(vdsmVmDynamic.getId());
-                if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
-                    saveDynamic(null);
-                }
+            VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(vdsmVmDynamic.getId());
+            if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
+                saveDynamic(null);
             }
         }
         // compare between vm in cache and vm from vdsm
@@ -859,21 +858,19 @@ public class VmAnalyzer {
      * from VDSM to the latest hash kept on engine side.
      */
     private void prepareGuestAgentNetworkDevicesForUpdate() {
-        if (vdsmVm != null) {
-            VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
-            if (vdsmVmDynamic != null) {
-                if (dbVm != null) {
-                    List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
-                    int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
-                    if (guestAgentNicHash != vdsmVmDynamic.getGuestAgentNicsHash()) {
-                        if (vmDynamicToSave == null) {
-                            saveDynamic(dbVm.getDynamicData());
-                        }
-                        updateGuestAgentInterfacesChanges(
-                                vmDynamicToSave,
-                                vmGuestAgentInterfaces,
-                                guestAgentNicHash);
+        VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
+        if (vdsmVmDynamic != null) {
+            if (dbVm != null) {
+                List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
+                int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
+                if (guestAgentNicHash != vdsmVmDynamic.getGuestAgentNicsHash()) {
+                    if (vmDynamicToSave == null) {
+                        saveDynamic(dbVm.getDynamicData());
                     }
+                    updateGuestAgentInterfacesChanges(
+                            vmDynamicToSave,
+                            vmGuestAgentInterfaces,
+                            guestAgentNicHash);
                 }
             }
         }
@@ -882,7 +879,7 @@ public class VmAnalyzer {
     protected void updateLunDisks() {
         // Looping only over powering up VMs as LUN device size
         // is updated by VDSM only once when running a VM.
-        if (poweringUp && vdsmVm != null) {
+        if (poweringUp) {
             Map<String, LUNs> lunsMap = vdsmVm.getLunsMap();
             if (lunsMap.isEmpty()) {
                 // LUNs list from getVmStats hasn't been updated yet or VDSM doesn't support LUNs list retrieval.
@@ -913,43 +910,41 @@ public class VmAnalyzer {
     }
 
     protected void updateVmJobs() {
-        if (vdsmVm != null) {
-            Set<Guid> vmJobIdsToIgnore = new HashSet<>();
-            Map<Guid, VmJob> jobsFromDb = new HashMap<>();
-            for (VmJob job : getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId())) {
-                // Only jobs that were in the DB before our update may be updated/removed;
-                // others are completely ignored for the time being
-                if (vmsMonitoring.getExistingVmJobIds().contains(job.getId())) {
-                    jobsFromDb.put(job.getId(), job);
+        Set<Guid> vmJobIdsToIgnore = new HashSet<>();
+        Map<Guid, VmJob> jobsFromDb = new HashMap<>();
+        for (VmJob job : getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId())) {
+            // Only jobs that were in the DB before our update may be updated/removed;
+            // others are completely ignored for the time being
+            if (vmsMonitoring.getExistingVmJobIds().contains(job.getId())) {
+                jobsFromDb.put(job.getId(), job);
+            }
+        }
+
+        if (vdsmVm.getVmStatistics().getVmJobs() == null) {
+            // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
+            log.debug("No vmJob data returned from VDSM, preserving existing jobs");
+            return;
+        }
+
+        for (VmJob jobFromVds : vdsmVm.getVmStatistics().getVmJobs()) {
+            if (jobsFromDb.containsKey(jobFromVds.getId())) {
+                if (jobsFromDb.get(jobFromVds.getId()).equals(jobFromVds)) {
+                    // Same data, no update needed.  It would be nice if a caching
+                    // layer would take care of this for us.
+                    vmJobIdsToIgnore.add(jobFromVds.getId());
+                    log.info("VM job '{}': In progress (no change)", jobFromVds.getId());
+                } else {
+                    vmsMonitoring.getVmJobsToUpdate().put(jobFromVds.getId(), jobFromVds);
+                    log.info("VM job '{}': In progress, updating", jobFromVds.getId());
                 }
             }
+        }
 
-            if (vdsmVm.getVmStatistics().getVmJobs() == null) {
-                // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
-                log.debug("No vmJob data returned from VDSM, preserving existing jobs");
-                return;
-            }
-
-            for (VmJob jobFromVds : vdsmVm.getVmStatistics().getVmJobs()) {
-                if (jobsFromDb.containsKey(jobFromVds.getId())) {
-                    if (jobsFromDb.get(jobFromVds.getId()).equals(jobFromVds)) {
-                        // Same data, no update needed.  It would be nice if a caching
-                        // layer would take care of this for us.
-                        vmJobIdsToIgnore.add(jobFromVds.getId());
-                        log.info("VM job '{}': In progress (no change)", jobFromVds.getId());
-                    } else {
-                        vmsMonitoring.getVmJobsToUpdate().put(jobFromVds.getId(), jobFromVds);
-                        log.info("VM job '{}': In progress, updating", jobFromVds.getId());
-                    }
-                }
-            }
-
-            // Any existing jobs not saved need to be removed
-            for (Guid id : jobsFromDb.keySet()) {
-                if (!vmsMonitoring.getVmJobsToUpdate().containsKey(id) && !vmJobIdsToIgnore.contains(id)) {
-                    vmsMonitoring.getVmJobIdsToRemove().add(id);
-                    log.info("VM job '{}': Deleting", id);
-                }
+        // Any existing jobs not saved need to be removed
+        for (Guid id : jobsFromDb.keySet()) {
+            if (!vmsMonitoring.getVmJobsToUpdate().containsKey(id) && !vmJobIdsToIgnore.contains(id)) {
+                vmsMonitoring.getVmJobIdsToRemove().add(id);
+                log.info("VM job '{}': Deleting", id);
             }
         }
     }
