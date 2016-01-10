@@ -121,6 +121,11 @@ public class VmAnalyzer {
             return;
         }
 
+        if (isUnmanagedVm()) {
+            saveDynamic(vdsmVm.getVmDynamic());
+            return;
+        }
+
         proceedDownVms();
         proceedWatchdogEvents();
         proceedBalloonCheck();
@@ -129,22 +134,12 @@ public class VmAnalyzer {
         prepareGuestAgentNetworkDevicesForUpdate();
         updateLunDisks();
         updateVmJobs();
-        analyzeExternalVms();
-        analyzeHostedEngineVm();
     }
 
-    private void analyzeExternalVms() {
-        if (dbVm == null) {
-            if (getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null) {
-                externalVm = true;
-            }
-        }
-    }
-
-    private void analyzeHostedEngineVm() {
-        if (dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE) {
-            hostedEngineUnmanaged = true;
-        }
+    private boolean isUnmanagedVm() {
+        externalVm = dbVm == null && getDbFacade().getVmStaticDao().get(vdsmVm.getVmDynamic().getId()) == null;
+        hostedEngineUnmanaged = dbVm != null && dbVm.getOrigin() == OriginType.HOSTED_ENGINE;
+        return externalVm || hostedEngineUnmanaged;
     }
 
     /**
