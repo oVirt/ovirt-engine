@@ -1,15 +1,23 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -115,7 +123,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     @Override
     protected void endWithFailure() {
-        // TODO: Add revert tasks for Cinder
+        revertCinderVolume((CinderDisk) getDestinationDiskImage());
         if (isDestinationImageExists(getDestinationDiskImage().getId()) &&
                 (isImageSnapshot(getDestinationDiskImage()))) {
             updateLastModifiedInParent(getDestinationDiskImage().getParentId());
@@ -123,6 +131,25 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
         super.endWithFailure();
         if (getParameters().getSnapshotType().equals(Snapshot.SnapshotType.STATELESS)) {
             updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true);
+        }
+    }
+
+    private void revertCinderVolume(CinderDisk diskVolumeVolume) {
+        RemoveCinderDiskVolumeParameters removeDiskVolumeParam =
+                new RemoveCinderDiskVolumeParameters(diskVolumeVolume);
+
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.RemoveCinderDiskVolume,
+                removeDiskVolumeParam,
+                null,
+                new SubjectEntity(VdcObjectType.Storage, diskVolumeVolume.getStorageIds().get(0)));
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Fail to revert snapshot id '{}' for disk id '{}'. Exception: {}",
+                    diskVolumeVolume.getImageId(),
+                    diskVolumeVolume.getId(),
+                    e);
         }
     }
 
