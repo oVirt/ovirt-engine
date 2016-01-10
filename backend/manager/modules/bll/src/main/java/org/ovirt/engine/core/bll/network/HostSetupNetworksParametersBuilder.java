@@ -71,11 +71,11 @@ public abstract class HostSetupNetworksParametersBuilder {
 
         if (attachmentToConfigure == null) {
             // The network is not attached to the host, attach it to the nic with the label
+            VdsNetworkInterface nic = network.getVlanId() == null ? baseNic : getVlanDevice(baseNic, network.getVlanId());
             attachmentToConfigure =
                     new NetworkAttachment(baseNic,
                             network,
-                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(baseNic,
-                                    network.getVlanId())));
+                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic));
         } else if (!attachmentToConfigure.getNicId().equals(baseNic.getId())) {
             // Move the attachment to the nic with the label
             attachmentToConfigure.setNicId(baseNic.getId());
