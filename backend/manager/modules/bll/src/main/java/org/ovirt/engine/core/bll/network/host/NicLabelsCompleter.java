@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
@@ -161,6 +162,8 @@ public class NicLabelsCompleter {
         networkAttachment.setNicName(nicName);
         networkAttachment.setNetworkId(networkId);
         networkAttachment.setNetworkName(networkName);
+        IpConfiguration ipConfiguration = NetworkUtils.createDefaultIpConfiguration();
+        networkAttachment.setIpConfiguration(ipConfiguration);
 
         return networkAttachment;
     }

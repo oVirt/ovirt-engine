@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -154,9 +155,13 @@ public class NetworkConfigurator {
 
     public IPv4Address createIPv4Address(VdsNetworkInterface nic) {
         IPv4Address result = new IPv4Address();
-        result.setAddress(nic.getAddress());
-        result.setNetmask(nic.getSubnet());
-        result.setGateway(nic.getGateway());
+
+        if (nic.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            result.setAddress(nic.getAddress());
+            result.setNetmask(nic.getSubnet());
+            result.setGateway(nic.getGateway());
+        }
+
         result.setBootProtocol(nic.getBootProtocol());
         return result;
     }
