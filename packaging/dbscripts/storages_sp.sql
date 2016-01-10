@@ -684,7 +684,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetAllFromstorage_domains(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
+   RETURN QUERY
+   SELECT DISTINCT ON (id) *
    FROM storage_domains
    WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM user_storage_domain_permissions_view
