@@ -2,18 +2,15 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -262,20 +259,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
     }
 
     protected String getClientTitle() {
-        AsyncDataProvider asyncDataProvider = AsyncDataProvider.getInstance();
-        String releaseCursorKeys = (String) asyncDataProvider
-                .getConfigValuePreConverted(ConfigurationValues.ConsoleReleaseCursorKeys);
-        String releaseCursorKeysTranslated = asyncDataProvider
-                .getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys : "shift+f12"); //$NON-NLS-1$
-
-        String releaseCursorMsg = ""; //$NON-NLS-1$
-
-        if (!StringHelper.isNullOrEmpty(releaseCursorKeysTranslated)) {
-            releaseCursorMsg = " - " + ConstantsManager.getInstance() //$NON-NLS-1$
-                    .getMessages().pressKeyToReleaseCursor(releaseCursorKeysTranslated);
-        }
-
-        return getEntity().getName() + ":%d" + releaseCursorMsg; //$NON-NLS-1$
+        return getEntity().getName() + ":%d"; //$NON-NLS-1$
     }
 
     protected void setForeignMenuData(HasForeignMenuData nativeImpl) {
