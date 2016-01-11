@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator.network;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.collections.Predicate;
 import org.junit.Before;
