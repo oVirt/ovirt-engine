@@ -3569,6 +3569,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("NUMA node memory error.")
     String VM_NUMA_NODE_MEMORY_ERROR();
 
+    @DefaultStringValue("Host has no NUMA architecture")
+    String HOST_NUMA_NOT_SUPPORTED();
+
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 
