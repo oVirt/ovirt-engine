@@ -621,7 +621,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void updateScanAlignmentCommandAvailability() {
         boolean isExecutionAllowed = true;
-        if (getSelectedItems() != null && getEntity() != null) {
+        if (isVmDown() && getSelectedItems() != null && getEntity() != null) {
             ArrayList<Disk> disks = Linq.<Disk> cast(getSelectedItems());
             for (Disk disk : disks) {
 
