@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -911,37 +912,34 @@ public class VmAnalyzer {
             return;
         }
 
-        Set<Guid> vmJobIdsToIgnore = new HashSet<>();
-        Map<Guid, VmJob> jobsFromDb = new HashMap<>();
-        for (VmJob job : getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId())) {
-            // Only jobs that were in the DB before our update may be updated/removed;
-            // others are completely ignored for the time being
-            if (vmsMonitoring.getExistingVmJobIds().contains(job.getId())) {
-                jobsFromDb.put(job.getId(), job);
-            }
-        }
+        // Only jobs that were in the DB before our update may be updated/removed;
+        // others are completely ignored for the time being
+        Map<Guid, VmJob> jobsFromDb = getDbFacade().getVmJobDao().getAllForVm(vdsmVm.getVmDynamic().getId()).stream()
+                .filter(job -> vmsMonitoring.getExistingVmJobIds().contains(job.getId()))
+                .collect(Collectors.toMap(VmJob::getId, Function.identity()));
 
-        for (VmJob jobFromVds : vdsmVm.getVmStatistics().getVmJobs()) {
-            if (jobsFromDb.containsKey(jobFromVds.getId())) {
-                if (jobsFromDb.get(jobFromVds.getId()).equals(jobFromVds)) {
-                    // Same data, no update needed.  It would be nice if a caching
-                    // layer would take care of this for us.
-                    vmJobIdsToIgnore.add(jobFromVds.getId());
-                    log.info("VM job '{}': In progress (no change)", jobFromVds.getId());
-                } else {
-                    vmsMonitoring.getVmJobsToUpdate().put(jobFromVds.getId(), jobFromVds);
-                    log.info("VM job '{}': In progress, updating", jobFromVds.getId());
-                }
+        Set<Guid> vmJobIdsToIgnore = new HashSet<>();
+        vdsmVm.getVmStatistics().getVmJobs().stream()
+        .filter(job -> jobsFromDb.containsKey(job.getId()))
+        .forEach(job -> {
+            if (jobsFromDb.get(job.getId()).equals(job)) {
+                // Same data, no update needed.  It would be nice if a caching
+                // layer would take care of this for us.
+                vmJobIdsToIgnore.add(job.getId());
+                log.info("VM job '{}': In progress (no change)", job.getId());
+            } else {
+                vmsMonitoring.getVmJobsToUpdate().put(job.getId(), job);
+                log.info("VM job '{}': In progress, updating", job.getId());
             }
-        }
+        });
 
         // Any existing jobs not saved need to be removed
-        for (Guid id : jobsFromDb.keySet()) {
-            if (!vmsMonitoring.getVmJobsToUpdate().containsKey(id) && !vmJobIdsToIgnore.contains(id)) {
-                vmsMonitoring.getVmJobIdsToRemove().add(id);
-                log.info("VM job '{}': Deleting", id);
-            }
-        }
+        jobsFromDb.keySet().stream()
+        .filter(jobId -> !vmsMonitoring.getVmJobsToUpdate().containsKey(jobId) && !vmJobIdsToIgnore.contains(jobId))
+        .forEach(jobId -> {
+            vmsMonitoring.getVmJobIdsToRemove().add(jobId);
+            log.info("VM job '{}': Deleting", jobId);
+        });
     }
 
     private void updateVmNumaNodeRuntimeInfo() {
