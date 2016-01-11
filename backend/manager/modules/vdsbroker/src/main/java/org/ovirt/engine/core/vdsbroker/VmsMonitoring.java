@@ -23,8 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmJob;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -78,7 +76,6 @@ public class VmsMonitoring {
 
     //*** data collectors ***//
     private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
-    private final List<VmNetworkStatistics> vmInterfaceStatisticsToSave = new ArrayList<>();
     private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
@@ -329,13 +326,19 @@ public class VmsMonitoring {
     private void flush() {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         saveVmStatistics();
-
-        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(vmInterfaceStatisticsToSave);
+        saveVmInterfaceStatistics();
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
+    }
+
+    private void saveVmInterfaceStatistics() {
+        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmNetworkStatistics)
+                .flatMap(List::stream)
+                .collect(Collectors.toList()));
     }
 
     private void saveVmStatistics() {
@@ -644,10 +647,6 @@ public class VmsMonitoring {
      */
     protected void addVmDynamicToList(VmDynamic vmDynamic) {
         vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
-    }
-
-    protected void addVmInterfaceStatisticsToList(List<VmNetworkInterface> nics) {
-        vmInterfaceStatisticsToSave.addAll(nics.stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList()));
     }
 
     /**

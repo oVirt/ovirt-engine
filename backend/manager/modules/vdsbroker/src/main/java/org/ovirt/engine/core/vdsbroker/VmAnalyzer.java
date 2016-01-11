@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -126,9 +128,6 @@ public class VmAnalyzer {
         analyzeHostedEngineVm();
         if (vmDynamicToSave != null) {
             vmsMonitoring.addVmDynamicToList(vmDynamicToSave);
-        }
-        if (saveVmInterfaces) {
-            vmsMonitoring.addVmInterfaceStatisticsToList(dbVm.getInterfaces());
         }
     }
 
@@ -279,6 +278,12 @@ public class VmAnalyzer {
 
     public VmStatistics getVmStatisticsToSave() {
         return saveStatistics ? dbVm.getStatisticsData() : null;
+    }
+
+    public List<VmNetworkStatistics> getVmNetworkStatistics() {
+        return saveVmInterfaces ?
+                dbVm.getInterfaces().stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList())
+                : Collections.emptyList();
     }
 
     // TODO Method with Side-Effect - move to VmsMonitoring
