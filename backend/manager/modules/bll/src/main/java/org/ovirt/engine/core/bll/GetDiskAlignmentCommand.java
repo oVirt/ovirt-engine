@@ -122,7 +122,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             }
         }
 
-        if (isImageExclusiveLockNeeded() && getVm().isRunningOrPaused()) {
+        if (getVm().isRunningOrPaused()) {
             return failCanDoAction(EngineMessage.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
         }
 

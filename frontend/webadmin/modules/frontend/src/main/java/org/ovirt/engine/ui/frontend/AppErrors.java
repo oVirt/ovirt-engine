@@ -3446,7 +3446,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cloud-Init is only supported on cluster compatibility version 3.3 and higher.")
     String ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Alignment scan of a disk attached to a running VM is only supported with RAW virtual disks.")
+    @DefaultStringValue("Cannot ${action} ${type}. Alignment scan of a disk attached to a running VM is not supported.")
     String ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING();
 
     @DefaultStringValue("Cannot ${action} ${type} ${diskAlias}. Alignment scan is only supported for disks located on block storage domains.")
