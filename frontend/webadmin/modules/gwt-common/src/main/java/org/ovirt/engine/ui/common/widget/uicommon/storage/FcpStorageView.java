@@ -25,6 +25,10 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModel> impleme
     Label errorMessage;
 
     @UiField
+    @Path(value = "selectedLunWarning")
+    Label warning;
+
+    @UiField
     ValidatedPanelWidget contentPanel;
 
     private final Driver driver = GWT.create(Driver.class);

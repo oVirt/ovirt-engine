@@ -18,7 +18,10 @@
 	</ui:style>
 	
 	<g:FlowPanel>
-		<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessageLabel}" />		
+		<g:VerticalPanel addStyleNames="{style.errorMessageLabel}">
+			<g:Label ui:field="errorMessage"/>
+			<g:Label ui:field="warning"/>
+		</g:VerticalPanel>
 		<w:ValidatedPanelWidget ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
 	</g:FlowPanel>
 
