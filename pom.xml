@@ -43,6 +43,9 @@
     <metamodel.version>1.0.2</metamodel.version>
     <model.version>4.0.1</model.version>
 
+    <!-- oVirt extentions versions -->
+    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
+
     <!-- Dependencies Versions -->
     <junit.version>4.11</junit.version>
     <commons-codec.version>1.4</commons-codec.version>
@@ -72,7 +75,6 @@
     <sshd-core.version>0.11.0</sshd-core.version>
     <otopi.version>1.2.0</otopi.version>
     <ovirt-host-deploy.version>1.4.0</ovirt-host-deploy.version>
-    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
     <vdsm-jsonrpc-java.version>1.1.6</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.6.1</gwt.version>
