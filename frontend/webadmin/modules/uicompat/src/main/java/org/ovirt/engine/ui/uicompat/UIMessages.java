@@ -195,9 +195,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Please use your VNC client to connect to this VM.<br/><br/>Use the following parameters:<br/>IP:Port --  {0}:{1}<br/><br/> Password: {2}<br/>(note: this password is valid for {3} seconds)")
     String vncInfoMessage(String hostIp, int port, String password, int seconds);
 
-    @DefaultMessage("Press {0} to Release Cursor")
-    String pressKeyToReleaseCursor(String key);
-
     @DefaultMessage("LUN is already part of Storage Domain: {0}")
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
