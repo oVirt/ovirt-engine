@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -193,7 +194,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
             updateRngDevice();
-            updateGraphicsDevice();
+            updateGraphicsDevices();
             updateVmHostDevices();
         }
         IconUtils.removeUnusedIcons(oldIconIds);
@@ -360,7 +361,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().
                     TranslateErrorText(setAmountOfMemoryResult.getCanDoActionMessages());
-            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
+            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE,
+                    StringUtils.join(canDos, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }
@@ -409,24 +411,40 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
-    private void updateGraphicsDevice() {
-        for (GraphicsType type : getParameters().getGraphicsDevices().keySet()) {
-            GraphicsDevice vmGraphicsDevice = getGraphicsDevOfType(type);
-            if (vmGraphicsDevice == null) {
-                if (getParameters().getGraphicsDevices().get(type) != null) {
-                    getParameters().getGraphicsDevices().get(type).setVmId(getVmId());
-                    getBackend().runInternalAction(VdcActionType.AddGraphicsDevice,
-                            new GraphicsParameters(getParameters().getGraphicsDevices().get(type)));
-                }
+    private void updateGraphicsDevices() {
+        Set<Map.Entry<GraphicsType, GraphicsDevice>> graphicalDevicesSet =
+                getParameters().getGraphicsDevices().entrySet();
+        /* Devices have to be removed first and then added to prevent having multiple devices at the same time
+           which is sometimes prohibited (FeatureSupported.multipleGraphicsSupported) */
+        for (Map.Entry<GraphicsType, GraphicsDevice> entry : graphicalDevicesSet) {
+            if (entry.getValue() == null) {
+                updateGraphicsDevice(entry.getKey());
+            }
+        }
+        for (Map.Entry<GraphicsType, GraphicsDevice> entry : graphicalDevicesSet) {
+            if (entry.getValue() != null) {
+                updateGraphicsDevice(entry.getKey());
+            }
+        }
+    }
+
+    private void updateGraphicsDevice(GraphicsType type) {
+        GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(type);
+        GraphicsDevice paramsGraphicsDevice = getParameters().getGraphicsDevices().get(type);
+        if (existingGraphicsDevice == null) {
+            if (paramsGraphicsDevice != null) {
+                paramsGraphicsDevice.setVmId(getVmId());
+                getBackend().runInternalAction(VdcActionType.AddGraphicsDevice,
+                        new GraphicsParameters(paramsGraphicsDevice));
+            }
+        } else {
+            if (paramsGraphicsDevice == null) {
+                getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
+                        new GraphicsParameters(existingGraphicsDevice));
             } else {
-                if (getParameters().getGraphicsDevices().get(type) == null) {
-                    getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
-                            new GraphicsParameters(vmGraphicsDevice));
-                } else {
-                    getParameters().getGraphicsDevices().get(type).setVmId(getVmId());
-                    getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice,
-                            new GraphicsParameters(getParameters().getGraphicsDevices().get(type)));
-                }
+                paramsGraphicsDevice.setVmId(getVmId());
+                getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice,
+                        new GraphicsParameters(paramsGraphicsDevice));
             }
         }
     }
