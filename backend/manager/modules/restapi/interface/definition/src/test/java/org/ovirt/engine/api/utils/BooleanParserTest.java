@@ -16,7 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.utils;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
