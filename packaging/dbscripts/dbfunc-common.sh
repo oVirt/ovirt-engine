@@ -371,7 +371,7 @@ _dbfunc_common_run_file() {
 		echo "Running upgrade shell script '${file}'..."
 		(
 			eval "$(set | grep '^DBFUNC_' | sed 's/^\([^=]*\)=.*/export \1/')"
-			"${file}"
+			"${file}" || die "Failed to run '${file}' shell script."
 		)
 	else
 		echo "Running upgrade sql script '${file}'..."
