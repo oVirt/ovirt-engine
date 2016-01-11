@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.numa.vm;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
@@ -29,10 +31,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-import junit.framework.TestCase;
-
 @RunWith(MockitoJUnitRunner.class)
-public class NumaValidatorTest extends TestCase {
+public class NumaValidatorTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
