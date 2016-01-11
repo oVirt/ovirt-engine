@@ -350,6 +350,10 @@ public enum EngineError {
     StorageDomainIsMemberOfPool(900),
     InvalidParameterException(1000),
     InvalidDefaultExceptionException(1001),
+
+    // Hook Errors
+    GeneralHookError(1500),
+
     NotImplementedException(2000),
     MiscFileReadException(2001),
     MiscFileWriteException(2002),

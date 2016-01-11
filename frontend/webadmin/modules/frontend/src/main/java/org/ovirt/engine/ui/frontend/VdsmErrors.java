@@ -21,6 +21,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String GeneralException();
 
+    String GeneralHookError();
+
     String HostIdMismatch();
 
     String ImageDeleteError();
