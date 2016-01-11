@@ -69,7 +69,7 @@ public class AddVmNumaNodesCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
         DbFacade.setInstance(dbFacade);
 
-        vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
+        vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
         existingNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
         newNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1), createVmNumaNode(2)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);

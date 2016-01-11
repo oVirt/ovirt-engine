@@ -106,6 +106,10 @@ public class NumaValidator {
             return new ValidationResult(EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
         }
 
+        if (hostNumaNodes.size() == 1) { // One node is equal to no NUMA node architecture present
+            return new ValidationResult(EngineMessage.HOST_NUMA_NOT_SUPPORTED);
+        }
+
         final HashMap<Integer, VdsNumaNode> hostNodeMap = new HashMap<>();
         for (VdsNumaNode hostNumaNode : hostNumaNodes) {
             hostNodeMap.put(hostNumaNode.getIndex(), hostNumaNode);

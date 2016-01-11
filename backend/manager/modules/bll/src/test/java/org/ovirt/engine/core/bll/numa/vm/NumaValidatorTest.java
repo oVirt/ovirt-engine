@@ -56,7 +56,7 @@ public class NumaValidatorTest {
         DbFacade.setInstance(dbFacade);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);
 
-        vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2)));
+        vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
         vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(1, vdsNumaNodes), createVmNumaNode(2)));
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
 
@@ -79,6 +79,13 @@ public class NumaValidatorTest {
     public void shouldHandleNoNumaNodes() {
         vm.setvNumaNodeList(null);
         assertTrue(NumaValidator.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
+    }
+
+    @Test
+    public void shouldDetectHostWihtoutNumaSupport() {
+        vdsNumaNodes = new ArrayList(Arrays.asList(createVdsNumaNode(1)));
+        assertValidationFailure(NumaValidator.validateNumaCompatibility(vm, vm.getvNumaNodeList(), vdsNumaNodes),
+                EngineMessage.HOST_NUMA_NOT_SUPPORTED);
     }
 
     @Test
