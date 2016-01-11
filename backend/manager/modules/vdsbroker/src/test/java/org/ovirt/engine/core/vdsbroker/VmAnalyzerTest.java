@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
@@ -266,7 +268,7 @@ public class VmAnalyzerTest {
         verify(vmsMonitoring.getResourceManager(), times(1)).internalSetVmStatus(data.dbVm(),
                 VMStatus.MigratingTo);
         verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
-        verify(vmsMonitoring, atLeastOnce()).addVmStatisticsToList(data.dbVm().getStatisticsData());
+        assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.DST_HOST_ID));
     }
 
@@ -286,7 +288,7 @@ public class VmAnalyzerTest {
                 data.vdsmVm().getVmDynamic().getId());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
         assertTrue(vmAnalyzer.isRerun());
-        assertTrue(data.dbVm().getMigratingToVds() == null);
+        assertNull(data.dbVm().getMigratingToVds());
     }
 
     @Theory
@@ -302,12 +304,12 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
-        verify(vmsMonitoring, atLeastOnce()).addVmStatisticsToList(data.dbVm().getStatisticsData());
+        assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
-        assertTrue(data.vdsmVm().getVmDynamic().getRunOnVds() == null);
+        assertNull(data.vdsmVm().getVmDynamic().getRunOnVds());
         assertFalse(vmAnalyzer.isRerun());
         assertTrue(vmAnalyzer.isAutoVmToRun());
-        assertTrue(data.dbVm().getMigratingToVds() == null);
+        assertNull(data.dbVm().getMigratingToVds());
     }
 
     @Theory

@@ -127,9 +127,6 @@ public class VmAnalyzer {
         if (vmDynamicToSave != null) {
             vmsMonitoring.addVmDynamicToList(vmDynamicToSave);
         }
-        if (saveStatistics) {
-            vmsMonitoring.addVmStatisticsToList(dbVm.getStatisticsData());
-        }
         if (saveVmInterfaces) {
             vmsMonitoring.addVmInterfaceStatisticsToList(dbVm.getInterfaces());
         }
@@ -278,6 +275,10 @@ public class VmAnalyzer {
 
     private void saveStatistics() {
         saveStatistics = true;
+    }
+
+    public VmStatistics getVmStatisticsToSave() {
+        return saveStatistics ? dbVm.getStatisticsData() : null;
     }
 
     // TODO Method with Side-Effect - move to VmsMonitoring
