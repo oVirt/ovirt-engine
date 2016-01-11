@@ -80,7 +80,7 @@ public class VmsMonitoring {
     //*** data collectors ***//
     private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
     private final List<VmStatistics> vmStatisticsToSave = new ArrayList<>();
-    private final List<List<VmNetworkInterface>> vmInterfaceStatisticsToSave = new ArrayList<>();
+    private final List<VmNetworkStatistics> vmInterfaceStatisticsToSave = new ArrayList<>();
     private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
@@ -332,15 +332,7 @@ public class VmsMonitoring {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave);
 
-        final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<>();
-        for (List<VmNetworkInterface> list : vmInterfaceStatisticsToSave) {
-            for (VmNetworkInterface iface : list) {
-                allVmInterfaceStatistics.add(iface.getStatistics());
-            }
-        }
-
-        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
-
+        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(vmInterfaceStatisticsToSave);
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
@@ -658,11 +650,8 @@ public class VmsMonitoring {
         vmStatisticsToSave.add(vmStatistics);
     }
 
-    protected void addVmInterfaceStatisticsToList(List<VmNetworkInterface> list) {
-        if (list.isEmpty()) {
-            return;
-        }
-        vmInterfaceStatisticsToSave.add(list);
+    protected void addVmInterfaceStatisticsToList(List<VmNetworkInterface> nics) {
+        vmInterfaceStatisticsToSave.addAll(nics.stream().map(VmNetworkInterface::getStatistics).collect(Collectors.toList()));
     }
 
     /**
