@@ -43,20 +43,6 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
     }
 
     @Override
-    protected void endWithFailure() {
-        if (getDestinationDiskImage() != null) {
-            // If the cinder disk has a snapshot and it is not a part of a template.
-            if ((!getDestinationDiskImage().getParentId().equals(Guid.Empty))
-                    && (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId()))) {
-                DiskImage previousSnapshot = getDiskImageDao().getSnapshotById(getDestinationDiskImage().getParentId());
-                previousSnapshot.setActive(true);
-                getImageDao().update(previousSnapshot.getImage());
-            }
-        }
-        super.endWithFailure();
-    }
-
-    @Override
     protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
             DiskImage curr = getDestinationDiskImage();
