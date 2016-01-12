@@ -207,7 +207,8 @@ public class VmsMonitoring {
         }
 
         processVmsWithDevicesChange();
-        saveVmsToDb();
+        addUnmanagedVms();
+        flush();
     }
 
     protected VmAnalyzer getVmAnalyzer(Pair<VM, VmInternalData> pair) {
@@ -327,8 +328,7 @@ public class VmsMonitoring {
         }
     }
 
-    private void saveVmsToDb() {
-        addUnmanagedVms();
+    private void flush() {
         getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
         getDbFacade().getVmStatisticsDao().updateAllInBatch(vmStatisticsToSave);
 
