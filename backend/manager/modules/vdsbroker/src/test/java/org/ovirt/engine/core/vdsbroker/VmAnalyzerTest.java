@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +26,6 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -152,10 +153,10 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring.getResourceManager(), never()).removeAsyncRunningVm(data.dbVm().getId());
         verify(vmsMonitoring.getResourceManager()).runVdsCommand(vdsCommandTypeCaptor.capture(),
                 vdsParamsCaptor.capture());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(vdsCommandTypeCaptor.getValue() == VDSCommandType.Destroy);
         assertTrue(vdsParamsCaptor.getValue().getClass() == DestroyVmVDSCommandParameters.class);
     }
@@ -178,10 +179,10 @@ public class VmAnalyzerTest {
         //then
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring.getResourceManager()).removeAsyncRunningVm(data.dbVm().getId());
         verify(vmsMonitoring.getResourceManager()).runVdsCommand(vdsCommandTypeCaptor.capture(),
                 vdsParamsCaptor.capture());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.VM_DOWN));
         assertTrue(vdsCommandTypeCaptor.getValue() == VDSCommandType.Destroy);
         assertTrue(vdsParamsCaptor.getValue().getClass() == DestroyVmVDSCommandParameters.class);
@@ -199,7 +200,7 @@ public class VmAnalyzerTest {
         vmAnalyzer.analyze();
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         verify(vmsMonitoring.getResourceManager(), atLeast(3)).isVmInAsyncRunningList(data.dbVm().getId());
-        verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
     }
 
     @Theory
@@ -267,7 +268,7 @@ public class VmAnalyzerTest {
         //then
         verify(vmsMonitoring.getResourceManager(), times(1)).internalSetVmStatus(data.dbVm(),
                 VMStatus.MigratingTo);
-        verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.DST_HOST_ID));
     }
@@ -283,9 +284,9 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
         //then
         vmAnalyzer.analyze();
-        verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring.getResourceManager(), times(1)).removeVmFromDownVms(VmTestPairs.SRC_HOST_ID,
                 data.vdsmVm().getVmDynamic().getId());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
         assertTrue(vmAnalyzer.isRerun());
         assertNull(data.dbVm().getMigratingToVds());
@@ -303,7 +304,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         vmAnalyzer.analyze();
-        verify(vmsMonitoring, atLeastOnce()).addVmDynamicToList(data.dbVm().getDynamicData());
+        assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
         assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
         assertNull(data.vdsmVm().getVmDynamic().getRunOnVds());
@@ -322,8 +323,8 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
         //then
         vmAnalyzer.analyze();
-        verify(vmsMonitoring, times(1)).addVmDynamicToList(Matchers.<VmDynamic>any());
-        verify(vmsMonitoring, never()).addVmDynamicToList(data.vdsmVm().getVmDynamic());
+        assertNotNull(vmAnalyzer.getVmDynamicToSave());
+        assertNotEquals(data.vdsmVm().getVmDynamic(), vmAnalyzer.getVmDynamicToSave());
     }
 
     @Theory
@@ -336,8 +337,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingTo);
         //then
         vmAnalyzer.analyze();
-        verify(vmsMonitoring, never()).addVmDynamicToList(Mockito.<VmDynamic>any());
-        verify(vmsMonitoring, never()).addVmDynamicToList(data.vdsmVm().getVmDynamic());
+        assertNull(vmAnalyzer.getVmDynamicToSave());
     }
 
     @Theory

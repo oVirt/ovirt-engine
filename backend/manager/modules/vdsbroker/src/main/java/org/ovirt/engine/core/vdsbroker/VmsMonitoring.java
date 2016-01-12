@@ -75,7 +75,6 @@ public class VmsMonitoring {
     private List<VmAnalyzer> vmAnalyzers = new ArrayList<>();
 
     //*** data collectors ***//
-    private final Map<Guid, VmDynamic> vmDynamicToSave = new HashMap<>();
     private final Collection<Pair<Guid, DiskImageDynamic>> vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<VmDevice> vmDeviceToSave = new ArrayList<>();
     private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
@@ -308,8 +307,12 @@ public class VmsMonitoring {
                     Guid vmId = pair.getFirst().getId();
                     // update only if the vm marked to change, otherwise it might have skipped because data invalidated
                     // this ensure the vmManager lock is taken
-                    if (vmDynamicToSave.containsKey(vmId)) {
-                        vmDynamicToSave.get(vmId).setHash(pair.getSecond().getVmDynamic().getHash());
+                    VmAnalyzer vmAnalyzer = vmAnalyzers.stream()
+                            .filter(analyzer -> vmId.equals(analyzer.getVdsmVm().getVmDynamic().getId()))
+                            .findFirst().orElse(null);
+
+                    if (vmAnalyzer != null && vmAnalyzer.getVmDynamicToSave() != null) {
+                        vmAnalyzer.getVmDynamicToSave().setHash(pair.getSecond().getVmDynamic().getHash());
                         vmsToUpdate.add(vmId.toString());
                     } else {
                         log.warn("VM '{}' not in changed list, skipping devices update.", vmId);
@@ -321,7 +324,7 @@ public class VmsMonitoring {
     }
 
     private void flush() {
-        getDbFacade().getVmDynamicDao().updateAllInBatch(vmDynamicToSave.values());
+        saveVmDynamic();
         saveVmStatistics();
         saveVmInterfaceStatistics();
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(vmDiskImageDynamicToSave);
@@ -329,6 +332,13 @@ public class VmsMonitoring {
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmJobsToDb();
+    }
+
+    private void saveVmDynamic() {
+        getDbFacade().getVmDynamicDao().updateAllInBatch(vmAnalyzers.stream()
+                .map(VmAnalyzer::getVmDynamicToSave)
+                .filter(vmDynamic -> vmDynamic != null)
+                .collect(Collectors.toList()));
     }
 
     private void saveVmInterfaceStatistics() {
@@ -619,13 +629,6 @@ public class VmsMonitoring {
         return (pair.getFirst() != null) ?
                 pair.getFirst().getId() :
                 ((pair.getSecond() != null) ? pair.getSecond().getVmDynamic().getId() : null);
-    }
-
-    /**
-     * Add or update vmDynamic to save list
-     */
-    protected void addVmDynamicToList(VmDynamic vmDynamic) {
-        vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
     }
 
     /**

@@ -126,9 +126,6 @@ public class VmAnalyzer {
         updateVmJobs();
         analyzeExternalVms();
         analyzeHostedEngineVm();
-        if (vmDynamicToSave != null) {
-            vmsMonitoring.addVmDynamicToList(vmDynamicToSave);
-        }
     }
 
     private void analyzeExternalVms() {
@@ -278,6 +275,10 @@ public class VmAnalyzer {
 
     public VmStatistics getVmStatisticsToSave() {
         return saveStatistics ? dbVm.getStatisticsData() : null;
+    }
+
+    public VmDynamic getVmDynamicToSave() {
+        return vmDynamicToSave;
     }
 
     public List<VmNetworkStatistics> getVmNetworkStatistics() {
