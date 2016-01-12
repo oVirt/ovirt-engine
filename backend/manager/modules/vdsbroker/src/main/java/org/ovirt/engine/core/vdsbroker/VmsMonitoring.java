@@ -87,8 +87,6 @@ public class VmsMonitoring {
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
-    private final List<Guid> autoVmsToRun = new ArrayList<>();
-    private final List<Guid> coldRebootVmsToRun = new ArrayList<>();
     private final Map<Guid, VmJob> vmJobsToUpdate = new HashMap<>();
     private final List<Guid> vmJobIdsToRemove = new ArrayList<>();
     private final List<Guid> existingVmJobIds = new ArrayList<>();
@@ -223,6 +221,8 @@ public class VmsMonitoring {
     private void afterVMsRefreshTreatment() {
         Collection<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
+        List<Guid> autoVmsToRun = new ArrayList<>();
+        List<Guid> coldRebootVmsToRun = new ArrayList<>();
 
         // now loop over the result and act
         for (VmAnalyzer vmAnalyzer : vmAnalyzers) {
