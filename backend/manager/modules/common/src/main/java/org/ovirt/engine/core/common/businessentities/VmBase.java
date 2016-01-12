@@ -368,7 +368,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private MigrationSupport migrationSupport;
 
     @CopyOnNewVersion
-    @EditableOnVmStatusField
+    @EditableField
     @EditableOnTemplate
     private List<Guid> dedicatedVmForVdsList;
 

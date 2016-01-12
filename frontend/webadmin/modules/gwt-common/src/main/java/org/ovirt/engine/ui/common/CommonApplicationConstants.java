@@ -425,6 +425,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Approve operation")
     String latchApproveOperationLabel();
 
+    @DefaultStringValue("Approve un-pinning action")
+    String latchApproveUnpinningLabel();
+
     @DefaultStringValue("Remove permanently")
     String permanentlyRemoveLabel();
 
@@ -2090,9 +2093,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("NUMA Pinning")
     String numaSupportButtonLabel();
-
-    @DefaultStringValue("Changed fields list")
-    String changedFieldsList();
 
     @DefaultStringValue("Auto Converge migrations")
     String autoConvergeLabel();

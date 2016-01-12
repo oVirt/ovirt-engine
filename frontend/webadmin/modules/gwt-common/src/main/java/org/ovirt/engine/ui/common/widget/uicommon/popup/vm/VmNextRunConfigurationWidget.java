@@ -6,10 +6,10 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -34,8 +34,11 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     }
 
     @UiField
+    FlowPanel changedFieldsPanel;
+
+    @UiField
     @Ignore
-    HTML message1;
+    HTML changedFieldsPanelTitle;
 
     @UiField
     @Ignore
@@ -62,13 +65,32 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     @UiField
     @Ignore
-    AdvancedParametersExpander changedFieldsExpander;
+    FlowPanel changedFieldsContent;
+
+    @UiField
+    FlowPanel vmUnpinnedPanel;
 
     @UiField
     @Ignore
-    FlowPanel changedFieldsExpanderContent;
+    HTML vmUnpinnedPanelTitle;
+
+    @UiField
+    @Ignore
+    HTML vmUnpinnedMessage1;
+
+    @UiField
+    @Ignore
+    HTML vmUnpinnedMessage2;
+
+    @UiField
+    @Ignore
+    HTML warningSectionTitle;
 
     private final Driver driver = GWT.create(Driver.class);
+
+    @UiField(provided = true)
+    @Path(value = "latch.entity")
+    EntityModelCheckBoxEditor vmUnpinnedLatchEditor;
 
     private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -80,42 +102,58 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        changedFieldsExpander.initWithContent(changedFieldsExpanderContent.getElement());
+
+        setVisibilityToChangedFieldsExpander(false);
+        setVisibilityToVmUnpinningWarrningPanel(false);
     }
 
     void initEditors() {
         applyCpuLaterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        vmUnpinnedLatchEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize() {
-        message1.setHTML(listItem(messages.nextRunConfigurationExists()));
-        applyNowTitleMessage.setHTML(listItem(messages.nextRunConfigurationCanBeAppliedImmediately()));
-        applyNowCpuMessage.setHTML(listItem(messages.nextRunConfigurationCpuValue()));
-        applyNowMemoryMessage.setHTML(listItem(messages.nextRunConfigurationMemoryValue()));
+        changedFieldsPanelTitle.setHTML(messages.nextRunConfigurationExists());
+        applyNowTitleMessage.setHTML(messages.nextRunConfigurationCanBeAppliedImmediately());
+        applyNowCpuMessage.setHTML(bulletedItem(messages.nextRunConfigurationCpuValue()));
+        applyNowMemoryMessage.setHTML(bulletedItem(messages.nextRunConfigurationMemoryValue()));
         applyCpuLaterEditor.setLabel(constants.applyLater());
 
-        changedFieldsExpander.setTitleWhenExpanded(constants.changedFieldsList());
-        changedFieldsExpander.setTitleWhenCollapsed(constants.changedFieldsList());
-    }
+        warningSectionTitle.setHTML(messages.warningSectionTitle());
+        vmUnpinnedPanelTitle.setHTML(messages.unpinnedRunningVmWarningTitle());
+        vmUnpinnedMessage1.setHTML(bulletedItem(messages.unpinnedRunningVmWarningIncompatability()));
+        vmUnpinnedMessage2.setHTML(bulletedItem(messages.unpinnedRunningVmWarningSecurity()));
+        vmUnpinnedLatchEditor.setLabel(constants.latchApproveUnpinningLabel());
+}
 
-    private SafeHtml listItem(String msg) {
-        return templates.listItem(SafeHtmlUtils.fromSafeConstant(msg));
+    private SafeHtml bulletedItem(String msg) {
+        return templates.unorderedList(templates.listItem(SafeHtmlUtils.fromSafeConstant(msg)));
     }
 
     @Override
     public void edit(VmNextRunConfigurationModel object) {
         driver.edit(object);
+
+        if (object.isVmUnpinned()){
+            setVisibilityToVmUnpinningWarrningPanel(true);
+        }
+
+        if (object.getChangedFields().size() > 0) {
+            setVisibilityToChangedFieldsExpander(true);
+            SafeHtmlBuilder changedFieldsBuilder = new SafeHtmlBuilder();
+            for (String field: object.getChangedFields()) {
+                String escapedField = SafeHtmlUtils.htmlEscape(field);
+                changedFieldsBuilder.append(bulletedItem(escapedField));
+            }
+            changedFields.setHTML(changedFieldsBuilder.toSafeHtml());
+        }
+        setVisibilityToHotChanges(object);
+    }
+
+    private void setVisibilityToHotChanges(VmNextRunConfigurationModel object) {
         hotplugPanel.setVisible(object.isCpuPluggable() || object.isMemoryPluggable());
         applyNowCpuMessage.setVisible(object.isCpuPluggable());
         applyNowMemoryMessage.setVisible(object.isMemoryPluggable());
-
-        SafeHtmlBuilder changedFieldsBuilder = new SafeHtmlBuilder();
-        for (String field: object.getChangedFields()) {
-            String escapedField = SafeHtmlUtils.htmlEscape(field);
-            changedFieldsBuilder.append(listItem(escapedField));
-        }
-        changedFields.setHTML(changedFieldsBuilder.toSafeHtml());
-
     }
 
     @Override
@@ -123,4 +161,15 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         return driver.flush();
     }
 
+    private void setVisibilityToVmUnpinningWarrningPanel(boolean visibility) {
+        vmUnpinnedPanel.setVisible(visibility);
+        vmUnpinnedPanelTitle.setVisible(visibility);
+        vmUnpinnedLatchEditor.setVisible(visibility);
+    }
+
+    private void setVisibilityToChangedFieldsExpander(boolean flag) {
+        changedFieldsPanel.setVisible(flag);
+        applyNowTitleMessage.setVisible(flag);
+        changedFieldsPanelTitle.setVisible(flag);
+    }
 }
