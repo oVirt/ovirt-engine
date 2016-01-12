@@ -44,8 +44,10 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
         }
 
         command.getParameters().setTaskGroupSuccess(!anyFailed);
-        command.setCommandStatus(command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
-                : CommandStatus.FAILED);
+        CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
+                : CommandStatus.FAILED;
+        command.setCommandStatus(newStatus, false);
+        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
         log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
                 command.getActionType(), cmdId, childCmdIds, command.getCommandStatus());
     }

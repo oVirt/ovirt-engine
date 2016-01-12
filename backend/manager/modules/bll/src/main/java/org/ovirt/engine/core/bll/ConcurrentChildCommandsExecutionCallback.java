@@ -27,7 +27,9 @@ public class ConcurrentChildCommandsExecutionCallback extends ChildCommandsCallb
         if (!shouldExecuteEndMethod(command)) {
             logEndWillBeExecutedByParent(command, newStatus);
         }
-        command.setCommandStatus(newStatus);
+
+        command.setCommandStatus(newStatus, false);
+        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
     }
 
 
