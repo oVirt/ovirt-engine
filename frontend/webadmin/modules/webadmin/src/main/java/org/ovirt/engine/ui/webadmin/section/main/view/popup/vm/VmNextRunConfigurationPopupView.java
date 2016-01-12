@@ -18,7 +18,7 @@ public class VmNextRunConfigurationPopupView extends AbstractModelBoundWidgetPop
 
     @Inject
     public VmNextRunConfigurationPopupView(EventBus eventBus) {
-        super(eventBus, new VmNextRunConfigurationWidget(), "400px", "300px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, new VmNextRunConfigurationWidget(), "400px", "420px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 }
