@@ -25,9 +25,7 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
-        List<Guid> failedGuids = getParameters().getImageList().stream()
-                        .filter(this::volumeExists)
-                        .collect(toList());
+        List<Guid> failedGuids = getFailedVolumeIds();
 
         if (failedGuids.isEmpty()) {
             log.info("Requested images were successfully removed");
@@ -36,6 +34,10 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
         } else {
             log.error("The following images were not removed: {}", failedGuids);
         }
+    }
+
+    protected List<Guid> getFailedVolumeIds() {
+        return getParameters().getImageList().stream().filter(this::volumeExists).collect(toList());
     }
 
     private boolean volumeExists(Guid volumeId) {
