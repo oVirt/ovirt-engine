@@ -128,6 +128,12 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     @Override
     protected void endWithFailure() {
+        // TODO: once the fix for adjusting cinder flows to coco changes will be backport this condition
+        // should be removed. Since the end with failure is being called twice.
+        if (getDestinationDiskImage() == null) {
+            setSucceeded(true);
+            return;
+        }
         revertCinderVolume((CinderDisk) getDestinationDiskImage());
         if (isDestinationImageExists(getDestinationDiskImage().getId()) &&
                 (isImageSnapshot(getDestinationDiskImage()))) {
