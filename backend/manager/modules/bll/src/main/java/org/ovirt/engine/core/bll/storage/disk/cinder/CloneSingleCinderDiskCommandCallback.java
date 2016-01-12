@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -36,17 +35,13 @@ public class CloneSingleCinderDiskCommandCallback<T extends BaseImagesCommand<? 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         super.onFailed(cmdId, childCmdIds);
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.ILLEGAL);
         getCommand().getParameters().setTaskGroupSuccess(false);
-        ImagesHandler.updateImageStatus(getCommand().getParameters().getImageId(), ImageStatus.OK);
         getCommand().endAction();
     }
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         super.onSucceeded(cmdId, childCmdIds);
-        ImagesHandler.updateImageStatus(getDiskId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getCommand().getParameters().getImageId(), ImageStatus.OK);
         getCommand().endAction();
     }
 

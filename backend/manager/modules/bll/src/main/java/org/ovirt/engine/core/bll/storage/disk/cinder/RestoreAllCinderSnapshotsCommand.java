@@ -75,6 +75,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
                     new RemoveCinderDiskVolumeParameters(cinderVolume);
             removeDiskVolumeParam.setParentCommand(getActionType());
             removeDiskVolumeParam.setParentParameters(getParameters());
+            removeDiskVolumeParam.setShouldBeEndedByParent(false);
 
             Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
                     VdcActionType.RemoveCinderDiskVolume,

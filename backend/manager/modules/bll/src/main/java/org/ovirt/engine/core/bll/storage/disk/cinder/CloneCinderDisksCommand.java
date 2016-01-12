@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,19 +10,25 @@ import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> extends CommandBase<T> {
 
     public CloneCinderDisksCommand(T parameters) {
@@ -72,8 +79,51 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
         createParams.setVmSnapshotId(getParameters().getVmSnapshotId());
-        createParams.setShouldBeEndedByParent(false);
         return createParams;
+    }
+
+    private void revertCinderDisks() {
+        for (VdcActionParametersBase childParams : getParameters().getImagesParameters()) {
+            ImagesContainterParametersBase commandParameters =
+                    (ImagesContainterParametersBase) childParams;
+            Guid destinationImageId = commandParameters.getDestinationImageId();
+            Guid storageDomainId = commandParameters.getStorageDomainId();
+            removeCinderDisk(destinationImageId, storageDomainId);
+        }
+    }
+
+    private void removeCinderDisk(Guid cinderDiskId, Guid storageDomainId) {
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.RemoveCinderDisk,
+                buildRevertParameters(cinderDiskId),
+                null,
+                new SubjectEntity(VdcObjectType.Storage, storageDomainId));
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Fail to revert disk id '{}'.", cinderDiskId);
+            log.error("Exception: ", e);
+        }
+    }
+
+    private RemoveCinderDiskParameters buildRevertParameters(Guid cinderDiskId) {
+        RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDiskId);
+        removeDiskParams.setLockVM(false);
+        removeDiskParams.setShouldBeLogged(false);
+        return removeDiskParams;
+    }
+
+    @Override
+    protected void endWithFailure() {
+        endActionOnDisks();
+        revertCinderDisks();
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        endActionOnDisks();
+        setSucceeded(true);
     }
 
     @Override
@@ -84,5 +134,18 @@ public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> exten
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
+    }
+
+    protected List<VdcReturnValueBase> endActionOnDisks() {
+        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            VdcReturnValueBase returnValue = getBackend().endAction(
+                    p.getCommandType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            returnValues.add(returnValue);
+        }
+        return returnValues;
     }
 }

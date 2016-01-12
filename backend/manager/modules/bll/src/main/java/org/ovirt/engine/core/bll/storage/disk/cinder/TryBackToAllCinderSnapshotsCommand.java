@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.cinder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -80,7 +82,6 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
         createParams.setVmSnapshotId(getParameters().getVmSnapshotId());
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
-        createParams.setShouldBeEndedByParent(false);
         return createParams;
     }
 
@@ -90,7 +91,35 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
     }
 
     @Override
+    protected void endWithFailure() {
+        endActionOnDisks(false);
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        endActionOnDisks(true);
+        setSucceeded(true);
+    }
+
+    protected List<VdcReturnValueBase> endActionOnDisks(boolean succeeded) {
+        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(succeeded);
+
+            VdcReturnValueBase returnValue = getBackend().endAction(
+                    p.getCommandType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            returnValues.add(returnValue);
+        }
+        return returnValues;
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
     }
+
+
 }

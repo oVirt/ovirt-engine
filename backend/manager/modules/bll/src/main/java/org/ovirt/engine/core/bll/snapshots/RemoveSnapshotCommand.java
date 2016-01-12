@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
@@ -40,6 +38,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -192,15 +191,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return !ImagesHandler.filterImageDisks(getSourceImages(), true, false, true).isEmpty();
     }
 
-    private RemoveAllVmCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks) {
-        RemoveAllVmCinderDisksParameters createParams = new RemoveAllVmCinderDisksParameters();
-        createParams.setCinderDisks(cinderDisks);
-        createParams.setParentCommand(getActionType());
-        createParams.setParentParameters(getParameters());
-        createParams.setShouldBeEndedByParent(false);
-        return createParams;
-    }
-
     private void removeImages() {
         List<CinderDisk> cinderDisks = new ArrayList<>();
         for (final DiskImage source : getSourceImages()) {
@@ -245,19 +235,20 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private void handleCinderSnapshotDisks(List<CinderDisk> cinderDisks) {
-        RemoveAllVmCinderDisksParameters params = buildCinderChildCommandParameters(cinderDisks);
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.RemoveAllCinderSnapshotDisks,
-                params,
-                cloneContextAndDetachFromParent(),
-                CINDERStorageHelper.getStorageEntities(cinderDisks));
-        try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
-            if (!vdcReturnValueBase.getSucceeded()) {
-                log.error("Error removing snapshots for Cinder disks");
+        for (CinderDisk cinderDisk : cinderDisks) {
+            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                    VdcActionType.RemoveCinderSnapshotDisk,
+                    buildRemoveCinderSnapshotDiskParameters(cinderDisk),
+                    cloneContextAndDetachFromParent(),
+                    new SubjectEntity(VdcObjectType.Storage, cinderDisk.getStorageIds().get(0)));
+            try {
+                VdcReturnValueBase vdcReturnValueBase = future.get();
+                if (!vdcReturnValueBase.getSucceeded()) {
+                    log.error("Error removing snapshots for Cinder disk");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Error removing snapshots for Cinder disk");
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error removing snapshots for Cinder disks");
         }
     }
 
@@ -282,6 +273,16 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         parameters.setCommandType(getSnapshotActionType());
         parameters.setVdsId(getVm().getRunOnVds());
         return parameters;
+    }
+
+    private ImagesContainterParametersBase buildRemoveCinderSnapshotDiskParameters(CinderDisk cinderDisk) {
+        ImagesContainterParametersBase removeCinderSnapshotParams =
+                new ImagesContainterParametersBase(cinderDisk.getImageId());
+        removeCinderSnapshotParams.setDestinationImageId(cinderDisk.getImageId());
+        removeCinderSnapshotParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
+        removeCinderSnapshotParams.setParentCommand(getActionType());
+        removeCinderSnapshotParams.setParentParameters(getParameters());
+        return removeCinderSnapshotParams;
     }
 
     @Override

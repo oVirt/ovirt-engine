@@ -257,7 +257,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
         CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
-        createParams.setShouldBeEndedByParent(false);
         return withRootCommandInfo(createParams);
     }
 
@@ -845,11 +844,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         getVmStaticDao().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            if (p.getCommandType() != VdcActionType.CloneCinderDisks) {
-                Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
-                        p,
-                        cloneContextAndDetachFromParent());
-            }
+            Backend.getInstance().endAction(p.getCommandType(),
+                    p,
+                    cloneContextAndDetachFromParent());
         }
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
@@ -925,11 +922,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(false);
-            if (p.getCommandType() != VdcActionType.CloneCinderDisks) {
-                Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
-                        p,
-                        cloneContextAndDetachFromParent());
-            }
+            Backend.getInstance().endAction(p.getCommandType(),
+                    p,
+                    cloneContextAndDetachFromParent());
         }
 
         if (CommandCoordinatorUtil.getCommandExecutionStatus(getParameters().getCommandId()) == CommandExecutionStatus.EXECUTED) {

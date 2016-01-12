@@ -246,13 +246,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            if (p.getCommandType() != VdcActionType.CloneCinderDisks) {
-                VdcReturnValueBase returnValue = getBackend().endAction(
-                        p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(),
-                        p,
-                        getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-                returnValues.add(returnValue);
-            }
+            VdcReturnValueBase returnValue = getBackend().endAction(
+                    p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            returnValues.add(returnValue);
         }
         return returnValues;
     }

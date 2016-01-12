@@ -352,7 +352,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
         createParams.setDescription(getParameters().getDescription());
         createParams.setSnapshotType(getParameters().getSnapshotType());
-        createParams.setShouldBeEndedByParent(false);
         return withRootCommandInfo(createParams);
     }
 
@@ -396,10 +395,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        if (CommandCoordinatorUtil.getChildCommandIds(getCommandId()).size() > 1) {
-            log.info("There are still running CoCo tasks");
-            return;
-        }
         Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure

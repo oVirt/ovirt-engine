@@ -110,6 +110,8 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     protected void endSuccessfully() {
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         if (!getParameters().isLeaveLocked()) {
             getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             getImageDao().update(getDestinationDiskImage().getImage());
@@ -119,6 +121,8 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
 
     @Override
     protected void endWithFailure() {
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
+        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true);
 
         // Remove destination, unlock source:

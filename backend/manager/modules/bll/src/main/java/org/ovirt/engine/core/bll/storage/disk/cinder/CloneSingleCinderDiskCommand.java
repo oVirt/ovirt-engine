@@ -103,11 +103,15 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     @Override
     protected void endSuccessfully() {
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
+        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
     }
 }

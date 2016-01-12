@@ -316,7 +316,6 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      */
     private void removeCinderDisks(List<CinderDisk> cinderDisks) {
         RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
-        removeParam.setShouldBeEndedByParent(false);
         Future<VdcReturnValueBase> future =
                 CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveAllVmCinderDisks,
                         withRootCommandInfo(removeParam),
