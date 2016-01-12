@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@ValidateSupportsTransaction
 public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<GraphicsParameters> {
 
     protected AddGraphicsDeviceCommand(GraphicsParameters parameters) {
