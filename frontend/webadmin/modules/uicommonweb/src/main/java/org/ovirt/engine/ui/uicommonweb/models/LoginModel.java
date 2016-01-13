@@ -201,8 +201,7 @@ public class LoginModel extends Model {
 
     public void login() {
         if (!validate()) {
-            this.setMessages((Arrays.asList(ConstantsManager.getInstance().getConstants().emptyFieldsInvalidReason())));
-            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
+            validationFailed();
             return;
         }
 
@@ -242,6 +241,11 @@ public class LoginModel extends Model {
         // run the login
         Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
                 getProfile().getSelectedItem(), true, _asyncQuery);
+    }
+
+    protected void validationFailed() {
+        this.setMessages((Arrays.asList(ConstantsManager.getInstance().getConstants().emptyFieldsInvalidReason())));
+        getLoginFailedEvent().raise(this, EventArgs.EMPTY);
     }
 
     protected void raiseLoggedInEvent() {
