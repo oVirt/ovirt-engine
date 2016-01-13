@@ -174,7 +174,7 @@ class Plugin(plugin.PluginBase):
         )
         clusterVersions = statement.execute(
             statement="""
-                SELECT compatibility_version FROM cluster;;
+                SELECT compatibility_version FROM vds_groups;
             """,
             ownConnection=True,
             transaction=False,
