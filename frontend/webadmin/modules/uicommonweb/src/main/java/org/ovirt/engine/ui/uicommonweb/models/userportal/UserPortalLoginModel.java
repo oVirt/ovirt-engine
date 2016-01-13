@@ -109,7 +109,7 @@ public class UserPortalLoginModel extends LoginModel {
     public void login() {
         // Completely override the base class functionality.
         if (!validate()) {
-            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
+            validationFailed();
             return;
         }
 
