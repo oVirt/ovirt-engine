@@ -79,7 +79,7 @@ public class IPAddressPatternTest {
 
     private static class IPAdress {
 
-        @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
+        @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
         private String address;
 
         public IPAdress(String address) {

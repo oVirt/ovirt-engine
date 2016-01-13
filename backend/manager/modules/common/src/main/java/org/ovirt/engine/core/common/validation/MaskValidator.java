@@ -28,7 +28,7 @@ public class MaskValidator {
      * @return true if correct IPv4 format , false otherwise.
      */
     public boolean isValidNetmaskFormat(String mask) {
-        return mask != null && mask.matches("^" + ValidationUtils.IP_PATTERN_NON_EMPTY + "$");
+        return mask != null && mask.matches("^" + ValidationUtils.IPV4_PATTERN_NON_EMPTY + "$");
     }
 
     /***

@@ -26,17 +26,19 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     private Guid vdsId;
     private String vdsName;
-    private NetworkBootProtocol bootProtocol;
     private String networkName;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
-    private String address;
+    private NetworkBootProtocol ipv4BootProtocol;
+
+    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
+    private String ipv4Address;
 
     @Mask
-    private String subnet;
+    private String ipv4Subnet;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
-    private String gateway;
+    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
+    private String ipv4Gateway;
+
     private String baseInterface;
     private Integer vlanId;
     private Boolean bonded;
@@ -112,11 +114,11 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     /**
      * Sets the boot protocol.
      *
-     * @param bootProtocol
+     * @param ipv4BootProtocol
      *            the boot protocol
      */
-    public void setBootProtocol(NetworkBootProtocol bootProtocol) {
-        this.bootProtocol = bootProtocol;
+    public void setIpv4BootProtocol(NetworkBootProtocol ipv4BootProtocol) {
+        this.ipv4BootProtocol = ipv4BootProtocol;
     }
 
     /**
@@ -124,8 +126,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      *
      * @return the boot protocol
      */
-    public NetworkBootProtocol getBootProtocol() {
-        return bootProtocol;
+    public NetworkBootProtocol getIpv4BootProtocol() {
+        return ipv4BootProtocol;
     }
 
     /**
@@ -148,60 +150,60 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     }
 
     /**
-     * Sets the network address.
+     * Sets the network ipv4Address.
      *
-     * @param address
-     *            the address
+     * @param ipv4Address
+     *            the ipv4Address
      */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setIpv4Address(String ipv4Address) {
+        this.ipv4Address = ipv4Address;
     }
 
     /**
-     * Returns the network address.
+     * Returns the network ipv4Address.
      *
-     * @return the address
+     * @return the ipv4Address
      */
-    public String getAddress() {
-        return address;
+    public String getIpv4Address() {
+        return ipv4Address;
     }
 
     /**
-     * Sets the address's subnet.
+     * Sets the ipv4Address's ipv4Subnet.
      *
-     * @param subnet
-     *            the subnet
+     * @param ipv4Subnet
+     *            the ipv4Subnet
      */
-    public void setSubnet(String subnet) {
-        this.subnet = subnet;
+    public void setIpv4Subnet(String ipv4Subnet) {
+        this.ipv4Subnet = ipv4Subnet;
     }
 
     /**
-     * Returns the subnet.
+     * Returns the ipv4Subnet.
      *
-     * @return the subnet
+     * @return the ipv4Subnet
      */
-    public String getSubnet() {
-        return subnet;
+    public String getIpv4Subnet() {
+        return ipv4Subnet;
     }
 
     /**
-     * Sets the gateway.
+     * Sets the ipv4Gateway.
      *
-     * @param gateway
-     *            the gateway
+     * @param ipv4Gateway
+     *            the ipv4Gateway
      */
-    public void setGateway(String gateway) {
-        this.gateway = gateway;
+    public void setIpv4Gateway(String ipv4Gateway) {
+        this.ipv4Gateway = ipv4Gateway;
     }
 
     /**
-     * Returns the gateway.
+     * Returns the ipv4Gateway.
      *
-     * @return the gateway
+     * @return the ipv4Gateway
      */
-    public String getGateway() {
-        return gateway;
+    public String getIpv4Gateway() {
+        return ipv4Gateway;
     }
 
     /**
@@ -412,10 +414,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("name", getName())
                 .append("vdsId", getVdsId())
                 .append("networkName", getNetworkName())
-                .append("bootProtocol", getBootProtocol())
-                .append("address", getAddress())
-                .append("subnet", getSubnet())
-                .append("gateway", getGateway())
+                .append("ipv4BootProtocol", getIpv4BootProtocol())
+                .append("ipv4Address", getIpv4Address())
+                .append("ipv4Subnet", getIpv4Subnet())
+                .append("ipv4Gateway", getIpv4Gateway())
                 .append("mtu", getMtu())
                 .append("bridged", isBridged())
                 .append("type", getType())
@@ -432,17 +434,17 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     public int hashCode() {
         return Objects.hash(
                 super.hashCode(),
-                address,
+                ipv4Address,
                 bondName,
                 bondOptions,
                 bondType,
                 bonded,
-                bootProtocol,
+                ipv4BootProtocol,
                 networkName,
                 bridged,
-                gateway,
+                ipv4Gateway,
                 mtu,
-                subnet,
+                ipv4Subnet,
                 vdsId,
                 baseInterface,
                 vlanId,
@@ -461,17 +463,17 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         }
         VdsNetworkInterface other = (VdsNetworkInterface) obj;
         return super.equals(obj)
-                && Objects.equals(address, other.address)
+                && Objects.equals(ipv4Address, other.ipv4Address)
                 && Objects.equals(bondName, other.bondName)
                 && Objects.equals(bondOptions, other.bondOptions)
                 && Objects.equals(bondType, other.bondType)
                 && Objects.equals(bonded, other.bonded)
-                && bootProtocol == other.bootProtocol
+                && ipv4BootProtocol == other.ipv4BootProtocol
                 && Objects.equals(networkName, other.networkName)
                 && bridged == other.bridged
-                && Objects.equals(gateway, other.gateway)
+                && Objects.equals(ipv4Gateway, other.ipv4Gateway)
                 && mtu == other.mtu
-                && Objects.equals(subnet, other.subnet)
+                && Objects.equals(ipv4Subnet, other.ipv4Subnet)
                 && Objects.equals(vdsId, other.vdsId)
                 && Objects.equals(baseInterface, other.baseInterface)
                 && Objects.equals(vlanId, other.vlanId)

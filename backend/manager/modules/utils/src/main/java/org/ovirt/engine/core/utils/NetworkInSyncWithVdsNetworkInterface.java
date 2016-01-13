@@ -68,12 +68,12 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private boolean isNetworkSubnetInSync() {
-        return getsSubnetUtilsInstance().equalSubnet(iface.getSubnet(), getPrimaryAddress().getNetmask());
+        return getsSubnetUtilsInstance().equalSubnet(iface.getIpv4Subnet(), getPrimaryAddress().getNetmask());
     }
 
     private boolean isGatewayInSync() {
         String gatewayDesiredValue = getPrimaryAddress().getGateway();
-        String gatewayActualValue = iface.getGateway();
+        String gatewayActualValue = iface.getIpv4Gateway();
         boolean bothBlank = StringUtils.isBlank(gatewayDesiredValue) && StringUtils.isBlank(gatewayActualValue);
         return bothBlank || Objects.equals(gatewayDesiredValue, gatewayActualValue);
     }
@@ -143,15 +143,15 @@ public class NetworkInSyncWithVdsNetworkInterface {
             return;
         }
         NetworkBootProtocol definedBootProtocol = getPrimaryAddress().getBootProtocol();
-        result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getBootProtocol(), definedBootProtocol);
+        result.add(ReportedConfigurationType.BOOT_PROTOCOL, iface.getIpv4BootProtocol(), definedBootProtocol);
 
-        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP && iface.getBootProtocol() == definedBootProtocol) {
+        if (definedBootProtocol == NetworkBootProtocol.STATIC_IP && iface.getIpv4BootProtocol() == definedBootProtocol) {
             result.add(ReportedConfigurationType.NETMASK,
-                    iface.getSubnet(), getPrimaryAddress().getNetmask(), isNetworkSubnetInSync());
+                    iface.getIpv4Subnet(), getPrimaryAddress().getNetmask(), isNetworkSubnetInSync());
             result.add(ReportedConfigurationType.IP_ADDRESS,
-                    iface.getAddress(), getPrimaryAddress().getAddress());
+                    iface.getIpv4Address(), getPrimaryAddress().getAddress());
             result.add(ReportedConfigurationType.GATEWAY,
-                    iface.getGateway(), getPrimaryAddress().getGateway(), isGatewayInSync());
+                    iface.getIpv4Gateway(), getPrimaryAddress().getGateway(), isGatewayInSync());
         }
     }
 }

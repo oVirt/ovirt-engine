@@ -24,14 +24,14 @@ public class DisplayInterfaceEqualityPredicateTest {
     @Before
     public void setUp() throws Exception {
         Mockito.when(mockIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockIface.getAddress()).thenReturn(TEST_INTERFACE_ADDRESS);
+        Mockito.when(mockIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
         underTest = new DisplayInterfaceEqualityPredicate(mockIface);
     }
 
     @Test
     public void testEvalPositive() throws Exception {
         Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getAddress()).thenReturn(TEST_INTERFACE_ADDRESS);
+        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
         Assert.assertTrue(underTest.test(mockOtherIface));
     }
@@ -39,7 +39,7 @@ public class DisplayInterfaceEqualityPredicateTest {
     @Test
     public void testEvalDifferentName() throws Exception {
         Mockito.when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getAddress()).thenReturn(TEST_INTERFACE_ADDRESS);
+        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
         Assert.assertFalse(underTest.test(mockOtherIface));
     }
@@ -47,7 +47,7 @@ public class DisplayInterfaceEqualityPredicateTest {
     @Test
     public void testEvalDifferentAddress() throws Exception {
         Mockito.when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
-        Mockito.when(mockOtherIface.getAddress()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
+        Mockito.when(mockOtherIface.getIpv4Address()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
 
         Assert.assertFalse(underTest.test(mockOtherIface));
     }

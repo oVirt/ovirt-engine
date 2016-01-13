@@ -96,7 +96,7 @@ public class NetworkConfigurator {
         return host.getInterfaces()
                 .stream()
                 .filter(new InterfaceByNetworkNamePredicate(managementNetworkName))
-                .map(VdsNetworkInterface::getAddress)
+                .map(VdsNetworkInterface::getIpv4Address)
                 .findFirst()
                 .orElse(null);
     }
@@ -148,13 +148,13 @@ public class NetworkConfigurator {
     public IPv4Address createIPv4Address(VdsNetworkInterface nic) {
         IPv4Address result = new IPv4Address();
 
-        if (nic.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            result.setAddress(nic.getAddress());
-            result.setNetmask(nic.getSubnet());
-            result.setGateway(nic.getGateway());
+        if (nic.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            result.setAddress(nic.getIpv4Address());
+            result.setNetmask(nic.getIpv4Subnet());
+            result.setGateway(nic.getIpv4Gateway());
         }
 
-        result.setBootProtocol(nic.getBootProtocol());
+        result.setBootProtocol(nic.getIpv4BootProtocol());
         return result;
     }
 

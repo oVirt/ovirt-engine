@@ -41,7 +41,7 @@ public abstract class BootProtocolResolver {
             }
         }
 
-        iface.setBootProtocol(bootproto);
+        iface.setIpv4BootProtocol(bootproto);
     }
 
 }

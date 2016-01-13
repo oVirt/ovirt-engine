@@ -38,15 +38,15 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     private Integer type;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
     private String addr;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_SUBNET_SIZE)
     private String subnet;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
     private String gateway;
 

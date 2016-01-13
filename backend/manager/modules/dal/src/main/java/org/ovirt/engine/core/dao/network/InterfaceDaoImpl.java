@@ -130,10 +130,10 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     private MapSqlParameterSource createInterfaceParametersMapper(VdsNetworkInterface nic) {
         return getCustomMapSqlParameterSource()
-                .addValue("addr", nic.getAddress())
+                .addValue("addr", nic.getIpv4Address())
                 .addValue("bond_name", nic.getBondName())
                 .addValue("bond_type", nic.getBondType())
-                .addValue("gateway", nic.getGateway())
+                .addValue("gateway", nic.getIpv4Gateway())
                 .addValue("id", nic.getId())
                 .addValue("is_bond", nic.getBonded())
                 .addValue("bond_opts", nic.getBondOptions())
@@ -141,8 +141,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("name", nic.getName())
                 .addValue("network_name", nic.getNetworkName())
                 .addValue("speed", nic.getSpeed())
-                .addValue("subnet", nic.getSubnet())
-                .addValue("boot_protocol", nic.getBootProtocol())
+                .addValue("subnet", nic.getIpv4Subnet())
+                .addValue("boot_protocol", nic.getIpv4BootProtocol())
                 .addValue("type", nic.getType())
                 .addValue("vds_id", nic.getVdsId())
                 .addValue("vlan_id", nic.getVlanId())
@@ -335,15 +335,15 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     VdsNetworkInterface entity = createInterface(rs);
                     entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
                     entity.setType((Integer) rs.getObject("type"));
-                    entity.setGateway(rs.getString("gateway"));
-                    entity.setSubnet(rs.getString("subnet"));
-                    entity.setAddress(rs.getString("addr"));
+                    entity.setIpv4Gateway(rs.getString("gateway"));
+                    entity.setIpv4Subnet(rs.getString("subnet"));
+                    entity.setIpv4Address(rs.getString("addr"));
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
                     entity.setVdsId(getGuid(rs, "vds_id"));
                     entity.setVdsName(rs.getString("vds_name"));
                     entity.setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
+                    entity.setIpv4BootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
                     entity.setQos(hostNetworkQosDao.get(entity.getId()));

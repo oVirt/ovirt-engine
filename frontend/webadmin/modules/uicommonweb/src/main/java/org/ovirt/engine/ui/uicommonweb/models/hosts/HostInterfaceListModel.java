@@ -264,7 +264,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         model.setVLans(new ArrayList<HostVLan>());
         model.setNetworkName(nic.getNetworkName());
         model.setIsManagement(nic.getIsManagement());
-        model.setAddress(nic.getAddress());
+        model.setAddress(nic.getIpv4Address());
 
         return model;
     }
@@ -274,7 +274,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         model.setInterface(nic);
         model.setIsBonded(true);
         model.setBondName(nic.getName());
-        model.setAddress(nic.getAddress());
+        model.setAddress(nic.getIpv4Address());
 
         return model;
     }
@@ -283,7 +283,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         HostInterface hi = new HostInterface();
         hi.setInterface(nic);
         hi.setName(nic.getName());
-        hi.setAddress(nic.getAddress());
+        hi.setAddress(nic.getIpv4Address());
         hi.setMAC(nic.getMacAddress());
         hi.setSpeed(nic.getSpeed());
         hi.setRxRate(nic.getStatistics().getReceiveRate());
@@ -303,7 +303,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         hv.setInterface(nic);
         hv.setName(nic.getName());
         hv.setNetworkName(nic.getNetworkName());
-        hv.setAddress(nic.getAddress());
+        hv.setAddress(nic.getIpv4Address());
         hv.getPropertyChangedEvent().addListener(this);
 
         return hv;

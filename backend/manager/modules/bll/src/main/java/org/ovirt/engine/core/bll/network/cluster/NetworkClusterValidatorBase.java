@@ -81,7 +81,7 @@ public abstract class NetworkClusterValidatorBase {
                 interfaceDao.getAllInterfacesByClusterId(networkCluster.getClusterId());
         final VdsNetworkInterface missingIpNic =
                 interfacesByClusterId.stream().filter(nic -> networkName.equals(nic.getNetworkName()) &&
-                        StringUtils.isEmpty(nic.getAddress())).findFirst().orElse(null);
+                        StringUtils.isEmpty(nic.getIpv4Address())).findFirst().orElse(null);
 
         return missingIpNic;
     }

@@ -63,13 +63,13 @@ public class HostNicMapper {
         }
         if (model.isSetIp()) {
             if (model.getIp().isSetAddress()) {
-                entity.setAddress(model.getIp().getAddress());
+                entity.setIpv4Address(model.getIp().getAddress());
             }
             if (model.getIp().isSetGateway()) {
-                entity.setGateway(model.getIp().getGateway());
+                entity.setIpv4Gateway(model.getIp().getGateway());
             }
             if (model.getIp().isSetNetmask()) {
-                entity.setSubnet(model.getIp().getNetmask());
+                entity.setIpv4Subnet(model.getIp().getNetmask());
             }
         }
         if (model.isSetMac() && model.getMac().isSetAddress()) {
@@ -91,7 +91,7 @@ public class HostNicMapper {
         if(model.isSetBootProtocol()){
             NetworkBootProtocol networkBootProtocol = BootProtocolMapper.map(model.getBootProtocol(), null);
             if(networkBootProtocol != null){
-                entity.setBootProtocol(networkBootProtocol);
+                entity.setIpv4BootProtocol(networkBootProtocol);
             }
         }
 
@@ -180,16 +180,16 @@ public class HostNicMapper {
             model.setVlan(new org.ovirt.engine.api.model.Vlan());
             model.getVlan().setId(entity.getVlanId());
         }
-        if (entity.getAddress() != null || entity.getGateway() != null || entity.getSubnet() != null) {
+        if (entity.getIpv4Address() != null || entity.getIpv4Gateway() != null || entity.getIpv4Subnet() != null) {
             model.setIp(new Ip());
-            if (entity.getAddress() != null) {
-                model.getIp().setAddress(entity.getAddress());
+            if (entity.getIpv4Address() != null) {
+                model.getIp().setAddress(entity.getIpv4Address());
             }
-            if (entity.getGateway() != null) {
-                model.getIp().setGateway(entity.getGateway());
+            if (entity.getIpv4Gateway() != null) {
+                model.getIp().setGateway(entity.getIpv4Gateway());
             }
-            if (entity.getSubnet() != null) {
-                model.getIp().setNetmask(entity.getSubnet());
+            if (entity.getIpv4Subnet() != null) {
+                model.getIp().setNetmask(entity.getIpv4Subnet());
             }
         }
         if (entity.getMacAddress() != null) {
@@ -222,7 +222,7 @@ public class HostNicMapper {
             }
         }
 
-        BootProtocol bootProtocol = BootProtocolMapper.map(entity.getBootProtocol(), null);
+        BootProtocol bootProtocol = BootProtocolMapper.map(entity.getIpv4BootProtocol(), null);
         if(bootProtocol!=null){
             model.setBootProtocol(bootProtocol);
         }

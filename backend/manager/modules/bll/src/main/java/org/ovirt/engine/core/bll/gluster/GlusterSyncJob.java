@@ -237,14 +237,14 @@ public class GlusterSyncJob extends GlusterJob {
         List<VdsNetworkInterface> interfaces = getInterfaceDao().getAllInterfacesForVds(host.getId());
         for (VdsNetworkInterface iface : interfaces) {
             if (glusterNetwork.getName().equals(iface.getNetworkName()) &&
-                    StringUtils.isNotBlank(iface.getAddress())
-                    && !glusterServer.getKnownAddresses().contains(iface.getAddress())) {
+                    StringUtils.isNotBlank(iface.getIpv4Address())
+                    && !glusterServer.getKnownAddresses().contains(iface.getIpv4Address())) {
                 // get another server in the cluster
                 VDS upServer = getAlternateUpServerInCluster(host.getClusterId(), host.getId());
                 if (upServer != null) {
-                    boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getAddress());
+                    boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getIpv4Address());
                     if (peerProbed) {
-                        getGlusterServerDao().addKnownAddress(host.getId(), iface.getAddress());
+                        getGlusterServerDao().addKnownAddress(host.getId(), iface.getIpv4Address());
                     }
                 }
             }
@@ -338,8 +338,8 @@ public class GlusterSyncJob extends GlusterJob {
     private List<String> getVdsIps(VDS vds) {
         List<String> vdsIps = new ArrayList<>();
         for (VdsNetworkInterface iface : getInterfaceDao().getAllInterfacesForVds(vds.getId())) {
-            if (iface.getAddress() != null) {
-                vdsIps.add(iface.getAddress());
+            if (iface.getIpv4Address() != null) {
+                vdsIps.add(iface.getIpv4Address());
             }
         }
         return vdsIps;

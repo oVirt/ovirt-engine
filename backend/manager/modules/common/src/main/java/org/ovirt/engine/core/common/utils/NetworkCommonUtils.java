@@ -81,16 +81,16 @@ public class NetworkCommonUtils {
             return createDefaultIpConfiguration();
         }
 
-        IPv4Address iPv4Address = new IPv4Address();
-        if (nic.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            iPv4Address.setAddress(nic.getAddress());
-            iPv4Address.setNetmask(nic.getSubnet());
-            iPv4Address.setGateway(nic.getGateway());
+        IPv4Address ipv4Address = new IPv4Address();
+        if (nic.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            ipv4Address.setAddress(nic.getIpv4Address());
+            ipv4Address.setNetmask(nic.getIpv4Subnet());
+            ipv4Address.setGateway(nic.getIpv4Gateway());
         }
-        iPv4Address.setBootProtocol(nic.getBootProtocol());
+        ipv4Address.setBootProtocol(nic.getIpv4BootProtocol());
 
         IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setIPv4Addresses(Collections.singletonList(iPv4Address));
+        ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
 
         return ipConfiguration;
     }

@@ -2175,14 +2175,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The specified domain '${storageDomainName}' is not an export domain.")
     String ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN();
 
-    @DefaultStringValue("Bad format of IP address")
-    String NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT();
+    @DefaultStringValue("Bad format of IPv4 address")
+    String IPV4_ADDR_BAD_FORMAT();
 
     @DefaultStringValue("Bad format of an IPv6 address.")
     String BAD_IPV6_ADDRESS_FORMAT();
 
-    @DefaultStringValue("Bad format of gateway address")
-    String NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT();
+    @DefaultStringValue("Bad format of IPv4 gateway address")
+    String IPV4_ADDR_GATEWAY_BAD_FORMAT();
 
     @DefaultStringValue("Bad format of subnet mask")
     String NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();

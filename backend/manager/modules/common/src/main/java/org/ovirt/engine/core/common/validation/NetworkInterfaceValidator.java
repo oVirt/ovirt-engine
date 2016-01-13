@@ -24,8 +24,8 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
      */
     @Override
     public boolean isValid(VdsNetworkInterface iface, ConstraintValidatorContext context) {
-        NetworkBootProtocol bootProtocol = iface.getBootProtocol();
-        String address = iface.getAddress();
+        NetworkBootProtocol bootProtocol = iface.getIpv4BootProtocol();
+        String address = iface.getIpv4Address();
 
         if (bootProtocol != null && bootProtocol == STATIC_IP) {
             if (isNullOrEmpty(address)) {

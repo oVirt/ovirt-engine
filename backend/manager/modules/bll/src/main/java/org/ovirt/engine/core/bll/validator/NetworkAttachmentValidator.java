@@ -179,7 +179,7 @@ public class NetworkAttachmentValidator {
                 && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
             if (existingIface != null) {
-                String oldAddress = existingIface.getAddress();
+                String oldAddress = existingIface.getIpv4Address();
                 return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED,
                     ReplacementUtils.createSetVariableString(
                         VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,

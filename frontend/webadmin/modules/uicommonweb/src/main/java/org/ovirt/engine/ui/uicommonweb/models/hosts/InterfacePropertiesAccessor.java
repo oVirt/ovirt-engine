@@ -32,22 +32,22 @@ public interface InterfacePropertiesAccessor {
 
         @Override
         public String getAddress() {
-            return nic.getAddress();
+            return nic.getIpv4Address();
         }
 
         @Override
         public String getNetmask() {
-            return nic.getSubnet();
+            return nic.getIpv4Subnet();
         }
 
         @Override
         public String getGateway() {
-            return nic.getGateway();
+            return nic.getIpv4Gateway();
         }
 
         @Override
         public NetworkBootProtocol getBootProtocol() {
-            return nic.getBootProtocol();
+            return nic.getIpv4BootProtocol();
         }
 
         @Override

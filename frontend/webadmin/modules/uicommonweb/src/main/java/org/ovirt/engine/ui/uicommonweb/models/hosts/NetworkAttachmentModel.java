@@ -25,11 +25,12 @@ public class NetworkAttachmentModel extends Model {
     private NetworkAttachment networkAttachment;
     private HostNetworkQos networkQos;
 
-    private EntityModel<String> address;
-    private EntityModel<String> subnet;
-    private EntityModel<String> gateway;
+    private EntityModel<String> ipv4Address;
+    private EntityModel<String> ipv4Subnet;
+    private EntityModel<String> ipv4Gateway;
+    private NetworkBootProtocol ipv4BootProtocol = NetworkBootProtocol.values()[0];
+
     private EntityModel<String> name;
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
     private boolean noneBootProtocolAvailable = true;
     private boolean bootProtocolsAvailable;
     private EntityModel<Boolean> isToSync;
@@ -50,18 +51,18 @@ public class NetworkAttachmentModel extends Model {
         verifyInput(network, nic, networkAttachment);
 
         setName(new EntityModel<String>());
-        setAddress(new EntityModel<String>());
-        setSubnet(new EntityModel<String>());
-        setGateway(new EntityModel<String>());
+        setIpv4Address(new EntityModel<String>());
+        setIpv4Subnet(new EntityModel<String>());
+        setIpv4Gateway(new EntityModel<String>());
         setQosOverridden(new EntityModel<Boolean>());
         setQosModel(new HostNetworkQosParametersModel());
         setCustomPropertiesModel(new KeyValueModel());
         setIsToSync(new EntityModel<Boolean>());
         setBootProtocolsAvailable(true);
-        getGateway().setIsAvailable(false);
-        getAddress().setIsChangeable(false);
-        getSubnet().setIsChangeable(false);
-        getGateway().setIsChangeable(false);
+        getIpv4Gateway().setIsAvailable(false);
+        getIpv4Address().setIsChangeable(false);
+        getIpv4Subnet().setIsChangeable(false);
+        getIpv4Gateway().setIsChangeable(false);
         getQosOverridden().setIsAvailable(false);
         getQosModel().setIsAvailable(false);
         getCustomPropertiesModel().setIsAvailable(false);
@@ -80,36 +81,36 @@ public class NetworkAttachmentModel extends Model {
     }
 
     public void syncWith(InterfacePropertiesAccessor interfacePropertiesAccessor) {
-        setBootProtocol(interfacePropertiesAccessor.getBootProtocol());
-        getAddress().setEntity(interfacePropertiesAccessor.getAddress());
-        getSubnet().setEntity(interfacePropertiesAccessor.getNetmask());
-        getGateway().setEntity(interfacePropertiesAccessor.getGateway());
+        setIpv4BootProtocol(interfacePropertiesAccessor.getBootProtocol());
+        getIpv4Address().setEntity(interfacePropertiesAccessor.getAddress());
+        getIpv4Subnet().setEntity(interfacePropertiesAccessor.getNetmask());
+        getIpv4Gateway().setEntity(interfacePropertiesAccessor.getGateway());
         getQosModel().init(interfacePropertiesAccessor.getHostNetworkQos());
         getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(interfacePropertiesAccessor.getCustomProperties()));
     }
 
-    public EntityModel<String> getAddress() {
-        return address;
+    public EntityModel<String> getIpv4Address() {
+        return ipv4Address;
     }
 
-    private void setAddress(EntityModel<String> value) {
-        address = value;
+    private void setIpv4Address(EntityModel<String> value) {
+        ipv4Address = value;
     }
 
-    public EntityModel<String> getSubnet() {
-        return subnet;
+    public EntityModel<String> getIpv4Subnet() {
+        return ipv4Subnet;
     }
 
-    private void setSubnet(EntityModel<String> value) {
-        subnet = value;
+    private void setIpv4Subnet(EntityModel<String> value) {
+        ipv4Subnet = value;
     }
 
-    public EntityModel<String> getGateway() {
-        return gateway;
+    public EntityModel<String> getIpv4Gateway() {
+        return ipv4Gateway;
     }
 
-    private void setGateway(EntityModel<String> value) {
-        gateway = value;
+    private void setIpv4Gateway(EntityModel<String> value) {
+        ipv4Gateway = value;
     }
 
     public EntityModel<String> getName() {
@@ -120,13 +121,13 @@ public class NetworkAttachmentModel extends Model {
         name = value;
     }
 
-    public NetworkBootProtocol getBootProtocol() {
-        return bootProtocol;
+    public NetworkBootProtocol getIpv4BootProtocol() {
+        return ipv4BootProtocol;
     }
 
-    public void setBootProtocol(NetworkBootProtocol value) {
-        if (bootProtocol != value) {
-            bootProtocol = value;
+    public void setIpv4BootProtocol(NetworkBootProtocol value) {
+        if (ipv4BootProtocol != value) {
+            ipv4BootProtocol = value;
             bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
@@ -156,7 +157,7 @@ public class NetworkAttachmentModel extends Model {
     }
 
     public boolean getIsStaticAddress() {
-        return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
+        return getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
     public EntityModel<Boolean> getIsToSync() {
@@ -238,37 +239,37 @@ public class NetworkAttachmentModel extends Model {
     private void bootProtocolChanged() {
         updateCanSpecify();
 
-        getAddress().setIsValid(true);
-        getSubnet().setIsValid(true);
-        getGateway().setIsValid(true);
+        getIpv4Address().setIsValid(true);
+        getIpv4Subnet().setIsValid(true);
+        getIpv4Gateway().setIsValid(true);
     }
 
     private void updateCanSpecify() {
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
-        getAddress().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
+        getIpv4Address().setChangeProhibitionReason(isChangable && !staticIpChangeAllowed
                 ? ConstantsManager.getInstance().getConstants().staticIpAddressSameAsHostname() : null);
-        getAddress().setIsChangeable(isChangable && staticIpChangeAllowed);
-        getSubnet().setIsChangeable(isChangable);
-        getGateway().setIsChangeable(isChangable);
+        getIpv4Address().setIsChangeable(isChangable && staticIpChangeAllowed);
+        getIpv4Subnet().setIsChangeable(isChangable);
+        getIpv4Gateway().setIsChangeable(isChangable);
     }
 
     public boolean validate() {
-        getAddress().setIsValid(true);
-        getSubnet().setIsValid(true);
-        getGateway().setIsValid(true);
+        getIpv4Address().setIsValid(true);
+        getIpv4Subnet().setIsValid(true);
+        getIpv4Gateway().setIsValid(true);
 
         if (getIsStaticAddress()) {
-            getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(),
+            getIpv4Address().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getIpv4Subnet().validateEntity(new IValidation[] { new NotEmptyValidation(),
                     new SubnetMaskValidation(true) });
-            getGateway().validateEntity(new IValidation[] { new IpAddressValidation(true) });
+            getIpv4Gateway().validateEntity(new IValidation[] { new IpAddressValidation(true) });
         }
 
         getQosModel().validate();
         getCustomPropertiesModel().validate();
 
-        return getAddress().getIsValid() && getSubnet().getIsValid()
-                && getGateway().getIsValid() && getQosModel().getIsValid() && getCustomPropertiesModel().getIsValid();
+        return getIpv4Address().getIsValid() && getIpv4Subnet().getIsValid() && getIpv4Gateway().getIsValid()
+                && getQosModel().getIsValid() && getCustomPropertiesModel().getIsValid();
     }
 
     private void isToSyncChanged() {

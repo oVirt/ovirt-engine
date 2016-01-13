@@ -17,13 +17,13 @@ public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator
     public boolean isValid(List<VdsNetworkInterface> value, ConstraintValidatorContext context) {
         Collection<String> staticIps = new HashSet<>();
         for (VdsNetworkInterface networkInterface : value) {
-            String address = networkInterface.getAddress();
-            if (networkInterface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+            String address = networkInterface.getIpv4Address();
+            if (networkInterface.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP
                     && address != null && !address.isEmpty()) {
-                if (staticIps.contains(networkInterface.getAddress())) {
+                if (staticIps.contains(networkInterface.getIpv4Address())) {
                     return false;
                 } else {
-                    staticIps.add(networkInterface.getAddress());
+                    staticIps.add(networkInterface.getIpv4Address());
                 }
             }
         }

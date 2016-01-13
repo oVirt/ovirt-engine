@@ -67,8 +67,8 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     private static VdsNetworkInterface createVdsNetworkInterfaceWithStaticIp(String ip) {
         VdsNetworkInterface networkInterface = new VdsNetworkInterface();
-        networkInterface.setAddress(ip);
-        networkInterface.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        networkInterface.setIpv4Address(ip);
+        networkInterface.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
         return networkInterface;
     }
 

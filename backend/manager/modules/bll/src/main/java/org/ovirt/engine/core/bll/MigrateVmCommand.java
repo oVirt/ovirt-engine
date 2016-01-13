@@ -306,7 +306,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         for (VdsNetworkInterface nic : nics) {
             if (migrationNetworkName.equals(nic.getNetworkName()) && migrationInterfaceUp(nic, nics)) {
-                return nic.getAddress();
+                return nic.getIpv4Address();
             }
         }
 

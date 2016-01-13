@@ -14,7 +14,7 @@ public class InterfaceByAddressPredicate implements Predicate<VdsNetworkInterfac
 
     @Override
     public boolean test(VdsNetworkInterface iface) {
-        return managementAddress == null ? false : managementAddress.equals(iface.getAddress());
+        return managementAddress == null ? false : managementAddress.equals(iface.getIpv4Address());
     }
 
 }

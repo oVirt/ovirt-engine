@@ -78,10 +78,10 @@ public class HostNetworkAttachmentsPersisterTest {
 
         customPropertiesForNics.add(interfaceWithAttachedClusterNetworkA, createCustomProperties());
 
-        interfaceWithAttachedClusterNetworkA.setBootProtocol(NetworkBootProtocol.STATIC_IP);
-        interfaceWithAttachedClusterNetworkA.setAddress(IP_ADDRESS);
-        interfaceWithAttachedClusterNetworkA.setSubnet(NETMASK);
-        interfaceWithAttachedClusterNetworkA.setGateway(GATEWAY);
+        interfaceWithAttachedClusterNetworkA.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
+        interfaceWithAttachedClusterNetworkA.setIpv4Address(IP_ADDRESS);
+        interfaceWithAttachedClusterNetworkA.setIpv4Subnet(NETMASK);
+        interfaceWithAttachedClusterNetworkA.setIpv4Gateway(GATEWAY);
 
         // host interface not attached to any network.
         interfaceWithoutAttachedNetwork = createVdsNetworkInterfaceWithId("interfaceWithoutAttachedNetwork");
@@ -475,10 +475,10 @@ public class HostNetworkAttachmentsPersisterTest {
     private void assertIpConfiguration(IpConfiguration ipConfiguration) {
         IPv4Address primaryAddress = ipConfiguration.getPrimaryAddress();
 
-        assertThat(primaryAddress.getBootProtocol(), is(interfaceWithAttachedClusterNetworkA.getBootProtocol()));
-        assertThat(primaryAddress.getAddress(), is(interfaceWithAttachedClusterNetworkA.getAddress()));
-        assertThat(primaryAddress.getNetmask(), is(interfaceWithAttachedClusterNetworkA.getSubnet()));
-        assertThat(primaryAddress.getGateway(), is(interfaceWithAttachedClusterNetworkA.getGateway()));
+        assertThat(primaryAddress.getBootProtocol(), is(interfaceWithAttachedClusterNetworkA.getIpv4BootProtocol()));
+        assertThat(primaryAddress.getAddress(), is(interfaceWithAttachedClusterNetworkA.getIpv4Address()));
+        assertThat(primaryAddress.getNetmask(), is(interfaceWithAttachedClusterNetworkA.getIpv4Subnet()));
+        assertThat(primaryAddress.getGateway(), is(interfaceWithAttachedClusterNetworkA.getIpv4Gateway()));
     }
 
     private void assertIpConfiguration(IpConfiguration persistedIpConfiguration, IpConfiguration ipConfiguration) {

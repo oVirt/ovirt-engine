@@ -25,7 +25,7 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
         VDS vds = new VDS();
         vds.setId(vdsID);
         VdsNetworkInterface managementInterface = new VdsNetworkInterface();
-        managementInterface.setAddress("my_address");
+        managementInterface.setIpv4Address("my_address");
 
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vmID);

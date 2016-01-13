@@ -211,7 +211,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
-        if (displayNic.getBootProtocol() == NetworkBootProtocol.NONE) {
+        if (displayNic.getIpv4BootProtocol() == NetworkBootProtocol.NONE) {
             log.warn("Host {} has the display network {} configured with improper boot protocol on interface {}.",
                     host.getName(),
                     displayNetwork.getName(),

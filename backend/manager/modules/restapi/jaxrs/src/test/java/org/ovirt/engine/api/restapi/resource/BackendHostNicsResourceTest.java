@@ -137,7 +137,7 @@ public class BackendHostNicsResourceTest
         entity.setSpeed(NIC_SPEED);
         entity = setUpStatistics(entity, GUIDS[index]);
         entity.getStatistics().setStatus(NIC_STATUS);
-        entity.setBootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
         return entity;
     }
 
@@ -148,7 +148,7 @@ public class BackendHostNicsResourceTest
         entity.setNetworkName(NETWORK_NAME);
         entity.setSpeed(NIC_SPEED);
         entity.setBonded(true);
-        entity.setBootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
         return setUpStatistics(entity, MASTER_GUID);
     }
 
@@ -159,7 +159,7 @@ public class BackendHostNicsResourceTest
         entity.setNetworkName(NETWORK_NAME);
         entity.setSpeed(NIC_SPEED);
         entity.setBondName(MASTER_NAME);
-        entity.setBootProtocol(BOOT_PROTOCOL);
+        entity.setIpv4BootProtocol(BOOT_PROTOCOL);
         return setUpStatistics(entity, SLAVE_GUID);
     }
 

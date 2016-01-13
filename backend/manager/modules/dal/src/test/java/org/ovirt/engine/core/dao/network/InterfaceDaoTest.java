@@ -57,13 +57,13 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         newVdsInterface.setId(Guid.newGuid());
         newVdsInterface.setName("eth77");
         newVdsInterface.setNetworkName("enginet");
-        newVdsInterface.setAddress("192.168.122.177");
-        newVdsInterface.setSubnet("255.255.255.0");
+        newVdsInterface.setIpv4Address("192.168.122.177");
+        newVdsInterface.setIpv4Subnet("255.255.255.0");
         newVdsInterface.setSpeed(1000);
         newVdsInterface.setType(3);
-        newVdsInterface.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        newVdsInterface.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
         newVdsInterface.setMacAddress("01:C0:81:21:71:17");
-        newVdsInterface.setGateway("192.168.122.1");
+        newVdsInterface.setIpv4Gateway("192.168.122.1");
         newVdsInterface.setMtu(1500);
         newVdsInterface.setQos(newQos);
 

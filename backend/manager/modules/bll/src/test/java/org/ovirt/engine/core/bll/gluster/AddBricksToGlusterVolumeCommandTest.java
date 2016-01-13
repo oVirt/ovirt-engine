@@ -166,7 +166,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setNetworkName(GLUSTER_NW);
         iface.setId(Guid.newGuid());
-        iface.setAddress(SERVER_ADDRESS);
+        iface.setIpv4Address(SERVER_ADDRESS);
         ifaces.add(iface);
         return ifaces;
     }

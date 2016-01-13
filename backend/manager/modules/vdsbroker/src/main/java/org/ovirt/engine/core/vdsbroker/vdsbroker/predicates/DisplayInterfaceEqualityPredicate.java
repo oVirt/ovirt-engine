@@ -23,7 +23,7 @@ public final class DisplayInterfaceEqualityPredicate implements Predicate<VdsNet
         // at this stage both of the objects are not null
         EqualsBuilder eb = new EqualsBuilder();
         eb.append(iface.getName(), otherIface.getName());
-        eb.append(iface.getAddress(), otherIface.getAddress());
+        eb.append(iface.getIpv4Address(), otherIface.getIpv4Address());
         return eb.isEquals();
     }
 }

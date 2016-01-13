@@ -435,7 +435,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         VdsNetworkInterface existingInterface = new VdsNetworkInterface();
         existingInterface.setName("nicName");
-        existingInterface.setAddress("anyAddress");
+        existingInterface.setIpv4Address("anyAddress");
         existingInterface.setNetworkName(network.getName());
 
         NetworkAttachment attachment =
@@ -443,7 +443,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNicName(existingInterface.getName());
         attachment.setNetworkId(network.getId());
 
-        host.setHostName(existingInterface.getAddress());
+        host.setHostName(existingInterface.getIpv4Address());
 
         when(networkDaoMock.get(attachment.getNetworkId())).thenReturn(network);
 

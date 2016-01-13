@@ -212,7 +212,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
         for (VdsNetworkInterface nic : nics) {
             if (glusterNetworkName.equals(nic.getNetworkName())) {
-                return nic.getAddress();
+                return nic.getIpv4Address();
             }
         }
         return null;

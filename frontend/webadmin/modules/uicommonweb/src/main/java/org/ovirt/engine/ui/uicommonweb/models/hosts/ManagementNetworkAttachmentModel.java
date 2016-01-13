@@ -12,6 +12,6 @@ public class ManagementNetworkAttachmentModel extends NetworkAttachmentModel {
         super(network, nic, networkAttachment, networkQos);
         setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
         setNoneBootProtocolAvailable(false);
-        getGateway().setIsAvailable(true);
+        getIpv4Gateway().setIsAvailable(true);
     }
 }

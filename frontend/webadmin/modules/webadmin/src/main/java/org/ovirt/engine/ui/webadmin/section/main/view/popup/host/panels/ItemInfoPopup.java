@@ -212,13 +212,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getOriginalIface();
-        NetworkBootProtocol bootProtocol = entity.getBootProtocol();
+        NetworkBootProtocol bootProtocol = entity.getIpv4BootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
         if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
-            addRow(constants.addressItemInfo(), entity.getAddress());
-            addRow(constants.subnetItemInfo(), entity.getSubnet());
-            addRow(constants.gatewayItemInfo(), entity.getGateway());
+            addRow(constants.addressItemInfo(), entity.getIpv4Address());
+            addRow(constants.subnetItemInfo(), entity.getIpv4Subnet());
+            addRow(constants.gatewayItemInfo(), entity.getIpv4Gateway());
         }
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());

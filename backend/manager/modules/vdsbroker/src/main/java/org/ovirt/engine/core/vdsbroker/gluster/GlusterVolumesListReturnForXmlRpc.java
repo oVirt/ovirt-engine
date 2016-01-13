@@ -257,7 +257,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
         for (VdsNetworkInterface nic : nics) {
             if (glusterNetworkName.equals(nic.getNetworkName())) {
-                return networkAddress.equals(nic.getAddress());
+                return networkAddress.equals(nic.getIpv4Address());
             }
         }
         return false;

@@ -29,7 +29,7 @@ public class GetManagementInterfaceAddressByVmIdQuery<P extends IdQueryParameter
             }
         }
 
-        getQueryReturnValue().setReturnValue(nic == null ? null : nic.getAddress());
+        getQueryReturnValue().setReturnValue(nic == null ? null : nic.getIpv4Address());
     }
 
 }

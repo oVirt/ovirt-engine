@@ -46,23 +46,23 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
     StringEntityModelLabelEditor nameEditor;
 
     @UiField(provided = true)
-    EnumRadioEditor<NetworkBootProtocol> bootProtocol;
+    EnumRadioEditor<NetworkBootProtocol> ipv4BootProtocol;
 
     @UiField
     @Ignore
-    StringEntityModelLabelEditor bootProtocolLabel;
+    StringEntityModelLabelEditor ipv4BootProtocolLabel;
 
     @UiField
-    @Path(value = "address.entity")
-    StringEntityModelTextBoxEditor address;
+    @Path(value = "ipv4Address.entity")
+    StringEntityModelTextBoxEditor ipv4Address;
 
     @UiField
-    @Path(value = "subnet.entity")
-    StringEntityModelTextBoxEditor subnet;
+    @Path(value = "ipv4Subnet.entity")
+    StringEntityModelTextBoxEditor ipv4Subnet;
 
     @UiField
-    @Path(value = "gateway.entity")
-    StringEntityModelTextBoxEditor gateway;
+    @Path(value = "ipv4Gateway.entity")
+    StringEntityModelTextBoxEditor ipv4Gateway;
 
     @UiField(provided = true)
     @Path(value = "qosOverridden.entity")
@@ -107,7 +107,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
 
         super(eventBus);
 
-        bootProtocol = new EnumRadioEditor<>(NetworkBootProtocol.class);
+        ipv4BootProtocol = new EnumRadioEditor<>(NetworkBootProtocol.class);
         qosWidget = new HostNetworkQosWidget();
         customPropertiesWidget = new KeyValueWidget<>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -118,7 +118,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Set Styles
-        bootProtocolLabel.asValueBox().setVisible(false);
+        ipv4BootProtocolLabel.asValueBox().setVisible(false);
         qosOverridden.setContentWidgetContainerStyleName(style.syncInfo());
         customPropertiesLabel.asValueBox().setVisible(false);
         isToSync.setContentWidgetContainerStyleName(style.syncInfo());
@@ -126,11 +126,11 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
 
         // Localize
         nameEditor.setLabel(constants.nameHostPopup() + ":"); //$NON-NLS-1$
-        bootProtocolLabel.setLabel(constants.bootProtocolHostPopup() +":"); //$NON-NLS-1$
-        bootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
-        address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
-        subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
-        gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
+        ipv4BootProtocolLabel.setLabel(constants.bootProtocolHostPopup() +":"); //$NON-NLS-1$
+        ipv4BootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
+        ipv4Address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
+        ipv4Subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
+        ipv4Gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
         qosOverridden.setLabel(constants.qosOverrideLabel());
         customPropertiesLabel.setLabel(constants.customPropertiesHostPopup());
         isToSync.setLabel(constants.syncNetwork());
@@ -168,9 +168,9 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
 
     protected void enableDisableByBootProtocol(NetworkAttachmentModel model) {
         boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
-        bootProtocolLabel.setEnabled(bootProtocolsAvailable);
-        bootProtocol.setEnabled(bootProtocolsAvailable);
-        bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
+        ipv4BootProtocolLabel.setEnabled(bootProtocolsAvailable);
+        ipv4BootProtocol.setEnabled(bootProtocolsAvailable);
+        ipv4BootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
     }
 
     @Override
@@ -181,7 +181,7 @@ public class NetworkAttachmentPopupView extends AbstractModelBoundPopupView<Netw
 
     @Override
     public void focusInput() {
-        bootProtocol.setFocus(true);
+        ipv4BootProtocol.setFocus(true);
     }
 
     interface Style extends CssResource {

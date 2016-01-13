@@ -10,7 +10,7 @@ public class NoCfgBootProtocolResolver extends BootProtocolResolver {
 
     public NoCfgBootProtocolResolver(Map<String, Object> entry, VdsNetworkInterface iface) {
         super(entry, iface);
-        ipAddress = iface.getAddress();
+        ipAddress = iface.getIpv4Address();
     }
 
     @Override

@@ -351,11 +351,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         .getMessages()
                         .editNetworkTitle(logicalNetworkModelName));
                 networkDialogModel.getName().setIsAvailable(false);
-                networkDialogModel.getGateway().setIsAvailable(true);
+                networkDialogModel.getIpv4Gateway().setIsAvailable(true);
             }
 
             if (nic != null && nic.getId() != null) {
-                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getAddress()));
+                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(nic.getIpv4Address()));
             }
 
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
@@ -395,11 +395,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         return;
                     }
                     IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getPrimaryAddress();
-                    iPv4Address.setBootProtocol(networkDialogModel.getBootProtocol());
+                    iPv4Address.setBootProtocol(networkDialogModel.getIpv4BootProtocol());
                     if (networkDialogModel.getIsStaticAddress()) {
-                        iPv4Address.setAddress(networkDialogModel.getAddress().getEntity());
-                        iPv4Address.setNetmask(networkDialogModel.getSubnet().getEntity());
-                        iPv4Address.setGateway(networkDialogModel.getGateway().getEntity());
+                        iPv4Address.setAddress(networkDialogModel.getIpv4Address().getEntity());
+                        iPv4Address.setNetmask(networkDialogModel.getIpv4Subnet().getEntity());
+                        iPv4Address.setGateway(networkDialogModel.getIpv4Gateway().getEntity());
                     }
 
                     if (networkDialogModel.getQosModel().getIsAvailable()) {

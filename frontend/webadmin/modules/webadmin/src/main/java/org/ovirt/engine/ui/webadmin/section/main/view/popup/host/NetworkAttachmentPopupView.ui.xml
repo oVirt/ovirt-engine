@@ -26,11 +26,11 @@
 		<d:content>
 			<g:VerticalPanel ui:field="mainPanel" >
 				<ge:StringEntityModelLabelEditor ui:field="nameEditor" />
-				<ge:StringEntityModelLabelEditor ui:field="bootProtocolLabel" />
-				<e:EnumRadioEditor ui:field="bootProtocol" />
-				<ge:StringEntityModelTextBoxEditor ui:field="address" />
-				<ge:StringEntityModelTextBoxEditor ui:field="subnet" />
-				<ge:StringEntityModelTextBoxEditor ui:field="gateway" />
+				<ge:StringEntityModelLabelEditor ui:field="ipv4BootProtocolLabel" />
+				<e:EnumRadioEditor ui:field="ipv4BootProtocol" />
+				<ge:StringEntityModelTextBoxEditor ui:field="ipv4Address" />
+				<ge:StringEntityModelTextBoxEditor ui:field="ipv4Subnet" />
+				<ge:StringEntityModelTextBoxEditor ui:field="ipv4Gateway" />
 				<g:FlowPanel addStyleNames="{style.sectionStyle}" >
 					<ge:EntityModelCheckBoxEditor ui:field="qosOverridden" />
 					<q:HostNetworkQosWidget ui:field="qosWidget" />

@@ -1729,8 +1729,8 @@ public class VdsBrokerObjectsBuilder {
                     List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
-                        iface.setAddress(addr);
-                        iface.setSubnet(subnet);
+                        iface.setIpv4Address(addr);
+                        iface.setIpv4Subnet(subnet);
                         iface.setBridged(bridgedNetwork);
                         iface.setQos(qos);
 
@@ -2010,8 +2010,8 @@ public class VdsBrokerObjectsBuilder {
 
         Map<String, Object> nicProperties = ifaceEntry.getValue();
         if (nicProperties != null) {
-            iface.setAddress(extractAddress(nicProperties));
-            iface.setSubnet(extractSubnet(nicProperties));
+            iface.setIpv4Address(extractAddress(nicProperties));
+            iface.setIpv4Subnet(extractSubnet(nicProperties));
 
             final Integer mtu = assignIntValue(nicProperties, VdsProperties.MTU);
             if (mtu != null) {
@@ -2097,7 +2097,7 @@ public class VdsBrokerObjectsBuilder {
      *            the gateway value to be set
      */
     public static void setGatewayIfNecessary(VdsNetworkInterface iface, String gateway) {
-        iface.setGateway(gateway);
+        iface.setIpv4Gateway(gateway);
     }
 
     private static ManagementNetworkUtil getManagementNetworkUtil() {

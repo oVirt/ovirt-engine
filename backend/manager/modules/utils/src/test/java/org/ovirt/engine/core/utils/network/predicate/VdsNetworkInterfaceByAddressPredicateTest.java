@@ -13,7 +13,7 @@ public class VdsNetworkInterfaceByAddressPredicateTest extends AbstractVdsNetwor
     @Override
     public VdsNetworkInterface generateVdsNetworkInterface(String address) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
-        iface.setAddress(address);
+        iface.setIpv4Address(address);
         return iface;
     }
 
