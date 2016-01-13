@@ -28,9 +28,7 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
-        List<Guid> failedGuids = getParameters().getImageList() == null
-                ? Collections.emptyList()
-                : getParameters().getImageList().stream()
+        List<Guid> failedGuids = getParameters().getImageList().stream()
                         .filter(this::volumeExists)
                         .collect(toList());
 
