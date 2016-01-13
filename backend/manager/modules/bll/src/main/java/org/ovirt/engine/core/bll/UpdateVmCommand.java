@@ -421,54 +421,32 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void updateGraphicsDevices() {
-        Set<Map.Entry<GraphicsType, GraphicsDevice>> graphicalDevicesSet =
+        Set<Map.Entry<GraphicsType, GraphicsDevice>> entries =
                 getParameters().getGraphicsDevices().entrySet();
         /* Devices have to be removed first and then added to prevent having multiple devices at the same time
            which is sometimes prohibited (FeatureSupported.multipleGraphicsSupported) */
-        for (Map.Entry<GraphicsType, GraphicsDevice> entry : graphicalDevicesSet) {
-            if (entry.getValue() == null) {
-                updateGraphicsDevice(entry.getKey());
-            }
-        }
-        for (Map.Entry<GraphicsType, GraphicsDevice> entry : graphicalDevicesSet) {
-            if (entry.getValue() != null) {
-                updateGraphicsDevice(entry.getKey());
-            }
-        }
+        entries.stream().filter(entry -> entry.getValue() == null).forEach(entry -> removeGraphicsDevice(entry.getKey()));
+        entries.stream().filter(entry -> entry.getValue() != null).forEach(entry -> addOrUpdateGraphicsDevice(entry.getValue()));
     }
 
-    private void updateGraphicsDevice(GraphicsType type) {
+    private void removeGraphicsDevice(GraphicsType type) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(type);
-        GraphicsDevice paramsGraphicsDevice = getParameters().getGraphicsDevices().get(type);
-        if (existingGraphicsDevice == null) {
-            if (paramsGraphicsDevice != null) {
-                paramsGraphicsDevice.setVmId(getVmId());
-                getBackend().runInternalAction(VdcActionType.AddGraphicsDevice,
-                        new GraphicsParameters(paramsGraphicsDevice));
-            }
-        } else {
-            if (paramsGraphicsDevice == null) {
-                getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
-                        new GraphicsParameters(existingGraphicsDevice));
-            } else {
-                paramsGraphicsDevice.setVmId(getVmId());
-                getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice,
-                        new GraphicsParameters(paramsGraphicsDevice));
-            }
+        if (existingGraphicsDevice != null) {
+            getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
+                    new GraphicsParameters(existingGraphicsDevice));
         }
     }
 
-    // first dev or null
+    private void addOrUpdateGraphicsDevice(GraphicsDevice device) {
+        GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(device.getGraphicsType());
+        device.setVmId(getVmId());
+        getBackend().runInternalAction(
+                existingGraphicsDevice == null ? VdcActionType.AddGraphicsDevice : VdcActionType.UpdateGraphicsDevice,
+                new GraphicsParameters(device));
+    }
+
     private GraphicsDevice getGraphicsDevOfType(GraphicsType type) {
-        List<GraphicsDevice> graphicsDevices = getGraphicsDevices();
-
-        for (GraphicsDevice dev : graphicsDevices) {
-            if (dev.getGraphicsType() == type) {
-                return dev;
-            }
-        }
-
-        return null;
+        return getGraphicsDevices().stream().filter(dev -> dev.getGraphicsType() == type).findFirst().orElse(null);
     }
 
     private List<GraphicsDevice> getGraphicsDevices() {
