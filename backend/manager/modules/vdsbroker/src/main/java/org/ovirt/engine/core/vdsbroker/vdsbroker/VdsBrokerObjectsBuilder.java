@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -111,6 +113,8 @@ public class VdsBrokerObjectsBuilder {
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static final Comparator<VdsNumaNode> numaNodeComparator = Comparator.comparing(VdsNumaNode::getIndex);
+    private static final Pattern IPV6_ADDRESS_CAPTURE_PREFIX_PATTERN = Pattern.compile("^.*?/(\\d+)?$");
+    private static final Pattern IPV6_ADDRESS_CAPTURE_PATTERN = Pattern.compile("^([^/]+)(:?/\\d{1,3})?$");
 
     public static VM buildVmsDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
         VmStatic vmStatic = buildVmStaticDataFromExternalProvider(xmlRpcStruct);
@@ -1721,16 +1725,24 @@ public class VdsBrokerObjectsBuilder {
                      * only be extracted for bridged networks and from bridge entries (not network entries)
                      **/
                     Map<String, Object> effectiveProperties =
-                            (bridgedNetwork && bridgeProperties != null) ? bridgeProperties : networkProperties;
-                    String addr = extractAddress(effectiveProperties);
-                    String subnet = extractSubnet(effectiveProperties);
-                    String gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
+                            (bridgedNetwork && bridgeProperties != null) ?
+                                    bridgeProperties : networkProperties;
+                    String v4addr = extractAddress(effectiveProperties);
+                    String v4Subnet = extractSubnet(effectiveProperties);
+                    String v4gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
+
+                    final String rawIpv6Address = getIpv6Address(effectiveProperties);
+                    String v6Addr = extractIpv6Address(rawIpv6Address);
+                    Integer v6Prefix = extractIpv6Prefix(rawIpv6Address);
+                    String v6gateway = (String) effectiveProperties.get(VdsProperties.IPV6_GLOBAL_GATEWAY);
 
                     List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
-                        iface.setIpv4Address(addr);
-                        iface.setIpv4Subnet(subnet);
+                        iface.setIpv4Address(v4addr);
+                        iface.setIpv4Subnet(v4Subnet);
+                        iface.setIpv6Address(v6Addr);
+                        iface.setIpv6Prefix(v6Prefix);
                         iface.setBridged(bridgedNetwork);
                         iface.setQos(qos);
 
@@ -1739,7 +1751,8 @@ public class VdsBrokerObjectsBuilder {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
                         }
 
-                        setGatewayIfNecessary(iface, gateway);
+                        iface.setIpv4Gateway(v4gateway);
+                        iface.setIpv6Gateway(v6gateway);
 
                         if (bridgedNetwork) {
                             addBootProtocol(effectiveProperties, host, iface);
@@ -2013,6 +2026,10 @@ public class VdsBrokerObjectsBuilder {
             iface.setIpv4Address(extractAddress(nicProperties));
             iface.setIpv4Subnet(extractSubnet(nicProperties));
 
+            final String ipv6Address = getIpv6Address(nicProperties);
+            iface.setIpv6Address(extractIpv6Address(ipv6Address));
+            iface.setIpv6Prefix(extractIpv6Prefix(ipv6Address));
+
             final Integer mtu = assignIntValue(nicProperties, VdsProperties.MTU);
             if (mtu != null) {
                 iface.setMtu(mtu);
@@ -2022,12 +2039,43 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
+    static Integer extractIpv6Prefix(String ipv6Address) {
+        if (ipv6Address == null) {
+            return null;
+        }
+
+        final Matcher matcher = IPV6_ADDRESS_CAPTURE_PREFIX_PATTERN.matcher(ipv6Address);
+        if (matcher.matches()) {
+            final String prefixString = matcher.group(1);
+            return Integer.valueOf(prefixString);
+        }
+        return null;
+    }
+
     private static String extractAddress(Map<String, Object> properties) {
         return (String) properties.get("addr");
     }
 
     private static String extractSubnet(Map<String, Object> properties) {
         return (String) properties.get("netmask");
+    }
+
+    private static String getIpv6Address(Map<String, Object> properties) {
+        final Object[] ipv6Addresses = (Object[]) properties.get("ipv6addrs");
+        if (ipv6Addresses == null || ipv6Addresses.length == 0) {
+            return null;
+        }
+        return (String) ipv6Addresses[0];
+    }
+
+    static String extractIpv6Address(String address) {
+        if (StringUtils.isEmpty(address)) {
+            return null;
+        }
+
+        final Matcher matcher = IPV6_ADDRESS_CAPTURE_PATTERN.matcher(address);
+
+        return matcher.matches() ? matcher.group(1) : address;
     }
 
     /**
@@ -2060,12 +2108,56 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void addBootProtocol(Map<String, Object> entry, VDS host, VdsNetworkInterface iface) {
-        BootProtocolResolver resolver =
-                FeatureSupported.cfgEntriesDeprecated(host.getClusterCompatibilityVersion())
-                        ? new NoCfgBootProtocolResolver(entry, iface)
-                        : new CfgBootProtocolResolver(entry, iface);
-        resolver.resolve();
+    private static BootProtocolResolver getBootProtocolResolver() {
+        return Injector.get(BootProtocolResolver.class);
+    }
+
+    private static void addBootProtocol(Map<String, Object> nicProperties, VDS host, VdsNetworkInterface iface) {
+        if (nicProperties == null) {
+            return;
+        }
+
+        final boolean cfgEntriesDeprecated =
+                FeatureSupported.cfgEntriesDeprecated(host.getClusterCompatibilityVersion());
+
+        final BootProtocolResolver resolver = getBootProtocolResolver();
+
+        setBootProtocolAndGateway(
+                resolver,
+                cfgEntriesDeprecated ?
+                        new NoCfgIpv4InfoFetcher(nicProperties, iface.getIpv4Address()) :
+                        new CfgIpv4InfoFetcher(nicProperties),
+                iface::setIpv4BootProtocol,
+                iface::setIpv4Gateway);
+
+        if (cfgEntriesDeprecated) {
+            setBootProtocolAndGateway(
+                    resolver,
+                    new NoCfgIpv6InfoFetcher(nicProperties, iface.getIpv6Address()),
+                    iface::setIpv6BootProtocol,
+                    iface::setIpv6Gateway);
+        }
+    }
+
+    private static void setBootProtocolAndGateway(
+            BootProtocolResolver bootProtocolResolver, IpInfoFetcher ipInfoFetcher,
+            Consumer<NetworkBootProtocol> bootProtocolSetter,
+            Consumer<String> gatewaySetter) {
+
+        final NetworkBootProtocol bootProtocol = bootProtocolResolver.resolve(ipInfoFetcher);
+        bootProtocolSetter.accept(bootProtocol);
+        setGateway(bootProtocol, ipInfoFetcher, gatewaySetter);
+    }
+
+    private static void setGateway(NetworkBootProtocol bootProtocol,
+            IpInfoFetcher ipInfoFetcher,
+            Consumer<String> gatewaySetter) {
+        if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
+            String gateway = ipInfoFetcher.fetchGateway();
+            if (StringUtils.isNotEmpty(gateway)) {
+                gatewaySetter.accept(gateway);
+            }
+        }
     }
 
     private static void addBondDeviceToHost(VDS vds, VdsNetworkInterface iface, Object[] interfaces) {
@@ -2080,24 +2172,6 @@ public class VdsBrokerObjectsBuilder {
                 }
             }
         }
-    }
-
-    /**
-     * Store the gateway for either of these cases:
-     * 1. any host network, in a cluster that supports multiple gateways
-     * 2. management network, no matter the cluster compatibility version
-     * 3. the active interface (could happen when there is no management network yet)
-     * If gateway was provided for non-management network when multiple gateways aren't supported, its value should be ignored.
-     *
-     * @param iface
-     *            the host network interface
-     * @param host
-     *            the host whose interfaces are being edited
-     * @param gateway
-     *            the gateway value to be set
-     */
-    public static void setGatewayIfNecessary(VdsNetworkInterface iface, String gateway) {
-        iface.setIpv4Gateway(gateway);
     }
 
     private static ManagementNetworkUtil getManagementNetworkUtil() {
