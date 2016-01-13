@@ -43,7 +43,7 @@
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value><![CDATA[$DomainAdminPassword$]]></Value>
+                    <Value><![CDATA[$AdminPassword$]]></Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
