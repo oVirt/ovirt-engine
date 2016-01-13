@@ -10,6 +10,7 @@ public class ElementIdCellTree<M extends TreeModelWithElementId> extends CellTre
 
     public <T> ElementIdCellTree(M viewModel, T rootValue, Resources resources) {
         super(viewModel, rootValue, resources);
+        setDefaultNodeSize(Integer.MAX_VALUE);
     }
 
     @Override
