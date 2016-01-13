@@ -413,7 +413,11 @@ CREATE OR REPLACE FUNCTION Insertvds_interface (
     v_vlan_id INT,
     v_mtu INT,
     v_bridged BOOLEAN,
-    v_labels TEXT
+    v_labels TEXT,
+    v_ipv6_boot_protocol INT,
+    v_ipv6_address VARCHAR(50),
+    v_ipv6_prefix INT,
+    v_ipv6_gateway VARCHAR(50)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -437,7 +441,11 @@ BEGIN
         vlan_id,
         mtu,
         bridged,
-        labels
+        labels,
+        ipv6_address,
+        ipv6_gateway,
+        ipv6_prefix,
+        ipv6_boot_protocol
         )
     VALUES (
         v_addr,
@@ -459,7 +467,11 @@ BEGIN
         v_vlan_id,
         v_mtu,
         v_bridged,
-        v_labels
+        v_labels,
+        v_ipv6_address,
+        v_ipv6_gateway,
+        v_ipv6_prefix,
+        v_ipv6_boot_protocol
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -484,7 +496,11 @@ CREATE OR REPLACE FUNCTION Updatevds_interface (
     v_vlan_id INT,
     v_mtu INT,
     v_bridged BOOLEAN,
-    v_labels TEXT
+    v_labels TEXT,
+    v_ipv6_address VARCHAR(50),
+    v_ipv6_gateway VARCHAR(50),
+    v_ipv6_prefix INT,
+    v_ipv6_boot_protocol INT
     )
 RETURNS VOID
     --The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -510,7 +526,11 @@ BEGIN
         _update_date = LOCALTIMESTAMP,
         mtu = v_mtu,
         bridged = v_bridged,
-        labels = v_labels
+        labels = v_labels,
+        ipv6_address = v_ipv6_address,
+        ipv6_gateway = v_ipv6_gateway,
+        ipv6_prefix = v_ipv6_prefix,
+        ipv6_boot_protocol = v_ipv6_boot_protocol
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

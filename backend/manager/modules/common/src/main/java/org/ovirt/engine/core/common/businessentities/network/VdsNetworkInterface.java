@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.Ipv6;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameOfVdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
@@ -38,6 +41,18 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     @Pattern(regexp = ValidationUtils.IPV4_PATTERN, message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String ipv4Gateway;
+
+    private NetworkBootProtocol ipv6BootProtocol;
+
+    @Ipv6
+    private String ipv6Address;
+
+    @Min(0L)
+    @Max(128L)
+    private Integer ipv6Prefix;
+
+    @Ipv6
+    private String ipv6Gateway;
 
     private String baseInterface;
     private Integer vlanId;
@@ -128,6 +143,38 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public NetworkBootProtocol getIpv4BootProtocol() {
         return ipv4BootProtocol;
+    }
+
+    public String getIpv6Address() {
+        return ipv6Address;
+    }
+
+    public void setIpv6Address(String ipv6Address) {
+        this.ipv6Address = ipv6Address;
+    }
+
+    public NetworkBootProtocol getIpv6BootProtocol() {
+        return ipv6BootProtocol;
+    }
+
+    public void setIpv6BootProtocol(NetworkBootProtocol ipv6BootProtocol) {
+        this.ipv6BootProtocol = ipv6BootProtocol;
+    }
+
+    public String getIpv6Gateway() {
+        return ipv6Gateway;
+    }
+
+    public void setIpv6Gateway(String ipv6Gateway) {
+        this.ipv6Gateway = ipv6Gateway;
+    }
+
+    public Integer getIpv6Prefix() {
+        return ipv6Prefix;
+    }
+
+    public void setIpv6Prefix(Integer ipv6Prefix) {
+        this.ipv6Prefix = ipv6Prefix;
     }
 
     /**
@@ -418,6 +465,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append("ipv4Address", getIpv4Address())
                 .append("ipv4Subnet", getIpv4Subnet())
                 .append("ipv4Gateway", getIpv4Gateway())
+                .append("ipv6BootProtocol", getIpv6BootProtocol())
+                .append("ipv6Address", getIpv6Address())
+                .append("ipv6Prefix", getIpv6Prefix())
+                .append("ipv6Gateway", getIpv6Gateway())
                 .append("mtu", getMtu())
                 .append("bridged", isBridged())
                 .append("type", getType())
@@ -435,16 +486,20 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         return Objects.hash(
                 super.hashCode(),
                 ipv4Address,
+                ipv6Address,
                 bondName,
                 bondOptions,
                 bondType,
                 bonded,
                 ipv4BootProtocol,
+                ipv6BootProtocol,
                 networkName,
                 bridged,
                 ipv4Gateway,
+                ipv6Gateway,
                 mtu,
                 ipv4Subnet,
+                ipv6Prefix,
                 vdsId,
                 baseInterface,
                 vlanId,
@@ -464,16 +519,20 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         VdsNetworkInterface other = (VdsNetworkInterface) obj;
         return super.equals(obj)
                 && Objects.equals(ipv4Address, other.ipv4Address)
+                && Objects.equals(ipv6Address, other.ipv6Address)
                 && Objects.equals(bondName, other.bondName)
                 && Objects.equals(bondOptions, other.bondOptions)
                 && Objects.equals(bondType, other.bondType)
                 && Objects.equals(bonded, other.bonded)
                 && ipv4BootProtocol == other.ipv4BootProtocol
+                && ipv6BootProtocol == other.ipv6BootProtocol
                 && Objects.equals(networkName, other.networkName)
                 && bridged == other.bridged
                 && Objects.equals(ipv4Gateway, other.ipv4Gateway)
+                && Objects.equals(ipv6Gateway, other.ipv6Gateway)
                 && mtu == other.mtu
                 && Objects.equals(ipv4Subnet, other.ipv4Subnet)
+                && Objects.equals(ipv6Prefix, other.ipv6Prefix)
                 && Objects.equals(vdsId, other.vdsId)
                 && Objects.equals(baseInterface, other.baseInterface)
                 && Objects.equals(vlanId, other.vlanId)

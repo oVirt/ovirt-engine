@@ -25,7 +25,7 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class InterfaceDaoTest extends BaseDaoTestCase {
+public class InterfaceDaoImplTest extends BaseDaoTestCase {
     private static final String IP_ADDR = "10.35.110.10";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
@@ -57,13 +57,20 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         newVdsInterface.setId(Guid.newGuid());
         newVdsInterface.setName("eth77");
         newVdsInterface.setNetworkName("enginet");
-        newVdsInterface.setIpv4Address("192.168.122.177");
-        newVdsInterface.setIpv4Subnet("255.255.255.0");
         newVdsInterface.setSpeed(1000);
         newVdsInterface.setType(3);
-        newVdsInterface.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
         newVdsInterface.setMacAddress("01:C0:81:21:71:17");
+
+        newVdsInterface.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
+        newVdsInterface.setIpv4Address("192.168.122.177");
+        newVdsInterface.setIpv4Subnet("255.255.255.0");
         newVdsInterface.setIpv4Gateway("192.168.122.1");
+
+        newVdsInterface.setIpv6BootProtocol(NetworkBootProtocol.DHCP);
+        newVdsInterface.setIpv6Address("ipv6 address");
+        newVdsInterface.setIpv6Prefix(666);
+        newVdsInterface.setIpv6Gateway("ipv6 gateway");
+
         newVdsInterface.setMtu(1500);
         newVdsInterface.setQos(newQos);
 
@@ -164,6 +171,15 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         VdsNetworkInterface ifaced = dao.get(interface_id);
         assertEquals(iface.getName(), ifaced.getName());
         assertEquals(iface.getQos(), ifaced.getQos());
+
+        verifyIpv6Properties(iface, ifaced);
+    }
+
+    private void verifyIpv6Properties(VdsNetworkInterface nicA, VdsNetworkInterface nicB) {
+        assertEquals(nicA.getIpv6BootProtocol(), nicB.getIpv6BootProtocol());
+        assertEquals(nicA.getIpv6Address(), nicB.getIpv6Address());
+        assertEquals(nicA.getIpv6Prefix(), nicB.getIpv6Prefix());
+        assertEquals(nicA.getIpv6Gateway(), nicB.getIpv6Gateway());
     }
 
     /**
