@@ -163,21 +163,24 @@ public abstract class VnicProfileModel extends Model {
             }
         });
 
-        boolean isPassthroughSupported =
-                (Boolean) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.NetworkSriovSupported,
-                        dcCompatibilityVersion.toString());
-        if (isPassthroughSupported) {
-            initPassthroughChangeListener();
+        if (dcCompatibilityVersion != null) {
+            boolean isPassthroughSupported =
+                    (Boolean) AsyncDataProvider.getInstance()
+                            .getConfigValuePreConverted(ConfigurationValues.NetworkSriovSupported,
+                                    dcCompatibilityVersion.toString());
+            if (isPassthroughSupported) {
+                initPassthroughChangeListener();
+            } else {
+                getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getMessages()
+                        .passthroughPropertyNotSupported(dcCompatibilityVersion.toString()));
+                getPassthrough().setIsChangeable(false);
+            }
         }
 
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);
         initCommands();
-
-        getPassthrough().setIsChangeable(isPassthroughSupported);
-        getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
-                .getMessages().passthroughPropertyNotSupported(dcCompatibilityVersion.toString()));
     }
 
     protected void initCommands() {
