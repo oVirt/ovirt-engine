@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -90,6 +91,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -165,6 +167,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDao().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
+
+        // Trigger OVF update for hosted engine VM only
+        if (getVm().isHostedEngine()) {
+            registerRollbackHandler(new HostedEngineEditNotifier(getVm()));
+        }
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         int cpuPerSocket = newVmStatic.getCpuPerSocket();
@@ -1114,6 +1121,25 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getParameters().isUpdateNuma()) {
             getParameters().getVm().setvNumaNodeList(getDbFacade().getVmNumaNodeDao().getAllVmNumaNodeByVmId
                     (getParameters().getVmId()));
+        }
+    }
+
+    private static class HostedEngineEditNotifier implements TransactionCompletionListener {
+        final VM vm;
+
+        public HostedEngineEditNotifier(VM vm) {
+            this.vm = vm;
+        }
+
+        @Override
+        public void onSuccess() {
+            Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool,
+                    new ProcessOvfUpdateForStoragePoolParameters(vm.getStoragePoolId()));
+        }
+
+        @Override
+        public void onRollback() {
+            // No notification is needed
         }
     }
 }
