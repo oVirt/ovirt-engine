@@ -34,6 +34,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean applyChangesLater;
     private boolean updateNuma;
     private Guid diskOperatorAuthzPrincipalDbId;
+    private Guid poolId;
 
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
@@ -252,6 +253,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setUpdateNuma(boolean updateNuma) {
         this.updateNuma = updateNuma;
+    }
+
+    public Guid getPoolId() {
+        return poolId;
+    }
+
+    public void setPoolId(Guid poolId) {
+        this.poolId = poolId;
     }
 
     public Guid getDiskOperatorAuthzPrincipalDbId() {

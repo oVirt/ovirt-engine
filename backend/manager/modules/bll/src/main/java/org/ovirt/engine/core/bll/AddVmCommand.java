@@ -1236,8 +1236,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     private boolean isMakeCreatorExplicitOwner() {
         return getParameters().isMakeCreatorExplicitOwner()
-                || (getCurrentUser() != null && !checkUserAuthorization(
-                        getCurrentUser().getId(),
+                || (getCurrentUser() != null && getParameters().getPoolId() == null
+                && !checkUserAuthorization(getCurrentUser().getId(),
                         ActionGroup.MANIPULATE_PERMISSIONS,
                         getVmId(),
                         VdcObjectType.VM));

@@ -60,6 +60,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(vmStatic, getParameters()
                 .getDiskInfoList(), getParameters().getStorageDomainId());
         parameters.setSessionId(getParameters().getSessionId());
+        parameters.setPoolId(getParameters().getPoolId());
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         return runInternalActionWithTasksContext(VdcActionType.AddVmFromScratch, parameters);
@@ -72,6 +73,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         } else {
             parameters.setSessionId(getParameters().getSessionId());
         }
+        parameters.setPoolId(getParameters().getPoolId());
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
