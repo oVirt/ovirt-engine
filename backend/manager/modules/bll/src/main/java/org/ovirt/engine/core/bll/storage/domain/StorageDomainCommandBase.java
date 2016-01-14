@@ -169,7 +169,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean checkStorageDomainStatusNotEqual(StorageDomainStatus status) {
         boolean returnValue = false;
         if (getStorageDomainStatus() != null) {
-            returnValue = (getStorageDomainStatus() != status);
+            returnValue = getStorageDomainStatus() != status;
             if (!returnValue) {
                 addStorageDomainStatusIllegalMessage();
             }

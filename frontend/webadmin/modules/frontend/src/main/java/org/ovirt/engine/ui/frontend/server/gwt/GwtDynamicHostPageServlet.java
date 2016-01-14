@@ -276,7 +276,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected String getMd5Sum(HttpServletRequest request) throws NoSuchAlgorithmException,
         UnsupportedEncodingException {
-        return (new HexBinaryAdapter()).marshal(getMd5Digest(request).digest());
+        return new HexBinaryAdapter().marshal(getMd5Digest(request).digest());
     }
 
     /**

@@ -561,7 +561,7 @@ public class GlusterSyncJob extends GlusterJob {
     private void disableCliSnapshotSchedulingFlag(Cluster cluster, GlusterVolumeEntity volume) {
         if (getGlusterUtil().isGlusterSnapshotSupported(cluster.getCompatibilityVersion(), cluster.getId())
                 && cluster.isGlusterCliBasedSchedulingOn()
-                && (Config.<String> getValue(ConfigValues.GlusterMetaVolumeName)).equalsIgnoreCase(volume.getName())) {
+                && Config.<String> getValue(ConfigValues.GlusterMetaVolumeName).equalsIgnoreCase(volume.getName())) {
 
             VdcReturnValueBase returnValue =
                     backend.runInternalAction(VdcActionType.DisableGlusterCliSnapshotScheduleInternal,

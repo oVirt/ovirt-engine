@@ -112,14 +112,14 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
         List<GlusterVolumeSnapshotConfig> updatedClusterConfigParams = new ArrayList<>();
         for (GlusterVolumeSnapshotConfig cfgParam : clusterConfigParams.values()) {
             GlusterVolumeSnapshotConfig fetchedCfgParam = fetchedClusterConfigParams.get(cfgParam.getParamName());
-            if (fetchedCfgParam != null && !(fetchedCfgParam.getParamValue().equals(cfgParam.getParamValue()))) {
+            if (fetchedCfgParam != null && !fetchedCfgParam.getParamValue().equals(cfgParam.getParamValue())) {
                 updatedClusterConfigParams.add(cfgParam);
             }
         }
         List<GlusterVolumeSnapshotConfig> updatedVolumeConfigParams = new ArrayList<>();
         for (GlusterVolumeSnapshotConfig cfgParam : volumeConfigParams.values()) {
             GlusterVolumeSnapshotConfig fetchedCfgParam = fetchedVolumeConfigParams.get(cfgParam.getParamName());
-            if (fetchedCfgParam != null && !(fetchedCfgParam.getParamValue().equals(cfgParam.getParamValue()))) {
+            if (fetchedCfgParam != null && !fetchedCfgParam.getParamValue().equals(cfgParam.getParamValue())) {
                 updatedVolumeConfigParams.add(cfgParam);
             }
         }

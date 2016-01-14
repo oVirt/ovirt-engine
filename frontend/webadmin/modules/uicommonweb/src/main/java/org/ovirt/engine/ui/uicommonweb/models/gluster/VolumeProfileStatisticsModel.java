@@ -217,7 +217,7 @@ public class VolumeProfileStatisticsModel extends Model {
                 stopProgress();
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
                 GlusterVolumeProfileInfo profileInfoEntity =vdcValue.getReturnValue();
-                if((profileInfoEntity == null) || (!vdcValue.getSucceeded())) {
+                if((profileInfoEntity == null) || !vdcValue.getSucceeded()) {
                     setSuccessfulProfileStatsFetch(false);
                     if(!isBrickSelected) {
                         showNfsProfileStats(profileInfoEntity);
@@ -288,7 +288,7 @@ public class VolumeProfileStatisticsModel extends Model {
     }
 
     private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected) {
-        String apiMatrixParam = ((!isBrickProfileSelected) ? ";nfsStatistics=true" : "");//$NON-NLS-1$//$NON-NLS-2$
+        String apiMatrixParam = !isBrickProfileSelected ? ";nfsStatistics=true" : "";//$NON-NLS-1$//$NON-NLS-2$
         return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/pdf", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
     }
 

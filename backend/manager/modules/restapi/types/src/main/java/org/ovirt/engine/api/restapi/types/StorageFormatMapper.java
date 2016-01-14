@@ -18,7 +18,7 @@ public class StorageFormatMapper {
         case V3:
             return StorageFormat.V3;
         default:
-            assert(false) : "unknown storage-format value: " + model.toString();
+            assert false : "unknown storage-format value: " + model.toString();
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class StorageFormatMapper {
         case V3:
             return StorageFormatType.V3;
         default:
-            assert(false) : "unknown storage-format value: " + model.toString();
+            assert false : "unknown storage-format value: " + model.toString();
             return null;
         }
     }

@@ -96,7 +96,7 @@ public class BackendHostStorageResourceTest
     protected void verifyCollection(List<HostStorage> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(NAMES.length, collection.size());
-        for (int i = 0; i < (NAMES.length); i++) {
+        for (int i = 0; i < NAMES.length; i++) {
             verifyModel(collection.get(i), i % NAMES.length);
         }
     }

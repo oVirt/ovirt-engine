@@ -429,7 +429,7 @@ public class ClusterGuideModel extends GuideModel {
                             clusterGuideModel.cancel();
                             clusterGuideModel.postAction();
                         } else {
-                            final String searchString = getVdsSearchString(((MoveHost) clusterGuideModel.getWindow()));
+                            final String searchString = getVdsSearchString((MoveHost) clusterGuideModel.getWindow());
                             Timer timer = new Timer() {
                                 public void run() {
                                     checkVdsClusterChangeSucceeded(clusterGuideModel, searchString, parameterList, activateVdsParameterList);

@@ -161,7 +161,7 @@ public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
         result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
         result = prime * result + ((authz == null) ? 0 : authz.hashCode());
         result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((int) creationDate);
+        result = prime * result + (int) creationDate;
         return result;
     }
 
@@ -174,12 +174,12 @@ public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
             return false;
         }
         Permission other = (Permission) obj;
-        return (creationDate != ((Permission) obj).creationDate
+        return creationDate != ((Permission) obj).creationDate
                 && Objects.equals(id, other.id)
                 && Objects.equals(adElementId, other.adElementId)
                 && Objects.equals(objectId, other.objectId)
                 && objectType == other.objectType
-                && Objects.equals(roleId, other.roleId));
+                && Objects.equals(roleId, other.roleId);
     }
 
 

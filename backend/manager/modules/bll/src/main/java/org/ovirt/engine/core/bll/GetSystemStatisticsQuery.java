@@ -59,14 +59,14 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
     }
 
     private int getActiveVMsStat() {
-        String[] activeVmStatuses = { (String.valueOf(VMStatus.Up.getValue())),
-                (String.valueOf(VMStatus.PoweringUp.getValue())),
-                (String.valueOf(VMStatus.MigratingTo.getValue())),
-                (String.valueOf(VMStatus.WaitForLaunch.getValue())),
-                (String.valueOf(VMStatus.RebootInProgress.getValue())),
-                (String.valueOf(VMStatus.PoweringDown.getValue())),
-                (String.valueOf(VMStatus.Paused.getValue())),
-                (String.valueOf(VMStatus.Unknown.getValue())) };
+        String[] activeVmStatuses = {String.valueOf(VMStatus.Up.getValue()),
+                String.valueOf(VMStatus.PoweringUp.getValue()),
+                String.valueOf(VMStatus.MigratingTo.getValue()),
+                String.valueOf(VMStatus.WaitForLaunch.getValue()),
+                String.valueOf(VMStatus.RebootInProgress.getValue()),
+                String.valueOf(VMStatus.PoweringDown.getValue()),
+                String.valueOf(VMStatus.Paused.getValue()),
+                String.valueOf(VMStatus.Unknown.getValue())};
         return getDbFacade().getSystemStatisticsValue(VM_ENTITY_NAME,
                 StringUtils.join(activeVmStatuses, COMMA_DELIMITER));
     }
@@ -77,15 +77,15 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
 
     private int getActiveHostsStat() {
         String[] activeVdsStatuses =
-                { (String.valueOf(VDSStatus.Up.getValue())),
-                        (String.valueOf(VDSStatus.PreparingForMaintenance.getValue())) };
+                {String.valueOf(VDSStatus.Up.getValue()),
+                        String.valueOf(VDSStatus.PreparingForMaintenance.getValue())};
         return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
                 StringUtils.join(activeVdsStatuses, COMMA_DELIMITER));
     }
 
     private int getMaintenanceHostsStat() {
         return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
-                (String.valueOf(VDSStatus.Maintenance.getValue())));
+                String.valueOf(VDSStatus.Maintenance.getValue()));
     }
 
     private int getTotalUsersStat() {
@@ -102,7 +102,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
 
     private int getActiveStorageDomainsStat() {
         return getDbFacade().getSystemStatisticsValue(ACTIVE_STORAGE_DOMAIN_ENTITY_NAME,
-                (String.valueOf(StorageDomainStatus.Active.getValue())));
+                String.valueOf(StorageDomainStatus.Active.getValue()));
     }
 
     @Override

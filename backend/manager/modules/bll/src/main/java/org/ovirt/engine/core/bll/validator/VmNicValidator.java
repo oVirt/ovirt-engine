@@ -113,7 +113,7 @@ public class VmNicValidator {
             interfaceTypes.add(VmInterfaceType.valueOf(networkDevice));
         }
 
-        return (!interfaceTypes.contains(VmInterfaceType.forValue(nic.getType())))
+        return !interfaceTypes.contains(VmInterfaceType.forValue(nic.getType()))
                 ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)
                 : ValidationResult.VALID;
 

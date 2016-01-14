@@ -32,7 +32,7 @@ public class DetachUserGroupFromTagCommand<T extends AttachEntityToTagParameters
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return noActionDone ? AuditLogType.UNASSIGNED : (getSucceeded() ? AuditLogType.USER_DETACH_USER_GROUP_FROM_TAG
-                : AuditLogType.USER_DETACH_USER_GROUP_FROM_TAG_FAILED);
+        return noActionDone ? AuditLogType.UNASSIGNED : getSucceeded() ? AuditLogType.USER_DETACH_USER_GROUP_FROM_TAG
+                : AuditLogType.USER_DETACH_USER_GROUP_FROM_TAG_FAILED;
     }
 }

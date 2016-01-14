@@ -52,7 +52,7 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
         if (!super.validate()) {
             return false;
         }
-        if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE) && !(getParameters().isForce())) {
+        if (getGeoRepSession().getStatus().equals(GeoRepSessionStatus.ACTIVE) && !getParameters().isForce()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED);
         }
         return true;

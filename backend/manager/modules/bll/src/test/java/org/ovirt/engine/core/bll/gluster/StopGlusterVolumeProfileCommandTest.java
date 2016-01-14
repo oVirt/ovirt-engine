@@ -54,7 +54,7 @@ public class StopGlusterVolumeProfileCommandTest extends BaseCommandTest {
         volumeEntity.addAccessProtocol(AccessProtocol.GLUSTER);
         volumeEntity.addTransportType(TransportType.TCP);
         volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
-        volumeEntity.setStatus((volumeId.equals(STARTED_VOLUME_ID)) ? GlusterStatus.UP : GlusterStatus.DOWN);
+        volumeEntity.setStatus(volumeId.equals(STARTED_VOLUME_ID) ? GlusterStatus.UP : GlusterStatus.DOWN);
         volumeEntity.setClusterId(CLUSTER_ID);
         return volumeEntity;
     }

@@ -318,17 +318,17 @@ public class VmDeviceCommonUtils {
      * "old" level is considered anything lower than 3.1 at the moment
      */
     public static boolean isOldClusterVersion(Version version) {
-        return (version.compareTo(Version.v3_1) < 0);
+        return version.compareTo(Version.v3_1) < 0;
     }
 
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {
         String expr = getDeviceTypeSearchExpr(type, device);
         String whiteList = Config.getValue(ConfigValues.ManagedDevicesWhiteList);
-        return (whiteList.indexOf(expr) >= 0);
+        return whiteList.indexOf(expr) >= 0;
     }
 
     private static boolean isBootable(VmDevice device) {
-        return (VmDeviceGeneralType.DISK == device.getType() || VmDeviceGeneralType.INTERFACE == device.getType());
+        return VmDeviceGeneralType.DISK == device.getType() || VmDeviceGeneralType.INTERFACE == device.getType();
     }
 
     private static String getDeviceTypeSearchExpr(VmDeviceGeneralType type, String device) {

@@ -369,7 +369,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
             return false;
         }
         Quota other = (Quota) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(description, other.description)
                 && Objects.equals(globalQuotaStorage, other.globalQuotaStorage)
                 && Objects.equals(globalQuotaCluster, other.globalQuotaCluster)
@@ -380,7 +380,7 @@ public class Quota implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
                 && Objects.equals(quotaClusterList, other.quotaClusterList)
                 && Objects.equals(storagePoolId, other.storagePoolId)
                 && thresholdStoragePercentage == other.thresholdStoragePercentage
-                && thresholdClusterPercentage == other.thresholdClusterPercentage);
+                && thresholdClusterPercentage == other.thresholdClusterPercentage;
     }
 
     public QuotaCluster getGlobalQuotaCluster() {

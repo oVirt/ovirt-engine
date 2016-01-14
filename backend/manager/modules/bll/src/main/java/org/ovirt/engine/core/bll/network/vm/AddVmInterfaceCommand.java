@@ -35,7 +35,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     @Override
     protected void executeVmCommand() {
         addCustomValue("InterfaceType",
-                (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
+                VmInterfaceType.forValue(getInterface().getType()).getDescription().toString());
         this.setVmName(getVmStaticDao().get(getParameters().getVmId()).getName());
 
         boolean succeeded = false;

@@ -351,11 +351,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     public void validate(List<String> errors) {
         int rowCount = getRowCount();
-        assert (errors != null && errors.size() == rowCount) : "errors must be the same size as the contents of the table!"; //$NON-NLS-1$
+        assert errors != null && errors.size() == rowCount : "errors must be the same size as the contents of the table!"; //$NON-NLS-1$
 
         for (int i=0; i < rowCount; ++i) {
             Element element = getRowElement(i);
-            assert (element != null) : "element shouldn't be null if errors is the same size as the contents of the table!"; //$NON-NLS-1$
+            assert element != null : "element shouldn't be null if errors is the same size as the contents of the table!"; //$NON-NLS-1$
 
             String error = errors.get(i);
             boolean valid = StringUtils.isEmpty(error);

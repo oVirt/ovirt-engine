@@ -496,7 +496,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (Cluster cluster : getSelectedItems()) {
-            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters((cluster));
+            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters(cluster);
             currentParam.setForceResetEmulatedMachine(true);
             prms.add(currentParam);
         }

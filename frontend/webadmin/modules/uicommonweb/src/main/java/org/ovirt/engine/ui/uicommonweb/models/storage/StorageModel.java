@@ -573,8 +573,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 // the next "else if..." condition; however, just in case we will support non-NFS ISO/Export in the
                 // future
                 // and in order to make the code more explicit, it is here. ***)
-                else if ((getCurrentStorageItem().getRole() == StorageDomainType.ISO
-                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport)) {
+                else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getCurrentStorageItem().getType() == StorageType.NFS
@@ -597,8 +597,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 }
             }
             else { // Unassigned DC:
-                if ((getCurrentStorageItem().getRole() == StorageDomainType.ISO
-                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport)) {
+                if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                        || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     // ISO/Export domains should not be available for '(none)' DC
                     return;
                 }

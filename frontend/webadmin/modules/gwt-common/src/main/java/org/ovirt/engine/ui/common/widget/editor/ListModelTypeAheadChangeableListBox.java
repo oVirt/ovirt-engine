@@ -33,7 +33,7 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
 
     @Override
     protected String asEntity(String provided) {
-        return (provided == null ? "" : provided);
+        return provided == null ? "" : provided;
     }
 
     @Override

@@ -47,7 +47,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             // nothing to do - logging inside upper functions
         } finally {
             // if couldn't parse image then succeeded should be false
-            getVDSReturnValue().setSucceeded((di != null));
+            getVDSReturnValue().setSucceeded(di != null);
             setReturnValue(di);
         }
     }

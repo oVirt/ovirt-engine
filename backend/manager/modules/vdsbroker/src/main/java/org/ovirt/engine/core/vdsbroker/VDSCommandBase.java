@@ -56,8 +56,8 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     public String toString() {
         String addInfo = getAdditionalInformation();
         return String.format("%s(%s %s)", super.toString(),
-                (!addInfo.isEmpty() ? addInfo + "," : StringUtils.EMPTY),
-                (getParameters() != null ? getParameters().toString() : "null"));
+                !addInfo.isEmpty() ? addInfo + "," : StringUtils.EMPTY,
+                getParameters() != null ? getParameters().toString() : "null");
     }
 
     @Override

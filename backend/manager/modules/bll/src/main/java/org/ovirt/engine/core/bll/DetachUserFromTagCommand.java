@@ -30,7 +30,7 @@ public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> ext
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return noActionDone ? AuditLogType.UNASSIGNED : (getSucceeded() ? AuditLogType.USER_DETACH_USER_FROM_TAG
-                : AuditLogType.USER_DETACH_USER_FROM_TAG_FAILED);
+        return noActionDone ? AuditLogType.UNASSIGNED : getSucceeded() ? AuditLogType.USER_DETACH_USER_FROM_TAG
+                : AuditLogType.USER_DETACH_USER_FROM_TAG_FAILED;
     }
 }

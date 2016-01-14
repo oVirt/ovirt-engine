@@ -127,7 +127,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             for (Object serviceObj : serviceInfo) {
                 Map<String, Object> serviceMap = (Map<String, Object>) serviceObj;
                 GlusterServerService parsedServiceInfo = parseServiceInfo(serviceMap);
-                parsedServiceInfo.setServiceType((service.equals(NFS_KEY) ? ServiceType.NFS : ServiceType.SHD));
+                parsedServiceInfo.setServiceType(service.equals(NFS_KEY) ? ServiceType.NFS : ServiceType.SHD);
                 serviceInfoList.add(parsedServiceInfo);
             }
         }

@@ -29,7 +29,7 @@ public class LexoNumericComparatorTest {
         assertEquals(String.format("Expected %1$s to be %3$s %2$s, but it wasn't.",
                 left,
                 right,
-                expectedResult == -1 ? "less than" : (expectedResult == 1 ? "greater than" : "equal to")),
+                expectedResult == -1 ? "less than" : expectedResult == 1 ? "greater than" : "equal to"),
                 expectedResult,
                 comparator.compare(left, right));
     }

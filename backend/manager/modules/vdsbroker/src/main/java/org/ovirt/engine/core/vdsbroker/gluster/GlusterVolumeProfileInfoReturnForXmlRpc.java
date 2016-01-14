@@ -123,8 +123,8 @@ public final class GlusterVolumeProfileInfoReturnForXmlRpc extends StatusReturnF
         statsInfo.setTotalRead(Long.parseLong((String) statsInfoMap.get(TOTAL_READ)));
         statsInfo.setBlockStats(getBlockStats((Object[]) statsInfoMap.get(BLOCK_STATS)));
         statsInfo.setFopStats(getFopStats((Object[]) statsInfoMap.get(FOP_STATS)));
-        statsInfo.setProfileStatsType((statType.equals(CUMULATIVE_STATS) ? ProfileStatsType.CUMULATIVE
-                : ProfileStatsType.INTERVAL));
+        statsInfo.setProfileStatsType(statType.equals(CUMULATIVE_STATS) ? ProfileStatsType.CUMULATIVE
+                : ProfileStatsType.INTERVAL);
         return statsInfo;
     }
 

@@ -55,7 +55,7 @@ public class VmWatchdogValidator {
         public ValidationResult isValid() {
             Set<VmWatchdogType> vmWatchdogTypes = getOsRepository().getVmWatchdogTypes(osId, version);
 
-            return (!vmWatchdogTypes.contains(vmWatchdog.getModel()))
+            return !vmWatchdogTypes.contains(vmWatchdog.getModel())
                     ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_WATCHDOG_MODEL_IS_NOT_SUPPORTED_BY_OS)
                     : ValidationResult.VALID;
         }

@@ -67,10 +67,8 @@ public class AuthzUtils {
                         Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                 ).mput(
                         Authz.InvokeKeys.QUERY_FLAGS,
-                        (
-                            (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
-                            (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)
-                        )
+                        (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
+                                (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)
                 ));
         if (output.<Integer> get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
             ret = output.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);

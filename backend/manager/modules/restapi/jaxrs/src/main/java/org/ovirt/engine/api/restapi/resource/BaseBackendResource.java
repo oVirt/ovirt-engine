@@ -239,9 +239,9 @@ public class BaseBackendResource {
      * @return the result of the operation
      */
     protected <T> T handleError(Class<T> clz, Exception e, boolean notFoundAs404) {
-        if ((e instanceof EntityNotFoundException) && (notFoundAs404)) {
+        if ((e instanceof EntityNotFoundException) && notFoundAs404) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
-        } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
+        } else if ((e instanceof BackendFailureException) && !StringUtils.isEmpty(e.getMessage())) {
             log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, e.getMessage()));
             BackendFailureException e2 = (BackendFailureException) e;
             throw new WebFaultException(null, e.getMessage(), e2.getHttpStatus() != null ? e2.getHttpStatus()

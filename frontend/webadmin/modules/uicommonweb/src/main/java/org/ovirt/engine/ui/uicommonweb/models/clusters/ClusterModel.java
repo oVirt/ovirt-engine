@@ -835,7 +835,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 ClusterModel.this.stopProgress();
                 List<String> glusterTunedProfiles = new ArrayList<>();
                 if (((VdcQueryReturnValue) returnValue).getSucceeded()) {
-                    glusterTunedProfiles.addAll((List<String>)(((VdcQueryReturnValue) returnValue).getReturnValue()));
+                    glusterTunedProfiles.addAll((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
                 }
                 final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
                 glusterTunedProfile.setItems(glusterTunedProfiles);
@@ -1276,7 +1276,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 setIsFingerprintVerified(false);
                 if (getGlusterHostAddress().getEntity() == null
-                        || (getGlusterHostAddress().getEntity()).trim().length() == 0) {
+                        || getGlusterHostAddress().getEntity().trim().length() == 0) {
                     getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
                     return;
                 }

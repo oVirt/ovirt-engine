@@ -94,7 +94,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected String getDefaultMacAddress() {
-        return (getNic()).getMacAddress();
+        return getNic().getMacAddress();
     }
 
     @Override

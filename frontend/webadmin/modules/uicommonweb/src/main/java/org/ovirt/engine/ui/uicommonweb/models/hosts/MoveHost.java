@@ -90,7 +90,7 @@ public class MoveHost extends ListModel<MoveHostData> {
         }
         setItems(items);
         for (MoveHostData entity : items) {
-            entity.setIsSelected(previouslySelectedHostIDs.contains((entity.getEntity()).getId()));
+            entity.setIsSelected(previouslySelectedHostIDs.contains(entity.getEntity().getId()));
         }
     }
 

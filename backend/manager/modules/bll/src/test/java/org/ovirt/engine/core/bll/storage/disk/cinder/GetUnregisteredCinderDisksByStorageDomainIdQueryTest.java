@@ -61,7 +61,7 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQueryTest
         Volume existingVolume = volumes.get(1);
         List<Disk> existingDisks =
                 new ArrayList<>(CinderBroker.volumesToCinderDisks
-                        (Collections.singletonList(existingVolume), (getQueryParameters().getId())));
+                        (Collections.singletonList(existingVolume), getQueryParameters().getId()));
 
         when(diskDao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, null, false)).thenReturn(existingDisks);
         when(getDbFacadeMockInstance().getDiskDao()).thenReturn(diskDao);

@@ -35,7 +35,7 @@ public class Regex {
     }
 
     public static boolean isMatch(String candidate, String regEx) {
-        return (new Regex(regEx)).isMatch(candidate);
+        return new Regex(regEx).isMatch(candidate);
     }
 
     public static String replace(String searchString, String pageStringRegex, String format) {

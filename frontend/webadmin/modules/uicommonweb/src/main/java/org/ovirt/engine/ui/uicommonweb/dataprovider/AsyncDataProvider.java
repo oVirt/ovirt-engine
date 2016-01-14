@@ -471,9 +471,9 @@ public class AsyncDataProvider {
                 vm.getClusterArch(),
                 vm.getClusterCompatibilityVersion());
 
-        return  ((Boolean) getConfigValuePreConverted(
+        return  (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.MemorySnapshotSupported,
-                vm.getClusterCompatibilityVersion().toString()))
+                vm.getClusterCompatibilityVersion().toString())
                 && archMemorySnapshotSupported;
     }
 
@@ -489,9 +489,9 @@ public class AsyncDataProvider {
     }
 
     public boolean isLiveMergeSupported(VM vm) {
-        return (vm != null && (Boolean) getConfigValuePreConverted(
+        return vm != null && (Boolean) getConfigValuePreConverted(
                 ConfigurationValues.LiveMergeSupported,
-                vm.getClusterCompatibilityVersion().toString()));
+                vm.getClusterCompatibilityVersion().toString());
     }
 
     public void initNicHotplugSupportMap() {
@@ -3562,8 +3562,8 @@ public class AsyncDataProvider {
     }
 
     public boolean isCustomIconId(Guid iconId) {
-        return (!largeToSmallOsDefaultIconIdMap.containsKey(iconId))
-                && (!largeToSmallOsDefaultIconIdMap.containsValue(iconId));
+        return !largeToSmallOsDefaultIconIdMap.containsKey(iconId)
+                && !largeToSmallOsDefaultIconIdMap.containsValue(iconId);
     }
 
     public Guid getDefaultIconId(boolean small) {

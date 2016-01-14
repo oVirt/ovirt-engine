@@ -881,7 +881,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasNICsAlert(false);
 
         // Check the network alert presense.
-        setHasNICsAlert((getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty()));
+        setHasNICsAlert(getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty());
 
         // Check manual fence alert presense.
         if (getEntity().getStatus() == VDSStatus.NonResponsive

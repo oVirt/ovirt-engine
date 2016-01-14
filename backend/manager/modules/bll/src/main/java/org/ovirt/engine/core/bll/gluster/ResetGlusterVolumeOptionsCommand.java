@@ -44,7 +44,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
 
         if (getSucceeded()) {
 
-            if (getParameters().getVolumeOption() != null && !(getParameters().getVolumeOption().getKey().isEmpty())) {
+            if (getParameters().getVolumeOption() != null && !getParameters().getVolumeOption().getKey().isEmpty()) {
                 GlusterVolumeOptionEntity entity = getGlusterVolume().getOption(getParameters().getVolumeOption().getKey());
                 isResetAllOptions = false;
                 if(entity != null) {
@@ -79,7 +79,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return (isResetAllOptions) ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_ALL : AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET;
+            return isResetAllOptions ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_ALL : AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET;
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED : errorType;
         }

@@ -125,7 +125,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
     protected void endWithFailure() {
         revertCinderVolume((CinderDisk) getDestinationDiskImage());
         if (isDestinationImageExists(getDestinationDiskImage().getId()) &&
-                (isImageSnapshot(getDestinationDiskImage()))) {
+                isImageSnapshot(getDestinationDiskImage())) {
             updateLastModifiedInParent(getDestinationDiskImage().getParentId());
         }
         super.endWithFailure();

@@ -772,7 +772,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     protected void updateActionsAvailability() {
         VmTemplate item = getSelectedItem();
         ArrayList items =
-                ((getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
+                (getSelectedItems() != null) ? (ArrayList) getSelectedItems()
                         : new ArrayList();
 
         boolean blankSelected = isBlankTemplateSelected();

@@ -267,7 +267,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                             put("snapConfigValue", paramValue);
                         }
                     });
-        } else if (!(existingParamDetail.getParamValue().equals(paramValue))) {
+        } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
             getGlusterVolumeSnapshotConfigDao().updateConfigByClusterIdAndName(cluster.getId(),
                     paramName,
                     paramValue);
@@ -305,7 +305,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                             put(GlusterConstants.VOLUME_NAME, volume.getName());
                         }
                     });
-        } else if (!(existingParamDetail.getParamValue().equals(paramValue))) {
+        } else if (!existingParamDetail.getParamValue().equals(paramValue)) {
             getGlusterVolumeSnapshotConfigDao().updateConfigByVolumeIdAndName(cluster.getId(),
                     volume.getId(),
                     paramName,

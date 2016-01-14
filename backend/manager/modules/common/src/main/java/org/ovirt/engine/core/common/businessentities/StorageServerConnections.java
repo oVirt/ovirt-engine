@@ -206,7 +206,7 @@ public class StorageServerConnections implements BusinessEntity<String> {
         boolean returnValue = super.equals(obj);
         if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
             returnValue =
-                    (getId() != null && !getId().isEmpty() && getId().equals(((StorageServerConnections) obj).getId()));
+                    getId() != null && !getId().isEmpty() && getId().equals(((StorageServerConnections) obj).getId());
         }
         return returnValue;
     }

@@ -737,7 +737,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         List<LUNs> luns = Collections.singletonList(disk.getLun());
         doReturn(luns).when(command).executeGetDeviceList(any(Guid.class),
                 any(StorageType.class),
-                (any(String.class)));
+                any(String.class));
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 

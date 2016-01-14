@@ -91,7 +91,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
     }
 
     private void updateActionAvailability() {
-        getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
     @Override

@@ -582,7 +582,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 !performImagesChecks() ||
                 !validate(vmValidator.vmDown()) ||
                 // if the user choose to commit a snapshot the vm can't have disk snapshots attached to other vms.
-                (getSnapshot()).getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
+                getSnapshot().getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;
         }
 

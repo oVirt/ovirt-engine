@@ -37,7 +37,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
         // We can only move to maintenance in case no VMs are running on the host
-        return (vds.getVmCount() == 0);
+        return vds.getVmCount() == 0;
     }
 
     @Override

@@ -435,13 +435,13 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADGROUP@" + (getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        new SearchParameters("ADGROUP@" + getProfile().getSelectedItem().getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADUSER@" + (getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        new SearchParameters("ADUSER@" + getProfile().getSelectedItem().getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void onAdUsersLoaded(AdElementListModel adElementListModel) {

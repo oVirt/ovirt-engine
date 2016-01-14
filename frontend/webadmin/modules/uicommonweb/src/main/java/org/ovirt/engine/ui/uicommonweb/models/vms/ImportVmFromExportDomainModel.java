@@ -200,8 +200,8 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                     if (disk.getVolumeType() == VolumeType.Sparse
                             && disk.getVolumeFormat() == VolumeFormat.RAW
                             && getDiskImportData(disk.getId()) != null
-                            && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
-                                    .getStorageType().isBlockDomain())) {
+                            && getDiskImportData(disk.getId()).getSelectedStorageDomain()
+                                    .getStorageType().isBlockDomain()) {
                         ((ImportVmData) item).setWarning(ConstantsManager.getInstance().getConstants()
                                 .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);

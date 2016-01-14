@@ -236,10 +236,7 @@ public class AAAServiceImpl implements ModuleService {
                                 authRecord
                             ).mput(
                                 Authz.InvokeKeys.QUERY_FLAGS,
-                                (
-                                    Authz.QueryFlags.RESOLVE_GROUPS |
-                                    Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-                                )
+                                Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
                             )
                     );
                     log.info(

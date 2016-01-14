@@ -57,7 +57,7 @@ public class StatusUtils {
     }
 
     public static CreationStatus getRequestStatus(String status) {
-        if ( (status==null) || (status.isEmpty()) ) {
+        if ( (status==null) || status.isEmpty()) {
             return null;
         } else {
             return getEnumValue(CreationStatus.class, status);

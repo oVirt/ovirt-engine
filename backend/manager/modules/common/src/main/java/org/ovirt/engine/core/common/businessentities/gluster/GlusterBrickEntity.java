@@ -156,11 +156,11 @@ public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStat
 
         GlusterBrickEntity other = (GlusterBrickEntity) obj;
         return Objects.equals(id, other.id)
-                && (Objects.equals(volumeId, other.volumeId))
-                && (Objects.equals(serverId, other.serverId))
-                && (Objects.equals(brickDirectory, other.brickDirectory))
-                && (Objects.equals(brickOrder, other.brickOrder))
-                && (Objects.equals(asyncTask, other.asyncTask))
+                && Objects.equals(volumeId, other.volumeId)
+                && Objects.equals(serverId, other.serverId)
+                && Objects.equals(brickDirectory, other.brickDirectory)
+                && Objects.equals(brickOrder, other.brickOrder)
+                && Objects.equals(asyncTask, other.asyncTask)
                 && status == other.status;
     }
 

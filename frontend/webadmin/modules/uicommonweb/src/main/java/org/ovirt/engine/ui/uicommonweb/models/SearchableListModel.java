@@ -510,7 +510,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 if (firstItem) {
                     dcId = ((HasStoragePool<?>) item).getStoragePoolId().toString();
                     firstItem = false;
-                } else if (!(((HasStoragePool<?>) item).getStoragePoolId().toString().equals(dcId))) {
+                } else if (!((HasStoragePool<?>) item).getStoragePoolId().toString().equals(dcId)) {
                     reportModel.setDifferntDcError(true);
                     continue;
                 }

@@ -615,8 +615,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private boolean isEditSnapshotScheduleAvailable(List<GlusterVolumeEntity> list) {
-        return ((list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP) && list.get(0)
-                .getSnapshotScheduled());
+        return (list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP) && list.get(0)
+                .getSnapshotScheduled();
     }
 
     private boolean isStopProfileAvailable(List<GlusterVolumeEntity> list) {
@@ -627,7 +627,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") == null)|| (!(volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")))) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") == null)|| !volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -643,7 +643,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") != null) && (volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on"))) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") != null) && volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -874,7 +874,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 cModel.stopProgress();
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
                 GlusterVolumeTaskStatusEntity rebalanceStatusEntity =vdcValue.getReturnValue();
-                if ((rebalanceStatusEntity == null) || !(vdcValue.getSucceeded())) {
+                if ((rebalanceStatusEntity == null) || !vdcValue.getSucceeded()) {
                     cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusFailed(volumeEntity.getName()));
                 } else {
                     setConfirmWindow(null);
@@ -1348,8 +1348,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         for (EntityModel<GlusterVolumeSnapshotConfig> clusterCfg : snapshotConfigModel.getClusterConfigOptions()
                 .getItems()) {
-            if (!(clusterCfg.getEntity().getParamValue().equals(snapshotConfigModel.getExistingClusterConfigValue(clusterCfg.getEntity()
-                    .getParamName())))) {
+            if (!clusterCfg.getEntity().getParamValue().equals(snapshotConfigModel.getExistingClusterConfigValue(clusterCfg.getEntity()
+                    .getParamName()))) {
                 cfgChanged = true;
                 break;
             }
@@ -1455,8 +1455,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         for (EntityModel<VolumeSnapshotOptionModel> volumeCfg : snapshotConfigModel.getConfigOptions().getItems()) {
-            if (!(volumeCfg.getEntity().getOptionValue().equals(snapshotConfigModel.getExistingVolumeConfigValue(volumeCfg.getEntity()
-                    .getOptionName())))) {
+            if (!volumeCfg.getEntity().getOptionValue().equals(snapshotConfigModel.getExistingVolumeConfigValue(volumeCfg.getEntity()
+                    .getOptionName()))) {
                 cfgChanged = true;
                 break;
             }

@@ -87,7 +87,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
 
     @Override
     protected boolean isGhost(VnicInstanceType value) {
-        return (value.getSelectedItem() == null);
+        return value.getSelectedItem() == null;
     }
 
     @Override

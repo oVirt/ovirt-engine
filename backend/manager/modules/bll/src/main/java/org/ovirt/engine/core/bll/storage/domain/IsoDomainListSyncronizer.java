@@ -650,7 +650,7 @@ public class IsoDomainListSyncronizer {
      * @return True if time exceeded, and should refresh the domain, false otherwise.
      */
     private boolean shouldRefreshIsoDomain(long lastRefreshed) {
-        return ((System.currentTimeMillis() - lastRefreshed) > isoDomainRefreshRate);
+        return (System.currentTimeMillis() - lastRefreshed) > isoDomainRefreshRate;
     }
 
     private boolean updateAllFileListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {

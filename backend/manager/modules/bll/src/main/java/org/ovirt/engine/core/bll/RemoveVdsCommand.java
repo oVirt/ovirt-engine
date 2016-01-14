@@ -130,10 +130,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private boolean statusLegalForRemove(VDS vds) {
-        return ((vds.getStatus() == VDSStatus.NonResponsive) || (vds.getStatus() == VDSStatus.Maintenance)
+        return (vds.getStatus() == VDSStatus.NonResponsive) || (vds.getStatus() == VDSStatus.Maintenance)
                 || (vds.getStatus() == VDSStatus.Down) || (vds.getStatus() == VDSStatus.Unassigned)
                 || (vds.getStatus() == VDSStatus.InstallFailed) || (vds.getStatus() == VDSStatus.PendingApproval) || (vds
-                    .getStatus() == VDSStatus.NonOperational) || (vds.getStatus() == VDSStatus.InstallingOS));
+                    .getStatus() == VDSStatus.NonOperational) || (vds.getStatus() == VDSStatus.InstallingOS);
     }
 
     private void removeVdsFromCollection() {
@@ -181,7 +181,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private boolean isGlusterEnabled() {
-        return (getCluster().supportsGlusterService());
+        return getCluster().supportsGlusterService();
     }
 
     private boolean hasVolumeBricksOnServer() {

@@ -54,8 +54,8 @@ public class FiltersHelper {
         public static final String LOGOUT_INPROGRESS = "LOGOUT_INPROGRESS";
     }
 
-    public static final int PREFER_NEW_AUTH = (1<<0);
-    public static final int PREFER_PERSISTENCE_AUTH = (1<<1);
+    public static final int PREFER_NEW_AUTH = 1<<0;
+    public static final int PREFER_PERSISTENCE_AUTH = 1<<1;
 
     public static BackendLocal getBackend(Context context) {
 

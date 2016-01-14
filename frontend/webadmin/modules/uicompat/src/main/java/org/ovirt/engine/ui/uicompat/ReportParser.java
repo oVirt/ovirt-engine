@@ -56,7 +56,7 @@ public class ReportParser {
 
     private void initDashboards(NodeList dashboardNodeList) {
         Node dashboardNode = dashboardNodeList.item(0);
-        Element dashboardElement = ((Element) dashboardNode);
+        Element dashboardElement = (Element) dashboardNode;
         isCommunityEdition = Boolean.valueOf(dashboardElement.getAttribute("is_ce")); //$NON-NLS-1$
 
         NodeList resourcesNodeList = dashboardElement.getElementsByTagName("resource"); //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class ReportParser {
         int i = 0;
 
         while ((resourceNode = resourcesNodeList.item(i)) != null) {
-            Element resourceElement = ((Element) resourceNode);
+            Element resourceElement = (Element) resourceNode;
             dashboardMap.put(resourceElement.getAttribute("type"), new Dashboard(resourceElement.getFirstChild() //$NON-NLS-1$
                     .getNodeValue()));
             i++;
@@ -77,7 +77,7 @@ public class ReportParser {
 
         // initialize the resources
         while ((resourceNode = nodeList.item(i)) != null) {
-            Element resourceElement = ((Element) resourceNode);
+            Element resourceElement = (Element) resourceNode;
             Resource resource =
                     new Resource(resourceElement.getAttribute("type")); //$NON-NLS-1$
 
@@ -97,7 +97,7 @@ public class ReportParser {
         int i = 0;
 
         while ((node = nodeList.item(i)) != null) {
-            Element categoryElement = ((Element) node);
+            Element categoryElement = (Element) node;
             Category category = new Category(categoryElement.getAttribute("name")); //$NON-NLS-1$
 
             // initialize categories uri's
@@ -115,7 +115,7 @@ public class ReportParser {
         int i = 0;
 
         while ((node = nodeList.item(i)) != null) {
-            Element uriElement = ((Element) node);
+            Element uriElement = (Element) node;
             URI uri =
                     new URI(uriElement.getAttribute("name"), //$NON-NLS-1$
                             uriElement.getAttributes()

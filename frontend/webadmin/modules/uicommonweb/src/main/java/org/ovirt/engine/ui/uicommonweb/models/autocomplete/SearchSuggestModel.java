@@ -146,8 +146,8 @@ public class SearchSuggestModel extends SearchableListModel {
                 }
 
                 String space = ""; //$NON-NLS-1$
-                if ((pf.length() > 0) && (!pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals(".")) //$NON-NLS-1$
-                        && (!".".equals(item))) { //$NON-NLS-1$
+                if ((pf.length() > 0) && !pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals(".") //$NON-NLS-1$
+                        && !".".equals(item)) { //$NON-NLS-1$
                     space = StringConstants.SPACE;
                 }
 

@@ -97,7 +97,7 @@ public class PasswordValueHelper implements ValueHelper {
             }
         } else {
                 password =
-                    EngineConfigLogic.getPassFromFile((StringUtils.isNotBlank(value)) ? value
+                    EngineConfigLogic.getPassFromFile(StringUtils.isNotBlank(value) ? value
                             : parser.getAdminPassFile());
         }
         return password;

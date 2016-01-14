@@ -129,7 +129,7 @@ public class XmlRpcUtils {
 
     public static void shutDownConnection(HttpClient httpClient) {
         if (httpClient != null && httpClient.getHttpConnectionManager() != null) {
-            ((MultiThreadedHttpConnectionManager) (httpClient).getHttpConnectionManager()).shutdown();
+            ((MultiThreadedHttpConnectionManager) httpClient.getHttpConnectionManager()).shutdown();
         }
     }
 

@@ -149,7 +149,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         for (ClusterNetworkModel manageModel : manageList) {
             NetworkCluster networkCluster = manageModel.getOriginalNetworkCluster();
 
-            boolean wasAttached = (networkCluster != null);
+            boolean wasAttached = networkCluster != null;
             boolean needsAttach = manageModel.isAttached() && !wasAttached;
             boolean needsDetach = !manageModel.isAttached() && wasAttached;
             boolean needsUpdate = false;

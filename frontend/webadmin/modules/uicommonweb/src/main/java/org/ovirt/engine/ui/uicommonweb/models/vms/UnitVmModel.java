@@ -2762,7 +2762,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        if (!(getBehavior().isBlankTemplateBehavior())) {
+        if (!getBehavior().isBlankTemplateBehavior()) {
             setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                     && getDataCenterWithClustersList().getIsValid()
                     && getTemplateWithVersion().getIsValid());

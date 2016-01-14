@@ -86,7 +86,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
 
-        if (storageType == StorageType.POSIXFS && (StringUtils.isEmpty(conn.getVfsType()))) {
+        if (storageType == StorageType.POSIXFS && StringUtils.isEmpty(conn.getVfsType())) {
             return failValidation(EngineMessage.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 

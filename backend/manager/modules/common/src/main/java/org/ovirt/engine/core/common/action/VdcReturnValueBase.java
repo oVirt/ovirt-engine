@@ -136,7 +136,7 @@ public class VdcReturnValueBase implements Serializable {
     }
 
     public boolean getHasAsyncTasks() {
-        return (getVdsmTaskIdList() != null && getVdsmTaskIdList().size() > 0);
+        return getVdsmTaskIdList() != null && getVdsmTaskIdList().size() > 0;
     }
 
     public boolean getEndActionTryAgain() {

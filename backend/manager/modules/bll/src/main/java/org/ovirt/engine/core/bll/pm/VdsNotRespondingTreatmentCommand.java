@@ -226,7 +226,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             double hostsWithBrokenConnectivityNumber =
                     hosts.stream().filter(h -> h.getStatus() == VDSStatus.Connecting || h.getStatus() == VDSStatus.NonResponsive).count();
             percents = (hostsWithBrokenConnectivityNumber/hostsNumber)*100.0;
-            result = (percents >= cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
+            result = percents >= cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold();
         }
         if (result) {
             logAlert(vds, percents);

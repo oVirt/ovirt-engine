@@ -69,7 +69,7 @@ public class PolicyUnitMapper {
         case LOAD_BALANCING:
             return PolicyUnitType.LOAD_BALANCING;
         default:
-            assert (false) : "unknown Policy Unit Type value: " + model.toString();
+            assert false : "unknown Policy Unit Type value: " + model.toString();
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class PolicyUnitMapper {
         case LOAD_BALANCING:
             return org.ovirt.engine.api.model.PolicyUnitType.LOAD_BALANCING;
         default:
-            assert (false) : "unknown Policy Unit Type value: " + model.toString();
+            assert false : "unknown Policy Unit Type value: " + model.toString();
             return null;
         }
     }

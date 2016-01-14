@@ -94,7 +94,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         if (getStoragePool().getCompatibilityVersion().isNotValid()) {
             getStoragePool().setCompatibilityVersion(Version.getLast());
         }
-        if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
+        if (result && !isStoragePoolUnique(getStoragePool().getName())) {
             result = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {

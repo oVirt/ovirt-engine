@@ -376,8 +376,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         boolean attachOrAddIsoAvailable = attachedIsoStorages.isEmpty();
         boolean masterStorageExistsAndRunning = Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages);
         boolean addIsoAllowed =
-                (attachedDataStorages.size() > 0 && masterStorageExistsAndRunning
-                        && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
+                attachedDataStorages.size() > 0 && masterStorageExistsAndRunning
+                        && attachedIsoStorages.isEmpty() && upHosts.size() > 0;
 
 
         if (attachOrAddIsoAvailable) {
@@ -1434,7 +1434,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                             dataCenterGuideModel.cancel();
                             dataCenterGuideModel.postAction();
                         } else {
-                            final String searchString = getVdsSearchString(((MoveHost) dataCenterGuideModel.getWindow()));
+                            final String searchString = getVdsSearchString((MoveHost) dataCenterGuideModel.getWindow());
                             Timer timer = new Timer() {
                                 public void run() {
                                     checkVdsClusterChangeSucceeded(dataCenterGuideModel, searchString, parameterList, activateVdsParameterList);

@@ -52,7 +52,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         Map<String, String> serversAndFingerprint = new HashMap<>();
 
         for (GlusterServerInfo server : glusterServers) {
-            if (server.getStatus() == PeerStatus.CONNECTED && (!serverExists(server))) {
+            if (server.getStatus() == PeerStatus.CONNECTED && !serverExists(server)) {
                 String fingerprint = null;
                 VdcQueryReturnValue returnValue;
                 if (getParameters().isServerKeyFingerprintRequired()) {

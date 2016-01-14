@@ -182,7 +182,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     private boolean isFileDomainInEditState(StorageDomain storageDomain) {
-        return (storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
+        return storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached;
     }
 
     @Override

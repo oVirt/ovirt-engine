@@ -167,8 +167,8 @@ public class PluginDataManager {
                 reloadConfiguration |= reloadDescriptor;
 
                 // Refresh configuration if the corresponding file has gone missing
-                reloadConfiguration |= (configurationLastModified == MISSING_FILE_LAST_MODIFIED
-                        && currentData.getConfigurationLastModified() != MISSING_FILE_LAST_MODIFIED);
+                reloadConfiguration |= configurationLastModified == MISSING_FILE_LAST_MODIFIED
+                        && currentData.getConfigurationLastModified() != MISSING_FILE_LAST_MODIFIED;
             } else {
                 reloadDescriptor = true;
                 reloadConfiguration = true;

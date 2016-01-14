@@ -116,7 +116,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 VDSCommandType.FullList,
                 new FullListVDSCommandParameters(vds, vmsToUpdate));
         if (vdsReturnValue.getSucceeded()) {
-            result = (Map<String, Object>[]) (vdsReturnValue.getReturnValue());
+            result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
         }
         return result;
     }

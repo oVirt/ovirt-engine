@@ -64,7 +64,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
         boolean networkValueSetToDefaultMtu = network.getMtu() == 0;
         boolean ifaceValueSetToDefaultMtu = iface.getMtu() == NetworkUtils.getDefaultMtu();
         boolean bothUsesDefaultValue = networkValueSetToDefaultMtu && ifaceValueSetToDefaultMtu;
-        return (bothUsesDefaultValue || iface.getMtu() == network.getMtu());
+        return bothUsesDefaultValue || iface.getMtu() == network.getMtu();
     }
 
     private boolean isNetworkSubnetInSync() {

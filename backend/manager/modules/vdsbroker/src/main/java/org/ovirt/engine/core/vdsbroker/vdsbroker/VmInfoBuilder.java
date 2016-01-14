@@ -73,7 +73,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         this.vm = vm;
         this.vdsId = vdsId;
         this.createInfo = createInfo;
-        hasNonDefaultBootOrder = (vm.getBootSequence() != vm.getDefaultBootSequence());
+        hasNonDefaultBootOrder = vm.getBootSequence() != vm.getDefaultBootSequence();
         if (hasNonDefaultBootOrder) {
             managedDevices = new ArrayList<>();
         }
@@ -610,7 +610,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     public static String evaluateInterfaceType(VmInterfaceType ifaceType, boolean vmHasAgent) {
         return ifaceType == VmInterfaceType.rtl8139_pv
-                ? (vmHasAgent ? VmInterfaceType.pv.name() : VmInterfaceType.rtl8139.name())
+                ? vmHasAgent ? VmInterfaceType.pv.name() : VmInterfaceType.rtl8139.name()
                 : ifaceType.getInternalName();
     }
 
@@ -652,7 +652,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildUnmanagedDevices() {
-        Map<String, String> customMap = (createInfo.containsKey(VdsProperties.Custom)) ?
+        Map<String, String> customMap = createInfo.containsKey(VdsProperties.Custom) ?
                 (Map<String, String>) createInfo.get(VdsProperties.Custom) : new HashMap<>();
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
@@ -984,12 +984,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void addDevice(Map<String, Object> struct, VmDevice vmDevice, String path) {
-        boolean isPayload = (VmPayload.isPayload(vmDevice.getSpecParams()) &&
-                vmDevice.getDevice().equals(VmDeviceType.CDROM.getName()));
+        boolean isPayload = VmPayload.isPayload(vmDevice.getSpecParams()) &&
+                vmDevice.getDevice().equals(VmDeviceType.CDROM.getName());
         Map<String, Object> specParams =
                 (vmDevice.getSpecParams() == null) ? Collections.<String, Object> emptyMap() : vmDevice.getSpecParams();
         if (path != null) {
-            struct.put(VdsProperties.Path, (isPayload) ? "" : path);
+            struct.put(VdsProperties.Path, isPayload ? "" : path);
         }
         if (isPayload) {
             String cdInterface = osRepository.getCdInterface(vm.getOs(),

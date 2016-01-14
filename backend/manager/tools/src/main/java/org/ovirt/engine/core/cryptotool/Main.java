@@ -116,11 +116,9 @@ public class Main {
                                     keystorePassword
                                 ),
                                 (String)argMap.get("keystore-alias"),
-                                (
                                     argMap.get("key-password") != null ?
                                     getPassword("Key password: ", (String)argMap.get("key-password")) :
                                     keystorePassword
-                                )
                             ),
                             new String(readStream(System.in), StandardCharsets.UTF_8)
                         )

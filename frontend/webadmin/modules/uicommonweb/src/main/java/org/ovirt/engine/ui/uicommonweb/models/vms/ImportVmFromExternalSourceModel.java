@@ -65,7 +65,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
         List<VdcActionParametersBase> prms = new ArrayList<>();
 
         for (Object item : getItems()) {
-            ImportVmData importVmData = ((ImportVmData) item);
+            ImportVmData importVmData = (ImportVmData) item;
             VM vm = importVmData.getVm();
 
             ImportVmFromExternalProviderParameters prm = new ImportVmFromExternalProviderParameters(

@@ -41,7 +41,7 @@ public class ReportsListModel extends SearchableListWithReportsModel {
         this.commonModelProvider = commonModelProvider;
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        htmlParams.setParameter("userLocale", currentLocale.equals("default") ? "en_US" : currentLocale); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         setApplicationPlace(WebAdminApplicationPlaces.reportsMainTabPlace);
 

@@ -123,7 +123,7 @@ public class ExtensionsToolExecutor {
         List<File> files = (List<File>)argMap.get("extension-file");
         if(files == null) {
             files = listFiles(
-                ((String) argMap.get("extensions-dir")),
+                (String) argMap.get("extensions-dir"),
                 "properties"
             );
         }

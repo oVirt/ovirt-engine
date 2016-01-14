@@ -214,7 +214,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // If file name got prefix of iso:// then set the path to the Iso domain.
         int prefixLength = ISO_PREFIX.length();
-        if (url.length() >= prefixLength && (url.substring(0, prefixLength)).equalsIgnoreCase(ISO_PREFIX)) {
+        if (url.length() >= prefixLength && url.substring(0, prefixLength).equalsIgnoreCase(ISO_PREFIX)) {
             fullPathFileName = cdPathWindowsToLinux(url.substring(prefixLength));
         }
         return fullPathFileName;
@@ -669,9 +669,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getActionReturnValue() == VMStatus.Up ?
                                isVmRunningOnNonDefaultVds() ?
                                        AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
-                                       : (isStatelessSnapshotExistsForVm() ?
+                                       : isStatelessSnapshotExistsForVm() ?
                                                AuditLogType.USER_RUN_VM_AS_STATELESS
-                                               : AuditLogType.USER_RUN_VM)
+                                               : AuditLogType.USER_RUN_VM
                                 : _isRerun ?
                                         AuditLogType.VDS_INITIATED_RUN_VM
                                         : getVm().isRunAndPause() ?
@@ -791,9 +791,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
         }
         if (getVm().getEmulatedMachine() == null) {
-            getVm().setEmulatedMachine((getVm().getCustomEmulatedMachine() != null ?
+            getVm().setEmulatedMachine(getVm().getCustomEmulatedMachine() != null ?
                     getVm().getCustomEmulatedMachine() :
-                    getCluster().getEmulatedMachine()));
+                    getCluster().getEmulatedMachine());
         }
 
         getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
@@ -928,7 +928,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                             && getVm().getHasAgent() &&
                     getVm().getGuestAgentVersion().getBuild() < bestToolVer))) {
                 // Vm has no tools or there are new tools
-                selectedToolsVersion = (Integer.toString(bestToolVer));
+                selectedToolsVersion = Integer.toString(bestToolVer);
                 selectedToolsClusterVersion = bestClusterVer.toString();
                 attachCd = true;
             }

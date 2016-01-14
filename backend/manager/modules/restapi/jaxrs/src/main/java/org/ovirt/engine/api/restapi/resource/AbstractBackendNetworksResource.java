@@ -56,7 +56,7 @@ public abstract class AbstractBackendNetworksResource
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
                 (name != null && name.equals(entity.getName()))
-                && (entity.getDataCenterId()!=null) && (entity.getDataCenterId().toString().equals(dataCenterId))) {
+                && (entity.getDataCenterId()!=null) && entity.getDataCenterId().toString().equals(dataCenterId)) {
                 return entity;
             }
         }

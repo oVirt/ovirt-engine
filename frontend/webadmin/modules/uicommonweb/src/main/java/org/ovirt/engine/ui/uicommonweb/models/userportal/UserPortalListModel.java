@@ -876,7 +876,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         AttachCdModel model = (AttachCdModel) getWindow();
         model.startProgress();
         String isoName =
-                (model.getIsoImage().getSelectedItem().equals(ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                model.getIsoImage().getSelectedItem().equals(ConsoleModel.getEjectLabel()) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
 
         Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
@@ -976,7 +976,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             saveNewVm(model);
         }
         else {
-            final VM selectedItem = (VM) (getSelectedItem()).getEntity();
+            final VM selectedItem = (VM) getSelectedItem().getEntity();
             gettempVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
             if (selectedItem.isRunningOrPaused()) {

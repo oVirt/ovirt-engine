@@ -300,7 +300,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             GlusterBrickEntity brick;
             int brick_num = 0;
             int count =
-                    (isReplicaCountIncreased(replicaCount)) ? replicaCount : stripeCount;
+                    isReplicaCountIncreased(replicaCount) ? replicaCount : stripeCount;
 
             // Updating existing brick order
             for (int i = 0; i < volumeBricks.size(); i++) {
@@ -356,15 +356,15 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
     }
 
     private boolean isReplicaCountIncreased(int replicaCount) {
-        return ((getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+        return (getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
-                && replicaCount > getGlusterVolume().getReplicaCount());
+                && replicaCount > getGlusterVolume().getReplicaCount();
     }
 
     private boolean isStripeCountIncreased(int stripeCount) {
-        return ((getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
+        return (getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
-                && stripeCount > getGlusterVolume().getStripeCount());
+                && stripeCount > getGlusterVolume().getStripeCount();
     }
 
     private GlusterStatus getBrickStatus() {

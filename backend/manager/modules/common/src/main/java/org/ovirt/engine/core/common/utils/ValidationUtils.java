@@ -93,6 +93,6 @@ public class ValidationUtils {
     }
 
     public static boolean validatePort(int port) {
-        return ((port >= BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT) && (port <= BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT));
+        return (port >= BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT) && (port <= BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT);
     }
 }

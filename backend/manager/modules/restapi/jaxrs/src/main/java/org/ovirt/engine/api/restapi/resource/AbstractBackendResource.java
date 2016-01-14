@@ -151,7 +151,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
      */
     protected final R populate(R model, Q entity) {
         model = deprecatedPopulate(model, entity);
-        return (isPopulate() ? doPopulate(model, entity) : model);
+        return isPopulate() ? doPopulate(model, entity) : model;
     }
 
     @Deprecated

@@ -150,7 +150,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
             @Override
             protected Long getRawValue(EntityModel object) {
-                return ((GlusterVolumeTaskStatusForHost)(object.getEntity())).getTotalSizeMoved();
+                return ((GlusterVolumeTaskStatusForHost) object.getEntity()).getTotalSizeMoved();
             }
         }, constants.rebalanceSize());
 
@@ -189,7 +189,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
             @Override
             protected Double getRawValue(EntityModel object) {
-                return ((GlusterVolumeTaskStatusForHost)(object.getEntity())).getRunTime();
+                return ((GlusterVolumeTaskStatusForHost) object.getEntity()).getRunTime();
             }
         }, constants.rebalanceRunTime());
     }

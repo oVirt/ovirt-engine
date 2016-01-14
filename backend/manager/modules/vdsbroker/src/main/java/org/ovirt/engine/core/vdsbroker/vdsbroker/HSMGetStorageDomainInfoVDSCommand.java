@@ -67,7 +67,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     sdStatic.setStorage(connections.get(0).getId());
                     sdStatic.setConnection(connections.get(0));
                 }
-            } else if (sdStatic.getStorageType() != StorageType.NFS && (xmlRpcStruct.containsKey("vguuid"))) {
+            } else if (sdStatic.getStorageType() != StorageType.NFS && xmlRpcStruct.containsKey("vguuid")) {
                 sdStatic.setStorage(xmlRpcStruct.get("vguuid").toString());
             }
         }

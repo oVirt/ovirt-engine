@@ -90,7 +90,7 @@ public class GuideModel extends EntityModel {
     protected String getVdsSearchString(final MoveHost moveHost) {
         StringBuilder buf = new StringBuilder("Host: "); //$NON-NLS-1$
         for (MoveHostData hostData : moveHost.getSelectedHosts()) {
-            if ((buf.length()) > 6) {
+            if (buf.length() > 6) {
                 buf.append(" or "); //$NON-NLS-1$
             }
             buf.append("name = "); //$NON-NLS-1$

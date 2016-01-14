@@ -44,7 +44,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
             log.error("Master node uuid is not available");
             return null;
         }
-        String masterBrickDir = (innerMap.containsKey(BRICK_NAME)) ? innerMap.get(BRICK_NAME).toString() : null;
+        String masterBrickDir = innerMap.containsKey(BRICK_NAME) ? innerMap.get(BRICK_NAME).toString() : null;
         GlusterServer glusterServer = getDbUtils().getServerByUuid(masterNodeGlusterId);
         if (glusterServer != null) {
             GlusterBrickEntity brick =

@@ -21,7 +21,7 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
         if (!(parameters.get(3) instanceof Boolean)) {
             throw new IllegalArgumentException();
         }
-        isLastMaster = (Boolean) (parameters.get(3));
+        isLastMaster = (Boolean) parameters.get(3);
         if (!(parameters.get(4) instanceof Guid)) {
             throw new IllegalArgumentException();
         }

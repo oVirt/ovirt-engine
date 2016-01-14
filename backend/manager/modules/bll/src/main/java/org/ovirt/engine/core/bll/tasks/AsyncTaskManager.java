@@ -286,7 +286,7 @@ public final class AsyncTaskManager {
                 "Failing partially submitted task AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                 task.getTaskType(),
                 task.getTaskId(),
-                (task.getActionType()));
+                task.getActionType());
         task.getTaskParameters().setTaskGroupSuccess(false);
         if (task.getActionType() == VdcActionType.Unknown) {
             removeTaskFromDbByTaskId(task.getTaskId());
@@ -294,7 +294,7 @@ public final class AsyncTaskManager {
                     "Not calling endAction for partially submitted task and AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                     task.getTaskType(),
                     task.getTaskId(),
-                    (task.getActionType()));
+                    task.getActionType());
             return;
         }
         log.info("Calling updateTask for partially submitted task and AsyncTaskType '{}': Task '{}' Parent Command"
@@ -335,7 +335,7 @@ public final class AsyncTaskManager {
 
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
-                .addMinutes((-1) * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
+                .addMinutes(-1 * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
@@ -528,10 +528,10 @@ public final class AsyncTaskManager {
                 log.info(
                         "Adding task '{}' (Parent Command '{}', Parameters Type '{}'), {}.",
                         task.getVdsmTaskId(),
-                        (task.getParameters().getDbAsyncTask().getActionType()),
+                        task.getParameters().getDbAsyncTask().getActionType(),
                         task.getParameters().getClass().getName(),
-                        (task.getShouldPoll() ? "polling started."
-                                : "polling hasn't started yet."));
+                        task.getShouldPoll() ? "polling started."
+                                : "polling hasn't started yet.");
 
                 // Set the indication to true for logging _tasks status on next
                 // quartz execution.

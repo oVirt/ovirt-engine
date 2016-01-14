@@ -201,8 +201,8 @@ public class CoCoAsyncTaskHelper {
         if (cmdEntity != null) {
             parentEntity = coco.getCommandEntity(cmdEntity.getParentCommandId());
         }
-        return (cmdEntity != null && !cmdEntity.isCallbackEnabled() &&
-                (parentEntity == null || !parentEntity.isCallbackEnabled()));
+        return cmdEntity != null && !cmdEntity.isCallbackEnabled() &&
+                (parentEntity == null || !parentEntity.isCallbackEnabled());
     }
 
     public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {

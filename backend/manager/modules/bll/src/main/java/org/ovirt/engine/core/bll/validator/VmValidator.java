@@ -86,8 +86,8 @@ public class VmValidator {
     public ValidationResult vmHostCanLiveMerge() {
         for (VM vm : vms) {
             if (!vm.isDown() &&
-                    ((vm.getRunOnVds() == null ||
-                    !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport()))) {
+                    (vm.getRunOnVds() == null ||
+                    !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport())) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
                             String.format("$VmName %s", vm.getName()));
             }
@@ -157,7 +157,7 @@ public class VmValidator {
         for (VM vm : vms) {
             List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vm.getId());
             ValidationResult result =
-                    (new DiskImagesValidator(ImagesHandler.filterImageDisks(vmDisks, true, false, true)))
+                    new DiskImagesValidator(ImagesHandler.filterImageDisks(vmDisks, true, false, true))
                             .diskImagesSnapshotsNotAttachedToOtherVms(onlyPlugged);
             if (result != ValidationResult.VALID) {
                 return result;

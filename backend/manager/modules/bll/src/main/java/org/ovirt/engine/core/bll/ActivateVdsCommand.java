@@ -116,15 +116,15 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     public AuditLogType getAuditLogTypeValue() {
         if (getParameters().isRunSilent()) {
             return getSucceeded()
-                    ? (haMaintenanceFailed
+                    ? haMaintenanceFailed
                             ? AuditLogType.VDS_ACTIVATE_MANUAL_HA_ASYNC
-                            : AuditLogType.VDS_ACTIVATE_ASYNC)
+                            : AuditLogType.VDS_ACTIVATE_ASYNC
                     : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
         } else {
             return getSucceeded()
-                    ? (haMaintenanceFailed
+                    ? haMaintenanceFailed
                             ? AuditLogType.VDS_ACTIVATE_MANUAL_HA
-                            : AuditLogType.VDS_ACTIVATE)
+                            : AuditLogType.VDS_ACTIVATE
                     : AuditLogType.VDS_ACTIVATE_FAILED;
         }
     }

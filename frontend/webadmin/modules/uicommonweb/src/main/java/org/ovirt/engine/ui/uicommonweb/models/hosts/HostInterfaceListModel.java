@@ -510,7 +510,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
         else if (sender instanceof Model && "InterfaceList".equals(((Model) sender).getTitle())) { //$NON-NLS-1$
-            HostManagementNetworkModel managementNetworkModel = ((HostManagementNetworkModel) getWindow());
+            HostManagementNetworkModel managementNetworkModel = (HostManagementNetworkModel) getWindow();
             VdsNetworkInterface vdsNetworkInterface = managementNetworkModel.getInterface().getSelectedItem();
             if (vdsNetworkInterface.getBonded() != null && vdsNetworkInterface.getBonded().equals(true)) {
                 managementNetworkModel.getBondingOptions().setIsChangeable(true);
@@ -1030,8 +1030,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             bondingOption = model.getBondingOptions().getSelectedItem();
 
             if (!bondingOption.getKey().equals("custom")) { //$NON-NLS-1$
-                parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
-                        : bondingOption.getKey()));
+                parameters.setBondingOptions(StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
+                        : bondingOption.getKey());
             }
             else {
                 EntityModel entityModel = bondingOption.getValue();
@@ -1344,8 +1344,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) { //$NON-NLS-1$
-                    parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
-                            : bondingOption.getKey()));
+                    parameters.setBondingOptions(StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
+                            : bondingOption.getKey());
                 }
                 else {
                     EntityModel entityModel = bondingOption.getValue();
@@ -1413,8 +1413,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) { //$NON-NLS-1$
-                    parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
-                            : bondingOption.getKey()));
+                    parameters.setBondingOptions(StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
+                            : bondingOption.getKey());
                 }
                 else {
                     EntityModel entityModel = bondingOption.getValue();
@@ -1685,7 +1685,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                         new UpdateNetworkToVdsParameters(getEntity().getId(),
                                 network,
                                 new ArrayList<>(Arrays.asList(new VdsNetworkInterface[]{nic})));
-                parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getName()));
+                parameters.setOldNetworkName(nic.getNetworkName() != null ? nic.getNetworkName() : network.getName());
                 parameters.setCheckConnectivity(model.getCheckConnectivity().getEntity());
 
                 actionType = VdcActionType.UpdateNetworkToVdsInterface;
@@ -1695,8 +1695,8 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 bondingOption = model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) { //$NON-NLS-1$
-                    parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
-                            : bondingOption.getKey()));
+                    parameters.setBondingOptions(StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
+                            : bondingOption.getKey());
                 }
                 else {
                     EntityModel entityModel = bondingOption.getValue();
@@ -1936,7 +1936,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
     private boolean isAnyBond(Iterable<VdsNetworkInterface> items) {
         for (VdsNetworkInterface item : items) {
-            if ((item.getBonded() == null ? false : item.getBonded())) {
+            if (item.getBonded() == null ? false : item.getBonded()) {
                 return true;
             }
         }

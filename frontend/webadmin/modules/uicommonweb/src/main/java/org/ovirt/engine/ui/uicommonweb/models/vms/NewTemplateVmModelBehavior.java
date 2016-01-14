@@ -273,8 +273,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     DiskImage diskImage = (DiskImage) disk;
                     diskModel.setSize(new EntityModel<>((int) diskImage.getSizeInGigabytes()));
                     ListModel volumes = new ListModel();
-                    volumes.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                            : AsyncDataProvider.getInstance().getVolumeTypeList()), diskImage.getVolumeType());
+                    volumes.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                            : AsyncDataProvider.getInstance().getVolumeTypeList(), diskImage.getVolumeType());
                     diskModel.setVolumeType(volumes);
                     diskModel.getAlias().setEntity(diskImage.getDiskAlias());
                     break;

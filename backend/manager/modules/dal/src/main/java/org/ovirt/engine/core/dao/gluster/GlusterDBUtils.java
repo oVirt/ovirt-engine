@@ -46,7 +46,7 @@ public class GlusterDBUtils {
     }
 
     public boolean hasBricks(Guid serverId) {
-        return (getGlusterBrickDao().getGlusterVolumeBricksByServerId(serverId).size() > 0);
+        return getGlusterBrickDao().getGlusterVolumeBricksByServerId(serverId).size() > 0;
     }
 
     /**

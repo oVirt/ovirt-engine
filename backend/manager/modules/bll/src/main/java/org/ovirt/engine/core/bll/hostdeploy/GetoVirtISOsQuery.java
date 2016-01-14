@@ -86,9 +86,8 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
                             IsoData isoData = new IsoData();
                             isoData.setVersion(readIsoVersion(versionFile));
                             String isoVersionText = isoData.getVersion();
-                            isoData.setVdsmCompitibilityVersion(readVdsmCompatibiltyVersion((
-                                    versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
-                                            OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
+                            isoData.setVdsmCompitibilityVersion(readVdsmCompatibiltyVersion(versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
+                                    OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX)));
 
                             if (StringUtils.isEmpty(isoVersionText)) {
                                 log.debug("Iso version file '{}' is empty.", versionFile.getAbsolutePath());
@@ -144,7 +143,7 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
             vdsClusterVersion,
             isoClusterVersion
         );
-        return (vdsClusterVersion.getMajor() == isoClusterVersion.getMajor() && vdsClusterVersion.getMinor() <= isoClusterVersion.getMinor());
+        return vdsClusterVersion.getMajor() == isoClusterVersion.getMajor() && vdsClusterVersion.getMinor() <= isoClusterVersion.getMinor();
     }
 
     private String[] readVdsmCompatibiltyVersion(String fileName) {

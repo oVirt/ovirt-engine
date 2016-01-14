@@ -63,7 +63,7 @@ public class GeoRepSessionCommandTest extends BaseCommandTest {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
         volumeEntity.setId(volumeId);
         volumeEntity.setName("test-vol");
-        volumeEntity.setStatus((volumeId.equals(startedVolumeId)) ? GlusterStatus.UP : GlusterStatus.DOWN);
+        volumeEntity.setStatus(volumeId.equals(startedVolumeId) ? GlusterStatus.UP : GlusterStatus.DOWN);
         volumeEntity.setClusterId(CLUSTER_ID);
         return volumeEntity;
     }

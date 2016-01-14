@@ -29,8 +29,8 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
 
     protected AsyncTaskStatus parseTaskStatus(TaskStatusForXmlRpc taskStatus) {
         AsyncTaskStatus task = new AsyncTaskStatus();
-        task.setStatus((taskStatus != null && taskStatus.taskState != null) ? (AsyncTaskStatusEnum
-                .valueOf(taskStatus.taskState)) : AsyncTaskStatusEnum.unknown);
+        task.setStatus((taskStatus != null && taskStatus.taskState != null) ? AsyncTaskStatusEnum
+                .valueOf(taskStatus.taskState) : AsyncTaskStatusEnum.unknown);
 
         if (task.getStatus() == AsyncTaskStatusEnum.finished) {
             updateReturnStatus(taskStatus);
@@ -43,7 +43,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 task.setException(ex);
             }
 
-            task.setResult(taskStatus != null ? (AsyncTaskResultEnum.valueOf(taskStatus.taskResult))
+            task.setResult(taskStatus != null ? AsyncTaskResultEnum.valueOf(taskStatus.taskResult)
                     : AsyncTaskResultEnum.unknown);
 
             // Normally, when the result is not 'success', there is an

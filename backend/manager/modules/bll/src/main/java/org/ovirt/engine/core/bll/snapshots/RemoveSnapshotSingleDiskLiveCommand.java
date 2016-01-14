@@ -98,9 +98,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 } else {
                     log.error("Child command '{}' failed: {}",
                             getParameters().getCommandStep(),
-                            (vdcReturnValue != null
+                            vdcReturnValue != null
                                     ? vdcReturnValue.getExecuteFailedMessages()
-                                    : "null return value")
+                                    : "null return value"
                     );
                     setCommandStatus(CommandStatus.FAILED);
                     return;
@@ -198,7 +198,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private RemoveSnapshotSingleDiskLiveStep getInitialMergeStepForImage(Guid imageId) {
         Image image = getImageDao().get(imageId);
         if (image.getStatus() == ImageStatus.ILLEGAL
-                && (image.getParentId().equals(Guid.Empty))) {
+                && image.getParentId().equals(Guid.Empty)) {
             List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
                     .getAllSnapshotsForParent(imageId);
             if (children.isEmpty()) {

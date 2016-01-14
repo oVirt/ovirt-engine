@@ -278,7 +278,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         for (GlusterHookEntity hook: existingHookMap.values()) {
             // Check if aggregated conflict status is different from existing hook
             Integer oldConflictStatus = existingHookConflictMap.get(hook.getHookKey());
-            if (!(hook.getConflictStatus().equals(oldConflictStatus))) {
+            if (!hook.getConflictStatus().equals(oldConflictStatus)) {
                 log.debug("Conflict change detected for hook '{}' in cluster '{}' ",
                         hook.getHookKey(), hook.getClusterId());
                 logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);

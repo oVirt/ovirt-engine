@@ -184,7 +184,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     protected void endMoveVmCommand() {
-        boolean vmExists = (getVm() != null);
+        boolean vmExists = getVm() != null;
         if (vmExists) {
             incrementDbGeneration();
         }

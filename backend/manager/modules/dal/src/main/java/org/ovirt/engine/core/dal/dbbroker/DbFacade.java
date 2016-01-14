@@ -374,7 +374,7 @@ public class DbFacade {
                 dbEngineDialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName("Getsystem_statistics")
                         .returningResultSet("RETURN_VALUE", mapper).execute(parameterSource);
 
-        return (Integer) DbFacadeUtils.asSingleResult((List<?>) (dbResults.get("RETURN_VALUE")));
+        return (Integer) DbFacadeUtils.asSingleResult((List<?>) dbResults.get("RETURN_VALUE"));
     }
 
     /**
@@ -397,7 +397,7 @@ public class DbFacade {
      * @return True if DB is up & running.
      */
     public boolean checkDBConnection() {
-        return (new SimpleJdbcCall(jdbcTemplate).withProcedureName("CheckDBConnection").execute() != null);
+        return new SimpleJdbcCall(jdbcTemplate).withProcedureName("CheckDBConnection").execute() != null;
     }
 
     /**

@@ -119,7 +119,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean isCpuSharesValid(VM vmData) {
-        return (vmData.getCpuShares() >= 0 && vmData.getCpuShares() <= MAXIMUM_CPU_SHARES);
+        return vmData.getCpuShares() >= 0 && vmData.getCpuShares() <= MAXIMUM_CPU_SHARES;
     }
 
     protected boolean setAndValidateCpuProfile() {

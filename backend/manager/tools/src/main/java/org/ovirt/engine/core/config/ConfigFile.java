@@ -13,8 +13,8 @@ public abstract class ConfigFile<T> {
 
     protected File locate(String optionalConfigFilePath) throws FileNotFoundException {
         return EngineConfigUtils.locateFileInPaths(
-                (!StringUtils.isBlank(optionalConfigFilePath) ? new String[] { optionalConfigFilePath }
-                        : getDefaultFileLocations()));
+                !StringUtils.isBlank(optionalConfigFilePath) ? new String[] { optionalConfigFilePath }
+                        : getDefaultFileLocations());
     }
 
 }

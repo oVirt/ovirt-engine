@@ -200,10 +200,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     }
 
     private boolean isOvirtReInstallOrUpgrade() {
-        return (
-            getParameters().getIsReinstallOrUpgrade() &&
-            getVds().isOvirtNode()
-        );
+        return getParameters().getIsReinstallOrUpgrade() && getVds().isOvirtNode();
     }
 
     @Override
@@ -221,6 +218,6 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         if (getParameters().getActivateHost()) {
             return VDSStatus.NonResponsive;
         }
-        return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
+        return VDSStatus.Maintenance.equals(vdsInitialStatus) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }

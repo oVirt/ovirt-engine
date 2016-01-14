@@ -87,7 +87,7 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return ((optionValueExists) ? AuditLogType.GLUSTER_VOLUME_OPTION_MODIFIED : AuditLogType.GLUSTER_VOLUME_OPTION_ADDED);
+            return optionValueExists ? AuditLogType.GLUSTER_VOLUME_OPTION_MODIFIED : AuditLogType.GLUSTER_VOLUME_OPTION_ADDED;
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED : errorType;
         }

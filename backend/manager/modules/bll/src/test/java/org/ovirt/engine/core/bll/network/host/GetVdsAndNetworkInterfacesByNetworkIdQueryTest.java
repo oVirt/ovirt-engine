@@ -106,7 +106,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
 
     private void setupNetworkDao() {
         when(getDbFacadeMockInstance().getNetworkDao()).thenReturn(networkDaoMocked);
-        when(networkDaoMocked.get(networkId)).thenReturn((networkMocked));
+        when(networkDaoMocked.get(networkId)).thenReturn(networkMocked);
     }
 
 }

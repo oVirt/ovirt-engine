@@ -91,8 +91,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
                 fakeA = (int) Math.round(factor * valueA);
                 fakeB = (int) Math.round(factor * valueB);
 
-                fakeA = (fakeB == 0 ? FULL_WIDTH : fakeA);
-                fakeB = (fakeA == 0 ? FULL_WIDTH : fakeB);
+                fakeA = fakeB == 0 ? FULL_WIDTH : fakeA;
+                fakeB = fakeA == 0 ? FULL_WIDTH : fakeB;
             }
 
             setBar(percentageBarA, percentageLabelA, valueA, fakeA, style.percentageLabelBlack());

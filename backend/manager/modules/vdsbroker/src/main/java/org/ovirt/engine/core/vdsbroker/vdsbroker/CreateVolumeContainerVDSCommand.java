@@ -20,7 +20,7 @@ public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandPar
         status = getBroker().createVolumeContainer(
                 getParameters().getStorageDomainId().toString(),
                 getParameters().getNewImageGroupId().toString(),
-                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
                 getParameters().getVolumeFormat().getValue(),
                 2,
                 getParameters().getNewImageID().toString(),

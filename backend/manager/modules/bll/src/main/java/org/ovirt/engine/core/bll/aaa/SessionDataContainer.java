@@ -332,7 +332,7 @@ public class SessionDataContainer {
     }
 
     private void refresh(SessionInfo sessionInfo) {
-        int softLimitValue = (Integer) (sessionInfo.contentOfSession.get(SOFT_LIMIT_INTERVAL_PARAMETER_NAME));
+        int softLimitValue = (Integer) sessionInfo.contentOfSession.get(SOFT_LIMIT_INTERVAL_PARAMETER_NAME);
         if (softLimitValue > 0) {
             sessionInfo.contentOfSession.put(SOFT_LIMIT_PARAMETER_NAME,
                     DateUtils.addMinutes(new Date(), softLimitValue));

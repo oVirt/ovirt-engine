@@ -269,7 +269,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
             entity.setRoleId(getGuidDefaultEmpty(rs, "role_id"));
             entity.setObjectId(getGuidDefaultEmpty(rs, "object_id"));
             entity.setObjectType(VdcObjectType.forValue(rs
-                    .getInt(("object_type_id"))));
+                    .getInt("object_type_id")));
             entity.setRoleName(rs.getString("role_name"));
             entity.setObjectName(rs.getString("object_name"));
             entity.setOwnerName(rs.getString("owner_name"));

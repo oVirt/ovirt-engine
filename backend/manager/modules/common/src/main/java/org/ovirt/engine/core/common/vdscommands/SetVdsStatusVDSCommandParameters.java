@@ -47,7 +47,7 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
     }
 
     public void setNonOperationalReason(NonOperationalReason nonOperationalReason) {
-        this.nonOperationalReason = (nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason);
+        this.nonOperationalReason = nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason;
     }
 
     public boolean isStopSpmFailureLogged() {

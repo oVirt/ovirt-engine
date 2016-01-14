@@ -86,7 +86,7 @@ public class ConsoleDescriptorGenerator {
     }
 
     private static int boolToInt(Boolean b) {
-        return (Boolean.TRUE.equals(b))
+        return Boolean.TRUE.equals(b)
             ? 1
             : 0;
     }

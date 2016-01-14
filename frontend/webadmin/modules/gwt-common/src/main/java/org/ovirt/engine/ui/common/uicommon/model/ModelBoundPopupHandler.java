@@ -126,7 +126,7 @@ public class ModelBoundPopupHandler<M extends IModel> {
      */
     <T extends Model> void revealPopup(final T model,
             final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
-        assert (model != null) : "Popup model must not be null"; //$NON-NLS-1$
+        assert model != null : "Popup model must not be null"; //$NON-NLS-1$
 
         // Initialize popup
         popup.init(model);

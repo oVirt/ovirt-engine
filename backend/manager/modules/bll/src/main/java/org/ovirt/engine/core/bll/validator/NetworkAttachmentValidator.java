@@ -119,10 +119,10 @@ public class NetworkAttachmentValidator {
 
     public ValidationResult bootProtocolSetForRoleNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        boolean failWhen = (isRoleNetwork() &&
+        boolean failWhen = isRoleNetwork() &&
                 (ipConfiguration == null
                         || !ipConfiguration.hasPrimaryAddressSet()
-                        || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE));
+                        || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE);
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
                 ReplacementUtils.createSetVariableString(

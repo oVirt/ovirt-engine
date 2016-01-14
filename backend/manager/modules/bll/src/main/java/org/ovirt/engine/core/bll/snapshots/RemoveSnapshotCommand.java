@@ -295,8 +295,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
 
             for (VdcActionParametersBase parameters : getParameters().getImagesParameters()) {
-                ImagesContainterParametersBase imagesParams = (parameters instanceof ImagesContainterParametersBase ?
-                        (ImagesContainterParametersBase) parameters : null);
+                ImagesContainterParametersBase imagesParams = parameters instanceof ImagesContainterParametersBase ?
+                        (ImagesContainterParametersBase) parameters : null;
 
                 if (imagesParams == null) {
                     // Shouldn't happen as for now ImagesParameters list contains only

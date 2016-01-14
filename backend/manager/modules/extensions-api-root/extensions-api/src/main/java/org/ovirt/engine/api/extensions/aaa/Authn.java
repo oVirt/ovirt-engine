@@ -239,22 +239,22 @@ public class Authn {
          * Provider supports negotiate non interactive mode authentication.
          * Used strictly HTTP headers/state to negotiate authentication.
          */
-        public static final long AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE = (1 << 0);
+        public static final long AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE = 1 << 0;
         /**
          * Provider supports negotiate interactive authentication.
          * May use form or any user interactive sequence.
          */
-        public static final long AUTHENTICATE_NEGOTIATE_INTERACTIVE = (1 << 1);
+        public static final long AUTHENTICATE_NEGOTIATE_INTERACTIVE = 1 << 1;
         /** Provider supports credentials based authentication. */
-        public static final long AUTHENTICATE_CREDENTIALS = (1 << 2);
+        public static final long AUTHENTICATE_CREDENTIALS = 1 << 2;
         /** Provider supports password based authentication. */
-        public static final long AUTHENTICATE_PASSWORD = (1 << 3);
+        public static final long AUTHENTICATE_PASSWORD = 1 << 3;
         /** Provider supports logout. */
-        public static final long LOGOUT = (1 << 4);
+        public static final long LOGOUT = 1 << 4;
         /** Provider supports credential change. */
-        public static final long CREDENTIALS_CHANGE = (1 << 5);
+        public static final long CREDENTIALS_CHANGE = 1 << 5;
         /** Provider supports self reset credential, example will send new password via email. */
-        public static final long CREDENTIALS_SELF_RESET = (1 << 6);
+        public static final long CREDENTIALS_SELF_RESET = 1 << 6;
     }
 
     /**

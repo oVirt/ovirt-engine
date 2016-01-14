@@ -68,7 +68,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected void executeVmCommand() {
         addCustomValue("InterfaceType",
-                (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
+                VmInterfaceType.forValue(getInterface().getType()).getDescription().toString());
 
         boolean succeeded = false;
         boolean macAddedToPool = false;
@@ -362,8 +362,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
-            return (!oldIface.getType().equals(getInterface().getType()))
-                    || (!oldIface.getMacAddress().equals(getMacAddress()));
+            return !oldIface.getType().equals(getInterface().getType())
+                    || !oldIface.getMacAddress().equals(getMacAddress());
         }
 
         /**
@@ -389,7 +389,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         private boolean isVnicAttachedToExternalNetwork() {
             final Network network = getNetwork();
-            return (network != null && network.isExternal());
+            return network != null && network.isExternal();
         }
     }
 }

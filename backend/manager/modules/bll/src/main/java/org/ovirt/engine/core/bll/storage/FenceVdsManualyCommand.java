@@ -94,7 +94,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             activateDataCenter();
         }
-        if ((getParameters()).getClearVMs()) {
+        if (getParameters().getClearVMs()) {
             VdsActionParameters tempVar = new VdsActionParameters(problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
             runInternalActionWithTasksContext(

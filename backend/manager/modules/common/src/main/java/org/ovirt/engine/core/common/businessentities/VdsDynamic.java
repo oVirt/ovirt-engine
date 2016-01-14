@@ -661,7 +661,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     }
 
     public void setNonOperationalReason(NonOperationalReason nonOperationalReason) {
-        this.nonOperationalReason = (nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason);
+        this.nonOperationalReason = nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason;
     }
 
     public boolean isPowerManagementControlledByPolicy() {

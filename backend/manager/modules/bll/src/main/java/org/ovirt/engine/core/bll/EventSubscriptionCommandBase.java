@@ -54,7 +54,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
 
         switch (notificationMethod) {
         case SMTP:
-            String mailAddress = (StringUtils.isEmpty(eventSubscriber.getMethodAddress())) ? user.getEmail()
+            String mailAddress = StringUtils.isEmpty(eventSubscriber.getMethodAddress()) ? user.getEmail()
                     : eventSubscriber.getMethodAddress();
 
             if (!isEmailValid(mailAddress)) {

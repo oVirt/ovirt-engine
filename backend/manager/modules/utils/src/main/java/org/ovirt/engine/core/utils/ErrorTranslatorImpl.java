@@ -140,7 +140,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
             ret = messages.get(errorMsg);
         } else {
             if (!(errorMsg == null || errorMsg.isEmpty())) {
-                if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
+                if (isDynamicVariable(errorMsg) || !changeIfNotFound) {
                     ret = errorMsg;
                 } else {
                 // just a message that doesn't have a value in the resource:

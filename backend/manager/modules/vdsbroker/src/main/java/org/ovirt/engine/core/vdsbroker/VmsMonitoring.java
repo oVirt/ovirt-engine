@@ -604,7 +604,7 @@ public class VmsMonitoring {
         VDSReturnValue vdsReturnValue = getResourceManager().runVdsCommand(VDSCommandType.FullList,
                 new FullListVDSCommandParameters(vds, vmsToUpdate));
         if (vdsReturnValue.getSucceeded()) {
-            result = (Map<String, Object>[]) (vdsReturnValue.getReturnValue());
+            result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
         }
         return result;
     }
@@ -628,7 +628,7 @@ public class VmsMonitoring {
     private Guid getVmId(Pair<VM, VmInternalData> pair) {
         return (pair.getFirst() != null) ?
                 pair.getFirst().getId() :
-                ((pair.getSecond() != null) ? pair.getSecond().getVmDynamic().getId() : null);
+                pair.getSecond() != null ? pair.getSecond().getVmDynamic().getId() : null;
     }
 
     /**

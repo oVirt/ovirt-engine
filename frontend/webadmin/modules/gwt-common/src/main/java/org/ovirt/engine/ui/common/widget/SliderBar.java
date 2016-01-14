@@ -874,7 +874,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
             }
 
             // Hide unused labels
-            for (int i = (numLabels + 1); i < labelElements.size(); i++) {
+            for (int i = numLabels + 1; i < labelElements.size(); i++) {
                 DOM.setStyleAttribute(labelElements.get(i), "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else { // Hide all labels
@@ -928,7 +928,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
             }
 
             // Hide unused ticks
-            for (int i = (numTicks + 1); i < tickElements.size(); i++) {
+            for (int i = numTicks + 1; i < tickElements.size(); i++) {
                 DOM.setStyleAttribute(tickElements.get(i), "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else { // Hide all ticks

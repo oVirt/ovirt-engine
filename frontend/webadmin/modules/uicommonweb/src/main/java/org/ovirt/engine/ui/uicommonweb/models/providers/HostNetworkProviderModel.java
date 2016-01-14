@@ -48,7 +48,7 @@ public class HostNetworkProviderModel extends EntityModel {
                 Provider<OpenstackNetworkProviderProperties> provider = getNetworkProviders().getSelectedItem();
                 getNetworkProviderType().setIsAvailable(provider != null);
                 getNetworkProviderType().setSelectedItem(provider == null ? null : provider.getType());
-                boolean isNeutron = (getNetworkProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK);
+                boolean isNeutron = getNetworkProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
                 getNeutronAgentModel().init(isNeutron ? provider : new Provider<OpenstackNetworkProviderProperties>());
                 getNeutronAgentModel().setIsAvailable(isNeutron);
             }

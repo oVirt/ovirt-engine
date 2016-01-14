@@ -229,8 +229,8 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
          * lock is not needed since the alignment scan can run without any interference
          * by a concurrent running VM.
          */
-        return (getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) getDisk()).getVolumeFormat() != VolumeFormat.RAW);
+        return getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) getDisk()).getVolumeFormat() != VolumeFormat.RAW;
     }
 
     @Override

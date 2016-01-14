@@ -249,7 +249,7 @@ public class ClusterMapper {
         case MIGRATE_HIGHLY_AVAILABLE:
             return MigrateOnErrorOptions.HA_ONLY;
         default:
-            assert(false) : "unknown migrate-on-error value: " + model.toString();
+            assert false : "unknown migrate-on-error value: " + model.toString();
             return null;
         }
     }
@@ -267,7 +267,7 @@ public class ClusterMapper {
         case HA_ONLY:
             return MigrateOnError.MIGRATE_HIGHLY_AVAILABLE;
         default:
-            assert(false) : "unknown migrate-on-error value: " + model.toString();
+            assert false : "unknown migrate-on-error value: " + model.toString();
             return null;
         }
     }

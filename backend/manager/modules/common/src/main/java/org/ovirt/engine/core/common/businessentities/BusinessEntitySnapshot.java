@@ -146,8 +146,8 @@ public class BusinessEntitySnapshot {
             return false;
         }
         BusinessEntitySnapshot other = (BusinessEntitySnapshot) obj;
-        return (Objects.equals(commandId, other.commandId)
-                && Objects.equals(entityId, other.entityId));
+        return Objects.equals(commandId, other.commandId)
+                && Objects.equals(entityId, other.entityId);
     }
 
     /**

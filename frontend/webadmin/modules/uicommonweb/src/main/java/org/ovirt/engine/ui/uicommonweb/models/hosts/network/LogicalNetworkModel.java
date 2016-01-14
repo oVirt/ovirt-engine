@@ -200,7 +200,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     @Override
     public NetworkStatus getStatus() {
-        return (getNetwork().getCluster() == null ? null : getNetwork().getCluster().getStatus());
+        return getNetwork().getCluster() == null ? null : getNetwork().getCluster().getStatus();
     }
 
     public int getVlanId() {

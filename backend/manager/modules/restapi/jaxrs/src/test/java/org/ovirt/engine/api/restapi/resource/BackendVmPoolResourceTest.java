@@ -161,7 +161,7 @@ public class BackendVmPoolResourceTest
         assertNotNull(r.getEntity());
         assertNotNull(((org.ovirt.engine.api.model.Action)r.getEntity()).getVm());
         assertNotNull(((org.ovirt.engine.api.model.Action)r.getEntity()).getVm().getId());
-        assertEquals((((org.ovirt.engine.api.model.Action)r.getEntity()).getVm()).getId(), GUIDS[0].toString());
+        assertEquals(((org.ovirt.engine.api.model.Action)r.getEntity()).getVm().getId(), GUIDS[0].toString());
 
         verifyActionResponse(r, "vmpools/" + GUIDS[0], false);
     }

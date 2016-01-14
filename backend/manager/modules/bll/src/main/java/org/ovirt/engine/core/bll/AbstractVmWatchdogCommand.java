@@ -80,7 +80,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         } else {
             if (getVmTemplate().getClusterId() != null) {
                 vmWatchdogValidator = new VmWatchdogValidator(getVmTemplate().getOsId(), watchdog,
-                        (getClusterDao().get(getVmTemplate().getClusterId())).getCompatibilityVersion());
+                        getClusterDao().get(getVmTemplate().getClusterId()).getCompatibilityVersion());
             }
         }
 

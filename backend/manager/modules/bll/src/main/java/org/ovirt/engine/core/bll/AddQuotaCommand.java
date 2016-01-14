@@ -28,8 +28,8 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected boolean validate() {
-        return (checkQuotaValidationForAdd(getParameters().getQuota(),
-                getReturnValue().getValidationMessages()));
+        return checkQuotaValidationForAdd(getParameters().getQuota(),
+                getReturnValue().getValidationMessages());
     }
 
     public boolean checkQuotaValidationForAdd(Quota quota, List<String> messages) {

@@ -686,9 +686,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // check for Vm Watchdog Model
         if (getParameters().getWatchdog() != null) {
-            if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
+            if (!validate(new VmWatchdogValidator(vmFromParams.getOs(),
                     getParameters().getWatchdog(),
-                    getEffectiveCompatibilityVersion())).isValid())) {
+                    getEffectiveCompatibilityVersion()).isValid())) {
                 return false;
             }
         }

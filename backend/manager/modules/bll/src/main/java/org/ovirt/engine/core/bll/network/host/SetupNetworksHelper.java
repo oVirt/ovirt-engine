@@ -571,7 +571,7 @@ public class SetupNetworksHelper {
                 }
             } else {
                 VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
-                existingIface = (existingIface == null ? iface : existingIface);
+                existingIface = existingIface == null ? iface : existingIface;
                 iface.setVlanId(existingIface.getVlanId());
                 validateNetworkExclusiveOnIface(iface,
                         determineNetworkType(existingIface.getVlanId(), existingIface.isBridged()));

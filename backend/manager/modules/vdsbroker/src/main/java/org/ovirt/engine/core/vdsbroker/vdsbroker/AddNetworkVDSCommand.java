@@ -46,13 +46,13 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
             break;
         }
 
-        options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");
+        options.put(VdsProperties.STP, getParameters().getStp() ? "yes" : "no");
 
         if (!StringUtils.isEmpty(getParameters().getBondingOptions())) {
             options.put(VdsProperties.BONDING_OPTIONS, getParameters().getBondingOptions());
         }
 
-        options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");
+        options.put(VdsProperties.STP, getParameters().getStp() ? "yes" : "no");
         // options[VdsProperties.force] = "true";
 
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));

@@ -553,7 +553,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                UiMenuBarButtonDefinition<T> menuBarDef = ((UiMenuBarButtonDefinition<T>) buttonDef);
+                UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
                 if (menuBarDef.isAsTitle()) {
                     MenuItemSeparator titleItem = new TitleMenuItemSeparator(buttonDef.getText());
                     menuBar.addSeparator(titleItem);

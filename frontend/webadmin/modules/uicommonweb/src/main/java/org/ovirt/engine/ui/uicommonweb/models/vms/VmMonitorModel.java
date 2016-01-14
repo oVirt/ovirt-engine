@@ -120,10 +120,10 @@ public class VmMonitorModel extends EntityModel {
             public void onSuccess(Object model, Object result) {
                 VM vm1 = (VM) result;
                 VmMonitorModel vmMonitorModel = (VmMonitorModel) model;
-                vmMonitorModel.setCpuUsage((vm1.getUsageCpuPercent() == null ? 0 : vm1.getUsageCpuPercent()));
-                vmMonitorModel.setMemoryUsage((vm1.getUsageMemPercent() == null ? 0 : vm1.getUsageMemPercent()));
-                vmMonitorModel.setNetworkUsage((vm1.getUsageNetworkPercent() == null ? 0
-                        : vm1.getUsageNetworkPercent()));
+                vmMonitorModel.setCpuUsage(vm1.getUsageCpuPercent() == null ? 0 : vm1.getUsageCpuPercent());
+                vmMonitorModel.setMemoryUsage(vm1.getUsageMemPercent() == null ? 0 : vm1.getUsageMemPercent());
+                vmMonitorModel.setNetworkUsage(vm1.getUsageNetworkPercent() == null ? 0
+                        : vm1.getUsageNetworkPercent());
             }
         };
         AsyncDataProvider.getInstance().getVmById(_asyncQuery, vm.getId());

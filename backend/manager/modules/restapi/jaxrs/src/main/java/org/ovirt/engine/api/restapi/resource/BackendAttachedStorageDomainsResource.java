@@ -101,7 +101,7 @@ public class BackendAttachedStorageDomainsResource
 
         @Override
         public org.ovirt.engine.core.common.businessentities.StorageDomain lookupEntity(Guid nullId) {
-            assert(nullId == null); // attach action return nothing, lookup original id instead
+            assert nullId == null; // attach action return nothing, lookup original id instead
             return lookupStorageDomainById(storageDomainId);
         }
     }

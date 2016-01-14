@@ -27,7 +27,7 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
         uuidReturn = getIrsProxy().createVolume(getParameters().getStorageDomainId().toString(),
                                                 getParameters().getStoragePoolId().toString(),
                                                 getParameters().getImageGroupId().toString(),
-                                                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                                                Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
                                                 getParameters().getVolumeFormat().getValue(),
                                                 getParameters().getImageType().getValue(),
                                                 2,

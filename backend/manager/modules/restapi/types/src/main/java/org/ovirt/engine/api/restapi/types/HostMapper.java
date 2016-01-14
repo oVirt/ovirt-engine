@@ -171,7 +171,7 @@ public class HostMapper {
 
     @Mapping(from = Option.class, to = String.class)
     public static String map(Option model, String template) {
-        if (model.isSetName() && (!model.getName().isEmpty()) && model.isSetValue() && (!model.getValue().isEmpty())) {
+        if (model.isSetName() && !model.getName().isEmpty() && model.isSetValue() && !model.getValue().isEmpty()) {
             return model.getName() + "=" + model.getValue();
         } else {
             return template;

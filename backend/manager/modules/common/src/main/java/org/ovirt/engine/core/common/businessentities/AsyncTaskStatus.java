@@ -52,9 +52,9 @@ public class AsyncTaskStatus implements Serializable {
             // No message is relevant:
             return "";
         }
-        return (!StringHelper.isNullOrEmpty(message)) ? (message) : ((getException() != null
-                && !StringHelper.isNullOrEmpty(getException().getMessage())) ? (getException().getMessage())
-                : ("Asynchronous Task unknown error"));
+        return !StringHelper.isNullOrEmpty(message) ? message : getException() != null
+                && !StringHelper.isNullOrEmpty(getException().getMessage()) ? getException().getMessage()
+                : "Asynchronous Task unknown error";
     }
 
     public void setMessage(String message) {
@@ -66,7 +66,7 @@ public class AsyncTaskStatus implements Serializable {
     }
 
     public boolean getTaskIsInUnusualState() {
-        return (getStatus() == AsyncTaskStatusEnum.unknown || getStatus() == AsyncTaskStatusEnum.aborting);
+        return getStatus() == AsyncTaskStatusEnum.unknown || getStatus() == AsyncTaskStatusEnum.aborting;
     }
 
     public boolean getTaskEndedSuccessfully() {

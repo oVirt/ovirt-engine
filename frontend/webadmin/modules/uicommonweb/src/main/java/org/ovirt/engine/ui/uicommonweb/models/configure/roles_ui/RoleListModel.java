@@ -302,7 +302,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         Role role = getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
-                RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.isReadonly()),
+                RoleTreeView.getRoleTreeView(model.getIsNew() ? false : role.isReadonly(),
                         model.getIsAdminRole().getEntity());
         for (SelectionTreeNodeModel sm : selectionTree) {
             for (SelectionTreeNodeModel smChild : sm.getChildren()) {
@@ -408,7 +408,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
 
         role = commandType != CommandType.Edit ? new Role() : getSelectedItem();
-        role.setType((model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
+        role.setType(model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER);
 
         if (!model.validate()) {
             return;

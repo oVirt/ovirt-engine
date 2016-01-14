@@ -223,11 +223,11 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     protected ISpice asSpice(VmConsoles vmConsoles) {
-        return (vmConsoles.getConsoleModel(SpiceConsoleModel.class)).getspice();
+        return vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice();
     }
 
     protected IVnc asVnc(VmConsoles vmConsoles) {
-        return (vmConsoles.getConsoleModel(VncConsoleModel.class)).getVncImpl();
+        return vmConsoles.getConsoleModel(VncConsoleModel.class).getVncImpl();
     }
 
     protected void storeRdpData(VmConsoles vmConsoles, KeyMaker keyMaker) {

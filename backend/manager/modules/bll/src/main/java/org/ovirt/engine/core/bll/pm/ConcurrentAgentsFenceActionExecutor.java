@@ -88,7 +88,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
             final FenceActionExecutor executor,
             final FenceActionType fenceAction
     ) {
-        return (() -> executor.fence(fenceAction));
+        return () -> executor.fence(fenceAction);
     }
 
     /**

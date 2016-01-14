@@ -87,7 +87,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     protected boolean isQuietTimeFromLastActionPassed() {
         // Check Quiet time between PM operations, this is done only if command is not internal.
-        int secondsLeftToNextPmOp = (isInternalExecution()) ? 0 :
+        int secondsLeftToNextPmOp = isInternalExecution() ? 0 :
                 DbFacade.getInstance()
                         .getAuditLogDao()
                         .getTimeToWaitForNextPmOp(getVds().getName(), AuditLogType.USER_VDS_RESTART.name());

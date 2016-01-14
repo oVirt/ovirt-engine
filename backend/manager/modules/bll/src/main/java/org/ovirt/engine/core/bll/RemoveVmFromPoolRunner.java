@@ -67,7 +67,7 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
         if (iterator != null && iterator.hasNext()) {
             Object param = iterator.next();
             if (param instanceof RemoveVmFromPoolParameters) {
-                return ((RemoveVmFromPoolParameters) param);
+                return (RemoveVmFromPoolParameters) param;
             }
         }
 

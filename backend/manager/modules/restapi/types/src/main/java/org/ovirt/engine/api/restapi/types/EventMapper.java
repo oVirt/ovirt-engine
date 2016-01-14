@@ -91,33 +91,33 @@ public class EventMapper {
         AuditLog auditLog = (entity != null) ? entity : new AuditLog();
         auditLog.setSeverity(map(event.getSeverity(), null));
         auditLog.setLogTime(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         auditLog.setMessage(event.getDescription());
-        Guid guid = (event.isSetUser()) ? GuidUtils.asGuid(event.getUser().getId()) : Guid.Empty;
+        Guid guid = event.isSetUser() ? GuidUtils.asGuid(event.getUser().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setUserId(guid);
         }
-        guid = (event.isSetVm()) ? GuidUtils.asGuid(event.getVm().getId()) : Guid.Empty;
+        guid = event.isSetVm() ? GuidUtils.asGuid(event.getVm().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setVmId(guid);
         }
-        guid = (event.isSetStorageDomain()) ? GuidUtils.asGuid(event.getStorageDomain().getId()) : Guid.Empty;
+        guid = event.isSetStorageDomain() ? GuidUtils.asGuid(event.getStorageDomain().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setStorageDomainId(guid);
         }
-        guid = (event.isSetHost()) ? GuidUtils.asGuid(event.getHost().getId()) : Guid.Empty;
+        guid = event.isSetHost() ? GuidUtils.asGuid(event.getHost().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setVdsId(guid);
         }
-        guid = (event.isSetTemplate()) ? GuidUtils.asGuid(event.getTemplate().getId()) : Guid.Empty;
+        guid = event.isSetTemplate() ? GuidUtils.asGuid(event.getTemplate().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setVmTemplateId(guid);
         }
-        guid = (event.isSetCluster()) ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
+        guid = event.isSetCluster() ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setClusterId(guid);
         }
-        guid = (event.isSetDataCenter()) ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
+        guid = event.isSetDataCenter() ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
             auditLog.setStoragePoolId(guid);
         }

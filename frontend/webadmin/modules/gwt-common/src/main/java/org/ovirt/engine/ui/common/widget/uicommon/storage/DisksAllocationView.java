@@ -146,7 +146,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             disksAllocationItemView.updateStyles(showQuota);
             disksAllocationItemView.setIsAliasChangeable(model.getIsAliasChangable());
             disksAllocationItemView.setElementId(
-                    ElementIdUtils.createElementId(elementId, "disk" + (diskIndex++))); //$NON-NLS-1$
+                    ElementIdUtils.createElementId(elementId, "disk" + diskIndex++)); //$NON-NLS-1$
             diskListPanel.add(disksAllocationItemView);
         }
     }

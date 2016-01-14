@@ -20,7 +20,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
                         getParameters().getStorageDomainType().getValue(),
                         getParameters().getStorageType() != null ? Integer.toString(getParameters().getStorageType()
                                 .getValue()) : "",
-                        ((getParameters().getPath()) != null) ? getParameters().getPath() : "");
+                        (getParameters().getPath() != null) ? getParameters().getPath() : "");
         proceedProxyReturnValue();
 
         ArrayList<Guid> domains = new ArrayList<>();

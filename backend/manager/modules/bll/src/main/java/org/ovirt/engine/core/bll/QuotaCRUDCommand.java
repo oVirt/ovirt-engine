@@ -52,7 +52,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         Quota quotaByName = getQuotaDao().getQuotaByQuotaName(quota.getQuotaName());
 
         // Check if there is no quota with the same name that already exists.
-        if ((quotaByName != null) && (!quotaByName.getId().equals(quota.getId()))) {
+        if ((quotaByName != null) && !quotaByName.getId().equals(quota.getId())) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
             return false;
         }

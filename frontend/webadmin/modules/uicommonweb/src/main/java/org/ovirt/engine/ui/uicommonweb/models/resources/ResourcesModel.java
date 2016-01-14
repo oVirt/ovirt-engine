@@ -307,7 +307,7 @@ public class ResourcesModel extends SearchableListModel {
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
     public String sizeParser(long sizeInMb) {
-        return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
+        return sizeInMb >= 1024 && sizeInMb % 1024 == 0 ? sizeInMb / 1024 + "GB" : sizeInMb + "MB"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

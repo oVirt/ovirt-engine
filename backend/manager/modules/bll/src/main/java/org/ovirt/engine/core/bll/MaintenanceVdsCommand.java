@@ -144,7 +144,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                         runInternalAction(VdcActionType.InternalMigrateVm,
                                 new InternalMigrateVmParameters(vm.getId(), getActionType()),
                                 createMigrateVmContext(parentContext, vm));
-                if (!result.isValid() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
+                if (!result.isValid() || !((Boolean) result.getActionReturnValue()).booleanValue()) {
                     succeeded = false;
                     appendCustomValue("failedVms", vm.getName(), ",");
                     log.error("ResourceManager::vdsMaintenance - Failed migrating desktop '{}'", vm.getName());

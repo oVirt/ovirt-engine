@@ -144,7 +144,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     public AddVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         // if we came from endAction the VmId is not null
-        setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.newGuid() : parameters.getVmId());
+        setVmId(parameters.getVmId().equals(Guid.Empty) ? Guid.newGuid() : parameters.getVmId());
         setVmName(parameters.getVm().getName());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
@@ -428,10 +428,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!getParameters().getVmStaticData().getSingleQxlPci()) {
             return true;
         }
-        return (VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+        return VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getValidationMessages(),
-                        getEffectiveCompatibilityVersion()));
+                        getEffectiveCompatibilityVersion());
     }
 
     protected boolean hostToRunExist() {
@@ -590,9 +590,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // check for Vm Watchdog Model
         if (getParameters().getWatchdog() != null) {
-            if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
+            if (!validate(new VmWatchdogValidator(vmFromParams.getOs(),
                     getParameters().getWatchdog(),
-                    getEffectiveCompatibilityVersion())).isValid())) {
+                    getEffectiveCompatibilityVersion()).isValid())) {
                 return false;
             }
         }
@@ -1025,7 +1025,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
         Cluster cluster = DbFacade.getInstance().getClusterDao().get(clusterId);
-        boolean legalClusterId = (cluster != null);
+        boolean legalClusterId = cluster != null;
         if (!legalClusterId) {
             reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());
         }
@@ -1211,8 +1211,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (!getReturnValue().getVdsmTaskIdList().isEmpty() ? AuditLogType.USER_ADD_VM_STARTED
-                    : AuditLogType.USER_ADD_VM) : AuditLogType.USER_FAILED_ADD_VM;
+            return getSucceeded() ? !getReturnValue().getVdsmTaskIdList().isEmpty() ? AuditLogType.USER_ADD_VM_STARTED
+                    : AuditLogType.USER_ADD_VM : AuditLogType.USER_FAILED_ADD_VM;
 
         case END_SUCCESS:
             return getSucceeded() ? AuditLogType.USER_ADD_VM_FINISHED_SUCCESS

@@ -78,7 +78,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         log.info("Successfully removed volume(s): {}", imagesToRemove);
 
         // Direction: base exists => backwards merge (commit); else (top exists) => forward merge (rebase)
-        VmBlockJobType jobType = (images.contains(getParameters().getBaseImage().getImageId()))
+        VmBlockJobType jobType = images.contains(getParameters().getBaseImage().getImageId())
                 ? VmBlockJobType.COMMIT : VmBlockJobType.PULL;
         log.info("Volume merge type '{}'", jobType.name());
 

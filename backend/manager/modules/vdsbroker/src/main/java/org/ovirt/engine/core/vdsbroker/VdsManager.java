@@ -349,7 +349,7 @@ public class VdsManager {
     }
 
     private void setMonitoringNeeded() {
-        monitoringNeeded = (monitoringStrategy.isMonitoringNeeded(cachedVds) &&
+        monitoringNeeded = monitoringStrategy.isMonitoringNeeded(cachedVds) &&
                 cachedVds.getStatus() != VDSStatus.Installing &&
                 cachedVds.getStatus() != VDSStatus.InstallFailed &&
                 cachedVds.getStatus() != VDSStatus.Reboot &&
@@ -357,7 +357,7 @@ public class VdsManager {
                 cachedVds.getStatus() != VDSStatus.PendingApproval &&
                 cachedVds.getStatus() != VDSStatus.InstallingOS &&
                 cachedVds.getStatus() != VDSStatus.Down &&
-                cachedVds.getStatus() != VDSStatus.Kdumping);
+                cachedVds.getStatus() != VDSStatus.Kdumping;
     }
 
     public boolean isMonitoringNeeded() {

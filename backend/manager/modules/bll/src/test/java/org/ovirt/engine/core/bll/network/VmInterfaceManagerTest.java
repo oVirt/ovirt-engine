@@ -113,7 +113,7 @@ public class VmInterfaceManagerTest {
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, osId, version);
         if (reserveExistingMac) {
-            verify(macPoolManagerStrategy, times(1)).forceAddMac((iface.getMacAddress()));
+            verify(macPoolManagerStrategy, times(1)).forceAddMac(iface.getMacAddress());
         } else {
             verifyZeroInteractions(macPoolManagerStrategy);
         }

@@ -54,7 +54,7 @@ public class LibvirtSecretDaoImpl extends DefaultGenericDao<LibvirtSecret, Guid>
 
             entity.setId(getGuid(rs, "secret_id"));
             entity.setValue(DbFacadeUtils.decryptPassword(rs.getString("secret_value")));
-            entity.setUsageType(LibvirtSecretUsageType.forValue(rs.getInt(("secret_usage_type"))));
+            entity.setUsageType(LibvirtSecretUsageType.forValue(rs.getInt("secret_usage_type")));
             entity.setDescription(rs.getString("secret_description"));
             entity.setProviderId(getGuid(rs, "provider_id"));
             entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));

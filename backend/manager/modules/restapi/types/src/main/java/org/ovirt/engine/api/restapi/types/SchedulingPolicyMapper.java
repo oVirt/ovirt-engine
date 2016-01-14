@@ -62,7 +62,7 @@ public class SchedulingPolicyMapper {
     public static Filter map(ClusterPolicy entity,
             Filter template) {
         if (template == null) {
-            assert (false) : "scheduling filter cannot be null";
+            assert false : "scheduling filter cannot be null";
             return null;
         }
         Filter model = template;
@@ -99,7 +99,7 @@ public class SchedulingPolicyMapper {
     public static Weight map(ClusterPolicy entity,
             Weight template) {
         if (template == null) {
-            assert (false) : "scheduling weight cannot be null";
+            assert false : "scheduling weight cannot be null";
             return null;
         }
         Weight model = template;
@@ -130,7 +130,7 @@ public class SchedulingPolicyMapper {
     public static Balance map(ClusterPolicy entity,
             Balance template) {
         if (template == null) {
-            assert (false) : "scheduling balance cannot be null";
+            assert false : "scheduling balance cannot be null";
             return null;
         }
         Balance model = template;

@@ -86,7 +86,7 @@ public class BackendTagsResource
 
         @Override
         public Tags lookupEntity(Guid id) throws BackendFailureException {
-            assert (id == null); // AddTag returns nothing, lookup name instead
+            assert id == null; // AddTag returns nothing, lookup name instead
             return lookupTagByName(name);
         }
     }

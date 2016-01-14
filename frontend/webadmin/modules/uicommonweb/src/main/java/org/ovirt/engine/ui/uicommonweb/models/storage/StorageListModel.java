@@ -397,8 +397,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     private boolean isStorageStatusValidForPathEditing(StorageDomain storage) {
-        return (storage.getStatus() == StorageDomainStatus.Maintenance
-                || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
+        return storage.getStatus() == StorageDomainStatus.Maintenance
+                || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached;
     }
 
     private void importDomain() {
@@ -923,10 +923,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         boolean isEditAvailable;
         boolean isActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
                 || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
-        boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance
-                || storageDomain.getStatus() == StorageDomainStatus.PreparingForMaintenance);
-        boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached
-                || storageDomain.getStatus() == StorageDomainStatus.Detaching);
+        boolean isInMaintenance = storageDomain.getStatus() == StorageDomainStatus.Maintenance
+                || storageDomain.getStatus() == StorageDomainStatus.PreparingForMaintenance;
+        boolean isUnattached = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached
+                || storageDomain.getStatus() == StorageDomainStatus.Detaching;
         boolean isInternalDomain = storageDomain.getStorageDomainType().isInternalDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
@@ -1997,9 +1997,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private boolean isConnectionOverriden() {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getCurrentStorageItem();
-        return (nfsModel.getVersion().getSelectedItem().getEntity() != null
+        return nfsModel.getVersion().getSelectedItem().getEntity() != null
                 || nfsModel.getRetransmissions().asConvertible().nullableShort() != null
                 || nfsModel.getTimeout().asConvertible().nullableShort() != null
-                || nfsModel.getMountOptions().getEntity() != null);
+                || nfsModel.getMountOptions().getEntity() != null;
     }
 }

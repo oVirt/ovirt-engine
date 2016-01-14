@@ -77,8 +77,8 @@ public class BackendGlusterVolumeResource
 
     @Override
     public Response rebalance(Action action) {
-        boolean fixLayoutOnly = (action.isSetFixLayout() ? action.isFixLayout() : false);
-        boolean force = (action.isSetForce() ? action.isForce() : false);
+        boolean fixLayoutOnly = action.isSetFixLayout() ? action.isFixLayout() : false;
+        boolean force = action.isSetForce() ? action.isForce() : false;
         return doAction(VdcActionType.StartRebalanceGlusterVolume,
                 new GlusterVolumeRebalanceParameters(guid,
                         fixLayoutOnly,

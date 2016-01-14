@@ -353,7 +353,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         int maxLength = osRepository.isWindows(vm.getVmOsId()) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
 
         // check if name is longer than allowed name
-        boolean nameLengthValid = (vmName.length() <= maxLength);
+        boolean nameLengthValid = vmName.length() <= maxLength;
 
         // return result
         return nameLengthValid;

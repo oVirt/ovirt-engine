@@ -56,7 +56,7 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
             String volumeName = entry.getKey();
             Map<String, Object> snapshotInfo = (Map<String, Object>) entry.getValue();
 
-            Object[] volumeSnapshots = (Object[]) (snapshotInfo.get(SNAPSHOTS));
+            Object[] volumeSnapshots = (Object[]) snapshotInfo.get(SNAPSHOTS);
             GlusterVolumeEntity volumeEntity = getGlusterVolumeDao().getByName(clusterId, volumeName);
 
             for (Object snapshot : volumeSnapshots) {

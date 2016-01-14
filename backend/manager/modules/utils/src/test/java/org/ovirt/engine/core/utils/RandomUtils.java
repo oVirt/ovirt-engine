@@ -166,7 +166,7 @@ public final class RandomUtils extends Random {
             throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
-        return (min + nextInt(max - min + 1));
+        return min + nextInt(max - min + 1);
     }
 
     /* --- Long-related Methods --- */
@@ -183,7 +183,7 @@ public final class RandomUtils extends Random {
         if (rand == Long.MIN_VALUE) {
             rand++;
         }
-        return (Math.abs(rand) % l);
+        return Math.abs(rand) % l;
     }
 
     /**
@@ -194,7 +194,7 @@ public final class RandomUtils extends Random {
             throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
-        return (min + nextLong(max - min + 1));
+        return min + nextLong(max - min + 1);
     }
 
     /* --- Float-related Methods --- */
@@ -229,7 +229,7 @@ public final class RandomUtils extends Random {
             }
         }
 
-        return (rand * f);
+        return rand * f;
     }
 
     /**
@@ -240,7 +240,7 @@ public final class RandomUtils extends Random {
             throw new IllegalArgumentException(MIN_MAX_ERROR);
         }
 
-        return (min + nextFloat(max - min, true));
+        return min + nextFloat(max - min, true);
     }
 
     /* --- Double-related Methods --- */
@@ -275,7 +275,7 @@ public final class RandomUtils extends Random {
             }
         }
 
-        return (rand * d);
+        return rand * d;
     }
 
     /* --- Collections-related Methods --- */

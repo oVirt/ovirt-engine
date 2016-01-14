@@ -15,7 +15,7 @@ public class PermitMapper {
      */
     @Mapping(from = Permit.class, to = ActionGroup.class)
     public static ActionGroup map(Permit model, ActionGroup template) {
-        assert(model.isSetId() || model.isSetName());
+        assert model.isSetId() || model.isSetName();
         return template != null
                ? template
                : model.getId() != null

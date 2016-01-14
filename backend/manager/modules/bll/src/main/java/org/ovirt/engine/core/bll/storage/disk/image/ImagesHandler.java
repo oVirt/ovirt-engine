@@ -913,7 +913,7 @@ public final class ImagesHandler {
     }
 
     private static boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
-        return (diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType());
+        return diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType();
     }
 
     protected static void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {

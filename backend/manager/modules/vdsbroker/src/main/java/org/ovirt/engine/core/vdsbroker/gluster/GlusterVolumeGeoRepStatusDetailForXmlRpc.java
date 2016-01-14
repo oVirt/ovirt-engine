@@ -45,7 +45,7 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
             if (innerMap.containsKey(CHECK_POINT_COMPLETED)) {
                 details.setCheckpointCompleted(Boolean.valueOf(innerMap.get(CHECK_POINT_COMPLETED).toString()));
             }
-            String timezone = (innerMap.containsKey(TIMEZONE)) ? innerMap.get(TIMEZONE).toString() : null;
+            String timezone = innerMap.containsKey(TIMEZONE) ? innerMap.get(TIMEZONE).toString() : null;
 
             Long lastSynced = parseSafeLong(innerMap, LAST_SYNCED);
             Long checkPointTime = parseSafeLong(innerMap, CHECK_POINT_TIME);

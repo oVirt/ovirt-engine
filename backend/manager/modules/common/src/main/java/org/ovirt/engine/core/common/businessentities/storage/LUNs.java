@@ -227,7 +227,7 @@ public class LUNs implements BusinessEntity<String> {
      * @return Count of how many paths this LUN has.
      */
     public int getPathCount() {
-        return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
+        return getPathsDictionary() == null ? 0 : getPathsDictionary().size();
     }
 
     public HashMap<String, Boolean> getPathsDictionary() {

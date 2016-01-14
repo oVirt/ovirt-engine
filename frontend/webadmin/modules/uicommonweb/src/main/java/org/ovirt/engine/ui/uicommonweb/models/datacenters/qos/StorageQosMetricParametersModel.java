@@ -132,7 +132,7 @@ public class StorageQosMetricParametersModel extends Model {
             getChoiceGroupTotal().setIsChangeable(getIsChangable());
             getChoiceGroupReadWrite().setIsChangeable(getIsChangable());
         }
-    else if ((sender instanceof EntityModel) && (Boolean.TRUE.equals(((EntityModel) sender).getEntity()))) {
+    else if ((sender instanceof EntityModel) && Boolean.TRUE.equals(((EntityModel) sender).getEntity())) {
             if (!getChoiceGroupNone().equals(sender)) {
                 getChoiceGroupNone().setEntity(false);
             }

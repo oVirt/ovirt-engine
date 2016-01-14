@@ -97,12 +97,12 @@ public class CinderDisksValidator {
 
     private boolean isLimitExceeded(Limits limits, VolumeClassification cinderType, int diskCount) {
         if (cinderType == VolumeClassification.Snapshot) {
-            return (limits.getAbsolute().getTotalSnapshotsUsed() + diskCount >
-                    limits.getAbsolute().getMaxTotalSnapshots());
+            return limits.getAbsolute().getTotalSnapshotsUsed() + diskCount >
+                    limits.getAbsolute().getMaxTotalSnapshots();
         }
         if (cinderType == VolumeClassification.Volume) {
-            return (limits.getAbsolute().getTotalVolumesUsed() + diskCount >
-                    limits.getAbsolute().getMaxTotalVolumes());
+            return limits.getAbsolute().getTotalVolumesUsed() + diskCount >
+                    limits.getAbsolute().getMaxTotalVolumes();
         }
         return false;
     }

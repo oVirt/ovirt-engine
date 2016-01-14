@@ -155,8 +155,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
         diskAliasLabel.setWidgetTooltip(object.getAlias().getEntity());
 
-        diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
-                object.getSize().getEntity())));
+        diskSizeLabel.asValueBox().setValue(new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
+                object.getSize().getEntity()));
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());

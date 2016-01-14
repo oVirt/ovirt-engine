@@ -292,11 +292,11 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
                     nfsBytesWritten.setText(object.getNfsBytesWritten());
                 }
                 if(args.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
-                    boolean disableErrorLabels = !(object.isSuccessfulProfileStatsFetch());
+                    boolean disableErrorLabels = !object.isSuccessfulProfileStatsFetch();
                     if(!disableErrorLabels) {
                         String url = object.getProfileExportUrl();
-                        boolean isBrickTabSelected = !(url.contains(";nfsStatistics=true"));//$NON-NLS-1$
-                        initAnchor(url, (isBrickTabSelected) ? brickProfileAnchor : nfsProfileAnchor);
+                        boolean isBrickTabSelected = !url.contains(";nfsStatistics=true");//$NON-NLS-1$
+                        initAnchor(url, isBrickTabSelected ? brickProfileAnchor : nfsProfileAnchor);
                     }
                     bricksErrorLabel.setVisible(disableErrorLabels);
                     nfsErrorLabel.setVisible(disableErrorLabels);

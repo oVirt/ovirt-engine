@@ -393,7 +393,7 @@ public class EngineConfigLogic {
             }
         }
         if (!persist(key, value, version)) {
-            String msg = MessageFormat.format(MERGE_PERSIST_ERR_MSG, key, (version == null ? "" : " with version " + version));
+            String msg = MessageFormat.format(MERGE_PERSIST_ERR_MSG, key, version == null ? "" : " with version " + version);
             log.debug(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -487,14 +487,12 @@ public class EngineConfigLogic {
 
         try {
             configKey.safeSetValue(value);
-            res = (getConfigDao().updateKey(configKey) == 1);
+            res = getConfigDao().updateKey(configKey) == 1;
         } catch (InvalidParameterException ipe) {
             message = ipe.getMessage();
             if (message == null) {
-                message = (
-                        "'" + value + "' is not a valid value for type " + configKey.getType() + ". " +
-                                (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues())
-                        );
+                message = "'" + value + "' is not a valid value for type " + configKey.getType() + ". " +
+                        (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues());
             }
         } catch (Exception e) {
             message = "Error setting " + key + "'s value. " + e.getMessage();

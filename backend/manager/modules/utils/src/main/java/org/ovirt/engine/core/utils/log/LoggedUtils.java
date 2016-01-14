@@ -187,7 +187,7 @@ public class LoggedUtils {
      * @return The {@link Logged} annotation from the class, or <code>null</code> if there isn't any.
      */
     protected static Logged getAnnotation(Object obj) {
-        return (obj == null ? null : obj.getClass().getAnnotation(Logged.class));
+        return obj == null ? null : obj.getClass().getAnnotation(Logged.class);
     }
 
     /**

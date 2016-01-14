@@ -50,7 +50,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (diskImage == null) {
                 List<DiskImage> diskImages =
                         getDiskImageDao().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
-                diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
+                diskImage = diskImages.isEmpty() ? null : diskImages.get(0);
             }
 
             return diskImage;

@@ -34,7 +34,7 @@ public class GlusterCoreUtil {
      * @return true of the given <code>searchBrick</code> exists in the given collection of bricks, else false
      */
     public static boolean containsBrick(Collection<GlusterBrickEntity> bricks, GlusterBrickEntity searchBrick) {
-        return (findBrick(bricks, searchBrick) != null);
+        return findBrick(bricks, searchBrick) != null;
     }
 
     /**

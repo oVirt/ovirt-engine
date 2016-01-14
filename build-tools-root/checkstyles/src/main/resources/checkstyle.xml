@@ -46,6 +46,7 @@
     <module name="RedundantImport"/>
     <module name="StringLiteralEquality"/>
     <module name="TypeName" />
+    <module name="UnnecessaryParentheses"/>
     <module name="UnusedImports"/>
     <module name="UpperEll"/>
     <module name="UncommentedMain"/>

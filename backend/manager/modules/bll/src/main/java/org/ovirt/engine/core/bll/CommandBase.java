@@ -498,8 +498,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                         commandId,
                         snapshot.getSnapshotType(),
                         snapshot.getEntityType(),
-                        (snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
-                                : snapshotData.toString()));
+                        snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
+                                : snapshotData.toString());
                 Class<BusinessEntity<Serializable>> entityClass =
                         (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
                 GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity =
@@ -833,7 +833,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected void logRollbackedTask() {
-        String type = (getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name());
+        String type = getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name();
         log.error("Reverting task '{}', handler '{}'", type, getCurrentTaskHandler().getClass().getName());
     }
 

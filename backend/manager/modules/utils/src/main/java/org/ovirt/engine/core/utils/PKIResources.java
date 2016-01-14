@@ -22,11 +22,9 @@ public class PKIResources {
         public String toString(Certificate cert, String alias) {
             try {
                 return String.format(
-                    (
                         "-----BEGIN CERTIFICATE-----%1$c" +
                         "%2$s" +
-                        "-----END CERTIFICATE-----%1$c"
-                    ),
+                        "-----END CERTIFICATE-----%1$c",
                     '\n',
                     new Base64(
                         76,

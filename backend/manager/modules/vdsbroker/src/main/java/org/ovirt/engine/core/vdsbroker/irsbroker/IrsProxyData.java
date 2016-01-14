@@ -119,7 +119,7 @@ public class IrsProxyData {
     }
 
     public void setCurrentVdsId(Guid value) {
-        currentVdsId = (Guid.Empty.equals(value)) ? null : value;
+        currentVdsId = Guid.Empty.equals(value) ? null : value;
     }
 
     private String privatemCurrentIrsHost;
@@ -491,7 +491,7 @@ public class IrsProxyData {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setStorageDomain(data);
                         logable.setStoragePoolId(_storagePoolId);
-                        logable.addCustomValue("DiskSpace", (data.getAvailableDiskSize()).toString());
+                        logable.addCustomValue("DiskSpace", data.getAvailableDiskSize().toString());
                         data.setStorageName(domainFromDb.getStorageName());
                         new AuditLogDirector().log(logable, type);
 
@@ -674,7 +674,7 @@ public class IrsProxyData {
      * Returns True if there are other vdss in pool
      */
     public boolean getHasVdssForSpmSelection() {
-        return (getPrioritizedVdsInPool().size() > 0);
+        return getPrioritizedVdsInPool().size() > 0;
     }
 
     private void connectStoragePool(VDS vds, StoragePool storagePool) {
@@ -1118,7 +1118,7 @@ public class IrsProxyData {
 
     public String getIsoDirectory() {
         String tempVar = privatemCurrentIrsHost;
-        return String.format("\\\\%1$s\\CD", ((tempVar != null) ? tempVar : gethostFromVds()));
+        return String.format("\\\\%1$s\\CD", tempVar != null ? tempVar : gethostFromVds());
     }
 
     public void resetIrs() {

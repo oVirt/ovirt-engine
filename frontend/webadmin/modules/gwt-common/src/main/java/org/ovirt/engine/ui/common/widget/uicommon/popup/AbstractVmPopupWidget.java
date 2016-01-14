@@ -1857,7 +1857,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         if (!disksAliases.isEmpty()) {
             generalWarningMessage.setText(messages.disksStatusWarning(
                     EnumTranslator.getInstance().translate(imageStatus),
-                    (StringUtils.join(disksAliases, ", ")))); //$NON-NLS-1$
+                    StringUtils.join(disksAliases, ", "))); //$NON-NLS-1$
         }
     }
 

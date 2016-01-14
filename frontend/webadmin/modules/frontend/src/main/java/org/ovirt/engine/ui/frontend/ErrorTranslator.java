@@ -90,7 +90,7 @@ public class ErrorTranslator {
                 if (errorsString != null) {
                     ret = errorsString.replace("\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
-                    if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
+                    if (isDynamicVariable(errorMsg) || !changeIfNotFound) {
                         ret = errorMsg;
                     } else {
                         // The error message is not found in the errors map, revert to original one

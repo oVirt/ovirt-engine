@@ -215,7 +215,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     protected boolean isOperationPerformedOnDiskSnapshot() {
-        return (getParameters().getSnapshotId() != null);
+        return getParameters().getSnapshotId() != null;
     }
 
     protected void updateBootOrderInVmDevice() {
@@ -225,7 +225,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     private void updateDiskVmSnapshotId() {
         Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         if (disk.getDiskStorageType().isInternal()) {
-            DiskImage diskImage = ((DiskImage) disk);
+            DiskImage diskImage = (DiskImage) disk;
             getImageDao().updateImageVmSnapshotId(diskImage.getImageId(),
                     snapshotId);
         } else {

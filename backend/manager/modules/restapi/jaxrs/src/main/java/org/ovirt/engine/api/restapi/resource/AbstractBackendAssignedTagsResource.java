@@ -92,7 +92,7 @@ public abstract class AbstractBackendAssignedTagsResource
 
         @Override
         public Tags lookupEntity(Guid id) throws BackendFailureException {
-            assert (id == null); // attach actions return nothing, lookup original id instead
+            assert id == null; // attach actions return nothing, lookup original id instead
             return lookupTagById(this.id);
         }
     }

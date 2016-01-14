@@ -631,7 +631,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         String newDiskAlias = diskAliasesMap.get(diskAlias);
         if (newDiskAlias == null) {
-            newDiskAlias = "Drive " + (++diskCounter);
+            newDiskAlias = "Drive " + ++diskCounter;
             diskAliasesMap.put(diskAlias, newDiskAlias);
         }
         return newDiskAlias;

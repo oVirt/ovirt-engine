@@ -465,8 +465,8 @@ public abstract class VmInterfaceModel extends Model {
     protected abstract void initLinked();
 
     protected void onSaveMAC(VmNetworkInterface nicToSave) {
-        nicToSave.setMacAddress(getMAC().getIsChangable() ? (getMAC().getEntity() == null ? null
-                : getMAC().getEntity().toLowerCase()) : getDefaultMacAddress());
+        nicToSave.setMacAddress(getMAC().getIsChangable() ? getMAC().getEntity() == null ? null
+                : getMAC().getEntity().toLowerCase() : getDefaultMacAddress());
     }
 
     protected abstract VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave);
@@ -482,8 +482,8 @@ public abstract class VmInterfaceModel extends Model {
             getLinked().setIsChangeable(false);
             return;
         }
-        if ((VmInterfaceType.pciPassthrough.equals(getNicType().getSelectedItem())
-        || getProfile().getSelectedItem().isPassthrough())) {
+        if (VmInterfaceType.pciPassthrough.equals(getNicType().getSelectedItem())
+        || getProfile().getSelectedItem().isPassthrough()) {
             getLinked().setEntity(true);
             getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()

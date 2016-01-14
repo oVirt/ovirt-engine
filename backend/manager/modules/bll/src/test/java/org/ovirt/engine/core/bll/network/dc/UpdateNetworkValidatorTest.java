@@ -98,7 +98,7 @@ public class UpdateNetworkValidatorTest {
 
     private void assertThatExternalNetworkDetailsUnchangedFails(Network externalNetwork) {
         assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork),
-                failsWith((EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED)));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class UpdateNetworkValidatorTest {
     public void networkChangeUnderRunningVmNegative() {
         prepareMocksForNetworkChangeUnderRunningVm(true, Version.v3_5);
         assertThat(validator.networkNotUsedByRunningVms(),
-                failsWith((EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE)));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE));
     }
 
     @Test

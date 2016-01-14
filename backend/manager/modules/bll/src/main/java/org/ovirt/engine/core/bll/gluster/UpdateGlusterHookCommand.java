@@ -89,7 +89,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
     @Override
     protected void executeCommand() {
         //check source to copy hook from - if engine copy or server copy
-        final boolean copyfromEngine = (getParameters().getSourceServerId() == null);
+        final boolean copyfromEngine = getParameters().getSourceServerId() == null;
 
         entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());

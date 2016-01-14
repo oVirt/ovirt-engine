@@ -295,7 +295,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             public void onSuccess(Object model, Object returnValue) {
                 List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
 
-                for (Disk disk : ((ArrayList<Disk>) returnValue)) {
+                for (Disk disk : (ArrayList<Disk>) returnValue) {
                     InstanceImageLineModel lineModel = new InstanceImageLineModel(getModel().getInstanceImages());
                     lineModel.initialize(disk, getVm());
                     imageLineModels.add(lineModel);

@@ -422,8 +422,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Since reload of configuration values is not fully supported, we have to get this value from DB
         // and can not use the cached configuration.
         String mode =
-                (dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
-                        ConfigCommon.defaultConfigurationVersion)).getOptionValue();
+                dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
+                        ConfigCommon.defaultConfigurationVersion).getOptionValue();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
         }
@@ -465,7 +465,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private boolean isActionExternal(VdcActionType actionType){
-        return (actionType == VdcActionType.EndExternalJob || actionType == VdcActionType.EndExternalStep || actionType == VdcActionType.ClearExternalJob);
+        return actionType == VdcActionType.EndExternalJob || actionType == VdcActionType.EndExternalStep || actionType == VdcActionType.ClearExternalJob;
     }
 
     protected VdcReturnValueBase runAction(CommandBase<?> command,
@@ -531,8 +531,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
                 CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
-            String mode = (dbFacade.getVdcOptionDao().getByNameAndVersion
-                    (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getOptionValue();
+            String mode = dbFacade.getVdcOptionDao().getByNameAndVersion
+                    (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion).getOptionValue();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }

@@ -215,7 +215,7 @@ public class BackendStorageDomainsResource
             // the user assumes that the host is already logged-in to the target of this lun.
             // so in this case we do not need (and do not have the required information) to login
             // to the target.
-            if ((storageType == StorageType.ISCSI) && (!isConnectionAssumed(unit))) {
+            if ((storageType == StorageType.ISCSI) && !isConnectionAssumed(unit)) {
                 connectStorageToHost(hostId, storageType, unit);
             }
             lunIds.add(unit.getId());
@@ -226,10 +226,10 @@ public class BackendStorageDomainsResource
 
     private boolean isConnectionAssumed(LogicalUnit unit) {
         // either 'target' and 'address' should both be provided, or none. Validate this
-        if ((unit.getAddress() != null || unit.getTarget() != null)) {
+        if (unit.getAddress() != null || unit.getTarget() != null) {
             validateParameters(unit, "address", "target");
         }
-        boolean connectionAssumed = (unit.getAddress() == null || unit.getTarget() == null);
+        boolean connectionAssumed = unit.getAddress() == null || unit.getTarget() == null;
         return connectionAssumed;
     }
 
@@ -312,7 +312,7 @@ public class BackendStorageDomainsResource
         }
 
         if (resp != null) {
-            addLinks(((StorageDomain) resp.getEntity()), getLinksToExclude(storageDomain));
+            addLinks((StorageDomain) resp.getEntity(), getLinksToExclude(storageDomain));
         }
         return resp;
     }

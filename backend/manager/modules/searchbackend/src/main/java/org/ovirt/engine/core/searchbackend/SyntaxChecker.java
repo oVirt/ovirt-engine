@@ -118,7 +118,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
         boolean betweenDoubleQuotes = searchText.substring(startPos.argvalue, idx).contains("\"");
         if (curChar == '"') {
-            betweenDoubleQuotes = (!betweenDoubleQuotes);
+            betweenDoubleQuotes = !betweenDoubleQuotes;
             if (betweenDoubleQuotes) {
                 if (!firstDQRegexp.isMatch(strRealObj)) {
                     container.setErr(SyntaxError.INVALID_CONDITION_VALUE, startPos.argvalue, idx + 1);
@@ -159,8 +159,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 container.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, startPos.argvalue, idx);
                 return ValueParseResult.Err;
             }
-            if ((!"".equals(curConditionField))
-                    && (!curConditionFieldAC.validateFieldValue(curConditionField, strRealObj))) {
+            if (!"".equals(curConditionField)
+                    && !curConditionFieldAC.validateFieldValue(curConditionField, strRealObj)) {
                 container.setErr(SyntaxError.INVALID_CONDITION_VALUE, startPos.argvalue, idx);
                 return ValueParseResult.Err;
             }
@@ -266,7 +266,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 if (dotAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.DOT, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if ((!"".equals(tryNextObj)) && (curConditionRelationAC.validate(tryNextObj))) {
+                } else if (!"".equals(tryNextObj) && curConditionRelationAC.validate(tryNextObj)) {
                     break; // i.e. the relation object has another charecter
                 } else if (curConditionRelationAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION,
@@ -275,8 +275,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                             idx + 1);
                     curStartPos = idx + 1;
 
-                } else if ((!curConditionRelationAC.validateCompletion(nextObject))
-                        && (!dotAC.validateCompletion(nextObject))) {
+                } else if (!curConditionRelationAC.validateCompletion(nextObject)
+                        && !dotAC.validateCompletion(nextObject)) {
                     syntaxContainer.setErr(SyntaxError.INVALID_POST_CROSS_REF_OBJ, curStartPos, idx + 1);
                     return syntaxContainer;
                 }
@@ -337,8 +337,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                             syntaxContainer.setvalid(true);
                             keepValid = true;
                         }
-                    } else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!searchObjectAC.validateCompletion(nextObject))) {
+                    } else if (!curConditionFieldAC.validateCompletion(nextObject)
+                            && !searchObjectAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_POST_OR_AND_PHRASE, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -383,9 +383,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                             freeTextObjSearched.add(syntaxContainer.getSearchObjectStr());
                         }
                         keepValid = true;
-                    } else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!sortbyAC.validateCompletion(nextObject))
-                            && (!searchObjectAC.validateCompletion(nextObject))) {
+                    } else if (!curConditionFieldAC.validateCompletion(nextObject)
+                            && !sortbyAC.validateCompletion(nextObject)
+                            && !searchObjectAC.validateCompletion(nextObject)) {
                         syntaxContainer.setErr(SyntaxError.INVALID_POST_COLON_PHRASE, curStartPos, idx + 1);
                         return syntaxContainer;
                     }
@@ -439,10 +439,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                         curStartPos = idx + 1;
                     }
 
-                    else if ((!curConditionFieldAC.validateCompletion(nextObject))
-                            && (!sortbyAC.validateCompletion(nextObject))
-                            && (!searchObjectAC.validateCompletion(nextObject))
-                            && (!andAC.validateCompletion(nextObject)) && (!orAC.validateCompletion(nextObject))) {
+                    else if (!curConditionFieldAC.validateCompletion(nextObject)
+                            && !sortbyAC.validateCompletion(nextObject)
+                            && !searchObjectAC.validateCompletion(nextObject)
+                            && !andAC.validateCompletion(nextObject) && !orAC.validateCompletion(nextObject)) {
                         RefObject<Integer> tempRefObject3 = new RefObject<>(curStartPos);
                         ValueParseResult ans =
                                 handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
@@ -739,7 +739,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
             }
             else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
-                if ((refObjList.contains(SearchObjects.VDS_OBJ_NAME))) {
+                if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
                     innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
@@ -841,7 +841,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     break;
                 case SORT_DIRECTION:
                     // Forcing any sorting using DESC to show NULL values last and ASC to show NULL values first
-                    String direction = (obj.getBody().equalsIgnoreCase("desc")) ? "DESC NULLS LAST" : "ASC NULLS FIRST";
+                    String direction = obj.getBody().equalsIgnoreCase("desc") ? "DESC NULLS LAST" : "ASC NULLS FIRST";
                     sortByPhrase = StringFormat.format("%1$s %2$s", sortByPhrase, direction);
                     break;
                 default:
@@ -1118,7 +1118,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             customizedValue = StringFormat.format("'%1$s'",
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
         } else if ("".equals(fieldName) /* search on all relevant fields */||
-                (String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
+                String.class.equals(conditionFieldAC.getDbFieldType(fieldName))) {
             customizedValue = customizedValue.replace("*", conditionFieldAC.getWildcard(fieldName));
         }
         return customizedValue;

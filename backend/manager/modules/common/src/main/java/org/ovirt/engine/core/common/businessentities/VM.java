@@ -1650,8 +1650,8 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public boolean isConfigured() {
         if (configured == null) {
             configured =
-                    (getInterfaces() != null && getDiskMap() != null && getInterfaces().size() > 0 && getDiskMap()
-                            .size() > 0);
+                    getInterfaces() != null && getDiskMap() != null && getInterfaces().size() > 0 && getDiskMap()
+                            .size() > 0;
         }
         return configured;
     }

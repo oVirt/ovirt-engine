@@ -63,7 +63,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Override
     protected VmDeviceId getExistingEntityId() {
-        return (new VmDeviceId(EXISTING_DEVICE_ID, EXISTING_VM_ID));
+        return new VmDeviceId(EXISTING_DEVICE_ID, EXISTING_VM_ID);
     }
 
     @Test

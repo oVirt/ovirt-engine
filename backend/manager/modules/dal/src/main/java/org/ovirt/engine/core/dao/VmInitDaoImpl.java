@@ -96,7 +96,7 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
             entity.setAuthorizedKeys(rs.getString("authorized_keys"));
             entity.setRegenerateKeys(rs.getBoolean("regenerate_keys"));
             entity.setTimeZone(rs.getString("time_zone"));
-            entity.setNetworks(VmInitUtils.jsonNetworksToList((rs.getString("networks"))));
+            entity.setNetworks(VmInitUtils.jsonNetworksToList(rs.getString("networks")));
             entity.setRootPassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
             entity.setWinKey(rs.getString("winkey"));
             entity.setDnsServers(rs.getString("dns_servers"));

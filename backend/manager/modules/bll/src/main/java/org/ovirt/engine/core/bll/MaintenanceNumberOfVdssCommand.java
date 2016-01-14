@@ -372,10 +372,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private void handleNonMigratableVms(List<String> hostsWithNonMigratableVms, List<String> nonMigratableVms) {
         if (!nonMigratableVms.isEmpty()) {
             addValidationMessage(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
-            getReturnValue().getValidationMessages().add((String.format("$VmsList %1$s",
-                    StringUtils.join(nonMigratableVms, " , "))));
-            getReturnValue().getValidationMessages().add((String.format("$HostsList %1$s",
-                    StringUtils.join(hostsWithNonMigratableVms, " , "))));
+            getReturnValue().getValidationMessages().add(String.format("$VmsList %1$s",
+                    StringUtils.join(nonMigratableVms, " , ")));
+            getReturnValue().getValidationMessages().add(String.format("$HostsList %1$s",
+                    StringUtils.join(hostsWithNonMigratableVms, " , ")));
         }
     }
 
@@ -416,8 +416,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void handleHostsWithVmsWithPluggedDiskSnapshots(List<String> hostsWithVmsWithPluggedDiskSnapshots) {
         if (!hostsWithVmsWithPluggedDiskSnapshots.isEmpty()) {
-            getReturnValue().getValidationMessages().add((String.format("$HostsList %1$s",
-                    StringUtils.join(hostsWithVmsWithPluggedDiskSnapshots, ","))));
+            getReturnValue().getValidationMessages().add(String.format("$HostsList %1$s",
+                    StringUtils.join(hostsWithVmsWithPluggedDiskSnapshots, ",")));
         }
     }
 

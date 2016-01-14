@@ -107,7 +107,7 @@ public class SimpleJdbcCallsHandler {
             final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         Map<String, Object> resultsMap = executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource), mapper);
-        return (List<T>) (resultsMap.get(RETURN_VALUE_PARAMETER));
+        return (List<T>) resultsMap.get(RETURN_VALUE_PARAMETER);
     }
 
     private CallCreator createCallForRead(final String procedureName,

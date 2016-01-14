@@ -87,13 +87,13 @@ public class Version implements Comparable<Version>, Serializable {
         } else {
             String[] partialVersions = value.split("\\.");
             switch (partialVersions.length) {
-            case (4):
+            case 4:
                 revision = Integer.parseInt(partialVersions[3]);
-            case (3):
+            case 3:
                 build = Integer.parseInt(partialVersions[2]);
-            case (2):
+            case 2:
                 minor = Integer.parseInt(partialVersions[1]);
-            case (1):
+            case 1:
                 major = Integer.parseInt(partialVersions[0]);
             }
         }
@@ -131,13 +131,13 @@ public class Version implements Comparable<Version>, Serializable {
     public String toString(int i) {
         StringBuilder sb = new StringBuilder();
         switch (i) {
-        case (4):
+        case 4:
             sb.append('.').append(revision);
-        case (3):
+        case 3:
             sb.insert(0, build).insert(0, '.');
-        case (2):
+        case 2:
             sb.insert(0, minor).insert(0, '.');
-        case (1):
+        case 1:
             sb.insert(0, major);
         }
         return sb.toString();
@@ -211,7 +211,7 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public boolean isNotValid() {
-        return (major == -1 && minor == -1 && revision == -1 && build == -1);
+        return major == -1 && minor == -1 && revision == -1 && build == -1;
     }
 
     public static Version getLast() {

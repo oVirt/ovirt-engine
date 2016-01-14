@@ -89,7 +89,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return true;
         }
 
-        if (!(checkStorageDomain())) {
+        if (!checkStorageDomain()) {
             return false;
         }
 
@@ -390,9 +390,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         : AuditLogType.SYSTEM_DEACTIVATE_STORAGE_DOMAIN_FAILED
                 :
                 getSucceeded() ?
-                        (isLastMaster ?
+                        isLastMaster ?
                                 AuditLogType.USER_DEACTIVATED_LAST_MASTER_STORAGE_DOMAIN :
-                                AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN)
+                                AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN
                         :
                         AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
     }

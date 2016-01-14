@@ -52,11 +52,11 @@ public class JobMapper {
             target.setOwnerId(GuidUtils.asGuid(job.getOwner().getId()));
         }
         target.setStartTime(job.isSetStartTime() ? job.getStartTime().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         target.setEndTime(job.isSetEndTime() ? job.getEndTime().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         target.setLastUpdateTime(job.isSetLastUpdated() ? job.getLastUpdated().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         target.setExternal(job.isSetExternal() ? job.isExternal() : true);
         target.setAutoCleared(job.isSetAutoCleared() ? job.isAutoCleared() : true);
 

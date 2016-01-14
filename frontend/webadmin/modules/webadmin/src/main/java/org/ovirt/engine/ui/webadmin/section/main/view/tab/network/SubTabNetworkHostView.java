@@ -225,7 +225,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
             };
 
     private void handleRadioButtonClick(ClickEvent event) {
-        getDetailModel().setViewFilterType((viewRadioGroup.getSelectedValue()));
+        getDetailModel().setViewFilterType(viewRadioGroup.getSelectedValue());
 
         boolean attached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.attached;
 
@@ -275,7 +275,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
-        hostOutOfSync.makeSortable((new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+        hostOutOfSync.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
 
             @Override
             public int compare(PairQueryable<VdsNetworkInterface, VDS> o1,
@@ -287,7 +287,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 return Boolean.compare(syncStatus1, syncStatus2);
             }
 
-        }));
+        });
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();

@@ -143,7 +143,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
             final SuggestionCallback callback) {
 
         // Hide popup if not needed
-        boolean anySuggestions = (suggestions != null && suggestions.size() > 0);
+        boolean anySuggestions = suggestions != null && suggestions.size() > 0;
         if (!anySuggestions) {
             hideSuggestions();
             return;

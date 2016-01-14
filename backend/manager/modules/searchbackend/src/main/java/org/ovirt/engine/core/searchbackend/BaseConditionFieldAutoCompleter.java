@@ -383,8 +383,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         pair.setSecond(customizedValue);
         formatValue(fieldName, pair, caseSensitive);
         if (("''".equals(pair.getSecond()) || "'null'".equalsIgnoreCase(pair.getSecond()))
-                && (("=".equals(pair.getFirst())) || ("!=".equals(pair.getFirst())))) {
-            String nullRelation = ("=".equals(pair.getFirst())) ? "IS" : "IS NOT";
+                && ("=".equals(pair.getFirst()) || "!=".equals(pair.getFirst()))) {
+            String nullRelation = "=".equals(pair.getFirst()) ? "IS" : "IS NOT";
             return StringFormat.format("(%1$s.%2$s %3$s  NULL)", tableName,
                     getDbFieldName(fieldName), nullRelation);
         } else {

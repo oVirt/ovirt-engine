@@ -107,10 +107,10 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         }
         switch (getParameters().getNonOperationalReason()) {
         case NETWORK_UNREACHABLE:
-            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
+            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
                     : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         case STORAGE_DOMAIN_UNREACHABLE:
-            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
+            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
                     : AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN_FAILED;
         case TIMEOUT_RECOVERING_FROM_CRASH:
             return AuditLogType.VDS_RECOVER_FAILED;
@@ -145,7 +145,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         case VDS_CANNOT_CONNECT_TO_GLUSTERFS:
             return AuditLogType.VDS_CANNOT_CONNECT_TO_GLUSTERFS;
         default:
-            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
+            return getSucceeded() ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
     }
 }

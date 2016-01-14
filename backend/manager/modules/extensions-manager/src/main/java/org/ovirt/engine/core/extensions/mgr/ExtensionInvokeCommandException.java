@@ -20,13 +20,11 @@ class ExtensionInvokeCommandException extends RuntimeException {
     @Override
     public String toString() {
         return String.format(
-            (
                 "Class: %s%n" +
                         "Input:%n" +
                         "%s%n" +
                         "Output:%n" +
-                        "%s%n"
-            ),
+                        "%s%n",
             getClass(),
             input,
             output

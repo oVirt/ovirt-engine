@@ -82,8 +82,8 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
                             : Collections.<StorageServerConnections> emptyList();
         }
 
-        boolean isDuplicateConnExists = (connections.size() > 1
-                || (connections.size() == 1 && !connections.get(0).getId().equalsIgnoreCase(connection.getId())));
+        boolean isDuplicateConnExists = connections.size() > 1
+                || (connections.size() == 1 && !connections.get(0).getId().equalsIgnoreCase(connection.getId()));
         return isDuplicateConnExists;
     }
 

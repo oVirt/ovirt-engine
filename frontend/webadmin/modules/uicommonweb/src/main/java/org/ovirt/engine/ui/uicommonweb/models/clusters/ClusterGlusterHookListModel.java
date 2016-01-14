@@ -439,10 +439,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
                     break;
                 }
             }
-            allowViewContent = (getSelectedItems().size() == 1
-                    && getSelectedItems().get(0).getContentType() == GlusterHookContentType.TEXT);
-            allowResolveConflict = (getSelectedItems().size() == 1
-                    && getSelectedItems().get(0).hasConflicts());
+            allowViewContent = getSelectedItems().size() == 1
+                    && getSelectedItems().get(0).getContentType() == GlusterHookContentType.TEXT;
+            allowResolveConflict = getSelectedItems().size() == 1
+                    && getSelectedItems().get(0).hasConflicts();
         }
         getEnableHookCommand().setIsExecutionAllowed(allowEnable);
         getDisableHookCommand().setIsExecutionAllowed(allowDisable);

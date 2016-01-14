@@ -56,7 +56,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             // Should be invoked only when Disks tab is selected
-            if ((commonModelProvider.get().getSelectedItem() instanceof DiskListModel)) {
+            if (commonModelProvider.get().getSelectedItem() instanceof DiskListModel) {
                 getView().handleQuotaColumnVisibility();
             }
         }

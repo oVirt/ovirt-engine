@@ -40,7 +40,7 @@ public class BackendVmNumaNodesResource
     }
 
     private boolean matchEntity(VmNumaNode entity, Guid id) {
-        return id != null && (id.equals(entity.getId()));
+        return id != null && id.equals(entity.getId());
     }
 
     private String[] getRequiredAddFields() {

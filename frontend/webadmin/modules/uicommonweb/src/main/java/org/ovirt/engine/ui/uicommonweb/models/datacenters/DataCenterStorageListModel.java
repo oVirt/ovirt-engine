@@ -570,7 +570,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                     DataCenterStorageListModel dataCenterStorageListModel = (DataCenterStorageListModel) model;
                     VDS locaVds = (VDS) result;
                     for (VdcActionParametersBase item : dataCenterStorageListModel.getpb_remove()) {
-                        ((RemoveStorageDomainParameters) item).setVdsId((locaVds != null ? locaVds.getId() : null));
+                        ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
                         ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                     }
 

@@ -76,7 +76,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         if (storageDomainId == null) {
             // This is needed for logging the command using CommandBase.logCommand
             List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(sourceSnapshotId);
-            storageDomainId = (!images.isEmpty()) ? images.get(0).getStorageIds().get(0) : Guid.Empty;
+            storageDomainId = !images.isEmpty() ? images.get(0).getStorageIds().get(0) : Guid.Empty;
         }
         return storageDomainId;
     }

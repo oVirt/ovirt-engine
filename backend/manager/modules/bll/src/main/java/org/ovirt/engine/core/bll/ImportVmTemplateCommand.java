@@ -396,8 +396,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                         p);
 
                 if (!vdcRetValue.getSucceeded()) {
-                    throw ((vdcRetValue.getFault() != null) ? new EngineException(vdcRetValue.getFault().getError())
-                            : new EngineException(EngineError.ENGINE));
+                    throw vdcRetValue.getFault() != null ? new EngineException(vdcRetValue.getFault().getError())
+                            : new EngineException(EngineError.ENGINE);
                 }
 
                 getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());

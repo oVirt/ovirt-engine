@@ -95,7 +95,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
             return false;
         }
         VDS other = (VDS) obj;
-        return (Objects.equals(vdsStatic, other.vdsStatic)
+        return Objects.equals(vdsStatic, other.vdsStatic)
                 && Objects.equals(cpuName, other.cpuName)
                 && spmStatus == other.spmStatus
                 && Objects.equals(imagesLastCheck, other.imagesLastCheck)
@@ -113,7 +113,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
                 && Objects.equals(clusterDescription, other.clusterDescription)
                 && Objects.equals(clusterName, other.clusterName)
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
-                && Objects.equals(clusterGlusterService, other.clusterGlusterService));
+                && Objects.equals(clusterGlusterService, other.clusterGlusterService);
     }
 
     public VDS clone() {

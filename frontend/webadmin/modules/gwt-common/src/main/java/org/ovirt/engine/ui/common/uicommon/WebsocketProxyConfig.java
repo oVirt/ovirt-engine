@@ -40,6 +40,6 @@ public class WebsocketProxyConfig {
     }
 
     private boolean matchesHostColonPort(String s) {
-        return (s == null ? false : s.matches("\\S+:\\d+")); //$NON-NLS-1$
+        return s == null ? false : s.matches("\\S+:\\d+"); //$NON-NLS-1$
     }
 }

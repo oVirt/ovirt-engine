@@ -20,7 +20,7 @@ public class UploadStreamVDSCommand<P extends UploadStreamVDSCommandParameters> 
                     new InputStreamRequestEntity(getParameters().getInputStream(),
                             getParameters().getSize());
         } else {
-            inputStreamRequestEntity = new InputStreamRequestEntity((getParameters().getInputStream()));
+            inputStreamRequestEntity = new InputStreamRequestEntity(getParameters().getInputStream());
         }
 
         getMethod().setRequestEntity(inputStreamRequestEntity);

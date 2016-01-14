@@ -152,7 +152,7 @@ public abstract class VnicProfileModel extends Model {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Network network = getNetwork().getSelectedItem();
-                boolean portMirroringAllowed = (network == null || !network.isExternal());
+                boolean portMirroringAllowed = network == null || !network.isExternal();
                 if (!portMirroringAllowed) {
                     getPortMirroring().setEntity(false);
                     getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()

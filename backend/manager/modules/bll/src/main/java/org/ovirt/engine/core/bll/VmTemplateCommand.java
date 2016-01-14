@@ -146,7 +146,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         char[] illegalChars = new char[] { '&' };
         if (StringUtils.isNotEmpty(domainName)) {
             for (char c : illegalChars) {
-                if (domainName.contains((Character.toString(c)))) {
+                if (domainName.contains(Character.toString(c))) {
                     result = false;
                     reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME.toString());
                     reasons.add(String.format("$Domain %1$s", domainName));

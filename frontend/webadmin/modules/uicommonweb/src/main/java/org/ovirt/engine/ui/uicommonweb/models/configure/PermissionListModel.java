@@ -101,7 +101,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     @Override
     protected void syncSearch() {
         VdcObjectType objType = getObjectType();
-        boolean directOnly = (objType == VdcObjectType.VM ? true : false);
+        boolean directOnly = objType == VdcObjectType.VM ? true : false;
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(objType);
@@ -276,7 +276,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     }
 
     private void updateActionAvailability() {
-        getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
         if (getRemoveCommand().getIsExecutionAllowed() == false) {
             return;
         }

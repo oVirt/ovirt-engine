@@ -73,7 +73,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
         initCommand();
-        doReturn((new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());

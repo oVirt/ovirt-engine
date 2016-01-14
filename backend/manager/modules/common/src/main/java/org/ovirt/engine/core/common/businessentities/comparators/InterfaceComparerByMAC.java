@@ -10,6 +10,6 @@ public class InterfaceComparerByMAC implements Comparator<NetworkInterface<?>>, 
 
     @Override
     public int compare(NetworkInterface<?> x, NetworkInterface<?> y) {
-        return (x.getMacAddress().compareTo(y.getMacAddress()));
+        return x.getMacAddress().compareTo(y.getMacAddress());
     }
 }

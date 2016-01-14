@@ -166,7 +166,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
             isCurrentLatest = poolVm.isUseLatestVersion();
         }
 
-        boolean isLatestPropertyChanged = (isCurrentLatest != getParameters().getVmStaticData().isUseLatestVersion());
+        boolean isLatestPropertyChanged = isCurrentLatest != getParameters().getVmStaticData().isUseLatestVersion();
 
         // template ID changed but latest is not set, as it would cause false-positives
         boolean isTemplateIdChanged = false;

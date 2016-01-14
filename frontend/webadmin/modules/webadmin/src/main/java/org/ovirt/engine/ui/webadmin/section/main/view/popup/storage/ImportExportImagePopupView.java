@@ -175,7 +175,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 if (object.getEntity() instanceof RepoImage) {
                     return ((RepoImage) object.getEntity()).getSize();
                 } else if (object.getEntity() instanceof DiskImage) {
-                    return ((DiskImage) (object.getEntity())).getSize();
+                    return ((DiskImage) object.getEntity()).getSize();
                 }
                 return null;
             }

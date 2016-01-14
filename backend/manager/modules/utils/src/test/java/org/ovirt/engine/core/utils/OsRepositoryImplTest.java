@@ -176,7 +176,7 @@ public class OsRepositoryImplTest {
         List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays = OsRepositoryImpl.INSTANCE.getGraphicsAndDisplays().get(777).get(null);
 
         boolean isSizeCorrect = supportedGraphicsAndDisplays.size() == 2;
-        boolean containsSameElements = (new HashSet<>(supportedGraphicsAndDisplays))
+        boolean containsSameElements = new HashSet<>(supportedGraphicsAndDisplays)
                 .equals(new HashSet<>(Arrays.asList(
                         new Pair<>(GraphicsType.SPICE, DisplayType.qxl),
                         new Pair<>(GraphicsType.VNC, DisplayType.cirrus))));

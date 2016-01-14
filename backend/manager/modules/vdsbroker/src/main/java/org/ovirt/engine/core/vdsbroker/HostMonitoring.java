@@ -689,7 +689,7 @@ public class HostMonitoring {
             // change the _cpuFlagsChanged flag only if it was false,
             // because get capabilities is called twice on a new server in same
             // loop!
-            processHardwareCapsNeeded = (processHardwareCapsNeeded) ? processHardwareCapsNeeded : flagsChanged;
+            processHardwareCapsNeeded = processHardwareCapsNeeded ? processHardwareCapsNeeded : flagsChanged;
         } else if (isVdsUpOrGoingToMaintenance || vds.getStatus() == VDSStatus.Error) {
             return;
         }

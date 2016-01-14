@@ -123,7 +123,7 @@ public class InterfaceDaoTest extends BaseDaoTestCase {
         // ensure we have records before the test
         boolean found = false;
         for (VdsNetworkInterface iface : before) {
-            found |= (FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId()));
+            found |= FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId());
         }
         assertTrue(found);
         assertNotNull(dbFacade.getNetworkQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));

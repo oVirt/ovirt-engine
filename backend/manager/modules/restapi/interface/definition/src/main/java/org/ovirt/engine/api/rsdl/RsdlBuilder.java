@@ -166,7 +166,7 @@ public class RsdlBuilder {
     public String toString() {
             return "RSDL Href: " + getHref() +
                                ", Description:" + getDescription() +
-                               ", Links: " + (rsdl != null ? (rsdl.isSetLinks() ? rsdl.getLinks().getLinks().size() : "0") : "0") + ".";
+                               ", Links: " + (rsdl != null ? rsdl.isSetLinks() ? rsdl.getLinks().getLinks().size() : "0" : "0") + ".";
     }
 
     public class LinkBuilder {
@@ -334,7 +334,7 @@ public class RsdlBuilder {
 
     private void handleAction(String prefix, Collection<DetailedLink> results, String path, Method m) {
         Class<?>[] parameterTypes = m.getParameterTypes();
-        assert (parameterTypes.length == 1);
+        assert parameterTypes.length == 1;
         String returnValueStr = parameterTypes[0].getSimpleName();
         DetailedLink link = new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build();
         addCommonActionParameters(link);

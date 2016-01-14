@@ -177,7 +177,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      *            The delegate for the Action Cell
      */
     public ActionColumn(ValueGetter<T> getter, ActionCellDelegate<T> delegate) {
-        super(new CompositeCell<>((createCells(getter, delegate))));
+        super(new CompositeCell<>(createCells(getter, delegate)));
     }
 
     /**
@@ -189,6 +189,6 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      *            The list of delegates for the Action Cells
      */
     public ActionColumn(ValueGetter<T> getter, List<ActionCellDelegate<T>> delegates) {
-        super(new CompositeCell<>((createCells(getter, delegates))));
+        super(new CompositeCell<>(createCells(getter, delegates)));
     }
 }

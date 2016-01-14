@@ -57,10 +57,10 @@ public class StorageDomainMapper {
             entity.setWipeAfterDelete(model.isWipeAfterDelete());
         }
         if (model.isSetWarningLowSpaceIndicator()) {
-            entity.setWarningLowSpaceIndicator((model.getWarningLowSpaceIndicator()));
+            entity.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator());
         }
         if (model.isSetCriticalSpaceActionBlocker()) {
-            entity.setCriticalSpaceActionBlocker((model.getCriticalSpaceActionBlocker()));
+            entity.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker());
         }
         return entity;
     }

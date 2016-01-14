@@ -181,8 +181,8 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         R parentEntity = getEntity();
 
         getNewCommand().setIsExecutionAllowed(parentEntity != null);
-        getEditCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() == 1));
-        getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
+        getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
     @Override

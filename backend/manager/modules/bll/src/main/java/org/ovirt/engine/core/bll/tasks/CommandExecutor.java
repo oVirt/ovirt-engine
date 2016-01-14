@@ -155,7 +155,7 @@ public class CommandExecutor {
         if (cmdEntity != null && cmdEntity.getCommandStatus() == CommandStatus.ACTIVE) {
             Calendar cal = Calendar.getInstance();
             Integer cmdLifeTimeInMin = cmdEntity.getCommandParameters().getLifeInMinutes();
-            cal.add(Calendar.MINUTE, (-1) * (cmdLifeTimeInMin == null ?
+            cal.add(Calendar.MINUTE, -1 * (cmdLifeTimeInMin == null ?
                     Config.<Integer>getValue(ConfigValues.CoCoLifeInMinutes) :
                     cmdLifeTimeInMin));
             if (cmdEntity.getCreatedAt().getTime() < cal.getTime().getTime()) {

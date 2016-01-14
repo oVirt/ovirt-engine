@@ -391,7 +391,7 @@ public class BackendHostNicsResource
 
         @Override
         public VdsNetworkInterface lookupEntity(Guid id) {
-            assert (id == null); // AddBond returns nothing, lookup name instead
+            assert id == null; // AddBond returns nothing, lookup name instead
             return lookupInterfaceByName(name);
         }
     }

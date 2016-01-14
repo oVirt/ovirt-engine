@@ -153,7 +153,7 @@ public class BackendVmNicResourceTest
 
         @SuppressWarnings("unchecked")
         BackendStatisticsResource<Nic, VmNetworkInterface> statisticsResource =
-            (BackendStatisticsResource<Nic, VmNetworkInterface>)(resource.getStatisticsResource());
+            (BackendStatisticsResource<Nic, VmNetworkInterface>) resource.getStatisticsResource();
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);

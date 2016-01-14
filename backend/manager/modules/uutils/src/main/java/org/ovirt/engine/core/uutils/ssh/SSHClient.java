@@ -304,11 +304,9 @@ public class SSHClient implements Closeable {
              * we have host key.
              */
             int stat = _session.waitFor(
-                (
                     ClientSession.CLOSED |
                     ClientSession.WAIT_AUTH |
-                    ClientSession.TIMEOUT
-                ),
+                    ClientSession.TIMEOUT,
                 _softTimeout
             );
             if ((stat & ClientSession.CLOSED) != 0) {
@@ -372,11 +370,9 @@ public class SSHClient implements Closeable {
                     String.format(
                         "SSH authentication to '%1$s' failed. Please verify provided credentials. %2$s",
                         this.getDisplayHost(),
-                        (
                             _keyPair == null ?
                             "Make sure host is configured for password authentication" :
                             "Make sure key is authorized at host"
-                        )
                     )
                 );
             }
@@ -469,15 +465,13 @@ public class SSHClient implements Closeable {
             boolean activity;
             do {
                 stat = channel.waitFor(
-                    (
                         ClientChannel.CLOSED |
                         ClientChannel.EOF |
-                        ClientChannel.TIMEOUT
-                    ),
+                        ClientChannel.TIMEOUT,
                     _softTimeout
                 );
 
-                hardTimeout = (hardEnd != 0 && System.currentTimeMillis() >= hardEnd);
+                hardTimeout = hardEnd != 0 && System.currentTimeMillis() >= hardEnd;
 
                 /*
                  * Notice that we should visit all
@@ -511,12 +505,10 @@ public class SSHClient implements Closeable {
             }
 
             stat = channel.waitFor(
-                (
                     ClientChannel.CLOSED |
                     ClientChannel.EXIT_STATUS |
                     ClientChannel.EXIT_SIGNAL |
-                    ClientChannel.TIMEOUT
-                ),
+                    ClientChannel.TIMEOUT,
                 _softTimeout
             );
 
@@ -565,10 +557,8 @@ public class SSHClient implements Closeable {
         finally {
             if (channel != null) {
                 int stat = channel.waitFor(
-                    (
                         ClientChannel.CLOSED |
-                        ClientChannel.TIMEOUT
-                    ),
+                        ClientChannel.TIMEOUT,
                     1
                 );
                 if ((stat & ClientChannel.CLOSED) != 0) {

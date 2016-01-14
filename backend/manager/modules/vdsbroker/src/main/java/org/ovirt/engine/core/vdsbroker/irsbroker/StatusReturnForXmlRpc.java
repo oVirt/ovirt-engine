@@ -38,7 +38,7 @@ public class StatusReturnForXmlRpc {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("status", (isRequestCompleted() ? getXmlRpcStatus() : "Pending Response"))
+                .append("status", isRequestCompleted() ? getXmlRpcStatus() : "Pending Response")
                 .build();
     }
 }

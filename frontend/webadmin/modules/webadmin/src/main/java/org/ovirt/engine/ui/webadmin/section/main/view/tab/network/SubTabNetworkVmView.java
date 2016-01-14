@@ -75,7 +75,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private void handleRadioButtonClick(ClickEvent event) {
-        getDetailModel().setViewFilterType((viewRadioGroup.getSelectedValue()));
+        getDetailModel().setViewFilterType(viewRadioGroup.getSelectedValue());
 
         boolean running = viewRadioGroup.getSelectedValue() == NetworkVmFilter.running;
 

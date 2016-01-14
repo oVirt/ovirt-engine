@@ -103,7 +103,7 @@ public class JsonSerializablePojo implements Serializable {
         sb.append(getObject().toString());
         sb.append("\"}],\"string\":\"");
         String string = getString().replace("\\", "\\\\").replace("\"", "\\\"");
-        sb.append((stripSpaces ? string.replaceAll("\\s", "") : string));
+        sb.append(stripSpaces ? string.replaceAll("\\s", "") : string);
         sb.append("\",\"guid\":[\"");
         sb.append(getGuid().getClass().getName());
         sb.append("\",{\"uuid\":\"");

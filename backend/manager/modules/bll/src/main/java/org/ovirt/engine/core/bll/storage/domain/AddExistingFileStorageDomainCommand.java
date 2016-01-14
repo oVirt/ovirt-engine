@@ -92,12 +92,12 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
                 && StringUtils.isEmpty(domainFromIrs.getStorage()) && domainFromIrs.getConnection() != null
                 && getStorageDomain().getStorageStaticData().getConnection() != null) {
-            returnValue = (StringUtils.equals(domainFromIrs.getConnection().getConnection(), getStorageDomain()
-                    .getStorageStaticData().getConnection().getConnection()));
+            returnValue = StringUtils.equals(domainFromIrs.getConnection().getConnection(), getStorageDomain()
+                    .getStorageStaticData().getConnection().getConnection());
         } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
                 && !StringUtils.isEmpty(domainFromIrs.getStorage())) {
-            returnValue = (StringUtils.equals(domainFromIrs.getStorage(), getStorageDomain().getStorageStaticData()
-                    .getStorage()));
+            returnValue = StringUtils.equals(domainFromIrs.getStorage(), getStorageDomain().getStorageStaticData()
+                    .getStorage());
         }
         if (!returnValue) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);

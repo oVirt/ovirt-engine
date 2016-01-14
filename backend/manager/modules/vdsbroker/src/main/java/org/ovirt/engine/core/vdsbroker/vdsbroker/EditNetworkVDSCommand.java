@@ -48,7 +48,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
             options.put(VdsProperties.BONDING_OPTIONS, getParameters().getBondingOptions());
         }
 
-        options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");
+        options.put(VdsProperties.STP, getParameters().getStp() ? "yes" : "no");
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
         Network network = getParameters().getNetwork();

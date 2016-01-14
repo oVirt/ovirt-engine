@@ -59,7 +59,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             storageDomainId =
                     getStorageDomainDao().getAllForStoragePool(getStoragePoolId()).stream().filter(
-                            a -> (!a.getStorageDomainType().isIsoOrImportExportDomain())
+                            a -> !a.getStorageDomainType().isIsoOrImportExportDomain()
                                     && (a.getStatus() == StorageDomainStatus.Active))
                             .map(StorageDomain::getId).findFirst().orElse(Guid.Empty);
 
@@ -87,7 +87,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
             getVmDisks().stream().filter(disk -> !disk.equals(defBootDisk)).forEach(disk -> disk.setBoot(false));
         }
 
-        return (!disks.isEmpty()) ? concreteAddVmImages(((DiskImage) disks.get(0)).getImageId()) : true;
+        return !disks.isEmpty() ? concreteAddVmImages(((DiskImage) disks.get(0)).getImageId()) : true;
     }
 
     protected boolean concreteAddVmImages(Guid itGuid) {
@@ -139,7 +139,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     @Override
     protected List<? extends Disk> getVmDisks() {
         if (_vmDisks == null) {
-            _vmDisks = ((getParameters().getDiskInfoList()) != null) ? getParameters().getDiskInfoList()
+            _vmDisks = (getParameters().getDiskInfoList() != null) ? getParameters().getDiskInfoList()
                     : new ArrayList<>();
         }
         return _vmDisks;

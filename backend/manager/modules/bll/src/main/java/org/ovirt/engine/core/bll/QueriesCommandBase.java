@@ -182,7 +182,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Override
     public String toString() {
         return String.format("%s(%s)", super.toString(),
-                (getParameters() != null ? getParameters().toString() : "null"));
+                getParameters() != null ? getParameters().toString() : "null");
     }
 
     protected abstract void executeQueryCommand();

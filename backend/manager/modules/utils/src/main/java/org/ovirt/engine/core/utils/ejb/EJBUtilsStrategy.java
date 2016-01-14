@@ -110,7 +110,7 @@ public abstract class EJBUtilsStrategy {
             } else {
                 log.error("Failed to create InitialContext which is currently null," +
                         " possibly because given BeanProxyType is null. Given BeanProxyType: {}",
-                        ((proxyType == null) ? "is null" : proxyType.toString()));
+                        proxyType == null ? "is null" : proxyType.toString());
                 throw new NullPointerException();
             }
 

@@ -251,7 +251,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
     private void updateActionAvailability() {
         Collection<VnicProfileView> tempVar = getSelectedItems();
-        Collection<VnicProfileView> selectedItems = ((tempVar != null) ? tempVar : new ArrayList());
+        Collection<VnicProfileView> selectedItems = tempVar != null ? tempVar : new ArrayList();
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);

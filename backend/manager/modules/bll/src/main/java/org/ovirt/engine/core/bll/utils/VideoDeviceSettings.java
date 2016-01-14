@@ -56,7 +56,7 @@ public class VideoDeviceSettings {
             int heads = vmBase.getSingleQxlPci() ? vmBase.getNumOfMonitors() : 1;
             int vgamem = BASE_RAM_SIZE * heads;
             int vramMultiplier = getVramMultiplier(vmBase);
-            int vram = (vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * vgamem);
+            int vram = vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * vgamem;
             specParams.put(VdsProperties.VIDEO_HEADS, String.valueOf(heads));
             specParams.put(VdsProperties.VIDEO_VGAMEM, String.valueOf(vgamem));
             specParams.put(VdsProperties.VIDEO_RAM, String.valueOf(RAM_MULTIPLIER * vgamem));

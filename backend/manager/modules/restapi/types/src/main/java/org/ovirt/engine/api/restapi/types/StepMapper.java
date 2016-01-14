@@ -69,9 +69,9 @@ public class StepMapper {
             target.setStatus(JobMapper.map(step.getStatus(), null));
         }
         target.setStartTime(step.isSetStartTime() ? step.getStartTime().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         target.setEndTime(step.isSetEndTime() ? step.getEndTime().toGregorianCalendar().getTime()
-                : new Date((Calendar.getInstance().getTimeInMillis())));
+                : new Date(Calendar.getInstance().getTimeInMillis()));
         target.setExternal(step.isSetExternal() ? step.isExternal() : true);
         return target;
     }

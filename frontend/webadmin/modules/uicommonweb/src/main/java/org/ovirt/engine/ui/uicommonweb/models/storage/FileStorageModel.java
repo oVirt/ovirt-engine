@@ -24,8 +24,8 @@ public abstract class FileStorageModel extends Model implements IStorageModel{
     }
 
     public boolean isEditable(StorageDomain storage) {
-        return (storage.getStatus() == StorageDomainStatus.Maintenance
-                || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
+        return storage.getStatus() == StorageDomainStatus.Maintenance
+                || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached;
     }
 
     protected abstract void prepareConnectionForEditing (StorageServerConnections connection);

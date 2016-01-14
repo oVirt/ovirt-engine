@@ -29,13 +29,13 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         // created image id!
         String imageInitSize = null;
         if (isInitialImageSizeSupported() && getParameters().getImageInitialSizeInBytes() != 0) {
-            imageInitSize = (Long.valueOf(getParameters().getImageInitialSizeInBytes())).toString();
+            imageInitSize = Long.valueOf(getParameters().getImageInitialSizeInBytes()).toString();
         }
         uuidReturn = getIrsProxy().createVolume(
                 getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getImageGroupId().toString(),
-                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
+                Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
                 getParameters().getVolumeFormat().getValue(),
                 getParameters().getImageType().getValue(),
                 2,

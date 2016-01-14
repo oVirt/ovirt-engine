@@ -31,6 +31,6 @@ public enum VolumeClassification {
     }
 
     public static VolumeClassification getVolumeClassificationByActiveFlag(boolean isActive) {
-        return (isActive ? VolumeClassification.Volume : VolumeClassification.Snapshot);
+        return isActive ? VolumeClassification.Volume : VolumeClassification.Snapshot;
     }
 }

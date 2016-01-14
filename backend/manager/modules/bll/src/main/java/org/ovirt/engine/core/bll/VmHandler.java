@@ -126,7 +126,7 @@ public class VmHandler {
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
 
         for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
-                (inspectedClassNames))) {
+                inspectedClassNames)) {
             updateVmsStatic.addPermittedFields(pair.getSecond().getName());
         }
 
@@ -222,7 +222,7 @@ public class VmHandler {
         NameQueryParameters params = new NameQueryParameters(vmName);
         params.setDatacenterId(storagePoolId);
         VdcQueryReturnValue result = Backend.getInstance().runInternalQuery(VdcQueryType.IsVmWithSameNameExist, params);
-        return (Boolean) (result.getReturnValue());
+        return (Boolean) result.getReturnValue();
     }
 
     /**
@@ -622,9 +622,9 @@ public class VmHandler {
         boolean legal = false;
 
         if (graphicsTypes.contains(GraphicsType.VNC)) {
-            legal = (numOfMonitors <= 1);
+            legal = numOfMonitors <= 1;
         } else if (graphicsTypes.contains(GraphicsType.SPICE)) { // contains spice and doesn't contain vnc
-            legal = (numOfMonitors <= getMaxNumberOfMonitors());
+            legal = numOfMonitors <= getMaxNumberOfMonitors();
         }
 
         if (!legal) {

@@ -414,11 +414,11 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      * @return  A string representation of this {@code UUID}
      */
     public String toString() {
-        return (digits(mostSigBits >> 32, 8) + "-" +
+        return digits(mostSigBits >> 32, 8) + "-" +
                 digits(mostSigBits >> 16, 4) + "-" +
                 digits(mostSigBits, 4) + "-" +
                 digits(leastSigBits >> 48, 4) + "-" +
-                digits(leastSigBits, 12));
+                digits(leastSigBits, 12);
     }
 
     /** Returns val represented by the specified number of hex digits. */
@@ -462,8 +462,8 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
             return false;
         }
         UUID id = (UUID)obj;
-        return (mostSigBits == id.mostSigBits &&
-                leastSigBits == id.leastSigBits);
+        return mostSigBits == id.mostSigBits &&
+                leastSigBits == id.leastSigBits;
     }
 
     // Comparison Operations
@@ -485,10 +485,10 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
     public int compareTo(UUID val) {
         // The ordering is intentionally set up so that the UUIDs
         // can simply be numerically compared as two numbers
-        return (this.mostSigBits < val.mostSigBits ? -1 :
-                (this.mostSigBits > val.mostSigBits ? 1 :
-                 (this.leastSigBits < val.leastSigBits ? -1 :
-                  (this.leastSigBits > val.leastSigBits ? 1 :
-                   0))));
+        return this.mostSigBits < val.mostSigBits ? -1 :
+                this.mostSigBits > val.mostSigBits ? 1 :
+                        this.leastSigBits < val.leastSigBits ? -1 :
+                                this.leastSigBits > val.leastSigBits ? 1 :
+                   0;
     }
 }

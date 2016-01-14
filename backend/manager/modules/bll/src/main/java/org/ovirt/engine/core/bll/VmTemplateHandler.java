@@ -37,8 +37,7 @@ public class VmTemplateHandler {
         final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
         updateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
-        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
-                                                                                   (inspectedClassNames))) {
+        for (Pair<EditableField, Field> pair : BaseHandler.extractAnnotatedFields(EditableField.class, inspectedClassNames)) {
             updateVmTemplate.addPermittedFields(pair.getSecond().getName());
         }
 
@@ -60,7 +59,7 @@ public class VmTemplateHandler {
             DiskImage diskImage = (DiskImage) dit;
             vmt.getDiskTemplateMap().put(dit.getId(), diskImage);
             // Translation from number of sectors to GB.
-            vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf((1024 * 1024 * 1024)));
+            vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf(1024 * 1024 * 1024));
             vmt.getDiskImageMap().put(dit.getId(), diskImage);
             vmt.getDiskList().add(diskImage);
         }

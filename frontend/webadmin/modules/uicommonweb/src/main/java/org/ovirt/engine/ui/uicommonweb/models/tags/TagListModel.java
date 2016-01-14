@@ -324,7 +324,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
             }
         }
 
-        if ((model.getSelection() == null ? false : model.getSelection())) {
+        if (model.getSelection() == null ? false : model.getSelection()) {
             list.add(model);
         }
         else {

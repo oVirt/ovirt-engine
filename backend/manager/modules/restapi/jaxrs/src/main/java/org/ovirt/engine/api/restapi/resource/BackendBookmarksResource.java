@@ -65,7 +65,7 @@ public class BackendBookmarksResource extends
         @Override
         public org.ovirt.engine.core.common.businessentities.Bookmark lookupEntity(Guid id) throws
             BackendFailureException {
-            assert (id == null); // AddBookmark returns nothing, lookup name instead
+            assert id == null; // AddBookmark returns nothing, lookup name instead
             return lookupBookmarkByName(name);
         }
     }

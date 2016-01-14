@@ -23,7 +23,7 @@ public class ReportModel extends EntityModel {
                "AND+delete_date+IS+NULL"); //$NON-NLS-1$
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        paramsMap.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        paramsMap.setParameter("userLocale", currentLocale.equals("default") ? "en_US" : currentLocale); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     public Map<String, List<String>> getReportParams() {

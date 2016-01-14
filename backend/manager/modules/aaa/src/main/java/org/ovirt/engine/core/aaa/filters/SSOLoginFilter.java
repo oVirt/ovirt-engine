@@ -48,7 +48,7 @@ public class SSOLoginFilter implements Filter {
             } else {
                 log.debug("Already logged in, executing next filter in chain.");
                 res.addHeader("OVIRT-SSO-TOKEN",
-                        URLEncoder.encode((String) (((HttpServletRequest) request).getSession(true)).getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY), "UTF-8"));
+                        URLEncoder.encode((String) ((HttpServletRequest) request).getSession(true).getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY), "UTF-8"));
                 chain.doFilter(request, response);
             }
         }

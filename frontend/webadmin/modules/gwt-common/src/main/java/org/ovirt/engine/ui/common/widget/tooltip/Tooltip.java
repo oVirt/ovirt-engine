@@ -604,7 +604,7 @@ public class Tooltip implements IsWidget, HasWidgets, HasOneWidget, HasId, HasHo
                     throw new NoSuchElementException();
                 }
                 hasElement = false;
-                return (returned = widget);
+                return returned = widget;
             }
 
             @Override

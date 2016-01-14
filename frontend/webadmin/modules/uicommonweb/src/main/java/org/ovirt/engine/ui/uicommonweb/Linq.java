@@ -121,7 +121,7 @@ public final class Linq {
         @Override
         public int compare(VDS vds1, VDS vds2) {
             return (vds1.getVdsSpmPriority() < vds2.getVdsSpmPriority()) ? 1
-                    : ((vds1.getVdsSpmPriority() == vds2.getVdsSpmPriority()) ? 0 : -1);
+                    : vds1.getVdsSpmPriority() == vds2.getVdsSpmPriority() ? 0 : -1;
 
         }
     }
@@ -145,8 +145,8 @@ public final class Linq {
         public int compare(StorageDevice device1, StorageDevice device2) {
             // Descending order on canCreateBrick then ascending order on Name
             int deviceStatusComparison =
-                    (device1.getCanCreateBrick() == device2.getCanCreateBrick() ? 0 : (device2.getCanCreateBrick() ? 1
-                            : -1));
+                    device1.getCanCreateBrick() == device2.getCanCreateBrick() ? 0 : device2.getCanCreateBrick() ? 1
+                            : -1;
             return deviceStatusComparison == 0 ? device1.getName().compareTo(device2.getName())
                     : deviceStatusComparison;
         }
@@ -816,9 +816,9 @@ public final class Linq {
             sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
             diskModel.setSize(sizeEntity);
             ListModel volumeList = new ListModel();
-            volumeList.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ?
+            volumeList.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ?
                     new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                    : AsyncDataProvider.getInstance().getVolumeTypeList()));
+                    : AsyncDataProvider.getInstance().getVolumeTypeList());
             volumeList.setSelectedItem(diskImage.getVolumeType());
             diskModel.setVolumeType(volumeList);
         }

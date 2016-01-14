@@ -118,7 +118,7 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
 
     @Override
     public boolean isVisible(List<T> selectedItems) {
-        return (command != null ? command.getIsVisible() : true);
+        return command != null ? command.getIsVisible() : true;
     }
 
     @Override

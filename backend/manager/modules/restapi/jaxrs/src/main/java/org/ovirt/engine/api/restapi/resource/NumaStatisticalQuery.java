@@ -32,7 +32,7 @@ public class NumaStatisticalQuery extends AbstractStatisticalQuery<NumaNode, Vds
         long memTotal = entity.getMemTotal();
         long memFree = (s==null) ? 0 : s.getMemFree();
         return asList(setDatum(clone(MEM_TOTAL),   memTotal),
-                setDatum(clone(MEM_USED),    (memTotal-memFree)),
+                setDatum(clone(MEM_USED),    memTotal-memFree),
                 setDatum(clone(MEM_FREE),    memFree),
                 setDatum(clone(CPU_USER),    (s==null) ? 0 : s.getCpuUser()),
                 setDatum(clone(CPU_SYS),     (s==null) ? 0 : s.getCpuSys()),

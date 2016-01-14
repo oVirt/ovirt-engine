@@ -86,7 +86,7 @@ public class StepStatisticalQuery extends AbstractStatisticalQuery<Step, Gluster
 
     @Override
     public Statistic adopt(Statistic statistic) {
-        statistic.setStep((clone(parent)));
+        statistic.setStep(clone(parent));
         return statistic;
     }
 

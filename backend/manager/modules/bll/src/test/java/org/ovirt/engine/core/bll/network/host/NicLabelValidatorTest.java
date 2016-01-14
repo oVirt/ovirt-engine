@@ -201,7 +201,7 @@ public class NicLabelValidatorTest {
         Bond bond = new Bond("bond");
         bond.setSlaves(Arrays.asList(slave.getName()));
 
-        params.setBonds(Arrays.asList((bond)));
+        params.setBonds(Arrays.asList(bond));
 
         assertLabelBeingAttachedToNonVlanNonSlaveInterfaceFailed(params, slave);
     }
@@ -217,7 +217,7 @@ public class NicLabelValidatorTest {
 
         Bond updatedBond = new Bond(bondWithSlave.getName());
         updatedBond.setSlaves(new ArrayList<>());
-        params.setBonds(Arrays.asList((updatedBond)));
+        params.setBonds(Arrays.asList(updatedBond));
 
         NicLabel nicLabel = new NicLabel();
         nicLabel.setNicName(slave.getName());

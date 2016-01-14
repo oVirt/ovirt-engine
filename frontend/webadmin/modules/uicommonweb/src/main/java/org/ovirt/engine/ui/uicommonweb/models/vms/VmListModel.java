@@ -1021,7 +1021,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
 
         if (!model.getCollapseSnapshots().getEntity()) {
-            if ((missingTemplatesFromVms == null || missingTemplatesFromVms.size() > 0)) {
+            if (missingTemplatesFromVms == null || missingTemplatesFromVms.size() > 0) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
                 confirmModel.setTitle(ConstantsManager.getInstance()
@@ -1679,7 +1679,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
 
         String isoName =
-                (Objects.equals(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
+                Objects.equals(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel()) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
 
         model.startProgress();

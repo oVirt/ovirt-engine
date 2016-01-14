@@ -13,7 +13,7 @@ public class ClusterNewNetworkModel extends NewNetworkModel{
 
     @Override
     protected NetworkClusterModel createNetworkClusterModel(Cluster cluster) {
-        if ((cluster.getId().equals(this.cluster.getId()))) {
+        if (cluster.getId().equals(this.cluster.getId())) {
             NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
             networkClusterModel.setAttached(true);
             networkClusterModel.setRequired(!getExport().getEntity());

@@ -54,9 +54,9 @@ public class Bookmark implements IVdcQueryable, Serializable {
             return false;
         }
         Bookmark other = (Bookmark) obj;
-        return (Objects.equals(id, other.id)
+        return Objects.equals(id, other.id)
                 && Objects.equals(name, other.name)
-                && Objects.equals(value, other.value));
+                && Objects.equals(value, other.value);
     }
 
 

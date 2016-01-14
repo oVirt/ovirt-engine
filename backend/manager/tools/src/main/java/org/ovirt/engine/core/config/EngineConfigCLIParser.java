@@ -33,7 +33,7 @@ public class EngineConfigCLIParser {
 
     private void validateNonEmpty(String[] args) {
         if (args.length == 0) {
-            throw (new IllegalArgumentException("Error: at least 1 argument needed for configuration utility to run."));
+            throw new IllegalArgumentException("Error: at least 1 argument needed for configuration utility to run.");
         }
     }
 
@@ -224,7 +224,7 @@ public class EngineConfigCLIParser {
      */
     private void validateArgStartsWithDash(String arg) {
         if (!arg.startsWith("-")) {
-            throw (new IllegalArgumentException("First argument must be an action, and start with '-' or '--'"));
+            throw new IllegalArgumentException("First argument must be an action, and start with '-' or '--'");
         }
     }
 

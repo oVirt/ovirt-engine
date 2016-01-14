@@ -18,7 +18,7 @@ public class GetGlusterVolumeAdvancedDetailsVDSCommand<P extends GlusterVolumeAd
     }
 
     private boolean getSucceeded() {
-        return (result.getStatus().code == 0);
+        return result.getStatus().code == 0;
     }
 
     @Override

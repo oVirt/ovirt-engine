@@ -112,7 +112,7 @@ public class SessionDataContainerTest {
     /** Initializes the {@link #key} data */
     private void initDataForClearTest(String key) {
         container.setData(TEST_SESSION_ID, key, mock(DbUser.class));
-        container.setData(TEST_SESSION_ID, SOFT_LIMIT, (DateUtils.addMinutes(new Date(), -1)));
+        container.setData(TEST_SESSION_ID, SOFT_LIMIT, DateUtils.addMinutes(new Date(), -1));
     }
 
     @Test

@@ -101,7 +101,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTERID_AND_SERVERID_BOTH_NULL);
         }
 
-        if (!(Guid.isNullOrEmpty(clusterId)) && getClusterUtils().getAllUpServers(clusterId).size() == 0) {
+        if (!Guid.isNullOrEmpty(clusterId) && getClusterUtils().getAllUpServers(clusterId).size() == 0) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SERVERS_FOR_CLUSTER);
         }
 
@@ -118,9 +118,9 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Override
     protected void executeCommand() {
-        if (!(Guid.isNullOrEmpty(serverId))) {
+        if (!Guid.isNullOrEmpty(serverId)) {
             performActionForServicesOfServer();
-        } else if (!(Guid.isNullOrEmpty(clusterId))) {
+        } else if (!Guid.isNullOrEmpty(clusterId)) {
             performActionForServicesOfCluster();
         }
         addCustomValue(GlusterConstants.SERVICE_TYPE, getParameters().getServiceType().name());
@@ -227,11 +227,11 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (!(Guid.isNullOrEmpty(getParameters().getServerId()))) {
+        if (!Guid.isNullOrEmpty(getParameters().getServerId())) {
             return Collections.singletonMap(getParameters().getServerId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        } else if (!(Guid.isNullOrEmpty(getParameters().getClusterId()))) {
+        } else if (!Guid.isNullOrEmpty(getParameters().getClusterId())) {
             return Collections.singletonMap(getParameters().getClusterId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));

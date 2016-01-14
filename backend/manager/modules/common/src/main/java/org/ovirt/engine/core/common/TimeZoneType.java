@@ -233,7 +233,7 @@ public enum TimeZoneType {
             value = extractOffsetFromMatch(match);
             boolean neg = value < 0;
             value = Math.abs(value);
-            value = ((value / 100) * 60 + value % 100);
+            value = (value / 100) * 60 + value % 100;
             if(neg) {
                 value *= -1;
             }

@@ -464,9 +464,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean shouldPerformMetadataUpdate() {
-        return ((getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
+        return (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
                 (!Objects.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias()) ||
-                 !Objects.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription())));
+                 !Objects.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription()));
     }
 
     private void updateMetaDataDescription(DiskImage diskImage) {

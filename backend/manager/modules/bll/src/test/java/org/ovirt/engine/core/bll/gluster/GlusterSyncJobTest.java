@@ -471,8 +471,8 @@ public class GlusterSyncJobTest {
                 }
                 @SuppressWarnings("unchecked")
                 ArrayList<Guid> optionsToRemove = (ArrayList<Guid>) argument;
-                return (optionsToRemove.size() == 1 && optionsToRemove.get(0)
-                        .equals(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId()));
+                return optionsToRemove.size() == 1 && optionsToRemove.get(0)
+                        .equals(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId());
             }
         };
     }
@@ -489,7 +489,7 @@ public class GlusterSyncJobTest {
                 ArrayList<GlusterVolumeOptionEntity> optionsToAdd = (ArrayList<GlusterVolumeOptionEntity>) argument;
                 // set the added option to volume
                 existingReplVol.setOption(optionsToAdd.get(0));
-                return (optionsToAdd.size() == 1 && (optionsToAdd.get(0).getKey().equals(OPTION_AUTH_REJECT)));
+                return optionsToAdd.size() == 1 && optionsToAdd.get(0).getKey().equals(OPTION_AUTH_REJECT);
             }
         };
     }
@@ -517,7 +517,7 @@ public class GlusterSyncJobTest {
                 }
                 @SuppressWarnings("unchecked")
                 ArrayList<Guid> ids = (ArrayList<Guid>) argument;
-                return (ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids));
+                return ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids);
             }
         };
     }

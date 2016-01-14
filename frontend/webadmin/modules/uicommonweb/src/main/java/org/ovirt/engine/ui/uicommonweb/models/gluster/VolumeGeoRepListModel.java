@@ -380,7 +380,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             GlusterGeoRepSessionConfiguration newConfig = newConfigPair.getSecond();
             boolean isOldConfigNull = oldConfigs.get(newConfig.getKey()) == null;
             boolean isNewConfigNull = newConfig.getValue() == null;
-            if ((!isNewConfigNull && !newConfig.getValue().isEmpty())
+            if (!isNewConfigNull && !newConfig.getValue().isEmpty()
                     && (isOldConfigNull || !newConfig.getValue().equals(oldConfigs.get(newConfig.getKey())))) {
                 actionTypes.add(VdcActionType.SetGeoRepConfig);
                 parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
@@ -558,7 +558,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     private void initializeGeoRepActionConfirmation(String title, HelpTag helpTag, String hashName, String forceHelp, String forceLabelText, String commandName, String masterVolumeName, String slaveVolumeName, String slaveHostName, String message) {
         GlusterVolumeGeoRepActionConfirmationModel cModel;
         if(getWindow() != null) {
-            if((getWindow() instanceof GlusterVolumeGeoRepActionConfirmationModel)) {
+            if(getWindow() instanceof GlusterVolumeGeoRepActionConfirmationModel) {
                 cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
             } else {
                 return;

@@ -392,7 +392,7 @@ public class EngineMonitorService implements Runnable {
         try {
             connection = ds.getConnection();
             ps = connection.prepareStatement("insert into audit_log(log_time, log_type_name , log_type, severity, message) values (?,?,?,?,?)");
-            ps.setTimestamp(1, (new Timestamp(new Date().getTime())));
+            ps.setTimestamp(1, new Timestamp(new Date().getTime()));
             ps.setString(2, eventType);
             ps.setInt(3, eventId);
             ps.setInt(4, severity);

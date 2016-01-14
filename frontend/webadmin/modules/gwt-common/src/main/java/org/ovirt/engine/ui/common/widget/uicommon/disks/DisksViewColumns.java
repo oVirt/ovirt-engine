@@ -245,7 +245,7 @@ public class DisksViewColumns {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
                         object.getDiskStorageType() == DiskStorageType.CINDER ?
                         Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
-                        : (long) (((LunDisk) object).getLun().getDeviceSize());
+                        : (long) ((LunDisk) object).getLun().getDeviceSize();
             }
         };
 
@@ -399,7 +399,7 @@ public class DisksViewColumns {
                 DiskModel diskModel = (DiskModel) object.getEntity();
                 Disk disk = diskModel.getDisk();
                 boolean isScsiPassthrough = disk.isScsiPassthrough();
-                boolean ideLimitation = (disk.getDiskInterface() == DiskInterface.IDE);
+                boolean ideLimitation = disk.getDiskInterface() == DiskInterface.IDE;
                 return !isScsiPassthrough && !ideLimitation;
             }
 

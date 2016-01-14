@@ -409,7 +409,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     public boolean isNfsEnabled() {
         String nfsDisabled = getOptionValue(GlusterConstants.OPTION_NFS_DISABLE);
-        return (nfsDisabled == null || nfsDisabled.equalsIgnoreCase(GlusterConstants.OFF));
+        return nfsDisabled == null || nfsDisabled.equalsIgnoreCase(GlusterConstants.OFF);
     }
 
     public void enableCifs() {
@@ -424,7 +424,7 @@ public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithSta
 
     public boolean isCifsEnabled() {
         String cifsEnabled = getOptionValue(GlusterConstants.OPTION_USER_CIFS);
-        return (cifsEnabled == null || cifsEnabled.equalsIgnoreCase(GlusterConstants.ENABLE));
+        return cifsEnabled == null || cifsEnabled.equalsIgnoreCase(GlusterConstants.ENABLE);
     }
 
     public List<String> getBrickDirectories() {

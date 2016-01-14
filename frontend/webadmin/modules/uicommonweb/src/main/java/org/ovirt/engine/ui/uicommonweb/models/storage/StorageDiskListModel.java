@@ -86,7 +86,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Obj
 
         super.syncSearch();
 
-        IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
+        IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByStorageDomainId, parameters,

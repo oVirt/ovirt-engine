@@ -322,7 +322,7 @@ public class GlusterServiceSyncJobTest {
                     return false;
                 }
 
-                return (((GlusterClusterService) argument).getStatus() == GlusterServiceStatus.MIXED);
+                return ((GlusterClusterService) argument).getStatus() == GlusterServiceStatus.MIXED;
             }
         };
     }

@@ -63,7 +63,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
         haVmsInCluster = countHaVmsInCluster(hostId2HaVmMapping);
 
 
-        int optimalHaDistribution = (int) Math.ceil(((double) haVmsInCluster / hosts.size()));
+        int optimalHaDistribution = (int) Math.ceil((double) haVmsInCluster / hosts.size());
 
         int overUtilizationParam = DEFAULT_OVER_UTILIZATION_VALUE;
         if (parameters.get("OverUtilization") != null) {

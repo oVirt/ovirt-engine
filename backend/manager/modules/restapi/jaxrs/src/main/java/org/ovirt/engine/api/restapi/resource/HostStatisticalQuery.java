@@ -43,7 +43,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         long memUsed = (s==null || s.getUsageMemPercent()==null) ? 0 : memTotal * s.getUsageMemPercent() / 100;
         return asList(setDatum(clone(MEM_TOTAL),   memTotal),
                       setDatum(clone(MEM_USED),    memUsed),
-                      setDatum(clone(MEM_FREE),    (memTotal-memUsed)),
+                      setDatum(clone(MEM_FREE),    memTotal-memUsed),
                       setDatum(clone(MEM_SHARED),  (s==null || s.getMemShared()==null) ? 0 : s.getMemShared()*Mb),
                       setDatum(clone(MEM_BUFFERS), 0),
                       setDatum(clone(MEM_CACHED),  0),

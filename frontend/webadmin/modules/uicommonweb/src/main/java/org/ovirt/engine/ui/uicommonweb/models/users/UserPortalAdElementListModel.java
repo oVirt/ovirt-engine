@@ -41,7 +41,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
     private DbUser getTargetDbUser() {
         DbUser dbUser = new DbUser();
         dbUser.setLoginName(getSearchString());
-        dbUser.setDomain((getProfile().getSelectedItem()).getAuthz());
+        dbUser.setDomain(getProfile().getSelectedItem().getAuthz());
         return dbUser;
     }
 

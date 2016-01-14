@@ -70,18 +70,18 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         // it would be nice to handle this from command execution rather than
         // audit log messages
         initUserAndGroupData();
-        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getName()) : dbUser.getLoginName();
+        return dbUser == null ? dbGroup == null ? "" : dbGroup.getName() : dbUser.getLoginName();
     }
 
     public String getNamespace() {
         initUserAndGroupData();
-        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getNamespace()) : dbUser.getNamespace();
+        return dbUser == null ? dbGroup == null ? "" : dbGroup.getNamespace() : dbUser.getNamespace();
 
     }
 
     public String getAuthz() {
         initUserAndGroupData();
-        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getDomain()) : dbUser.getDomain();
+        return dbUser == null ? dbGroup == null ? "" : dbGroup.getDomain() : dbUser.getDomain();
 
     }
 

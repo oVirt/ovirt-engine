@@ -25,7 +25,7 @@ public class PollListAndAllVmStatsRefresher extends PollVmStatsRefresher {
     }
 
     private void updateIteration() {
-        refreshIteration =  (++refreshIteration) % NUMBER_VMS_REFRESHES_BEFORE_SAVE;
+        refreshIteration =  ++refreshIteration % NUMBER_VMS_REFRESHES_BEFORE_SAVE;
     }
 
     @Override

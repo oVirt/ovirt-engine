@@ -943,7 +943,7 @@ public class Frontend implements HasHandlers {
         // 'runActionExecutionFailed' invokes an error pop-up displaying, therefore calling 'failureEventHandler' is
         // only needed for validate failure
         if (showErrorDialog && failedOnValidate && (getEventsHandler() != null)
-                && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
+                && getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault())) {
             ArrayList<String> messages = result.getValidationMessages();
             failureEventHandler(result.getDescription(),
                     messages.isEmpty() ? Collections.singletonList(getConstants().noValidateMessage()) : messages); //$NON-NLS-1$

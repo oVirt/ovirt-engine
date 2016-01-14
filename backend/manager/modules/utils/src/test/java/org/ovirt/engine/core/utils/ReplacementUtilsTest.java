@@ -122,7 +122,7 @@ public class ReplacementUtilsTest {
             }
         }
 
-        return (numOfElementsFound == numOfElementsToShow);
+        return numOfElementsFound == numOfElementsToShow;
     }
 
     private <T> void validateReplacementsContainsExpectedProperties(Collection<String> replacements, List<T> items) {

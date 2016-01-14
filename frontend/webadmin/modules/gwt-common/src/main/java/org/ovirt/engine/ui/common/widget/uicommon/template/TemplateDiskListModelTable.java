@@ -52,7 +52,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(DiskImage object) {
-                       return Math.round((object.getActualDiskWithSnapshotsSize()));
+                       return Math.round(object.getActualDiskWithSnapshotsSize());
             }
         };
 

@@ -130,8 +130,8 @@ public final class FormatterJava {
         }
 
         static boolean isValid(char c) {
-            return (isGeneral(c) || isInteger(c) || isFloat(c) || isText(c)
-                    || c == 't' || isCharacter(c));
+            return isGeneral(c) || isInteger(c) || isFloat(c) || isText(c)
+                    || c == 't' || isCharacter(c);
         }
     }
 
@@ -809,7 +809,7 @@ public final class FormatterJava {
                 try {
                     index = Integer.parseInt(s.substring(0, s.length() - 1));
                 } catch (NumberFormatException x) {
-                    assert (false);
+                    assert false;
                 }
             } else {
                 index = 0;
@@ -933,7 +933,7 @@ public final class FormatterJava {
                         throw new IllegalArgumentException("precision: " + precision);
                     }
                 } catch (NumberFormatException x) {
-                    assert (false);
+                    assert false;
                 }
             }
             return precision;
@@ -1015,7 +1015,7 @@ public final class FormatterJava {
             }
 
             // trailing sign indicator
-            trailingSign(sb, (value.signum() == -1));
+            trailingSign(sb, value.signum() == -1);
 
             // justify based on width
             a.append(justify(sb.toString()));
@@ -1026,7 +1026,7 @@ public final class FormatterJava {
             if (value < 0
                     && (c == Conversion.OCTAL_INTEGER
                     || c == Conversion.HEXADECIMAL_INTEGER)) {
-                v += (1L << 8);
+                v += 1L << 8;
                 assert v >= 0 : v;
             }
             print(v);
@@ -1082,7 +1082,7 @@ public final class FormatterJava {
             if (value < 0
                     && (c == Conversion.OCTAL_INTEGER
                     || c == Conversion.HEXADECIMAL_INTEGER)) {
-                v += (1L << 32);
+                v += 1L << 32;
                 assert v >= 0 : v;
             }
             print(v);
@@ -1113,9 +1113,9 @@ public final class FormatterJava {
                 checkBadFlags(Flags.PARENTHESES, Flags.LEADING_SPACE,
                         Flags.PLUS);
                 String s = Long.toOctalString(value);
-                int len = (f.contains(Flags.ALTERNATE)
+                int len = f.contains(Flags.ALTERNATE)
                         ? s.length() + 1
-                        : s.length());
+                        : s.length();
 
                 // apply ALTERNATE (radix indicator for octal) before ZERO_PAD
                 if (f.contains(Flags.ALTERNATE)) {
@@ -1131,9 +1131,9 @@ public final class FormatterJava {
                 checkBadFlags(Flags.PARENTHESES, Flags.LEADING_SPACE,
                         Flags.PLUS);
                 String s = Long.toHexString(value);
-                int len = (f.contains(Flags.ALTERNATE)
+                int len = f.contains(Flags.ALTERNATE)
                         ? s.length() + 2
-                        : s.length());
+                        : s.length();
 
                 // apply ALTERNATE (radix indicator for hex) before ZERO_PAD
                 if (f.contains(Flags.ALTERNATE)) {
@@ -1159,7 +1159,7 @@ public final class FormatterJava {
             if (value < 0
                     && (c == Conversion.OCTAL_INTEGER
                     || c == Conversion.HEXADECIMAL_INTEGER)) {
-                v += (1L << 16);
+                v += 1L << 16;
                 assert v >= 0 : v;
             }
             print(v);
@@ -1181,7 +1181,7 @@ public final class FormatterJava {
                 throws IOException {
             if (c == Conversion.SCIENTIFIC) {
                 // Create a new BigDecimal with the desired precision.
-                int prec = (precision == -1 ? 6 : precision);
+                int prec = precision == -1 ? 6 : precision;
                 int scale = value.scale();
                 int origPrec = value.precision();
                 int nzeros = 0;
@@ -1208,7 +1208,7 @@ public final class FormatterJava {
                 // precision is one. Append a decimal point if '#' is set or if
                 // we require zero padding to get to the requested precision.
                 if ((origPrec == 1 || !bdl.hasDot())
-                        && (nzeros > 0 || (f.contains(Flags.ALTERNATE)))) {
+                        && (nzeros > 0 || f.contains(Flags.ALTERNATE))) {
                     mant = addDot(mant);
                 }
 
@@ -1227,7 +1227,7 @@ public final class FormatterJava {
 
                 Flags flags = f.dup().remove(Flags.GROUP);
                 char sign = exp[0];
-                assert (sign == '+' || sign == '-');
+                assert sign == '+' || sign == '-';
                 sb.append(exp[0]);
 
                 char[] tmp = new char[exp.length - 1];
@@ -1235,7 +1235,7 @@ public final class FormatterJava {
                 sb.append(localizedMagnitude(null, tmp, flags, -1));
             } else if (c == Conversion.DECIMAL_FLOAT) {
                 // Create a new BigDecimal with the desired precision.
-                int prec = (precision == -1 ? 6 : precision);
+                int prec = precision == -1 ? 6 : precision;
                 int scale = value.scale();
                 if (scale > prec) {
                     // more "scale" digits than the requested "precision
@@ -1244,7 +1244,7 @@ public final class FormatterJava {
                         // case of 0.xxxxxx
                         value = value.setScale(prec, RoundingMode.HALF_UP);
                     } else {
-                        compPrec -= (scale - prec);
+                        compPrec -= scale - prec;
                         value = new BigDecimal(value.unscaledValue(),
                                 scale,
                                 new MathContext(compPrec));
@@ -1255,7 +1255,7 @@ public final class FormatterJava {
                         value.scale(),
                         BigDecimalLayoutForm.DECIMAL_FLOAT);
                 char[] mant = bdl.mantissa();
-                int nzeros = (bdl.scale() < prec ? prec - bdl.scale() : 0);
+                int nzeros = bdl.scale() < prec ? prec - bdl.scale() : 0;
 
                 // Add a decimal point if necessary. The mantissa may not
                 // contain a decimal point if the scale is zero (the internal
@@ -1281,7 +1281,7 @@ public final class FormatterJava {
 
                 BigDecimal tenToTheNegFour = BigDecimal.valueOf(1, 4);
                 BigDecimal tenToThePrec = BigDecimal.valueOf(1, -prec);
-                if ((value.equals(BigDecimal.ZERO))
+                if (value.equals(BigDecimal.ZERO)
                         || ((value.compareTo(tenToTheNegFour) != -1)
                         && (value.compareTo(tenToThePrec) == -1))) {
 
@@ -1314,7 +1314,7 @@ public final class FormatterJava {
 
         private Appendable print(StringBuilder sb, Date t, char c)
                 throws IOException {
-            assert (width == -1);
+            assert width == -1;
             if (sb == null) {
                 sb = new StringBuilder();
             }
@@ -1325,12 +1325,12 @@ public final class FormatterJava {
             case DateTime.HOUR: { // 'l' (1 - 12) -- like I
                 int i = t.getHours();
                 if (c == DateTime.HOUR_0 || c == DateTime.HOUR) {
-                    i = (i == 0 || i == 12 ? 12 : i % 12);
+                    i = i == 0 || i == 12 ? 12 : i % 12;
                 }
-                Flags flags = (c == DateTime.HOUR_OF_DAY_0
+                Flags flags = c == DateTime.HOUR_OF_DAY_0
                         || c == DateTime.HOUR_0
                         ? Flags.ZERO_PAD
-                        : Flags.NONE);
+                        : Flags.NONE;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
             }
@@ -1390,9 +1390,9 @@ public final class FormatterJava {
             case DateTime.DAY_OF_MONTH_0: // 'd' (01 - 31)
             case DateTime.DAY_OF_MONTH: { // 'e' (1 - 31) -- like d
                 int i = t.getDate();
-                Flags flags = (c == DateTime.DAY_OF_MONTH_0
+                Flags flags = c == DateTime.DAY_OF_MONTH_0
                         ? Flags.ZERO_PAD
-                        : Flags.NONE);
+                        : Flags.NONE;
                 sb.append(localizedMagnitude(null, i, flags, 2));
                 break;
             }
@@ -1541,16 +1541,16 @@ public final class FormatterJava {
             } else if (arg instanceof Double) {
                 print(((Double) arg).doubleValue());
             } else if (arg instanceof BigDecimal) {
-                print(((BigDecimal) arg));
+                print((BigDecimal) arg);
             } else {
                 failConversion(c, arg);
             }
         }
 
         private void printHashCode(Object arg) throws IOException {
-            String s = (arg == null
+            String s = arg == null
                     ? "null"
-                    : Integer.toHexString(arg.hashCode()));
+                    : Integer.toHexString(arg.hashCode());
             print(s);
         }
 
@@ -1568,7 +1568,7 @@ public final class FormatterJava {
             } else if (arg instanceof Long) {
                 print(((Long) arg).longValue());
             } else if (arg instanceof BigInteger) {
-                print(((BigInteger) arg));
+                print((BigInteger) arg);
             } else {
                 failConversion(c, arg);
             }
@@ -1613,7 +1613,7 @@ public final class FormatterJava {
                         throw new IllegalArgumentException("Illegal width " + width);
                     }
                 } catch (NumberFormatException x) {
-                    assert (false);
+                    assert false;
                 }
             }
             return width;
@@ -1670,7 +1670,7 @@ public final class FormatterJava {
                     if (last < 0 || (args != null && last > args.length - 1)) {
                         throw new IllegalArgumentException(fs.toString());
                     }
-                    fs.print((args == null ? null : args[last]));
+                    fs.print(args == null ? null : args[last]);
                     break;
                 case 0: // ordinary index
                     lasto++;
@@ -1678,14 +1678,14 @@ public final class FormatterJava {
                     if (args != null && lasto > args.length - 1) {
                         throw new IllegalArgumentException(fs.toString());
                     }
-                    fs.print((args == null ? null : args[lasto]));
+                    fs.print(args == null ? null : args[lasto]);
                     break;
                 default: // explicit index
                     last = index - 1;
                     if (args != null && last > args.length - 1) {
                         throw new IllegalArgumentException(fs.toString());
                     }
-                    fs.print((args == null ? null : args[last]));
+                    fs.print(args == null ? null : args[last]);
                     break;
                 }
             } catch (IOException x) {
@@ -1713,7 +1713,7 @@ public final class FormatterJava {
         // If there are any '%' in the given string, we got a bad format
         // specifier.
         if ((idx = s.indexOf('%')) != -1) {
-            char c = (idx > s.length() - 2 ? '%' : s.charAt(idx + 1));
+            char c = idx > s.length() - 2 ? '%' : s.charAt(idx + 1);
             throw new IllegalArgumentException(String.valueOf(c));
         }
     }

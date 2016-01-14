@@ -422,9 +422,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // Check if the watchdog model is supported
         if (getParameters().getWatchdog() != null) {
-            if (!validate((new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
+            if (!validate(new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),
                     getParameters().getWatchdog(),
-                    getVm().getCompatibilityVersion())).isValid())) {
+                    getVm().getCompatibilityVersion()).isValid())) {
                 return false;
             }
         }
@@ -645,8 +645,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         MultipleStorageDomainsValidator multipleSdValidator = getStorageDomainsValidator(
                 getVm().getStoragePoolId(), getStorageGuidSet());
 
-        return (validate(multipleSdValidator.allDomainsWithinThresholds())
-                && validate(multipleSdValidator.allDomainsHaveSpaceForClonedDisks(disksListForStorageChecks)));
+        return validate(multipleSdValidator.allDomainsWithinThresholds())
+                && validate(multipleSdValidator.allDomainsHaveSpaceForClonedDisks(disksListForStorageChecks));
     }
 
     protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> disks) {

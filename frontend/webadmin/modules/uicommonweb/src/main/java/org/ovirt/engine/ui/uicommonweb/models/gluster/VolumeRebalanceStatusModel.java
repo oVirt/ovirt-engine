@@ -125,7 +125,7 @@ public class VolumeRebalanceStatusModel extends Model {
         if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED) {
             refresh.cancel();
         }else {
-            if ((rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED || rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FAILED)) {
+            if (rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED || rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FAILED) {
                 refresh.cancel();
                 if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED) {
                     getStopTime().setEntity(rebalanceStatusEntity.getStopTime());

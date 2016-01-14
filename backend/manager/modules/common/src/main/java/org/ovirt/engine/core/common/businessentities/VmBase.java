@@ -1354,7 +1354,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public void setCustomEmulatedMachine(String customEmulatedMachine) {
-        this.customEmulatedMachine = ((customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty()) ? null : customEmulatedMachine);
+        this.customEmulatedMachine = customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty() ? null : customEmulatedMachine;
     }
 
     public String getCustomCpuName() {
@@ -1362,7 +1362,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public void setCustomCpuName(String customCpuName) {
-        this.customCpuName = ((customCpuName==null || customCpuName.trim().isEmpty()) ? null : customCpuName);
+        this.customCpuName = customCpuName==null || customCpuName.trim().isEmpty() ? null : customCpuName;
     }
 
     public void setCustomCompatibilityVersion(Version customCompatibilityVersion) {

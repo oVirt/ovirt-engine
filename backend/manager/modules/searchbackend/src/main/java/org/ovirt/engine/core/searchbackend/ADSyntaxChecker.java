@@ -145,7 +145,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
             case CONDITION_RELATION:
                 boolean addObjFlag = false;
                 if (curChar == '"') {
-                    betweenDoubleQuotes = (!betweenDoubleQuotes);
+                    betweenDoubleQuotes = !betweenDoubleQuotes;
                     if (betweenDoubleQuotes) {
                         if (!firstDQRegexp.isMatch(strRealObj)) {
                             retval.setErr(SyntaxError.INVALID_CONDITION_VALUE, curStartPos, idx + 1);

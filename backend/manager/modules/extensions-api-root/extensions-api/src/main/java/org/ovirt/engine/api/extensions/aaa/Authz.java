@@ -99,9 +99,9 @@ public class Authz {
      */
     public static class QueryFlags {
         /** Resolve groups. */
-        public static final int RESOLVE_GROUPS = (1 << 0);
+        public static final int RESOLVE_GROUPS = 1 << 0;
         /** Resolve groups recursively when resolving groups. */
-        public static final int RESOLVE_GROUPS_RECURSIVE = (1 << 1);
+        public static final int RESOLVE_GROUPS_RECURSIVE = 1 << 1;
     }
 
     /**
@@ -197,7 +197,7 @@ public class Authz {
          * Provider always resolves groups recursively. This implies provider ignores
          * {@link QueryFlags#RESOLVE_GROUPS_RECURSIVE} flag.
          */
-        public static final long RECURSIVE_GROUP_RESOLUTION = (1 << 0);
+        public static final long RECURSIVE_GROUP_RESOLUTION = 1 << 0;
     }
 
     /**

@@ -31,8 +31,8 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
     @Override
     protected boolean validate() {
         M validator = getQosValidator(getQos());
-        return (validateParameters()
-                && validate(validator.requiredValuesPresent()));
+        return validateParameters()
+                && validate(validator.requiredValuesPresent());
     }
 
     public T getQos() {

@@ -50,7 +50,7 @@ public class SlaValidator {
             }
 
             log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
-            return (vmMemRequired <= vdsMemLimit);
+            return vmMemRequired <= vdsMemLimit;
         } else {
             return false;
         }
@@ -79,7 +79,7 @@ public class SlaValidator {
                 curVds.getGuestOverhead());
 
         log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
-        return (vmMemRequired <= vdsMemLimit);
+        return vmMemRequired <= vdsMemLimit;
     }
 
     public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {

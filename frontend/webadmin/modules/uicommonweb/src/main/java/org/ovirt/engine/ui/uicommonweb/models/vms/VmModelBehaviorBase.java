@@ -522,9 +522,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                             List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
                                               ? oldDefaultHosts
-                                              : (!hosts.isEmpty()
+                                              : !hosts.isEmpty()
                                                       ? Collections.singletonList(hosts.get(0))
-                                                      : Collections.<VDS>emptyList());
+                                                      : Collections.<VDS>emptyList();
                             model.getDefaultHost().setSelectedItems(hostsToSelect);
                         }
                         changeDefaultHost();
@@ -638,8 +638,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 case IMAGE:
                     diskModel.setSize(new EntityModel<>((int) disk.getSizeInGigabytes()));
                     ListModel volumes = new ListModel();
-                    volumes.setItems((disk.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                            : AsyncDataProvider.getInstance().getVolumeTypeList()), disk.getVolumeType());
+                    volumes.setItems(disk.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                            : AsyncDataProvider.getInstance().getVolumeTypeList(), disk.getVolumeType());
                     diskModel.setVolumeType(volumes);
                     break;
                 case CINDER:
@@ -1205,7 +1205,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     public void onSuccess(Object target, Object returnValue) {
 
                         VmModelBehaviorBase behavior = VmModelBehaviorBase.this;
-                        behavior.maxNumOfSockets = ((Integer) returnValue);
+                        behavior.maxNumOfSockets = (Integer) returnValue;
                         behavior.updataMaxVmsInPool();
                     }
                 }), version.toString());

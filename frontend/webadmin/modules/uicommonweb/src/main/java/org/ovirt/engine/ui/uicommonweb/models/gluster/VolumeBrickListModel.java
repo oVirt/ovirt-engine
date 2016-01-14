@@ -700,7 +700,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         for (int distIndex = 0; distIndex < distributions; distIndex++) {
 
             List<GlusterBrickEntity> bricksInSubVolumeList =
-                    brickList.subList((distIndex * replicaCount), (distIndex * replicaCount) + replicaCount);
+                    brickList.subList(distIndex * replicaCount, (distIndex * replicaCount) + replicaCount);
 
             int selectedBricksInSubVolume = 0;
             for (GlusterBrickEntity brick : bricksInSubVolumeList) {
@@ -747,7 +747,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         for (int i = 0; i < distributions; i++) {
             List<GlusterBrickEntity> subBrickList =
-                    brickList.subList((i * stripeCount), (i * stripeCount) + stripeCount);
+                    brickList.subList(i * stripeCount, (i * stripeCount) + stripeCount);
             if (subBrickList.containsAll(selectedBricks)) {
                 return true;
             }

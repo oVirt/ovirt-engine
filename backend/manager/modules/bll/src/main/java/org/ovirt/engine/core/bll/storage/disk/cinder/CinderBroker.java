@@ -61,7 +61,7 @@ public class CinderBroker extends AuditLogableBase {
             VolumeForCreate cinderVolume = new VolumeForCreate();
             cinderVolume.setName(cinderDisk.getDiskAlias());
             cinderVolume.setDescription(cinderDisk.getDiskDescription());
-            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setSize((int) cinderDisk.getSizeInGigabytes());
             cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
             return proxy.createVolume(cinderVolume);
         });
@@ -72,7 +72,7 @@ public class CinderBroker extends AuditLogableBase {
             VolumeForCreate cinderVolume = new VolumeForCreate();
             cinderVolume.setName(cinderDisk.getDiskAlias());
             cinderVolume.setDescription(cinderDisk.getDiskDescription());
-            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setSize((int) cinderDisk.getSizeInGigabytes());
             cinderVolume.setSourceVolid(cinderDisk.getImageId().toString());
             return proxy.createVolume(cinderVolume);
         });
@@ -175,7 +175,7 @@ public class CinderBroker extends AuditLogableBase {
             VolumeForCreate cinderVolume = new VolumeForCreate();
             cinderVolume.setName(cinderDisk.getDiskAlias());
             cinderVolume.setDescription(cinderDisk.getDiskDescription());
-            cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+            cinderVolume.setSize((int) cinderDisk.getSizeInGigabytes());
             cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
             cinderVolume.setSnapshotId(snapshotId.toString());
             return proxy.cloneVolumeFromSnapshot(cinderVolume);

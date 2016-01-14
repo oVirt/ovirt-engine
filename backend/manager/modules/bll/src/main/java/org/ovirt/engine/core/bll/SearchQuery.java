@@ -318,7 +318,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(), getParameters().getCaseSensitive());
                 data = queriesCache.get(searchKey);
-                isExistsValue = (data != null);
+                isExistsValue = data != null;
 
                 if (isExistsValue) {
                     TimeSpan span = DateTime.getNow().subtract(new Date(data.getDate()));

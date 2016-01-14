@@ -424,7 +424,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         setMessage(""); //$NON-NLS-1$
 
         if (isInVm) {
-            AsyncDataProvider.getInstance().getDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -441,7 +441,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                         diskModel.setMessage(constants.relevantDCnotActive());
                     }
                 }
-            })), getVm().getStoragePoolId());
+            }), getVm().getStoragePoolId());
             updateBootableDiskAvailable();
         }
         else {

@@ -82,7 +82,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> ex
             return;
         }
 
-        IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
+        IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(vdcQueryType, parameters,

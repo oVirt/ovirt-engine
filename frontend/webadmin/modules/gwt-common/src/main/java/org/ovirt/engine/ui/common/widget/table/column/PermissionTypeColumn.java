@@ -27,7 +27,7 @@ public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission
                 if (getValue(o1).equals(getValue(o2))) {
                     return 0;
                 } else {
-                    return (resources.userImage().equals(getValue(o1))) ? -1 : 1;
+                    return resources.userImage().equals(getValue(o1)) ? -1 : 1;
                 }
             }
         });

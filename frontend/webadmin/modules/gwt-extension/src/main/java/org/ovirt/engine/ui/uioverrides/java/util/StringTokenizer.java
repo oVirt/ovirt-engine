@@ -328,7 +328,7 @@ class StringTokenizer implements Enumeration<Object> {
          * that nextToken() invocation.
          */
         newPosition = skipDelimiters(currentPosition);
-        return (newPosition < maxPosition);
+        return newPosition < maxPosition;
     }
 
     /**

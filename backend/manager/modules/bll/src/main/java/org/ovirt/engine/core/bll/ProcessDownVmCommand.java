@@ -232,7 +232,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                                 VmDeviceGeneralType.DISK,
                                 VmDeviceType.FLOPPY.getName());
 
-        return (cdList.size() > 1 || floppyList.size() > 1);
+        return cdList.size() > 1 || floppyList.size() > 1;
     }
 
     /**

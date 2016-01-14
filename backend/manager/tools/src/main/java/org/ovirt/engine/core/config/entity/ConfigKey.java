@@ -135,9 +135,9 @@ public class ConfigKey {
         catch (Exception e) {
             LoggerFactory.getLogger(ConfigKey.class).debug("Error fetching value", e);
         }
-        return (new StringBuilder ("ConfigKey [type=").append(type).append(", description=").append(description)
+        return new StringBuilder ("ConfigKey [type=").append(type).append(", description=").append(description)
                 .append(", alternateKey=").append(alternateKey).append(", key=").append(keyName).append(", value=").append(value)
-                .append(", validValues=").append(validValues).append(", version=").append(version + "]")).toString();
+                .append(", validValues=").append(validValues).append(", version=").append(version + "]").toString();
     }
 
     public List<String> getValidValues() {

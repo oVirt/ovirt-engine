@@ -382,7 +382,7 @@ public class VdsBrokerObjectsBuilder {
 
         adjustDisplayIp(vm.getGraphicsInfos(), host);
 
-        if (xmlRpcStruct.containsKey((VdsProperties.utc_diff))) {
+        if (xmlRpcStruct.containsKey(VdsProperties.utc_diff)) {
             String utc_diff = xmlRpcStruct.get(VdsProperties.utc_diff).toString();
             if (utc_diff.startsWith("+")) {
                 utc_diff = utc_diff.substring(1);
@@ -648,7 +648,7 @@ public class VdsBrokerObjectsBuilder {
                         xmlRpcStruct.get(VdsProperties.display_secure_port));
             }
         }
-        if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
+        if (xmlRpcStruct.containsKey(VdsProperties.displayIp)) {
             graphicsInfo.setIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
         }
 
@@ -1200,7 +1200,7 @@ public class VdsBrokerObjectsBuilder {
             // prior to 3.4, haScore was returned if ha was installed; assume active if > 0
             if (haScore != null) {
                 haIsConfigured = true;
-                haIsActive = (haScore > 0);
+                haIsActive = haScore > 0;
             }
         }
         vds.setHighlyAvailableScore(haScore != null ? haScore : 0);
@@ -1376,7 +1376,7 @@ public class VdsBrokerObjectsBuilder {
                     data.setDomainId(new Guid(value.getKey().toString()));
                     Map<String, Object> internalValue = (Map<String, Object>) value.getValue();
                     double lastCheck = 0;
-                    data.setCode((Integer) (internalValue).get(VdsProperties.code));
+                    data.setCode((Integer) internalValue.get(VdsProperties.code));
                     if (internalValue.containsKey(VdsProperties.lastCheck)) {
                         lastCheck = Double.parseDouble((String) internalValue.get(VdsProperties.lastCheck));
                     }
@@ -1434,7 +1434,7 @@ public class VdsBrokerObjectsBuilder {
      */
     private static Double assignDoubleValueWithNullProtection(Map<String, Object> input, String name) {
         Double doubleValue = assignDoubleValue(input, name);
-        return (doubleValue == null ? Double.valueOf(0.0) : doubleValue);
+        return doubleValue == null ? Double.valueOf(0.0) : doubleValue;
     }
 
     private static Integer assignIntValue(Map input, String name) {

@@ -37,7 +37,7 @@ public class UsageFinder {
                 break;
             }
         }
-        assert (link != null) : "Corresponding link not found (this should not happen)";
+        assert link != null : "Corresponding link not found (this should not happen)";
         return link;
     }
 
@@ -50,7 +50,7 @@ public class UsageFinder {
                 break;
             }
         }
-        assert (rsdl != null) : "Resource that generates RSDL, BackendApiResource, not found (this should never happen)";
+        assert rsdl != null : "Resource that generates RSDL, BackendApiResource, not found (this should never happen)";
         return rsdl;
     }
 
@@ -80,9 +80,9 @@ public class UsageFinder {
     }
 
     private boolean isMatchRel(String rel, String httpMethod) {
-        return ((rel.equals("get") && httpMethod.equals("GET")))
-                || ((rel.equals("add") && httpMethod.equals("POST")))
-                || ((rel.equals("update") && httpMethod.equals("PUT")))
+        return (rel.equals("get") && httpMethod.equals("GET"))
+                || (rel.equals("add") && httpMethod.equals("POST"))
+                || (rel.equals("update") && httpMethod.equals("PUT"))
                 || httpMethod.equals("POST") ? true : false;
     }
 

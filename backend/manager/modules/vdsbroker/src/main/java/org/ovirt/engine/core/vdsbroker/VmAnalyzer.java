@@ -453,7 +453,7 @@ public class VmAnalyzer {
                 auditLogable.addCustomValue("VdsName", this.getVdsManager().getVdsName());
                 auditLogable.addCustomValue("MemGuaranteed", String.valueOf(dbVm.getMinAllocatedMem()));
                 auditLogable.addCustomValue("MemActual",
-                        Long.toString((vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES)));
+                        Long.toString(vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES));
                 auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
             }
         }
@@ -975,8 +975,8 @@ public class VmAnalyzer {
                 List<Integer> pinnedNodes = NumaUtils.getPinnedNodeIndexList(dbVmNumaNode.getVdsNumaNodeList());
                 List<Pair<Guid, Pair<Boolean, Integer>>> runTimePinList = new ArrayList<>();
                 for (Pair<Guid, Pair<Boolean, Integer>> pair : vNode.getVdsNumaNodeList()) {
-                    if ((!pinnedNodes.contains(pair.getSecond().getSecond())) &&
-                            (runOnVdsAllNumaNodesMap.containsKey(pair.getSecond().getSecond()))) {
+                    if (!pinnedNodes.contains(pair.getSecond().getSecond()) &&
+                            runOnVdsAllNumaNodesMap.containsKey(pair.getSecond().getSecond())) {
                         pair.setFirst(runOnVdsAllNumaNodesMap.get(pair.getSecond().getSecond()).getId());
                         pair.getSecond().setFirst(false);
                         runTimePinList.add(pair);
@@ -1017,8 +1017,8 @@ public class VmAnalyzer {
     }
 
     protected boolean isBalloonWorking(VmBalloonInfo balloonInfo) {
-        return (Math.abs(balloonInfo.getBalloonLastMemory() - balloonInfo.getBalloonTargetMemory())
-                > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory()));
+        return Math.abs(balloonInfo.getBalloonLastMemory() - balloonInfo.getBalloonTargetMemory())
+                > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory());
     }
 
     public DbFacade getDbFacade() {

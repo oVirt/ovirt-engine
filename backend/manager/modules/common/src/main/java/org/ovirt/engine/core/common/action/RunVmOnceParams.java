@@ -139,7 +139,7 @@ public class RunVmOnceParams extends RunVmParams {
     }
 
     public void setCustomEmulatedMachine(String customEmulatedMachine) {
-        this.customEmulatedMachine = ((customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty()) ? null : customEmulatedMachine);
+        this.customEmulatedMachine = customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty() ? null : customEmulatedMachine;
     }
 
     public String getCustomCpuName() {
@@ -147,7 +147,7 @@ public class RunVmOnceParams extends RunVmParams {
     }
 
     public void setCustomCpuName(String customCpuName) {
-        this.customCpuName = ((customCpuName == null || customCpuName.trim().isEmpty()) ? null : customCpuName);
+        this.customCpuName = customCpuName == null || customCpuName.trim().isEmpty() ? null : customCpuName;
     }
 
 }

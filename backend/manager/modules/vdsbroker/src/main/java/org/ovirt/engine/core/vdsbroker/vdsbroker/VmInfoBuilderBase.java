@@ -91,8 +91,8 @@ public abstract class VmInfoBuilderBase {
         }
 
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
-            createInfo.put(VdsProperties.cores_per_socket, (Integer.toString(vm.getCpuPerSocket())));
-            createInfo.put(VdsProperties.threads_per_core, (Integer.toString(vm.getThreadsPerCpu())));
+            createInfo.put(VdsProperties.cores_per_socket, Integer.toString(vm.getCpuPerSocket()));
+            createInfo.put(VdsProperties.threads_per_core, Integer.toString(vm.getThreadsPerCpu()));
             if (FeatureSupported.supportedInConfig(
                     ConfigValues.HotPlugCpuSupported,
                     vm.getClusterCompatibilityVersion(),
@@ -192,7 +192,7 @@ public abstract class VmInfoBuilderBase {
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
         maxVCpus = cpuPerSocket * threadsPerCore *
-                (Math.min(maxSockets, maxVCpus / (cpuPerSocket * threadsPerCore)));
+                Math.min(maxSockets, maxVCpus / (cpuPerSocket * threadsPerCore));
         return maxVCpus;
     }
 
@@ -266,8 +266,8 @@ public abstract class VmInfoBuilderBase {
 
         int offset = 0;
         if (javaZoneId != null) {
-            offset = (TimeZone.getTimeZone(javaZoneId).getOffset(
-                    new Date().getTime()) / 1000);
+            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
+                    new Date().getTime()) / 1000;
         }
         createInfo.put(VdsProperties.utc_diff, "" + offset);
     }

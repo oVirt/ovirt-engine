@@ -532,7 +532,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
 
     private void updateActionAvailability() {
         ArrayList items =
-                (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
+                ((ArrayList) getSelectedItems() != null) ? (ArrayList) getSelectedItems()
                         : new ArrayList();
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0

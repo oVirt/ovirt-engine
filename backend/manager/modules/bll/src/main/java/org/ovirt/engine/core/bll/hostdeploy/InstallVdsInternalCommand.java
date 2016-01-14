@@ -265,6 +265,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         if (getParameters().getActivateHost()) {
             return VDSStatus.NonResponsive;
         }
-        return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
+        return VDSStatus.Maintenance.equals(vdsInitialStatus) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }

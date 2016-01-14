@@ -91,7 +91,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         super.syncSearch();
 
-        IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
+        IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,

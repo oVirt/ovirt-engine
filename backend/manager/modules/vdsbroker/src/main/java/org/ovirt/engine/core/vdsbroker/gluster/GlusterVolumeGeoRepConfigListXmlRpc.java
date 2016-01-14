@@ -22,7 +22,7 @@ public class GlusterVolumeGeoRepConfigListXmlRpc extends StatusReturnForXmlRpc {
             innerMap = (Map<String, Object>) innerMap.get(INFO);
         }
         if (innerMap.containsKey(SESSION_CONFIG)) {
-            prepareConfigMap((Map<String, Object>) ((((Map<String, Object>) (innerMap.get(SESSION_CONFIG))).get(GEO_REP_CONFIG))));
+            prepareConfigMap((Map<String, Object>) ((Map<String, Object>) innerMap.get(SESSION_CONFIG)).get(GEO_REP_CONFIG));
         }
     }
 

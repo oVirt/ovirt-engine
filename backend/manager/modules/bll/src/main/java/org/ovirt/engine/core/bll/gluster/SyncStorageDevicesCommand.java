@@ -30,8 +30,8 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
     protected boolean validate() {
         Cluster cluster = getCluster();
         if (!cluster.supportsGlusterService()
-                || (!getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
-                        getCluster().getId()))) {
+                || !getGlusterUtil().isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion(),
+                        getCluster().getId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER);
         }
 

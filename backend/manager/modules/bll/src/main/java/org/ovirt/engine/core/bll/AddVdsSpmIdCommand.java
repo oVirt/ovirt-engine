@@ -67,7 +67,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
             }
         }
         // get the dc id from cluster if DC was removed and cluster is attached to a new DC
-        Guid dcId = (getVds().getStoragePoolId().equals(Guid.Empty) ? getCluster().getStoragePoolId() : getVds().getStoragePoolId());
+        Guid dcId = getVds().getStoragePoolId().equals(Guid.Empty) ? getCluster().getStoragePoolId() : getVds().getStoragePoolId();
         VdsSpmIdMap newMap = new VdsSpmIdMap(dcId, getVdsId(), selectedId);
         getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {

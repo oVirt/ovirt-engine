@@ -18,7 +18,7 @@ public class XmlRpcObjectDescriptor {
             } else if (!(entry.getValue() instanceof String) && entry.getValue() instanceof Iterable) {
                 builder.append(String.format("%1$s:", entry.getKey()));
                 builder.append("\n");
-                toStringBuilder((Iterable) (entry.getValue()), builder);
+                toStringBuilder((Iterable) entry.getValue(), builder);
                 builder.append("\n");
             } else if (entry.getValue() instanceof Object[]) {
                 builder.append(String.format("%1$s:", entry.getKey()));
@@ -49,7 +49,7 @@ public class XmlRpcObjectDescriptor {
 
         for (Object value : xmlRpc) {
             if (value instanceof Iterable) {
-                toStringBuilder((Iterable) (value), builder);
+                toStringBuilder((Iterable) value, builder);
             } else {
                 builder.append(value.toString());
                 builder.append("\n");

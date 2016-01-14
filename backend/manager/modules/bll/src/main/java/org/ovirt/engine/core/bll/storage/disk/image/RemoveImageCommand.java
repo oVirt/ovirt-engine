@@ -52,7 +52,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     protected void initImage() {
-        setDiskImage(((getParameters().getDiskImage()) != null) ? getParameters().getDiskImage() : getImage());
+        setDiskImage((getParameters().getDiskImage() != null) ? getParameters().getDiskImage() : getImage());
     }
 
     protected void initStoragePoolId() {

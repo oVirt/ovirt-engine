@@ -154,7 +154,7 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public VolumeClassification getVolumeClassification() {
         if (volumeClassification == null) {
-            return (active ? VolumeClassification.Volume : VolumeClassification.Snapshot);
+            return active ? VolumeClassification.Volume : VolumeClassification.Snapshot;
         }
         return volumeClassification;
     }

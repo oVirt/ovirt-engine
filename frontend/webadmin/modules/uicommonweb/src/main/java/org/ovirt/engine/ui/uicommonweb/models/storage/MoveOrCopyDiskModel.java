@@ -151,7 +151,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected void postInitStorageDomains() {
         for (DiskModel disk : getDisks()) {
-            DiskImage diskImage = ((DiskImage) disk.getDisk());
+            DiskImage diskImage = (DiskImage) disk.getDisk();
 
             // Source storage domains
             ArrayList<Guid> diskStorageIds = diskImage.getStorageIds();
@@ -187,7 +187,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<StorageDomain> sourceActiveStorageDomains, DiskModel diskModel, boolean isDiskBasedOnTemplate) {
 
         boolean shouldFilterBySourceType = isFilterDestinationDomainsBySourceType(diskModel);
-        DiskImage diskImage = ((DiskImage) diskModel.getDisk());
+        DiskImage diskImage = (DiskImage) diskModel.getDisk();
 
         DiskModel templateDisk = null;
         if (isDiskBasedOnTemplate) {

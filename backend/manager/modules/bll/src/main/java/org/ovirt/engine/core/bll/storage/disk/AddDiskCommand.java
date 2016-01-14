@@ -163,7 +163,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean checkIfLunDiskCanBeAdded(DiskValidator diskValidator) {
-        LunDisk lunDisk = ((LunDisk) getParameters().getDiskInfo());
+        LunDisk lunDisk = (LunDisk) getParameters().getDiskInfo();
         LUNs lun = lunDisk.getLun();
 
         switch (lun.getLunType()) {

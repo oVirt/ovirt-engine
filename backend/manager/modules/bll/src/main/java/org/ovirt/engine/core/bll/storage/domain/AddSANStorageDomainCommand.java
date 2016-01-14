@@ -32,7 +32,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         initializeStorageDomain();
         // save storage if got from parameters in order to save first empty
         // storage in db and use it later
-        String storage = ((getStorageDomain().getStorage()) != null) ? getStorageDomain().getStorage() : "";
+        String storage = (getStorageDomain().getStorage() != null) ? getStorageDomain().getStorage() : "";
         // set domain storage to empty because not nullable in db and for shared
         // status to be locked
         getStorageDomain().setStorage("");
@@ -41,7 +41,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
               storage = createVG();
         }
         getStorageDomain().setStorage(storage);
-        if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && (addStorageDomainInIrs())) {
+        if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && addStorageDomainInIrs()) {
             DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
             updateStorageDomainDynamicFromIrs();
             proceedVGLunsInDb();
@@ -75,8 +75,8 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
     @Override
     protected boolean canAddDomain() {
-        if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
-                .isEmpty(getStorageDomain().getStorage()))) {
+        if ((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
+                .isEmpty(getStorageDomain().getStorage())) {
             return failValidation(EngineMessage.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {

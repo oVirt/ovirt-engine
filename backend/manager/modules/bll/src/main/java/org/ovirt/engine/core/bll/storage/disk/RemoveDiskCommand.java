@@ -93,8 +93,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        return (validateHostedEngineDisks() && validateAllVmsForDiskAreDown())
-                && canRemoveDiskBasedOnStorageTypeCheck();
+        return validateHostedEngineDisks() && validateAllVmsForDiskAreDown() && canRemoveDiskBasedOnStorageTypeCheck();
     }
 
     private boolean validateHostedEngineDisks() {

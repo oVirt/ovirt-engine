@@ -83,11 +83,9 @@ public class TicketEncoder {
         map.put("signedFields", fields.toString());
         map.put("signature", base64.encodeToString(signature.sign()));
         map.put("certificate", String.format(
-            (
                 "-----BEGIN CERTIFICATE-----\n" +
                 "%s" +
-                "-----END CERTIFICATE-----\n"
-            ),
+                "-----END CERTIFICATE-----\n",
             new Base64(76).encodeToString(cert.getEncoded())
         ));
 

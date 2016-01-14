@@ -295,7 +295,7 @@ public class BackendResource extends BaseBackendResource {
         } else if (result != null && !result.getSucceeded()) {
             backendFailure(result.getExecuteFailedMessages());
         }
-        assert (result != null);
+        assert result != null;
         return result;
     }
 

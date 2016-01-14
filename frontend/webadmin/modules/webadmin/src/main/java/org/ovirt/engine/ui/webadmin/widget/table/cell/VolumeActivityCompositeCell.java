@@ -30,7 +30,7 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
         }
         for(HasCell<T, ?> currentHasCell : hasCells) {
             if(currentHasCell instanceof Column) {
-                Set<String> consumedEvents = ((Column)(currentHasCell)).getCell().getConsumedEvents();
+                Set<String> consumedEvents = ((Column) currentHasCell).getCell().getConsumedEvents();
                 if(consumedEvents != null) {
                     set.addAll(consumedEvents);
                 }

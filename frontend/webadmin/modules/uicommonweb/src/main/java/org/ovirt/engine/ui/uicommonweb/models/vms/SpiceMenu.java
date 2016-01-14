@@ -52,7 +52,7 @@ public class SpiceMenu {
                     parentID,
                     commandItem.getId(),
                     commandItem.getText(),
-                    (commandItem.getIsEnabled()) ? 0 : 2));
+                    commandItem.getIsEnabled() ? 0 : 2));
         }
 
         if (item instanceof SpiceMenuContainerItem) {

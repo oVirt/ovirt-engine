@@ -215,7 +215,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // Verify that only VM networks exists on the nic if the non-Vm network feature isn't supported by the cluster
-        if (!FeatureSupported.nonVmNetwork(getVds().getClusterCompatibilityVersion()) && (!iface.isBridged())) {
+        if (!FeatureSupported.nonVmNetwork(getVds().getClusterCompatibilityVersion()) && !iface.isBridged()) {
             return false;
         }
 
