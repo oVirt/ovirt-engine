@@ -1426,7 +1426,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         setVmPauseStatus(vm.getPauseStatus());
         setLastWatchdogEvent(vm.getLastWatchdogEvent());
         setGuestCpuCount(vm.getGuestCpuCount());
-        getGraphicsInfos().putAll(vm.getGraphicsInfos());
+        setGraphicsInfos(new HashMap<>(vm.getGraphicsInfos()));
         getDynamicData().setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
         getDynamicData().setGuestMemoryCached(vm.getGuestMemoryCached());
         getDynamicData().setGuestMemoryFree(vm.getGuestMemoryFree());
