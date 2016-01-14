@@ -757,6 +757,12 @@ class ConfigEnv(object):
 
     PKI_RENEWAL_DOC_URL = 'OVESETUP_CONFIG/pkiRenewalDocUrl'
 
+    @osetupattrs(
+        answerfile=True,
+    )
+    def IGNORE_VDS_GROUP_IN_NOTIFIER(self):
+        return 'OVESETUP_CONFIG/ignoreVdsgroupInNotifier'
+
 
 @util.export
 @util.codegen
