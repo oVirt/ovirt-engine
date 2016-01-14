@@ -13,7 +13,12 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceMode
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.AutoScrollDisableEvent;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.AutoScrollEnableEvent;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.AutoScrollOverEvent;
+
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
@@ -29,6 +34,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class NetworkGroup extends FocusPanel {
 
@@ -37,7 +43,11 @@ public class NetworkGroup extends FocusPanel {
     private final FlexTable table;
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    public NetworkGroup(NetworkInterfaceModel nicModel, final NetworkPanelsStyle style) {
+
+    private int dragCounter = 0; // handle enter/leaves on children, only need to actually enter and leave once.
+
+
+    public NetworkGroup(NetworkInterfaceModel nicModel, final EventBus eventBus, final NetworkPanelsStyle style) {
         super();
         getElement().setDraggable(Element.DRAGGABLE_FALSE);
 
@@ -70,7 +80,7 @@ public class NetworkGroup extends FocusPanel {
         if (nicModel instanceof BondNetworkInterfaceModel) {
             table.setWidget(0, 0, new BondPanel((BondNetworkInterfaceModel) nicModel, style));
         } else {
-            table.setWidget(0, 0, new NicPanel(nicModel, style));
+            table.setWidget(0, 0, new NicPanel<>(nicModel, style));
         }
 
         // connector
@@ -92,37 +102,43 @@ public class NetworkGroup extends FocusPanel {
             table.setWidget(0, 2, emptyPanel);
         }
 
-        // drag enter
-        addBitlessDomHandler(new DragEnterHandler() {
-            @Override
-            public void onDragEnter(DragEnterEvent event) {
-                doDrag(event, false);
-            }
-        }, DragEnterEvent.getType());
-
-        // drag over
+        // drag over -- check the operation of the thing the user is currently over
         addBitlessDomHandler(new DragOverHandler() {
-
             @Override
             public void onDragOver(DragOverEvent event) {
+                NativeEvent ne = event.getNativeEvent();
+                eventBus.fireEvent(new AutoScrollOverEvent(NetworkGroup.this,
+                        ne.getScreenX(), ne.getScreenY(), ne.getClientX(), ne.getClientY()));
                 doDrag(event, false);
             }
         }, DragOverEvent.getType());
 
+        // drag enter
+        addBitlessDomHandler(new DragEnterHandler() {
+            @Override
+            public void onDragEnter(DragEnterEvent event) {
+                dragCounter++;
+                eventBus.fireEvent(new AutoScrollEnableEvent(NetworkGroup.this));
+            }
+        }, DragEnterEvent.getType());
+
         // drag leave
         addBitlessDomHandler(new DragLeaveHandler() {
-
             @Override
             public void onDragLeave(DragLeaveEvent event) {
-                table.getElement().removeClassName(style.networkGroupDragOver());
+                dragCounter--;
+                if (dragCounter == 0) {
+                    eventBus.fireEvent(new AutoScrollDisableEvent(NetworkGroup.this));
+                    table.getElement().removeClassName(style.networkGroupDragOver());
+                }
             }
         }, DragLeaveEvent.getType());
 
         // drop
         addBitlessDomHandler(new DropHandler() {
-
             @Override
             public void onDrop(DropEvent event) {
+                eventBus.fireEvent(new AutoScrollDisableEvent(NetworkGroup.this));
                 event.preventDefault();
                 doDrag(event, true);
                 table.getElement().removeClassName(style.networkGroupDragOver());

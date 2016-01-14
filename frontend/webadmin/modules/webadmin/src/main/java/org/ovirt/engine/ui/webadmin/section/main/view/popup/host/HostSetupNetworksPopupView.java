@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.SimpleNetworkItemsPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusPanel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -45,6 +46,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
@@ -78,7 +80,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     InfoIcon externalNetworksInfo;
 
     @UiField
-    AnimatedVerticalPanel nicList;
+    AnimatedVerticalPanel nicList; /* if this panel is contained within a scroll panel, we need to add extra handling for drag-and-drop auto-scrolling. */
 
     @UiField
     @Ignore
@@ -102,6 +104,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     InfoIcon commitChangesInfo;
 
     private final Driver driver = GWT.create(Driver.class);
+    private final EventBus eventBus;
 
     private boolean rendered = false;
     private boolean keepStatusText;
@@ -114,6 +117,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @Inject
     public HostSetupNetworksPopupView(EventBus eventBus) {
         super(eventBus);
+        this.eventBus = eventBus;
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -127,6 +131,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         commitChanges.setContentWidgetContainerStyleName(style.commitChanges());
         initUnassignedItemsPanel();
         localize();
+
+        setupNicListAutoScrolling();
         driver.initialize(this);
     }
 
@@ -157,6 +163,14 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private void localize() {
         checkConnectivity.setLabel(constants.checkConHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
+    }
+
+    // Create an auto-scroll adapter for the nicList's parent ScrollPanel
+    private void setupNicListAutoScrolling() {
+        if (nicList.getParent() instanceof ScrollPanel) {
+            ScrollPanel sp = (ScrollPanel)nicList.getParent();
+            new AutoScrollAdapter(eventBus, sp);
+        }
     }
 
     @Override
@@ -253,7 +267,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         Collections.sort(nics);
         List<NetworkGroup> groups = new ArrayList<>();
         for (NetworkInterfaceModel nic : nics) {
-            groups.add(new NetworkGroup(nic, style));
+            groups.add(new NetworkGroup(nic, eventBus, style));
         }
         nicList.addAll(groups, !rendered);
     }
