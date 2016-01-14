@@ -82,16 +82,3 @@ select fn_db_add_column('vm_dynamic', 'spice_tls_port', 'integer default NULL');
 select fn_db_add_column('vm_dynamic', 'spice_ip', 'varchar(255) default NULL');
 select fn_db_add_column('vm_dynamic', 'vnc_port', 'integer default NULL');
 select fn_db_add_column('vm_dynamic', 'vnc_ip', 'varchar(255) default NULL');
-
--- update added colums
-update vm_dynamic set
-    spice_port = display,
-    spice_tls_port = display_secure_port,
-    spice_ip = display_ip
-where display_type = 0;
-
-update vm_dynamic set
-    vnc_port = display,
-    vnc_ip = display_ip
-where display_type = 1;
-
