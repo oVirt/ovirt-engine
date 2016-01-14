@@ -141,6 +141,11 @@ public class BackendInstanceTypeResource
             if(incoming.isSetSoundcardEnabled()) {
                 updateParams.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
+            if (incoming.isSetVirtioScsi()) {
+                if (incoming.getVirtioScsi().isSetEnabled()) {
+                    updateParams.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+                }
+            }
 
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), updateParams);
 
