@@ -258,6 +258,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         return super.buildAndCheckDestStorageDomains();
     }
 
+    @Override
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         for (DiskImage diskImage : disksList) {
             List<DiskImage> snapshots = getAllImageSnapshots(diskImage);

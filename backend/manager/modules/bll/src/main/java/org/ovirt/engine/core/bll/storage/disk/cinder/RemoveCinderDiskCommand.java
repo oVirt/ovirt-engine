@@ -40,6 +40,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         super(parameters, commandContext);
     }
 
+    @Override
     public void executeCommand() {
         CinderDisk disk = getDisk();
         lockDisk();

@@ -149,8 +149,10 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         deactivateStorageDomainAfterTaskExecution();
     }
 
+    @Override
     protected void startFinalizingStep() {}
 
+    @Override
     public AuditLogType getAuditLogTypeValue() {
         return AuditLogType.UNASSIGNED;
     }

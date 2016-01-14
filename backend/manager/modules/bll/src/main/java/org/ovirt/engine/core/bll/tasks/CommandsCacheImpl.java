@@ -41,6 +41,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public Set<Guid> keySet() {
         initializeCache();
         return commandMap.keySet();
@@ -64,12 +65,14 @@ public class CommandsCacheImpl implements CommandsCache {
         saveOrUpdateWithoutTransaction(cmdEntity);
     }
 
+    @Override
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
         DbFacade.getInstance().getCommandEntityDao().removeAllBeforeDate(cutoff);
         cacheInitialized = false;
         initializeCache();
     }
 
+    @Override
     public void updateCommandStatus(Guid commandId, CommandStatus status) {
         final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
@@ -78,6 +81,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public void updateCommandData(Guid commandId, Map<String, Serializable> data) {
         final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
@@ -86,6 +90,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public void updateCommandExecuted(final Guid commandId) {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
@@ -105,6 +110,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public void updateCallbackNotified(final Guid commandId) {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
@@ -113,6 +119,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
         Transaction transaction = TransactionSupport.suspend();
         try {
@@ -124,10 +131,12 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
+    @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
         return DbFacade.getInstance().getCommandEntityDao().getAllCommandAssociatedEntities(cmdId);
     }
 
+    @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
         return DbFacade.getInstance().getCommandEntityDao().getCommandIdsByEntity(entityId);
     }

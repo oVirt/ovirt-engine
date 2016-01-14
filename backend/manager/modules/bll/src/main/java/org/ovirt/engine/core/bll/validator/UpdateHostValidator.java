@@ -27,6 +27,7 @@ public class UpdateHostValidator extends HostValidator {
         providerDao = dbFacade.getProviderDao();
     }
 
+    @Override
     public ValidationResult hostExists() {
         return ValidationResult.failWith(EngineMessage.VDS_INVALID_SERVER_ID)
                 .when(oldHost == null || getHost() == null);
@@ -46,6 +47,7 @@ public class UpdateHostValidator extends HostValidator {
                         && !oldHost.getHostName().equals(getHost().getHostName()));
     }
 
+    @Override
     public ValidationResult nameNotUsed() {
         if (StringUtils.equalsIgnoreCase(oldHost.getName(), getHost().getName())) {
             return ValidationResult.VALID;
@@ -54,6 +56,7 @@ public class UpdateHostValidator extends HostValidator {
         return super.nameNotUsed();
     }
 
+    @Override
     public ValidationResult hostNameNotUsed() {
         if (StringUtils.equalsIgnoreCase(oldHost.getHostName(), getHost().getHostName())) {
             return ValidationResult.VALID;

@@ -8,14 +8,17 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class NullableMemoryImageBuilder implements MemoryImageBuilder {
 
+    @Override
     public void build() {
         //no op
     }
 
+    @Override
     public String getVolumeStringRepresentation() {
         return StringUtils.EMPTY;
     }
 
+    @Override
     public boolean isCreateTasks() {
         return false;
     }

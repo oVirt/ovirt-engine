@@ -90,6 +90,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return DbFacade.getInstance().getClusterDao();
     }
 
+    @Override
     protected BackendInternal getBackend() {
         return Backend.getInstance();
     }

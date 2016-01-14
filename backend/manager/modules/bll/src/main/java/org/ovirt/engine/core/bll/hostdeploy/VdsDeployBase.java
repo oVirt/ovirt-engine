@@ -411,6 +411,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     /**
      * Release resources.
      */
+    @Override
     public void close() throws IOException {
         stop();
         if (_dialog != null) {

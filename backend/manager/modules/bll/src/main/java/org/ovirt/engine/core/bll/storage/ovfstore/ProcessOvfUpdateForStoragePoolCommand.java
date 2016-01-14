@@ -261,6 +261,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         VmHandler.updateDisksFromDb(vm);
     }
 
+    @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? super.getAuditLogTypeValue() : AuditLogType.UPDATE_OVF_FOR_STORAGE_POOL_FAILED;
     }
@@ -375,6 +376,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
         return FeatureSupported.ovfStoreOnAnyDomain(pool.getCompatibilityVersion());
     }
 
+    @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Execution).withWait(true);
     }

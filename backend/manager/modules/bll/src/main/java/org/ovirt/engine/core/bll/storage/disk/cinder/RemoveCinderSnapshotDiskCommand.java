@@ -38,6 +38,7 @@ public class RemoveCinderSnapshotDiskCommand<T extends ImagesContainterParameter
         getCinderBroker().deleteSnapshot(getImageId());
     }
 
+    @Override
     public Guid getStorageDomainId() {
         return getDiskImage().getStorageIds().get(0);
     }

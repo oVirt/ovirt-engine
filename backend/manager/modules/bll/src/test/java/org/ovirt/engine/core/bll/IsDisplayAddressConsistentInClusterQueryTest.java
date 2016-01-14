@@ -112,6 +112,7 @@ class OverriddenConsoleAddress extends BaseVdsContainer {
         super(numOfVds);
     }
 
+    @Override
     protected void addVds() {
         super.addVds("some overridden value"); //$NON-NLS-1$
     }
@@ -123,6 +124,7 @@ class DefaultConsoleAddress extends BaseVdsContainer {
         super(numOfVds);
     }
 
+    @Override
     protected void addVds() {
         super.addVds(null);
     }

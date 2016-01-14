@@ -18,6 +18,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         super(parameters, commandContext);
     }
 
+    @Override
     protected boolean validate() {
         if (!super.validate()) {
             return false;

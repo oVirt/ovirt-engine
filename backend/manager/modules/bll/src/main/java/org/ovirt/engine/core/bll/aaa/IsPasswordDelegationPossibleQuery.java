@@ -14,6 +14,7 @@ public class IsPasswordDelegationPossibleQuery<P extends VdcQueryParametersBase>
         super(parameters);
     }
 
+    @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(sessionDataContainer.getPassword(getParameters().getSessionId()) != null);
         getQueryReturnValue().setSucceeded(true);

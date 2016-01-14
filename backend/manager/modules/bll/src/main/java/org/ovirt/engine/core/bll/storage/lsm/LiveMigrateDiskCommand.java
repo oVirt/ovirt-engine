@@ -128,10 +128,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         // Not implemented
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }

@@ -34,6 +34,7 @@ public class MergeCommand<T extends MergeParameters>
         super(parameters, cmdContext);
     }
 
+    @Override
     public void executeCommand() {
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Merge,
                 createVDSParameters());

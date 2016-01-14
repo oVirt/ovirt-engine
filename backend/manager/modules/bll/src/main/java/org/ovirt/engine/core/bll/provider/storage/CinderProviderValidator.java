@@ -28,6 +28,7 @@ public class CinderProviderValidator extends ProviderValidator {
         super(provider);
     }
 
+    @Override
     public ValidationResult validateAddProvider() {
         ValidationResult cinderValidation = isCinderAlreadyExists();
         if (!cinderValidation.isValid()) {
@@ -39,6 +40,7 @@ public class CinderProviderValidator extends ProviderValidator {
         return ValidationResult.VALID;
     }
 
+    @Override
     public ValidationResult validateRemoveProvider() {
         if (getStorageDomain() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

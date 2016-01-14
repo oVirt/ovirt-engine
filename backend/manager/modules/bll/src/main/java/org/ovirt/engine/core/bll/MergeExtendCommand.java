@@ -29,6 +29,7 @@ public class MergeExtendCommand<T extends MergeParameters>
         super(parameters, cmdContext);
     }
 
+    @Override
     public void executeCommand() {
         if (getParameters().getBaseImage().hasRawBlock()) {
             if (getParameters().getTopImage().getSize() != getParameters().getBaseImage().getSize()) {

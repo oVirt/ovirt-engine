@@ -43,6 +43,7 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
                 && validate(getVfsConfigValidator().sriovFeatureSupported());
     }
 
+    @Override
     protected InterfaceDao getInterfaceDao() {
         return interfaceDao;
     }

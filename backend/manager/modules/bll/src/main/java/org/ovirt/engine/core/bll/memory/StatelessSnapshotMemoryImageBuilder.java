@@ -19,10 +19,12 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         activeSnapshot = getSnapshotDao().get(vm.getId(), SnapshotType.ACTIVE);
     }
 
+    @Override
     public void build() {
         //no op
     }
 
+    @Override
     public String getVolumeStringRepresentation() {
         return activeSnapshot.getMemoryVolume();
     }
@@ -37,6 +39,7 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         return activeSnapshot.getMetadataDiskId();
     }
 
+    @Override
     public boolean isCreateTasks() {
         return false;
     }

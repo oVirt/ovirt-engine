@@ -29,6 +29,7 @@ final class VlanUntaggedNetworkExclusivenessValidator implements NetworkExclusiv
      *
      * @return true for a valid configuration, otherwise false.
      */
+    @Override
     public boolean isNetworkExclusive(List<NetworkType> networksOnIface) {
         final int untaggedNetworkCount = CollectionUtils.countMatches(networksOnIface, untaggedNetworkPredicate);
 

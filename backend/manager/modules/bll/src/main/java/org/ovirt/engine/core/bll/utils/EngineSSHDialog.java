@@ -16,6 +16,7 @@ public class EngineSSHDialog extends SSHDialog {
 
     VDS _vds;
 
+    @Override
     protected SSHClient getSSHClient() {
         EngineSSHClient client = new EngineSSHClient();
         client.setVds(_vds);

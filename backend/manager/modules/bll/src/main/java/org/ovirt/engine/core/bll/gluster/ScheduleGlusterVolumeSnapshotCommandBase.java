@@ -107,6 +107,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         return force;
     }
 
+    @Override
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
     }

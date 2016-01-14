@@ -56,6 +56,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
         return null;
     }
 
+    @Override
     protected void startFinalizingStep() {}
 
     @Override

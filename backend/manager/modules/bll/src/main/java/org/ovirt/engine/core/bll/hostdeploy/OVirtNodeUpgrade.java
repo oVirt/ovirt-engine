@@ -118,6 +118,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
     /**
      * Free resources.
      */
+    @Override
     public void close() throws IOException {
         stop();
         if (_dialog != null) {

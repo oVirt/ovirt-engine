@@ -56,6 +56,7 @@ public class AddCinderDiskCommandCallback extends AbstractCinderDiskCommandCallb
         return getCommand().getParameters().getDiskInfo().getId();
     }
 
+    @Override
     protected CinderDisk getDisk() {
         if (disk == null) {
             disk = (CinderDisk) getDiskDao().get(getDiskId());

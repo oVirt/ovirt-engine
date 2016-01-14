@@ -272,6 +272,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         }
     }
 
+    @Override
     protected boolean isPowerManagementLegal(boolean pmEnabled,
                                              List<FenceAgent> fenceAgents,
                                              String clusterCompatibilityVersion) {

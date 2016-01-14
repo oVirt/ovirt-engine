@@ -16,6 +16,7 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
         super(parameters);
     }
 
+    @Override
     protected void executeQueryCommand() {
         log.debug("Calling ValidateSession");
         validateSession(getParameters().getSessionId());

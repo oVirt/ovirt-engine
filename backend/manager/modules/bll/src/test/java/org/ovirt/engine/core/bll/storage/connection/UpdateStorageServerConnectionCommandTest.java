@@ -739,10 +739,12 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(Arrays.asList(domains)).when(command).getStorageDomainsByConnId(connId);
     }
 
+    @Override
     protected ConnectStorageToVdsCommand getCommand() {
         return command;
     }
 
+    @Override
     protected boolean createConnectionWithId() {
         return true;
     }

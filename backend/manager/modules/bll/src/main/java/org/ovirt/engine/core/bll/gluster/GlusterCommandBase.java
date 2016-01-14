@@ -251,6 +251,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return new GlusterVolumeValidator();
     }
 
+    @Override
     protected InterfaceDao getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
     }

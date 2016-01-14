@@ -36,6 +36,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         this.storagePool = storagePool;
     }
 
+    @Override
     public void build() {
         Guid memoryDiskId = addMemoryDisk();
         Guid metadataDiskId = addMetadataDisk();
@@ -98,6 +99,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
+    @Override
     public String getVolumeStringRepresentation() {
         return MemoryUtils.createMemoryStateString(
                 storageDomainId,
@@ -108,6 +110,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                 metadataDisk.getImageId());
     }
 
+    @Override
     public boolean isCreateTasks() {
         return true;
     }

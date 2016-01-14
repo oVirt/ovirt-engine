@@ -340,6 +340,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return false;
     }
 
+    @Override
     protected InterfaceDao getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
     }

@@ -85,6 +85,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
         return getSucceeded() ? AuditLogType.HOST_UPGRADE_STARTED : AuditLogType.HOST_UPGRADE_FAILED;
     }
 
+    @Override
     public CommandCallback getCallback() {
         return new HostUpgradeCallback();
     }

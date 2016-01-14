@@ -266,6 +266,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         return storageDomain;
     }
 
+    @Override
     protected BackendInternal getBackend() {
         return super.getBackend();
     }

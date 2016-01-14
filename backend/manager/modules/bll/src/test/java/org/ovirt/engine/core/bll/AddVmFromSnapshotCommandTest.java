@@ -44,6 +44,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
 
     private SnapshotsValidator snapshotsValidator;
 
+    @Override
     @Test
     public void validateSpaceAndThreshold() {
         initCommand();
@@ -56,6 +57,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
     }
 
+    @Override
     @Test
     public void validateSpaceNotEnough() throws Exception {
         initCommand();
@@ -70,6 +72,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
     }
 
+    @Override
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
         initCommand();

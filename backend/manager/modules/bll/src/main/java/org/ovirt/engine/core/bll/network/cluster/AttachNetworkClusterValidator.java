@@ -14,6 +14,7 @@ public class AttachNetworkClusterValidator extends NetworkClusterValidatorBase {
         super(interfaceDao, networkDao, networkCluster, version);
     }
 
+    @Override
     protected boolean isManagementNetworkChanged() {
         return networkCluster.isManagement();
     }

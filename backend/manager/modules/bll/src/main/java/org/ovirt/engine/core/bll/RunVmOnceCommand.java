@@ -167,6 +167,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     /**
      * This methods sets graphics infos of a VM to correspond to graphics set in Run Once.
      */
+    @Override
     protected void updateGraphicsInfos() {
         if (getParameters().getRunOnceGraphics().isEmpty()) {
             // configure from DB

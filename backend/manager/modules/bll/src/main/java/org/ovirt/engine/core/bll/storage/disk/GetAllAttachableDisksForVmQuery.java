@@ -14,6 +14,7 @@ public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForV
         super(parameters);
     }
 
+    @Override
     protected List<Disk> filterDisks(List<Disk> diskList) {
         VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId(),
                 getUserID(),

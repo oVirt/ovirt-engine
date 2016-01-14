@@ -29,6 +29,7 @@ public class SetSesssionSoftLimitCommand<T extends SetSesssionSoftLimitCommandPa
         }
     }
 
+    @Override
     protected boolean isUserAuthorizedToRunAction() {
         return true;
     }

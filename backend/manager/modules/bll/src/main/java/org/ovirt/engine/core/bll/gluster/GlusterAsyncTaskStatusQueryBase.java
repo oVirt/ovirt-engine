@@ -71,6 +71,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         return GlusterTaskUtils.getInstance();
     }
 
+    @Override
     public ClusterDao getClusterDao() {
         return DbFacade.getInstance().getClusterDao();
     }

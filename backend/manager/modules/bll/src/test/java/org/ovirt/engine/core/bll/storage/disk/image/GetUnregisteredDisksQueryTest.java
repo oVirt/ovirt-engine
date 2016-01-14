@@ -47,6 +47,7 @@ public class GetUnregisteredDisksQueryTest
 
     private List<Guid> importDiskIds;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

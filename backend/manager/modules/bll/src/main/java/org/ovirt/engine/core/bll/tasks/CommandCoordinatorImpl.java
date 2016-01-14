@@ -98,14 +98,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
+    @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
         commandsCache.persistCommandAssociatedEntities(cmdAssociatedEntities);
     }
 
+    @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
         return commandsCache.getCommandIdsByEntityId(entityId);
     }
 
+    @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
         return commandsCache.getCommandAssociatedEntities(cmdId);
     }
@@ -142,6 +145,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return cmdEntity;
     }
 
+    @Override
     public List<CommandEntity> getCommandsWithCallbackEnabled() {
         return getCommands(true);
     }
@@ -185,6 +189,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return command;
     }
 
+    @Override
     public CommandStatus getCommandStatus(final Guid commandId) {
         CommandEntity cmdEntity = commandsCache.get(commandId);
         if (cmdEntity != null) {
@@ -193,6 +198,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return CommandStatus.UNKNOWN;
     }
 
+    @Override
     public void removeAllCommandsInHierarchy(final Guid commandId) {
         for (Guid childCmdId : new ArrayList<>(getChildCommandIds(commandId))) {
             removeAllCommandsInHierarchy(childCmdId);
@@ -200,12 +206,14 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         removeCommand(commandId);
     }
 
+    @Override
     public void removeCommand(final Guid commandId) {
         commandsCache.remove(commandId);
         contextsCache.remove(commandId);
         updateCmdHierarchy(commandId);
     }
 
+    @Override
     public void removeAllCommandsBeforeDate(final DateTime cutoff) {
         commandsCache.removeAllCommandsBeforeDate(cutoff);
         synchronized(LOCK) {
@@ -213,22 +221,27 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
+    @Override
     public void updateCommandData(final Guid commandId, final Map<String, Serializable> data) {
         commandsCache.updateCommandData(commandId, data);
     }
 
+    @Override
     public void updateCommandStatus(final Guid commandId, final CommandStatus status) {
         commandsCache.updateCommandStatus(commandId, status);
     }
 
+    @Override
     public void updateCommandExecuted(Guid commandId) {
         commandsCache.updateCommandExecuted(commandId);
     }
 
+    @Override
     public void updateCallbackNotified(final Guid commandId) {
         commandsCache.updateCallbackNotified(commandId);
     }
 
+    @Override
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
         CommandEntity cmdEntity;
         for (Guid cmdId : commandsCache.keySet()) {
@@ -242,6 +255,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return false;
     }
 
+    @Override
     public List<Guid> getChildCommandIds(Guid cmdId) {
         initChildHierarchy();
         if (childHierarchy.containsKey(cmdId)) {
@@ -250,6 +264,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return Collections.emptyList();
     }
 
+    @Override
     public List<Guid> getChildCommandIds(Guid cmdId, VdcActionType childActionType, CommandStatus status) {
         List<Guid> childCmdIds = new ArrayList<>();
         for (Guid childCmdId : getChildCommandIds(cmdId)) {
@@ -263,6 +278,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return childCmdIds;
     }
 
+    @Override
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
         return commandsCache.getChildCmdsByParentCmdId(cmdId);
     }
@@ -302,30 +318,37 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
+    @Override
     public List<AsyncTask> getAllAsyncTasksFromDb() {
         return coCoAsyncTaskHelper.getAllAsyncTasksFromDb(this);
     }
 
+    @Override
     public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
         coCoAsyncTaskHelper.saveAsyncTaskToDb(asyncTask);
     }
 
+    @Override
     public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
         return coCoAsyncTaskHelper.getAsyncTaskFromDb(asyncTaskId);
     }
 
+    @Override
     public int removeTaskFromDbByTaskId(final Guid taskId) throws RuntimeException {
         return coCoAsyncTaskHelper.removeTaskFromDbByTaskId(taskId);
     }
 
+    @Override
     public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
         return coCoAsyncTaskHelper.getByVdsmTaskId(vdsmTaskId);
     }
 
+    @Override
     public int removeByVdsmTaskId(final Guid vdsmTaskId) {
         return coCoAsyncTaskHelper.removeByVdsmTaskId(vdsmTaskId);
     }
 
+    @Override
     public void addOrUpdateTaskInDB(final AsyncTask asyncTask) {
         coCoAsyncTaskHelper.addOrUpdateTaskInDB(asyncTask);
     }
@@ -334,6 +357,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.createTask(taskType, taskParameters);
     }
 
+    @Override
     public AsyncTask getAsyncTask(
             Guid taskId,
             CommandBase<?> command,
@@ -342,6 +366,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -349,6 +374,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             CommandBase<?> command,
                            AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -359,6 +385,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     }
 
+    @Override
     public SPMAsyncTask concreteCreateTask(
             Guid taskId,
             CommandBase<?> command,
@@ -367,10 +394,12 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public void cancelTasks(final CommandBase<?> command) {
         coCoAsyncTaskHelper.cancelTasks(command, log);
     }
 
+    @Override
     public void revertTasks(CommandBase<?> command) {
         coCoAsyncTaskHelper.revertTasks(command);
     }
@@ -425,6 +454,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return AsyncTaskFactory.construct(this, taskType, asyncTaskParams, duringInit);
     }
 
+    @Override
     public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {
         return coCoAsyncTaskHelper.endAction(task, context);
     }

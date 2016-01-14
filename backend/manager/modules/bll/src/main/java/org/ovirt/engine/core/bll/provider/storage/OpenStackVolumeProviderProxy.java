@@ -57,6 +57,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         CINDERStorageHelper.activateCinderDomain(storageDomainId, storagePoolId);
     }
 
+    @Override
     protected Cinder getClient() {
         return getClient("");
     }

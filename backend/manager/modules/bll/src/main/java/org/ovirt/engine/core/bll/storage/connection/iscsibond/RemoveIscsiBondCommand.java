@@ -43,6 +43,7 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
         return storagePoolId;
     }
 
+    @Override
     protected IscsiBond getIscsiBond() {
         if (iscsiBond == null) {
             iscsiBond = getDbFacade().getIscsiBondDao().get(getParameters().getIscsiBondId());

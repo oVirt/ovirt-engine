@@ -769,10 +769,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     /// TaskHandlerCommand implementation ///
     /////////////////////////////////////////
 
+    @Override
     public void preventRollback() {
         throw new NotImplementedException();
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
@@ -783,10 +785,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 entityType, entityIds);
     }
 
+    @Override
     public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
     }
@@ -796,10 +800,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // Not implemented
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }

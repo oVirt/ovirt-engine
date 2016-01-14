@@ -38,6 +38,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
     private StorageDomain storageDomain;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

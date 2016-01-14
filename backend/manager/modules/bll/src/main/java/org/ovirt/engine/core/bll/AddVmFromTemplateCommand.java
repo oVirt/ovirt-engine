@@ -174,6 +174,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         return true;
     }
 
+    @Override
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         for (DiskImage diskImage : disksList) {
             List<DiskImage> snapshots = getAllImageSnapshots(diskImage);

@@ -25,6 +25,7 @@ public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         setSucceeded(true);
     }
 
+    @Override
     protected boolean validate() {
         if (!super.validate()) {
             return false;

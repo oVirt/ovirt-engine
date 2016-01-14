@@ -39,6 +39,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         return Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute);
     }
 
+    @Override
     protected FindVmAndDestinations getFindVmAndDestinations(Cluster cluster, Map<String, String> parameters) {
         final int highCpuUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
                 getHighUtilizationDefaultValue());

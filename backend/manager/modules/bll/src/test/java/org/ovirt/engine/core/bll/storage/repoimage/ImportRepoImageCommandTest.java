@@ -23,6 +23,7 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     protected ImportRepoImageCommand<ImportRepoImageParameters> cmd;
 
+    @Override
     @Before
     public void setUp() {
         super.setUp();

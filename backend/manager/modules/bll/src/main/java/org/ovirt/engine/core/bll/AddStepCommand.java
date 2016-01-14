@@ -72,6 +72,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         return DbFacade.getInstance().getJobDao();
     }
 
+    @Override
     public StepDao getStepDao() {
         return DbFacade.getInstance().getStepDao();
     }

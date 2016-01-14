@@ -41,38 +41,47 @@ public class SPMAsyncTask implements SPMTask {
         lastAccessToStatusSinceEnd = System.currentTimeMillis();
     }
 
+    @Override
     public Map<Guid, VdcObjectType> getEntitiesMap() {
         return entitiesMap;
     }
 
+    @Override
     public void setEntitiesMap(Map<Guid, VdcObjectType> entitiesMap) {
         this.entitiesMap = entitiesMap;
     }
 
+    @Override
     public AsyncTaskParameters getParameters() {
         return parameters;
     }
 
+    @Override
     public void setParameters(AsyncTaskParameters parameters) {
         this.parameters = parameters;
     }
 
+    @Override
     public Guid getVdsmTaskId() {
         return getParameters().getVdsmTaskId();
     }
 
+    @Override
     public Guid getStoragePoolID() {
         return getParameters().getStoragePoolID();
     }
 
+    @Override
     public AsyncTaskState getState() {
         return state;
     }
 
+    @Override
     public void setState(AsyncTaskState state) {
         this.state = state;
     }
 
+    @Override
     public boolean getShouldPoll() {
         AsyncTaskState state = getState();
         return (state == AsyncTaskState.Polling || state == AsyncTaskState.Ended || state == AsyncTaskState.ClearFailed)
@@ -167,6 +176,7 @@ public class SPMAsyncTask implements SPMTask {
      * @param returnTaskStatus
      *            - Task status returned from VDSM.
      */
+    @Override
     @SuppressWarnings("incomplete-switch")
     public void updateTask(AsyncTaskStatus returnTaskStatus) {
         try {
@@ -371,10 +381,12 @@ public class SPMAsyncTask implements SPMTask {
         }
     }
 
+    @Override
     public void stopTask() {
         stopTask(false);
     }
 
+    @Override
     public void stopTask(boolean forceFinish) {
         if (getState() != AsyncTaskState.AttemptingEndAction && getState() != AsyncTaskState.Cleared
                 && getState() != AsyncTaskState.ClearFailed && !getLastTaskStatus().getTaskIsInUnusualState()) {
@@ -403,6 +415,7 @@ public class SPMAsyncTask implements SPMTask {
         }
     }
 
+    @Override
     public void clearAsyncTask() {
         // if we are calling updateTask on a task which has not been submitted,
         // to vdsm there is no need to clear the task. The task is just deleted
@@ -414,6 +427,7 @@ public class SPMAsyncTask implements SPMTask {
         clearAsyncTask(false);
     }
 
+    @Override
     public void clearAsyncTask(boolean forceDelete) {
         VDSReturnValue vdsReturnValue = null;
 
@@ -470,18 +484,22 @@ public class SPMAsyncTask implements SPMTask {
         log.error("SPMAsyncTask::ClearAsyncTask: Clearing task '{}' failed.", getVdsmTaskId());
     }
 
+    @Override
     public boolean isPartiallyCompletedCommandTask() {
         return partiallyCompletedCommandTask;
     }
 
+    @Override
     public void setPartiallyCompletedCommandTask(boolean val) {
         this.partiallyCompletedCommandTask = val;
     }
 
+    @Override
     public boolean isZombieTask() {
         return zombieTask;
     }
 
+    @Override
     public void setZombieTask(boolean zombieTask) {
         this.zombieTask = zombieTask;
     }

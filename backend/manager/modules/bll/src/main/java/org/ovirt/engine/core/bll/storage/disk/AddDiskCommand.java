@@ -98,6 +98,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return lockProperties.withScope(LockProperties.Scope.Execution);
     }
 
+    @Override
     protected boolean validateInputs() {
         return super.validateInputs();
     }

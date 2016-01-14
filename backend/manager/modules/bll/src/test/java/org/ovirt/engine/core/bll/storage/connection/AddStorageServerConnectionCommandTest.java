@@ -233,10 +233,12 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         assertFalse(isExists);
     }
 
+    @Override
     protected ConnectStorageToVdsCommand getCommand() {
         return command;
     }
 
+    @Override
     protected boolean createConnectionWithId() {
         return false;
     }

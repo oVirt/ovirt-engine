@@ -140,10 +140,12 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         return oldVmId;
     }
 
+    @Override
     protected VM getVmFromConfiguration() {
         return getVm();
     }
 
+    @Override
     protected VM getSourceVmFromDb() {
         if (sourceVm == null) {
             sourceVm = getVmDao().get(oldVmId);

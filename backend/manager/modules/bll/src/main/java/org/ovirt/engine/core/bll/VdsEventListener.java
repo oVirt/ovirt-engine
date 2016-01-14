@@ -539,6 +539,7 @@ public class VdsEventListener implements IVdsEventListener {
         });
     }
 
+    @Override
     public boolean isUpdateAvailable(VDS host) {
         return availableUpdatesFinder.isUpdateAvailable(host);
     }

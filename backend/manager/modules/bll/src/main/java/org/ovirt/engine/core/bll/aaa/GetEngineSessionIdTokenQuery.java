@@ -14,6 +14,7 @@ public class GetEngineSessionIdTokenQuery<P extends VdcQueryParametersBase> exte
         super(parameters);
     }
 
+    @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(sessionDataContainer.getSsoAccessToken(getParameters().getSessionId()));
         getQueryReturnValue().setSucceeded(true);

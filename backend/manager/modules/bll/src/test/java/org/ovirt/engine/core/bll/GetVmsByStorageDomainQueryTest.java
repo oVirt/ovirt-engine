@@ -22,6 +22,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
     Guid domainId = Guid.newGuid();
     GetVmsByStorageDomainQuery<IdQueryParameters> query;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -35,6 +35,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     protected VM vm;
 
+    @Override
     @Before
     public void setUp() {
         super.setUp();

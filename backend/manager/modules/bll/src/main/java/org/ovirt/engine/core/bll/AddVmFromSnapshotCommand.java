@@ -178,6 +178,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return new SnapshotsValidator();
     }
 
+    @Override
     protected VM getVmFromConfiguration() {
         if (vmFromConfiguration == null) {
             VdcQueryReturnValue queryReturnValue =
@@ -206,6 +207,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         freeLock();
     }
 
+    @Override
     protected VM getSourceVmFromDb() {
         if (sourceVmFromDb == null) {
             sourceVmFromDb = getVmDao().get(getVmIdFromSnapshot());
@@ -274,6 +276,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         unlockEntities();
     }
 
+    @Override
     protected void updateOriginalTemplate(VmStatic vmStatic) {
         // do not update it - it is already correctly configured from the snapshot
     }

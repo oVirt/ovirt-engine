@@ -112,10 +112,12 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }

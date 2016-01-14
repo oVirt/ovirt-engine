@@ -14,6 +14,7 @@ public class GetEngineSessionIdForSSOTokenQuery<P extends GetEngineSessionIdForS
         super(parameters);
     }
 
+    @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(sessionDataContainer.getSessionIdBySSOAccessToken(getParameters().getToken()));
     }

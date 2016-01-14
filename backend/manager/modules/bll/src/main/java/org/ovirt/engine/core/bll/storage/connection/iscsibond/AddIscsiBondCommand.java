@@ -84,6 +84,7 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
         addValidationMessage(EngineMessage.VAR__TYPE__ISCSI_BOND);
     }
 
+    @Override
     protected IscsiBond getIscsiBond() {
         return getParameters().getIscsiBond();
     }
