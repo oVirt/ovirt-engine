@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -86,9 +87,11 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
@@ -100,6 +103,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ProviderDao providerDao;
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -174,6 +179,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDao().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
+
+        // Trigger OVF update for hosted engine VM only
+        if (getVm().isHostedEngine()) {
+            registerRollbackHandler(new HostedEngineEditNotifier(getVm()));
+        }
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         VM userVm = new VM();
@@ -1103,6 +1113,25 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public VmValidator createVmValidator(VM vm) {
         return new VmValidator(vm);
+    }
+
+    private static class HostedEngineEditNotifier implements TransactionCompletionListener {
+        final VM vm;
+
+        public HostedEngineEditNotifier(VM vm) {
+            this.vm = vm;
+        }
+
+        @Override
+        public void onSuccess() {
+            Backend.getInstance().runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool,
+                    new ProcessOvfUpdateForStoragePoolParameters(vm.getStoragePoolId()));
+        }
+
+        @Override
+        public void onRollback() {
+            // No notification is needed
+        }
     }
 
 }
