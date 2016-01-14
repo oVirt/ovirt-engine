@@ -223,7 +223,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     if (passthroughHotUnplug) {
                         networkDeviceHelper.setVmIdOnVfs(getVdsId(),
                                 null,
-                                new HashSet<String>(Arrays.asList(vmDevice.getHostDevice())));
+                                new HashSet<>(Arrays.asList(vmDevice.getHostDevice())));
                     }
 
                     if (passthroughHotPlug || passthroughHotUnplug) {

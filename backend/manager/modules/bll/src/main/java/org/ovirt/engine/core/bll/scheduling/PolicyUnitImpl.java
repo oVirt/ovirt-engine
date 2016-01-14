@@ -44,7 +44,7 @@ public abstract class PolicyUnitImpl {
             this.policyUnit.setId(getGuid());
             this.policyUnit.setInternal(true);
             this.policyUnit.setPolicyUnitType(getType());
-            this.policyUnit.setParameterRegExMap(new HashMap<String, String>());
+            this.policyUnit.setParameterRegExMap(new HashMap<>());
 
             // Add all supported config values to the saved policy unit configuration
             for (PolicyUnitParameter parameter: getParameters()) {

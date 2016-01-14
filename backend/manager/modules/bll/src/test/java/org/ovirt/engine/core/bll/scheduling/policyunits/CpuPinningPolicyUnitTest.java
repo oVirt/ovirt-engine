@@ -60,7 +60,7 @@ public class CpuPinningPolicyUnitTest {
 
     @Test
     public void shouldHandleEmptyHostList() {
-        final List<VDS> filteredHost = policyUnit.filter(new ArrayList<VDS>(), vm, null, mock(PerHostMessages.class));
+        final List<VDS> filteredHost = policyUnit.filter(new ArrayList<>(), vm, null, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
     }

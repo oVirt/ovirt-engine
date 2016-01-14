@@ -154,10 +154,10 @@ public class InternalClusterPolicies {
         private PolicyBuilder(Guid id) {
             policy = new ClusterPolicy();
             policy.setId(id);
-            policy.setFilters(new ArrayList<Guid>());
-            policy.setFilterPositionMap(new HashMap<Guid, Integer>());
-            policy.setFunctions(new ArrayList<Pair<Guid, Integer>>());
-            policy.setParameterMap(new HashMap<String, String>());
+            policy.setFilters(new ArrayList<>());
+            policy.setFilterPositionMap(new HashMap<>());
+            policy.setFunctions(new ArrayList<>());
+            policy.setParameterMap(new HashMap<>());
             policy.setLocked(true);
         }
 

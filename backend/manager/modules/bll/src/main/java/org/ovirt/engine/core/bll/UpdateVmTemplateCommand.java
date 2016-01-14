@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -234,7 +233,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVmTemplate().getCompatibilityVersion(),
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
-                    new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
+                    new ArrayList<>(getParameters().getVmTemplateData().getDiskList()),
                     VmDeviceUtils.hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
                     VmDeviceUtils.hasMemoryBalloon(getParameters().getVmTemplateData().getId()),

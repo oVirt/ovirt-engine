@@ -921,7 +921,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 getStorageDomainStaticDao().get(guids.get(0)).getStorageType());
         memoryDisk.setId(guids.get(2));
         memoryDisk.setImageId(guids.get(3));
-        memoryDisk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(guids.get(0))));
+        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         return memoryDisk;
@@ -932,7 +932,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         DiskImage memoryDisk = MemoryUtils.createMetadataDisk();
         memoryDisk.setId(guids.get(4));
         memoryDisk.setImageId(guids.get(5));
-        memoryDisk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(guids.get(0))));
+        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         return memoryDisk;

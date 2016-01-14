@@ -91,7 +91,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage, getCreateImageVDSCommandParameters());
         if (vdsReturnValue.getSucceeded()) {
-            getParameters().setVdsmTaskIds(new ArrayList<Guid>());
+            getParameters().setVdsmTaskIds(new ArrayList<>());
             getParameters().getVdsmTaskIds().add(
                     createTask(taskId,
                             vdsReturnValue.getCreationInfo(),

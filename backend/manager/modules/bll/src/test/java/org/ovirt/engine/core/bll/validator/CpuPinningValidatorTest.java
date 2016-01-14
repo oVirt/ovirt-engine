@@ -28,7 +28,7 @@ public class CpuPinningValidatorTest {
 
     @Test
     public void isCpuPinningValidWithoutPinnedHost() {
-        vmStatic.setDedicatedVmForVdsList(new ArrayList<Guid>());
+        vmStatic.setDedicatedVmForVdsList(new ArrayList<>());
         assertFailsWith(isCpuPinningValid("0#0", vmStatic),
                 EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
     }
