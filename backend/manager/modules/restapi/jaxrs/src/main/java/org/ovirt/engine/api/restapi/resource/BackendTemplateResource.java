@@ -152,6 +152,11 @@ public class BackendTemplateResource
             if(incoming.isSetSoundcardEnabled()) {
                 params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
+            if (incoming.isSetVirtioScsi()) {
+                if (incoming.getVirtioScsi().isSetEnabled()) {
+                    params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+                }
+            }
 
             IconHelper.setIconToParams(incoming, params);
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);

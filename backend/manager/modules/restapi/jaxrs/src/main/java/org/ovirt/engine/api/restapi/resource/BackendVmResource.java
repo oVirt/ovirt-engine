@@ -629,7 +629,9 @@ public class BackendVmResource
                 params.setConsoleEnabled(incoming.getConsole().isEnabled());
             }
             if (incoming.isSetVirtioScsi()) {
-                params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+                if (incoming.getVirtioScsi().isSetEnabled()) {
+                    params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+                }
             }
             if (incoming.isSetSoundcardEnabled()) {
                 params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
