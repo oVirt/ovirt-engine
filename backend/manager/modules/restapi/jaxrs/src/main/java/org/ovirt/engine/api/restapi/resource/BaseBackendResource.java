@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BaseBackendResource {
-    private static String USER_FILTER_HEADER = "Filter";
+    private static final String USER_FILTER_HEADER = "Filter";
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
