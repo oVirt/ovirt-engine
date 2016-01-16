@@ -364,16 +364,6 @@ public class BaseBackendResource {
         return enumList;
     }
 
-    protected String combine(String head, String tail) {
-        if (head.endsWith("/")) {
-            head = head.substring(0, head.length() - 1);
-        }
-        if (tail.startsWith("/")) {
-            tail = tail.substring(1);
-        }
-        return head + "/" + tail;
-    }
-
     /**
      * Indicate whether data retrieval should be filtered according to user permissions.
      *
