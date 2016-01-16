@@ -43,7 +43,6 @@ public class BaseBackendResource {
     protected ValidatorLocator validatorLocator;
     protected MappingLocator mappingLocator;
 
-    // protected <S extends AbstractBackendResource<B extends BaseResource, A>> S inject(S resource) {
     protected <S extends BaseBackendResource> S inject(S resource) {
         resource.setBackend(backend);
         resource.setMappingLocator(mappingLocator);
