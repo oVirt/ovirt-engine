@@ -81,8 +81,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         AbstractDiskSizeColumn<StorageDomain> freeColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
-                return (long) availableDiskSize;
+                return object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0L;
             }
         };
         freeColumn.makeSortable();
@@ -91,8 +90,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         AbstractDiskSizeColumn<StorageDomain> usedColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long usedDiskSize = object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0;
-                return (long) usedDiskSize;
+                return object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0L;
             }
         };
         usedColumn.makeSortable();
@@ -101,8 +99,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         AbstractDiskSizeColumn<StorageDomain> totalColumn = new AbstractDiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GiB) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
-                return (long) totalDiskSize;
+                return object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0L;
             }
         };
         totalColumn.makeSortable();
