@@ -286,18 +286,18 @@ public class SyntaxCheckerTest {
     @Test
     public void testCluster() {
         // Before: 7ms
-        // "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM  clusters_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
+        // "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM  cluster_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 1ms
         testValidSql("Cluster: ",
                 "SELECT * FROM ((SELECT distinct cluster_view.* FROM  cluster_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Cluster: storage.name = 111",
-                "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT distinct clusters_storage_domain.cluster_id FROM  clusters_storage_domain   LEFT OUTER JOIN storage_domains_with_hosts_view ON clusters_storage_domain.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT distinct cluster_storage_domain.cluster_id FROM  cluster_storage_domain   LEFT OUTER JOIN storage_domains_with_hosts_view ON cluster_storage_domain.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE 111 ))  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
     public void testClusters() {
         // Before: 7ms
-        // "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM  clusters_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
+        // "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM  cluster_storage_domain  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 1ms
         testValidSql("Clusters: ",
                 "SELECT * FROM ((SELECT distinct cluster_view.* FROM  cluster_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
@@ -311,7 +311,7 @@ public class SyntaxCheckerTest {
         testValidSql("DataCenter: sortby name",
                 "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool  )  ORDER BY name,name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("DataCenter: Clusters.name =Default",
-                "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool   LEFT OUTER JOIN clusters_storage_domain ON storage_pool.id=clusters_storage_domain.storage_pool_id    WHERE  clusters_storage_domain.name LIKE Default )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct storage_pool.* FROM  storage_pool   LEFT OUTER JOIN cluster_storage_domain ON storage_pool.id=cluster_storage_domain.storage_pool_id    WHERE  cluster_storage_domain.name LIKE Default )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

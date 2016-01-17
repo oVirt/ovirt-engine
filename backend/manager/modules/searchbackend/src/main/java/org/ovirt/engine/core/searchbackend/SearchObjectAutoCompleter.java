@@ -329,7 +329,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                     put(SearchObjects.VDC_CLUSTER_OBJ_NAME, new EntitySearchInfo(new ClusterCrossRefAutoCompleter(),
                             new ClusterConditionFieldAutoCompleter(),
                             "cluster_view",
-                            "clusters_storage_domain",
+                            "cluster_storage_domain",
                             "cluster_id",
                             "name ASC"));
                     put(SearchObjects.QUOTA_OBJ_NAME, new EntitySearchInfo(new QuotaConditionFieldAutoCompleter(),

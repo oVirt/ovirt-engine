@@ -435,8 +435,8 @@ public class SearchQueryTest extends DbDependentTestBase {
     @Test
     public void testGetAllClusterSearch() throws Exception {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
-        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM
-        // clusters_storage_domain ))) as T1 ) as T2
+        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
+        // cluster_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Cluster" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
@@ -446,8 +446,8 @@ public class SearchQueryTest extends DbDependentTestBase {
     @Test
     public void testGetAllMultiClusterSearch() throws Exception {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
-        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT clusters_storage_domain.cluster_id FROM
-        // clusters_storage_domain ))) as T1 ) as T2
+        // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
+        // cluster_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Clusters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR, SearchType.Cluster);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
