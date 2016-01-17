@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class GetDefaultTimeZoneQueryTest extends AbstractUserQueryTest<TimeZoneQ
         @SuppressWarnings("unchecked")
         String result = (String) getQuery().getQueryReturnValue().getReturnValue();
 
-        assertTrue("Wrong default time zone: " + result, result.equals(DEFAULT_WINDOWS_TIME_ZONE));
+        assertEquals("Wrong default time zone: " + result, DEFAULT_WINDOWS_TIME_ZONE, result);
     }
 
     @Test
@@ -35,6 +35,6 @@ public class GetDefaultTimeZoneQueryTest extends AbstractUserQueryTest<TimeZoneQ
         @SuppressWarnings("unchecked")
         String result = (String) getQuery().getQueryReturnValue().getReturnValue();
 
-        assertTrue("Wrong default time zone: " + result, result.equals(DEFAULT_GENERAL_TIME_ZONE));
+        assertEquals("Wrong default time zone: " + result, DEFAULT_GENERAL_TIME_ZONE, result);
     }
 }
