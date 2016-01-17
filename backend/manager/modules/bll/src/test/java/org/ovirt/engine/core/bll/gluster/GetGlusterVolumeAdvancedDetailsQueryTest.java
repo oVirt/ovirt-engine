@@ -51,7 +51,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private ClusterUtils clusterUtils;
     private VdsDao vdsDao;
     private GlusterVolumeDao volumeDao;
-    private GlusterBrickDao brickDao;
 
     @Before
     @Override
@@ -151,7 +150,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         clusterUtils = mock(ClusterUtils.class);
         vdsDao = mock(VdsDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
-        brickDao = mock(GlusterBrickDao.class);
+        GlusterBrickDao brickDao = mock(GlusterBrickDao.class);
 
         doReturn(vdsDao).when(getQuery()).getVdsDao();
 
