@@ -1634,7 +1634,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
             vmStatic.setLargeIconId(iconIds.getLarge());
             vmStatic.setSmallIconId(iconIds.getSmall());
-            return;
         } else {
             if (vmStatic.getLargeIconId() == null
                     || vmStatic.getSmallIconId() == null) {
