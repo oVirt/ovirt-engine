@@ -70,7 +70,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
             public boolean getIsAvailable() {
-                return isUserElement(getDetailModel());
+                return isUserElement();
             }
         }, 2, 10);
     }
@@ -80,7 +80,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    private boolean isUserElement(UserGeneralModel userGeneralModel) {
+    private boolean isUserElement() {
         if (getDetailModel().getEntity() == null) {
             return false;
         }
