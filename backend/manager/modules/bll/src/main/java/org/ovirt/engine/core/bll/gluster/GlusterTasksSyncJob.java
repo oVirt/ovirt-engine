@@ -174,8 +174,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             throw new EngineException(result.getFault().getError());
         }
 
-        Guid asyncStepId = (Guid)result.getActionReturnValue();
-        return asyncStepId;
+        return (Guid)result.getActionReturnValue();
     }
 
     private Guid addExecutingStep(Guid jobId) {
@@ -187,8 +186,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             throw new EngineException(result.getFault().getError());
         }
 
-        Guid execStepId = (Guid)result.getActionReturnValue();
-        return execStepId;
+        return (Guid)result.getActionReturnValue();
     }
 
     private Guid addJob(Cluster cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
@@ -200,8 +198,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             //log and return
             throw new EngineException(result.getFault().getError());
         }
-        Guid jobId = (Guid)result.getActionReturnValue();
-        return jobId;
+        return (Guid)result.getActionReturnValue();
     }
 
     private void updateVolumeBricksAndLock(Cluster cluster, GlusterAsyncTask task, final GlusterVolumeEntity vol) {
