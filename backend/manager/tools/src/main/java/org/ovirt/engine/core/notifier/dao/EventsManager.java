@@ -56,8 +56,7 @@ public class EventsManager implements Observer {
         ResultSet rs = null;
         try {
             connection = ds.getConnection();
-            ps =
-                    connection.prepareStatement("" +
+            ps = connection.prepareStatement(
                             "SELECT em.event_up_name, em.event_down_name " +
                             "FROM event_map em;");
 
@@ -79,8 +78,7 @@ public class EventsManager implements Observer {
         List<FirstMatchSimpleFilter.FilterEntry> eventSubscribers = new ArrayList<>();
         try {
             connection = ds.getConnection();
-            ps =
-                    connection.prepareStatement("" +
+            ps = connection.prepareStatement(
                             "SELECT event_subscriber.event_up_name, " +
                             "       event_subscriber.method_address, " +
                             "       event_subscriber.notification_method " +
@@ -122,8 +120,7 @@ public class EventsManager implements Observer {
         ResultSet rs = null;
         try {
             connection = ds.getConnection();
-            ps =
-                    connection.prepareStatement("" +
+            ps = connection.prepareStatement(
                             "SELECT al.audit_log_id, al.log_type_name, " +
                             "       al.user_id, al.user_name, " +
                             "       al.vm_id, al.vm_name, al.vm_template_id, al.vm_template_name, " +
@@ -196,7 +193,7 @@ public class EventsManager implements Observer {
         int updatedRecords;
         try {
             connection = ds.getConnection();
-            statement = connection.prepareStatement("" +
+            statement = connection.prepareStatement(
                     "UPDATE audit_log " +
                     "SET  processed = 'true' " +
                     "WHERE processed = 'false' AND log_time < ? ;"
@@ -224,7 +221,7 @@ public class EventsManager implements Observer {
             int deletedRecords;
             try {
                 connection = ds.getConnection();
-                deleteStmt = connection.prepareStatement("" +
+                deleteStmt = connection.prepareStatement(
                         "DELETE " +
                         "FROM event_notification_hist " +
                         "WHERE sent_at < ? ;");
@@ -246,7 +243,7 @@ public class EventsManager implements Observer {
         PreparedStatement ps = null;
         try {
             connection = ds.getConnection();
-            ps = connection.prepareStatement("" +
+            ps = connection.prepareStatement(
                     "UPDATE audit_log " +
                     "SET processed = 'true' " +
                     "WHERE audit_log_id = ? ;");
