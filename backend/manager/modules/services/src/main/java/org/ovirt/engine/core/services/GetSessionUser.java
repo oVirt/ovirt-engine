@@ -41,7 +41,7 @@ public class GetSessionUser extends HttpServlet {
 
     private void doProcessRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String sessionID = request.getParameter(SESSION_ID_PARAMETER);
-        if (runQuery(request, response, sessionID)) {
+        if (runQuery(response, sessionID)) {
             response.setStatus(SUCCESS_CODE);
             log.debug("Validate Session '{}' succeeded", sessionID);
         } else {
@@ -50,16 +50,13 @@ public class GetSessionUser extends HttpServlet {
         }
     }
 
-    private boolean runQuery(HttpServletRequest request, HttpServletResponse response, String sessionID) {
-        BackendInternal backend = null;
-        VdcQueryParametersBase params = null;
-        VdcQueryReturnValue queryReturnValue = null;
+    private boolean runQuery(HttpServletResponse response, String sessionID) {
         boolean returnValue = false;
 
-        backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
+        BackendInternal backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
         log.debug("Calling ValidateSession query");
 
-        queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession,
+        VdcQueryReturnValue queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession,
                 new VdcQueryParametersBase(sessionID));
 
         if (queryReturnValue != null) {
