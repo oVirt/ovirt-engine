@@ -1,12 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractGeneralModel;
@@ -16,20 +13,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
-
-    @Override
-    public VmTemplate getEntity() {
-        if (super.getEntity() == null) {
-            return null;
-        }
-        if (super.getEntity() instanceof VmTemplate) {
-            return (VmTemplate) super.getEntity();
-        } else {
-            Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
-                    (Map.Entry<VmTemplate, ArrayList<DiskImage>>) super.getEntity();
-            return pair.getKey();
-        }
-    }
 
     private String name;
 
