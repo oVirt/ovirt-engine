@@ -611,8 +611,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return the VDS create VM parameters
      */
     protected CreateVmVDSCommandParameters buildCreateVmParameters() {
-        CreateVmVDSCommandParameters parameters = new CreateVmVDSCommandParameters(getVdsId(), getVm());
-        return parameters;
+        return new CreateVmVDSCommandParameters(getVdsId(), getVm());
     }
 
     protected void initParametersForExternalNetworks() {
