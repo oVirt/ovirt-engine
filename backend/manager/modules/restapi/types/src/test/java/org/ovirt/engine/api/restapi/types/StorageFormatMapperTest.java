@@ -11,13 +11,13 @@ public class StorageFormatMapperTest {
     @Test
     public void testMapping() {
         StorageFormat storageFormat = StorageFormatMapper.map(StorageFormatType.V1, (StorageFormat)null);
-        assertEquals (storageFormat, StorageFormat.V1);
+        assertEquals (StorageFormat.V1, storageFormat);
         StorageFormatType storageFormatType = StorageFormatMapper.map(storageFormat, (StorageFormatType)null);
-        assertEquals (storageFormatType, StorageFormatType.V1);
+        assertEquals (StorageFormatType.V1, storageFormatType);
 
         storageFormat = StorageFormatMapper.map(StorageFormatType.V2, (StorageFormat)null);
-        assertEquals (storageFormat, StorageFormat.V2);
+        assertEquals (StorageFormat.V2, storageFormat);
         storageFormatType = StorageFormatMapper.map(storageFormat, (StorageFormatType)null);
-        assertEquals (storageFormatType, StorageFormatType.V2);
+        assertEquals (StorageFormatType.V2, storageFormatType);
     }
 }
