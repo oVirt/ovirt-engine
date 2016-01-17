@@ -690,10 +690,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                     addStorageQuotaColumn();
                     table.redraw();
                     diskTable.asEditor().edit(object.getImportDiskListModel());
-                } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
+                } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
                     message.setText(object.getMessage());
                 }
-                else if (args.propertyName.equals("InvalidVm")) { ////$NON-NLS-1$
+                else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
                     table.redraw();
                 }
             }
