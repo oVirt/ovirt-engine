@@ -730,16 +730,10 @@ public class IsoDomainListSyncronizer {
 
     private boolean updateIsoListFromVDSM(Guid repoStoragePoolId,
             Guid repoStorageDomainId, Map<String, Map<String, Object>> fileStats) {
-        FileListRefreshed fileListRefreshed = new FileListRefreshed() {
-            @Override
-            public void onFileListRefreshed(Guid poolId, Set<String> isoList) {
-                VmHandler.refreshVmsToolsVersion(poolId, isoList);
-            }
-        };
 
         return refreshVdsmFileList(repoStoragePoolId,
                 repoStorageDomainId,
-                ImageFileType.ISO, fileStats, fileListRefreshed);
+                ImageFileType.ISO, fileStats, VmHandler::refreshVmsToolsVersion);
     }
 
     private boolean refreshVdsmFileList(Guid repoStoragePoolId,
