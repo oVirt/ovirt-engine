@@ -64,17 +64,13 @@ public class ServletUtilsTest {
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
     @Test
-    public void testWriteFileToStream() {
+    public void testWriteFileToStream() throws IOException {
         File file = new File(canReadFileName);
         long hostSize = file.length();
         assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-        try {
-            ServletUtils.writeFileToStream(out, file);
-            assertEquals("The bytes in the buffer have to match the length of the file", (int)hostSize, out.size());
-        } catch(IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        }
+        ServletUtils.writeFileToStream(out, file);
+        assertEquals("The bytes in the buffer have to match the length of the file", (int)hostSize, out.size());
     }
 
     /**
@@ -87,27 +83,19 @@ public class ServletUtilsTest {
         assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
         assertEquals("The file size should be 0", 0L, zeroSize);
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-        try {
-            ServletUtils.writeFileToStream(out, file);
-            assertEquals("The bytes in the buffer have to match the length of the file", (int)zeroSize, out.size());
-        } catch(IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        }
+        ServletUtils.writeFileToStream(out, file);
+        assertEquals("The bytes in the buffer have to match the length of the file", (int)zeroSize, out.size());
     }
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
-    @Test
-    public void testWriteFileToStream_IOException() {
+    @Test(expected = IOException.class)
+    public void testWriteFileToStream_IOException() throws IOException {
         File file = new File("/doesnotexist/iamprettysure");
         //Make a large buffer.
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            ServletUtils.writeFileToStream(out, file);
-            fail("Should not get here, file doesn't exist");
-        } catch(IOException ioe) {
-        }
+        ServletUtils.writeFileToStream(out, file);
     }
 
     /**
@@ -262,20 +250,15 @@ public class ServletUtilsTest {
        verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
     }
 
-    private File createTempPng() {
-        try {
-            File file = File.createTempFile("favicon", ".png");
-            file.deleteOnExit();
-            BufferedImage img = new BufferedImage(256, 256,
-                    BufferedImage.TYPE_INT_RGB);
-            if (!ImageIO.write(img, "PNG", file)) {
-                fail("Unable to write temporary image file");
-            }
-            return file;
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-            return null;
+    private File createTempPng() throws IOException {
+        File file = File.createTempFile("favicon", ".png");
+        file.deleteOnExit();
+        BufferedImage img = new BufferedImage(256, 256,
+                BufferedImage.TYPE_INT_RGB);
+        if (!ImageIO.write(img, "PNG", file)) {
+            fail("Unable to write temporary image file");
         }
+        return file;
     }
 
     /**
