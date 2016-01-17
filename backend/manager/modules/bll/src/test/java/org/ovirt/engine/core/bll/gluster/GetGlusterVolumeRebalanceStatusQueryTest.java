@@ -55,12 +55,8 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     private static final Guid SERVER_UUID_1 = Guid.newGuid();
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
     private VdsDao vdsDao;
-    private ClusterDao clusterDao;
     private GlusterVolumeDao volumeDao;
-    private GlusterServerDao glusterServerDao;
-    private StepDao stepDao;
     private ClusterUtils clusterUtils;
-    private GlusterTaskUtils taskUtils;
 
     @Before
     @Override
@@ -171,11 +167,11 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
         vdsDao = mock(VdsDao.class);
-        clusterDao = mock(ClusterDao.class);
+        ClusterDao clusterDao = mock(ClusterDao.class);
         volumeDao = mock(GlusterVolumeDao.class);
-        glusterServerDao = mock(GlusterServerDao.class);
-        stepDao = mock(StepDao.class);
-        taskUtils = mock(GlusterTaskUtils.class);
+        GlusterServerDao glusterServerDao = mock(GlusterServerDao.class);
+        StepDao stepDao = mock(StepDao.class);
+        GlusterTaskUtils taskUtils = mock(GlusterTaskUtils.class);
 
         doReturn(vdsDao).when(getQuery()).getVdsDao();
         doReturn(clusterDao).when(getQuery()).getClusterDao();
