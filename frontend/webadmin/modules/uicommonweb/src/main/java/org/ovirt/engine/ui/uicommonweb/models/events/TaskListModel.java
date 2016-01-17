@@ -141,7 +141,7 @@ public class TaskListModel extends SearchableListModel {
                                     - detailedTaskMap.get(id).getLastUpdateTime().getTime() < 100) {
                         task.setSteps(detailedTaskMap.get(id).getSteps());
                     } else if (hadDetails) {
-                        detailedTaskMap.remove(id.toString());
+                        detailedTaskMap.remove(id);
                         updateSingleTask(id);
                     }
 
@@ -166,7 +166,7 @@ public class TaskListModel extends SearchableListModel {
 
     public boolean updateSingleTask(final String guidOrCorrelationId) {
         if (!detailedTaskMap.containsKey(guidOrCorrelationId)) {
-            detailedTaskMap.put(guidOrCorrelationId.toString(), null);
+            detailedTaskMap.put(guidOrCorrelationId, null);
             AsyncQuery asyncQuery = new AsyncQuery();
             asyncQuery.setModel(this);
 
