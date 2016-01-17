@@ -129,7 +129,7 @@ public class TaskListModel extends SearchableListModel {
                 ArrayList<Job> newTaskList = new ArrayList<>();
 
                 for (Job task : taskListWithCorrelationFilter) {
-                    String id = ""; //$NON-NLS-1$
+                    String id;
                     if (task.getCorrelationId().startsWith(WEBADMIN)) {
                         id = task.getCorrelationId();
                     } else {
