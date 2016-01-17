@@ -70,7 +70,7 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
                 newSnapshot.setStatus(GlusterSnapshotStatus.from((String) individualSnapshot.get(SNAP_VOLUME_STATUS)));
                 try {
                     Map<String, Object> createTimeDetail = (Map<String, Object>) individualSnapshot.get(CREATETIME);
-                    long millis = ((Integer) createTimeDetail.get(EPOCH_TIME)).intValue() * 1000L;
+                    long millis = (Integer) createTimeDetail.get(EPOCH_TIME) * 1000L;
                     Date createDate = new Date(millis);
                     // Convert to UTC
                     DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
