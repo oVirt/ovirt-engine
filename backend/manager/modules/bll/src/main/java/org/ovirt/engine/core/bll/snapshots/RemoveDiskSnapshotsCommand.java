@@ -84,24 +84,24 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         // Images must be specified in parameters and belong to a single Disk;
         // Otherwise, we'll fail on validate.
         DiskImage representativeImage = getRepresentativeImage();
-        if (representativeImage == null) {
-            return;
-        }
+        if (representativeImage != null) {
+            setImage(representativeImage);
+            getParameters().setStorageDomainId(representativeImage.getStorageIds().get(0));
+            getParameters().setDiskAlias(representativeImage.getDiskAlias());
+            getParameters().setUseCinderCommandCallback(!ImagesHandler.filterDisksBasedOnCinder(getImages()).isEmpty());
 
-        setImage(representativeImage);
-        setStorageDomainId(representativeImage.getStorageIds().get(0));
-        getParameters().setUseCinderCommandCallback(!ImagesHandler.filterDisksBasedOnCinder(getImages()).isEmpty());
-
-        if (!Guid.isNullOrEmpty(getParameters().getContainerId())) {
-            setVmId(getParameters().getContainerId());
-        }
-        else {
-            List<VM> listVms = getVmDao().getVmsListForDisk(representativeImage.getId(), false);
-            if (!listVms.isEmpty()) {
-                VM vm = listVms.get(0);
-                setVm(vm);
+            if (Guid.isNullOrEmpty(getParameters().getContainerId())) {
+                List<VM> listVms = getVmDao().getVmsListForDisk(representativeImage.getId(), false);
+                if (!listVms.isEmpty()) {
+                    VM vm = listVms.get(0);
+                    setVm(vm);
+                    getParameters().setContainerId(vm.getId());
+                }
             }
         }
+
+        setVmId(getParameters().getContainerId());
+        setStorageDomainId(getParameters().getStorageDomainId());
 
         // It would be better to not add the task handlers in the first place, but at
         // the time they are added (via super.init()), setVm() hasn't been called and
@@ -438,7 +438,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private void addAuditLogCustomValues() {
-        this.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
+        this.addCustomValue("DiskAlias", getParameters().getDiskAlias());
         this.addCustomValue("Snapshots", StringUtils.join(getSnapshotsNames(), ", "));
     }
 
@@ -511,7 +511,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected DiskImage getRepresentativeImage() {
-        return getImages().get(0);
+        if (!getImages().isEmpty()) {
+            return getImages().get(0);
+        }
+        return null;
     }
 
     @Override
@@ -541,7 +544,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         addAuditLogCustomValues();
         switch (getActionState()) {
             case EXECUTE:
-                if (!hasTaskHandlers()) {
+                if (!hasTaskHandlers() && !getParameters().isUseCinderCommandCallback()) {
                     return getParameters().getTaskGroupSuccess() ?
                             AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_SUCCESS :
                             AuditLogType.USER_REMOVE_DISK_SNAPSHOT_FINISHED_FAILURE;
