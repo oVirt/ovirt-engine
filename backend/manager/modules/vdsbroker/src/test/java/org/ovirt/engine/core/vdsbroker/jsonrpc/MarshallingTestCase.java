@@ -136,7 +136,7 @@ public class MarshallingTestCase {
         Map<String, Object> map =
                 new FutureMap(client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class)
-                        .withSubTypeClazz(new HashMap<String, Object>().getClass())
+                        .withSubTypeClazz(HashMap.class)
                         .withSubtypeKey("vmId");
 
         // Then
