@@ -136,12 +136,6 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
     }
 
     @SuppressWarnings("unchecked")
-    private static void checkReturnValue(GetoVirtISOsQuery<IdQueryParameters> query) {
-        List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
-        assertTrue(!isosList.isEmpty());
-    }
-
-    @SuppressWarnings("unchecked")
     private static void checkReturnValueEmpty(GetoVirtISOsQuery<IdQueryParameters> query) {
         List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
         assertTrue(isosList.isEmpty());
