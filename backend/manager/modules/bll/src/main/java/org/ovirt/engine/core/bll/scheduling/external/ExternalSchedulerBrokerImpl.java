@@ -20,12 +20,12 @@ import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
-    private static String DISCOVER = "discover";
-    private static String FILTER = "runFilters";
-    private static String SCORE = "runCostFunctions";
-    private static String BALANCE = "runLoadBalancing";
+    private static final String DISCOVER = "discover";
+    private static final String FILTER = "runFilters";
+    private static final String SCORE = "runCostFunctions";
+    private static final String BALANCE = "runLoadBalancing";
 
-    private static Object[] EMPTY = new Object[] {};
+    private static final Object[] EMPTY = new Object[] {};
 
     private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
 
