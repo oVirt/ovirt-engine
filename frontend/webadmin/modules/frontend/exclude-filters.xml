@@ -3,16 +3,6 @@
           <Class name="com.google.gwt.core.client.GWTBridge" />
           <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
     </Match>
-    <Match>
-          <Class name="org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService" />
-          <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
-	  <Method name=".*"/>
-    </Match>
-    <Match>
-          <Class name="org.ovirt.engine.ui.frontend.server.gwt.GenericApiGWTServiceImpl" />
-          <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
-          <Method name=".*"/>
-    </Match>
 
     <!--
       findbugs complain of unused field in class.
