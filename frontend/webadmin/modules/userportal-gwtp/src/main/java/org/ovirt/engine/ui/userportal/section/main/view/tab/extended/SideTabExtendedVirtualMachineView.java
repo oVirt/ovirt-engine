@@ -55,14 +55,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    protected static abstract class AbstractVmButtonsImageButtonCell extends AbstractImageButtonCell<UserPortalItemModel> {
-
-        public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
-            super(enabledImage, resources.sideTabExtendedVmStyle().vmButtonEnabled(),
-                    disabledImage, resources.sideTabExtendedVmStyle().vmButtonDisabled());
-        }
-    }
-
     public interface VmTableResources extends CellTable.Resources {
         interface TableStyle extends CellTable.Style {
         }
