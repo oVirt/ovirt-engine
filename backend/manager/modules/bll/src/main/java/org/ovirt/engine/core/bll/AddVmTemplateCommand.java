@@ -78,6 +78,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -136,7 +137,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // API backward compatibility
             if (VmDeviceUtils.shouldOverrideSoundDevice(
                     getParameters().getMasterVm(),
-                    getVm().getCompatibilityVersion(),
+                    getVm() == null ? CompatibilityVersionUtils.getEffective(parameterMasterVm, getCluster())
+                            : getVm().getCompatibilityVersion(),
                     getParameters().isSoundDeviceEnabled())) {
                 parameters.setSoundDeviceEnabled(true);
             }
@@ -173,7 +175,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    getVm().getCompatibilityVersion(), parameterMasterVm);
+                    getVm() == null ? CompatibilityVersionUtils.getEffective(parameterMasterVm, getCluster())
+                            : getVm().getCompatibilityVersion(), parameterMasterVm);
         }
     }
 
