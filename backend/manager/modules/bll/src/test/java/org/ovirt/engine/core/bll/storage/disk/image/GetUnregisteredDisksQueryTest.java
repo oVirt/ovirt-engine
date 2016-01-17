@@ -15,9 +15,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -101,19 +99,15 @@ public class GetUnregisteredDisksQueryTest
 
         // Mock the get unregistered disk query
         when(backendMock.runInternalQuery(eq(VdcQueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class), any(EngineContext.class)))
-                .thenAnswer(new Answer<VdcQueryReturnValue>() {
-
-                    @Override
-                    public VdcQueryReturnValue answer(InvocationOnMock invocation) throws Throwable {
-                        GetUnregisteredDiskQueryParameters params = (GetUnregisteredDiskQueryParameters) invocation
-                                .getArguments()[1];
-                        VdcQueryReturnValue unregDiskReturnValue = new VdcQueryReturnValue();
-                        unregDiskReturnValue.setSucceeded(true);
-                        DiskImage newDiskImage = mock(DiskImage.class);
-                        when(newDiskImage.getId()).thenReturn(params.getDiskId());
-                        unregDiskReturnValue.setReturnValue(newDiskImage);
-                        return unregDiskReturnValue;
-                    }
+                .thenAnswer(invocation -> {
+                    GetUnregisteredDiskQueryParameters p = (GetUnregisteredDiskQueryParameters) invocation
+                            .getArguments()[1];
+                    VdcQueryReturnValue unregDiskReturnValue = new VdcQueryReturnValue();
+                    unregDiskReturnValue.setSucceeded(true);
+                    DiskImage newDiskImage = mock(DiskImage.class);
+                    when(newDiskImage.getId()).thenReturn(p.getDiskId());
+                    unregDiskReturnValue.setReturnValue(newDiskImage);
+                    return unregDiskReturnValue;
                 });
 
         doReturn(storagePoolId).when(getQuery()).getStoragePoolId();
