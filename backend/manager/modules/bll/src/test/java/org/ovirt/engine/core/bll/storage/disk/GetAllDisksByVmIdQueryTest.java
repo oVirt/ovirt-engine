@@ -34,12 +34,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllDisksByVmIdQuery<IdQueryParameters>> {
     private static final int NUM_DISKS_OF_EACH_KIND = 3;
 
-    /** The {@link DiskDao} mocked for the test */
-    private DiskDao diskDaoMock;
-
-    /** The {@link VmDeviceDao} mocked for the test */
-    private VmDeviceDao vmDeviceDaoMock;
-
     /** The ID of the VM the disks belong to */
     private Guid vmID;
 
@@ -55,15 +49,12 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     /** An unplugged disk snapshot for the test */
     private DiskImage unpluggedDiskSnapshot;
 
-    /** An unplugged disk snapshot for the test */
-    private Guid snapshotId;
-
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         vmID = Guid.newGuid();
-        snapshotId = Guid.newGuid();
+        Guid snapshotId = Guid.newGuid();
         pluggedDisk = createDiskImage(true);
         unpluggedDisk = createDiskImage(true);
         pluggedDiskSnapshot = createDiskImage(false);
@@ -91,12 +82,13 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         returnArray.add(unpluggedDisk);
         returnArray.add(pluggedDiskSnapshot);
         returnArray.add(unpluggedDiskSnapshot);
-        diskDaoMock = mock(DiskDao.class);
+
+        DiskDao diskDaoMock = mock(DiskDao.class);
         when(dbFacadeMock.getDiskDao()).thenReturn(diskDaoMock);
         when(diskDaoMock.getAllForVm(vmID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
 
         // VM Device Dao
-        vmDeviceDaoMock = mock(VmDeviceDao.class);
+        VmDeviceDao vmDeviceDaoMock = mock(VmDeviceDao.class);
         when(dbFacadeMock.getVmDeviceDao()).thenReturn(vmDeviceDaoMock);
         when(vmDeviceDaoMock.getVmDeviceByVmIdTypeAndDevice(vmID,
                 VmDeviceGeneralType.DISK,
