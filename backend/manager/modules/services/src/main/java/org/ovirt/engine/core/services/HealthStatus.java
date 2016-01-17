@@ -69,9 +69,8 @@ public class HealthStatus extends HttpServlet {
             throws ServletException, IOException {
         log.debug("Health Status servlet: entry");
         response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
 
-        try {
+        try (PrintWriter out = response.getWriter()) {
             if (runQuery(request, out)) {
                 out.print("Welcome to Health Status!");
                 log.debug("Succeeded to run Health Status.");
@@ -82,8 +81,6 @@ public class HealthStatus extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
             log.error("Error calling runQuery: ", e);
-        } finally {
-            out.close();
         }
         log.debug("Health Status servlet: close");
     }
