@@ -30,12 +30,10 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 2;
 
     private ClusterDao dao;
-    private VDS existingVds;
     private Cluster existingCluster;
     private Cluster newGroup;
     private Cluster groupWithNoRunningVms;
     private StoragePool storagePool;
-    private ClusterPolicyDao clusterPolicyDao;
 
     @Override
     public void setUp() throws Exception {
@@ -43,7 +41,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
         VdsDao vdsDao = dbFacade.getVdsDao();
 
-        existingVds = vdsDao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
+        VDS existingVds = vdsDao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         StoragePoolDao storagePoolDao = dbFacade.getStoragePoolDao();
 
@@ -60,7 +58,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
         newGroup.setClusterPolicyId(existingCluster.getClusterPolicyId());
-        clusterPolicyDao = dbFacade.getClusterPolicyDao();
+        ClusterPolicyDao clusterPolicyDao = dbFacade.getClusterPolicyDao();
         // set cluster policy name to allow equals method to succeed
         newGroup.setClusterPolicyName(clusterPolicyDao.get(existingCluster.getClusterPolicyId()).getName());
         newGroup.setClusterPolicyProperties(new LinkedHashMap<>());
