@@ -513,11 +513,11 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void startGeoRepSession() {
-        performGeoRepAction("onStartGeoRepSession", constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.startGeoRep(), VdcActionType.StartGlusterVolumeGeoRep, constants.startGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onStartGeoRepSession", constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.startGeoRep(), VdcActionType.StartGlusterVolumeGeoRep);//$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void stopGeoRepSession() {
-        performGeoRepAction("onStopGeoRepSession", constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", constants.stopGeoRep(), VdcActionType.StopGeoRepSession, constants.stopGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onStopGeoRepSession", constants.geoReplicationStopTitle(), HelpTag.volume_geo_rep_stop_confirmation, "volume_geo_rep_stop_confirmation", constants.stopGeoRep(), VdcActionType.StopGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void confirmGeoRepAction(String title, HelpTag helpTag, String hashName, String commandName, String action) {
@@ -530,15 +530,15 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
     }
 
     private void pauseGeoRepSession() {
-        performGeoRepAction("onPauseGeoRepSession", constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", constants.pauseGeoRep(), VdcActionType.PauseGlusterVolumeGeoRepSession, constants.pauseGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onPauseGeoRepSession", constants.geoReplicationPauseTitle(), HelpTag.volume_geo_rep_pause_confirmation, "volume_geo_rep_pause_confirmation", constants.pauseGeoRep(), VdcActionType.PauseGlusterVolumeGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void resumeGeoRepSession() {
-        performGeoRepAction("onResumeGeoRepSession", constants.geoReplicationResumeTitle(), HelpTag.volume_geo_rep_resume_confirmation, "volume_geo_rep_resume_confirmation", constants.resumeGeoRep(), VdcActionType.ResumeGeoRepSession, constants.resumeGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onResumeGeoRepSession", constants.geoReplicationResumeTitle(), HelpTag.volume_geo_rep_resume_confirmation, "volume_geo_rep_resume_confirmation", constants.resumeGeoRep(), VdcActionType.ResumeGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void removeGeoRepSession() {
-        performGeoRepAction("onRemoveGeoRepSession", constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", constants.removeGeoRep(), VdcActionType.DeleteGeoRepSession, constants.removeGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+        performGeoRepAction("onRemoveGeoRepSession", constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", constants.removeGeoRep(), VdcActionType.DeleteGeoRepSession);//$NON-NLS-1$//$NON-NLS-2$
     }
 
     private void performGeoRepAction(String commandName,
@@ -546,8 +546,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             HelpTag helpTag,
             String hashName,
             String action,
-            VdcActionType actionType,
-            String actionProgressText) {
+            VdcActionType actionType) {
         GlusterGeoRepSession selectedSession = getSelectedItem();
         if (selectedSession == null) {
             return;
