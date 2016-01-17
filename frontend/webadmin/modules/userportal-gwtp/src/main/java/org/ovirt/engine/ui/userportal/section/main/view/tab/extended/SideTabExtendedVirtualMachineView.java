@@ -412,9 +412,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             }
         });
 
-        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<>(list);
-
-        return compositeCell;
+        return new BorderedCompositeCell<>(list);
     }
 
 }
