@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static java.util.stream.Collectors.toCollection;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,7 +58,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
-
 
 public class HostMapper {
 
@@ -139,10 +140,12 @@ public class HostMapper {
             entity.setDisablePowerManagementPolicy(!model.isAutomaticPmEnabled());
         }
         if (model.isSetPmProxies()) {
-            List<FenceProxySourceType> fenceProxySources = new LinkedList<>();
-            for (PmProxy pmProxy : model.getPmProxies().getPmProxies()) {
-                fenceProxySources.add(FenceProxySourceType.forValue(pmProxy.getType()));
-            }
+            List<FenceProxySourceType> fenceProxySources =
+                    model.getPmProxies()
+                            .getPmProxies()
+                            .stream()
+                            .map(pmProxy -> FenceProxySourceType.forValue(pmProxy.getType()))
+                            .collect(toCollection(LinkedList::new));
             entity.setFenceProxySources(fenceProxySources);
         }
         if (model.isSetKdumpDetection()) {
