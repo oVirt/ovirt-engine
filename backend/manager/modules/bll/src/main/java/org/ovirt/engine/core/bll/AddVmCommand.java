@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
@@ -1245,12 +1246,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
         if (getVmTemplate() != null && !getVmTemplate().getDiskList().isEmpty()) {
-            for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
-                if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
-                    permissionList.add(new PermissionSubject(disk.getStorageIds().get(0),
-                            VdcObjectType.Storage, ActionGroup.CREATE_DISK));
-                }
-            }
+            permissionList.addAll(getParameters().getDiskInfoDestinationMap()
+                    .values()
+                    .stream()
+                    .filter(disk -> disk.getStorageIds() != null && !disk.getStorageIds().isEmpty())
+                    .map(disk -> new PermissionSubject(disk.getStorageIds().get(0),
+                            VdcObjectType.Storage,
+                            ActionGroup.CREATE_DISK))
+                    .collect(Collectors.toList()));
         }
 
         addPermissionSubjectForAdminLevelProperties(permissionList);
@@ -1445,17 +1448,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<>();
-
-        for (DiskImage disk : diskInfoDestinationMap.values()) {
-            list.add(new QuotaStorageConsumptionParameter(
-                    disk.getQuotaId(),
-                    null,
-                    QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getStorageIds().get(0),
-                    (double)disk.getSizeInGigabytes()));
-        }
-        return list;
+        return diskInfoDestinationMap.values()
+                .stream()
+                .map(disk -> new QuotaStorageConsumptionParameter(
+                        disk.getQuotaId(),
+                        null,
+                        QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
+                        disk.getStorageIds().get(0),
+                        (double) disk.getSizeInGigabytes()))
+                .collect(Collectors.toList());
     }
 
     @Override
