@@ -320,7 +320,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         importModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName.equals(importModel.ON_DISK_LOAD)) {
+                if (args.propertyName.equals(ImportVmFromExternalProviderModel.ON_DISK_LOAD)) {
                     table.asEditor().edit(table.asEditor().flush());
                 } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(importModel.getMessage());
