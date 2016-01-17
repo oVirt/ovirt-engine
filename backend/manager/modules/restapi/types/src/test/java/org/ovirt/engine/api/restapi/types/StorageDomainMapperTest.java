@@ -79,8 +79,8 @@ public class StorageDomainMapperTest extends
                 .businessentities.StorageDomainStatus.Unattached, null));
         assertEquals(StorageDomainStatus.UNKNOWN, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Unknown, null));
-        assertTrue(StorageDomainMapper.map(org.ovirt.engine.core.common
-                .businessentities.StorageDomainStatus.Uninitialized, null) == null);
+        assertNull(StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.StorageDomainStatus.Uninitialized, null));
         assertEquals(StorageDomainStatus.MAINTENANCE, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Maintenance, null));
 
