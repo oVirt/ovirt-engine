@@ -259,10 +259,6 @@ public class TaskListModel extends SearchableListModel {
         return true;
     }
 
-    public void removeSingleTask(String string) {
-        // detailTaskGuids.remove(guid);
-    }
-
     static class TaskEntry implements Map.Entry<Job, ArrayList<Job>> {
         public TaskEntry(Job key) {
             this.key = key;
