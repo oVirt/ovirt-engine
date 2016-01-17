@@ -95,8 +95,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private GetVmConfigurationBySnapshotQuery<IdQueryParameters> setupQueryBySnapshotId(Guid snapshotId) {
         IdQueryParameters queryParams = getQueryParameters();
         when(queryParams.getId()).thenReturn(snapshotId);
-        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query = getQuery();
-        return query;
+        return getQuery();
     }
 
 }
