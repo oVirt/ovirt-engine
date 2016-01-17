@@ -33,19 +33,17 @@ public class HealthStatus extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(HealthStatus.class);
 
-    private boolean runQuery(HttpServletRequest request, PrintWriter out) {
+    private boolean runQuery(PrintWriter out) {
         boolean fReturn = false;
         BackendInternal backend = null;
-        VdcQueryParametersBase params = null;
-        VdcQueryReturnValue v = null;
 
         try {
             backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
             log.debug("Calling CheckDBConnection query");
 
-            params = new VdcQueryParametersBase();
+            VdcQueryParametersBase params = new VdcQueryParametersBase();
 
-            v = backend.runInternalQuery(VdcQueryType.CheckDBConnection, params);
+            VdcQueryReturnValue v = backend.runInternalQuery(VdcQueryType.CheckDBConnection, params);
             if (v != null) {
                 fReturn = v.getSucceeded();
                 out.print(fReturn ? "DB Up!" : "DB Down!");
@@ -71,7 +69,7 @@ public class HealthStatus extends HttpServlet {
         response.setContentType("text/html");
 
         try (PrintWriter out = response.getWriter()) {
-            if (runQuery(request, out)) {
+            if (runQuery(out)) {
                 out.print("Welcome to Health Status!");
                 log.debug("Succeeded to run Health Status.");
             } else {
