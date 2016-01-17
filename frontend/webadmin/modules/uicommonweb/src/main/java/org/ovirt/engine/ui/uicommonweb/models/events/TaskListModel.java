@@ -295,7 +295,6 @@ public class TaskListModel extends SearchableListModel {
         Random rand = new Random();
         String hashStr = rand.nextInt(9000000) + 9999999 + ""; //$NON-NLS-1$
 
-        String correlationId = TaskListModel.WEBADMIN + hashStr + "_" + actionDescription; //$NON-NLS-1$
-        return correlationId;
+        return TaskListModel.WEBADMIN + hashStr + "_" + actionDescription; //$NON-NLS-1$
     }
 }
