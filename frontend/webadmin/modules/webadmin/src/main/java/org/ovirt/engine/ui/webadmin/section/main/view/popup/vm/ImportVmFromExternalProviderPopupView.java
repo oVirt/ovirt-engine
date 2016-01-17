@@ -144,8 +144,6 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
     private ImportVmGeneralSubTabView generalView;
 
-    private CustomSelectionCell customSelectionCellFormatType;
-
     private CustomSelectionCell customSelectionCellNetwork;
 
     protected ImportVmFromExternalProviderModel importModel;
