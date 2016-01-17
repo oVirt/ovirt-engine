@@ -33,11 +33,7 @@ public class FenceValidator {
         Date waitTo =
                 getBackend().getStartedAt().addSeconds(Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
         Date now = new Date();
-        if (!(waitTo.before(now) || waitTo.equals(now))) {
-            return false;
-        } else {
-            return true;
-        }
+        return waitTo.before(now) || waitTo.equals(now);
     }
 
     public boolean isStartupTimeoutPassed(List<String> messages) {
