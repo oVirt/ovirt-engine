@@ -328,7 +328,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         dataCenters.add(a);
                     }
                 }
-                if (dataCenters == null || dataCenters.isEmpty()) {
+                if (dataCenters.isEmpty()) {
                     getDataCenters().setIsChangeable(false);
                     getImportSources().setIsChangeable(false);
                     setError(constants.notAvailableWithNoUpDC());
