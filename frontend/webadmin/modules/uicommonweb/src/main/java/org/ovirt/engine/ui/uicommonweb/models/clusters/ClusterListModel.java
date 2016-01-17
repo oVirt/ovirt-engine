@@ -942,7 +942,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
                         hostsModel.stopProgress();
                         boolean isAllValidatePassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
-                            isAllValidatePassed = isAllValidatePassed && returnValueBase.isValid();
+                            isAllValidatePassed = returnValueBase.isValid();
                             if (!isAllValidatePassed) {
                                 break;
                             }
