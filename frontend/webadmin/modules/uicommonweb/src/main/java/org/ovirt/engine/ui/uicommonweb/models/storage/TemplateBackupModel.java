@@ -499,7 +499,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                         return ConstantsManager.getInstance()
                                 .getMessages()
                                 .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength);
-                    };
+                    }
                 },
                 new UniqueClonedNameValidator(assignedVmNames)
         };
@@ -585,7 +585,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                         return ConstantsManager.getInstance()
                                 .getMessages()
                                 .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength);
-                    };
+                    }
                 },
                 new UniqueClonedAppendedNameValidator(assignedVmNames)
         };
