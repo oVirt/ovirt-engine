@@ -397,7 +397,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 ImportVmData selectedObject =
                         ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
                 customSelectionCellFormatType.setEnabled(((Boolean) selectedObject.getCollapseSnapshots().getEntity()));
-                // diskTable.edit(importVmModel.getImportDiskListModel());
             }
         });
 
@@ -717,7 +716,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 sp.add(table);
                 splitLayoutPanel.add(sp);
                 table.getElement().getStyle().setPosition(Position.RELATIVE);
-                // subTabLayoutPanel.selectTab(0);
             }
 
         });
