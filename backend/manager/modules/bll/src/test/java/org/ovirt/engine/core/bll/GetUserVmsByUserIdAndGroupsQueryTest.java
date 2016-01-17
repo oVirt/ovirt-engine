@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
@@ -48,15 +46,11 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
 
         // Mock the disks, if needed
         if (includeDiskData) {
-            doAnswer(new Answer() {
-                @Override
-                public Object answer(InvocationOnMock invocation) throws Throwable {
-                    expectedDisk.getSnapshots().addAll(snapshots);
-                    expectedVM.getDiskMap().put(expectedDisk.getId(), expectedDisk);
-                    expectedVM.getDiskList().add(expectedDisk);
-
-                    return null;
-                }
+            doAnswer(invocation -> {
+                expectedDisk.getSnapshots().addAll(snapshots);
+                expectedVM.getDiskMap().put(expectedDisk.getId(), expectedDisk);
+                expectedVM.getDiskList().add(expectedDisk);
+                return null;
             }).when(getQuery()).updateDisksFromDB(expectedVM);
 
             doNothing().when(getQuery()).fillImagesBySnapshots(expectedVM);
