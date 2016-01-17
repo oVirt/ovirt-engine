@@ -53,7 +53,7 @@ public class InternalNetworksPanel extends UnassignedNetworksPanel<NetworkPanel>
         for (NetworkPanel networkPanel : list) {
             LogicalNetworkModel networkModel = (LogicalNetworkModel) networkPanel.getItem();
             boolean isRequired =
-                    networkModel.getNetwork().getCluster() == null ? false : networkModel.getNetwork()
+                    networkModel.getNetwork().getCluster() != null && networkModel.getNetwork()
                             .getCluster()
                             .isRequired();
             if (isRequired) {
