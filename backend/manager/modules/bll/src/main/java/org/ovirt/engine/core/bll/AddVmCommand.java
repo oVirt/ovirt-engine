@@ -371,25 +371,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean validateAddVmCommand() {
-        boolean returnValue = areParametersLegal(getReturnValue().getValidationMessages());
-        // Check if number of monitors passed is legal
-        returnValue = returnValue && checkNumberOfMonitors() && checkSingleQxlDisplay();
-
-        returnValue =
-                returnValue
-                        && checkPciAndIdeLimit(getParameters().getVm().getOs(),
-                                getEffectiveCompatibilityVersion(),
-                                getParameters().getVmStaticData().getNumOfMonitors(),
-                                getVmInterfaces(),
-                                getVmDisks(),
-                                isVirtioScsiEnabled(),
-                                hasWatchdog(),
-                                isBalloonEnabled(),
-                                isSoundDeviceEnabled(),
-                                getReturnValue().getValidationMessages())
-                        && canAddVm(getReturnValue().getValidationMessages(), destStorages.values())
-                        && hostToRunExist();
-        return returnValue;
+        return areParametersLegal(getReturnValue().getValidationMessages())
+                && checkNumberOfMonitors() && checkSingleQxlDisplay()
+                && checkPciAndIdeLimit(getParameters().getVm().getOs(),
+                        getEffectiveCompatibilityVersion(),
+                        getParameters().getVmStaticData().getNumOfMonitors(),
+                        getVmInterfaces(),
+                        getVmDisks(),
+                        isVirtioScsiEnabled(),
+                        hasWatchdog(),
+                        isBalloonEnabled(),
+                        isSoundDeviceEnabled(),
+                        getReturnValue().getValidationMessages())
+                && canAddVm(getReturnValue().getValidationMessages(), destStorages.values())
+                && hostToRunExist();
     }
 
     /**
@@ -450,41 +445,36 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     public static boolean checkCpuSockets(int num_of_sockets, int cpu_per_socket, int threadsPerCpu,
                                           String compatibility_version, List<String> validationMessages) {
-        boolean retValue = true;
-        if (retValue
-                && (num_of_sockets * cpu_per_socket * threadsPerCpu) >
+        if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
                 Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, compatibility_version)) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue
-                && num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
+        if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue
-                && cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
+        if (cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue
-                && threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
+        if (threadsPerCpu > Config.<Integer> getValue(ConfigValues.MaxNumOfThreadsPerCpu, compatibility_version)) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue && cpu_per_socket < 1) {
+        if (cpu_per_socket < 1) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue && num_of_sockets < 1) {
+        if (num_of_sockets < 1) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS.toString());
-            retValue = false;
+            return false;
         }
-        if (retValue && threadsPerCpu < 1) {
+        if (threadsPerCpu < 1) {
             validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU.toString());
-            retValue = false;
+            return false;
         }
-        return retValue;
+        return true;
     }
 
     @Override
