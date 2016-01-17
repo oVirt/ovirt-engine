@@ -217,7 +217,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsToClone) {
             VmTemplate template = ((ImportTemplateData) object).getTemplate();
-            if (!validateName(template.getName() + suffix, entityModel, getClonedAppendedNameValidators(null))) {
+            if (!validateName(template.getName() + suffix, entityModel, getClonedAppendedNameValidators())) {
                 return false;
             }
         }
@@ -237,7 +237,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         return temp.getIsValid();
     }
 
-    protected int getMaxClonedNameLength(Object object) {
+    protected int getMaxClonedNameLength() {
         return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
     }
 
@@ -474,7 +474,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             ImportTemplateData object = (ImportTemplateData) cloneModel.getEntity();
             if (!cloneModel.getNoClone().getEntity()) {
                 String vmName = cloneModel.getName().getEntity();
-                if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators(object))) {
+                if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators())) {
                     return;
                 }
                 setObjectName(object, vmName, false);
@@ -488,8 +488,8 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         executeImportClone();
     }
 
-    protected IValidation[] getClonedNameValidators(Object object) {
-        final int maxClonedNameLength = getMaxClonedNameLength(object);
+    protected IValidation[] getClonedNameValidators() {
+        final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(maxClonedNameLength),
@@ -574,8 +574,8 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         assignedVmNames.clear();
     }
 
-    protected IValidation[] getClonedAppendedNameValidators(Object object) {
-        final int maxClonedNameLength = getMaxClonedNameLength(object);
+    protected IValidation[] getClonedAppendedNameValidators() {
+        final int maxClonedNameLength = getMaxClonedNameLength();
         return new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(maxClonedNameLength),
