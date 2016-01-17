@@ -275,14 +275,13 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         ArrayList<SanTargetModel> targetModelList = new ArrayList<>();
         if (a.getLunConnections() != null) {
             for (StorageServerConnections b : a.getLunConnections()) {
-                SanTargetModel tempVar = new SanTargetModel();
-                tempVar.setAddress(b.getConnection());
-                tempVar.setPort(b.getPort());
-                tempVar.setName(b.getIqn());
-                tempVar.setIsSelected(true);
-                tempVar.setIsLoggedIn(true);
-                tempVar.setLuns(new ObservableCollection<LunModel>());
-                SanTargetModel model = tempVar;
+                SanTargetModel model = new SanTargetModel();
+                model.setAddress(b.getConnection());
+                model.setPort(b.getPort());
+                model.setName(b.getIqn());
+                model.setIsSelected(true);
+                model.setIsLoggedIn(true);
+                model.setLuns(new ObservableCollection<LunModel>());
                 model.getLoginCommand().setIsExecutionAllowed(false);
 
                 targetModelList.add(model);
@@ -637,11 +636,10 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LunModel lunModel : getAddedLuns()) {
-            String reason = null;
             LUNs lun = (LUNs) lunModel.getEntity();
 
             if (lun.getStorageDomainId() != null) {
-                reason = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());
+                String reason = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());
                 partOfSdLunsMessages.add(lunModel.getLunId() + " (" + reason + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
