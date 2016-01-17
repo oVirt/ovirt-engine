@@ -49,12 +49,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private List<VDS> serversList;
     private List<GlusterServerInfo> expectedServers;
     private AddedGlusterServersParameters params;
-    private VDSBrokerFrontend vdsBrokerFrontend;
-    private BackendInternal backendInternal;
-    private VdsDao vdsDaoMock;
     private ClusterDao clusterDaoMock;
-    private GlusterDBUtils dbUtils;
-    private ClusterUtils clusterUtils;
 
     private static final String CLUSTER_NAME = "default";
     private static final String TEST_SERVER1 = "test_server1";
@@ -123,12 +118,12 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     }
 
     private void setupMock() throws Exception {
-        vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
-        clusterUtils = mock(ClusterUtils.class);
-        vdsDaoMock = mock(VdsDao.class);
+        VDSBrokerFrontend vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
+        ClusterUtils clusterUtils = mock(ClusterUtils.class);
+        VdsDao vdsDaoMock = mock(VdsDao.class);
         clusterDaoMock = mock(ClusterDao.class);
-        dbUtils = mock(GlusterDBUtils.class);
-        backendInternal = mock(BackendInternal.class);
+        GlusterDBUtils dbUtils = mock(GlusterDBUtils.class);
+        BackendInternal backendInternal = mock(BackendInternal.class);
 
         doReturn(vdsBrokerFrontend).when(getQuery()).getVdsBroker();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
