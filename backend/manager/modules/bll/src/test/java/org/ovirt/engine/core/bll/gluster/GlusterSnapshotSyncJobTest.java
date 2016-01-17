@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -135,9 +136,9 @@ public class GlusterSnapshotSyncJobTest {
                         argThat(snapshotInfoParam()));
         when(volumeDao.getById(any(Guid.class))).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         syncJob.refreshSnapshotList();
-        Mockito.verify(snapshotDao, times(1)).saveAll(any(List.class));
-        Mockito.verify(snapshotDao, times(1)).removeAll(any(List.class));
-        Mockito.verify(snapshotDao, times(1)).updateAllInBatch(any(List.class));
+        Mockito.verify(snapshotDao, times(1)).saveAll(anyListOf(GlusterVolumeSnapshotEntity.class));
+        Mockito.verify(snapshotDao, times(1)).removeAll(anyListOf(Guid.class));
+        Mockito.verify(snapshotDao, times(1)).updateAllInBatch(anyListOf(GlusterVolumeSnapshotEntity.class));
     }
 
     @Test
