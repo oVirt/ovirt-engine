@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -658,11 +658,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private Set<Guid> getStorageGuidSet() {
-        Set<Guid> destImageDomains = new HashSet<>();
-        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            destImageDomains.add(diskImage.getStorageIds().get(0));
-        }
-        return destImageDomains;
+        return diskInfoDestinationMap.values().stream().map(d -> d.getStorageIds().get(0)).collect(Collectors.toSet());
     }
 
     /**
@@ -1040,17 +1036,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<>();
-
-        for (DiskImage disk : getVm().getDiskList()) {
-            list.add(new QuotaStorageConsumptionParameter(
-                    getQuotaIdForDisk(disk),
-                    null,
-                    QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getStorageIds().get(0),
-                    (double)disk.getSizeInGigabytes()));
-        }
-        return list;
+        return getVm().getDiskList()
+                .stream()
+                .map(disk -> new QuotaStorageConsumptionParameter(
+                        getQuotaIdForDisk(disk),
+                        null,
+                        QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
+                        disk.getStorageIds().get(0),
+                        (double) disk.getSizeInGigabytes()))
+                .collect(Collectors.toList());
     }
 
     private Guid getQuotaId() {
