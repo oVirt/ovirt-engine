@@ -800,7 +800,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                             break;
                         }
                     }
-                    if (containsSelectBondingOpt == false) {
+                    if (!containsSelectBondingOpt) {
                         if (Objects.equals(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption())) {
                             selectBondingOpt = defaultItem;
                         }
@@ -926,7 +926,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                                     break;
                                 }
                             }
-                            if (containsSelectBondingOpt == false) {
+                            if (!containsSelectBondingOpt) {
                                 if (Objects.equals(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption())) {
                                     selectBondingOpt = defaultItem;
                                 }
@@ -964,7 +964,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             if (!model.validate()) {
                 return;
             }
-            if (model.getCheckConnectivity().getEntity() == true) {
+            if (model.getCheckConnectivity().getEntity()) {
                 onEditManagementNetwork();
                 return;
             }
@@ -974,7 +974,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             if (!model.validate()) {
                 return;
             }
-            if (model.getCheckConnectivity().getEntity() == true) {
+            if (model.getCheckConnectivity().getEntity()) {
                 onBond();
                 return;
             }
@@ -1003,7 +1003,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         HostManagementNetworkModel model = (HostManagementNetworkModel) getWindow();
         if (getConfirmWindow() != null) {
             ConfirmationModel confirmModel = (ConfirmationModel) getConfirmWindow();
-            if (confirmModel.getLatch().getEntity() == true) {
+            if (confirmModel.getLatch().getEntity()) {
                 model.getCheckConnectivity().setEntity(true);
             }
         }
@@ -1040,7 +1040,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 }
             }
         }
-        if (nic.getBonded() == null || nic.getBonded() == false) {
+        if (nic.getBonded() == null || !nic.getBonded()) {
             parameters.setBondingOptions(null);
         }
 
@@ -1301,7 +1301,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
         if (getConfirmWindow() != null) {
             ConfirmationModel confirmModel = (ConfirmationModel) getConfirmWindow();
-            if (confirmModel.getLatch().getEntity() == true) {
+            if (confirmModel.getLatch().getEntity()) {
                 model.getCheckConnectivity().setEntity(true);
             }
             cancelConfirm();
