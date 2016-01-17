@@ -28,9 +28,6 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         extends AbstractUserQueryTest<IdQueryParameters,
         GetAllVmSnapshotsByVmIdQuery<IdQueryParameters>> {
 
-    /** The {@link SnapshotDao} mocked for the test */
-    private SnapshotDao snapshotDaoMock;
-
     /** The ID of the VM the disks belong to */
     private Guid vmId;
 
@@ -53,7 +50,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
         // Disk Image Dao
-        snapshotDaoMock = mock(SnapshotDao.class);
+        SnapshotDao snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
         when(snapshotDaoMock.getAll(vmId, getUser().getId(), getQueryParameters().isFiltered()))
                 .thenReturn(Arrays.asList(snapshot));
