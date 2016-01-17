@@ -59,10 +59,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         unpluggedDisk = createDiskImage(true);
         pluggedDiskSnapshot = createDiskImage(false);
         pluggedDiskSnapshot.setVmSnapshotId(snapshotId);
-        pluggedDiskSnapshot.setActive(false);
         unpluggedDiskSnapshot = createDiskImage(false);
         unpluggedDiskSnapshot.setVmSnapshotId(snapshotId);
-        unpluggedDiskSnapshot.setActive(false);
         setUpDaoMocks();
     }
 
@@ -126,11 +124,11 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
 
     private DiskImage createDiskImage(boolean active) {
         DiskImage di = new DiskImage();
-        di.setActive(true);
         di.setId(Guid.newGuid());
         di.setImageId(Guid.newGuid());
         di.setParentId(Guid.newGuid());
         di.setImageStatus(ImageStatus.OK);
+        di.setActive(active);
         return di;
     }
 
