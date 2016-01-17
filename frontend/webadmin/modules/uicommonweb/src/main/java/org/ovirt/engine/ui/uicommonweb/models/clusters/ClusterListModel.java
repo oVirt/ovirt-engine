@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -127,19 +125,6 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
 
     private void setAddMultipleHostsCommand(UICommand value) {
         privateAddMultipleHostsCommand = value;
-    }
-
-    protected Object[] getSelectedKeys() {
-        if (getSelectedItems() == null) {
-            return new Object[0];
-        }
-        else {
-            ArrayList<Object> items = new ArrayList<>();
-            for (Cluster cluster : getSelectedItems()) {
-                items.add(cluster.getId());
-            }
-            return items.toArray(new Object[] {});
-        }
     }
 
     private Object privateGuideContext;
@@ -608,18 +593,6 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         }
     }
 
-    private ServerCpu getClusterServerCpu(ClusterModel model, Cluster cluster) {
-        ServerCpu retVal = null;
-        for (ServerCpu cpu : model.getCPU().getItems()) {
-            if (Objects.equals(cpu.getCpuName(), cluster.getCpuName())) {
-                retVal = cpu;
-                break;
-            }
-        }
-
-        return retVal;
-    }
-
     private void onSaveConfirmGenericWarnings() {
         ClusterModel model = (ClusterModel) getWindow();
         cancelConfirmation();
@@ -645,21 +618,6 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, Clust
         }), model.getClusterId(), cluster);
     }
 
-    private void cpuLevelConfirmationWindow(String message) {
-        ConfirmationModel confirmModel = new ConfirmationModel();
-        setConfirmWindow(confirmModel);
-        confirmModel.setTitle(ConstantsManager.getInstance()
-                .getConstants()
-                .changeCpuLevel());
-        confirmModel.setHelpTag(HelpTag.change_cpu_level);
-        confirmModel.setHashName("change_cpu_level"); //$NON-NLS-1$
-        confirmModel.setMessage(message);
-
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
-        getConfirmWindow().getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
-        getConfirmWindow().getCommands().add(tempVar2);
-    }
     public void onPreSaveInternal(ClusterModel model) {
         if (model.getIsImportGlusterConfiguration().getEntity()) {
             fetchAndImportClusterHosts(model);
