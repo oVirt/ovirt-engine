@@ -8,13 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /**
- * A test case for {@link GetDataCentersWithPermittedActionOnClusters}.
+ * A test case for {@link GetVmTemplatesWithPermittedActionQuery}.
  * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
 public class GetVmTemplatesWithPermittedActionQueryTest
@@ -34,8 +33,8 @@ public class GetVmTemplatesWithPermittedActionQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<StoragePool> actual = (List<StoragePool>) getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VDS Groups", 1, actual.size());
-        assertEquals("Wrong VDS Groups", expected, actual.get(0));
+        List<VmTemplate> actual = getQuery().getQueryReturnValue().getReturnValue();
+        assertEquals("Wrong number of templates", 1, actual.size());
+        assertEquals("Wrong templates", expected, actual.get(0));
     }
 }
