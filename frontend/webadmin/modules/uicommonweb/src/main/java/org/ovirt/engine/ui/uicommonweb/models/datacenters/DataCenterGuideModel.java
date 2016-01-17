@@ -165,8 +165,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
-                        dataCenterGuideModel.clusters = clusters;
+                        dataCenterGuideModel.clusters = (ArrayList<Cluster>) returnValue;
                         dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }), getEntity().getId());
@@ -176,9 +175,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                 @Override
                                                                                 public void onSuccess(Object target, Object returnValue) {
                                                                                     DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                                                                                    ArrayList<StorageDomain> storageDomains =
-                                                                                            (ArrayList<StorageDomain>) returnValue;
-                                                                                    dataCenterGuideModel.allStorageDomains = storageDomains;
+                                                                                    dataCenterGuideModel.allStorageDomains = (ArrayList<StorageDomain>) returnValue;
                                                                                     dataCenterGuideModel.updateOptionsNonLocalFS();
                                                                                 }
                                                                             }));
@@ -188,9 +185,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<StorageDomain> storageDomains =
-                                (ArrayList<StorageDomain>) returnValue;
-                        dataCenterGuideModel.attachedStorageDomains = storageDomains;
+                        dataCenterGuideModel.attachedStorageDomains = (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }), getEntity().getId());
@@ -200,9 +195,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                                    @Override
                                                                                    public void onSuccess(Object target, Object returnValue) {
                                                                                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                                                                                       ArrayList<StorageDomain> storageDomains =
-                                                                                               (ArrayList<StorageDomain>) returnValue;
-                                                                                       dataCenterGuideModel.isoStorageDomains = storageDomains;
+                                                                                       dataCenterGuideModel.isoStorageDomains = (ArrayList<StorageDomain>) returnValue;
                                                                                        dataCenterGuideModel.updateOptionsNonLocalFS();
                                                                                    }
                                                                                }));
@@ -212,8 +205,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                                                        @Override
                                                                        public void onSuccess(Object target, Object returnValue) {
                                                                            DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                                                                           ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                                                                           dataCenterGuideModel.allHosts = hosts;
+                                                                           dataCenterGuideModel.allHosts = (ArrayList<VDS>) returnValue;
                                                                            dataCenterGuideModel.updateOptionsNonLocalFS();
                                                                        }
                                                                    }));
@@ -225,8 +217,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<Cluster> clusters = (ArrayList<Cluster>) returnValue;
-                        dataCenterGuideModel.clusters = clusters;
+                        dataCenterGuideModel.clusters = (ArrayList<Cluster>) returnValue;
                         dataCenterGuideModel.updateOptionsLocalFS();
                     }
                 }), getEntity().getId());
@@ -249,8 +240,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                                     public void onSuccess(Object target, Object returnValue) {
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                                         if (returnValue != null) {
-                                        VDS localStorageHost = (VDS) returnValue;
-                                        dataCenterGuideModel.localStorageHost = localStorageHost;
+                                            dataCenterGuideModel.localStorageHost = (VDS) returnValue;
                                         } else {
                                             noLocalStorageHost = true;
                                         }
@@ -310,9 +300,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
     }
 
     private void updateAddAndSelectHostAvailability(ArrayList<VDS> hosts, ArrayList<VDS> availableHosts) {
-        UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
-        tempVar.setIsExecutionAllowed(clusters.size() > 0);
-        UICommand addHostAction = tempVar;
+        UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
+        addHostAction.setIsExecutionAllowed(clusters.size() > 0);
 
         if (hosts.isEmpty()) {
             addHostAction.setTitle(DataCenterConfigureHostsAction);
@@ -455,12 +444,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             getCompulsoryActions().add(addClusterAction);
         }
         else {
-            UICommand tempVar6 = new UICommand("AddHost", this); //$NON-NLS-1$
-            tempVar6.setTitle(DataCenterConfigureHostsAction);
-            UICommand addHostAction = tempVar6;
-            UICommand tempVar7 = new UICommand("SelectHost", this); //$NON-NLS-1$
-            tempVar7.setTitle(DataCenterSelectHostsAction);
-            UICommand selectHost = tempVar7;
+            UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
+            addHostAction.setTitle(DataCenterConfigureHostsAction);
+            UICommand selectHost = new UICommand("SelectHost", this); //$NON-NLS-1$
+            selectHost.setTitle(DataCenterSelectHostsAction);
             boolean hasMaintenance3_0Host = false;
 
             Version version3_0 = new Version(3, 0);
@@ -485,9 +472,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                 selectHost.getExecuteProhibitionReasons().add(hasHostReason);
                 selectHost.setIsExecutionAllowed(false);
                 if (localStorageHost.getStatus() == VDSStatus.Up) {
-                    UICommand tempVar8 = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
-                    tempVar8.setTitle(ConstantsManager.getInstance().getConstants().addLocalStorageTitle());
-                    UICommand addLocalStorageAction = tempVar8;
+                    UICommand addLocalStorageAction = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
+                    addLocalStorageAction.setTitle(ConstantsManager.getInstance().getConstants().addLocalStorageTitle());
                     getOptionalActions().add(addLocalStorageAction);
                 }
 
