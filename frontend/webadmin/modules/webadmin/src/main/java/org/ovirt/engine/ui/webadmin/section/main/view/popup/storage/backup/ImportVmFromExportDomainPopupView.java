@@ -129,12 +129,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     private CustomSelectionCell customSelectionCellFormatType;
 
-    private CustomSelectionCell customSelectionCellStorageDomain;
-
-    private CustomSelectionCell customSelectionCellQuota;
-
-    private Column<DiskImage, String> storageDomainsColumn;
-
     private Column<DiskImage, String> quotaColumn;
 
     protected AbstractImageResourceColumn<Object> isObjectInSystemColumn;
@@ -566,10 +560,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void addStorageDomainsColumn() {
-        customSelectionCellStorageDomain = new CustomSelectionCell(new ArrayList<String>());
+        CustomSelectionCell customSelectionCellStorageDomain = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCellStorageDomain.setStyle(style.cellSelectBox());
 
-        storageDomainsColumn = new Column<DiskImage, String>(customSelectionCellStorageDomain) {
+        Column<DiskImage, String> storageDomainsColumn = new Column<DiskImage, String>(customSelectionCellStorageDomain) {
             @Override
             public String getValue(DiskImage disk) {
                 ImportDiskData importData = importModel.getDiskImportData(disk.getId());
@@ -621,7 +615,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             return;
         }
 
-        customSelectionCellQuota = new CustomSelectionCell(new ArrayList<String>());
+        CustomSelectionCell customSelectionCellQuota = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCellQuota.setStyle(style.cellSelectBox());
 
         quotaColumn = new Column<DiskImage, String>(customSelectionCellQuota) {
