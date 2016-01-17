@@ -148,9 +148,7 @@ public class UserPortalTemplateListModel extends TemplateListModel {
             if (baseNameComparison != 0) {
                 return baseNameComparison;
             }
-            final int versionComparison =
-                    - Integer.signum(Integer.compare(t1.getTemplateVersionNumber(), t2.getTemplateVersionNumber()));
-            return versionComparison;
+            return - Integer.signum(Integer.compare(t1.getTemplateVersionNumber(), t2.getTemplateVersionNumber()));
         }
 
         @Override
