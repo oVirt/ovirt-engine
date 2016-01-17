@@ -703,8 +703,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean isVmRunningOnNonDefaultVds() {
-        return getVm().getDedicatedVmForVdsList().isEmpty() == false
-                && getVm().getDedicatedVmForVdsList().contains(getVm().getRunOnVds()) == false;
+        return !getVm().getDedicatedVmForVdsList().isEmpty()
+                && !getVm().getDedicatedVmForVdsList().contains(getVm().getRunOnVds());
     }
 
     /**
@@ -810,10 +810,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean isPayloadExists(VmDeviceType deviceType) {
-        if (getVm().getVmPayload() != null && getVm().getVmPayload().getDeviceType().equals(deviceType)) {
-            return true;
-        }
-        return false;
+        return getVm().getVmPayload() != null && getVm().getVmPayload().getDeviceType().equals(deviceType);
     }
 
     protected void loadPayloadDevice() {
