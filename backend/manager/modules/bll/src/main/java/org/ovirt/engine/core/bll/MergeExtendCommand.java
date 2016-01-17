@@ -21,9 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class MergeExtendCommand<T extends MergeParameters>
         extends CommandBase<T> {
-    public MergeExtendCommand(T parameters) {
-        super(parameters);
-    }
 
     public MergeExtendCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

@@ -13,10 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class RemoveCinderDiskVolumeCommand<T extends RemoveCinderDiskVolumeParameters> extends RemoveImageCommand<T> {
     private Guid storageDomainId;
 
-    public RemoveCinderDiskVolumeCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveCinderDiskVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

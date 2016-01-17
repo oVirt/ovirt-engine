@@ -93,7 +93,7 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     private RemoveQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters();
         param.setQuotaId(generalGuidQuota);
-        command = spy(new RemoveQuotaCommand(param));
+        command = spy(new RemoveQuotaCommand(param, null));
         doReturn(storagePoolDao).when(command).getStoragePoolDao();
         doReturn(quotaDao).when(command).getQuotaDao();
         doReturn(vmDao).when(command).getVmDao();

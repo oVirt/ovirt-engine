@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -34,8 +35,8 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
         super(commandId);
     }
 
-    public RecoveryStoragePoolCommand(ReconstructMasterParameters parameters) {
-        super(parameters);
+    public RecoveryStoragePoolCommand(ReconstructMasterParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -12,10 +12,6 @@ public class RemoveStorageServerConnectionExtensionCommand<T extends IdParameter
 
     private StorageServerConnectionExtension connExt;
 
-    public RemoveStorageServerConnectionExtensionCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveStorageServerConnectionExtensionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

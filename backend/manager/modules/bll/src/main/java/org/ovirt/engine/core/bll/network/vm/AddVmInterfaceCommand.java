@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -28,8 +29,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
     private MacPoolManagerStrategy macPool;
 
-    public AddVmInterfaceCommand(T parameters) {
-        super(parameters);
+    public AddVmInterfaceCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

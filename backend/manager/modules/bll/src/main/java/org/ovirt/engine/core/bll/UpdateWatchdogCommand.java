@@ -9,10 +9,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
-    public UpdateWatchdogCommand(WatchdogParameters parameters) {
-        this(parameters, null);
-    }
-
     public UpdateWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

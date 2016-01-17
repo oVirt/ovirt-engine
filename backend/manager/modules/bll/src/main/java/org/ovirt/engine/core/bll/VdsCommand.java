@@ -62,10 +62,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         super(commandId);
     }
 
-    public VdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public VdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());

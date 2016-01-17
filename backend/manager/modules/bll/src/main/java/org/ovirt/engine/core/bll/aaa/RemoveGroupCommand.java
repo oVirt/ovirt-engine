@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -18,8 +19,8 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
         super(commandId);
     }
 
-    public RemoveGroupCommand(T parameters) {
-        super(parameters);
+    public RemoveGroupCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

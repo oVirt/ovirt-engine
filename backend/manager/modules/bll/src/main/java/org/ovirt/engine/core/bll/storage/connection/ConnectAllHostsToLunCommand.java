@@ -34,10 +34,6 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         super(parameters, commandContext);
     }
 
-    public ConnectAllHostsToLunCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public static class ConnectAllHostsToLunCommandReturnValue extends VdcReturnValueBase {
         private VDS failedVds;
         private LUNs failedLun;

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
@@ -41,9 +42,8 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     private OpenStackImageProviderProxy providerProxy;
 
-    public ImportRepoImageCommand(T parameters) {
-        super(parameters);
-
+    public ImportRepoImageCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         getParameters().setCommandType(getActionType());
     }
 

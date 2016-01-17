@@ -81,7 +81,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
     private StartRemoveGlusterVolumeBricksCommand createTestCommand(Guid volumeId, int replicaCount) {
         return new StartRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeId,
                 getBricks(volumeId, 1),
-                replicaCount));
+                replicaCount), null);
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {

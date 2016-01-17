@@ -9,10 +9,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @InternalCommandAttribute
 public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
-    public UpdateRngDeviceCommand(RngDeviceParameters parameters) {
-        this(parameters, null);
-    }
-
     public UpdateRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

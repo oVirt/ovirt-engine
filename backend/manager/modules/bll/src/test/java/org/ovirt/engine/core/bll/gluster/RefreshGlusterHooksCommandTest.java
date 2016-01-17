@@ -62,7 +62,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommand() {
-        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID), null));
         setupMocks();
         doNothing().when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
         cmd.executeCommand();
@@ -71,7 +71,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID), null));
         setupMocks();
         doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
         try {
@@ -85,7 +85,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(CLUSTER_ID), null));
         setupMocks();
         doReturn(getServer()).when(cmd).getUpServer();
         assertTrue(cmd.validate());
@@ -93,7 +93,7 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsOnNullCluster() {
-        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(null)));
+        cmd = spy(new RefreshGlusterHooksCommand<>(new GlusterClusterParameters(null), null));
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString()));
     }

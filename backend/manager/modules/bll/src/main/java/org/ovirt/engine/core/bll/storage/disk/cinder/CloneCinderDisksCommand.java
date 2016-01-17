@@ -31,10 +31,6 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class CloneCinderDisksCommand<T extends CloneCinderDisksParameters> extends CommandBase<T> {
 
-    public CloneCinderDisksCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public CloneCinderDisksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

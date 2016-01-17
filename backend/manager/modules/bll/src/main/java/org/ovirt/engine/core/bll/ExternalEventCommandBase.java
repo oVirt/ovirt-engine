@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -16,8 +17,8 @@ public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase
         super();
     }
 
-    public ExternalEventCommandBase(T parameters) {
-        super(parameters);
+    public ExternalEventCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public ExternalEventCommandBase(Guid commandId) {

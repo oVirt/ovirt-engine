@@ -59,10 +59,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         return lockProperties.withScope(scope);
     }
 
-    public DeactivateStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public DeactivateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

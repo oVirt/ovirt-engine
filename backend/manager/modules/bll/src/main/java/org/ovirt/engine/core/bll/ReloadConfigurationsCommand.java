@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 @NonTransactiveCommandAttribute
 public class ReloadConfigurationsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    public ReloadConfigurationsCommand(T parameters) {
-        super(parameters);
+    public ReloadConfigurationsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

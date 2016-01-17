@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
-    public VmLogonCommand(T parameters) {
-        super(parameters, null);
-    }
-
     public VmLogonCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

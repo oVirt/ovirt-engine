@@ -34,9 +34,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters> extends StorageDomainCommandBase<T> {
-    public RemoveStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public RemoveStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

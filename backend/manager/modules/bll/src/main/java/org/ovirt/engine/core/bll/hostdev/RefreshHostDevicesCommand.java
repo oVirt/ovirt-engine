@@ -52,10 +52,6 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
 
     private Map<String, HostDevice> fetchedMap;
 
-    public RefreshHostDevicesCommand(T parameters) {
-        super(parameters);
-    }
-
     public RefreshHostDevicesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSPa
 @InternalCommandAttribute
 public class DisableGlusterCliSnapshotScheduleInternalCommand<T extends GlusterVolumeActionParameters> extends GlusterVolumeCommandBase<T> {
 
-    public DisableGlusterCliSnapshotScheduleInternalCommand(T parameters) {
-        super(parameters, null);
-    }
-
     public DisableGlusterCliSnapshotScheduleInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

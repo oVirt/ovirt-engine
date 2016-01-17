@@ -16,10 +16,6 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     @Inject
     private ResourceManager resourceManager;
 
-    public HostEnrollCertificateInternalCommand(VdsActionParameters parameters) {
-        super(parameters);
-    }
-
     public HostEnrollCertificateInternalCommand(VdsActionParameters parameters, CommandContext context) {
         super(parameters, context);
     }

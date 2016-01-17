@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.io.File;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
     private String cdImagePath;
 
-    public ChangeFloppyCommand(T parameters) {
-        super(parameters);
+    public ChangeFloppyCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         cdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
     }
 

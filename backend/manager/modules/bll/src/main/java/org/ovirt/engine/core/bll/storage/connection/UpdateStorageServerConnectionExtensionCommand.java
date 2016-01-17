@@ -13,10 +13,6 @@ import org.ovirt.engine.core.common.utils.Pair;
  */
 public class UpdateStorageServerConnectionExtensionCommand <T extends StorageServerConnectionExtensionParameters> extends StorageServerConnectionExtensionCommandBase<T> {
 
-    public UpdateStorageServerConnectionExtensionCommand(T parameters) {
-        super(parameters);
-    }
-
     public UpdateStorageServerConnectionExtensionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

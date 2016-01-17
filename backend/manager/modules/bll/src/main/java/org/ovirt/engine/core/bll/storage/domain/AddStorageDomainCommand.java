@@ -43,9 +43,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         StorageDomainManagementCommandBase<T> {
-    protected AddStorageDomainCommand(T parameters) {
-        super(parameters);
-    }
 
     protected AddStorageDomainCommand(Guid commandId) {
         super(commandId);

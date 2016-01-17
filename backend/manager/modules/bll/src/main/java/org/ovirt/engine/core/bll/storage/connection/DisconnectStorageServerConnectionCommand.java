@@ -15,10 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class DisconnectStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
 
-    public DisconnectStorageServerConnectionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public DisconnectStorageServerConnectionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

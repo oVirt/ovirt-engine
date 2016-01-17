@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.SetSesssionSoftLimitCommandParameters;
 
@@ -14,8 +15,8 @@ public class SetSesssionSoftLimitCommand<T extends SetSesssionSoftLimitCommandPa
     @Inject
     private SessionDataContainer sessionDataContainer;
 
-    public SetSesssionSoftLimitCommand(T params) {
-        super(params);
+    public SetSesssionSoftLimitCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

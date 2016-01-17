@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -54,12 +55,12 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             "protocol");
     private VdcActionType actionType;
 
-    public UpdateVdsCommand(T parameters) {
-        this(parameters, VdcActionType.InstallVdsInternal);
+    public UpdateVdsCommand(T parameters, CommandContext cmdContext) {
+        this(parameters, cmdContext, VdcActionType.InstallVdsInternal);
     }
 
-    public UpdateVdsCommand(T parameters, VdcActionType actionType) {
-        super(parameters);
+    public UpdateVdsCommand(T parameters, CommandContext commandContext, VdcActionType actionType) {
+        super(parameters, commandContext);
         this.actionType = actionType;
     }
 

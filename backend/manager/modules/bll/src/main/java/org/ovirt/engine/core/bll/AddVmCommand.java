@@ -134,10 +134,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
     private MacPoolManagerStrategy macPool;
 
-    public AddVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected AddVmCommand(Guid commandId) {
         super(commandId);
     }

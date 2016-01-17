@@ -41,8 +41,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     private GlusterVolumeEntity volume;
 
-    public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params) {
-        super(params);
+    public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params, CommandContext commandContext) {
+        super(params, commandContext);
         volume = getParameters().getVolume();
 
         if (volume != null) {

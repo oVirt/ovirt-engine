@@ -15,9 +15,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 @NonTransactiveCommandAttribute
 public class RefreshVolumeCommand<T extends RefreshVolumeParameters>
         extends CommandBase<T> {
-    public RefreshVolumeCommand(T parameters) {
-        super(parameters);
-    }
 
     public RefreshVolumeCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

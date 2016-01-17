@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
@@ -22,8 +23,9 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 public class DeleteGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCommandBase<GlusterVolumeSnapshotActionParameters> {
     private List<GlusterGeoRepSession> georepSessions;
 
-    public DeleteGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params) {
-        super(params);
+    public DeleteGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }
 

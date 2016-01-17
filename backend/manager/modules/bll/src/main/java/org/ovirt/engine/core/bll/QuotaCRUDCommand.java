@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -15,8 +16,8 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     private Quota quota;
 
-    public QuotaCRUDCommand(QuotaCRUDParameters parameters) {
-        super(parameters);
+    public QuotaCRUDCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public Quota getQuota() {

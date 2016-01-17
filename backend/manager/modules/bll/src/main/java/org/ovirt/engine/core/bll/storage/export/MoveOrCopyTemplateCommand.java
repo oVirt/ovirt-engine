@@ -78,10 +78,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         super(commandId);
     }
 
-    public MoveOrCopyTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public MoveOrCopyTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -17,10 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
 
-    public AttachActionGroupsToRoleCommand(T params) {
-        this(params, null);
-    }
-
     public AttachActionGroupsToRoleCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

@@ -38,10 +38,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     private int memoryToConsume;
 
-    public HotSetAmountOfMemoryCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public HotSetAmountOfMemoryCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         memoryToConsume = getParameters().getVm().getMemSizeMb() - getVm().getMemSizeMb();

@@ -134,10 +134,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super(commandId);
     }
 
-    public RunVmCommand(T runVmParams) {
-        this(runVmParams, null);
-    }
-
     public RunVmCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));

@@ -2,14 +2,15 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import java.util.Date;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddLibvirtSecretCommand extends LibvirtSecretCommandBase {
 
-    public AddLibvirtSecretCommand(LibvirtSecretParameters parameters) {
-        super(parameters);
+    public AddLibvirtSecretCommand(LibvirtSecretParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

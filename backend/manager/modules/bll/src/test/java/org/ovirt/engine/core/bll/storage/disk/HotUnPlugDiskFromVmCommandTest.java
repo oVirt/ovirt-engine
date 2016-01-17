@@ -32,7 +32,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     @Override
     protected HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters> createCommand() {
-        return new HotUnPlugDiskFromVmCommand<>(createParameters());
+        return new HotUnPlugDiskFromVmCommand<>(createParameters(), null);
     }
 
     @Override

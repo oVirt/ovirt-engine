@@ -42,7 +42,7 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
     private GlusterVolumeRemoveBricksCommand createTestCommand(Guid volumeId, int replicaCount) {
         return new GlusterVolumeRemoveBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeId,
                 getBricks(volumeId, 1),
-                replicaCount));
+                replicaCount), null);
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {

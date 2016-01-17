@@ -30,10 +30,6 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         super(commandId);
     }
 
-    public AddRoleWithActionGroupsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddRoleWithActionGroupsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

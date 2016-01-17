@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
 
-    public UpdateVmNumaNodesCommand(T parameters) {
-        super(parameters);
+    public UpdateVmNumaNodesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

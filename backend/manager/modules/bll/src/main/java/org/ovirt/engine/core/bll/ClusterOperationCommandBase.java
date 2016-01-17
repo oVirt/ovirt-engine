@@ -36,10 +36,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     @Inject
     private SchedulingManager schedulingManager;
 
-    public ClusterOperationCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);
     }

@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesCommandBase<T> {
 
-    public RemoveRoleCommand(T parameters) {
-        super(parameters);
-
+    public RemoveRoleCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -13,8 +14,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveClusterCommand<T extends ClusterParametersBase> extends ClusterCommandBase<T> {
 
-    public RemoveClusterCommand(T parameters) {
-        super(parameters);
+    public RemoveClusterCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

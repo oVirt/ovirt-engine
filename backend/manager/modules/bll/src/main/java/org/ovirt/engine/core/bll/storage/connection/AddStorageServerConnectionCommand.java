@@ -25,10 +25,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         ConnectStorageToVdsCommand<T> {
 
-    public AddStorageServerConnectionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddStorageServerConnectionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

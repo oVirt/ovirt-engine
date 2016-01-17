@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSPa
 @NonTransactiveCommandAttribute
 public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGlusterServerParameters> {
 
-    public RemoveGlusterServerCommand(RemoveGlusterServerParameters params) {
-        super(params);
+    public RemoveGlusterServerCommand(RemoveGlusterServerParameters params, CommandContext commandContext) {
+        super(params, commandContext);
         setClusterId(getParameters().getClusterId());
         setVdsName(getParameters().getHostnameOrIp());
     }

@@ -21,21 +21,21 @@ public class StopGeoRepSessionCommandTest extends GeoRepSessionCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(startedVolumeId, geoRepSessionId)));
+        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(startedVolumeId, geoRepSessionId), null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId)));
+        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsIfStopped() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId)));
+        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId), null));
         prepareMocks(cmd);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.STOPPED)).when(geoRepDao).getById(geoRepSessionId);
         assertFalse(cmd.validate());
@@ -43,7 +43,7 @@ public class StopGeoRepSessionCommandTest extends GeoRepSessionCommandTest {
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(null, null)));
+        cmd = spy(new StopGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(null, null), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

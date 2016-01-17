@@ -45,7 +45,7 @@ public class UpdateRngDeviceTest extends BaseCommandTest {
         Mockito.when(clusterMock.get(clusterId)).thenReturn(cluster);
 
         RngDeviceParameters params = new RngDeviceParameters(dev, true);
-        UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params) {
+        UpdateRngDeviceCommand cmd = new UpdateRngDeviceCommand(params, null) {
             @Override
             public VmStaticDao getVmStaticDao() {
                 return vmDaoMock;

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -25,8 +26,8 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         super(commandId);
     }
 
-    public RemoveUserCommand(T parameters) {
-        super(parameters);
+    public RemoveUserCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

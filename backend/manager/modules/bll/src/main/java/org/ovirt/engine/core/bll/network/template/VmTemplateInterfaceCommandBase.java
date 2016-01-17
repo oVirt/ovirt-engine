@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -20,8 +21,8 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         super(commandId);
     }
 
-    public VmTemplateInterfaceCommandBase(T parameters) {
-        super(parameters);
+    public VmTemplateInterfaceCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

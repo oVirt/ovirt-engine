@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
@@ -26,8 +27,8 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
     private List<Guid> addedNetworks = new ArrayList<>();
     private Set<Guid> removedNetworks = new HashSet<>();
 
-    public EditIscsiBondCommand(T parameters) {
-        super(parameters);
+    public EditIscsiBondCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public EditIscsiBondCommand(Guid commandId) {

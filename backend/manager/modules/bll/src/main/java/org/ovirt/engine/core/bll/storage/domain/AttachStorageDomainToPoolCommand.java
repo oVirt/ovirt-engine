@@ -51,10 +51,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
 
-    public AttachStorageDomainToPoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AttachStorageDomainToPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

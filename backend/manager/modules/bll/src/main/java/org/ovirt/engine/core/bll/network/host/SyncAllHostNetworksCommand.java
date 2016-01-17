@@ -24,10 +24,6 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
 
-    public SyncAllHostNetworksCommand(VdsActionParameters parameters) {
-        super(parameters);
-    }
-
     public SyncAllHostNetworksCommand(VdsActionParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

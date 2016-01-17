@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.ChangeQuotaCommand;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -17,8 +18,8 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
     private DiskImage disk;
 
-    public ChangeQuotaForDiskCommand(ChangeQuotaParameters params) {
-        super(params);
+    public ChangeQuotaForDiskCommand(ChangeQuotaParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

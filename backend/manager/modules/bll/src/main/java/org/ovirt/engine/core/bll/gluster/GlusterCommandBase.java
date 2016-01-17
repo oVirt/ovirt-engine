@@ -43,10 +43,6 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected VDS upServer;
     private Network glusterNetwork;
 
-    public GlusterCommandBase(T params) {
-        this(params, null);
-    }
-
     public GlusterCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
     }

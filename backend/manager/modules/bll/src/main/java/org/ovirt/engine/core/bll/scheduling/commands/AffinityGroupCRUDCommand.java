@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -23,8 +24,8 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     AffinityGroup affinityGroup = null;
 
-    public AffinityGroupCRUDCommand(AffinityGroupCRUDParameters parameters) {
-        super(parameters);
+    public AffinityGroupCRUDCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         if (getAffinityGroup() != null) {
             setClusterId(getAffinityGroup().getClusterId());
             addCustomValue("affinityGroupName", getAffinityGroup().getName());

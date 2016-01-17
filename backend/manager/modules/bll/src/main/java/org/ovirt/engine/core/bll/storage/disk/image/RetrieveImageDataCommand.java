@@ -13,10 +13,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 @InternalCommandAttribute
 public class RetrieveImageDataCommand<T extends RetrieveImageDataParameters> extends ImageSpmCommand<T> {
 
-    public RetrieveImageDataCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RetrieveImageDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

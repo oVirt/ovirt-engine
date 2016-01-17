@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.connection.iscsibond;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -16,8 +17,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseIscsiBondCommand<T> {
 
-    public AddIscsiBondCommand(T parameters) {
-        super(parameters);
+    public AddIscsiBondCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public AddIscsiBondCommand(Guid commandId) {

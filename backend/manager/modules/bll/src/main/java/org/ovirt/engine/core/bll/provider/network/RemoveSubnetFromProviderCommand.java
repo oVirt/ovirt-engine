@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -23,10 +24,9 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
 
     private Provider<?> provider;
 
-    public RemoveSubnetFromProviderCommand(T parameters) {
-        super(parameters);
+    public RemoveSubnetFromProviderCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
-
 
     private Provider<?> getProvider() {
         if (provider == null) {

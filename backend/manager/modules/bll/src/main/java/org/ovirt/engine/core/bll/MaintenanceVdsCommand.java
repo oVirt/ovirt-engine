@@ -43,10 +43,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     @Inject
     private SchedulingManager schedulingManager;
 
-    public MaintenanceVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public MaintenanceVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         _isInternal = parameters.getIsInternal();

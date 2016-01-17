@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -23,8 +24,8 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         super(commandId);
     }
 
-    public AddSANStorageDomainCommand(T parameters) {
-        super(parameters);
+    public AddSANStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

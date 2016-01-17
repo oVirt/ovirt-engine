@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -55,8 +56,8 @@ implements QuotaStorageDependent {
         super(cmdId);
     }
 
-    protected ImportVmFromExternalProviderCommand(T parameters) {
-        super(parameters, null);
+    public ImportVmFromExternalProviderCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

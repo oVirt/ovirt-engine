@@ -32,10 +32,6 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     private NetworkClustersToSetupNetworksParametersTransformerFactory
             networkClustersToSetupNetworksParametersTransformerFactory;
 
-    public PropagateLabeledNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters) {
-        super(parameters);
-    }
-
     public PropagateLabeledNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

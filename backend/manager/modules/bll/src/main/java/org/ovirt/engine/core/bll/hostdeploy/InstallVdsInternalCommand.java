@@ -43,10 +43,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     @Inject
     private ResourceManager resourceManager;
 
-    public InstallVdsInternalCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public InstallVdsInternalCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

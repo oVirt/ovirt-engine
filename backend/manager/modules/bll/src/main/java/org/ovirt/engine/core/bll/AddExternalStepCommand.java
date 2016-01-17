@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 public class AddExternalStepCommand <T extends AddExternalStepParameters> extends AddStepCommand<T>{
 
 
-    public AddExternalStepCommand(T parameters) {
-        super(parameters);
+    public AddExternalStepCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

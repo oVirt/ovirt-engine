@@ -75,10 +75,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private Network oldNetwork;
 
-    public UpdateNetworkCommand(T parameters) {
-        super(parameters);
-    }
-
     public UpdateNetworkCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

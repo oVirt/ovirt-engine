@@ -39,6 +39,10 @@ public final class CommandContext implements Cloneable {
         this.engineContext = engineContext;
     }
 
+    public static CommandContext createContext(String sessionId) {
+        return new CommandContext(new EngineContext().withSessionId(sessionId)).withoutExecutionContext();
+    }
+
     public EngineContext getEngineContext() {
         return engineContext;
     }

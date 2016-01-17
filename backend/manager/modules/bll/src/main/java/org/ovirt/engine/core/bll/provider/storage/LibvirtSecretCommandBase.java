@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,8 +22,8 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
 
     private StorageDomain storageDomain;
 
-    public LibvirtSecretCommandBase(LibvirtSecretParameters parameters) {
-        super(parameters);
+    public LibvirtSecretCommandBase(LibvirtSecretParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected LibvirtSecretDao getLibvirtSecretDao() {

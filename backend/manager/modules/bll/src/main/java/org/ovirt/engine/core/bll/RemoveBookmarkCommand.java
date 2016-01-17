@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends BookmarkCommandBase<T> {
-    public RemoveBookmarkCommand(T parameters) {
-        super(parameters);
+
+    public RemoveBookmarkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

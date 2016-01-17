@@ -13,10 +13,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @NonTransactiveCommandAttribute
 public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVdsInternalCommand<T> {
 
-    public ApproveVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ApproveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

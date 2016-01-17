@@ -26,6 +26,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -213,7 +214,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private void initCommand(OvfEntityData resultOvfEntityData) {
         ImportVmParameters parameters = createParametersWhenImagesExistOnTargetStorageDomain();
         initUnregisteredOVFData(resultOvfEntityData);
-        cmd = spy(new ImportVmFromConfigurationCommand<ImportVmParameters>(parameters) {
+        cmd = spy(new ImportVmFromConfigurationCommand<ImportVmParameters>(
+                parameters, CommandContext.createContext(parameters.getSessionId())) {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override

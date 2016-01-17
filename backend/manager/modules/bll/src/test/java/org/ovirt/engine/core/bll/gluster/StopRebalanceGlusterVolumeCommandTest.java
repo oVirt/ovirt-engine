@@ -226,7 +226,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     private StopRebalanceGlusterVolumeCommand createTestCommand(Guid volumeId) {
         return new StopRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(volumeId,
                 false,
-                false));
+                false), null);
     }
 
     @Test

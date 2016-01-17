@@ -30,10 +30,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         getParameters().setCommandType(getActionType());
     }
 
-    public AddImageFromScratchCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddImageFromScratchCommand(Guid commandId) {
         super(commandId);
     }

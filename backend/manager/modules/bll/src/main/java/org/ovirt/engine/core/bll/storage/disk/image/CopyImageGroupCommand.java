@@ -36,10 +36,6 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         super(parameters, cmdContext);
     }
 
-    public CopyImageGroupCommand(T parameters) {
-        this(parameters, null);
-    }
-
     private DiskImage diskImage;
 
     @Override

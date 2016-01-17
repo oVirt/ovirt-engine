@@ -94,7 +94,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
                 bricks,
                 replicaCount,
                 stripeCount,
-                force));
+                force), null);
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {

@@ -40,10 +40,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
 
-    public AddVmFromTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddVmFromTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

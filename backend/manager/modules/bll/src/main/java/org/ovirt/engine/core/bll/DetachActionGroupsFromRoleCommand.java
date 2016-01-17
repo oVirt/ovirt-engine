@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
 
-    public DetachActionGroupsFromRoleCommand(T params) {
-        super(params);
+    public DetachActionGroupsFromRoleCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

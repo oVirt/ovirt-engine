@@ -13,10 +13,6 @@ public class AddNFSStorageDomainCommand<T extends StorageDomainManagementParamet
         super(commandId);
     }
 
-    public AddNFSStorageDomainCommand(T parameters) {
-        super(parameters);
-    }
-
     public AddNFSStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

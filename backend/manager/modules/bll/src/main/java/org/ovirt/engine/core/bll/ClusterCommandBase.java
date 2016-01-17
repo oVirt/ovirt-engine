@@ -20,10 +20,6 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
 
     private Cluster cluster;
 
-    protected ClusterCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected ClusterCommandBase(Guid commandId) {
         super(commandId);
     }

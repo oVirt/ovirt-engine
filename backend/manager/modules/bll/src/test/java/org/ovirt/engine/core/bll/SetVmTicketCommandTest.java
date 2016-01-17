@@ -14,7 +14,7 @@ public class SetVmTicketCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        command = new SetVmTicketCommand<>(new SetVmTicketParameters());
+        command = new SetVmTicketCommand<>(new SetVmTicketParameters(), null);
     }
 
     /**

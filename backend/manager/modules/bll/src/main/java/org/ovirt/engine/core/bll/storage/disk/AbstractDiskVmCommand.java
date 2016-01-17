@@ -61,10 +61,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     @Inject
     private VmDao vmDao;
 
-    public AbstractDiskVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);
     }

@@ -48,10 +48,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     @Inject
     private ResourceManager resourceManager;
 
-    public VdsNotRespondingTreatmentCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

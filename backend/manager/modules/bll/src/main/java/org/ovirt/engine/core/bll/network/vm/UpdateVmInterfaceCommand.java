@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
@@ -42,8 +43,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private boolean macShouldBeChanged;
     private RequiredAction requiredAction = null;
 
-    public UpdateVmInterfaceCommand(T parameters) {
-        super(parameters);
+    public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVmId(parameters.getVmId());
     }
 

@@ -93,8 +93,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         super(commandId);
     }
 
-    public CommonVmPoolWithVmsCommand(T parameters) {
-        super(parameters);
+    public CommonVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmPool(parameters.getVmPool());
         setClusterId(parameters.getVmPool().getClusterId());
     }

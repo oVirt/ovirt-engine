@@ -21,10 +21,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase<T> {
 
-    public RemoveSnapshotSingleDiskCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

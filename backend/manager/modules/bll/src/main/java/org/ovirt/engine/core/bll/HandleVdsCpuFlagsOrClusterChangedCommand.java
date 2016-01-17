@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -27,8 +28,8 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     private boolean architectureMatch = true;
     private boolean foundCPU = true;
 
-    public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters) {
-        super(parameters);
+    public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

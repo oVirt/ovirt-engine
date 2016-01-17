@@ -33,10 +33,6 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         super(parameters, cmdContext);
     }
 
-    public RestoreFromSnapshotCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void executeCommand() {
         if (removeImages()) {

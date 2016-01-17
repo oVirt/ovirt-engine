@@ -350,7 +350,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         updateVmHandler();
 
         RunVmParams param = new RunVmParams(Guid.newGuid());
-        command = spy(new RunVmCommand<RunVmParams>(param) {
+        command = spy(new RunVmCommand<RunVmParams>(param, null) {
             @Override
             protected void loadPayloadDevice() {
             }

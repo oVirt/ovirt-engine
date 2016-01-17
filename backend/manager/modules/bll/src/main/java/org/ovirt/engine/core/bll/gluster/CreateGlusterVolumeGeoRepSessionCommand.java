@@ -35,10 +35,6 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     private Set<VDS> remoteServersSet;
     private VDS slaveHost;
 
-    public CreateGlusterVolumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params) {
-        this(params, null);
-    }
-
     public CreateGlusterVolumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
     }

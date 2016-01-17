@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,8 +20,8 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
     private T qos;
     private Guid qosId;
 
-    public QosCommandBase(QosParametersBase<T> parameters) {
-        super(parameters);
+    public QosCommandBase(QosParametersBase<T> parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         if (getQos() != null) {
             setStoragePoolId(getQos().getStoragePoolId());
             addCustomValue("QosName", getQos().getName());

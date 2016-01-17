@@ -15,10 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
 
-    public AddUserCommand(T params) {
-        this(params, null);
-    }
-
     public AddUserCommand(T params, CommandContext commandContext) {
         super(params, commandContext);
     }

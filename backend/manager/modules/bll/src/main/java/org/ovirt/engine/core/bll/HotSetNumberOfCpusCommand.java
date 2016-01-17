@@ -34,10 +34,6 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
     public static final String LOGABLE_FIELD_PREVIOUS_NUMBER_OF_CPUS = "previousNumberOfCpus";
     public static final String LOGABLE_FIELD_ERROR_MESSAGE = "ErrorMessage";
 
-    public HotSetNumberOfCpusCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public HotSetNumberOfCpusCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

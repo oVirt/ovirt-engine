@@ -26,7 +26,8 @@ public class ResetGlusterVolumeOptionsCommandTest extends BaseCommandTest {
     private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     private ResetGlusterVolumeOptionsCommand createTestCommand(Guid volumeId) {
-        return new ResetGlusterVolumeOptionsCommand(new ResetGlusterVolumeOptionsParameters(volumeId, null, false));
+        return new ResetGlusterVolumeOptionsCommand(
+                new ResetGlusterVolumeOptionsParameters(volumeId, null, false), null);
     }
 
     private void prepareMocks(ResetGlusterVolumeOptionsCommand command) {

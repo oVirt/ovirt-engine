@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -26,8 +27,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
-    public ForceRemoveStorageDomainCommand(T parameters) {
-        super(parameters);
+
+    public ForceRemoveStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

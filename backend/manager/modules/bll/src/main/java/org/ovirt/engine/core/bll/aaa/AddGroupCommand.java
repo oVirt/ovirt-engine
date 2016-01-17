@@ -16,10 +16,6 @@ import org.ovirt.engine.core.dao.DbGroupDao;
 public class AddGroupCommand<T extends AddGroupParameters>
     extends CommandBase<T> {
 
-    public AddGroupCommand(T params) {
-        this(params, null);
-    }
-
     public AddGroupCommand(T params, CommandContext commandContext) {
         super(params, commandContext);
     }

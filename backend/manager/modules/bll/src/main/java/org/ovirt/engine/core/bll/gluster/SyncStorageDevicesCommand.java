@@ -18,10 +18,6 @@ import org.ovirt.engine.core.di.Injector;
 
 public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParameter> extends VdsCommand<T> {
 
-    public SyncStorageDevicesCommand(T parameters) {
-        super(parameters);
-    }
-
     public SyncStorageDevicesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

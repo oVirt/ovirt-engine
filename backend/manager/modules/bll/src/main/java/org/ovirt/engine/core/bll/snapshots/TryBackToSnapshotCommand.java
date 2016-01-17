@@ -20,10 +20,6 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         super.setVmId(parameters.getContainerId());
     }
 
-    public TryBackToSnapshotCommand(T parameters) {
-        this(parameters, null);
-    }
-
     /**
      * Remove old image vm map.
      */

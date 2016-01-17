@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.numa.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -14,8 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> extends AbstractVmNumaNodeCommand<T> {
 
-    public AddVmNumaNodesCommand(T parameters) {
-        super(parameters);
+    public AddVmNumaNodesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

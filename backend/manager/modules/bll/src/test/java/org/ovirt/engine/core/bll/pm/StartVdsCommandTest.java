@@ -144,7 +144,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private void initCommand() {
         FenceVdsActionParameters params = new FenceVdsActionParameters();
         params.setVdsId(FENCECD_HOST_ID);
-        command = new StartVdsCommand<>(params);
+        command = new StartVdsCommand<>(params, null);
         command.setAuditLogDirector(auditLogDirector);
         command = spy(command);
         doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));

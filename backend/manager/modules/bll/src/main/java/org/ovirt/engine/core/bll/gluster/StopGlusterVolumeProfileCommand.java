@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -14,8 +15,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParamete
 @NonTransactiveCommandAttribute
 public class StopGlusterVolumeProfileCommand extends GlusterVolumeCommandBase<GlusterVolumeParameters> {
 
-    public StopGlusterVolumeProfileCommand(GlusterVolumeParameters params) {
-        super(params);
+    public StopGlusterVolumeProfileCommand(GlusterVolumeParameters params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

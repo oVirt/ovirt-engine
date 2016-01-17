@@ -20,10 +20,6 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         super(commandId);
     }
 
-    protected VmOperationCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected VmOperationCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

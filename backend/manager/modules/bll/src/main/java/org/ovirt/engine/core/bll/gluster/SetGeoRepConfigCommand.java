@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -16,8 +17,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeOptionVDSPa
 
 public class SetGeoRepConfigCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionConfigParameters> {
 
-    public SetGeoRepConfigCommand(GlusterVolumeGeoRepSessionConfigParameters params) {
-        super(params);
+    public SetGeoRepConfigCommand(GlusterVolumeGeoRepSessionConfigParameters params, CommandContext context) {
+        super(params, context);
         setGlusterVolumeId(getGeoRepSession().getMasterVolumeId());
     }
 

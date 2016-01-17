@@ -22,10 +22,6 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         super(parameters, commandContext);
     }
 
-    public AddWatchdogCommand(WatchdogParameters parameters) {
-        super(parameters);
-    }
-
     @Override
     protected void executeCommand() {
         VmDevice watchdogDevice = new VmDevice();

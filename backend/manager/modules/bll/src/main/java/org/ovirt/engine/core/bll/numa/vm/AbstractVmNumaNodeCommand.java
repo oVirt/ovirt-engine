@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -25,8 +26,8 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
 
     private List<VmNumaNode> vmNumaNodesForValidation;
 
-    public AbstractVmNumaNodeCommand(T parameters) {
-        super(parameters);
+    public AbstractVmNumaNodeCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected VdsNumaNodeDao getVdsNumaNodeDao() {

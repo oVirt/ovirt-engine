@@ -18,10 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessi
 @NonTransactiveCommandAttribute
 public class StopGeoRepSessionCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
-    public StopGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params) {
-        super(params);
-    }
-
     public StopGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
     }

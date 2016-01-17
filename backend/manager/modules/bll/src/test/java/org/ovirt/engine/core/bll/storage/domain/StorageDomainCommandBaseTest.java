@@ -191,7 +191,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     private static class TestStorageCommandBase extends StorageDomainCommandBase<StorageDomainParametersBase> {
 
         public TestStorageCommandBase(StorageDomainParametersBase parameters) {
-            super(parameters);
+            super(parameters, null);
         }
 
         @Override

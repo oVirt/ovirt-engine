@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -20,8 +21,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     @Inject
     private ResourceManager resourceManager;
 
-    public RebootVmCommand(T parameters) {
-        super(parameters);
+    public RebootVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

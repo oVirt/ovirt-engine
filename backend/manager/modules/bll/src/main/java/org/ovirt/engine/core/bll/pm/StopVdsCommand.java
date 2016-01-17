@@ -36,10 +36,6 @@ import org.slf4j.LoggerFactory;
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     private static final Logger log = LoggerFactory.getLogger(StopVdsCommand.class);
 
-    public StopVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public StopVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

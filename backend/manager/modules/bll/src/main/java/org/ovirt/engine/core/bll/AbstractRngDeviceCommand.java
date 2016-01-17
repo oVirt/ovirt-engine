@@ -57,10 +57,6 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         }
     }
 
-    public AbstractRngDeviceCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -74,8 +75,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         super(commandId);
     }
 
-    public AddVdsCommand(T parameters) {
-        super(parameters);
+    public AddVdsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setClusterId(parameters.getvds().getClusterId());
     }
 

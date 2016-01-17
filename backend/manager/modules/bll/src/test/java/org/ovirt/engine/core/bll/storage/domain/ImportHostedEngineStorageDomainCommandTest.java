@@ -88,7 +88,8 @@ public class ImportHostedEngineStorageDomainCommandTest {
     private HostedEngineHelper hostedEngineHelper;
     private StorageDomainManagementParameter parameters = new StorageDomainManagementParameter();
     @InjectMocks @Spy
-    private ImportHostedEngineStorageDomainCommand cmd = new ImportHostedEngineStorageDomainCommand(parameters);
+    private ImportHostedEngineStorageDomainCommand cmd = new ImportHostedEngineStorageDomainCommand(
+            parameters, CommandContext.createContext(parameters.getSessionId()));
     @Mock
     private BackendInternal backend;
     @Mock

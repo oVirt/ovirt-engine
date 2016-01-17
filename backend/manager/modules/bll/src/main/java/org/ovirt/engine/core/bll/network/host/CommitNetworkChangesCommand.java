@@ -9,9 +9,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 
 public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
-    public CommitNetworkChangesCommand(T param) {
-        this(param, null);
-    }
 
     public CommitNetworkChangesCommand(T param, CommandContext commandContext) {
         super(param, commandContext);

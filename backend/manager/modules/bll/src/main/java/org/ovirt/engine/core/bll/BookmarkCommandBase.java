@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
@@ -22,8 +23,8 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     private Bookmark bookmark;
     private String bookmarkName;
 
-    public BookmarkCommandBase(T parameters) {
-        super(parameters);
+    public BookmarkCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public BookmarkCommandBase() {

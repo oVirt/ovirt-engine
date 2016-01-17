@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -8,8 +9,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
 
-    public UpdateRoleCommand(T parameters) {
-        super(parameters);
+    public UpdateRoleCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

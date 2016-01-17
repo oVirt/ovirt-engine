@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -33,8 +34,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     // of the virtual machine:
     private boolean neededPermissions = false;
 
-    public SetVmTicketCommand(T parameters) {
-        super(parameters);
+    public SetVmTicketCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         ticket = parameters.getTicket();
     }
 

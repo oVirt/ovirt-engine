@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 public class RemoveStoragePoolCommandTest extends BaseCommandTest {
 
     private static RemoveStoragePoolCommand<StoragePoolParametersBase> createCommand(StoragePoolParametersBase param) {
-        return new RemoveStoragePoolCommand<>(param);
+        return new RemoveStoragePoolCommand<>(param, null);
     }
 
     @Test

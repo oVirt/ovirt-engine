@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
@@ -16,8 +17,8 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
     @Inject
     private VmDao vmDao;
 
-    public RemoveVnicProfileCommand(T parameters) {
-        super(parameters);
+    public RemoveVnicProfileCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

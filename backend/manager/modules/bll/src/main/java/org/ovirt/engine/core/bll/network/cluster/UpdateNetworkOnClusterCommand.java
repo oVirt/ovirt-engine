@@ -28,10 +28,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     private NetworkCluster oldNetworkCluster;
 
-    public UpdateNetworkOnClusterCommand(T parameters) {
-        super(parameters);
-    }
-
     public UpdateNetworkOnClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

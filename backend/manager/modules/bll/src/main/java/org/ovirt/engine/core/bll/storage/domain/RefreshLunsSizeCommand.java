@@ -42,10 +42,6 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         super(parameters, commandContext);
     }
 
-    public RefreshLunsSizeCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected boolean validate() {
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {

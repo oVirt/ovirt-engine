@@ -30,6 +30,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
@@ -545,7 +546,12 @@ public class ImportVmCommandTest extends BaseCommandTest {
         }
 
         public ImportVmCommandStub(ImportVmParameters parameters, ImportValidator validator) {
-            super(parameters);
+            this(parameters, CommandContext.createContext(parameters.getSessionId()), validator);
+        }
+
+        public ImportVmCommandStub(ImportVmParameters parameters, CommandContext commandContext,
+                ImportValidator validator) {
+            super(parameters, commandContext);
             this.validator = validator;
         }
 

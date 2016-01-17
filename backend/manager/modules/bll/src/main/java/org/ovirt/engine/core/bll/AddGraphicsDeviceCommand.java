@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -16,8 +17,8 @@ import org.ovirt.engine.core.compat.Guid;
 @ValidateSupportsTransaction
 public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<GraphicsParameters> {
 
-    protected AddGraphicsDeviceCommand(GraphicsParameters parameters) {
-        super(parameters);
+    public AddGraphicsDeviceCommand(GraphicsParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.sql.Time;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
@@ -10,8 +11,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeSnapshotCommandBase<ScheduleGlusterVolumeSnapshotParameters> {
-    public RescheduleGlusterVolumeSnapshotCommand(ScheduleGlusterVolumeSnapshotParameters params) {
-        super(params);
+
+    public RescheduleGlusterVolumeSnapshotCommand(ScheduleGlusterVolumeSnapshotParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

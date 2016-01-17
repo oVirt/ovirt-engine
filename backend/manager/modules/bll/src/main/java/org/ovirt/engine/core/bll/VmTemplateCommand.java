@@ -49,10 +49,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         super(commandId);
     }
 
-    protected VmTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected VmTemplateCommand() {
     }
 

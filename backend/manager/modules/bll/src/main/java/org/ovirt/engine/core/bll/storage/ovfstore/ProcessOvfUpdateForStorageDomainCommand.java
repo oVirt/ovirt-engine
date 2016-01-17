@@ -61,10 +61,6 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     private Date updateDate;
     private List<Guid> failedOvfDisks;
 
-    public ProcessOvfUpdateForStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ProcessOvfUpdateForStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStorageDomainId(parameters.getStorageDomainId());

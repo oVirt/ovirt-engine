@@ -64,10 +64,6 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     private SnapshotsValidator snapshotsValidator;
     private StorageDomainValidator storageDomainValidator;
 
-    public RemoveDiskSnapshotsCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

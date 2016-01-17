@@ -36,10 +36,6 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         super(commandId);
     }
 
-    public ClearNonResponsiveVdsVmsCommand(T parameters) {
-        super(parameters);
-    }
-
     public ClearNonResponsiveVdsVmsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

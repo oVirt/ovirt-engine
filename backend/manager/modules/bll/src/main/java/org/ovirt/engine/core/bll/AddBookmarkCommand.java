@@ -2,14 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.BookmarkDao;
 
 public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends BookmarkOperationCommand<T> {
-    public AddBookmarkCommand(T parameters) {
-        super(parameters);
+
+    public AddBookmarkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Inject

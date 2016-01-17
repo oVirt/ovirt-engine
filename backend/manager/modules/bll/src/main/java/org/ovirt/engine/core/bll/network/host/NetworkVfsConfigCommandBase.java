@@ -8,10 +8,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class NetworkVfsConfigCommandBase extends VfsConfigCommandBase<VfsConfigNetworkParameters> {
 
-    public NetworkVfsConfigCommandBase(VfsConfigNetworkParameters parameters) {
-        this(parameters, null);
-    }
-
     public NetworkVfsConfigCommandBase(VfsConfigNetworkParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

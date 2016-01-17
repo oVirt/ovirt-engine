@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -31,8 +32,8 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
     protected List<String> errors = new ArrayList<>();
     private List<VDS> serversInCluster = null;
 
-    public RemoveGlusterHookCommand(GlusterHookManageParameters params) {
-        super(params);
+    public RemoveGlusterHookCommand(GlusterHookManageParameters params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

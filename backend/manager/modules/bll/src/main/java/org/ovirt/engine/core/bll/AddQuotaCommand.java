@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,8 +22,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddQuotaCommand extends QuotaCRUDCommand {
 
-    public AddQuotaCommand(QuotaCRUDParameters parameters) {
-        super(parameters);
+    public AddQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);
     }
 

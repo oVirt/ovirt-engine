@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
@@ -55,8 +56,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     private Network managementNetwork;
 
-    public AddClusterCommand(T parameters) {
-        super(parameters);
+    public AddClusterCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setStoragePoolId(getCluster().getStoragePoolId());
     }
 

@@ -12,9 +12,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 
 public class AddStorageServerConnectionExtensionCommand<T extends StorageServerConnectionExtensionParameters> extends StorageServerConnectionExtensionCommandBase<StorageServerConnectionExtensionParameters> {
-    public AddStorageServerConnectionExtensionCommand(T parameters) {
-        super(parameters);
-    }
 
     public AddStorageServerConnectionExtensionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

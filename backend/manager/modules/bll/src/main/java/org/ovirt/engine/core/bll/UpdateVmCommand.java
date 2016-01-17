@@ -101,10 +101,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private List<GraphicsDevice> cachedGraphics;
     private boolean isUpdateVmTemplateVersion = false;
 
-    public UpdateVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         if (getCluster() != null) {
@@ -352,7 +348,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void hotSetCpusLog(HotSetNumberOfCpusParameters params) {
         if (!setNumberOfCpusResult.isValid()) {
-            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
+            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params, null);
             List<String> validationMessages = getBackend().getErrorsTranslator().
                     translateErrorText(setNumberOfCpusResult.getValidationMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
@@ -366,7 +362,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void hotSetMemlog(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
         if (!setAmountOfMemoryResult.isValid()) {
-            AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params);
+            AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params, null);
             List<String> validationMessages = getBackend().getErrorsTranslator().
                     translateErrorText(setAmountOfMemoryResult.getValidationMessages());
             logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));

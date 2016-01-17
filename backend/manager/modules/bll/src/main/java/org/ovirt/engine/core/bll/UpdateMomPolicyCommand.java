@@ -4,6 +4,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,8 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 @NonTransactiveCommandAttribute
 public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
 
-    public UpdateMomPolicyCommand(VdsActionParameters vdsActionParameters) {
-        super(vdsActionParameters);
+    public UpdateMomPolicyCommand(VdsActionParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

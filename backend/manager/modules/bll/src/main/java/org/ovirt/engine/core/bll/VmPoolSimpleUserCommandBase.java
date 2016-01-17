@@ -16,10 +16,6 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
         super(commandId);
     }
 
-    public VmPoolSimpleUserCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public VmPoolSimpleUserCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

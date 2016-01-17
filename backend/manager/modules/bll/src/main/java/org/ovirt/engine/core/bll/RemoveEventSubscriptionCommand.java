@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -8,8 +9,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
-    public RemoveEventSubscriptionCommand(T parameters) {
-        super(parameters);
+
+    public RemoveEventSubscriptionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

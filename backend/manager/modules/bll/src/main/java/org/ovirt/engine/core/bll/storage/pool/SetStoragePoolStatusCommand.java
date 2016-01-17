@@ -15,9 +15,6 @@ import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 
 public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameters> extends
         StorageHandlingCommandBase<T> {
-    public SetStoragePoolStatusCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public SetStoragePoolStatusCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

@@ -30,7 +30,7 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
         param.setForce(false);
         param.setGeoRepSessionId(geoRepSessionId);
         param.setVolumeId(startedVolumeId);
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param));
+        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param, null));
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.ACTIVE, startedVolumeId)).when(geoRepDao)
                 .getById(geoRepSessionId);
         prepareMocks(cmd);
@@ -43,7 +43,7 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
         param.setForce(false);
         param.setVolumeId(startedVolumeId);
         param.setGeoRepSessionId(geoRepSessionId);
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param));
+        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(param, null));
         prepareMocks(cmd);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.PASSIVE, startedVolumeId)).when(geoRepDao)
                 .getById(geoRepSessionId);
@@ -52,7 +52,7 @@ public class PauseGlusterVolumeGeoRepSessionCommandTest extends GeoRepSessionCom
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters()));
+        cmd = spy(new PauseGlusterVolumeGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

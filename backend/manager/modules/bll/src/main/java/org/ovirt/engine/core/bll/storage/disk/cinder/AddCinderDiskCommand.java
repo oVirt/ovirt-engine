@@ -30,10 +30,6 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
 
     private static final Logger log = LoggerFactory.getLogger(AddCinderDiskCommand.class);
 
-    public AddCinderDiskCommand(T parameters) {
-        super(parameters);
-    }
-
     public AddCinderDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

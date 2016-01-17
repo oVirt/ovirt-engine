@@ -73,10 +73,6 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
     }
 
-    public RemoveVmTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RemoveVmTemplateCommand(Guid vmTemplateId) {
         super.setVmTemplateId(vmTemplateId);
     }

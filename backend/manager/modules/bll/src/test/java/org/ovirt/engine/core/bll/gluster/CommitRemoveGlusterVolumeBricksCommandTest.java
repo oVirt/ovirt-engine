@@ -133,7 +133,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void testExecuteCommand() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
         prepareMocks(cmd);
         mockBackend(true, null);
         assertTrue(cmd.validate());
@@ -148,7 +148,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void executeCommandWhenFailed() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
         prepareMocks(cmd);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksCommitFailed);
         assertTrue(cmd.validate());
@@ -163,7 +163,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateSucceedsOnVolumeWithRemoveBricksTask() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
 
         prepareMocks(cmd);
         assertTrue(cmd.validate());
@@ -173,7 +173,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailsOnCompatVersion() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
 
         prepareMocks(cmd);
         doReturn(UNSUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
@@ -187,7 +187,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailsOnVolumeWithoutAsyncTask() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutAsyncTask,
-                        getBricks(volumeWithoutAsyncTask))));
+                        getBricks(volumeWithoutAsyncTask)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -196,7 +196,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailsOnVolumeWithoutRemoveBricksTask() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        getBricks(volumeWithoutRemoveBricksTask))));
+                        getBricks(volumeWithoutRemoveBricksTask)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -205,7 +205,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailesOnVolumeWithRemoveBricksTaskNotFinished() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskNotFinished,
-                        getBricks(volumeWithRemoveBricksTaskNotFinished))));
+                        getBricks(volumeWithRemoveBricksTaskNotFinished)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -214,7 +214,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailsOnNull() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskNull,
-                        getBricks(volumeWithRemoveBricksTaskNull))));
+                        getBricks(volumeWithRemoveBricksTaskNull)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -223,7 +223,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     public void validateFailsWithEmptyBricksList() {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        new ArrayList<>())));
+                        new ArrayList<>()), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -231,12 +231,12 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
     @Test
     public void validateFailsWithInvalidBricks() {
         List<GlusterBrickEntity> paramBricks1 = getInvalidNoOfBricks(volumeWithRemoveBricksTask);
-        cmd = spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask, paramBricks1)));
+        cmd = spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask, paramBricks1), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
 
         List<GlusterBrickEntity> paramBricks2 = getInvalidBricks(volumeWithRemoveBricksTask);
-        cmd = spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask, paramBricks2)));
+        cmd = spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask, paramBricks2), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

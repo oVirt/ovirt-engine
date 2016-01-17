@@ -9,10 +9,6 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase<T> {
 
-    public StopVmCommand(T stopVmParams) {
-        this(stopVmParams, null);
-    }
-
     public StopVmCommand(T stopVmParams,  CommandContext commandContext) {
         super(stopVmParams, commandContext);
     }

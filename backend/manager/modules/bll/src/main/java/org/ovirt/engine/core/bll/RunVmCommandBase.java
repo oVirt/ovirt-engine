@@ -70,10 +70,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         super(commandId);
     }
 
-    public RunVmCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public RunVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

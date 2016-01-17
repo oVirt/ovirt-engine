@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -15,8 +16,8 @@ import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener
 
 public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
-    public AddMacPoolCommand(MacPoolParameters parameters) {
-        super(parameters);
+    public AddMacPoolCommand(MacPoolParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

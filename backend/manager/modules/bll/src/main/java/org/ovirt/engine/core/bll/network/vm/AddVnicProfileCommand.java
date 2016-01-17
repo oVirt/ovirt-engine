@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
@@ -21,8 +22,8 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
     @Inject
     private VmDao vmDao;
 
-    public AddVnicProfileCommand(T parameters) {
-        super(parameters);
+    public AddVnicProfileCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

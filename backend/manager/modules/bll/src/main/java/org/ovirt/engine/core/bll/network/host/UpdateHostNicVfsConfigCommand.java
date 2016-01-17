@@ -28,10 +28,6 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
 
     private HostNicVfsConfig hostNicVfsConfig;
 
-    public UpdateHostNicVfsConfigCommand(UpdateHostNicVfsConfigParameters parameters) {
-        this(parameters, null);
-    }
-
     public UpdateHostNicVfsConfigCommand(UpdateHostNicVfsConfigParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

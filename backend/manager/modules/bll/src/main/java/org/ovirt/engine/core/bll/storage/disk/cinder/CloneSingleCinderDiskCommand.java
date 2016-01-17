@@ -19,10 +19,6 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
 
     private CinderDisk disk;
 
-    public CloneSingleCinderDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public CloneSingleCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStorageDomainId(parameters.getStorageDomainId());

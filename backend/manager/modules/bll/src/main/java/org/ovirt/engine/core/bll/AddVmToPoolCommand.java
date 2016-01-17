@@ -9,9 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolCommandBase<T> {
-    public AddVmToPoolCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public AddVmToPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 @NonTransactiveCommandAttribute
 public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
-    public CancelMigrateVmCommand(T param) {
-        super(param);
+    public CancelMigrateVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

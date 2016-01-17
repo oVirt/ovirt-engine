@@ -244,7 +244,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
-        return new HotPlugDiskToVmCommand<>(createParameters());
+        return new HotPlugDiskToVmCommand<>(createParameters(), null);
     }
 
     protected VdcActionType getCommandActionType() {

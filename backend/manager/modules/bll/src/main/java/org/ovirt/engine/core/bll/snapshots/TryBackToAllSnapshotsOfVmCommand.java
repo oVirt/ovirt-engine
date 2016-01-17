@@ -67,10 +67,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         super(commandId);
     }
 
-    public TryBackToAllSnapshotsOfVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public TryBackToAllSnapshotsOfVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));

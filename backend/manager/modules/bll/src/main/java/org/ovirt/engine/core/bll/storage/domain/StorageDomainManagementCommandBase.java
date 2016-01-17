@@ -7,9 +7,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class StorageDomainManagementCommandBase<T extends StorageDomainManagementParameter> extends
         StorageDomainCommandBase<T> {
-    public StorageDomainManagementCommandBase(T parameters) {
-        super(parameters);
-    }
 
     /**
      * Constructor for command creation when compensation is applied on startup

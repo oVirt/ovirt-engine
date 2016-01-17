@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -18,8 +19,8 @@ public class CancelConvertVmCommand<T extends VmOperationParameterBase> extends 
     @Inject
     protected ResourceManager resourceManager;
 
-    public CancelConvertVmCommand(T param) {
-        super(param);
+    public CancelConvertVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

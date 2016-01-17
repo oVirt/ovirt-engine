@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -75,8 +76,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     private Version effectiveCompatibilityVersion;
 
-    public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
-        super(parameters);
+    public ImportVmTemplateCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         setStoragePoolId(parameters.getStoragePoolId());

@@ -60,14 +60,14 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(getStorageDevice("sda", null)))));
+                null, Arrays.asList(getStorageDevice("sda", null))), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsForCluster() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters()));
+        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
         prepareMocks(cmd, VDSStatus.Up);
         mockIsGlusterEnabled(false);
         assertFalse(cmd.validate());
@@ -79,7 +79,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsForVdsNonUp() {
-        cmd = spy(new CreateBrickCommand(new CreateBrickParameters()));
+        cmd = spy(new CreateBrickCommand(new CreateBrickParameters(), null));
         prepareMocks(cmd, VDSStatus.Down);
         assertFalse(cmd.validate());
 
@@ -97,7 +97,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.<StorageDevice> emptyList())));
+                null, Collections.<StorageDevice> emptyList()), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.validate());
     }
@@ -111,7 +111,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(storageDevice))));
+                null, Arrays.asList(storageDevice)), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.validate());
     }
@@ -127,7 +127,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(storageDevice1, storageDevice2))));
+                null, Arrays.asList(storageDevice1, storageDevice2)), null));
         prepareMocks(cmd, VDSStatus.Up);
         assertFalse(cmd.validate());
     }

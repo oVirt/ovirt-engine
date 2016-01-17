@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
 
-    public RemoveVfsConfigNetworkCommand(VfsConfigNetworkParameters parameters) {
-        this(parameters, null);
-    }
-
     public RemoveVfsConfigNetworkCommand(VfsConfigNetworkParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

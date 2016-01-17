@@ -23,10 +23,6 @@ public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcA
 
     private StorageServerConnectionExtensionValidator connectionExtensionValidator = new StorageServerConnectionExtensionValidator();
 
-    protected StorageServerConnectionExtensionCommandBase(T parameters) {
-        super(parameters, null);
-    }
-
     public StorageServerConnectionExtensionCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

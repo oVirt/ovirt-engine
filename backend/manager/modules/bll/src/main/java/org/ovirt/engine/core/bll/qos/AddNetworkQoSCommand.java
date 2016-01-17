@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.qos;
 
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
@@ -9,8 +10,8 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 
 public class AddNetworkQoSCommand extends AddQosCommand<NetworkQoS, NetworkQosValidator> {
 
-    public AddNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters) {
-        super(parameters);
+    public AddNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

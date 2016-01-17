@@ -113,7 +113,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateForStoragePoolParameters()));
+        command = Mockito.spy(new ProcessOvfUpdateForStoragePoolCommand<>(
+                new ProcessOvfUpdateForStoragePoolParameters(), null));
         ovfUpdateProcessHelper = Mockito.spy(new OvfUpdateProcessHelper());
         doReturn(ITEMS_COUNT_PER_UPDATE).when(command).loadConfigValue();
         doReturn(new ArrayList<DiskImage>()).when(ovfUpdateProcessHelper).getAllImageSnapshots(any(DiskImage.class));

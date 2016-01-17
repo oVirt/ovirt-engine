@@ -84,10 +84,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         super(commandId);
     }
 
-    public AddDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVdsId(parameters.getVdsId());

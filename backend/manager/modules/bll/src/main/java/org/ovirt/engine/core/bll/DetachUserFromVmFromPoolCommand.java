@@ -30,10 +30,6 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
 
     }
 
-    public DetachUserFromVmFromPoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected void detachVmFromUser() {
         Permission perm = DbFacade
                 .getInstance()

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -26,8 +27,8 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
     private StoragePool storagePoolForVds;
 
-    public ForceSelectSPMCommand(T parameters) {
-        super(parameters);
+    public ForceSelectSPMCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVdsId(getParameters().getPreferredSPMId());
     }
 

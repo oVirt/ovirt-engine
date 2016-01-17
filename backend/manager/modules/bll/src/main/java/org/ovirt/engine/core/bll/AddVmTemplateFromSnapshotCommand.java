@@ -44,10 +44,6 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         super(commandId);
     }
 
-    public AddVmTemplateFromSnapshotCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddVmTemplateFromSnapshotCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

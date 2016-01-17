@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,8 +12,8 @@ public abstract class VdsTagMapBase<T extends AttachEntityToTagParameters> exten
         return getParameters().getEntitiesId();
     }
 
-    public VdsTagMapBase(T parameters) {
-        super(parameters);
+    public VdsTagMapBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

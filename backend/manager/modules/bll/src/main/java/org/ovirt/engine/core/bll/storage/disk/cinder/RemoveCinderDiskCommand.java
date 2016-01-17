@@ -32,10 +32,6 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
 
     private CinderDisk cinderDisk;
 
-    public RemoveCinderDiskCommand(T parameters) {
-        super(parameters, null);
-    }
-
     public RemoveCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -57,10 +57,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     protected EventQueue eventQueue;
 
-    protected StorageDomainCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

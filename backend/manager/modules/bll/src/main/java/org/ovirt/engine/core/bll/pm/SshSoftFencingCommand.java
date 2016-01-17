@@ -27,16 +27,6 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     @Inject
     private ResourceManager resourceManager;
 
-    /**
-     * Creates an instance with specified parameters
-     *
-     * @param parameters
-     *            command parameters
-     */
-    public SshSoftFencingCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public SshSoftFencingCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

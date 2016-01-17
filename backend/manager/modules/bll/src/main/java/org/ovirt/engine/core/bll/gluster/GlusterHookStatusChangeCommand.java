@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
@@ -30,8 +31,8 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
 
     private List<VDS> upServers = null;
 
-    public GlusterHookStatusChangeCommand(T params) {
-        super(params);
+    public GlusterHookStatusChangeCommand(T params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

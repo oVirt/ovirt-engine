@@ -31,10 +31,6 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
         super(guid);
     }
 
-    public CreateSnapshotFromTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     /**
      * Old image not have to be changed
      */

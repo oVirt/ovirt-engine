@@ -128,7 +128,7 @@ public class GetDiskAlignmentCommandTest extends BaseCommandTest {
         when(clusterDao.get(groupId)).thenReturn(cluster);
         when(storageDomainStaticDao.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
 
-        cmd = spy(new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId)));
+        cmd = spy(new GetDiskAlignmentCommand<>(new GetDiskAlignmentParameters(diskId), null));
 
         doReturn(disk).when(cmd).getDisk();
         doReturn(vdsDao).when(cmd).getVdsDao();

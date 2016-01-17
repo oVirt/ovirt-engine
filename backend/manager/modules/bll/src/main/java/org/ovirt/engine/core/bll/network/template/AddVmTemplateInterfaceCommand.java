@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -22,8 +23,9 @@ import org.ovirt.engine.core.compat.Version;
 
 public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
-    public AddVmTemplateInterfaceCommand(T parameters) {
-        super(parameters);
+
+    public AddVmTemplateInterfaceCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

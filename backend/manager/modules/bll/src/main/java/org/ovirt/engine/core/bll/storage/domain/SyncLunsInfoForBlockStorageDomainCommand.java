@@ -28,10 +28,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
-    public SyncLunsInfoForBlockStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());

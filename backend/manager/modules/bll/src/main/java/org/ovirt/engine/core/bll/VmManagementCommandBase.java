@@ -33,10 +33,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;
 
-    public VmManagementCommandBase(T parameters) {
-        super(parameters, null);
-    }
-
     protected VmManagementCommandBase(Guid commandId) {
         super(commandId);
     }

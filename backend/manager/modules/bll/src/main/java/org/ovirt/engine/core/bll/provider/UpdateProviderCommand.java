@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,8 +27,8 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
         super(commandId);
     }
 
-    public UpdateProviderCommand(P parameters) {
-        super(parameters);
+    public UpdateProviderCommand(P parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private Provider<?> getProvider() {

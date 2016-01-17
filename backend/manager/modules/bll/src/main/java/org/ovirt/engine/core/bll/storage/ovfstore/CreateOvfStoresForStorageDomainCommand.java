@@ -23,10 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresForStorageDomainCommandParameters> extends CommandBase<T> {
 
-    public CreateOvfStoresForStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public CreateOvfStoresForStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStorageDomainId(getParameters().getStorageDomainId());

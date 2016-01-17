@@ -47,11 +47,6 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         earlyUpdateVmDynamicRunOnce();
     }
 
-
-    public RunVmOnceCommand(T runVmParams) {
-        this(runVmParams, null);
-    }
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);

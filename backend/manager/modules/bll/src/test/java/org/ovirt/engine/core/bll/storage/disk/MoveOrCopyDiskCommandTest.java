@@ -381,7 +381,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private class MoveOrCopyDiskCommandDummy extends MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> {
 
         public MoveOrCopyDiskCommandDummy(MoveOrCopyImageGroupParameters parameters) {
-            super(parameters);
+            super(parameters, null);
         }
 
         @Override

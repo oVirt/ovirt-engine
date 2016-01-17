@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -8,9 +9,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachUserGroupFromTagCommand<T extends AttachEntityToTagParameters> extends UserGroupTagMapBase<T> {
 
-    public DetachUserGroupFromTagCommand(T parameters) {
-        super(parameters);
-
+    public DetachUserGroupFromTagCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

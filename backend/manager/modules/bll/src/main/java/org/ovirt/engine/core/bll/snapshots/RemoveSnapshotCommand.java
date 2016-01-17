@@ -60,10 +60,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         implements QuotaStorageDependent {
     private List<DiskImage> _sourceImages = null;
 
-    public RemoveSnapshotCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveSnapshotCommand(T parameters, CommandContext context) {
         super(parameters, context);
     }

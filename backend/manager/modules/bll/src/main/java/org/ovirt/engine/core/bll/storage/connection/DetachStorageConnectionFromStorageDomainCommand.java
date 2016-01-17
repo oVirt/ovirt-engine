@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
@@ -14,8 +15,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
 
-    public DetachStorageConnectionFromStorageDomainCommand(T parameters) {
-        super(parameters);
+    public DetachStorageConnectionFromStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

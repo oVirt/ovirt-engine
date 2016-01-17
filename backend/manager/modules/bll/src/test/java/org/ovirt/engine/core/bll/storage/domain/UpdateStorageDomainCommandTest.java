@@ -67,7 +67,7 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         sp.setStatus(StoragePoolStatus.Up);
         sp.setIsLocal(false);
 
-        cmd = spy(new UpdateStorageDomainCommand<>(new StorageDomainManagementParameter(newSdStatic)));
+        cmd = spy(new UpdateStorageDomainCommand<>(new StorageDomainManagementParameter(newSdStatic), null));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();

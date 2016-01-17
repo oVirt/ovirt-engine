@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -29,8 +30,8 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         super(commandId);
     }
 
-    public ExtendSANStorageDomainCommand(T parameters) {
-        super(parameters);
+    public ExtendSANStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

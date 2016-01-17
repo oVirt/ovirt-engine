@@ -234,7 +234,7 @@ public class PmHealthCheckManager implements BackendService {
         for (VDS host : hostWithPMInStatusReboot) {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
                     new RestartVdsCommand<>(new
-                            FenceVdsActionParameters(host.getId()));
+                            FenceVdsActionParameters(host.getId()), null);
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {

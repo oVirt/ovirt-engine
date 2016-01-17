@@ -29,10 +29,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFromPoolParameters> extends
         StorageDomainCommandBase<T> {
 
-    public DetachStorageDomainFromPoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

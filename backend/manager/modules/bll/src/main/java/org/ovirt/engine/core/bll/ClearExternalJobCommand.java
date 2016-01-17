@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -15,8 +16,9 @@ import org.ovirt.engine.core.dao.JobDao;
 public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends CommandBase<T>{
 
     private Job job;
-    public ClearExternalJobCommand(T parameters) {
-        super(parameters);
+
+    public ClearExternalJobCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

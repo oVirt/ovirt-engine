@@ -175,7 +175,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         params.setCommandType(VdcActionType.UpdateVm);
         params.setVmStaticData(vmStatic);
 
-        command = spy(new UpdateVmCommand<VmManagementParametersBase>(params) {
+        command = spy(new UpdateVmCommand<VmManagementParametersBase>(params, null) {
             @Override
             protected void initUser() {
                 // Stub for testing

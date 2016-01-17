@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -36,8 +37,9 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     private List<GlusterGeoRepSession> georepSessions;
     private List<GlusterGeoRepSession> engineStoppedSessions;
 
-    public RestoreGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params) {
-        super(params);
+    public RestoreGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
         engineStoppedSessions = new ArrayList<>();
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }

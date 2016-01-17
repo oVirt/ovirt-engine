@@ -27,7 +27,8 @@ public class UpdateStorageServerConnectionExtensionCommandTest {
         StorageServerConnectionExtension conn = createConnection(hostId, "iqn1", "user", "pass");
 
         StorageServerConnectionExtensionParameters params = new StorageServerConnectionExtensionParameters(conn);
-        UpdateStorageServerConnectionExtensionCommand realCmd = new UpdateStorageServerConnectionExtensionCommand(params);
+        UpdateStorageServerConnectionExtensionCommand realCmd =
+                new UpdateStorageServerConnectionExtensionCommand(params, null);
         UpdateStorageServerConnectionExtensionCommand cmd = spy(realCmd);
         when(cmd.getConnectionExtensionValidator()).thenReturn(storageServerConnectionExtensionValidator);
 

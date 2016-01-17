@@ -139,7 +139,7 @@ public class SetVmNumaNodesCommandTest extends BaseCommandTest {
     private SetVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommand(VmNumaNodeOperationParameters
             parameters) {
         final SetVmNumaNodesCommand<VmNumaNodeOperationParameters> command =
-                spy(new SetVmNumaNodesCommand<>(parameters));
+                spy(new SetVmNumaNodesCommand<>(parameters, null));
         when(command.getDbFacade()).thenReturn(dbFacade);
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);

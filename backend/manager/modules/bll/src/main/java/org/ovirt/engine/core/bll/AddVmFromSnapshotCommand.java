@@ -53,12 +53,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     protected AddVmFromSnapshotCommand(T params, CommandContext commandContext) {
-        super(params);
+        super(params, commandContext);
         sourceSnapshotId = params.getSourceSnapshotId();
-    }
-
-    public AddVmFromSnapshotCommand(T params) {
-        this(params, null);
     }
 
     @Override

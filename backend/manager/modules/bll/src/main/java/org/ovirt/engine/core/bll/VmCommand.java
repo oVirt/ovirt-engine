@@ -59,11 +59,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         setVmId(parameters.getVmId());
     }
 
-
-    public VmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected MacPoolManagerStrategy getMacPool() {
         return poolPerDc.poolForDataCenter(getStoragePoolId());
     }

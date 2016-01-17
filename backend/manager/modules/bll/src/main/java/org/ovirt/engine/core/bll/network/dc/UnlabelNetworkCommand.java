@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -26,8 +27,8 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     private Network network;
 
-    public UnlabelNetworkCommand(T parameters) {
-        super(parameters);
+    public UnlabelNetworkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePoolId(getNetwork() == null ? null : getNetwork().getDataCenterId());
     }
 

@@ -96,7 +96,7 @@ public class AttachDiskToVmCommandTest extends BaseCommandTest {
     private void initCommand() {
         when(diskDao.get(diskId)).thenReturn(createDiskImage());
         AttachDetachVmDiskParameters parameters = createParameters();
-        command = spy(new AttachDiskToVmCommand<AttachDetachVmDiskParameters>(parameters) {
+        command = spy(new AttachDiskToVmCommand<AttachDetachVmDiskParameters>(parameters, null) {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override

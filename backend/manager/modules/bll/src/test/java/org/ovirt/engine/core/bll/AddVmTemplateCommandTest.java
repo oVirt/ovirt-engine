@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -101,7 +102,8 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(DbFacade.class, dbFacade);
 
         // Using the compensation constructor since the normal one contains DB access
-        cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {
+        cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(
+                params, CommandContext.createContext(params.getSessionId())) {
 
             @Override
             protected void initUser() {

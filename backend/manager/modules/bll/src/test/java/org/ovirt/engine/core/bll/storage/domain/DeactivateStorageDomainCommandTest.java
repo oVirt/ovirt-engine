@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
@@ -86,7 +87,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public void setup() {
         map = new StoragePoolIsoMap();
 
-        cmd = spy(new DeactivateStorageDomainCommand<>(params));
+        cmd = spy(new DeactivateStorageDomainCommand<>(params, CommandContext.createContext(params.getSessionId())));
         doReturn(storagePoolDao).when(cmd).getStoragePoolDao();
         doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
         doReturn(eventQueue).when(cmd).getEventQueue();

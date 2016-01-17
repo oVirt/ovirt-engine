@@ -30,10 +30,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomainPoolParametersBase> extends
         DeactivateStorageDomainCommand<T> {
 
-    public DeactivateStorageDomainWithOvfUpdateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setCommandShouldBeLogged(false);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -26,8 +27,8 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
     private static final long serialVersionUID = 1465299601226267507L;
     private final List<GlusterBrickEntity> bricks = new ArrayList<>();
 
-    public GlusterVolumeRemoveBricksCommand(GlusterVolumeRemoveBricksParameters params) {
-        super(params);
+    public GlusterVolumeRemoveBricksCommand(GlusterVolumeRemoveBricksParameters params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

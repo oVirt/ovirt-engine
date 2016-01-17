@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.profiles;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,8 +14,8 @@ import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
 public class RemoveDiskProfileCommand extends RemoveProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
 
-    public RemoveDiskProfileCommand(DiskProfileParameters parameters) {
-        super(parameters);
+    public RemoveDiskProfileCommand(DiskProfileParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

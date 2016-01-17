@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -98,8 +99,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         super(commandId);
     }
 
-    public ChangeVDSClusterCommand(T params) {
-        super(params);
+    public ChangeVDSClusterCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

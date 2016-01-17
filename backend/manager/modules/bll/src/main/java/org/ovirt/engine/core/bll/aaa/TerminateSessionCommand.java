@@ -29,10 +29,6 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
     @Inject
     private SessionDataContainer sessionDataContainer;
 
-    public TerminateSessionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public TerminateSessionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

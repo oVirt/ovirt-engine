@@ -47,10 +47,6 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     private Set<Guid> vmsRemoved = new HashSet<>();
     private boolean allVmsDown;
 
-    public RemoveVmPoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RemoveVmPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         // set group id for logging and job

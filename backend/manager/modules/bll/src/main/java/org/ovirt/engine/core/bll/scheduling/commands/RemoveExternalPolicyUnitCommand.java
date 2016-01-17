@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -16,8 +17,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveExternalPolicyUnitCommand extends CommandBase<RemoveExternalPolicyUnitParameters> {
 
-    public RemoveExternalPolicyUnitCommand(RemoveExternalPolicyUnitParameters parameters) {
-        super(parameters);
+    public RemoveExternalPolicyUnitCommand(RemoveExternalPolicyUnitParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Inject

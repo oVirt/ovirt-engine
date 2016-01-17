@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
@@ -14,8 +15,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
-    public AddEventSubscriptionCommand(T parameters) {
-        super(parameters);
+
+    public AddEventSubscriptionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

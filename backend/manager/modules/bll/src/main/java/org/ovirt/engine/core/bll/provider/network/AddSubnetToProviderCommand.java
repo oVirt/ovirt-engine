@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -21,8 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> extends CommandBase<T> {
-    public AddSubnetToProviderCommand(T parameters) {
-        super(parameters);
+
+    public AddSubnetToProviderCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private Provider<?> getProvider() {

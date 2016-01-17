@@ -174,20 +174,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         this(Guid.newGuid());
     }
 
-    protected CommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected CommandBase(T parameters, CommandContext cmdContext) {
-        if (cmdContext == null) {
-            cmdContext =
-                    new CommandContext(new EngineContext().withSessionId(parameters.getSessionId()))
-                            .withExecutionContext(new ExecutionContext());
-        } else if (cmdContext.getEngineContext().getSessionId() == null) {
-            // Needed for SEAT mechanism - session ID is available only on parameters
-            // upon command re-instantiation (when moving between task handlers).
-            cmdContext.getEngineContext().withSessionId(parameters.getSessionId());
-        }
         this.context = cmdContext;
         this.commandData = new HashMap<>();
         _parameters = parameters;

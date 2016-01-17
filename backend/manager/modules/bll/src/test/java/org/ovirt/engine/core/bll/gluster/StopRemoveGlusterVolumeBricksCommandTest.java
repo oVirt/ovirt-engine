@@ -119,7 +119,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void testExecuteCommand() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
         prepareMocks(cmd);
         mockBackend(true, null);
         assertTrue(cmd.validate());
@@ -134,7 +134,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void executeCommandWhenFailed() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
         prepareMocks(cmd);
         mockBackend(false, EngineError.GlusterVolumeRemoveBricksStopFailed);
         assertTrue(cmd.validate());
@@ -149,7 +149,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateSucceedsOnVolumeWithRemoveBricksTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        getBricks(volumeWithRemoveBricksTask))));
+                        getBricks(volumeWithRemoveBricksTask)), null));
 
         prepareMocks(cmd);
         assertTrue(cmd.validate());
@@ -160,7 +160,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
-                        getBricks(volumeWithRemoveBricksTaskCompleted))));
+                        getBricks(volumeWithRemoveBricksTaskCompleted)), null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
@@ -169,7 +169,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateFailsOnVolumeWithoutAsyncTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutAsyncTask,
-                        getBricks(volumeWithoutAsyncTask))));
+                        getBricks(volumeWithoutAsyncTask)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -178,7 +178,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateFailsOnVolumeWithoutRemoveBricksTask() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        getBricks(volumeWithoutRemoveBricksTask))));
+                        getBricks(volumeWithoutRemoveBricksTask)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -187,7 +187,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateFailsOnNull() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(null,
-                        getBricks(volumeWithRemoveBricksTaskCompleted))));
+                        getBricks(volumeWithRemoveBricksTaskCompleted)), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -196,7 +196,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     public void validateFailsWithEmptyBricksList() {
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
-                        new ArrayList<>())));
+                        new ArrayList<>()), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
@@ -206,14 +206,14 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
         List<GlusterBrickEntity> paramBricks1 = getInvalidNoOfBricks(volumeWithRemoveBricksTask);
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        paramBricks1)));
+                        paramBricks1), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
 
         List<GlusterBrickEntity> paramBricks2 = getInvalidBricks(volumeWithRemoveBricksTask);
         cmd =
                 spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
-                        paramBricks2)));
+                        paramBricks2), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

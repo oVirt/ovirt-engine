@@ -35,7 +35,7 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         importParameters.setStoragePoolId(getStoragePoolId());
         importParameters.setStorageDomainId(getStorageDomainId());
 
-        cmd = spy(new ImportRepoImageCommand<>(importParameters));
+        cmd = spy(new ImportRepoImageCommand<>(importParameters, null));
 
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDao();

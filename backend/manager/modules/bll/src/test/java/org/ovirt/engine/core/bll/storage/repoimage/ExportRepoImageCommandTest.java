@@ -48,7 +48,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(
                 getDiskImageGroupId(), getRepoStorageDomainId());
 
-        cmd = spy(new ExportRepoImageCommand<>(exportParameters));
+        cmd = spy(new ExportRepoImageCommand<>(exportParameters, null));
 
         doReturn(vmDao).when(cmd).getVmDao();
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDao();

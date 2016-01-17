@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -23,8 +24,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
-    public AbstractVmInterfaceCommand(T parameters) {
-        super(parameters);
+    public AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected boolean activateOrDeactivateNewNic(VmNic nic, PlugAction plugAction) {

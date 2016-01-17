@@ -54,10 +54,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private List<Pair<VM, VmDevice>> cachedVmsDeviceInfo;
     private String cachedDiskIsBeingMigratedMessage;
 
-    public MoveOrCopyDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public MoveOrCopyDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         defineVmTemplate();

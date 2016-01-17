@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -19,8 +20,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
-    public ReorderVmNicsCommand(T parameters) {
-        super(parameters);
+    public ReorderVmNicsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

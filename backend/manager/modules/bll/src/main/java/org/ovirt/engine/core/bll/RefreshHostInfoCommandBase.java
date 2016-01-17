@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public abstract class RefreshHostInfoCommandBase<T extends VdsActionParameters> extends VdsCommand<T> {
 
-    public RefreshHostInfoCommandBase(T parameters) {
-        super(parameters);
-    }
-
     public RefreshHostInfoCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

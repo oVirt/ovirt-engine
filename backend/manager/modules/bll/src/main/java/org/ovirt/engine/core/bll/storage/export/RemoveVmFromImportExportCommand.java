@@ -10,6 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -43,8 +44,8 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     // this is needed since overriding getVmTemplate()
     private VM exportVm;
 
-    public RemoveVmFromImportExportCommand(T parameters) {
-        super(parameters);
+    public RemoveVmFromImportExportCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(parameters.getVmId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
         setStorageDomainId(parameters.getStorageDomainId());

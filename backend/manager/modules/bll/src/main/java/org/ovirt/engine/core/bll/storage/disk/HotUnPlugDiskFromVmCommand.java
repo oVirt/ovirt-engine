@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -11,9 +12,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 @NonTransactiveCommandAttribute
 public class HotUnPlugDiskFromVmCommand<T extends HotPlugDiskToVmParameters> extends HotPlugDiskToVmCommand<T> {
 
-    public HotUnPlugDiskFromVmCommand(T parameters) {
-        super(parameters);
-
+    public HotUnPlugDiskFromVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

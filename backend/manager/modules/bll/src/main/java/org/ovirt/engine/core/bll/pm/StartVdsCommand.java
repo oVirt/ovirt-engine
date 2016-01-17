@@ -23,9 +23,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
  */
 @NonTransactiveCommandAttribute
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
-    public StartVdsCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public StartVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

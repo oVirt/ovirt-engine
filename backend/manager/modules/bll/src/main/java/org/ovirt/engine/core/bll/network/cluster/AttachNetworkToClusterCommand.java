@@ -25,10 +25,6 @@ public class AttachNetworkToClusterCommand extends NetworkClusterCommandBase<Att
         super(attachNetworkToClusterParameter, cmdContext);
     }
 
-    public AttachNetworkToClusterCommand(AttachNetworkToClusterParameter attachNetworkToClusterParameter) {
-        super(attachNetworkToClusterParameter);
-    }
-
     protected Version getClusterVersion() {
         return getCluster().getCompatibilityVersion();
     }

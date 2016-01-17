@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -24,8 +25,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 @NonTransactiveCommandAttribute
 public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
 
-    public CommitRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params) {
-        super(params);
+    public CommitRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

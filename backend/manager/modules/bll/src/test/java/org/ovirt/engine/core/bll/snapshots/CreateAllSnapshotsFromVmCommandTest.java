@@ -72,7 +72,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
-        cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params));
+        cmd = spy(new CreateAllSnapshotsFromVmCommand<>(params, null));
         doReturn(true).when(vm).isManagedVm();
         doReturn(vm).when(cmd).getVm();
         doReturn(vmValidator).when(cmd).createVmValidator();

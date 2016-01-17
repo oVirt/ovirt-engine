@@ -73,7 +73,7 @@ public class RemoveStorageServerConnectionCommandTest extends BaseCommandTest {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new RemoveStorageServerConnectionCommand(parameters));
+        command = spy(new RemoveStorageServerConnectionCommand(parameters, null));
         doReturn(lunDao).when(command).getLunDao();
         doReturn(storageServerConnectionDao).when(command).getStorageServerConnectionDao();
     }

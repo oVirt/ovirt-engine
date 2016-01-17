@@ -139,7 +139,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceeds() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -152,7 +152,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenGlusterHostHasVolumes() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -167,7 +167,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true), null));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockHasMultipleClusters(true);
@@ -180,7 +180,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceedsWithForceOption() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), true), null));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -193,7 +193,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenVMsPinnedToHost() throws Exception {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -217,7 +217,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeWhenMultipleHosts() {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
         prepareMocks();
 
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -235,7 +235,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Test
     public void removeLastHost() {
-        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false)));
+        command = spy(new RemoveVdsCommand<>(new RemoveVdsParameters(Guid.newGuid(), false), null));
         prepareMocks();
 
         mockVdsWithStatus(VDSStatus.Maintenance);

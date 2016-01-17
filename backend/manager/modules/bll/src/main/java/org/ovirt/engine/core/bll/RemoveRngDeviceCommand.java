@@ -13,10 +13,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @InternalCommandAttribute
 public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
-    public RemoveRngDeviceCommand(RngDeviceParameters parameters) {
-        this(parameters, null);
-    }
-
     public RemoveRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

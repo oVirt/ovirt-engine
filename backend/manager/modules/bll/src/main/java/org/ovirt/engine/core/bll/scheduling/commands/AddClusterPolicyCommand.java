@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
@@ -7,8 +8,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
-    public AddClusterPolicyCommand(ClusterPolicyCRUDParameters parameters) {
-        super(parameters);
+    public AddClusterPolicyCommand(ClusterPolicyCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

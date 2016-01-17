@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -28,8 +29,8 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
     @Inject
     protected SchedulingManager schedulingManager;
 
-    public ClusterPolicyCRUDCommand(ClusterPolicyCRUDParameters parameters) {
-        super(parameters);
+    public ClusterPolicyCRUDCommand(ClusterPolicyCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setClusterPolicy(getParameters().getClusterPolicy());
         addCustomValue("ClusterPolicy", getClusterPolicy().getName());
         getParameters().setShouldBeLogged(true);

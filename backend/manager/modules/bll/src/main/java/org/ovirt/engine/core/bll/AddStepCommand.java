@@ -19,10 +19,6 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
     protected Job job;
     protected Step parentStep;
 
-    protected AddStepCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected AddStepCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

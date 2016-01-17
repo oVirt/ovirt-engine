@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,8 +19,8 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     private static final String OVIRT="oVirt";
 
-    public RemoveAuditLogByIdCommand(T parameters) {
-        super(parameters);
+    public RemoveAuditLogByIdCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

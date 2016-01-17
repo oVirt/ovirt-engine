@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -46,8 +47,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     private OpenStackImageProviderProxy providerProxy;
 
-    public ExportRepoImageCommand(T parameters) {
-        super(parameters);
+    public ExportRepoImageCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         getParameters().setCommandType(getActionType());
     }
 

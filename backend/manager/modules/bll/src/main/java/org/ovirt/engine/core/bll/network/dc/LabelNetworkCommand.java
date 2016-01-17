@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -27,8 +28,8 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     private Network network;
 
-    public LabelNetworkCommand(T parameters) {
-        super(parameters);
+    public LabelNetworkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePoolId(getNetwork() == null ? null : getNetwork().getDataCenterId());
     }
 

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -40,8 +41,8 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         super(commandId);
     }
 
-    public MoveDisksCommand(T parameters) {
-        super(parameters);
+    public MoveDisksCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

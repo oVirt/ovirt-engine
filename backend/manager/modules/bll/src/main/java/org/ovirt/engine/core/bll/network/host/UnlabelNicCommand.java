@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -20,8 +21,8 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
 
     private VdsNetworkInterface nic;
 
-    public UnlabelNicCommand(T parameters) {
-        super(parameters);
+    public UnlabelNicCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVdsId(getNic() == null ? null : getNic().getVdsId());
     }
 

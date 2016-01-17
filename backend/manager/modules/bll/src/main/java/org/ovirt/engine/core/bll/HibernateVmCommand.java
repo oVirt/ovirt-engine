@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -49,8 +50,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         super(commandId);
     }
 
-    public HibernateVmCommand(T parameters) {
-        super(parameters);
+    public HibernateVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         if (getVm() != null) {
             setStoragePoolId(getVm().getStoragePoolId());
             parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));

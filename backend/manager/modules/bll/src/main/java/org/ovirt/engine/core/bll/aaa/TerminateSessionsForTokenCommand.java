@@ -20,10 +20,6 @@ public class TerminateSessionsForTokenCommand<T extends TerminateSessionsForToke
     @Inject
     private SessionDataContainer sessionDataContainer;
 
-    public TerminateSessionsForTokenCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public TerminateSessionsForTokenCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

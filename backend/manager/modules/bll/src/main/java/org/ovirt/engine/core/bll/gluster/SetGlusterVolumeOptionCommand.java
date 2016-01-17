@@ -23,10 +23,6 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
     private boolean optionValueExists;
 
-    public SetGlusterVolumeOptionCommand(GlusterVolumeOptionParameters params) {
-        this(params, null);
-    }
-
     public SetGlusterVolumeOptionCommand(GlusterVolumeOptionParameters params, CommandContext commandContext) {
         super(params, commandContext);
     }

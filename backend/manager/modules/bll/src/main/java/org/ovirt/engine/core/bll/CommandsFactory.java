@@ -78,9 +78,23 @@ public final class CommandsFactory {
         return createCommand(action, parameters, null);
     }
 
-    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters, CommandContext commandContext) {
+    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters,
+            CommandContext commandContext) {
         try {
-            return Injector.injectMembers(instantiateCommand(action, parameters, commandContext));
+            Constructor<CommandBase<? extends VdcActionParametersBase>> commandConstructor =
+                    findCommandConstructor(getCommandClass(action.name()), parameters.getClass(), CommandContext.class);
+
+            if (commandContext == null) {
+                commandContext = CommandContext.createContext(parameters.getSessionId());
+            } else if (commandContext.getEngineContext().getSessionId() == null) {
+                // Needed for SEAT mechanism - session ID is available only on parameters
+                // upon command re-instantiation (when moving between task handlers).
+                commandContext.getEngineContext().withSessionId(parameters.getSessionId());
+            }
+
+            @SuppressWarnings("unchecked")
+            CommandBase<P> command = (CommandBase<P>) commandConstructor.newInstance(parameters, commandContext);
+            return Injector.injectMembers(command);
         }
         catch (InvocationTargetException ex) {
             log.error("Error in invocating CTOR of command '{}': {}", action.name(), ex.getMessage());
@@ -94,27 +108,6 @@ public final class CommandsFactory {
             log.debug("Exception", ex);
             return null;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <P extends VdcActionParametersBase> CommandBase<P> instantiateCommand(VdcActionType action,
-                                                                                         P parameters,
-                                                                                         CommandContext commandContext)
-            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        CommandBase<P> command;
-        if (commandContext != null && CommandsFactory.hasConstructor(action, parameters, commandContext)) {
-            command = (CommandBase<P>) findCommandConstructor(getCommandClass(action.name()),
-                    parameters.getClass(),
-                    commandContext.getClass()).newInstance(parameters, commandContext);
-        } else {
-            command = (CommandBase<P>) findCommandConstructor(
-                    getCommandClass(action.name()),
-                    parameters.getClass()).newInstance(parameters);
-            if (commandContext != null) {
-                command.getContext().withExecutionContext(commandContext.getExecutionContext());
-            }
-        }
-        return command;
     }
 
     /**
@@ -169,12 +162,6 @@ public final class CommandsFactory {
 
     public static Class<CommandBase<? extends VdcActionParametersBase>> getQueryClass(String name) {
         return getCommandClass(name, QUERY_SUFFIX);
-    }
-
-    private static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters, CommandContext cmdContext) {
-        return ReflectionUtils.findConstructor(getCommandClass(action.name()),
-                parameters.getClass(),
-                cmdContext.getClass()) != null;
     }
 
     private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {

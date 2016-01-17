@@ -69,10 +69,6 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     static final StorageType[] SUPPORTED_DOMAIN_TYPES =
             { StorageType.NFS, StorageType.FCP, StorageType.GLUSTERFS, StorageType.ISCSI };
 
-    public ImportHostedEngineStorageDomainCommand(T parameters) {
-        super(parameters);
-    }
-
     public ImportHostedEngineStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

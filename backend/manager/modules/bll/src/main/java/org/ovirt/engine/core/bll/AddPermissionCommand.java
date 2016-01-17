@@ -25,10 +25,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
-    public AddPermissionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddPermissionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

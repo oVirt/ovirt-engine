@@ -28,10 +28,6 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
 
-    public RegisterDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RegisterDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStoragePoolId(parameters.getDiskImage().getStoragePoolId());

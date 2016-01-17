@@ -24,7 +24,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
 
      @Test
     public void validateSucceeds() {
-        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
         setupMocks(cmd);
         assertTrue(cmd.validate());
     }
@@ -32,7 +32,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
 
     @Test
     public void validateFailsOnNullHookId() {
-        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(null)));
+        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(null), null));
         setupMocks(cmd);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
@@ -41,7 +41,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
 
     @Test
     public void validateFailsOnNullHook() {
-        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
         setupMocks(cmd, false);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
@@ -49,7 +49,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
 
     @Test
     public void executeCommand() {
-        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
         setupMocks(cmd);
         mockBackendStatusChange(cmd, true);
         cmd.executeCommand();
@@ -59,7 +59,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID)));
+        cmd = spy(new DisableGlusterHookCommand<>(new GlusterHookParameters(HOOK_ID), null));
         setupMocks(cmd);
         mockBackendStatusChange(cmd, false);
         cmd.executeCommand();

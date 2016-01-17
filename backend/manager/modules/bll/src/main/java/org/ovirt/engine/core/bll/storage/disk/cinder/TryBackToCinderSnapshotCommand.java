@@ -21,10 +21,6 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
     private CinderBroker cinderBroker;
     private CinderDisk oldActiveDisk;
 
-    public TryBackToCinderSnapshotCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public TryBackToCinderSnapshotCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

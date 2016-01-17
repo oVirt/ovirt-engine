@@ -19,9 +19,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
  */
 @NonTransactiveCommandAttribute
 public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCommand<T> {
-    public VdsPowerDownCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public VdsPowerDownCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

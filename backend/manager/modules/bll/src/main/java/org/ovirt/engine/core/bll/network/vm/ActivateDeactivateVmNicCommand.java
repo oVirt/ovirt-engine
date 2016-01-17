@@ -71,10 +71,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     @Inject
     private HostDeviceManager hostDeviceManager;
 
-    public ActivateDeactivateVmNicCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(parameters.getVmId());

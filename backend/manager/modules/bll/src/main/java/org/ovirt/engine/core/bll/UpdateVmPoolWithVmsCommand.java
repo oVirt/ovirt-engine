@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -41,8 +42,8 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
         super(commandId);
     }
 
-    public UpdateVmPoolWithVmsCommand(T parameters) {
-        super(parameters);
+    public UpdateVmPoolWithVmsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

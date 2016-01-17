@@ -102,7 +102,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     protected void spyCommand(StoragePoolManagementParameter params) {
         UpdateStoragePoolCommand<StoragePoolManagementParameter> realCommand =
-                new UpdateStoragePoolCommand<>(params);
+                new UpdateStoragePoolCommand<>(params, null);
 
         cmd = spy(realCommand);
         doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)

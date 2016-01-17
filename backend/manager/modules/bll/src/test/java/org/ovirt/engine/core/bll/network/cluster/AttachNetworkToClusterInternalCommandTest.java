@@ -35,7 +35,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
                                                    AttachNetworkToClusterInternalCommand<AttachNetworkToClusterParameter> {
 
         private TestAttachNetworkToClusterCommand(AttachNetworkToClusterParameter parameters) {
-            super(parameters);
+            super(parameters, null);
         }
 
         @Override

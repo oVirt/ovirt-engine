@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,8 +29,8 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
 
     protected boolean encounterConnectionProblems;
 
-    public BaseIscsiBondCommand(T parameters) {
-        super(parameters);
+    public BaseIscsiBondCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public BaseIscsiBondCommand(Guid commandId) {

@@ -48,9 +48,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStoragesParameter> extends
         UpdateStoragePoolCommand<T> {
-    public AddStoragePoolWithStoragesCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public AddStoragePoolWithStoragesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

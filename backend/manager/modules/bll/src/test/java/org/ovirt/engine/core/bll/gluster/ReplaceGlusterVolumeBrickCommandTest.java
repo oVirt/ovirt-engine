@@ -144,14 +144,14 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
         return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
                 GlusterTaskOperation.START,
                 getBricks(volumeId, "distrib", 1).get(0),
-                getBricks(volumeId, "new", 1).get(0), false));
+                getBricks(volumeId, "new", 1).get(0), false), null);
     }
 
     private ReplaceGlusterVolumeBrickCommand createTestCommand2(Guid volumeId) {
         return new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(volumeId,
                 GlusterTaskOperation.START,
                 null,
-                getBricks(volumeId, "", 1).get(0), false));
+                getBricks(volumeId, "", 1).get(0), false), null);
     }
 
     @Test

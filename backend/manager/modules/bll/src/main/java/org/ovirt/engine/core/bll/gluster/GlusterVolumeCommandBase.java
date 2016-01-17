@@ -18,10 +18,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
  */
 public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters> extends GlusterCommandBase<T> {
 
-    public GlusterVolumeCommandBase(T params) {
-        this(params, null);
-    }
-
     public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
         setGlusterVolumeId(getParameters().getVolumeId());

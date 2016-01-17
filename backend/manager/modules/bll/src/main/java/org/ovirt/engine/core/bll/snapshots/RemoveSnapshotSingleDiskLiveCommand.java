@@ -39,10 +39,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         extends RemoveSnapshotSingleDiskCommandBase<T> {
     private static final Logger log = LoggerFactory.getLogger(RemoveSnapshotSingleDiskLiveCommand.class);
 
-    public RemoveSnapshotSingleDiskLiveCommand(T parameters) {
-        super(parameters);
-    }
-
     public RemoveSnapshotSingleDiskLiveCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

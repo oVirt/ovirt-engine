@@ -42,10 +42,6 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
         super(commandId);
     }
 
-    public UpgradeHostInternalCommand(T parameters) {
-        super(parameters);
-    }
-
     public UpgradeHostInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

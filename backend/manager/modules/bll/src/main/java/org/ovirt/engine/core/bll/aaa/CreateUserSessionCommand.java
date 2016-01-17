@@ -15,6 +15,7 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
@@ -47,8 +48,8 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     @Inject
     private PermissionDao permissionDao;
 
-    public CreateUserSessionCommand(T parameters) {
-        super(parameters);
+    public CreateUserSessionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private DbUser buildUser(T params, String authzName) {

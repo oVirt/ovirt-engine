@@ -20,10 +20,6 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
     @Inject
     private SessionDataContainer sessionDataContainer;
 
-    public LogoutSessionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public LogoutSessionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -29,10 +29,6 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         super(parameters, cmdContext);
     }
 
-    public CreateCloneOfTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected DiskImage cloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.cloneDiskImage(newImageGuid);

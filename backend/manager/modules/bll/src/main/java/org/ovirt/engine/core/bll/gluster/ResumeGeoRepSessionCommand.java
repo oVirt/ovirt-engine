@@ -14,10 +14,6 @@ public class ResumeGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
 
     private GlusterVolumeGeoRepSessionParameters parameters;
 
-    public ResumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params) {
-        super(params);
-    }
-
     public ResumeGeoRepSessionCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
     }

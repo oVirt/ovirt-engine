@@ -20,10 +20,6 @@ public class RegisterCinderDiskCommand<T extends RegisterCinderDiskParameters> e
 
     private static final Logger log = LoggerFactory.getLogger(RegisterCinderDiskCommand.class);
 
-    public RegisterCinderDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RegisterCinderDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -51,8 +52,8 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     private VM diskVm;
     private List<PermissionSubject> permsList;
 
-    public GetDiskAlignmentCommand(T parameters) {
-        super(parameters);
+    public GetDiskAlignmentCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

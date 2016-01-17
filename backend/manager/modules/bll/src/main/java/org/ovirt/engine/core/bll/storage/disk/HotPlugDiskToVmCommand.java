@@ -32,10 +32,6 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     private Disk disk;
     protected VmDevice oldVmDevice;
 
-    public HotPlugDiskToVmCommand(T parameters) {
-        super(parameters);
-    }
-
     public HotPlugDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

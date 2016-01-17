@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -80,8 +81,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         super(commandId);
     }
 
-    public ExportVmCommand(T parameters) {
-        super(parameters);
+    public ExportVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }

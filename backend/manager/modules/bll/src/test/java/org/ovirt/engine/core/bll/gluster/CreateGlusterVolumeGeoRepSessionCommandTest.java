@@ -79,7 +79,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         Guid.newGuid(),
                         null,
                         null,
-                        false)));
+                        false), null));
         prepareMocks();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
         doReturn(volume).when(command).getSlaveVolume();
@@ -111,7 +111,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         Guid.newGuid(),
                         null,
                         null,
-                        false)));
+                        false), null));
         prepareMocks();
         doReturn(null).when(command).getSlaveVolume();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();
@@ -128,7 +128,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         Guid.newGuid(),
                         null,
                         null,
-                        false)));
+                        false), null));
         prepareMocks();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(vds).when(command).getSlaveHost();
@@ -147,7 +147,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         Guid.newGuid(),
                         null,
                         null,
-                        false)));
+                        false), null));
         prepareMocks();
         doReturn(vds).when(command).getUpServer();
         doReturn(vds).when(command).getSlaveHost();
@@ -165,7 +165,7 @@ public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest
                         Guid.newGuid(),
                         null,
                         null,
-                        false)));
+                        false), null));
         prepareMocks();
         doReturn(vds).when(command).getUpServer();
         doReturn(SUPPORTED_VERSION).when(cluster).getCompatibilityVersion();

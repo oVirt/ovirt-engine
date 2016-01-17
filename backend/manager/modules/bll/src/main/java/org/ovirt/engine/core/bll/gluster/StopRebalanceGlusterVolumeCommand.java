@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
@@ -21,8 +22,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParamete
 @NonTransactiveCommandAttribute
 public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<GlusterVolumeRebalanceParameters> {
 
-    public StopRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params) {
-        super(params);
+    public StopRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

@@ -18,10 +18,6 @@ public abstract class RolesOperationCommandBase<T extends RolesOperationsParamet
         super(commandId);
     }
 
-    public RolesOperationCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public RolesOperationCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -61,8 +62,8 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
                         AuditLogType.GLUSTER_SERVICE_RESTART_FAILED));
     }
 
-    public ManageGlusterServiceCommand(GlusterServiceParameters params) {
-        super(params);
+    public ManageGlusterServiceCommand(GlusterServiceParameters params, CommandContext commandContext) {
+        super(params, commandContext);
         this.clusterId = params.getClusterId();
         this.serverId = params.getServerId();
         this.serviceType = params.getServiceType();

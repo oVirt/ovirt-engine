@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -23,8 +24,8 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
 
     private VnicProfile oldVnicProfile;
 
-    public UpdateVnicProfileCommand(T parameters) {
-        super(parameters);
+    public UpdateVnicProfileCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessi
 
 public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<GlusterVolumeGeoRepSessionParameters> {
 
-    public StartGlusterVolumeGeoRepCommand(GlusterVolumeGeoRepSessionParameters params) {
-        super(params);
-    }
-
     public StartGlusterVolumeGeoRepCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
         super(params, context);
     }

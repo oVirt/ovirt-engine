@@ -14,9 +14,6 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public abstract class StoragePoolManagementCommandBase<T extends StoragePoolManagementParameter> extends
         StorageHandlingCommandBase<T> {
-    public StoragePoolManagementCommandBase(T parameters) {
-        super(parameters, null);
-    }
 
     /**
      * Constructor for command creation when compensation is applied on startup

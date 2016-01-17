@@ -14,6 +14,7 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
@@ -38,8 +39,8 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
     @Inject
     private DbUserDao dbUserDao;
 
-    public LoginOnBehalfCommand(T parameters) {
-        super(parameters);
+    public LoginOnBehalfCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

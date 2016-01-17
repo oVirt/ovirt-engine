@@ -24,10 +24,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetUpPasswordLessSSHParameters> {
 
-    public SetUpPasswordLessSSHInternalCommand(SetUpPasswordLessSSHParameters params) {
-        super(params, null);
-    }
-
     public SetUpPasswordLessSSHInternalCommand(SetUpPasswordLessSSHParameters params, CommandContext commandContext) {
         super(params, commandContext);
         setClusterId(getParameters().getId());

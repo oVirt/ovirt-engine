@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -17,8 +18,8 @@ public class DisableGlusterHookCommand<T extends GlusterHookParameters> extends 
     private static final long serialVersionUID = 2267182025441596357L;
 
 
-    public DisableGlusterHookCommand(T params) {
-        super(params);
+    public DisableGlusterHookCommand(T params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     public void createCommand() {
         param = new UpdateHostNicVfsConfigParameters(NIC_ID, NUM_OF_VFS, false);
 
-        command = spy(new UpdateHostNicVfsConfigCommand(param));
+        command = spy(new UpdateHostNicVfsConfigCommand(param, null));
         doReturn(validator).when(command).getVfsConfigValidator();
         doReturn(vfsConfigDao).when(command).getVfsConfigDao();
         doReturn(interfaceDao).when(command).getInterfaceDao();

@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddVfsConfigNetworkCommand extends NetworkVfsConfigCommandBase {
 
-    public AddVfsConfigNetworkCommand(VfsConfigNetworkParameters parameters) {
-        this(parameters, null);
-    }
-
     public AddVfsConfigNetworkCommand(VfsConfigNetworkParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

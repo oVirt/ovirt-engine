@@ -24,10 +24,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintenanceVdsCommand<T> {
 
-    public SetNonOperationalVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public SetNonOperationalVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStorageDomainId(parameters.getStorageDomainId());

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.qos;
 
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
@@ -10,8 +11,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>> extends QosCommandBase<T, M> {
 
-    public AddQosCommand(QosParametersBase<T> parameters) {
-        super(parameters);
+    public AddQosCommand(QosParametersBase<T> parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

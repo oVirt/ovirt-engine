@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -33,8 +34,8 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
     protected List<String> errors = new ArrayList<>();
     private List<GlusterServerHook> missingServerHooks = null;
 
-    public AddGlusterHookCommand(T params) {
-        super(params);
+    public AddGlusterHookCommand(T params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

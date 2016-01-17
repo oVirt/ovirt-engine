@@ -22,10 +22,6 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
     @Inject
     private ResourceManager resourceManager;
 
-    public RefreshHostCapabilitiesCommand(T parameters) {
-        super(parameters);
-    }
-
     public RefreshHostCapabilitiesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

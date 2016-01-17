@@ -53,10 +53,6 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
     }
 
-    public FenceVdsManualyCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);

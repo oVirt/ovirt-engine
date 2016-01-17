@@ -19,10 +19,6 @@ public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentComman
         super(parameters, cmdContext);
     }
 
-    public FenceAgentCommandBase(FenceAgentCommandParameterBase parameters) {
-        super(parameters);
-    }
-
     public FenceAgentCommandBase(Guid commandId) {
         super(commandId);
     }

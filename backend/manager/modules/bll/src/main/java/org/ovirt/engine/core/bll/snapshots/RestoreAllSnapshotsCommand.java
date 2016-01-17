@@ -92,11 +92,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }
 
-
-    public RestoreAllSnapshotsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected BackendInternal getBackend() {
         return super.getBackend();

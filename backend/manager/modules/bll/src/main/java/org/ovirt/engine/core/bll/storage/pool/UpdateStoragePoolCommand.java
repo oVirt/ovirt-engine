@@ -64,10 +64,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Inject
     private MacPoolPerDc poolPerDc;
 
-    public UpdateStoragePoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     /**
      * Constructor for command creation when compensation is applied on startup
      */

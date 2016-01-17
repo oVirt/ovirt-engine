@@ -32,10 +32,6 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         super(parameters, cmdContext);
     }
 
-    public ConnectStorageToVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void executeCommand() {
         Pair<Boolean, Integer> result = connectHostToStorage();

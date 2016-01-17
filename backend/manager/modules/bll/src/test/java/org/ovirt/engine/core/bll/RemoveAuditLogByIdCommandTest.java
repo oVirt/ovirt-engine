@@ -49,7 +49,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsOnNonExistingEvent() {
         command =
-                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_1)));
+                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_1), null));
         prepareMocks(command);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
@@ -58,7 +58,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceeds() {
         command =
-                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_3)));
+                spy(new RemoveAuditLogByIdCommand<>(new RemoveAuditLogByIdParameters(EVENT_ID_3), null));
         prepareMocks(command);
         assertTrue(command.validate());
     }

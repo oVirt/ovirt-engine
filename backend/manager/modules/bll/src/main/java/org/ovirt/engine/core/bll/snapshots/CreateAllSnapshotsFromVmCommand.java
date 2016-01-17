@@ -91,10 +91,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super(commandId);
     }
 
-    public CreateAllSnapshotsFromVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Command);

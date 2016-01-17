@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,8 +14,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class ClearAllAuditLogEventsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    public ClearAllAuditLogEventsCommand(T parameters) {
-        super(parameters);
+    public ClearAllAuditLogEventsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

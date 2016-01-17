@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 
 public class UpdateGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<GraphicsParameters> {
 
-    protected UpdateGraphicsDeviceCommand(GraphicsParameters parameters) {
-        super(parameters);
+    public UpdateGraphicsDeviceCommand(GraphicsParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

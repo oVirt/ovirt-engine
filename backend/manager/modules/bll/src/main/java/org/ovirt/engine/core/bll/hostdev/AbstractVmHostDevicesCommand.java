@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -33,8 +34,8 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
      */
     private Set<String> primaryDeviceNames;
 
-    public AbstractVmHostDevicesCommand(P parameters) {
-        super(parameters);
+    public AbstractVmHostDevicesCommand(P parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         primaryDeviceNames = new HashSet<>(parameters.getDeviceNames());
     }
 

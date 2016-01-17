@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -22,8 +23,8 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
     @Inject
     private DBSchedulerUtilQuartzImpl schedulerUtil;
 
-    public ScheduleGlusterVolumeSnapshotCommandBase(T params) {
-        super(params);
+    public ScheduleGlusterVolumeSnapshotCommandBase(T params, CommandContext commandContext) {
+        super(params, commandContext);
         this.schedule = getParameters().getSchedule();
         this.force = getParameters().getForce();
 

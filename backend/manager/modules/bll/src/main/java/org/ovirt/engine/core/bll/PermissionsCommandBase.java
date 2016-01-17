@@ -29,10 +29,6 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         super(commandId);
     }
 
-    public PermissionsCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public PermissionsCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

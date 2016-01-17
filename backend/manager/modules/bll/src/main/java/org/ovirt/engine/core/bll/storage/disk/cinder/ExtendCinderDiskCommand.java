@@ -19,10 +19,6 @@ public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends U
 
     private static final Logger log = LoggerFactory.getLogger(ExtendCinderDiskCommand.class);
 
-    public ExtendCinderDiskCommand(T parameters) {
-        super(parameters);
-    }
-
     public ExtendCinderDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

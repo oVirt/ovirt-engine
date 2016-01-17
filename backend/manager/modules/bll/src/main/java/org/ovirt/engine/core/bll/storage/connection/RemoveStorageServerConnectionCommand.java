@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -23,8 +24,8 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand<T> {
 
-    public RemoveStorageServerConnectionCommand(T parameters) {
-        super(parameters, null);
+    public RemoveStorageServerConnectionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

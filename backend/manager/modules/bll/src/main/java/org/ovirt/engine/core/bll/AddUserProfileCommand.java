@@ -11,10 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
 
-    public AddUserProfileCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AddUserProfileCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

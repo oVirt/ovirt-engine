@@ -14,10 +14,6 @@ import org.ovirt.engine.core.dao.JobDao;
 
 public abstract class AddJobCommand<T extends AddJobParameters> extends CommandBase<T> {
 
-    protected AddJobCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected AddJobCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

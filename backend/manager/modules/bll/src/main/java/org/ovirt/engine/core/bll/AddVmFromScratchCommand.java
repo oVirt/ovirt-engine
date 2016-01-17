@@ -30,9 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
 public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCommand<T> {
-    public AddVmFromScratchCommand(T parameters) {
-        super(parameters, null);
-    }
 
     public AddVmFromScratchCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

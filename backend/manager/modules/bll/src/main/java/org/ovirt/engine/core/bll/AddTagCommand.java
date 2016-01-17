@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -7,8 +8,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddTagCommand<T extends TagsOperationParameters> extends TagsCommandOperationBase<T> {
-    public AddTagCommand(T parameters) {
-        super(parameters);
+
+    public AddTagCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

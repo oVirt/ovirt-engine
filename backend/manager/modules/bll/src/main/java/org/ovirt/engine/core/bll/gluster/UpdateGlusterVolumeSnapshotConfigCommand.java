@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -29,8 +30,9 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
     private boolean updatesSuccessful;
     private List<String> failedCfgs;
 
-    public UpdateGlusterVolumeSnapshotConfigCommand(UpdateGlusterVolumeSnapshotConfigParameters params) {
-        super(params);
+    public UpdateGlusterVolumeSnapshotConfigCommand(UpdateGlusterVolumeSnapshotConfigParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
         setClusterId(params.getClusterId());
         failedCfgs = new ArrayList<>();
     }

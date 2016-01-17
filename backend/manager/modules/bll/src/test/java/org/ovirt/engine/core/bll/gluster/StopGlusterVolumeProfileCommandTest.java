@@ -61,21 +61,21 @@ public class StopGlusterVolumeProfileCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSucceedsOnStoppedVolume() {
-        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(STOPPED_VOLUME_ID)));
+        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(STOPPED_VOLUME_ID), null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateSucceedsOnStartedVolume() {
-        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(STARTED_VOLUME_ID)));
+        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(STARTED_VOLUME_ID), null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(null)));
+        cmd = spy(new StopGlusterVolumeProfileCommand(new GlusterVolumeParameters(null), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

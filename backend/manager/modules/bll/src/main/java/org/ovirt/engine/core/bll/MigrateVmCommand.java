@@ -54,10 +54,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private Integer actualDowntime;
 
-    public MigrateVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
 

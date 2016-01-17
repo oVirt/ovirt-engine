@@ -58,10 +58,6 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
     private KdumpDetectionResult kdumpDetectionResult;
 
 
-    public VdsKdumpDetectionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public VdsKdumpDetectionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         listenerTimeoutInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpListenerTimeout) * 1000;

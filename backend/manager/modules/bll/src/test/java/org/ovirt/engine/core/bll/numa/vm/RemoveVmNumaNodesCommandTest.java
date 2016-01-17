@@ -147,7 +147,7 @@ public class RemoveVmNumaNodesCommandTest extends BaseCommandTest {
     private RemoveVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommand(VmNumaNodeOperationParameters
             parameters) {
         final RemoveVmNumaNodesCommand<VmNumaNodeOperationParameters> command =
-                spy(new RemoveVmNumaNodesCommand<>(parameters));
+                spy(new RemoveVmNumaNodesCommand<>(parameters, null));
         when(command.getDbFacade()).thenReturn(dbFacade);
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);

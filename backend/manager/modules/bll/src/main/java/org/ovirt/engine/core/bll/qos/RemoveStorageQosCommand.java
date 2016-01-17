@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.qos;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageQosValidator;
 import org.ovirt.engine.core.common.action.QosParametersBase;
@@ -8,8 +9,8 @@ import org.ovirt.engine.core.dao.qos.QosDao;
 
 public class RemoveStorageQosCommand extends RemoveQosCommandBase<StorageQos, QosValidator<StorageQos>> {
 
-    public RemoveStorageQosCommand(QosParametersBase<StorageQos> parameters) {
-        super(parameters);
+    public RemoveStorageQosCommand(QosParametersBase<StorageQos> parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

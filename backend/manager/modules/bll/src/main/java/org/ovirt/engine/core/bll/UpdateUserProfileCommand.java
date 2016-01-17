@@ -8,10 +8,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
 
-    public UpdateUserProfileCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public UpdateUserProfileCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -33,10 +33,6 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
 
     private CinderDisk disk;
 
-    public CreateCinderSnapshotCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public CreateCinderSnapshotCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

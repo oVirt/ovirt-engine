@@ -354,7 +354,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private void initializeCommand(Guid storageId, AddDiskParameters params) {
         params.setStorageDomainId(storageId);
-        command = spy(new AddDiskCommand<>(params));
+        command = spy(new AddDiskCommand<>(params, null));
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
         doReturn(storagePoolIsoMapDao).when(command).getStoragePoolIsoMapDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDao();

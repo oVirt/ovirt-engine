@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -33,8 +34,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Inject
     private VmDao vmDao;
 
-    public AddNetworkCommand(T parameters) {
-        super(parameters);
+    public AddNetworkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

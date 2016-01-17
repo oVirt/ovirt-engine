@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 import org.junit.Test;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -312,7 +313,8 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private ImportVmTemplateCommand createImportVmTemplateCommandSpy(final ImportVmTemplateParameters parameters) {
-        ImportVmTemplateCommand spy = spy(new ImportVmTemplateCommand(parameters) {
+        ImportVmTemplateCommand spy = spy(new ImportVmTemplateCommand(
+                parameters, CommandContext.createContext(parameters.getSessionId())) {
 
             @Override
             public Cluster getCluster() {

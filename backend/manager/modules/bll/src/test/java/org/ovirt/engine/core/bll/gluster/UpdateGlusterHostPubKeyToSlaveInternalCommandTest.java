@@ -33,7 +33,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
         pubKeys.add("");
         command =
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
-                        pubKeys)));
+                        pubKeys), null));
         doReturn(vds).when(command).getUpServer();
         assertTrue(command.validate());
     }
@@ -43,7 +43,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
         List<String> pubKeys = new ArrayList<>();
         command =
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
-                        pubKeys)));
+                        pubKeys), null));
         doReturn(vds).when(command).getUpServer();
         assertFalse(command.validate());
     }
@@ -54,7 +54,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
         pubKeys.add("");
         command =
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
-                        pubKeys)));
+                        pubKeys), null));
         doReturn(null).when(command).getUpServer();
         command.setClusterId(Guid.newGuid());
         doReturn(new Cluster()).when(command).getCluster();

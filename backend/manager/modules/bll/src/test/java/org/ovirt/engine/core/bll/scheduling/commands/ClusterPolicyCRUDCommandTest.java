@@ -31,7 +31,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
         clusterPolicy.setId(clusterPolicyId);
         ClusterPolicyCRUDCommand command =
                 new ClusterPolicyCRUDCommand(new ClusterPolicyCRUDParameters(clusterPolicyId,
-                        clusterPolicy)) {
+                        clusterPolicy), null) {
 
                     @Override
                     protected void executeCommand() {
@@ -51,7 +51,7 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
         clusterPolicy.setParameterMap(parameterMap);
         ClusterPolicyCRUDCommand command =
                 new ClusterPolicyCRUDCommand(new ClusterPolicyCRUDParameters(clusterPolicyId,
-                        clusterPolicy)) {
+                        clusterPolicy), null) {
 
                     @Override
                     protected void executeCommand() {

@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
@@ -20,8 +21,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 @NonTransactiveCommandAttribute
 public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsCommand<T> {
 
-    public UpgradeHostCommand(T parameters) {
-        super(parameters);
+    public UpgradeHostCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

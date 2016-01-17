@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -23,9 +24,8 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
         super(commandId);
     }
 
-    public UserCommandBase(T parameters) {
-        super(parameters);
-
+    public UserCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private String adUserName;

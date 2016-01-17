@@ -4,6 +4,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,8 +19,8 @@ import org.ovirt.engine.core.compat.Version;
 @NonTransactiveCommandAttribute
 public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParameters> {
 
-    public SetHaMaintenanceCommand(SetHaMaintenanceParameters vdsActionParameters) {
-        super(vdsActionParameters);
+    public SetHaMaintenanceCommand(SetHaMaintenanceParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

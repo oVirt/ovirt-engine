@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
@@ -21,8 +22,8 @@ public class VmSlaPolicyCommand<T extends VmSlaPolicyParameters> extends VmManag
 
     public static final String LOGABLE_FIELD_CPU_LIMIT = "cpuLimit";
 
-    public VmSlaPolicyCommand(T parameters) {
-        super(parameters);
+    public VmSlaPolicyCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         if (getParameters().getVm() != null) {
             setVm(getParameters().getVm());
         }

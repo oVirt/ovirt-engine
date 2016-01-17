@@ -164,7 +164,7 @@ public class UpdateVmNumaNodesCommandTest extends BaseCommandTest {
     private UpdateVmNumaNodesCommand<VmNumaNodeOperationParameters> mockedCommand(VmNumaNodeOperationParameters
             parameters) {
         final UpdateVmNumaNodesCommand<VmNumaNodeOperationParameters> command =
-                spy(new UpdateVmNumaNodesCommand<>(parameters));
+                spy(new UpdateVmNumaNodesCommand<>(parameters, null));
         when(command.getDbFacade()).thenReturn(dbFacade);
         when(dbFacade.getVmNumaNodeDao()).thenReturn(vmNumaNodeDao);
         when(dbFacade.getVdsNumaNodeDao()).thenReturn(vdsNumaNodeDao);

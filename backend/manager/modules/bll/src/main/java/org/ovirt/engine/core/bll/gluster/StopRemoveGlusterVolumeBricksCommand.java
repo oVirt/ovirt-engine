@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,8 +23,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
 @NonTransactiveCommandAttribute
 public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
 
-    public StopRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params) {
-        super(params);
+    public StopRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmTemplateCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -39,8 +40,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     // this is needed since overriding getVmTemplate()
     private VmTemplate exportTemplate;
 
-    public RemoveVmTemplateFromImportExportCommand(T parameters) {
-        super(parameters);
+    public RemoveVmTemplateFromImportExportCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStorageDomainId(parameters.getStorageDomainId());
     }
 

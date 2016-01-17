@@ -23,10 +23,6 @@ public abstract class VfsConfigCommandBase<T extends VfsConfigBaseParameters> ex
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
 
-    public VfsConfigCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public VfsConfigCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

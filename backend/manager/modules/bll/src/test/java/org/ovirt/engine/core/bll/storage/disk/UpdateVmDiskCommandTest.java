@@ -35,6 +35,7 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -567,7 +568,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     protected void initializeCommand(UpdateVmDiskParameters params, List<VM> vms) {
         // Done before creating the spy to have correct values during the ctor run
         mockCtorRelatedDaoCalls(vms);
-        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(params) {
+        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(
+                params, CommandContext.createContext(params.getSessionId())) {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override

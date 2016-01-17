@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -18,8 +19,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 
-    public RemoveVmHostDevicesCommand(VmHostDevicesParameters parameters) {
-        super(parameters);
+    public RemoveVmHostDevicesCommand(VmHostDevicesParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

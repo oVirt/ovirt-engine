@@ -32,7 +32,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
 
     @Override
     protected AttachActionGroupsToRoleCommand<? extends ActionGroupsToRoleParameter> generateCommand() {
-        return new AttachActionGroupsToRoleCommand<>(getParams());
+        return new AttachActionGroupsToRoleCommand<>(getParams(), null);
     }
 
     @SuppressWarnings("unchecked")

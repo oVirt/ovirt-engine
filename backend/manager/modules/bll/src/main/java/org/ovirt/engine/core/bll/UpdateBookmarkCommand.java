@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
@@ -7,8 +8,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateBookmarkCommand<T extends BookmarksOperationParameters> extends BookmarkOperationCommand<T> {
 
-    public UpdateBookmarkCommand(T parameters) {
-        super(parameters);
+    public UpdateBookmarkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

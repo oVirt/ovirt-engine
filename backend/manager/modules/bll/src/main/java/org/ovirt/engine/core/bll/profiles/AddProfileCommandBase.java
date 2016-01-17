@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.profiles;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ProfileParametersBase;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -7,8 +8,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AddProfileCommandBase<T extends ProfileParametersBase<P>, P extends ProfileBase, Q extends ProfileValidator<P>> extends ProfileCommandBase<T, P> {
 
-    public AddProfileCommandBase(T parameters) {
-        super(parameters);
+    public AddProfileCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

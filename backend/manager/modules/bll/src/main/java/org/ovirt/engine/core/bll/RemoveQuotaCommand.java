@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,8 +14,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
-    public RemoveQuotaCommand(QuotaCRUDParameters parameters) {
-        super(parameters);
+    public RemoveQuotaCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

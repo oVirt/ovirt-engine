@@ -58,7 +58,7 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        cmd = spy(new ReconstructMasterDomainCommand<>(new ReconstructMasterParameters()));
+        cmd = spy(new ReconstructMasterDomainCommand<>(new ReconstructMasterParameters(), null));
 
         initializeStorageDomains();
         initializeStoragePool();

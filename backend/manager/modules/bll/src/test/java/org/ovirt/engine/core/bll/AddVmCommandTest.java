@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -384,7 +385,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         AddVmParameters param = new AddVmParameters();
         param.setVm(vm);
         AddVmFromTemplateCommand<AddVmParameters> concrete =
-                new AddVmFromTemplateCommand<AddVmParameters>(param) {
+                new AddVmFromTemplateCommand<AddVmParameters>(param, CommandContext.createContext(param.getSessionId())) {
                     @Override
                     protected void initUser() {
                         // Stub for testing
@@ -424,7 +425,7 @@ public class AddVmCommandTest extends BaseCommandTest {
         param.setSourceSnapshotId(sourceSnapshotId);
         param.setStorageDomainId(Guid.newGuid());
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
-                new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param) {
+                new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param, null) {
                     @Override
                     protected void initUser() {
                         // Stub for testing
@@ -630,7 +631,8 @@ public class AddVmCommandTest extends BaseCommandTest {
 
     private AddVmCommand<AddVmParameters> createCommand(VM vm) {
         AddVmParameters param = new AddVmParameters(vm);
-        AddVmCommand<AddVmParameters> cmd = new AddVmCommand<AddVmParameters>(param) {
+        AddVmCommand<AddVmParameters> cmd =
+                new AddVmCommand<AddVmParameters>(param, CommandContext.createContext(param.getSessionId())) {
 
             @Override
             protected void initUser() {

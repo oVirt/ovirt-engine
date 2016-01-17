@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -8,8 +9,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachVdsFromTagCommand<T extends AttachEntityToTagParameters> extends VdsTagMapBase<T> {
 
-    public DetachVdsFromTagCommand(T parameters) {
-        super(parameters);
+    public DetachVdsFromTagCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

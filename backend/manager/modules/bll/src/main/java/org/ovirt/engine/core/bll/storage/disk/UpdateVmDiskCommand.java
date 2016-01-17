@@ -85,10 +85,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private VmDevice vmDeviceForVm;
     private Disk oldDisk;
 
-    public UpdateVmDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         loadVmDiskAttachedToInfo();

@@ -18,9 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class DestroyImageCheckCommand<T extends DestroyImageParameters>
         extends CommandBase<T> {
-    public DestroyImageCheckCommand(T parameters) {
-        super(parameters);
-    }
 
     public DestroyImageCheckCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

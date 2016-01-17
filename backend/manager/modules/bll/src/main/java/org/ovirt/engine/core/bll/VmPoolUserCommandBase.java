@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,8 +10,8 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
         super(commandId);
     }
 
-    public VmPoolUserCommandBase(T parameters) {
-        super(parameters);
+    public VmPoolUserCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected void initPoolUser() {

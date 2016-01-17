@@ -72,10 +72,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     private SetupNetworksHelper helper;
 
-    public SetupNetworksCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public SetupNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVdsId(parameters.getVdsId());

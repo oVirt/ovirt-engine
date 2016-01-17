@@ -45,7 +45,8 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
     private VdsDao vdsDao;
 
     private InstallVdsInternalCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
-        InstallVdsInternalCommand<InstallVdsParameters> command = spy(new InstallVdsInternalCommand<>(params));
+        InstallVdsInternalCommand<InstallVdsParameters> command =
+                spy(new InstallVdsInternalCommand<>(params, null));
         doReturn(vdsDao).when(command).getVdsDao();
         return command;
     }

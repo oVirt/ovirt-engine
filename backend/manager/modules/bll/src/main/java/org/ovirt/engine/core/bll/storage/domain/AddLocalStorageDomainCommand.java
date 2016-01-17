@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,8 +26,8 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
         super(commandId);
     }
 
-    public AddLocalStorageDomainCommand(T parameters) {
-        super(parameters);
+    public AddLocalStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

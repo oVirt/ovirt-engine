@@ -31,10 +31,6 @@ public class RemoveFenceAgentsByVdsIdCommand<T extends FenceAgentCommandParamete
         super(parameters, cmdContext);
     }
 
-    public RemoveFenceAgentsByVdsIdCommand(FenceAgentCommandParameterBase parameters) {
-        super(parameters);
-    }
-
     public RemoveFenceAgentsByVdsIdCommand(Guid commandId) {
         super(commandId);
     }

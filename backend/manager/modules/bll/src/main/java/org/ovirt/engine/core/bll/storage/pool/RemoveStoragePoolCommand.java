@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
@@ -55,8 +56,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     private Map<String, Pair<String, String>> sharedLocks;
 
-    public RemoveStoragePoolCommand(T parameters) {
-        super(parameters);
+    public RemoveStoragePoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     public RemoveStoragePoolCommand(Guid commandId) {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,8 +29,8 @@ public class ImportProviderCertificateCommand<P extends ImportProviderCertificat
         super(commandId);
     }
 
-    public ImportProviderCertificateCommand(P parameters) {
-        super(parameters);
+    public ImportProviderCertificateCommand(P parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private Provider<?> getProvider() {

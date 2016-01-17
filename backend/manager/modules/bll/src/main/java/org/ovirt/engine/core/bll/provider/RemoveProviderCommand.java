@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -37,8 +38,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         super(commandId);
     }
 
-    public RemoveProviderCommand(P parameters) {
-        super(parameters);
+    public RemoveProviderCommand(P parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private Provider<?> getDeletedProvider() {

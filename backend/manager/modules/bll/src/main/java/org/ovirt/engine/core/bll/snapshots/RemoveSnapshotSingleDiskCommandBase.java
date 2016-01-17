@@ -15,9 +15,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
-    protected RemoveSnapshotSingleDiskCommandBase(T parameters) {
-        this(parameters, null);
-    }
 
 
     protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {

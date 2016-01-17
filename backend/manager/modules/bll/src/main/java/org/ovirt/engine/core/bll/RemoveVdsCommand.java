@@ -36,10 +36,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
     private VDS upServer;
 
-    public RemoveVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

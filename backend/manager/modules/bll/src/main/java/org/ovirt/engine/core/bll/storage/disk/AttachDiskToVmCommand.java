@@ -45,10 +45,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     private List<PermissionSubject> permsList = null;
     private Disk disk;
 
-    public AttachDiskToVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public AttachDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         disk = loadDisk(getParameters().getEntityInfo().getId());

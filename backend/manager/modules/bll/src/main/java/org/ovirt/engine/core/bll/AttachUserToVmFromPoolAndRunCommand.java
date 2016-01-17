@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
@@ -45,8 +46,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         super(commandId);
     }
 
-    public AttachUserToVmFromPoolAndRunCommand(T parameters) {
-        super(parameters);
+    public AttachUserToVmFromPoolAndRunCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

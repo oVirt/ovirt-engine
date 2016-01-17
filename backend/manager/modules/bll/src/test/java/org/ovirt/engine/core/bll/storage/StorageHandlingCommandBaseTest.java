@@ -151,7 +151,7 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     private static class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
         TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
-            super(parameters);
+            super(parameters, null);
         }
 
         @Override

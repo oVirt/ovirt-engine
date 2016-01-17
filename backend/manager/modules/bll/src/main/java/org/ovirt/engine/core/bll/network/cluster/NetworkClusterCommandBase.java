@@ -24,10 +24,6 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         super(parameters, cmdContext);
     }
 
-    protected NetworkClusterCommandBase(T parameters) {
-        super(parameters);
-    }
-
     protected NetworkCluster getNetworkCluster() {
         return getParameters().getNetworkCluster();
     }

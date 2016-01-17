@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.connection.iscsibond;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
@@ -11,8 +12,8 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
 
     private IscsiBond iscsiBond;
 
-    public RemoveIscsiBondCommand(T parameters) {
-        super(parameters);
+    public RemoveIscsiBondCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

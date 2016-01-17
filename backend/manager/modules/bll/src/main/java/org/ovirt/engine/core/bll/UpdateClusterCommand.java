@@ -85,10 +85,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private NetworkCluster managementNetworkCluster;
 
-    public UpdateClusterCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void init() {
         updateMigrateOnError();

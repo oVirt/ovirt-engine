@@ -23,10 +23,6 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         super(commandId);
     }
 
-    public AddExistingFileStorageDomainCommand(T parameters) {
-        super(parameters);
-    }
-
     public AddExistingFileStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

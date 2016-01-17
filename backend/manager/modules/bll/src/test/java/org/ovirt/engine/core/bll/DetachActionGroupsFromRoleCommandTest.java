@@ -26,7 +26,7 @@ public class DetachActionGroupsFromRoleCommandTest extends AbstractRolesCommandT
 
     @Override
     protected DetachActionGroupsFromRoleCommand<? extends ActionGroupsToRoleParameter> generateCommand() {
-        return new DetachActionGroupsFromRoleCommand<>(getParams());
+        return new DetachActionGroupsFromRoleCommand<>(getParams(), null);
     }
 
     @Override

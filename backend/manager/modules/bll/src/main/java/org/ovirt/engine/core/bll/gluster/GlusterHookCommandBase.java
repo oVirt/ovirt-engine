@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> extends GlusterCommandBase<T> {
     protected GlusterHookEntity entity;
 
-    public GlusterHookCommandBase(T params) {
-        super(params);
+    public GlusterHookCommandBase(T params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

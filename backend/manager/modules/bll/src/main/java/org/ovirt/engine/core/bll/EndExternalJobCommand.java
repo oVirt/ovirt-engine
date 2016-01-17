@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -21,8 +22,8 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
 
     private Job job;
 
-    public EndExternalJobCommand(T parameters) {
-        super(parameters);
+    public EndExternalJobCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

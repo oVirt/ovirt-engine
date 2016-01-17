@@ -103,7 +103,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new UpdateStorageServerConnectionCommand<>(parameters));
+        command = spy(new UpdateStorageServerConnectionCommand<>(parameters, null));
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
         doReturn(storagePoolIsoMapDao).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();

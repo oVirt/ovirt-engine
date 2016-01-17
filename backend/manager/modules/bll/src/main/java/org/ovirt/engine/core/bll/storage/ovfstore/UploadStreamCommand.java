@@ -21,10 +21,6 @@ public class UploadStreamCommand<T extends UploadStreamParameters> extends Image
         super(parameters, cmdContext);
     }
 
-    public UploadStreamCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected VDSReturnValue executeVdsCommand() {
         UploadStreamVDSCommandParameters vdsCommandParameters =

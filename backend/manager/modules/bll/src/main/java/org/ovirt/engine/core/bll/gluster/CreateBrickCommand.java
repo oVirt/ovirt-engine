@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -28,8 +29,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
-    public CreateBrickCommand(CreateBrickParameters parameters) {
-        super(parameters);
+    public CreateBrickCommand(CreateBrickParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

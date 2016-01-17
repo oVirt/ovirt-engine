@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -12,8 +13,7 @@ public class AddPosixFsStorageDomainCommand<T extends StorageDomainManagementPar
         super(commandId);
     }
 
-    public AddPosixFsStorageDomainCommand(T parameters) {
-        super(parameters);
+    public AddPosixFsStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
-
 }

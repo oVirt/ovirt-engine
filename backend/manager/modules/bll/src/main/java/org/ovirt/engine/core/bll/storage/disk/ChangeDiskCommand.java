@@ -5,6 +5,7 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmOperationCommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
     private String cdImagePath;
 
-    public ChangeDiskCommand(T parameters) {
-        super(parameters);
+    public ChangeDiskCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         cdImagePath = getParameters().getCdImagePath();
     }
 

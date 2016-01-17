@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 @NonTransactiveCommandAttribute
 public class ConnectDomainToStorageCommand<T extends StorageDomainPoolParametersBase> extends StorageDomainCommandBase<T> {
 
-    public ConnectDomainToStorageCommand(T parameters) {
-        super(parameters, null);
-    }
-
     public ConnectDomainToStorageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

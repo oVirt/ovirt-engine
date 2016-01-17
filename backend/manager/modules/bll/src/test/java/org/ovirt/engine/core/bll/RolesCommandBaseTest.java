@@ -19,7 +19,7 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
 
     @Override
     protected RolesCommandBase<RolesParameterBase> generateCommand() {
-        return new RolesCommandBase<RolesParameterBase>(getParams()) {
+        return new RolesCommandBase<RolesParameterBase>(getParams(), null) {
 
             @Override
             protected void executeCommand() {

@@ -33,10 +33,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     private boolean haMaintenanceFailed;
 
-    public ActivateVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ActivateVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

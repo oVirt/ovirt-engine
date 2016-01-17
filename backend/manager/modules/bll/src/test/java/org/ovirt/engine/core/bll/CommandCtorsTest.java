@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -23,6 +26,28 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public class CommandCtorsTest {
+
+    private static Collection<Class<CommandBase<? extends VdcActionParametersBase>>> commandClasses;
+
+    private static Predicate<Constructor<?>> mandatoryConstructorSignature;
+
+    @BeforeClass
+    public static void initCommandsCollection() {
+        // Create a stream of all VdcActionType objects.
+        commandClasses = Arrays.stream(VdcActionType.values())
+                // Filter out the Unknown VdcActionType.
+                .filter(vdcActionType -> vdcActionType != VdcActionType.Unknown)
+                // Map each vdcActionType to its appropriate command.
+                .map(vdcActionType -> CommandsFactory.getCommandClass(vdcActionType.toString()))
+                .collect(Collectors.toList());
+    }
+
+    @BeforeClass
+    public static void createMandatoryConstructorSignaturePredicate() {
+        // Signature for a constructor that receives parameters and context objects.
+        mandatoryConstructorSignature =
+                createConstructorSignaturePredicate(VdcActionParametersBase.class, CommandContext.class);
+    }
 
     @Test
     public void testInternalAnnotationCtors() {
@@ -61,19 +86,13 @@ public class CommandCtorsTest {
                 createConstructorInaccessibleFromPackagePredicate(commandsFactoryPackage);
 
         Map<Class<?>, List<Constructor<?>>> commandsWithInaccessibleConstructor =
-                // Create a stream of all VdcActionType objects.
-                Arrays.stream(VdcActionType.values())
-                        // Filter out the Unknown VdcActionType.
-                        .filter(vdcActionType -> vdcActionType != VdcActionType.Unknown)
-                                // Map each vdcActionType to its appropriate command.
-                        .map(vdcActionType -> CommandsFactory.getCommandClass(vdcActionType.toString()))
-                                // Extract constructors from all commands.
+                commandClasses.stream()
                         .map(command -> Arrays.stream(command.getDeclaredConstructors()))
-                                // Filter out all constructors that are not required by CommandsFactory.
+                        // Filter out all constructors that are not required by CommandsFactory.
                         .map(constructorStream -> constructorStream.filter(constructorRequiredByCommandsFactory))
-                                // Filter only the constructors that are not accessible from CommandsFactory.
+                        // Filter only the constructors that are not accessible from CommandsFactory.
                         .map(constructorStream -> constructorStream.filter(constructorInaccessibleFromPackagePredicate))
-                                // Flat Stream<Stream<Constructor<?>>> to Stream<Constructor<?>>.
+                        // Flat Stream<Stream<Constructor<?>>> to Stream<Constructor<?>>.
                         .flatMap(Function.identity())
                         .collect(Collectors.groupingBy(Constructor::getDeclaringClass));
 
@@ -115,19 +134,11 @@ public class CommandCtorsTest {
      * it's one of the constructors that are required by {@link CommandsFactory}.
      */
     private Predicate<Constructor<?>> getConstructorRequiredByCommandsFactoryPredicate() {
-        // Signature for a constructor that gets a parameters object.
-        Predicate<Constructor<?>> parametersConstructorSignature =
-                createConstructorSignaturePredicate(VdcActionParametersBase.class);
-
-        // Signature for a constructor that gets parameters and context objects.
-        Predicate<Constructor<?>> parametersAndContextConstructorSignature =
-                createConstructorSignaturePredicate(VdcActionParametersBase.class, CommandContext.class);
-
         // Signature for a constructor that gets a Guid object.
         Predicate<Constructor<?>> guidConstructorSignature =
                 createConstructorSignaturePredicate(Guid.class);
 
-        return parametersConstructorSignature.or(parametersAndContextConstructorSignature).or(guidConstructorSignature);
+        return mandatoryConstructorSignature.or(guidConstructorSignature);
     }
 
     /**
@@ -146,8 +157,22 @@ public class CommandCtorsTest {
      * Gets an array of classes and returns a predicate that given a constructor, returns
      * true iff its signature is compatible with the signature composed from the class array.
      */
-    private Predicate<Constructor<?>> createConstructorSignaturePredicate(Class<?>... constructorParametersTypes) {
+    private static Predicate<Constructor<?>> createConstructorSignaturePredicate(Class<?>... constructorParametersTypes) {
         return constructor ->
                 ReflectionUtils.isCompatible(constructor.getParameterTypes(), constructorParametersTypes);
+    }
+
+    @Test
+    public void testCommandMandatoryConstructorsExistence() {
+        List<String> commandsWithoutMandatoryConstructor =
+                commandClasses.stream()
+                        .filter(commandClass ->
+                                Arrays.stream(commandClass.getDeclaredConstructors())
+                                        .noneMatch(mandatoryConstructorSignature))
+                        .map(Class::getSimpleName)
+                        .sorted()
+                        .collect(Collectors.toList());
+        assertThat("There are commands that don't contain the mandatory constructor (constructor that receives " +
+                "parameters and context objects):", commandsWithoutMandatoryConstructor, empty());
     }
 }

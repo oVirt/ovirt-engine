@@ -37,10 +37,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
     @Inject
     private SupportedHostFeatureDao hostFeatureDao;
 
-    public HandleVdsVersionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public HandleVdsVersionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

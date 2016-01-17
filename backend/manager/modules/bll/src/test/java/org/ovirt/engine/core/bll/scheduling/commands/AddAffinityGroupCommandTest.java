@@ -42,7 +42,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Before
     public void setup() {
-        command = spy(new AddAffinityGroupCommand(parameters));
+        command = spy(new AddAffinityGroupCommand(parameters, null));
         doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDao();

@@ -16,10 +16,6 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
         }
     }
 
-    public RemoveVmFromPoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected boolean validate() {
         if (getVm() == null) {

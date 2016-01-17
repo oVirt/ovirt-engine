@@ -41,7 +41,7 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
     public void setUp() {
         setUpQuota();
         params = new QuotaCRUDParameters(quota);
-        command = spy(new UpdateQuotaCommand(params));
+        command = spy(new UpdateQuotaCommand(params, null));
         doReturn(quotaDao).when(command).getQuotaDao();
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();

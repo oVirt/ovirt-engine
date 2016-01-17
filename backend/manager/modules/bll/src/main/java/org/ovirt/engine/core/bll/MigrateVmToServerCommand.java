@@ -16,9 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> extends MigrateVmCommand<T> {
-    public MigrateVmToServerCommand(T parameters) {
-        this(parameters, null);
-    }
 
     public MigrateVmToServerCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);

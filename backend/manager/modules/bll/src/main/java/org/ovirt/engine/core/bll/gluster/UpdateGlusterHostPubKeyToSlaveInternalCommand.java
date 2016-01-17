@@ -18,10 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.UpdateGlusterGeoRepKeysV
 @NonTransactiveCommandAttribute
 public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterCommandBase<UpdateGlusterHostPubKeyToSlaveParameters> {
 
-    public UpdateGlusterHostPubKeyToSlaveInternalCommand(UpdateGlusterHostPubKeyToSlaveParameters params) {
-        this(params, null);
-    }
-
     public UpdateGlusterHostPubKeyToSlaveInternalCommand(UpdateGlusterHostPubKeyToSlaveParameters params, CommandContext commandContext) {
         super(params, commandContext);
         setVdsId(getParameters().getId());

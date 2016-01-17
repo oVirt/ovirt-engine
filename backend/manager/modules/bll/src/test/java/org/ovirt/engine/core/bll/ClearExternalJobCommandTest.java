@@ -41,7 +41,7 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
     }
 
     private void setupMock() throws Exception {
-        commandMock = spy(new ClearExternalJobCommand<>(parameters));
+        commandMock = spy(new ClearExternalJobCommand<>(parameters, null));
         when(commandMock.getParameters()).thenReturn(parameters);
         doReturn(jobDaoMock).when(commandMock).getJobDao();
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));

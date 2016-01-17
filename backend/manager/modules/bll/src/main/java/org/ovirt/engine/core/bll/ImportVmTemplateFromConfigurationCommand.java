@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
@@ -34,8 +35,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         super(commandId);
     }
 
-    public ImportVmTemplateFromConfigurationCommand(T parameters) {
-        super(parameters);
+    public ImportVmTemplateFromConfigurationCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

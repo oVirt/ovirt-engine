@@ -49,12 +49,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     private VM sourceVm;
 
-    public CloneVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected CloneVmCommand(T params, CommandContext commandContext) {
-        super(params);
+        super(params, commandContext);
     }
 
 

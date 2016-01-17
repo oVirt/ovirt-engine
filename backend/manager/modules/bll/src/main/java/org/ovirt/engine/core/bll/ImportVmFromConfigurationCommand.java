@@ -45,10 +45,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         setCommandShouldBeLogged(false);
     }
 
-    public ImportVmFromConfigurationCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected boolean validate() {
         if (isImagesAlreadyOnTarget()) {

@@ -19,10 +19,6 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         super(commandId);
     }
 
-    public AddStorageDomainCommon(T parameters) {
-        super(parameters);
-    }
-
     public AddStorageDomainCommon(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

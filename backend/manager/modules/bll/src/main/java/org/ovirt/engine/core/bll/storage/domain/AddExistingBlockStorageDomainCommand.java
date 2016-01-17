@@ -31,10 +31,6 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         super(commandId);
     }
 
-    public AddExistingBlockStorageDomainCommand(T parameters) {
-        super(parameters);
-    }
-
     public AddExistingBlockStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

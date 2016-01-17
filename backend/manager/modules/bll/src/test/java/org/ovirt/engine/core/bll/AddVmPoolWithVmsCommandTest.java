@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 
@@ -22,7 +23,8 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
                 new AddVmPoolWithVmsParameters(vmPools, testVm, VM_COUNT, DISK_SIZE);
         param.setStorageDomainId(firstStorageDomainId);
         AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command =
-                spy(new AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param) {
+                spy(new AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(
+                        param, CommandContext.createContext(param.getSessionId())) {
                     @Override
                     protected void initUser() {
                     }

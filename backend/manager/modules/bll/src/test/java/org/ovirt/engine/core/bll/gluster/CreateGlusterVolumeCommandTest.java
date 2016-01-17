@@ -65,7 +65,8 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     private CreateGlusterVolumeCommand cmd;
 
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {
-        return new CreateGlusterVolumeCommand(new CreateGlusterVolumeParameters(volumeEntity));
+        CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(volumeEntity);
+        return new CreateGlusterVolumeCommand(parameters, null);
     }
 
     private VDS getVds(VDSStatus status) {
@@ -178,7 +179,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsWithForceNotSupported() {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(getVolume(2, true), true);
-        CreateGlusterVolumeCommand command = new CreateGlusterVolumeCommand(parameters);
+        CreateGlusterVolumeCommand command = new CreateGlusterVolumeCommand(parameters, null);
         cmd = spy(command);
         prepareMocks(cmd);
 

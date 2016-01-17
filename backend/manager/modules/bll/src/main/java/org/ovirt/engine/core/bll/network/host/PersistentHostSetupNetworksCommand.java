@@ -21,10 +21,6 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
     @Inject
     private VdsDynamicDao vdsDynamicDao;
 
-    public PersistentHostSetupNetworksCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public PersistentHostSetupNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVdsId(parameters.getVdsId());

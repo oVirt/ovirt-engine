@@ -97,10 +97,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
     private MacPoolManagerStrategy macPool;
 
-    public ImportVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void init() {
         super.init();

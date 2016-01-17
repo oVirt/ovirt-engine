@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -18,8 +19,8 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
     private MacPool oldMacPool;
 
-    public UpdateMacPoolCommand(MacPoolParameters parameters) {
-        super(parameters);
+    public UpdateMacPoolCommand(MacPoolParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         addValidationGroup(UpdateEntity.class);
     }
 

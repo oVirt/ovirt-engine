@@ -41,10 +41,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         fenceValidator = new FenceValidator();
     }
 
-    public FenceVdsBaseCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public FenceVdsBaseCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         fenceValidator = new FenceValidator();

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,8 +23,8 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
     private VdsNetworkInterface nic;
     private List<VdsNetworkInterface> hostNics;
 
-    public LabelNicCommand(T parameters) {
-        super(parameters);
+    public LabelNicCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVdsId(getNic() == null ? null : getNic().getVdsId());
     }
 

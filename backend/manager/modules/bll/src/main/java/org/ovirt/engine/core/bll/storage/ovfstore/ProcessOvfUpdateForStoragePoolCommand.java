@@ -54,10 +54,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
     private List<Guid> activeDataDomainsIds;
 
-    public ProcessOvfUpdateForStoragePoolCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ProcessOvfUpdateForStoragePoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStoragePoolId(parameters.getStoragePoolId());

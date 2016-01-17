@@ -146,7 +146,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
         parameters.setImages(diskImageList);
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
-        spyCommand = spy(new RestoreAllSnapshotsCommand<>(parameters));
+        spyCommand = spy(new RestoreAllSnapshotsCommand<>(parameters, null));
         doReturn(vdsBrokerFrontend).when(spyCommand).getVdsBroker();
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();

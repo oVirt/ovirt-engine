@@ -39,7 +39,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         WatchdogParameters params = new WatchdogParameters();
         params.setAction(VmWatchdogAction.RESET);
         params.setModel(vmWatchdogType);
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params);
+        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null);
         HashMap<String, Object> specParams = command.getSpecParams();
         Assert.assertNotNull(specParams);
         Assert.assertEquals("i6300esb", specParams.get("model"));
@@ -54,7 +54,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         params.setModel(vmWatchdogType);
         final VmDao vmDaoMock = mock(VmDao.class);
         when(vmDaoMock.get(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"))).thenReturn(null);
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
+        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null) {
             @Override
             public VmDao getVmDao() {
                 return vmDaoMock;
@@ -75,7 +75,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
         when(vmDaoMock.get(vmGuid)).thenReturn(new VM());
         final VmDeviceDao deviceDao = mock(VmDeviceDao.class);
         when(deviceDao.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
-        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
+        UpdateWatchdogCommand command = new UpdateWatchdogCommand(params, null) {
             @Override
             public VmDao getVmDao() {
                 return vmDaoMock;

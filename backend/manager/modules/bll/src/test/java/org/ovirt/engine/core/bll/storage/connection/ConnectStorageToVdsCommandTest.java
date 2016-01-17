@@ -21,7 +21,7 @@ public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
     @Before
     public void prepareCommand() {
         params = new StorageServerConnectionParametersBase();
-        command = new ConnectStorageToVdsCommand(params);
+        command = new ConnectStorageToVdsCommand(params, null);
     }
 
     private StorageServerConnections createConnection(StorageType storageType, String mountOptions) {

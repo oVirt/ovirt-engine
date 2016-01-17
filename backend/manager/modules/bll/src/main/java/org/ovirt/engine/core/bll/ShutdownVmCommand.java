@@ -24,10 +24,6 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         super(commandId);
     }
 
-    public ShutdownVmCommand(T shutdownVmParamsData) {
-        this(shutdownVmParamsData, null);
-    }
-
     public ShutdownVmCommand(T shutdownVmParamsData, CommandContext commandContext) {
         super(shutdownVmParamsData, commandContext);
     }

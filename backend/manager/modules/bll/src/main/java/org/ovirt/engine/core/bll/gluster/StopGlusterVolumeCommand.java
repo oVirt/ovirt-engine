@@ -23,10 +23,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 @NonTransactiveCommandAttribute
 public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
 
-    public StopGlusterVolumeCommand(GlusterVolumeActionParameters params) {
-        super(params);
-    }
-
     public StopGlusterVolumeCommand(GlusterVolumeActionParameters params, CommandContext context) {
         super(params, context);
     }

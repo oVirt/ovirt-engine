@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -7,8 +8,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> extends UserTagMapBase<T> {
-    public DetachUserFromTagCommand(T parameters) {
-        super(parameters);
+
+    public DetachUserFromTagCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

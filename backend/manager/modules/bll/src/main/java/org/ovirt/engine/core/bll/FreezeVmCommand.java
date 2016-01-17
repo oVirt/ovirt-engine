@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class FreezeVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
-    public FreezeVmCommand(T parameters) {
-        super(parameters);
+    public FreezeVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

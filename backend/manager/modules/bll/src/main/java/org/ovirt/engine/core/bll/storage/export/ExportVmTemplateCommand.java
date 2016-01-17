@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -37,8 +38,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     private String cachedTemplateIsBeingExportedMessage;
 
-    public ExportVmTemplateCommand(T parameters) {
-        super(parameters);
+    public ExportVmTemplateCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         if (getVmTemplate() != null) {
             setDescription(getVmTemplateName());
             setStoragePoolId(getVmTemplate().getStoragePoolId());

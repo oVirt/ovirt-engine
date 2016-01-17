@@ -29,10 +29,6 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
 
     GlusterVolumeEntity slaveVolume;
 
-    public SetupGlusterGeoRepMountBrokerInternalCommand(SetUpMountBrokerParameters params) {
-        this(params, null);
-    }
-
     public SetupGlusterGeoRepMountBrokerInternalCommand(SetUpMountBrokerParameters params, CommandContext commandContext) {
         super(params, commandContext);
     }

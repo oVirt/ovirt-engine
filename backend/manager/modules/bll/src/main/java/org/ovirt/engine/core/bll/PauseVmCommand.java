@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -13,8 +14,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
-    public PauseVmCommand(T parameters) {
-        super(parameters);
+
+    public PauseVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

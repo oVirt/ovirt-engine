@@ -124,7 +124,7 @@ public class RefreshGlusterVolumeDetailsCommandTest extends BaseCommandTest {
     }
 
     private RefreshGlusterVolumeDetailsCommand createTestCommand(Guid volumeId) {
-        return new RefreshGlusterVolumeDetailsCommand(new GlusterVolumeParameters(volumeId));
+        return new RefreshGlusterVolumeDetailsCommand(new GlusterVolumeParameters(volumeId), null);
     }
 
     @Test

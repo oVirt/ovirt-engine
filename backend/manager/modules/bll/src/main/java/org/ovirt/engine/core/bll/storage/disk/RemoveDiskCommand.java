@@ -67,10 +67,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private List<VM> listVms;
     private String cachedDiskIsBeingRemovedLockMessage;
 
-    public RemoveDiskCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RemoveDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setStorageDomainId(getParameters().getStorageDomainId());

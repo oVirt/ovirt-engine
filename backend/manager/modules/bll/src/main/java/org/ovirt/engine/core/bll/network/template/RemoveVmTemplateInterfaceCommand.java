@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.template;
 
 import org.ovirt.engine.core.bll.VmTemplateCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -9,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
 
-    public RemoveVmTemplateInterfaceCommand(T parameters) {
-        super(parameters);
+    public RemoveVmTemplateInterfaceCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

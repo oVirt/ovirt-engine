@@ -46,10 +46,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
 
-    public MaintenanceNumberOfVdssCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         Iterable<Guid> vdsIdList = getParameters().getVdsIdList();

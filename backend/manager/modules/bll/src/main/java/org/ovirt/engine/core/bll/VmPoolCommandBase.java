@@ -69,11 +69,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         super(commandId);
     }
 
-    public VmPoolCommandBase(T parameters) {
-        this(parameters, null);
-
-    }
-
     public VmPoolCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -25,8 +26,8 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
     private List<GlusterVolumeSnapshotEntity> snapshots;
     private List<GlusterGeoRepSession> georepSessions;
 
-    public DeleteAllGlusterVolumeSnapshotsCommand(GlusterVolumeParameters params) {
-        super(params);
+    public DeleteAllGlusterVolumeSnapshotsCommand(GlusterVolumeParameters params, CommandContext commandContext) {
+        super(params, commandContext);
         snapshots = getGlusterVolumeSnapshotDao().getAllByVolumeId(getGlusterVolumeId());
         georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }

@@ -30,7 +30,7 @@ public class ResumeGeoRepSessionCommandTest extends GeoRepSessionCommandTest{
         param.setForce(false);
         param.setVolumeId(startedVolumeId);
         param.setGeoRepSessionId(geoRepSessionId);
-        cmd = spy(new ResumeGeoRepSessionCommand(param));
+        cmd = spy(new ResumeGeoRepSessionCommand(param, null));
         prepareMocks(cmd);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.PASSIVE, startedVolumeId)).when(geoRepDao).getById(geoRepSessionId);
         assertTrue(cmd.validate());
@@ -42,7 +42,7 @@ public class ResumeGeoRepSessionCommandTest extends GeoRepSessionCommandTest{
         param.setForce(false);
         param.setVolumeId(startedVolumeId);
         param.setGeoRepSessionId(geoRepSessionId);
-        cmd = spy(new ResumeGeoRepSessionCommand(param));
+        cmd = spy(new ResumeGeoRepSessionCommand(param, null));
         prepareMocks(cmd);
         doReturn(getGeoRepSession(geoRepSessionId, GeoRepSessionStatus.ACTIVE, startedVolumeId)).when(geoRepDao).getById(geoRepSessionId);
         assertFalse(cmd.validate());

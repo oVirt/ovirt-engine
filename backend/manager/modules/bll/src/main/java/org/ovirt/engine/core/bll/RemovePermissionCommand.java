@@ -21,10 +21,6 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
         super(commandId);
     }
 
-    public RemovePermissionCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RemovePermissionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class AddVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
 
-    public AddVfsConfigLabelCommand(VfsConfigLabelParameters parameters) {
-        this(parameters, null);
-    }
-
     public AddVfsConfigLabelCommand(VfsConfigLabelParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

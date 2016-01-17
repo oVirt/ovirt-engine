@@ -111,7 +111,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void executeCommand() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForUpdate();
         mockBackend(true, null);
         cmd.executeCommand();
@@ -121,7 +121,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void executeCommandWhenServerIdPresent() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID, SERVER_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID, SERVER_ID), null));
         setUpMocksForUpdate();
         mockForReadContent(true, null);
         cmd.executeCommand();
@@ -131,7 +131,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void executeCommandWhenFailed() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForUpdate();
         mockBackend(false, EngineError.GlusterHookUpdateFailed);
         cmd.executeCommand();
@@ -141,7 +141,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void executeCommandFailedWhenServerIdPresent() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID, SERVER_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID, SERVER_ID), null));
         setUpMocksForUpdate();
         mockForReadContent(false, EngineError.GlusterHookNotFound);
         try {
@@ -154,14 +154,14 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForUpdate();
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNullHookId() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(null)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(null), null));
         setUpMocksForUpdate();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED.toString()));
@@ -169,7 +169,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void validateFailsOnNoHook() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForUpdate(false);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
@@ -177,7 +177,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void validateFailsOnNoConflictServers() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         GlusterHookEntity hook = getHookEntity();
         hook.setServerHooks(Collections.singletonList(getGlusterServerHook(0, GlusterHookStatus.MISSING)));
         setUpMocksForUpdate(true, hook);
@@ -187,7 +187,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
 
     @Test
     public void validateFailsOnServerNotUp() {
-        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
+        cmd = spy(new UpdateGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID), null));
         setUpMocksForUpdate(VDSStatus.Down);
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString()));

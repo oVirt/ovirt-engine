@@ -197,7 +197,7 @@ public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
     }
 
     private MoveOrCopyTemplateCommand createCommand(MoveOrCopyParameters params, VDSReturnValue returnValue) {
-        MoveOrCopyTemplateCommand cmd = spy(new MoveOrCopyTemplateCommand<>(params));
+        MoveOrCopyTemplateCommand cmd = spy(new MoveOrCopyTemplateCommand<>(params, null));
         doReturn(returnValue).when(cmd).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
         doReturn(Guid.newGuid()).when(cmd).getStoragePoolId();
 
@@ -209,7 +209,7 @@ public class MoveOrCopyTemplateCommandTest extends BaseCommandTest {
     }
 
     private MoveOrCopyTemplateCommand<MoveOrCopyParameters> setupSpaceTests(MoveOrCopyParameters parameters) {
-        MoveOrCopyTemplateCommand<MoveOrCopyParameters> cmd = spy(new MoveOrCopyTemplateCommand<>(parameters));
+        MoveOrCopyTemplateCommand<MoveOrCopyParameters> cmd = spy(new MoveOrCopyTemplateCommand<>(parameters, null));
         doReturn(multipleSdValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
         doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());

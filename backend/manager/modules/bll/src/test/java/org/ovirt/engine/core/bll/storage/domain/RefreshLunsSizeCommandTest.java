@@ -79,7 +79,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         lunIdList.add("1");
         lunIdList.add("2");
 
-        cmd = spy(new RefreshLunsSizeCommand<>(new ExtendSANStorageDomainParameters(sdId, (ArrayList)lunIdList)));
+        cmd = spy(new RefreshLunsSizeCommand<>(new ExtendSANStorageDomainParameters(sdId, (ArrayList)lunIdList), null));
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();

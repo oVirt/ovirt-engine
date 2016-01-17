@@ -64,7 +64,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
         parameters = new StorageDomainManagementParameter(getStorageDomain());
         parameters.setVdsId(Guid.newGuid());
         parameters.setStoragePoolId(Guid.newGuid());
-        command = spy(new AddExistingFileStorageDomainCommand<>(parameters));
+        command = spy(new AddExistingFileStorageDomainCommand<>(parameters, null));
 
         command.setStoragePool(getStoragePool());
 

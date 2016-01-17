@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -11,8 +12,8 @@ public abstract class MacPoolCommandBase<T extends VdcActionParametersBase> exte
     @Inject
     protected MacPoolPerDc poolPerDc;
 
-    public MacPoolCommandBase(T parameters) {
-        super(parameters);
+    public MacPoolCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

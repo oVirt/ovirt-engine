@@ -19,21 +19,21 @@ public class DeleteGeoRepSessionCommandTest extends GeoRepSessionCommandTest {
 
     @Test
     public void validateSucceeds() {
-        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(startedVolumeId, geoRepSessionId)));
+        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(startedVolumeId, geoRepSessionId), null));
         prepareMocks(cmd);
         assertTrue(cmd.validate());
     }
 
     @Test
     public void validateFails() {
-        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId)));
+        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(stoppedVolumeId, geoRepSessionId), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }
 
     @Test
     public void validateFailsOnNull() {
-        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(null, null)));
+        cmd = spy(new DeleteGeoRepSessionCommand(new GlusterVolumeGeoRepSessionParameters(null, null), null));
         prepareMocks(cmd);
         assertFalse(cmd.validate());
     }

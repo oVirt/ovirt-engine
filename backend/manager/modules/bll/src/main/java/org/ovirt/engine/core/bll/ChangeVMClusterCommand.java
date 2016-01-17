@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,8 +22,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     private boolean dedicatedHostWasCleared;
 
-    public ChangeVMClusterCommand(T params) {
-        super(params);
+    public ChangeVMClusterCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -35,10 +35,6 @@ public class TryBackToAllCinderSnapshotsCommand<T extends CloneCinderDisksParame
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
-    public TryBackToAllCinderSnapshotsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public TryBackToAllCinderSnapshotsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

@@ -90,7 +90,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         Guid vmGuid = Guid.newGuid();
         params.setContainerId(vmGuid);
 
-        cmd = spy(new RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters>(params) {
+        cmd = spy(new RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters>(params, null) {
             protected List<DiskImage> getImages() {
                 return mockImages();
             }

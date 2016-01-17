@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.AddClusterCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -28,8 +29,8 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
-    public AddEmptyStoragePoolCommand(T parameters) {
-        super(parameters);
+    public AddEmptyStoragePoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected void addStoragePoolToDb() {

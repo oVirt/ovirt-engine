@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,8 +20,9 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class UpdateStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         StorageDomainManagementCommandBase<T>  implements RenamedEntityInfoProvider {
-    public UpdateStorageDomainCommand(T parameters) {
-        super(parameters);
+
+    public UpdateStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     private boolean storageDomainNameChanged;

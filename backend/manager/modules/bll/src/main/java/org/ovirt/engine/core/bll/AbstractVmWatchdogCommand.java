@@ -19,10 +19,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
  */
 public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> extends CommandBase<T> {
 
-    public AbstractVmWatchdogCommand(T parameters) {
-        super(parameters, null);
-    }
-
     public AbstractVmWatchdogCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

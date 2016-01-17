@@ -80,10 +80,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         super(parameters, commandContext);
     }
 
-    public RemoveVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void init() {
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));

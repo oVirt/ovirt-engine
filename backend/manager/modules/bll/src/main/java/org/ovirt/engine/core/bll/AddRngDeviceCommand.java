@@ -10,10 +10,6 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
-    public AddRngDeviceCommand(RngDeviceParameters parameters) {
-        this(parameters, null);
-    }
-
     public AddRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

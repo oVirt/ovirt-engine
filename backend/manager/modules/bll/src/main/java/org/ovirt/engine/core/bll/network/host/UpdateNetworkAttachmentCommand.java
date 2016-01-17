@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,8 +15,8 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 public class UpdateNetworkAttachmentCommand<T extends NetworkAttachmentParameters> extends VdsCommand<T> {
 
 
-    public UpdateNetworkAttachmentCommand(T parameters) {
-        super(parameters);
+    public UpdateNetworkAttachmentCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         addValidationGroup(UpdateEntity.class);
     }
 

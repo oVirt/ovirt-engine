@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
@@ -14,8 +15,8 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         super(cmdId);
     }
 
-    protected ImportVmFromOvaCommand(T parameters) {
-        super(parameters);
+    public ImportVmFromOvaCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

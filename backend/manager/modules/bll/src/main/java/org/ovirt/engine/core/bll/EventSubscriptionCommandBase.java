@@ -8,6 +8,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -22,8 +23,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
         CommandBase<T> {
-    protected EventSubscriptionCommandBase(T parameters) {
-        super(parameters);
+
+    public EventSubscriptionCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

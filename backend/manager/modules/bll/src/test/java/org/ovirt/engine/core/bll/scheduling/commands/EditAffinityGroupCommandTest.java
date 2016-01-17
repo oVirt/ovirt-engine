@@ -43,7 +43,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
     @Before
     public void setup() {
         doReturn(createAffinityGroup()).when(parameters).getAffinityGroup();
-        command = spy(new EditAffinityGroupCommand(parameters) {
+        command = spy(new EditAffinityGroupCommand(parameters, null) {
             @Override
             protected AffinityGroup getAffinityGroup() {
                 AffinityGroup affinityGroup2 = new AffinityGroup();

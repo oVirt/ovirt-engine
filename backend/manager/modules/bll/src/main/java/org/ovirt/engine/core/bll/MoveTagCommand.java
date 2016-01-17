@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -9,8 +10,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase<T> {
     private String _oldParnetTagName = "[null]";
 
-    public MoveTagCommand(T parameters) {
-        super(parameters);
+    public MoveTagCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -16,10 +16,6 @@ public class UpdateFenceAgentCommand<T extends FenceAgentCommandParameterBase> e
         super(parameters, cmdContext);
     }
 
-    public UpdateFenceAgentCommand(FenceAgentCommandParameterBase parameters) {
-        super(parameters);
-    }
-
     public UpdateFenceAgentCommand(Guid commandId) {
         super(commandId);
     }

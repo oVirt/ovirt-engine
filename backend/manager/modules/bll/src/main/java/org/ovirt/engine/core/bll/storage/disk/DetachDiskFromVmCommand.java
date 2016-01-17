@@ -19,10 +19,6 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     private Disk disk;
     private VmDevice vmDevice;
 
-    public DetachDiskFromVmCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public DetachDiskFromVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

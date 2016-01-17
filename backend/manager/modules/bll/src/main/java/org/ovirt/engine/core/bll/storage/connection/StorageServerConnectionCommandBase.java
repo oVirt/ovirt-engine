@@ -22,9 +22,6 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public abstract class StorageServerConnectionCommandBase<T extends StorageServerConnectionParametersBase> extends
         CommandBase<T> {
-    protected StorageServerConnectionCommandBase(T parameters) {
-        this(parameters, null);
-    }
 
     protected StorageServerConnectionCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

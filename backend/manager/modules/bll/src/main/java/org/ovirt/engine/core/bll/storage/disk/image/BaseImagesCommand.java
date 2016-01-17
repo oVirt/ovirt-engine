@@ -38,10 +38,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private Guid imageId = Guid.Empty;
     private EngineLock snapshotsEngineLock;
 
-    protected BaseImagesCommand(T parameters) {
-        this(parameters, null);
-    }
-
     protected BaseImagesCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         imageId = parameters.getImageId();

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -25,8 +26,8 @@ public class TestProviderConnectivityCommand<P extends ProviderParameters> exten
         super(commandId);
     }
 
-    public TestProviderConnectivityCommand(P parameters) {
-        super(parameters);
+    public TestProviderConnectivityCommand(P parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

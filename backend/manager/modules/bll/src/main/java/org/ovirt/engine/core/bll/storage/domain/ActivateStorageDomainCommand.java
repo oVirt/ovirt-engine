@@ -42,10 +42,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
 
-    public ActivateStorageDomainCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public ActivateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

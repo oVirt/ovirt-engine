@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
-    public RemoveWatchdogCommand(WatchdogParameters parameters) {
-        this(parameters, null);
-    }
-
     public RemoveWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

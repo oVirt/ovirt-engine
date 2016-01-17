@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -17,8 +18,9 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
-    public GlusterSnapshotCommandBase(T params) {
-        super(params);
+
+    public GlusterSnapshotCommandBase(T params, CommandContext commandContext) {
+        super(params, commandContext);
         setGlusterVolumeId(params.getVolumeId());
     }
 

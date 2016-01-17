@@ -8,10 +8,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveUserProfileCommand<T extends UserProfileParameters> extends UserProfilesOperationCommandBase<T> {
 
-    public RemoveUserProfileCommand(T parameters){
-        this(parameters, null);
-    }
-
     public RemoveUserProfileCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

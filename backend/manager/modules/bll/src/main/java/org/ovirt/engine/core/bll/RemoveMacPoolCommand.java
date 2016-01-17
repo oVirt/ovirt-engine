@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -17,8 +18,8 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     private MacPool oldMacPool;
 
-    public RemoveMacPoolCommand(RemoveMacPoolByIdParameters parameters) {
-        super(parameters);
+    public RemoveMacPoolCommand(RemoveMacPoolByIdParameters parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -180,10 +180,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
-    public AddVmTemplateCommand(T parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);

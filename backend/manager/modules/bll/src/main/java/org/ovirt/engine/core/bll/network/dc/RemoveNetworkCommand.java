@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.dc;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -31,8 +32,8 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
         super(id);
     }
 
-    public RemoveNetworkCommand(T parameters) {
-        super(parameters);
+    public RemoveNetworkCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -16,10 +16,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSessionParameters> extends GlusterVolumeCommandBase<T> {
     private GlusterGeoRepSession geoRepSession = null;
 
-    public GeoRepSessionCommandBase(T params) {
-        super(params);
-    }
-
     public GeoRepSessionCommandBase(T params, CommandContext context) {
         super(params, context);
     }

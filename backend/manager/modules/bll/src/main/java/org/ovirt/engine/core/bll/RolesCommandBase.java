@@ -23,10 +23,6 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
         super(commandId);
     }
 
-    public RolesCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public RolesCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

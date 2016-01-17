@@ -23,10 +23,6 @@ public abstract class UserProfilesOperationCommandBase<T extends UserProfilePara
     @Inject
     protected UserProfileDao userProfileDao;
 
-    public UserProfilesOperationCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     public UserProfilesOperationCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

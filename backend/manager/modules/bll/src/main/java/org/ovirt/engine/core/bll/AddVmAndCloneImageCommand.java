@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -55,8 +56,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         super(commandId);
     }
 
-    public AddVmAndCloneImageCommand(T parameters) {
-        super(parameters);
+    public AddVmAndCloneImageCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

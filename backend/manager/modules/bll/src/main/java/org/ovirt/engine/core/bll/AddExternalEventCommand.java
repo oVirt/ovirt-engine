@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -24,8 +25,8 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
 
     @Inject StorageDomainDynamicDao storageDomainDynamicDao;
 
-    public AddExternalEventCommand(T parameters) {
-        super(parameters);
+    public AddExternalEventCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

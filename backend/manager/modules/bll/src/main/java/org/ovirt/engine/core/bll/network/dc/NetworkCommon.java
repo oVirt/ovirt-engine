@@ -19,10 +19,6 @@ public abstract class NetworkCommon<T extends VdcActionParametersBase> extends C
         super(id);
     }
 
-    public NetworkCommon(T parameters) {
-        super(parameters);
-    }
-
     public NetworkCommon(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

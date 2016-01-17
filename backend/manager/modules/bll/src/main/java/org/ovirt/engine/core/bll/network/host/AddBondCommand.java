@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -24,8 +25,8 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
-    public AddBondCommand(T parameters) {
-        super(parameters);
+    public AddBondCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         if (parameters.getNics() != null) {
             for (String nic : parameters.getNics()) {
                 appendCustomValue("Interfaces", nic, ", ");

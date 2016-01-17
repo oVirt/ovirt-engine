@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
@@ -20,8 +21,8 @@ import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
 
-    public AttachStorageConnectionToStorageDomainCommand(T parameters) {
-        super(parameters);
+    public AttachStorageConnectionToStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

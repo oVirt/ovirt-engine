@@ -97,7 +97,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         params = new StorageDomainManagementParameter(sd);
         params.setVdsId(vdsId);
 
-        cmd = spy(new AddStorageDomainCommon<>(params));
+        cmd = spy(new AddStorageDomainCommon<>(params, null));
         doReturn(vdsDao).when(cmd).getVdsDao();
         doReturn(sdDao).when(cmd).getStorageDomainDao();
         doReturn(sdsDao).when(cmd).getStorageDomainStaticDao();

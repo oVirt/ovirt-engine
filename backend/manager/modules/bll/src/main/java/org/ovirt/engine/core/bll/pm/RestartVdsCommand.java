@@ -59,10 +59,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         skippedDueToFencingPolicy = false;
     }
 
-    public RestartVdsCommand(T parameters) {
-        this(parameters, null);
-    }
-
     public RestartVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         skippedDueToFencingPolicy = false;

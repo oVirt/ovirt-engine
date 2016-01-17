@@ -8,10 +8,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 
 public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
 
-    public RefreshHostCommand(VdsActionParameters parameters) {
-        super(parameters);
-    }
-
     public RefreshHostCommand(VdsActionParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

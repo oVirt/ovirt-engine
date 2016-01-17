@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -32,8 +33,8 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
 
     private List<VdsNetworkInterface> hostNics;
 
-    public AddNetworkAttachmentCommand(T parameters) {
-        super(parameters);
+    public AddNetworkAttachmentCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         addValidationGroup(CreateEntity.class);
     }
 

@@ -62,10 +62,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         setVmId(getParameters().getVmId());
     }
 
-    public LiveMigrateVmDisksCommand(T parameters) {
-        this(parameters, null);
-    }
-
     // ctor for compensation
     public LiveMigrateVmDisksCommand(Guid commandId) {
         super(commandId);

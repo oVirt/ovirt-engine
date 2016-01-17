@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
@@ -30,9 +31,8 @@ public abstract class TagsCommandBase<T extends TagsActionParametersBase> extend
         return getTag() != null ? getTag().getTagName() : null;
     }
 
-    public TagsCommandBase(T parameters) {
-        super(parameters);
-
+    public TagsCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

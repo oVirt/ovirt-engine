@@ -24,11 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class DisconnectHostFromStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
 
-    // Required as invoked not only by command
-    public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
-        this(parameters, null);
-    }
-
     public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePool(parameters.getStoragePool());

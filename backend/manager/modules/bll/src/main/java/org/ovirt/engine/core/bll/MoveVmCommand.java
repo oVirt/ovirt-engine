@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.export.MoveOrCopyTemplateCommand;
@@ -40,8 +41,8 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         super(commandId);
     }
 
-    public MoveVmCommand(T parameters) {
-        super(parameters);
+    public MoveVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setStoragePoolId(getVm().getStoragePoolId());

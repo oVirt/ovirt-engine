@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -40,8 +41,9 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
     private List<GlusterGeoRepSession> georepSessions;
     private List<GlusterGeoRepSession> enginePausedSessions;
 
-    public CreateGlusterVolumeSnapshotCommand(CreateGlusterVolumeSnapshotParameters params) {
-        super(params);
+    public CreateGlusterVolumeSnapshotCommand(CreateGlusterVolumeSnapshotParameters params,
+            CommandContext commandContext) {
+        super(params, commandContext);
         this.snapshot = params.getSnapshot();
         this.force = params.getForce();
         this.enginePausedSessions = new ArrayList<>();

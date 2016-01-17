@@ -58,7 +58,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
         TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, snapshotId);
 
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params));
+        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params, null));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         doReturn(vmDao).when(cmd).getVmDao();
@@ -73,7 +73,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     @Test
     public void testValidateWithEmptySnapshotGuid() {
         TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, Guid.Empty);
-        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params));
+        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<>(params, null));
         doNothing().when(cmd).updateVmDisksFromDb();
         doReturn(snapshotDao).when(cmd).getSnapshotDao();
         ValidateTestUtils.runAndAssertValidateFailure(cmd,

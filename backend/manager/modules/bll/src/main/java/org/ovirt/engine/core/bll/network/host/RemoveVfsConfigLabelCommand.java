@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class RemoveVfsConfigLabelCommand extends VfsConfigLabelCommandBase {
 
-    public RemoveVfsConfigLabelCommand(VfsConfigLabelParameters parameters) {
-        this(parameters, null);
-    }
-
     public RemoveVfsConfigLabelCommand(VfsConfigLabelParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }

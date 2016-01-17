@@ -54,10 +54,6 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     @Inject
     private UpdateNetworkClusterPermissionsChecker updatePermissionChecker;
 
-    public ManageNetworkClustersCommand(ManageNetworkClustersParameters parameters) {
-        super(parameters);
-    }
-
     public ManageNetworkClustersCommand(
             ManageNetworkClustersParameters parameters,
             CommandContext cmdContext) {

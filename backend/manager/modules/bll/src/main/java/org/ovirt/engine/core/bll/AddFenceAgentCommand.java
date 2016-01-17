@@ -13,10 +13,6 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
         super();
     }
 
-    public AddFenceAgentCommand(FenceAgentCommandParameterBase params) {
-        super(params);
-    }
-
     public AddFenceAgentCommand(FenceAgentCommandParameterBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

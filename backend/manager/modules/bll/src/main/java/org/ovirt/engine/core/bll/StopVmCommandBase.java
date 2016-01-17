@@ -39,10 +39,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         setReason(parameters.getStopReason());
     }
 
-    public StopVmCommandBase(T parameters) {
-        this(parameters, null);
-    }
-
     protected boolean getSuspendedVm() {
         return suspendedVm;
     }
