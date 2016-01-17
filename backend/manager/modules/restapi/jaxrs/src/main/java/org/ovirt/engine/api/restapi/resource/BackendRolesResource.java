@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Permit;
@@ -59,9 +60,7 @@ public class BackendRolesResource
     protected ArrayList<ActionGroup> mapPermits(List<Permit> permits) {
         ArrayList<ActionGroup> actionGroups = new ArrayList<>();
         Mapper<Permit, ActionGroup> mapper = getMapper(Permit.class, ActionGroup.class);
-        for (Permit permit : permits) {
-            actionGroups.add(mapper.map(permit, (ActionGroup)null));
-        }
+        actionGroups.addAll(permits.stream().map(p -> mapper.map(p, (ActionGroup) null)).collect(Collectors.toList()));
         return actionGroups;
     }
 }
