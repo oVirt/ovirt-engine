@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -25,8 +26,8 @@ public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryPara
         assertTrue(getQuery().getQueryReturnValue().getSucceeded());
         assertTrue(getQuery().getQueryReturnValue().getReturnValue() instanceof DbUser);
         DbUser user = getQuery().getQueryReturnValue().getReturnValue();
-        assertTrue(user.getDomain().equals("myDomain"));
-        assertTrue(user.getLoginName().equals("myUser"));
+        assertEquals("myDomain", user.getDomain());
+        assertEquals("myUser", user.getLoginName());
     }
 
     @Test
