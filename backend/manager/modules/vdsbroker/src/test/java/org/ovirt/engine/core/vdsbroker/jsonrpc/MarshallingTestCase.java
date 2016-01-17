@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -32,7 +26,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnFor
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
-import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
@@ -41,8 +34,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetCapabilities() throws JsonParseException, JsonMappingException, IOException,
-            InterruptedException, ExecutionException, TimeoutException, ClientConnectionException {
+    public void testGetCapabilities() throws Exception {
         // Given
         String capabilitiesJson =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"aed1feb4-42cf-4bf4-8ddf-852251152b68\", \"result\": {\"HBAInventory\": {\"iSCSI\": "
@@ -103,8 +95,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testEmptyListVDS() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testEmptyListVDS() throws Exception {
         // Given
         String json = "{\"jsonrpc\": \"2.0\", \"id\": \"3a0a4c64-1b67-4b48-bc31-e4e0cb7538b1\", \"result\": []}";
         ObjectMapper mapper = new ObjectMapper();
@@ -129,8 +120,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testShortList() throws JsonProcessingException, IOException, InterruptedException, ExecutionException,
-            ClientConnectionException {
+    public void testShortList() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"ae80f5c4-0f63-4c2e-aed6-5372f07a14c1\", \"result\": [\"e4a0fc02-c5ad-4b35-b2d0-5a4b6557c06b\"]}";
@@ -159,8 +149,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testVdsStatsError() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testVdsStatsError() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"4d2d6215-3159-4c03-8066-5148cfa09587\", \"error\": {\"message\":"
@@ -185,8 +174,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testAddDomain() throws JsonProcessingException, IOException, InterruptedException, ExecutionException,
-            TimeoutException, ClientConnectionException {
+    public void testAddDomain() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"4b0838b3-f940-4780-b2f0-fd56c1fbc573\", \"result\": [{\"status\": 0, \"id\": \"00000000-0000-0000-0000-000000000000\"}]}";
@@ -214,8 +202,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetIsoListWithoutIsos() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testGetIsoListWithoutIsos() throws Exception {
         // Given
         String json = "{\"jsonrpc\": \"2.0\", \"id\": \"c1796b67-8932-4e90-a6f9-aa68266493f8\", \"result\": []}";
         ObjectMapper mapper = new ObjectMapper();
@@ -239,8 +226,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetIsoListWithImage() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testGetIsoListWithImage() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"8d38c4c9-3fdb-4663-993a-dc65488875bb\", \"result\": [\"Fedora-Live-Desktop-x86_64-19-1.iso\"]}";
@@ -266,8 +252,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetVMList() throws JsonProcessingException, IOException, InterruptedException, ExecutionException,
-            TimeoutException, ClientConnectionException {
+    public void testGetVMList() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"e32621e5-753f-45b8-b071-2eb929408efd\", \"result\": [{\"status\": \"Up\", \"vmId\": \"dd4d61c3-5128-4c26-ae71-0dbe5081ea93\"}]}";
@@ -294,9 +279,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetVMListIdsOnly() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException,
-            TimeoutException, ClientConnectionException {
+    public void testGetVMListIdsOnly() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"e9968b53-7450-4059-83e6-d3569f7024ec\", \"result\": [\"1397d80b-1c48-4d4a-acf9-ebd669bf3b25\"]}";
@@ -322,8 +305,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testStoragePoolInfo() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testStoragePoolInfo() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"609b5787-ab3a-485b-8ed8-0bc9a27eda27\", \"result\": {\"info\": {\"spm_id\": 1, \"master_uuid\": \"05a0ad59-1259-4353-b40b-34eb80d8590a\","
@@ -360,8 +342,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testActivateDomain() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testActivateDomain() throws Exception {
         // Given
         String json = "{\"jsonrpc\": \"2.0\", \"id\": \"5ba8294b-afd7-4810-968d-607703a7bd93\", \"result\": true}";
         ObjectMapper mapper = new ObjectMapper();
@@ -385,8 +366,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testVolumeCreate() throws JsonProcessingException, IOException, InterruptedException,
-            ExecutionException, TimeoutException, ClientConnectionException {
+    public void testVolumeCreate() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"e8ea1fa9-d819-4c41-ae9c-b103a236fb29\", \"result\": {\"uuid\": \"4f84eef5-8f8b-4732-babd-0a860cf0d1b9\"}}";
@@ -410,8 +390,7 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testDiscoverSendTargets() throws JsonProcessingException, IOException, InterruptedException, ExecutionException,
-            ClientConnectionException {
+    public void testDiscoverSendTargets() throws Exception {
         // Given
         String json =
                 "{\"jsonrpc\": \"2.0\", \"id\": \"9afac443-3473-454d-b6c7-80f0b7876ff7\", \"result\": [\"10.35.16.25:3260,1 iqn.1994-05.com.redhat.com:ahadas-iscsi\","
