@@ -36,7 +36,6 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
 
     private VdsStaticDao vdsStaticDao;
-    private GlusterUtil glusterUtil;
 
     @Before
     @Override
@@ -51,7 +50,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
         doReturn(null).when(vdsStaticDao).getByHostName(NEW_SERVER);
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(EXISTING_SERVER);
 
-        glusterUtil = mock(GlusterUtil.class);
+        GlusterUtil glusterUtil = mock(GlusterUtil.class);
         doReturn(glusterUtil).when(getQuery()).getGlusterUtil();
 
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
