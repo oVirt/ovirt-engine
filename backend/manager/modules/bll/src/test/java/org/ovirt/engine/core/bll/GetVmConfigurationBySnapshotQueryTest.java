@@ -34,7 +34,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
     private Snapshot existingSnapshot;
-    private SnapshotsManager snapshotsManager;
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
@@ -50,7 +49,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
         snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
         when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
-        snapshotsManager = mock(SnapshotsManager.class);
+        SnapshotsManager snapshotsManager = mock(SnapshotsManager.class);
         when(snapshotVmConfigurationHelper.getSnapshotManager()).thenReturn(snapshotsManager);
         setUpDaoMocks();
     }
