@@ -43,8 +43,7 @@ public class NewDiskModel extends AbstractDiskModel {
                 Object sender,
                 ValueEventArgs<LunModel> args) {
             String description = getDescription().getEntity();
-            if (description == null || description.isEmpty() ||
-                    (!description.isEmpty() && descriptionDerivedFromLunId)) {
+            if (description == null || description.isEmpty() || descriptionDerivedFromLunId) {
                 LunModel selectedLunModel = args.getValue();
                 if (selectedLunModel.getLunId() != null) {
                     int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
