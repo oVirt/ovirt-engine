@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -141,20 +139,7 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StartRemoveGlusterVolumeBricks),
-                argThat(anyGlusterVolumeRemoveBricksVDSParameters()))).thenReturn(vdsReturnValue);
-    }
-
-    private ArgumentMatcher<VDSParametersBase> anyGlusterVolumeRemoveBricksVDSParameters() {
-        return new ArgumentMatcher<VDSParametersBase>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterVolumeRemoveBricksVDSParameters)) {
-                    return false;
-                }
-                return true;
-            }
-        };
+                any(GlusterVolumeRemoveBricksVDSParameters.class))).thenReturn(vdsReturnValue);
     }
 
     @Test

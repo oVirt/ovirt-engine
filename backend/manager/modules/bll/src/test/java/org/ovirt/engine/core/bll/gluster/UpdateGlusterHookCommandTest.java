@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -17,7 +16,6 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,7 +28,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -80,7 +77,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.UpdateGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.UpdateGlusterHook), any(GlusterHookVDSParameters.class))).thenReturn(vdsReturnValue);
      }
 
     private void mockForReadContent(boolean succeeded, EngineError errorCode) {
@@ -92,21 +89,8 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetGlusterHookContent), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GetGlusterHookContent), any(GlusterHookVDSParameters.class))).thenReturn(vdsReturnValue);
 
-    }
-
-    private ArgumentMatcher<VDSParametersBase> anyHookVDS() {
-        return new ArgumentMatcher<VDSParametersBase>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof GlusterHookVDSParameters)) {
-                    return false;
-                }
-                return true;
-            }
-        };
     }
 
     @Test
