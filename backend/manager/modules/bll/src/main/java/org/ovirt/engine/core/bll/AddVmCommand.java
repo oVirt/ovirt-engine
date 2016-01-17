@@ -371,8 +371,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean validateAddVmCommand() {
-        boolean returnValue = false;
-        returnValue = areParametersLegal(getReturnValue().getValidationMessages());
+        boolean returnValue = areParametersLegal(getReturnValue().getValidationMessages());
         // Check if number of monitors passed is legal
         returnValue = returnValue && checkNumberOfMonitors() && checkSingleQxlDisplay();
 
@@ -773,7 +772,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
-        boolean retValue = true;
+        boolean retValue;
         if (diskInfoDestinationMap.isEmpty()) {
             retValue = fillDestMap();
         } else {
