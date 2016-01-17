@@ -5,16 +5,11 @@ import java.util.Comparator;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
  * Column that renders a checkbox. Supports tooltips.
@@ -54,15 +49,6 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
 
     public Cell<Boolean> getCell() {
         return (Cell<Boolean>) super.getCell();
-    }
-
-    static boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-        NativeEvent nativeEvent = event.getNativeEvent();
-        if (!BrowserEvents.CLICK.equals(nativeEvent.getType())) {
-            return false;
-        }
-        Element target = nativeEvent.getEventTarget().cast();
-        return "input".equals(target.getTagName().toLowerCase()); //$NON-NLS-1$
     }
 
     @Override
