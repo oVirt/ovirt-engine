@@ -254,10 +254,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     @Override
     public VM getVm() {
         if (diskVm == null && getDisk() != null) {
-            for (VM vm : getVmDao().getVmsListForDisk(getDisk().getId(), false)) {
-                diskVm = vm;
-                break;
-            }
+            diskVm = getVmDao().getVmsListForDisk(getDisk().getId(), false).stream().findFirst().orElse(null);
         }
         return diskVm;
     }
