@@ -157,8 +157,8 @@ public class VmAnalyzerTest {
         verify(vmsMonitoring.getResourceManager()).runVdsCommand(vdsCommandTypeCaptor.capture(),
                 vdsParamsCaptor.capture());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
-        assertTrue(vdsCommandTypeCaptor.getValue() == VDSCommandType.Destroy);
-        assertTrue(vdsParamsCaptor.getValue().getClass() == DestroyVmVDSCommandParameters.class);
+        assertEquals(VDSCommandType.Destroy, vdsCommandTypeCaptor.getValue());
+        assertEquals(DestroyVmVDSCommandParameters.class, vdsParamsCaptor.getValue().getClass());
     }
 
     @Theory
@@ -184,8 +184,8 @@ public class VmAnalyzerTest {
                 vdsParamsCaptor.capture());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.VM_DOWN));
-        assertTrue(vdsCommandTypeCaptor.getValue() == VDSCommandType.Destroy);
-        assertTrue(vdsParamsCaptor.getValue().getClass() == DestroyVmVDSCommandParameters.class);
+        assertEquals(VDSCommandType.Destroy, vdsCommandTypeCaptor.getValue());
+        assertEquals(vdsParamsCaptor.getValue().getClass(), DestroyVmVDSCommandParameters.class);
     }
 
     @Theory
@@ -270,7 +270,7 @@ public class VmAnalyzerTest {
                 VMStatus.MigratingTo);
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
-        assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.DST_HOST_ID));
+        assertEquals(VmTestPairs.DST_HOST_ID, data.dbVm().getRunOnVds());
     }
 
     @Theory
@@ -287,7 +287,7 @@ public class VmAnalyzerTest {
         verify(vmsMonitoring.getResourceManager(), times(1)).removeVmFromDownVms(VmTestPairs.SRC_HOST_ID,
                 data.vdsmVm().getVmDynamic().getId());
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
-        assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
+        assertEquals(VmTestPairs.SRC_HOST_ID, data.dbVm().getRunOnVds());
         assertTrue(vmAnalyzer.isRerun());
         assertNull(data.dbVm().getMigratingToVds());
     }
@@ -306,7 +306,7 @@ public class VmAnalyzerTest {
         vmAnalyzer.analyze();
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertNotNull(vmAnalyzer.getVmStatisticsToSave());
-        assertTrue(data.dbVm().getRunOnVds().equals(VmTestPairs.SRC_HOST_ID));
+        assertEquals(VmTestPairs.SRC_HOST_ID, data.dbVm().getRunOnVds());
         assertNull(data.vdsmVm().getVmDynamic().getRunOnVds());
         assertFalse(vmAnalyzer.isRerun());
         assertTrue(vmAnalyzer.isAutoVmToRun());
