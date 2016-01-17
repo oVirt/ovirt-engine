@@ -19,7 +19,6 @@ import org.ovirt.engine.core.dao.JobDao;
 
 public class EndExternalJobCommand <T extends EndExternalJobParameters> extends CommandBase<T>{
 
-    private static final long serialVersionUID = 1L;
     private Job job;
 
     public EndExternalJobCommand(T parameters) {
