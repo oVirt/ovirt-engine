@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,10 +170,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             // Handling exception as we can't tolerate the failure
             return handleError(e, false);
         }
-    }
-    protected String asString(VdcReturnValueBase result) {
-        Guid guid = (Guid)result.getActionReturnValue();
-        return guid != null ? guid.toString() : null;
     }
 
     /**
