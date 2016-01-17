@@ -82,17 +82,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         this.isMultiSelection = isMultiSelection;
     }
 
-    public boolean isRootSelectionEnabled() {
-        return isRootSelectionEnabled;
-    }
-
     public void setRootSelectionEnabled(boolean isRootSelectionEnabled) {
         this.isRootSelectionEnabled = isRootSelectionEnabled;
         selectedItems.clear();
-    }
-
-    public boolean isNodeSelectionEnabled() {
-        return isNodeSelectionEnabled;
     }
 
     public void setNodeSelectionEnabled(boolean isNodeSelectionEnabled) {
