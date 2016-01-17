@@ -67,7 +67,7 @@ public class EditProviderModel extends ProviderModel {
 
     @Override
     protected void preSave() {
-        if (!StringHelper.stringsEqualIgnoreCase((String) getUrl().getEntity(), oldUrl)) {
+        if (!StringHelper.stringsEqualIgnoreCase(getUrl().getEntity(), oldUrl)) {
             ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
             ArrayList<VdcQueryParametersBase> queryParams = new ArrayList<>();
             final Set<VdcObjectType> providedTypes = provider.getType().getProvidedTypes();
@@ -87,7 +87,7 @@ public class EditProviderModel extends ProviderModel {
                         stopProgress();
                         Iterator<VdcQueryReturnValue> i = result.getReturnValues().iterator();
                         if (providedTypes.contains(VdcObjectType.Network)) {
-                            providedNetworks = (Collection<Network>) (i.next()).getReturnValue();
+                            providedNetworks = i.next().getReturnValue();
                         }
                         showConfirmation();
                     }

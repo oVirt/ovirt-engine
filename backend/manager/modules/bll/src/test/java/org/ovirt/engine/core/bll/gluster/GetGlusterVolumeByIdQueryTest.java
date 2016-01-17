@@ -44,7 +44,7 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
     @Test
     public void testExecuteQueryCommnad() {
         getQuery().executeQueryCommand();
-        GlusterVolumeEntity actual = (GlusterVolumeEntity) getQuery().getQueryReturnValue().getReturnValue();
+        GlusterVolumeEntity actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("wrong Gluster Volume", expected.getId(), actual.getId());
     }

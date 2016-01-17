@@ -102,7 +102,7 @@ public class MergeStatusCommand<T extends MergeParameters>
             return null;
         }
 
-        Map vm = (Map) vms[0];
+        Map vm = vms[0];
         if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
             log.error("Received incomplete VM information");
             return null;

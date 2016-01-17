@@ -28,10 +28,10 @@ public class GetProductVersionQuery<P extends VdcQueryParametersBase> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        String rpmVersion = (String) (Config.getValue(ConfigValues.ProductRPMVersion));
+        String rpmVersion = Config.getValue(ConfigValues.ProductRPMVersion);
         Version version = parseRpmVersion(rpmVersion);
         if (version == null) {
-            String vdcVersion = (String) (Config.getValue(ConfigValues.VdcVersion));
+            String vdcVersion = Config.getValue(ConfigValues.VdcVersion);
             version = parseVdcVersion(vdcVersion);
         }
         setReturnValue(version);

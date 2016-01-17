@@ -1158,7 +1158,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     throw new EngineException(result.getFault().getError());
                 } else {
                     getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                    DiskImage newImage = (DiskImage) result.getActionReturnValue();
+                    DiskImage newImage = result.getActionReturnValue();
                     srcDiskIdToTargetDiskIdMapping.put(image.getId(), newImage.getId());
                 }
             }

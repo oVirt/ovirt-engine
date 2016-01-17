@@ -904,8 +904,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
             setHasReinstallAlertMaintenance(true);
         }
 
-        setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
-                : (NonOperationalReason) getEntity().getNonOperationalReason()));
+        setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
+                null : getEntity().getNonOperationalReason());
 
         updateActionAvailability();
         setHasAnyAlert();

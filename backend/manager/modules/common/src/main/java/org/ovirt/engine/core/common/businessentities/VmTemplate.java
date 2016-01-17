@@ -175,7 +175,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     }
 
     public VmTemplate(VmTemplate template) {
-        super((VmBase)template);
+        super(template);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();

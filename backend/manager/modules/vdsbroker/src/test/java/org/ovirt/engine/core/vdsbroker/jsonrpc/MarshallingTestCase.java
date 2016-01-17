@@ -273,8 +273,8 @@ public class MarshallingTestCase {
         assertEquals("Done", vmList.status.message);
         assertEquals(0, vmList.status.code);
         assertEquals(1, vmList.vmList.length);
-        assertEquals("dd4d61c3-5128-4c26-ae71-0dbe5081ea93", (String) vmList.vmList[0].get("vmId"));
-        assertEquals("Up", (String) vmList.vmList[0].get("status"));
+        assertEquals("dd4d61c3-5128-4c26-ae71-0dbe5081ea93", vmList.vmList[0].get("vmId"));
+        assertEquals("Up", vmList.vmList[0].get("status"));
     }
 
     @SuppressWarnings("unchecked")
@@ -300,7 +300,7 @@ public class MarshallingTestCase {
         assertEquals("Done", vmList.status.message);
         assertEquals(0, vmList.status.code);
         assertEquals(1, vmList.vmList.length);
-        assertEquals("1397d80b-1c48-4d4a-acf9-ebd669bf3b25", (String) vmList.vmList[0].get("vmId"));
+        assertEquals("1397d80b-1c48-4d4a-acf9-ebd669bf3b25", vmList.vmList[0].get("vmId"));
     }
 
     @SuppressWarnings("unchecked")

@@ -49,7 +49,7 @@ public class BackendGlusterHookResource
         if (result != null
                 && result.getSucceeded()
                 && result.getReturnValue() != null) {
-            hook.setContent((String)result.getReturnValue());
+            hook.setContent(result.getReturnValue());
         }
         return hook;
     }

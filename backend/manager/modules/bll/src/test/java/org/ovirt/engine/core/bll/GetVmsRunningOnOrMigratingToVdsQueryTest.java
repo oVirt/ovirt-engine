@@ -38,7 +38,7 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<VM> actual = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VM> actual = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VMs", 1, actual.size());
     }
 }

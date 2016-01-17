@@ -530,8 +530,7 @@ public class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                balloonSupportMap = (Map<Integer, Map<Version, Boolean>>) ((VdcQueryReturnValue) returnValue)
-                        .getReturnValue();
+                balloonSupportMap = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(

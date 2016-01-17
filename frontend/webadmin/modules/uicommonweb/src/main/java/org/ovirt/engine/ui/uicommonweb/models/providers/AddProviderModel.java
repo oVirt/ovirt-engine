@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,7 +23,7 @@ public class AddProviderModel extends ProviderModel {
         setHelpTag(HelpTag.add_provider);
         setHashName("add_provider"); //$NON-NLS-1$
 
-        getType().setSelectedItem(Linq.firstOrNull((Iterable<ProviderType>) getType().getItems()));
+        getType().setSelectedItem(Linq.firstOrNull(getType().getItems()));
 
         getNeutronAgentModel().init(provider); // this is okay because AdditionalProperties == null at this point
     }

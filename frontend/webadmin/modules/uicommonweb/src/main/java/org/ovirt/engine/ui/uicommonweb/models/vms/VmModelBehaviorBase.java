@@ -1504,8 +1504,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<CpuProfile> cpuProfiles =
-                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<CpuProfile> cpuProfiles = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         getModel().getCpuProfiles().setItems(cpuProfiles);
                         if (cpuProfiles != null) {
                             for (CpuProfile cpuProfile : cpuProfiles) {

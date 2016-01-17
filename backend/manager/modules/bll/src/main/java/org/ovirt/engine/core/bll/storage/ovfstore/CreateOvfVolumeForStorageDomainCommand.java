@@ -49,7 +49,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         diskParameters.setSkipDomainCheck(getParameters().isSkipDomainChecks());
         VdcReturnValueBase vdcReturnValueBase =
                 runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
-        Guid createdId = (Guid)vdcReturnValueBase.getActionReturnValue();
+        Guid createdId = vdcReturnValueBase.getActionReturnValue();
 
         if (createdId != null) {
             addStorageDomainOvfInfoToDb(createdId);

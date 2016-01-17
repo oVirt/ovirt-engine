@@ -37,7 +37,7 @@ public class TaskListModel extends SearchableListModel {
             public void onSuccess(Object model, Object ReturnValue) {
                 TaskListModel taskListModel = (TaskListModel) model;
                 ArrayList<Job> taskList =
-                        (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (taskList.size() == 0) {
                     detailedTaskMap.clear();
                 }
@@ -175,7 +175,7 @@ public class TaskListModel extends SearchableListModel {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
-                        ArrayList<Job> retTasks = (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        ArrayList<Job> retTasks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                         ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
                         ArrayList<Job> newTaskList = new ArrayList<>();
@@ -232,7 +232,7 @@ public class TaskListModel extends SearchableListModel {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         TaskListModel taskListModel = (TaskListModel) model;
-                        Job retTask = (Job) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        Job retTask = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                         if (retTask == null) {
                             return;
                         }

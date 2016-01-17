@@ -492,7 +492,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetClustersByServiceAndCompatibilityVersion() {
-        List<Cluster> clusters = ((ClusterDaoImpl)dao).getClustersByServiceAndCompatibilityVersion(true, false, "2.3");
+        List<Cluster> clusters = dao.getClustersByServiceAndCompatibilityVersion(true, false, "2.3");
         assertNotNull(clusters);
         assertEquals(1, clusters.size());
         assertEquals(FixturesTool.GLUSTER_CLUSTER_ID, clusters.get(0).getId());
@@ -500,7 +500,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetClustersHavingHosts() {
-        List<Cluster> clusters = ((ClusterDaoImpl) dao).getClustersHavingHosts();
+        List<Cluster> clusters = dao.getClustersHavingHosts();
         assertNotNull(clusters);
         assertThat(clusters, hasSize(4));
     }

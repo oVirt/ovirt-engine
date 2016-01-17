@@ -63,7 +63,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     @Ignore
     @Override
     protected ProfileInstanceTypeEditor createWidget(VnicInstanceType value) {
-        VnicProfileView profile = (VnicProfileView) value.getSelectedItem();
+        VnicProfileView profile = value.getSelectedItem();
 
         ProfileInstanceTypeEditor item = new ProfileInstanceTypeEditor();
         item.edit(value);

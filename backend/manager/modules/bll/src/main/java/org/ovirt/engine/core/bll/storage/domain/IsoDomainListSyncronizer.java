@@ -232,7 +232,7 @@ public class IsoDomainListSyncronizer {
         Lock syncObject = getSyncObject(storageDomain.getId(), imageType);
         try {
             syncObject.lock();
-            return (Boolean) TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
+            return TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
                     () -> {
                         repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
 

@@ -206,8 +206,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
         when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
 
         getQuery().executeQueryCommand();
-        GlusterVolumeTaskStatusEntity volumeStatusDetails =
-                (GlusterVolumeTaskStatusEntity) getQuery().getQueryReturnValue().getReturnValue();
+        GlusterVolumeTaskStatusEntity volumeStatusDetails = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(volumeStatusDetails);
         assertEquals(expectedVolumeStatusDetails, volumeStatusDetails);

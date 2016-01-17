@@ -79,7 +79,7 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
                     newSnapshot.setCreatedAt(new Date(formattedCreateDate));
                 } catch (Exception e) {
                     log.info("Could not populate creation time for snapshot '{}' of volume '{}' on cluster '{}': {}",
-                            (String) snapshotInfo.get(NAME),
+                            snapshotInfo.get(NAME),
                             volumeEntity.getName(),
                             clusterId,
                             e.getMessage());

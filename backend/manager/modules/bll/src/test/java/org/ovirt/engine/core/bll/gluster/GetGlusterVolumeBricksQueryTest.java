@@ -59,7 +59,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
     @Test
     public void testExecuteQueryCommnad() {
         getQuery().executeQueryCommand();
-        List<GlusterBrickEntity> actual =  (List<GlusterBrickEntity>) getQuery().getQueryReturnValue().getReturnValue();
+        List<GlusterBrickEntity> actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("wrong Gluster Volume", expected.getBricks(), actual);
     }

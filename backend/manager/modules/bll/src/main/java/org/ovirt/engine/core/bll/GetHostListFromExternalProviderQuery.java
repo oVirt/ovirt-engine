@@ -49,7 +49,7 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     }
 
     protected List<VDS> getProviderHosts(Provider hostProvider, String searchFilter) {
-        HostProviderProxy proxy = ((HostProviderProxy) ProviderProxyFactory.getInstance().create(hostProvider));
+        HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(hostProvider);
         if (StringUtils.isEmpty(searchFilter)) {
             return proxy.getAll();
         } else {

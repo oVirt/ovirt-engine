@@ -1466,9 +1466,9 @@ public final class FormatterJava {
         private void printBoolean(Object arg) throws IOException {
             String s;
             if (arg != null) {
-                s = ((arg instanceof Boolean)
-                        ? ((Boolean) arg).toString()
-                        : Boolean.toString(true));
+                s = arg instanceof Boolean
+                        ? arg.toString()
+                        : Boolean.toString(true);
             } else {
                 s = Boolean.toString(false);
             }
@@ -1482,7 +1482,7 @@ public final class FormatterJava {
             }
             String s = null;
             if (arg instanceof Character) {
-                s = ((Character) arg).toString();
+                s = arg.toString();
             } else if (arg instanceof Byte) {
                 byte i = ((Byte) arg).byteValue();
                 if (Character.isValidCodePoint(i)) {

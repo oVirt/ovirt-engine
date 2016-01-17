@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import java.util.Comparator;
 
-import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -45,10 +44,6 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
         super(multipleSelectionAllowed ? new CheckboxCell(true, false) : new RadioboxCell(true, false));
         this.multipleSelectionAllowed = multipleSelectionAllowed;
         setFieldUpdater(fieldUpdater);
-    }
-
-    public Cell<Boolean> getCell() {
-        return (Cell<Boolean>) super.getCell();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class GetQuotaStorageByQuotaIdQueryTest
 
         // Assert the result
         @SuppressWarnings("unchecked")
-        List<QuotaStorage> results = (List<QuotaStorage>) getQuery().getQueryReturnValue().getReturnValue();
+        List<QuotaStorage> results = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of results returned", 1, results.size());
         assertEquals("Wrong results returned", group, results.get(0));
     }

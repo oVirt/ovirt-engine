@@ -263,7 +263,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     private void onRestoreSnapshot() {
         runAction(VdcActionType.RestoreGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
-                        ((GlusterVolumeSnapshotEntity) getSelectedItem()).getSnapshotName(),
+                        getSelectedItem().getSnapshotName(),
                         true));
     }
 
@@ -273,7 +273,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        List<GlusterVolumeSnapshotEntity> snapshots = (List<GlusterVolumeSnapshotEntity>) getSelectedItems();
+        List<GlusterVolumeSnapshotEntity> snapshots = getSelectedItems();
         StringBuilder snapshotNames = new StringBuilder();
         for (GlusterVolumeSnapshotEntity snapshot : snapshots) {
             snapshotNames.append(snapshot.getSnapshotName());
@@ -302,7 +302,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
         final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
         List<VdcActionParametersBase> paramsList = new ArrayList<>();
-        for (GlusterVolumeSnapshotEntity snapshot : (List<GlusterVolumeSnapshotEntity>) getSelectedItems()) {
+        for (GlusterVolumeSnapshotEntity snapshot : getSelectedItems()) {
             GlusterVolumeSnapshotActionParameters param =
                     new GlusterVolumeSnapshotActionParameters(getEntity().getId(), snapshot.getSnapshotName(), true);
             paramsList.add(param);
@@ -361,7 +361,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     private void onActivateSnapshot() {
         runAction(VdcActionType.ActivateGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
-                        ((GlusterVolumeSnapshotEntity) getSelectedItem()).getSnapshotName(),
+                        getSelectedItem().getSnapshotName(),
                         true));
     }
 
@@ -386,7 +386,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     private void onDeactivateSnapshot() {
         runAction(VdcActionType.DeactivateGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
-                        ((GlusterVolumeSnapshotEntity) getSelectedItem()).getSnapshotName(),
+                        getSelectedItem().getSnapshotName(),
                         true));
     }
 
@@ -410,7 +410,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
     @Override
     public GlusterVolumeEntity getEntity() {
-        return (GlusterVolumeEntity) super.getEntity();
+        return super.getEntity();
     }
 
     public void setEntity(GlusterVolumeEntity value) {

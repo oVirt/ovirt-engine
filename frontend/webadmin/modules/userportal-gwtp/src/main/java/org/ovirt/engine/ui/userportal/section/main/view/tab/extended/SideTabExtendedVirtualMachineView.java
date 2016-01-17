@@ -272,7 +272,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             }
 
             protected boolean isSelectedRow(UserPortalItemModel row) {
-                UserPortalItemModel selectedModel = (UserPortalItemModel) getModel().getSelectedItem();
+                UserPortalItemModel selectedModel = getModel().getSelectedItem();
                 if (selectedModel != null) {
                     if (modelProvider.getKey(selectedModel).equals(modelProvider.getKey(row))) {
                         return true;

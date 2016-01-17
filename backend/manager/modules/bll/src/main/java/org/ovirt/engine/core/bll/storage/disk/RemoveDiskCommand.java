@@ -210,7 +210,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDao().getVmsListForDisk((Guid) getParameters().getDiskId(), true);
+            listVms = getVmDao().getVmsListForDisk(getParameters().getDiskId(), true);
         }
         return listVms;
     }

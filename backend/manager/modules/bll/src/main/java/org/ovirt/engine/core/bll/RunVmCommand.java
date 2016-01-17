@@ -666,7 +666,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
                 return getSucceeded() ?
-                        (VMStatus) getActionReturnValue() == VMStatus.Up ?
+                        getActionReturnValue() == VMStatus.Up ?
                                isVmRunningOnNonDefaultVds() ?
                                        AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
                                        : (isStatelessSnapshotExistsForVm() ?

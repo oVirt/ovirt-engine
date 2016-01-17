@@ -52,8 +52,8 @@ public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProf
 
     @Override
     protected boolean isGhost(VnicProfileModel value) {
-        String name = (String) value.getName().getEntity();
-        return (name == null || name.isEmpty());
+        String name = value.getName().getEntity();
+        return name == null || name.isEmpty();
     }
 
     @Override

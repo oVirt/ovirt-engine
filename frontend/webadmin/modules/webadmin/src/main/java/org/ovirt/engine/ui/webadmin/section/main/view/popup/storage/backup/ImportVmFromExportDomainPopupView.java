@@ -396,7 +396,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             public void onSelectionChange(SelectionChangeEvent event) {
                 ImportVmData selectedObject =
                         ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
-                customSelectionCellFormatType.setEnabled(((Boolean) selectedObject.getCollapseSnapshots().getEntity()));
+                customSelectionCellFormatType.setEnabled(selectedObject.getCollapseSnapshots().getEntity());
             }
         });
 

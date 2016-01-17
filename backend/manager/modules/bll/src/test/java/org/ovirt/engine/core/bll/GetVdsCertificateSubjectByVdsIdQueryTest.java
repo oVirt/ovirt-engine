@@ -39,7 +39,7 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
 
         getQuery().executeQueryCommand();
 
-        String result = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong interfaces returned", expectedResult, result);
     }

@@ -43,7 +43,7 @@ public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
             }
         };
 
-        IdQueryParameters tempVar = new IdQueryParameters(((Quota) getEntity()).getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsRelatedToQuotaId, tempVar, _asyncQuery);
     }

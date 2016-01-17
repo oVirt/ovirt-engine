@@ -408,8 +408,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(EntityModel object) {
-                CinderDisk disk = (CinderDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return (long) disk.getSizeInGigabytes();
+                CinderDisk disk = (CinderDisk) ((DiskModel) object.getEntity()).getDisk();
+                return disk.getSizeInGigabytes();
             }
         };
         cinderDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "100px"); //$NON-NLS-1$

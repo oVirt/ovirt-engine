@@ -33,7 +33,7 @@ public class GetClustersWithPermittedActionQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<Cluster> actual = (List<Cluster>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Cluster> actual = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VDS Groups", 1, actual.size());
         assertEquals("Wrong VDS Groups", expected, actual.get(0));
     }

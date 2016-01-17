@@ -100,7 +100,7 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
      * set dropdown with selected key tooltip.
      */
     private void updateKeyTitle(KeyValueLineModel object) {
-        String selectedKey = (String) object.getKeys().getSelectedItem();
+        String selectedKey = object.getKeys().getSelectedItem();
         if (selectedKey != null) {
             TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(selectedKey), keyField.getElement());
         }

@@ -81,7 +81,7 @@ public class UserPortalTemplateListModel extends TemplateListModel {
 
     @Override
     protected void updateActionsAvailability() {
-        VmTemplate item = (VmTemplate) getSelectedItem();
+        VmTemplate item = getSelectedItem();
         if (item != null) {
             ArrayList items = new ArrayList();
             items.add(item);

@@ -33,7 +33,7 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParamet
 
         getQuery().executeQueryCommand();
 
-        VmPool result = (VmPool) getQuery().getQueryReturnValue().getReturnValue();
+        VmPool result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong VM pool returned", expectedResult, result);
     }

@@ -252,7 +252,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
 
-        VmwareVmProviderProperties properties = (VmwareVmProviderProperties) provider.getAdditionalProperties();
+        VmwareVmProviderProperties properties = provider.getAdditionalProperties();
         getvCenter().setEntity(properties.getvCenter());
         getEsx().setEntity(properties.getEsx());
         Pair<String, String> dcAndCluster = splitToDcAndCluster(properties.getDataCenter());

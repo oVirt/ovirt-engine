@@ -112,7 +112,7 @@ public class NegotiationFilter implements Filter {
         if (FiltersHelper.isAuthenticated(httpreq) || httpreq.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY) != null) {
             chain.doFilter(req, rsp);
         } else {
-            ((HttpServletRequest) req).setAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY, schemes);
+            req.setAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY, schemes);
             HttpSession session = httpreq.getSession(false);
             Deque<AuthenticationProfile> stack = null;
             if (session != null) {

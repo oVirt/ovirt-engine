@@ -112,8 +112,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         });
 
         if (getParameters().isProvisioned()) {
-            HostProviderProxy proxy =
-                    ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
+            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(getHostProvider());
             proxy.provisionHost(
                     getParameters().getvds(),
                     getParameters().getHostGroup(),

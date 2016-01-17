@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
@@ -40,7 +39,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
         }
 
         if (retValue) {
-            disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
+            disk = loadDisk(getParameters().getEntityInfo().getId());
             retValue = isDiskExist(disk);
         }
         if (retValue) {

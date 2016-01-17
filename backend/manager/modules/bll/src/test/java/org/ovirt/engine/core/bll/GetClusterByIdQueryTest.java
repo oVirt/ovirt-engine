@@ -34,7 +34,7 @@ public class GetClusterByIdQueryTest
 
         getQuery().executeQueryCommand();
 
-        Cluster actual = (Cluster) getQuery().getQueryReturnValue().getReturnValue();
+        Cluster actual = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("wrong VDS Group", expected, actual);
     }
 }

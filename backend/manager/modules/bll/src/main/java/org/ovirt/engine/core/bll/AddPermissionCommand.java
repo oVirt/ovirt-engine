@@ -225,7 +225,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             AddUserParameters parameters = new AddUserParameters(dbUser);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddUser, parameters, cloneContextAndDetachFromParent());
             if (result.getSucceeded()) {
-                Guid id = (Guid) result.getActionReturnValue();
+                Guid id = result.getActionReturnValue();
                 if (id != null) {
                     return getDbUserDao().get(id);
                 }
@@ -242,7 +242,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             AddGroupParameters parameters = new AddGroupParameters(groupToAdd);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
             if (result.getSucceeded()) {
-                Guid id = (Guid) result.getActionReturnValue();
+                Guid id = result.getActionReturnValue();
                 if (id != null) {
                     return getAdGroupDao().get(id);
                 }

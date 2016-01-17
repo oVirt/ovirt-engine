@@ -37,7 +37,7 @@ public class GetAllAuditLogsByVMTemplateIdQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<AuditLog> result = (List<AuditLog>) getQuery().getQueryReturnValue().getReturnValue();
+        List<AuditLog> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of audit logs in result", 1, result.size());
         assertEquals("Wrong audit log in result", expectedResult, result.get(0));
     }

@@ -90,7 +90,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
 
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    Guid vmid = new Guid((String) entry.getKey());
+                    Guid vmid = new Guid(entry.getKey());
                     VM dbVm = dbFacade.getVmDao().get(vmid);
                     VmInternalData vdsmVm;
                     if (dbVm == null) {

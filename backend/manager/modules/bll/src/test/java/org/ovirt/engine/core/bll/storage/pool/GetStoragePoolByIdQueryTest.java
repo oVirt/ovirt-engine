@@ -34,7 +34,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
 
         getQuery().executeQueryCommand();
 
-        StoragePool result = (StoragePool) getQuery().getQueryReturnValue().getReturnValue();
+        StoragePool result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong storage pool returned", expectedResult, result);
     }

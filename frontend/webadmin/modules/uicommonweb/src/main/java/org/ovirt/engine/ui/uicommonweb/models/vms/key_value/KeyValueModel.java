@@ -125,7 +125,7 @@ public class KeyValueModel extends BaseKeyModel {
         if (getItems() == null) {
             return "";
         }
-        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
+        for (KeyValueLineModel keyValueLineModel : getItems()) {
             String key = keyValueLineModel.getKeys().getSelectedItem();
             if (!isKeyValid(key)) {
                 continue;
@@ -152,7 +152,7 @@ public class KeyValueModel extends BaseKeyModel {
             return true;
         }
         boolean isValid = true;
-        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
+        for (KeyValueLineModel keyValueLineModel : getItems()) {
             String key = keyValueLineModel.getKeys().getSelectedItem();
             if (!isKeyValid(key)) {
                 continue;

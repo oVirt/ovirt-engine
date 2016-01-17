@@ -83,7 +83,7 @@ public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresente
             lastPresenter = (AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
                     ? extends AbstractSubTabPresenter.ViewDef<VDS>, ? extends TabContentProxyPlace<?>>) content;
         }
-        TabContentProxy<?> proxy = (TabContentProxy<?>) lastPresenter.getProxy();
+        TabContentProxy<?> proxy = lastPresenter.getProxy();
         super.setInSlot(TYPE_SetTabContent, lastPresenter);
         getView().setActiveTab(proxy.getTab());
         getView().setActiveTabHistoryToken(proxy.getTargetHistoryToken());

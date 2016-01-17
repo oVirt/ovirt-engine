@@ -150,7 +150,7 @@ public class LoggerServiceImpl implements ModuleService {
             props.load(reader);
         }
 
-        Map<String, String> substitutions = (Map)context.get(ContextKeys.CLI_PARSER_SUBSTITUTIONS);
+        Map<String, String> substitutions = context.get(ContextKeys.CLI_PARSER_SUBSTITUTIONS);
         ArgumentsParser parser = new ArgumentsParser(props, "module");
         parser.getSubstitutions().putAll(substitutions);
         parser.parse(args);

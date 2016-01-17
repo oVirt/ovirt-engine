@@ -73,7 +73,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
             return true;
         }
         if (listModel.getEntity() instanceof Quota) {
-            return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
+            return ((BusinessEntity) listModel.getEntity()).getId().equals(disk.getQuotaId());
         }
         return disk.getStorageIds().contains(((StorageDomain) listModel.getEntity()).getId());
     }

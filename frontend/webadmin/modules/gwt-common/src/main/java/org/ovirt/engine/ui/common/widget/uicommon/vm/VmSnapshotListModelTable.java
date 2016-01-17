@@ -109,7 +109,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     }
 
     private void updateSnapshotInfo() {
-        final Snapshot snapshot = (Snapshot) getModel().getSelectedItem();
+        final Snapshot snapshot = getModel().getSelectedItem();
         if (snapshot == null) {
             return;
         }
@@ -130,7 +130,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     }
 
     private void updateMemoryColumnVisibility() {
-        VM vm = (VM) getModel().getEntity();
+        VM vm = getModel().getEntity();
         if (vm == null) {
             return;
         }

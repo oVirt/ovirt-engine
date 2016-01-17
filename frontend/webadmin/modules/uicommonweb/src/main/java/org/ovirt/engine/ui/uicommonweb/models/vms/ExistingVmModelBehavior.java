@@ -45,7 +45,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     public ExistingVmModelBehavior(VM vm) {
         this.vm = vm;
-        dedicatedHostsNames = Collections.<String>emptyList();
+        dedicatedHostsNames = Collections.emptyList();
     }
 
     public VM getVm() {
@@ -82,8 +82,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<VmNumaNode> nodes =
-                                (List<VmNumaNode>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<VmNumaNode> nodes = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         ExistingVmModelBehavior.this.getModel().setVmNumaNodes(nodes);
                         ExistingVmModelBehavior.this.getModel().updateNodeCount(nodes.size());
                     }

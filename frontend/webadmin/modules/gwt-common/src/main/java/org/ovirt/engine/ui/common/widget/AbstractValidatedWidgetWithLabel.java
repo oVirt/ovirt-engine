@@ -30,7 +30,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -452,7 +451,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     private void addStateUpdateHandler() {
-        ((IsWidget) this.getContentWidget()).asWidget().addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
+        this.getContentWidget().asWidget().addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
             @Override
             public void onEditorStateUpdate(EditorStateUpdateEvent event) {
                 if (event.isValid()) {

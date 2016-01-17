@@ -179,8 +179,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         when(vdsDao.get(SERVER_ID)).thenReturn(getVds(VDSStatus.Up));
 
         getQuery().executeQueryCommand();
-        GlusterVolumeAdvancedDetails volumeAdvancedDetails =
-                (GlusterVolumeAdvancedDetails) getQuery().getQueryReturnValue().getReturnValue();
+        GlusterVolumeAdvancedDetails volumeAdvancedDetails = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(volumeAdvancedDetails);
         assertEquals(expectedVolumeAdvancedDetails, volumeAdvancedDetails);
@@ -207,8 +206,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getRandomUpServer(CLUSTER_ID);
 
         getQuery().executeQueryCommand();
-        GlusterVolumeAdvancedDetails volumeAdvancedDetails =
-                (GlusterVolumeAdvancedDetails) getQuery().getQueryReturnValue().getReturnValue();
+        GlusterVolumeAdvancedDetails volumeAdvancedDetails = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(volumeAdvancedDetails);
         assertEquals(expectedVolumeAdvancedDetails, volumeAdvancedDetails);

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
@@ -99,7 +98,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         } else {
             // use luns list from connect command
-            getParameters().setLunsList((ArrayList<LUNs>) connectResult.getActionReturnValue());
+            getParameters().setLunsList(connectResult.getActionReturnValue());
         }
         return true;
     }

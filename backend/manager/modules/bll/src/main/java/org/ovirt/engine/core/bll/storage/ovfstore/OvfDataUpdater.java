@@ -76,7 +76,7 @@ public class OvfDataUpdater {
                 log.debug("Attempting to update ovfs in domain in Data Center '{}'",
                         pool.getName());
 
-                Set<Guid> domainsToUpdate = (Set<Guid>) returnValueBase.getActionReturnValue();
+                Set<Guid> domainsToUpdate = returnValueBase.getActionReturnValue();
                 if (domainsToUpdate != null) {
                     for (Guid id : domainsToUpdate) {
                         performOvfUpdateForDomain(pool.getId(), id);

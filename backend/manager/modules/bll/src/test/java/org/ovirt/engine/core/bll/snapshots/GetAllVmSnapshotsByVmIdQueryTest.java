@@ -65,7 +65,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         query.executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<Snapshot> snapshots = (List<Snapshot>) query.getQueryReturnValue().getReturnValue();
+        List<Snapshot> snapshots = query.getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
         assertTrue("snapshot should be in the return value", snapshots.contains(snapshot));

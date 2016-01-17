@@ -325,7 +325,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+            UserPortalItemModel selectedItem = getSelectedItem();
             if (items != null && selectedItem != null) {
                 for (Object object : items) {
                     UserPortalItemModel itemModel = (UserPortalItemModel) object;
@@ -375,7 +375,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
 
-        UserPortalItemModel item = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel item = getSelectedItem();
 
         vmGeneralModel.setIsAvailable(item != null && !item.isPool());
         vmSnapshotListModel.setIsAvailable(item != null && !item.isPool());
@@ -454,7 +454,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void cloneVm() {
-        final UserPortalItemModel vm = (UserPortalItemModel) getSelectedItem();
+        final UserPortalItemModel vm = getSelectedItem();
         if (vm == null) {
             return;
         }
@@ -479,7 +479,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void newTemplate() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null) {
             return;
         }
@@ -504,7 +504,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void onNewTemplate() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null) {
             cancel();
             return;
@@ -556,7 +556,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private void postNameUniqueCheck(UserPortalListModel userPortalListModel) {
         UnitVmModel model = (UnitVmModel) userPortalListModel.getWindow();
-        UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
+        UserPortalItemModel selectedItem = userPortalListModel.getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
 
         VM newVm = buildVmOnNewTemplate(model, vm);
@@ -612,7 +612,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void runOnce() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null) {
             return;
         }
@@ -635,7 +635,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void updateActionAvailability() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
 
         getEditCommand().setIsExecutionAllowed(selectedItem != null && !selectedItem.isPool());
 
@@ -699,7 +699,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void edit() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null) {
             return;
         }
@@ -816,7 +816,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void changeCD() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null) {
             return;
         }
@@ -866,7 +866,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void onChangeCD() {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null) {
             cancel();
             return;
@@ -892,7 +892,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void onSave() {
 
         final UnitVmModel model = (UnitVmModel) getWindow();
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         if (!model.getIsNew() && selectedItem.getEntity() == null) {
             cancel();
             return;
@@ -984,7 +984,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
-                        List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
+                        List<String> changedFields = ((VdcQueryReturnValue)returnValue).getReturnValue();
                         if (!changedFields.isEmpty()) {
                             VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
                             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
@@ -1044,7 +1044,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private void updateExistingVm(UserPortalListModel userPortalListModel, final boolean applyCpuChangesLater) {
         final UnitVmModel model = (UnitVmModel) getWindow();
-        UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
+        UserPortalItemModel selectedItem = userPortalListModel.getSelectedItem();
 
         Guid oldClusterID = ((VM) selectedItem.getEntity()).getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
@@ -1112,7 +1112,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private void updateDataCenterWithCluster() {
         UnitVmModel model = (UnitVmModel) getWindow();
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         final VM vm = (VM) selectedItem.getEntity();
         DataCenterWithCluster selectedDataCenterWithCluster = null;
 
@@ -1163,7 +1163,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void vmModel_DefaultHost_ItemsChanged() {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew()) {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+            UserPortalItemModel selectedItem = getSelectedItem();
             VM vm = (VM) selectedItem.getEntity();
             VDS host = null;
 
@@ -1186,7 +1186,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void vmModel_DisplayProtocol_ItemsChanged() {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew()) {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+            UserPortalItemModel selectedItem = getSelectedItem();
             DisplayType displayType = ((VM) selectedItem.getEntity()).getDefaultDisplayType();
             if (model.getDisplayType().getItems().contains(displayType)) {
                 model.getDisplayType().setSelectedItem(displayType);
@@ -1215,7 +1215,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void updatePriority(UnitVmModel model) {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        UserPortalItemModel selectedItem = getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
         int roundPriority = AsyncDataProvider.getInstance().getRoundedPriority(vm.getPriority(), cachedMaxPriority);
         EntityModel<Integer> priority = null;
@@ -1233,7 +1233,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void vmModel_TimeZone_ItemsChanged() {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew()) {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+            UserPortalItemModel selectedItem = getSelectedItem();
             VM vm = (VM) selectedItem.getEntity();
 
             if (!StringHelper.isNullOrEmpty(vm.getTimeZone())) {

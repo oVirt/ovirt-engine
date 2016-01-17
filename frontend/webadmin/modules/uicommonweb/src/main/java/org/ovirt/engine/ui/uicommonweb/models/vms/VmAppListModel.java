@@ -63,7 +63,7 @@ public class VmAppListModel<E> extends SearchableListModel<E, String> {
                     @Override
                     public void onSuccess(Object model, Object result) {
                         if (result != null) {
-                            VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                            VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                             if (vm != null) {
                                 updateAppListFromVm(vm);
                             }

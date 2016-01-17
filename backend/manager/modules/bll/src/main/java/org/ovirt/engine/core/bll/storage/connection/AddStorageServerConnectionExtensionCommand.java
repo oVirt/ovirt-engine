@@ -23,7 +23,7 @@ public class AddStorageServerConnectionExtensionCommand<T extends StorageServerC
     @Override
     protected void init() {
         super.init();
-        setVdsId(((StorageServerConnectionExtensionParameters) getParameters()).getStorageServerConnectionExtension().getHostId());
+        setVdsId(getParameters().getStorageServerConnectionExtension().getHostId());
     }
 
     @Override

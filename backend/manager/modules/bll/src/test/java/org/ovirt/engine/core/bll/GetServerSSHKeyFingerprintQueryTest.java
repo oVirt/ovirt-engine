@@ -36,7 +36,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
         when(getQueryParameters().getServer()).thenReturn(serverName);
         doReturn(fingerPrint).when(mockEngineSSHClient).getHostFingerprint();
         getQuery().executeQueryCommand();
-        String serverFingerprint = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String serverFingerprint = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(serverFingerprint);
         assertEquals(fingerPrint, serverFingerprint);
@@ -46,7 +46,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
     public void testExecuteQueryCommnadFails() {
         when(getQueryParameters().getServer()).thenReturn(null);
         getQuery().executeQueryCommand();
-        String serverFingerprint = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String serverFingerprint = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNull(serverFingerprint);
     }

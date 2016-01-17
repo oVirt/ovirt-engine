@@ -149,7 +149,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     }
 
     protected void updateSelectedLunWarning(LunModel lunModel) {
-        LUNs lun = (LUNs) lunModel.getEntity();
+        LUNs lun = lunModel.getEntity();
         String warning = constants.empty();
 
         // Adding 'GrayedOutReasons'

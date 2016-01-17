@@ -87,7 +87,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().getSearchButton()
                         .getCommand()
-                        .setIsExecutionAllowed(!(Boolean) model.getSearchInProgress().getEntity());
+                        .setIsExecutionAllowed(!model.getSearchInProgress().getEntity());
             }
         });
 

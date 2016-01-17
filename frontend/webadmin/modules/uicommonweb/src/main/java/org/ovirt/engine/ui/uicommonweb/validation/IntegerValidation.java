@@ -39,7 +39,7 @@ public class IntegerValidation implements IValidation {
     public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && ((value instanceof String && !((String) value).equals("")) || value instanceof Integer)) { //$NON-NLS-1$
+        if (value != null && ((value instanceof String && !value.equals("")) || value instanceof Integer)) { //$NON-NLS-1$
             Integer intValue = value instanceof String ? IntegerCompat.tryParse((String) value) : (Integer) value;
             String msg = ""; //$NON-NLS-1$
             String prefixMsg =

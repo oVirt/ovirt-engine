@@ -135,7 +135,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateEnums(Action.class, action);
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
         params = (UpdateVdsActionParameters) getMapper
-                (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
+                (Action.class, VdsOperationActionParameters.class).map(action, params);
         if (vds.isOvirtNode()) {
             params.setReinstallOrUpgrade(true);
             if (action.isSetImage()) {
@@ -174,7 +174,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateEnums(Action.class, action);
         ApproveVdsParameters params = new ApproveVdsParameters(guid);
         params = (ApproveVdsParameters) getMapper
-                (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
+                (Action.class, VdsOperationActionParameters.class).map(action, params);
 
         // Set pk authentication as default
         params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
@@ -681,7 +681,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             }
 
             updateParams = (UpdateVdsActionParameters) getMapper
-                    (Host.class, VdsOperationActionParameters.class).map(incoming, (VdsOperationActionParameters) updateParams);
+                    (Host.class, VdsOperationActionParameters.class).map(incoming, updateParams);
             return updateParams;
         }
     }

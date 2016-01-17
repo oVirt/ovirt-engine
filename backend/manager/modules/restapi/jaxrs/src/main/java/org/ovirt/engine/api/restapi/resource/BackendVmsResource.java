@@ -310,7 +310,7 @@ public class BackendVmsResource extends
     private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.storage.Disk> values) {
         HashMap<Guid, DiskImage> result = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.storage.Disk diskImage : values) {
-            result.put(((DiskImage) diskImage).getId(), (DiskImage) diskImage);
+            result.put(diskImage.getId(), (DiskImage) diskImage);
         }
         return result;
     }

@@ -67,7 +67,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<Permission> result = (List<Permission>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Permission> result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong permissions returned from the query", mockedPermissions, result);
     }

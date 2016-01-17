@@ -87,7 +87,7 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
     void addItems(ChangeQuotaModel model) {
         listPanel.clear();
 
-        for (final ChangeQuotaItemModel itemModel : (ArrayList<ChangeQuotaItemModel>) model.getItems()) {
+        for (final ChangeQuotaItemModel itemModel : model.getItems()) {
             ChangeQuotaItemView itemView = new ChangeQuotaItemView();
             itemView.edit(itemModel);
             listPanel.add(itemView);

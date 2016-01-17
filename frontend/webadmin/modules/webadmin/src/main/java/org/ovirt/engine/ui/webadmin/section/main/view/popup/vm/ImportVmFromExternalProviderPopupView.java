@@ -185,23 +185,23 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractCheckboxColumn<ImportVmData> cloneVMColumn = new AbstractCheckboxColumn<ImportVmData>(new FieldUpdater<ImportVmData, Boolean>() {
             @Override
             public void update(int index, ImportVmData model, Boolean value) {
-                ((ImportVmData) model).getClone().setEntity(value);
+                model.getClone().setEntity(value);
                 table.asEditor().edit(importModel);
             }
         }) {
             @Override
             public Boolean getValue(ImportVmData model) {
-                return (Boolean) ((ImportVmData) model).getClone().getEntity();
+                return model.getClone().getEntity();
             }
 
             @Override
             protected boolean canEdit(ImportVmData model) {
-                return ((ImportVmData) model).getClone().getIsChangable();
+                return model.getClone().getIsChangable();
             }
 
             @Override
             protected String getDisabledMessage(ImportVmData model) {
-                return ((ImportVmData) model).getClone().getChangeProhibitionReason();
+                return model.getClone().getChangeProhibitionReason();
             }
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
@@ -217,7 +217,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> originColumn = new AbstractEnumColumn<ImportVmData, OriginType>() {
             @Override
             protected OriginType getRawValue(ImportVmData object) {
-                return ((ImportVmData) object).getVm().getOrigin();
+                return object.getVm().getOrigin();
             }
         };
         table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
@@ -226,14 +226,14 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                 new AbstractImageResourceColumn<ImportVmData>() {
                     @Override
                     public com.google.gwt.resources.client.ImageResource getValue(ImportVmData object) {
-                        return new VmTypeColumn().getValue(((ImportVmData) object).getVm());
+                        return new VmTypeColumn().getValue(object.getVm());
                     }
                 }, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<ImportVmData> memoryColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
-                return String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return String.valueOf(object.getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
@@ -241,7 +241,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> cpuColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
-                return String.valueOf(((ImportVmData) object).getVm().getNumOfCpus());
+                return String.valueOf(object.getVm().getNumOfCpus());
             }
         };
         table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
@@ -249,7 +249,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> archColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
-                return String.valueOf(((ImportVmData) object).getVm().getClusterArch());
+                return String.valueOf(object.getVm().getClusterArch());
             }
         };
         table.addColumn(archColumn, constants.architectureVm(), "50px"); //$NON-NLS-1$
@@ -257,7 +257,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         AbstractTextColumn<ImportVmData> diskColumn = new AbstractTextColumn<ImportVmData>() {
             @Override
             public String getValue(ImportVmData object) {
-                return String.valueOf(((ImportVmData) object).getVm().getDiskMap().size());
+                return String.valueOf(object.getVm().getDiskMap().size());
             }
         };
         table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$

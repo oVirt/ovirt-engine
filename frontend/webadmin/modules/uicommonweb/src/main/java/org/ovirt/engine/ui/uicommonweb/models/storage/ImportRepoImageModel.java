@@ -7,10 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -93,11 +91,11 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
             // destination
             importParameters.setDiskAlias(((RepoImageModel) entity).getDiskImageAlias());
-            importParameters.setStoragePoolId(((StoragePool) getDataCenter().getSelectedItem()).getId());
-            importParameters.setStorageDomainId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
-            importParameters.setClusterId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
+            importParameters.setStoragePoolId(getDataCenter().getSelectedItem().getId());
+            importParameters.setStorageDomainId(getStorageDomain().getSelectedItem().getId());
+            importParameters.setClusterId(getStorageDomain().getSelectedItem().getId());
 
-            Quota selectedQuota = (Quota) getQuota().getSelectedItem();
+            Quota selectedQuota = getQuota().getSelectedItem();
 
             if (selectedQuota != null) {
                 importParameters.setQuotaId(selectedQuota.getId());
@@ -107,7 +105,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             importParameters.setImportAsTemplate(importAsTemplate);
 
             if (importAsTemplate) {
-                importParameters.setClusterId(((Cluster) getCluster().getSelectedItem()).getId());
+                importParameters.setClusterId(getCluster().getSelectedItem().getId());
             }
 
             actionParameters.add(importParameters);

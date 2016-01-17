@@ -52,8 +52,7 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
         assertNotNull(returnValue);
         assertNotNull(returnValue.getReturnValue());
         @SuppressWarnings("unchecked")
-        Map<VdcActionType, CommandVersionsInfo> resultMap =
-                (Map<VdcActionType, CommandVersionsInfo>) returnValue.getReturnValue();
+        Map<VdcActionType, CommandVersionsInfo> resultMap = returnValue.getReturnValue();
         assertEquals(2, resultMap.size());
         verifyEntry(resultMap, VdcActionType.RunVm, RUN_VM_VERSION);
         verifyEntry(resultMap, VdcActionType.AddVmFromSnapshot, ADD_VM_FROM_SNAPSHOT_VERSION);

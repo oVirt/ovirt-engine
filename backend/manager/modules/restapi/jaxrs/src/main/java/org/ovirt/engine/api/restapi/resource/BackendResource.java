@@ -191,7 +191,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected Response performAction(VdcActionType task, VdcActionParametersBase params) {
-        return performAction(task, params, (Action) null, false);
+        return performAction(task, params, null, false);
     }
 
     protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {

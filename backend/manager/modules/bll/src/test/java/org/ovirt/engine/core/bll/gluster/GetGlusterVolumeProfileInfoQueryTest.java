@@ -154,7 +154,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
         doReturn(params.isNfs()).when(getQueryParameters()).isNfs();
         getQuery().executeQueryCommand();
         GlusterVolumeProfileInfo glusterVolumeProfileInfo =
-                (GlusterVolumeProfileInfo) getQuery().getQueryReturnValue().getReturnValue();
+                getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(glusterVolumeProfileInfo);
         assertEquals(expectedProfileInfo, glusterVolumeProfileInfo);

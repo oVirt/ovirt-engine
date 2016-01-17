@@ -77,7 +77,7 @@ public class CurrentFilter implements Filter {
         );
         parameters.setSessionId(sessionId);
         VdcQueryReturnValue result = backend.runPublicQuery( VdcQueryType.GetConfigurationValue, parameters);
-        return ApplicationMode.from((Integer) result.getReturnValue());
+        return ApplicationMode.from(result.getReturnValue());
     }
 
     private DbUser findPrincipal(String sessionId) {

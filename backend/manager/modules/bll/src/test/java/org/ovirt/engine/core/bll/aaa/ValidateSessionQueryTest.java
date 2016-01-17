@@ -24,7 +24,7 @@ public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryPara
         getQuery().execute();
         assertTrue(getQuery().getQueryReturnValue().getSucceeded());
         assertTrue(getQuery().getQueryReturnValue().getReturnValue() instanceof DbUser);
-        DbUser user = (DbUser) getQuery().getQueryReturnValue().getReturnValue();
+        DbUser user = getQuery().getQueryReturnValue().getReturnValue();
         assertTrue(user.getDomain().equals("myDomain"));
         assertTrue(user.getLoginName().equals("myUser"));
     }

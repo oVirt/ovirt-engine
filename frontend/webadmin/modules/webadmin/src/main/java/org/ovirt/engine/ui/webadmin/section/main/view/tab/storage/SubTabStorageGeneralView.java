@@ -111,7 +111,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         formBuilder.addFormItem(new FormItem(constants.overAllocRatioStorageGeneral(), overAllocationRatio, 4, 0) {
             @Override
             public boolean getIsAvailable() {
-                StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
+                StorageDomain entity = getDetailModel().getEntity();
                 StorageDomainType storageDomainType = entity != null ? entity.getStorageDomainType() : null;
                 return !StorageDomainType.ISO.equals(storageDomainType)
                         && !StorageDomainType.ImportExport.equals(storageDomainType);
@@ -171,7 +171,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         driver.edit(getDetailModel());
 
         // Required because of StorageGeneralModel.getEntity() returning Object
-        StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
+        StorageDomain entity = getDetailModel().getEntity();
         if (entity != null) {
             totalSize.setValue(entity.getTotalDiskSize());
             availableSize.setValue(entity.getAvailableDiskSize());

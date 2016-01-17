@@ -148,7 +148,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             break;
         case DESTROY_IMAGE:
             if (vdcReturnValue != null) {
-                getParameters().setMergeStatusReturnValue((MergeStatusReturnValue) vdcReturnValue.getActionReturnValue());
+                getParameters().setMergeStatusReturnValue(vdcReturnValue.getActionReturnValue());
             } else if (getParameters().getMergeStatusReturnValue() == null) {
                 // If the images were already merged, just add the orphaned image
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());

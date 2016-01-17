@@ -158,7 +158,7 @@ public class AuthenticationUtils {
                 credentials.getPassword(),
                 credentials.getProfile(),
                 authRecord,
-                (ExtMap) output.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                output.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
     }
 
     public static List<String> getAvailableProfiles(SSOExtensionsManager extensionsManager) {

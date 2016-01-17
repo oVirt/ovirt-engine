@@ -102,7 +102,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/fr/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+        verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**

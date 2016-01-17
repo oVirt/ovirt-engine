@@ -242,7 +242,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         } else if(command.equals(getSessionOptionsCommand())) {
             showSessionOptions();
         } else if(command.equals(getViewSessionDetailsCommand())) {
-            showGeoRepSessionDetails((GlusterGeoRepSession)getSelectedItem());
+            showGeoRepSessionDetails(getSelectedItem());
         } else if (command.equals(getRefreshSessionsCommand())) {
             refreshSessions();
         } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
@@ -348,8 +348,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 if (!queryExecutionStatus) {
                     geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
                 } else {
-                    List<GlusterGeoRepSessionConfiguration> sessionConfigs =
-                            (List<GlusterGeoRepSessionConfiguration>) vdcQueryReturnValue.getReturnValue();
+                    List<GlusterGeoRepSessionConfiguration> sessionConfigs = vdcQueryReturnValue.getReturnValue();
                     List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
                             new ArrayList<>();
                             for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {

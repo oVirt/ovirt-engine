@@ -119,7 +119,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public Response resetEmulatedMachine(Action action) {
         VdcQueryReturnValue result = runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(guid));
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters((Cluster)result.getReturnValue());
+            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters(result.getReturnValue());
             param.setForceResetEmulatedMachine(true);
             return doAction(VdcActionType.UpdateCluster, param, action);
 

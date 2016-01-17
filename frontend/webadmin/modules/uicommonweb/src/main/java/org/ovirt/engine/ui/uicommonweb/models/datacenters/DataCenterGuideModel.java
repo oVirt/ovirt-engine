@@ -700,7 +700,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
-        path = (String) localModel.getPath().getEntity();
+        path = localModel.getPath().getEntity();
 
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
@@ -910,7 +910,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                dataCenterGuideModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
+                dataCenterGuideModel.storageId = vdcReturnValueBase.getActionReturnValue();
 
             }
         };
@@ -1082,7 +1082,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
                         StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
-                            Guid storageId = (Guid) returnValue.getActionReturnValue();
+                            Guid storageId = returnValue.getActionReturnValue();
                             dataCenterGuideModel.attachStorageToDataCenter(storageId, dataCenter.getId());
                         }
                         dataCenterGuideModel.onFinish(dataCenterGuideModel.context,
@@ -1388,7 +1388,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget {
             }
         }
 
-        Cluster cluster = (Cluster) model.getCluster().getSelectedItem();
+        Cluster cluster = model.getCluster().getSelectedItem();
         final List<VdcActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();

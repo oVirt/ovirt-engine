@@ -114,9 +114,9 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         if (getParameters().isSetTicket()) {
             options.setTicket(generateTicket());
         }
-        options.setToggleFullscreenHotKey((String) getConfigValue(ConfigValues.ConsoleToggleFullScreenKeys));
-        options.setReleaseCursorHotKey((String) getConfigValue(ConfigValues.ConsoleReleaseCursorKeys));
-        options.setRemapCtrlAltDelete((Boolean) getConfigValue(ConfigValues.RemapCtrlAltDelDefault));
+        options.setToggleFullscreenHotKey(getConfigValue(ConfigValues.ConsoleToggleFullScreenKeys));
+        options.setReleaseCursorHotKey(getConfigValue(ConfigValues.ConsoleReleaseCursorKeys));
+        options.setRemapCtrlAltDelete(getConfigValue(ConfigValues.RemapCtrlAltDelDefault));
 
         fillRemoteViewerVersions(options);
     }
@@ -229,7 +229,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             options.setSecurePort(graphicsInfo.getTlsPort());
         }
 
-        if ((boolean) getConfigValue(ConfigValues.SSLEnabled)) {
+        if (getConfigValue(ConfigValues.SSLEnabled)) {
             String spiceSecureChannels = getConfigValue(ConfigValues.SpiceSecureChannels);
             if (!StringUtils.isBlank(spiceSecureChannels)) {
                 options.setSslChanels(spiceSecureChannels);
@@ -243,7 +243,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         String certificateSubject = "";
         String caCertificate = "";
 
-        if ((boolean) getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)) {
+        if (getConfigValue(ConfigValues.EnableSpiceRootCertificateValidation)) {
             VdcQueryReturnValue certificate = getCACertificate();
             if (!certificate.getSucceeded()) {
                 getQueryReturnValue().setExceptionString("Spice Root Certificate Validation enforced, but no CA found!");

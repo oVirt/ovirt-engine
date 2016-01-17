@@ -74,7 +74,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<VM> actualVMs = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VM> actualVMs = getQuery().getQueryReturnValue().getReturnValue();
         if (!expectedResults) {
             assertTrue("no VMs should have been returned", actualVMs.isEmpty());
         } else {

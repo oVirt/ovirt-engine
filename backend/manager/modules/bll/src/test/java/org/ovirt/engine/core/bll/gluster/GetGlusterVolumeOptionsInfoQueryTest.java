@@ -91,8 +91,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     public void testExecuteQueryCommnad() {
         when(getQueryParameters().getClusterId()).thenReturn(parameters.getClusterId());
         getQuery().executeQueryCommand();
-        List<GlusterVolumeOptionInfo> options =
-                (List<GlusterVolumeOptionInfo>) getQuery().getQueryReturnValue().getReturnValue();
+        List<GlusterVolumeOptionInfo> options = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(options);
         assertEquals(expected, options);

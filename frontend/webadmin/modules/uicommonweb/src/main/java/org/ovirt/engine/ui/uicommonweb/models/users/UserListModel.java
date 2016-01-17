@@ -262,7 +262,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
         ArrayList<Guid> tagsToAttach = new ArrayList<>();
         ArrayList<Guid> tagsToDetach = new ArrayList<>();
 
-        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0) {
+        if (model.getItems() != null && model.getItems().size() > 0) {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
@@ -399,7 +399,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     @Override
     protected void updateDetailsAvailability() {
         if (getSelectedItem() != null) {
-            DbUser adUser = (DbUser) getSelectedItem();
+            DbUser adUser = getSelectedItem();
             userGroupListModel.setIsAvailable(!adUser.isGroup());
             userEventNotifierListModel.setIsAvailable(!adUser.isGroup());
         }
@@ -480,7 +480,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     }
 
     public void onRemove() {
-        List<DbUser> selectedItems = Linq.<DbUser> cast(getSelectedItems());
+        List<DbUser> selectedItems = Linq.cast(getSelectedItems());
 
         ArrayList<VdcActionParametersBase> userPrms = new ArrayList<>();
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<>();

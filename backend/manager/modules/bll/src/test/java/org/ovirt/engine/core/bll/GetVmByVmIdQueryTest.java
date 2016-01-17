@@ -32,7 +32,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameter
         doNothing().when(getQuery()).updateVMDetails(expectedResult);
         getQuery().executeQueryCommand();
 
-        VM result = (VM) getQuery().getQueryReturnValue().getReturnValue();
+        VM result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong VM returned", expectedResult, result);
     }

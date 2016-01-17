@@ -319,7 +319,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
                     Version vdsVersion = new Version(array[i]);
 
-                    for (Version version : (List<Version>) getDataCenter().getVersion().getItems()) {
+                    for (Version version : getDataCenter().getVersion().getItems()) {
 
                         if (version.equals(vdsVersion) && version.compareTo(maxVersion) > 0) {
                             maxVersion = version;

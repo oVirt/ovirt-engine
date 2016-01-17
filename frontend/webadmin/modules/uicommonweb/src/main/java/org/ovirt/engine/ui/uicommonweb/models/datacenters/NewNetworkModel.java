@@ -78,7 +78,7 @@ public class NewNetworkModel extends NetworkModel {
     protected NetworkClusterModel createNetworkClusterModel(Cluster cluster) {
         NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
         networkClusterModel.setAttached(true);
-        networkClusterModel.setRequired(!(Boolean) getExport().getEntity());
+        networkClusterModel.setRequired(!getExport().getEntity());
 
         return networkClusterModel;
     }

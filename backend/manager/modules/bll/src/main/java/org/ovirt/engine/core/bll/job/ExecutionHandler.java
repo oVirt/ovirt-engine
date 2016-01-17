@@ -217,7 +217,7 @@ public class ExecutionHandler {
         Job job;
         // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
         if (params.getJobId() != null) {
-            job = DbFacade.getInstance().getJobDao().get((Guid)params.getJobId());
+            job = DbFacade.getInstance().getJobDao().get(params.getJobId());
         }
         else {
             job = createJob(actionType, command);

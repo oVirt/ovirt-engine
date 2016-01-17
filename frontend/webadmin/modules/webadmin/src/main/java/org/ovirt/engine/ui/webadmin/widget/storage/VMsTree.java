@@ -148,8 +148,8 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             boolean isDiskImage = disk.getDiskStorageType() == DiskStorageType.IMAGE;
             Double actualSize =
                     isDiskImage ? ((DiskImage) disk).getActualDiskWithSnapshotsSize()
-                            : (long) (((LunDisk) disk).getLun().getDeviceSize());
-            Long virtualSize = isDiskImage ? ((DiskImage) disk).getSize() :
+                            : (long) ((LunDisk) disk).getLun().getDeviceSize();
+            Long virtualSize = isDiskImage ? disk.getSize() :
                     (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
 
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(SizeConverter.SizeUnit.BYTES), virtualSize, "110px"); //$NON-NLS-1$

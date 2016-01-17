@@ -33,7 +33,7 @@ public class DataCenterStorageQosListModel extends DataCenterQosListModel<Storag
 
     @Override
     protected QosModel<StorageQos, StorageQosParametersModel> getEditQosModel(StorageQos qoS) {
-        return new EditStorageQosModel((StorageQos) getSelectedItem(), this, getEntity());
+        return new EditStorageQosModel(getSelectedItem(), this, getEntity());
     }
 
     @Override

@@ -126,7 +126,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                     throw new EngineException(result.getFault().getError());
                 }
                 getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                DiskImage newImage = (DiskImage) result.getActionReturnValue();
+                DiskImage newImage = result.getActionReturnValue();
                 getSrcDiskIdToTargetDiskIdMapping().put(disk.getId(), newImage.getId());
             }
 

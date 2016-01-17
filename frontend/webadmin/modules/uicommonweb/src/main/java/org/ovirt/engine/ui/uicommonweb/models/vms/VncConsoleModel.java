@@ -102,7 +102,7 @@ public class VncConsoleModel extends ConsoleModel {
         final AsyncQuery configureCallback = new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ConsoleOptions configuredOptions = (ConsoleOptions) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 // overriding global server settings by frontend settings
                 configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
                 vncImpl.setOptions(configuredOptions);

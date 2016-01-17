@@ -34,7 +34,7 @@ public class DataCenterHostNetworkQosListModel extends DataCenterQosListModel<Ho
 
     @Override
     protected QosModel<HostNetworkQos, HostNetworkQosParametersModel> getEditQosModel(HostNetworkQos qoS) {
-        return new EditHostNetworkQosModel((HostNetworkQos) getSelectedItem(), this, getEntity());
+        return new EditHostNetworkQosModel(getSelectedItem(), this, getEntity());
     }
 
     @Override

@@ -41,12 +41,12 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         updateStaticDataDefaults();
         if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
             getStorageDomain().setStorage(
-                    (String) Backend
-                            .getInstance()
-                            .runInternalAction(
-                                    VdcActionType.AddStorageServerConnection,
-                                    new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
-                                            .getConnection(), getVds().getId())).getActionReturnValue());
+                    Backend
+                    .getInstance()
+                    .runInternalAction(
+                            VdcActionType.AddStorageServerConnection,
+                            new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
+                                    .getConnection(), getVds().getId())).getActionReturnValue());
         }
         addStorageDomainInDb();
         updateStorageDomainDynamicFromIrs();

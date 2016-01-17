@@ -64,7 +64,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
         for (EntityModel entity : getEntities()) {
             actionParameters.add(new ExportRepoImageParameters(
                     ((DiskImage) entity.getEntity()).getId(),  // Source
-                    ((StorageDomain) getStorageDomain().getSelectedItem()).getId())  // Destination
+                    getStorageDomain().getSelectedItem().getId())  // Destination
             );
         }
 

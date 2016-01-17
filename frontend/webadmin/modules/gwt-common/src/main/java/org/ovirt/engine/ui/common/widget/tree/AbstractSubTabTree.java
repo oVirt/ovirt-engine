@@ -369,7 +369,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     private void onItemSelection(TreeItem item, boolean enforceSelection) {
-        Object entity = (Object) item.getUserObject();
+        Object entity = item.getUserObject();
         boolean isRootItem = item.getParentItem() == null;
         boolean isNodeItem = item.getParentItem() != null;
 
@@ -397,7 +397,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     private void updateItemSelection(TreeItem item) {
-        Object entity = (Object) item.getUserObject();
+        Object entity = item.getUserObject();
         boolean isRootItem = item.getParentItem() == null;
 
         if (entity == null) {

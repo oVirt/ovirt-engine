@@ -21,7 +21,7 @@ public class GetComputeResourceFromExternalProviderQuery<P extends ProviderQuery
     }
 
     protected List<ExternalComputeResource> getProviderComputeResource(Provider hostProvider) {
-        HostProviderProxy proxy = ((HostProviderProxy) ProviderProxyFactory.getInstance().create(hostProvider));
+        HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(hostProvider);
         return proxy.getComputeResources();
     }
 }

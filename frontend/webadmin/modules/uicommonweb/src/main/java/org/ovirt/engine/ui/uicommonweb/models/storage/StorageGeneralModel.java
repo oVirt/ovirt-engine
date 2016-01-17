@@ -145,7 +145,7 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
         super.onEntityChanged();
 
         if (getEntity() != null) {
-            StorageDomain storageDomain = (StorageDomain) getEntity();
+            StorageDomain storageDomain = getEntity();
 
             setIsNfs(storageDomain.getStorageType() == StorageType.NFS);
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);

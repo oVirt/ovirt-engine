@@ -115,7 +115,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                             VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId,
                                     new IdQueryParameters(vm.getRunOnVds()));
                             if (retValue != null && retValue.getReturnValue() != null) {
-                                VDS vds = (VDS) retValue.getReturnValue();
+                                VDS vds = retValue.getReturnValue();
                                 jsonVm.put("vmid", vm.getId().toString());
                                 jsonVm.put("vmname", vm.getName());
                                 jsonVm.put("host", vds.getHostName());

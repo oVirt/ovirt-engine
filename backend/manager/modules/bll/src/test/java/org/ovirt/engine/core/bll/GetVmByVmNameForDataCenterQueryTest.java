@@ -34,7 +34,7 @@ public class GetVmByVmNameForDataCenterQueryTest extends AbstractUserQueryTest<G
         doNothing().when(getQuery()).updateVMDetails(expectedResult);
         getQuery().executeQueryCommand();
 
-        VM result = (VM) getQuery().getQueryReturnValue().getReturnValue();
+        VM result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong VM returned", expectedResult, result);
     }

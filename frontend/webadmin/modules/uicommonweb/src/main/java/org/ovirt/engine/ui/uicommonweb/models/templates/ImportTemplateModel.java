@@ -75,8 +75,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<VmTemplate> vmtList =
-                                (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<VmTemplate> vmtList = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         List<ImportTemplateData> templateDataList = new ArrayList<>();
                         for (VmTemplate template : externalTemplates) {

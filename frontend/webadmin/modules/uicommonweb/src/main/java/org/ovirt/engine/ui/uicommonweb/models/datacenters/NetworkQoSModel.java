@@ -72,8 +72,8 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
     @Override
     public NetworkQoS flush() {
         super.flush();
-        networkQoS.setName((String) getName().getEntity());
-        networkQoS.setStoragePoolId(((StoragePool)getDataCenters().getSelectedItem()).getId());
+        networkQoS.setName(getName().getEntity());
+        networkQoS.setStoragePoolId(getDataCenters().getSelectedItem().getId());
         return networkQoS;
     }
 

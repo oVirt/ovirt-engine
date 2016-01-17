@@ -388,7 +388,7 @@ public class ClusterGuideModel extends GuideModel {
             }
         }
 
-        Cluster cluster = (Cluster) model.getCluster().getSelectedItem();
+        Cluster cluster = model.getCluster().getSelectedItem();
 
         final List<VdcActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {

@@ -95,7 +95,7 @@ public class FileServletTest {
         //Make sure cache is enabled
         verify(mockResponse).setHeader(eq("ETag"), anyString());
         //Make sure something is written to the output stream (assuming it is the file).
-        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+        verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -113,7 +113,7 @@ public class FileServletTest {
         //Make sure cache is enabled
         verify(mockResponse).setHeader(eq("ETag"), anyString());
         //Make sure something is written to the output stream (assuming it is the file).
-        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+        verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -131,7 +131,7 @@ public class FileServletTest {
         //Make sure cache is disabled
         verify(mockResponse, never()).setHeader(eq("ETag"), anyString());
         //Make sure something is written to the output stream (assuming it is the file).
-        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+        verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**

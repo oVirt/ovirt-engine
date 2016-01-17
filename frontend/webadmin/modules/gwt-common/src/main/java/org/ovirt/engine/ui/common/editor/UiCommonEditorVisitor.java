@@ -219,12 +219,12 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
      */
     @SuppressWarnings("unchecked")
     <O> void updateListEditor(TakesConstrainedValueEditor<O> listEditor, ListModel<O> parentModel) {
-        Collection<O> items = (Collection<O>) parentModel.getItems();
+        Collection<O> items = parentModel.getItems();
         if (items != null) {
             if (items.size() > 0) {
                 O value;
                 if (parentModel.getSelectedItem() != null) {
-                    value = (O) parentModel.getSelectedItem();
+                    value = parentModel.getSelectedItem();
                 } else {
                     value = items.iterator().next();
                     // Order is important

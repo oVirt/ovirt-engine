@@ -197,7 +197,7 @@ public class ResourcesModel extends SearchableListModel {
             public void onSuccess(Object model, Object ReturnValue) {
                 ResourcesModel resourcesModel = (ResourcesModel) model;
                 final ArrayList<VM> list =
-                        (ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                 // Update calculated properties.
                 int runningVMs = 0;

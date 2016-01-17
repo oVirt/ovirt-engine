@@ -21,7 +21,7 @@ public class GetDefaultTimeZoneQueryTest extends AbstractUserQueryTest<TimeZoneQ
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        String result = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong default time zone: " + result, DEFAULT_WINDOWS_TIME_ZONE, result);
     }
@@ -33,7 +33,7 @@ public class GetDefaultTimeZoneQueryTest extends AbstractUserQueryTest<TimeZoneQ
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        String result = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong default time zone: " + result, DEFAULT_GENERAL_TIME_ZONE, result);
     }

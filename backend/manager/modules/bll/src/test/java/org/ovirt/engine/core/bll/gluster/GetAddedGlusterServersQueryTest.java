@@ -185,8 +185,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     public void testExecuteQueryCommand() throws IOException {
         when(clusterDaoMock.get(any(Guid.class))).thenReturn(getCluster(Version.v3_3));
         getQuery().executeQueryCommand();
-        Map<String, String> servers =
-                (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();
+        Map<String, String> servers = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(servers);
         assertEquals(getAddedServers(), servers);
@@ -196,8 +195,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     public void testExecuteQueryCommandFor32Cluster() throws IOException {
         when(clusterDaoMock.get(any(Guid.class))).thenReturn(getCluster(Version.v3_2));
         getQuery().executeQueryCommand();
-        Map<String, String> servers =
-                (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();
+        Map<String, String> servers = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(servers);
         assertEquals(getAddedServers(), servers);

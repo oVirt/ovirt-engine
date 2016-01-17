@@ -40,7 +40,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
 
         // Assert the query's results
         @SuppressWarnings("unchecked")
-        List<Permission> actual = (List<Permission>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Permission> actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong number of returned permissions", 1, actual.size());
         assertEquals("Wrong returned permissions", expected, actual.get(0));

@@ -206,12 +206,6 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
         return model;
     }
-
-    @Override
-    public Snapshot getEntity() {
-        return (Snapshot) super.getEntity();
-    }
-
     @Override
     public void initialize() {
         super.initialize();

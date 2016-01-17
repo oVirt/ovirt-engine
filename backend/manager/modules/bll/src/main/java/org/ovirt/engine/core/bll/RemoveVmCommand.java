@@ -146,7 +146,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         Collection<DiskImage> unremovedDisks = Collections.emptyList();
         if (getParameters().isRemoveDisks()) {
             if (!diskImages.isEmpty()) {
-                unremovedDisks = (Collection<DiskImage>) removeVmImages(diskImages).getActionReturnValue();
+                unremovedDisks = removeVmImages(diskImages).getActionReturnValue();
             }
             unremovedDisks.addAll(removeCinderDisks());
             if (!unremovedDisks.isEmpty()) {

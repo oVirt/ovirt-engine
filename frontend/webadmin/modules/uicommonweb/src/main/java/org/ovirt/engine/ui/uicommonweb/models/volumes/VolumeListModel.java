@@ -491,7 +491,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
-        GlusterVolumeEntity selectedVolume = (GlusterVolumeEntity)provideDetailModelEntity(getSelectedItem());
+        GlusterVolumeEntity selectedVolume = provideDetailModelEntity(getSelectedItem());
         getBrickListModel().setVolumeEntity(selectedVolume);
         getGeoRepListModel().setEntity(selectedVolume);
         getSnapshotListModel().setEntity(selectedVolume);
@@ -807,7 +807,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
+        GlusterVolumeEntity volumeEntity = getSelectedItem();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceTitle());
         model.setHelpTag(HelpTag.volume_rebalance_stop);
@@ -834,7 +834,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         model.startProgress();
 
-        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
+        final GlusterVolumeEntity volumeEntity = getSelectedItem();
         GlusterVolumeRebalanceParameters param = new GlusterVolumeRebalanceParameters(volumeEntity.getId(), false, false);
 
         Frontend.getInstance().runAction(VdcActionType.StopRebalanceGlusterVolume, param, new IFrontendActionAsyncCallback() {
@@ -856,7 +856,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
         final ConfirmationModel cModel = new ConfirmationModel();
-        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
+        final GlusterVolumeEntity volumeEntity = getSelectedItem();
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
         cModel.startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());//$NON-NLS-1$
@@ -918,7 +918,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         if(getSelectedItem() == null || getWindow()!= null) {
             return;
         }
-        GlusterVolumeEntity selectedVolume = (GlusterVolumeEntity)getSelectedItem();
+        GlusterVolumeEntity selectedVolume = getSelectedItem();
         VolumeProfileStatisticsModel profileStatsModel = new VolumeProfileStatisticsModel(selectedVolume.getClusterId(), selectedVolume.getId(), selectedVolume.getName());
 
         setWindow(profileStatsModel);
@@ -1304,7 +1304,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     clusterSnapshotConfigModel.getClusters().setItems((List<Cluster>) returnValue, selectedCluster);
                 } else {
                     if (getSelectedItems() != null) {
-                        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItems().get(0);
+                        GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
                         if (volumeEntity != null) {
                             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -1416,7 +1416,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItems().get(0);
+        GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
         final GlusterVolumeSnapshotConfigModel volumeSnapshotConfigModel =
                 new GlusterVolumeSnapshotConfigModel(volumeEntity);
         volumeSnapshotConfigModel.setHelpTag(HelpTag.configure_volume_snapshot);

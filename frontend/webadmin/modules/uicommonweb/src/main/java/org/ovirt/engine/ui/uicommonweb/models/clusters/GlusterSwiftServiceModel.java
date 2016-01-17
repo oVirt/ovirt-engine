@@ -49,11 +49,6 @@ public class GlusterSwiftServiceModel extends EntityModel<GlusterServerService> 
         }
     }
 
-    @Override
-    public GlusterServerService getEntity() {
-        return (GlusterServerService) super.getEntity();
-    }
-
     public List<GlusterServerService> getInternalServiceList() {
         return internalServiceList;
     }

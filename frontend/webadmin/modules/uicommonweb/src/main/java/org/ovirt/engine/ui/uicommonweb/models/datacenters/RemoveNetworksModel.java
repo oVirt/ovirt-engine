@@ -77,7 +77,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         for (Object a : sourceListModel.getSelectedItems()) {
             Network network = (Network) a;
             if (network.isExternal()) {
-                pb.add(new RemoveNetworkParameters(network.getId(), (Boolean) getForce().getEntity()));
+                pb.add(new RemoveNetworkParameters(network.getId(), getForce().getEntity()));
             } else {
                 pb.add(new RemoveNetworkParameters(network.getId()));
             }

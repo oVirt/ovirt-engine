@@ -181,8 +181,7 @@ public class DisksAllocationModel extends EntityModel {
 
                                 @Override
                                 public void onSuccess(Object innerModel, Object innerReturnValue) {
-                                    ArrayList<Quota> list =
-                                            (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                                    ArrayList<Quota> list = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                                     DisksAllocationModel diskAllocationModel = (DisksAllocationModel) innerModel;
                                     if (list != null) {
                                         if (isItem == null) {
@@ -224,8 +223,7 @@ public class DisksAllocationModel extends EntityModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<DiskProfile> fetchedDiskProfiles =
-                                (List<DiskProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        List<DiskProfile> fetchedDiskProfiles = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         DisksAllocationModel.this.setDiskProfilesList(diskProfiles, fetchedDiskProfiles);
 
                     }

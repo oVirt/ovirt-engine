@@ -366,7 +366,7 @@ public class BackendVmNicResourceTest
 
     @Test
     public void testActivateNic() throws Exception {
-        BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
+        BackendVmNicResource backendVmNicResource = resource;
         setUpGetEntityExpectations(3);
         setAllContentHeaderExpectation();
         setUriInfo(
@@ -389,7 +389,7 @@ public class BackendVmNicResourceTest
 
     @Test
     public void testDeactivateNic() throws Exception {
-        BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
+        BackendVmNicResource backendVmNicResource = resource;
         setAllContentHeaderExpectation();
         setUpGetEntityExpectations(3);
         setUriInfo(

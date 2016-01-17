@@ -21,7 +21,7 @@ public class GetHostGroupsFromExternalProviderQuery<P extends ProviderQueryParam
     }
 
     protected List<ExternalHostGroup> getProviderHostGroups(Provider hostProvider) {
-        HostProviderProxy proxy = ((HostProviderProxy) ProviderProxyFactory.getInstance().create(hostProvider));
+        HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(hostProvider);
         return proxy.getHostGroups();
     }
 }

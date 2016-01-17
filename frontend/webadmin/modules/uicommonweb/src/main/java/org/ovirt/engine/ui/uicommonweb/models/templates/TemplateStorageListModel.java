@@ -77,7 +77,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
 
         super.syncSearch();
 
-        VmTemplate template = (VmTemplate) getEntity();
+        VmTemplate template = getEntity();
         super.syncSearch(VdcQueryType.GetStorageDomainsByVmTemplateId,
                 new IdQueryParameters(template.getId()));
     }
@@ -95,7 +95,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
         }
         else {
             this.value = value;
-            VmTemplate template = (VmTemplate) getEntity();
+            VmTemplate template = getEntity();
             AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @SuppressWarnings("unchecked")
@@ -105,7 +105,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
                             List<DiskImage> diskImages = (List<DiskImage>) returnValue;
 
                             List<StorageDomain> storageDomains =
-                                    Linq.<StorageDomain> cast(templateStorageListModel.value);
+                                    Linq.cast(templateStorageListModel.value);
                             List<StorageDomainModel> storageDomainModels = new ArrayList<>();
 
                             for (StorageDomain storageDomain : storageDomains) {
@@ -149,7 +149,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
         for (DiskModel diskModel : disks) {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
-                    ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getStorageName()));
+                    diskModel.getStorageDomain().getSelectedItem().getStorageName()));
         }
         model.setItems(items);
 
@@ -162,7 +162,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         List<VdcActionParametersBase> parameters = new ArrayList<>();
-        List<StorageDomainModel> storageDomains = (List<StorageDomainModel>) getSelectedItems();
+        List<StorageDomainModel> storageDomains = getSelectedItems();
 
         for (StorageDomainModel storageDomainModel : storageDomains) {
             for (DiskImage diskModel: storageDomainModel.getDisks()) {

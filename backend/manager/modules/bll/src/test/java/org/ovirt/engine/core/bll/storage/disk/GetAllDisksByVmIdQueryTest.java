@@ -150,7 +150,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<DiskImage> disks = (List<DiskImage>) getQuery().getQueryReturnValue().getReturnValue();
+        List<DiskImage> disks = getQuery().getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
         assertTrue("plugged disk should be in the return value", disks.contains(pluggedDisk));

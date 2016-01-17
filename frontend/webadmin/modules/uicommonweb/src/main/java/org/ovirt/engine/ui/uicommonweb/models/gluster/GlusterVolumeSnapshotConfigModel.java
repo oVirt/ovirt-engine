@@ -119,7 +119,7 @@ public class GlusterVolumeSnapshotConfigModel extends Model {
             public void onSuccess(Object model, Object returnValue) {
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
                 Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
-                        (Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>>) vdcValue.getReturnValue();
+                        vdcValue.getReturnValue();
                 Map<String, String> clusterConfigOptions = new HashMap<>();
                 Map<String, String> volumeConfigOptions = new HashMap<>();
                 for (GlusterVolumeSnapshotConfig config : configs.getFirst()) {

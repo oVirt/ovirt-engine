@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -465,7 +464,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                 }
                 for (ImportTemplateData object : objectsToClone) {
                     setObjectName(object, suffix, true);
-                    cloneObjectMap.put((Guid) ((IVdcQueryable) (object.getEntity())).getQueryableId(),
+                    cloneObjectMap.put((Guid) object.getEntity().getQueryableId(),
                             object);
                 }
             }
@@ -478,7 +477,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     return;
                 }
                 setObjectName(object, vmName, false);
-                cloneObjectMap.put((Guid) ((IVdcQueryable) object.getEntity()).getQueryableId(),
+                cloneObjectMap.put((Guid) object.getEntity().getQueryableId(),
                         object);
             }
             objectsToClone.remove(object);

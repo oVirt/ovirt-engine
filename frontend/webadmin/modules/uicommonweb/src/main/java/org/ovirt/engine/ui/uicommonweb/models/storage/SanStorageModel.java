@@ -124,7 +124,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
             return;
         }
 
-        VDS host = (VDS) getContainer().getHost().getSelectedItem();
+        VDS host = getContainer().getHost().getSelectedItem();
         if (host == null) {
             proposeDiscover();
             return;
@@ -294,7 +294,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-        LUNs lun = (LUNs) lunModel.getEntity();
+        LUNs lun = lunModel.getEntity();
         boolean nonEmpty = lun.getStorageDomainId() != null || lun.getDiskId() != null ||
                 lun.getStatus() == LunStatus.Unusable;
 
@@ -421,7 +421,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
                     currLun.setProductId(lun.getProductId());
                     currLun.setSerial(lun.getSerial());
                     currLun.setMultipathing(lun.getMultipathing());
-                    currLun.setTargets(createTargetModelList((LUNs) lun.getEntity()));
+                    currLun.setTargets(createTargetModelList(lun.getEntity()));
                     currLun.setSize(lun.getSize());
                     currLun.setAdditionalAvailableSize(lun.getAdditionalAvailableSize());
                     currLun.setAdditionalAvailableSizeSelected(lun.isAdditionalAvailableSizeSelected());
@@ -636,7 +636,7 @@ public abstract class SanStorageModel extends SanStorageModelBase {
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LunModel lunModel : getAddedLuns()) {
-            LUNs lun = (LUNs) lunModel.getEntity();
+            LUNs lun = lunModel.getEntity();
 
             if (lun.getStorageDomainId() != null) {
                 String reason = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());

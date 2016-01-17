@@ -154,7 +154,7 @@ public class NewDiskModel extends AbstractDiskModel {
         switch (getDiskStorageType().getEntity()) {
             case LUN:
                 LunDisk lunDisk = (LunDisk) getDisk();
-                LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
+                LUNs luns = getSanStorageModel().getAddedLuns().get(0).getEntity();
                 luns.setLunType(getStorageType().getSelectedItem());
                 lunDisk.setLun(luns);
                 break;

@@ -37,7 +37,7 @@ public class VmBasedWidgetSwitchModeCommand extends UICommand {
     }
 
     private boolean isAdvancedMode() {
-        return (Boolean) model.getAdvancedMode().getEntity();
+        return model.getAdvancedMode().getEntity();
     }
 
     private void setAdvancedMode(boolean advancedMode) {

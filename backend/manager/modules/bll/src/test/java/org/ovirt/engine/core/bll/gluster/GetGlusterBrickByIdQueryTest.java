@@ -44,7 +44,7 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
     @Test
     public void testExecuteQueryCommnad() {
         getQuery().executeQueryCommand();
-        GlusterBrickEntity actual = (GlusterBrickEntity) getQuery().getQueryReturnValue().getReturnValue();
+        GlusterBrickEntity actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("wrong Gluster Brick", expected.getId(), actual.getId());
     }

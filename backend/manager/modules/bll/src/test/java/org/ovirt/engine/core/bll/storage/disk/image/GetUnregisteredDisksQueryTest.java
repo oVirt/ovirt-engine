@@ -76,7 +76,7 @@ public class GetUnregisteredDisksQueryTest
 
         // Assert the query's results
         @SuppressWarnings("unchecked")
-        List<Disk> newDisks = (List<Disk>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Disk> newDisks = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals(newDisks.size(), 1);
         assertEquals(newDisks.get(0).getId(), importDiskId);
     }

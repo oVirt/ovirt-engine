@@ -31,8 +31,7 @@ public class FenceValidator {
         // check if we are in the interval of X seconds from startup
         // if yes , system is still initializing , ignore fence operations
         Date waitTo =
-                getBackend().getStartedAt()
-                        .addSeconds((Integer) Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
+                getBackend().getStartedAt().addSeconds(Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
         Date now = new Date();
         if (!(waitTo.before(now) || waitTo.equals(now))) {
             return false;

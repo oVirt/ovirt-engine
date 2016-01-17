@@ -79,7 +79,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         query.execute();
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
-        VM returnedVm = (VM) returnValue.getReturnValue();
+        VM returnedVm = returnValue.getReturnValue();
         assertEquals(vm, returnedVm);
     }
 
@@ -89,7 +89,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
                 setupQueryBySnapshotId(Guid.newGuid());
         when(snapshotDaoMock.get(any(Guid.class))).thenReturn(null);
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
-        VM returnedVm = (VM) returnValue.getReturnValue();
+        VM returnedVm = returnValue.getReturnValue();
         assertNull("Return value from non existent query should be null", returnedVm);
     }
 

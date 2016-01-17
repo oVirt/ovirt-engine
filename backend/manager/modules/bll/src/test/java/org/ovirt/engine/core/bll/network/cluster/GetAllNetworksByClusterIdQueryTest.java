@@ -34,7 +34,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Id
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<Network> result = (List<Network>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Network> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of networks in result", 1, result.size());
         assertEquals("Wrong network in result", networkMock, result.get(0));
     }

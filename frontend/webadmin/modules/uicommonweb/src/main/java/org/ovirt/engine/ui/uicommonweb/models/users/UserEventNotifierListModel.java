@@ -141,7 +141,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             model.getEmail().setEntity(items.get(0).getMethodAddress());
         }
 
-        model.setOldEmail((String) model.getEmail().getEntity());
+        model.setOldEmail(model.getEmail().getEntity());
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -215,7 +215,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             for (SelectionTreeNodeModel a : selected) {
                 toAddList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
-                        (String) model.getEmail().getEntity(),
+                        model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
@@ -223,7 +223,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             for (SelectionTreeNodeModel a : added) {
                 toAddList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
-                        (String) model.getEmail().getEntity(),
+                        model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 

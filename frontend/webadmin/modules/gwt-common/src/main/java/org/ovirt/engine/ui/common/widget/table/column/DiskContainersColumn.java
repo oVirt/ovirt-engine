@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -42,11 +41,6 @@ public class DiskContainersColumn extends AbstractTextColumn<Disk> implements Co
         else {
             return object.getNumberOfVms() + " " + entityType + "s"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-    }
-
-    @Override
-    public TextCell getCell() {
-        return (TextCell) super.getCell();
     }
 
     @Override

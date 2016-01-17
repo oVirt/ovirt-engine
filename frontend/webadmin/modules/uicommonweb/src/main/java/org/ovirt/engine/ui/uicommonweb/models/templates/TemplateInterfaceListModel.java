@@ -117,7 +117,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
                         getEntity().getStoragePoolId(),
                         cluster.getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
-                        (VmNetworkInterface) getSelectedItem(),
+                        getSelectedItem(),
                         this);
         setWindow(model);
     }

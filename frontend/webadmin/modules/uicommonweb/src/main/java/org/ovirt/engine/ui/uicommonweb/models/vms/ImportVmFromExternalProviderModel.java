@@ -313,7 +313,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         ImportDiskData importData = diskImportDataMap.get(alias);
         if (importData != null) {
             if (storage.getSelectedItem() == null) {
-                importData.setSelectedStorageDomain((StorageDomain) storage.getSelectedItem());
+                importData.setSelectedStorageDomain(storage.getSelectedItem());
             }
         }
         return importData;

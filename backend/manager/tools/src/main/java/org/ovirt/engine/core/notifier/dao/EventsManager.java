@@ -264,7 +264,7 @@ public class EventsManager implements Observer {
 
     @Override
     public void update(Observable o, DispatchResult dispatchResult) {
-        AuditLogEvent event = (AuditLogEvent) dispatchResult.getEvent();
+        AuditLogEvent event = dispatchResult.getEvent();
 
         Connection connection = null;
         CallableStatement cs = null;

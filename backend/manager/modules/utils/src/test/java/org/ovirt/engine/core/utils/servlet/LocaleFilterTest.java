@@ -52,7 +52,7 @@ public class LocaleFilterTest {
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, testLocale.toString());
         cookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class LocaleFilterTest {
         verify(mockChain).doFilter(mockRequest, mockResponse);
         //Verify that it defaulted to the US locale
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.US);
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class LocaleFilterTest {
         verify(mockChain).doFilter(mockRequest, mockResponse);
         //Verify that it defaulted to the US locale
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.US);
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class LocaleFilterTest {
         when(mockRequest.getLocale()).thenReturn(Locale.JAPANESE);
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
-        verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockResponse, times(1)).addCookie(any());
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.JAPAN);
     }
 

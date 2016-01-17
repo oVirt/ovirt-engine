@@ -61,7 +61,7 @@ public class StorageDomainMapperTest extends
         entity.setAvailableDiskSize(3);
         entity.setUsedDiskSize(4);
         entity.setCommittedDiskSize(5);
-        StorageDomain model = StorageDomainMapper.map(entity, (StorageDomain) null);
+        StorageDomain model = StorageDomainMapper.map(entity, null);
         assertEquals(model.getAvailable(), Long.valueOf(3221225472L));
         assertEquals(model.getUsed(), Long.valueOf(4294967296L));
         assertEquals(model.getCommitted(), Long.valueOf(5368709120L));

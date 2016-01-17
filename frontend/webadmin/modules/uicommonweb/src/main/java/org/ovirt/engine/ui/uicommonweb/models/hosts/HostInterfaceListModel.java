@@ -677,7 +677,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             public void onSuccess(Object model, Object ReturnValue) {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
-                VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
+                VdsNetworkInterface item = hostInterfaceListModel.getSelectedItem();
                 ArrayList<Network> networksToAdd = new ArrayList<>();
                 Network selectedNetwork = null;
                 if (item.getVlanId() != null) {
@@ -864,7 +864,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
             public void onSuccess(Object model, Object ReturnValue) {
                 final HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> clusterNetworks = (ArrayList<Network>) ReturnValue;
-                final VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
+                final VdsNetworkInterface item = hostInterfaceListModel.getSelectedItem();
                 final HostManagementNetworkModel managementModel =
                         (HostManagementNetworkModel) hostInterfaceListModel.getWindow();
                 Network networkToEdit = Linq.findNetworkByName(clusterNetworks, item.getNetworkName());
@@ -1475,7 +1475,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
         model.setHelpTag(HelpTag.detach_network_interfaces);
         model.setHashName("detach_network_interfaces"); //$NON-NLS-1$
 
-        VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
+        VdsNetworkInterface nic = getSelectedItem();
         model.getName().setEntity(nic.getName());
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnDetach", this); //$NON-NLS-1$
@@ -1501,7 +1501,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
 
                 Network defaultNetwork = new Network();
-                VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
+                VdsNetworkInterface nic = getSelectedItem();
                 defaultNetwork.setName(nic.getNetworkName());
                 Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
@@ -1856,7 +1856,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
     private void updateActionAvailability() {
         VDS host = getEntity();
-        VdsNetworkInterface selectedItem = (VdsNetworkInterface) getSelectedItem();
+        VdsNetworkInterface selectedItem = getSelectedItem();
         ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
 
         getEditCommand().setIsExecutionAllowed(host != null

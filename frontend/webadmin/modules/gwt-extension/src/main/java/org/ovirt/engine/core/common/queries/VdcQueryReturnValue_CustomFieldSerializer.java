@@ -26,40 +26,40 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
             returnValue = null;
         } else if (type.equals("java.lang.String")) {
             deserializedAs = "java.util.String";
-            instance.setReturnValue((String) streamReader.readString());
+            instance.setReturnValue(streamReader.readString());
         } else if (type.equals("java.lang.Integer")) {
             deserializedAs = "java.lang.Integer";
-            instance.setReturnValue((Integer) streamReader.readInt());
+            instance.setReturnValue(streamReader.readInt());
         } else if (type.equals("java.lang.Boolean")) {
             deserializedAs = "java.lang.Boolean";
-            instance.setReturnValue((Boolean) streamReader.readBoolean());
+            instance.setReturnValue(streamReader.readBoolean());
         } else if (type.equals("java.lang.Double")) {
             deserializedAs = "java.lang.Double";
-            instance.setReturnValue((Double) streamReader.readDouble());
+            instance.setReturnValue(streamReader.readDouble());
         } else if (type.equals("java.lang.Float")) {
             deserializedAs = "java.lang.Float";
-            instance.setReturnValue((Float) streamReader.readFloat());
+            instance.setReturnValue(streamReader.readFloat());
         } else if (type.equals("java.lang.Character")) {
             deserializedAs = "java.lang.Character";
-            instance.setReturnValue((Character) streamReader.readChar());
+            instance.setReturnValue(streamReader.readChar());
         } else if (type.equals("java.lang.Short")) {
             deserializedAs = "java.lang.Short";
-            instance.setReturnValue((Short) streamReader.readShort());
+            instance.setReturnValue(streamReader.readShort());
         } else if (type.equals("java.lang.Byte")) {
             deserializedAs = "java.lang.Byte";
-            instance.setReturnValue((Byte) streamReader.readByte());
+            instance.setReturnValue(streamReader.readByte());
         } else if (type.equals("java.util.List")) {
             deserializedAs = "java.util.List";
-            instance.setReturnValue((List) streamReader.readObject());
+            instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("java.util.Map")) {
             deserializedAs = "java.util.Map";
-            instance.setReturnValue((Map) streamReader.readObject());
+            instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("java.util.Set")) {
             deserializedAs = "java.util.Set";
-            instance.setReturnValue((Set) streamReader.readObject());
+            instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("IVdcQueryable")) {
             deserializedAs = "IVdcQueryable";
-            instance.setReturnValue((IVdcQueryable) streamReader.readObject());
+            instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("UNKNOWN")) {
             deserializedAs = "UNKNOWN";
             instance.setReturnValue(streamReader.readObject());
@@ -127,19 +127,19 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
         } else if (returnValue instanceof List) {
             serializedAs = "java.util.List";
             streamWriter.writeString(serializedAs);
-            streamWriter.writeObject((List) instance.getReturnValue());
+            streamWriter.writeObject(instance.getReturnValue());
         } else if (returnValue instanceof Map) {
             serializedAs = "java.util.Map";
             streamWriter.writeString(serializedAs);
-            streamWriter.writeObject((Map) instance.getReturnValue());
+            streamWriter.writeObject(instance.getReturnValue());
         } else if (returnValue instanceof Set) {
             serializedAs = "java.util.Set";
             streamWriter.writeString(serializedAs);
-            streamWriter.writeObject((Set) instance.getReturnValue());
+            streamWriter.writeObject(instance.getReturnValue());
         } else if (returnValue instanceof IVdcQueryable) {
             serializedAs = "IVdcQueryable";
             streamWriter.writeString(serializedAs);
-            streamWriter.writeObject((IVdcQueryable) instance.getReturnValue());
+            streamWriter.writeObject(instance.getReturnValue());
         } else {
             serializedAs = "UNKNOWN";
             streamWriter.writeString(serializedAs);

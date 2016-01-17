@@ -81,7 +81,7 @@ public class NewHostModel extends HostModel {
 
     private void hostName_SelectedItemChanged() {
         if (Boolean.FALSE.equals(getIsDiscoveredHosts().getEntity())) {
-            VDS vds = (VDS) getExternalHostName().getSelectedItem();
+            VDS vds = getExternalHostName().getSelectedItem();
             if (vds != null) {
                 setOriginalName(vds.getName());
                 getName().setEntity(vds.getName());

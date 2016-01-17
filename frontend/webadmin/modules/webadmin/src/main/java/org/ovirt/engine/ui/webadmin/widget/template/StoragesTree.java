@@ -109,13 +109,13 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
     protected Object getEntityId(Object entity) {
         DiskModel diskModel = (DiskModel) entity;
-        StorageDomain storageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
         return ((DiskImage) diskModel.getDisk()).getImageId().toString() + storageDomain.getId().toString();
     }
 
     protected ArrayList<Object> getSelectedEntities() {
         ArrayList<Object> selectedEntities = new ArrayList<>();
-        for (StorageDomainModel storageDomainModel : (ArrayList<StorageDomainModel>) listModel.getItems()) {
+        for (StorageDomainModel storageDomainModel : listModel.getItems()) {
             for (DiskModel entity : storageDomainModel.getDisksModels()) {
                 if (selectedItems.contains(getEntityId(entity))) {
                     selectedEntities.add(entity);

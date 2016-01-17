@@ -37,7 +37,7 @@ public class GetVdsByVdsIdQueryTest extends AbstractQueryTest<IdQueryParameters,
 
         query.executeQueryCommand();
 
-        VDS actual = (VDS) query.getQueryReturnValue().getReturnValue();
+        VDS actual = query.getQueryReturnValue().getReturnValue();
         assertEquals("wrong VDS", expected, actual);
     }
 }

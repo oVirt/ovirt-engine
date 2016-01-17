@@ -7,7 +7,6 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent.ValidationCompleteEventHandler;
@@ -42,7 +41,7 @@ public final class ValidationTabSwitchHelper {
                 //Make sure the model in the event is the one we are interested in.
                 if (event.getModel() != null && event.getModel().equals(presenterWidget.getModel())) {
                     //Get the invalid tab names from the model.
-                    Set<TabName> invalidTabs = ((HasValidatedTabs) presenterWidget.getModel()).getInvalidTabs();
+                    Set<TabName> invalidTabs = presenterWidget.getModel().getInvalidTabs();
                     //Get the tab names to dialog tab widget map from the view.
                     Map<TabName, DialogTab> mapping = view.getTabNameMapping();
                     markTabs(invalidTabs, mapping);

@@ -40,7 +40,7 @@ public class GetQuotaClusterByQuotaIdQueryTest
 
         // Assert the result
         @SuppressWarnings("unchecked")
-        List<QuotaCluster> results = (List<QuotaCluster>) getQuery().getQueryReturnValue().getReturnValue();
+        List<QuotaCluster> results = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of results returned", 1, results.size());
         assertEquals("Wrong results returned", group, results.get(0));
     }

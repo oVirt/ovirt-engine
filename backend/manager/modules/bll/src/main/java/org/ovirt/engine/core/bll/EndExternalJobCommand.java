@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.JobDao;
 
@@ -31,7 +30,7 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
     protected boolean validate() {
         boolean retValue = true;
         if (getParameters().getJobId() != null) {
-            job = getJobDao().get((Guid) getParameters().getJobId());
+            job = getJobDao().get(getParameters().getJobId());
             if (job == null) {
                 retValue = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);

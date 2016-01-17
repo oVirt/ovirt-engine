@@ -367,7 +367,7 @@ public final class Linq {
         if (minVersion != null) {
             for (Cluster cluster : source) {
                 minVersion =
-                        cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? (Version) cluster.getCompatibilityVersion()
+                        cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? cluster.getCompatibilityVersion()
                                 : minVersion;
             }
         }

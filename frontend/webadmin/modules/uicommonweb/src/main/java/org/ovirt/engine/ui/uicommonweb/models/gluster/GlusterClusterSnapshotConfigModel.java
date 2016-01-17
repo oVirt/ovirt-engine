@@ -102,7 +102,7 @@ public class GlusterClusterSnapshotConfigModel extends Model {
             public void onSuccess(Object model, Object returnValue) {
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
                 Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>> configs =
-                        (Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>>) vdcValue.getReturnValue();
+                        vdcValue.getReturnValue();
                 if (configs != null) {
                     List<GlusterVolumeSnapshotConfig> clusterConfigOptions = configs.getFirst();
                     Collections.sort(clusterConfigOptions, new Linq.GlusterVolumeSnapshotConfigComparator());

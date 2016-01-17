@@ -28,8 +28,7 @@ public class VolumeGeoRepSessionDetailsPopUpPresenterWidget extends AbstractMode
         model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if(e.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) {//$NON-NLS-1$
+                if(args.propertyName.equalsIgnoreCase("selectedSessionSummaryRow")) {//$NON-NLS-1$
                     GlusterGeoRepSessionDetails selectedSessionDetail = model.getGeoRepSessionSummary().getSelectedItem().getEntity();
                     getView().setCheckPointCompletedAtVisibility(selectedSessionDetail.isCheckpointCompleted());
                     getView().updateSessionDetailProperties(selectedSessionDetail);

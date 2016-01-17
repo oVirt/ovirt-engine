@@ -165,7 +165,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
             }
         }
         if (model.getLoadBalanceList().getSelectedItem() != null) {
-            PolicyUnit policyUnit = (PolicyUnit)model.getLoadBalanceList().getSelectedItem();
+            PolicyUnit policyUnit = model.getLoadBalanceList().getSelectedItem();
             if (policyUnit.getParameterRegExMap() != null
                     && !policyUnit.getParameterRegExMap().isEmpty()) {
                 return true;
@@ -224,7 +224,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private void updateTooltips(NewClusterPolicyModel model) {
-        PolicyUnit selectedItem = (PolicyUnit) model.getLoadBalanceList().getSelectedItem();
+        PolicyUnit selectedItem = model.getLoadBalanceList().getSelectedItem();
         if (selectedItem != null) {
             loadBalanceListEditor.getElement().setTitle(selectedItem.getDescription());
             String text = ""; //$NON-NLS-1$

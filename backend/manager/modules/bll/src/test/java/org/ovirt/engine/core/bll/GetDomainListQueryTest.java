@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -85,7 +84,7 @@ public class GetDomainListQueryTest
     public void test() {
         getQuery().executeQueryCommand();
         assertTrue("Wrong filtered domains", CollectionUtils.isEqualCollection(
-                (Collection<String>) getQuery().getQueryReturnValue().getReturnValue(),
+                getQuery().getQueryReturnValue().getReturnValue(),
                 Arrays.asList("aaa", "internal", "zzz")));
     }
 }

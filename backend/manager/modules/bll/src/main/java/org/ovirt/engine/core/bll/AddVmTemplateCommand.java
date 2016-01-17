@@ -831,7 +831,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
-        DiskImage newImage = (DiskImage) retValue.getActionReturnValue();
+        DiskImage newImage = retValue.getActionReturnValue();
         srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
     }
 

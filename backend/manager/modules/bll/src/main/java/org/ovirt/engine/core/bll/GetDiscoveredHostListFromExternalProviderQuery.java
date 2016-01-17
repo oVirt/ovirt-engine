@@ -21,7 +21,7 @@ public class GetDiscoveredHostListFromExternalProviderQuery<P extends ProviderQu
     }
 
     protected List<ExternalDiscoveredHost> getProviderHosts(Provider hostProvider) {
-        HostProviderProxy proxy = ((HostProviderProxy) ProviderProxyFactory.getInstance().create(hostProvider));
+        HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(hostProvider);
         return proxy.getDiscoveredHosts();
     }
 }

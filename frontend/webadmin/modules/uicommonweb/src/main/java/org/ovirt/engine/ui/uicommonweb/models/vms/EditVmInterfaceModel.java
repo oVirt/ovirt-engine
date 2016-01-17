@@ -70,7 +70,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         getNicType().setIsChangeable(!plug);
         getEnableMac().setIsChangeable(!plug);
-        getMAC().setIsChangeable((Boolean) getEnableMac().getEntity() && !plug);
+        getMAC().setIsChangeable(getEnableMac().getEntity() && !plug);
 
         updateProfileChangability();
         updateLinkChangability();
@@ -138,12 +138,12 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
     }
 
     private boolean isPluggedBeforeAndAfterEdit() {
-        return getNic().isPlugged() && (Boolean) getPlugged().getEntity();
+        return getNic().isPlugged() && getPlugged().getEntity();
     }
 
     private void confirmSave() {
         // Check if the nic was unplugged
-        if (getNic().isPlugged() && !(Boolean) getPlugged().getEntity()) {
+        if (getNic().isPlugged() && !getPlugged().getEntity()) {
             ConfirmationModel model = new ConfirmationModel();
             model.setTitle(ConstantsManager.getInstance().getConstants().unplugVnicTitle());
             model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantUnplugVnicMsg());

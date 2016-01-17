@@ -28,7 +28,7 @@ public class KeyValuePairValidation implements IValidation {
     public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && value instanceof String && !((String) value).equals("")){  //$NON-NLS-1$
+        if (value != null && value instanceof String && !value.equals("")){  //$NON-NLS-1$
             String strValue = (String) value;
 
             if (strValue.endsWith(",")){  //$NON-NLS-1$

@@ -7,8 +7,6 @@ import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -65,7 +63,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 vm,
                 getStorage().getSelectedItem().getId(),
                 getStoragePool().getId(),
-                ((Cluster) getCluster().getSelectedItem()).getId());
+                getCluster().getSelectedItem().getId());
         prm.setOvaPath(ovaPath);
         prm.setProxyHostId(hostId);
         prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
@@ -73,7 +71,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
 
         if (getClusterQuota().getSelectedItem() != null &&
                 getClusterQuota().getIsAvailable()) {
-            prm.setQuotaId(((Quota) getClusterQuota().getSelectedItem()).getId());
+            prm.setQuotaId(getClusterQuota().getSelectedItem().getId());
         }
 
         CpuProfile cpuProfile = getCpuProfiles().getSelectedItem();
@@ -82,7 +80,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         }
 
         prm.setForceOverride(true);
-        prm.setCopyCollapse((Boolean) importVmData.getCollapseSnapshots().getEntity());
+        prm.setCopyCollapse(importVmData.getCollapseSnapshots().getEntity());
 
         for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
             DiskImage disk = (DiskImage) entry.getValue();
@@ -100,7 +98,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         updateNetworkInterfacesForVm(vm);
 
         if (importVmData.isExistsInSystem() ||
-                (Boolean) (importVmData.getClone().getEntity())) {
+                importVmData.getClone().getEntity()) {
             prm.setImportAsNewEntity(true);
             prm.setCopyCollapse(true);
         }

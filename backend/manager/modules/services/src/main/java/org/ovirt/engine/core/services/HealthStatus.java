@@ -38,7 +38,7 @@ public class HealthStatus extends HttpServlet {
         BackendInternal backend = null;
 
         try {
-            backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
+            backend = EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
             log.debug("Calling CheckDBConnection query");
 
             VdcQueryParametersBase params = new VdcQueryParametersBase();

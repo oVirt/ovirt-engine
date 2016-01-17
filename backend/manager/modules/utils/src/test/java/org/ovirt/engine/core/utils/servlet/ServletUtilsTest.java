@@ -186,7 +186,7 @@ public class ServletUtilsTest {
        //Check the file length is set right.
        verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -205,7 +205,7 @@ public class ServletUtilsTest {
        //Check the file length is set right.
        verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -226,7 +226,7 @@ public class ServletUtilsTest {
        //Check the file length is set right.
        verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -247,7 +247,7 @@ public class ServletUtilsTest {
        //Check the file length is set right.
        verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     private File createTempPng() throws IOException {
@@ -285,7 +285,7 @@ public class ServletUtilsTest {
        File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
        verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -333,7 +333,7 @@ public class ServletUtilsTest {
        when(mockRequest.getHeader("If-None-Match")).thenReturn("xxxx");
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
        verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
-       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+       verify(responseOut).write(anyObject(), eq(0), anyInt());
     }
 
     @Test

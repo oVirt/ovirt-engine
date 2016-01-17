@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -34,11 +33,6 @@ public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements Co
         else {
             return numOfStorageDomains + constants.space() + constants.storageDomainsLabelDisk();
         }
-    }
-
-    @Override
-    public TextCell getCell() {
-        return (TextCell) super.getCell();
     }
 
     @Override

@@ -1310,7 +1310,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         if (diskSize == 0) {
             for (Disk disk : getDiskMap().values()) {
                 if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                    diskSize += ((DiskImage) disk).getSize() / Double.valueOf(1024 * 1024 * 1024);
+                    diskSize += disk.getSize() / Double.valueOf(1024 * 1024 * 1024);
                 }
             }
         }

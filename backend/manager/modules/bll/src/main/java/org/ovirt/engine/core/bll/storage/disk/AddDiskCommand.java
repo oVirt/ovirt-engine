@@ -518,7 +518,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (tmpRetValue.getActionReturnValue() != null) {
-            DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
+            DiskImage diskImage = tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
             getReturnValue().setActionReturnValue(diskImage.getId());
         }

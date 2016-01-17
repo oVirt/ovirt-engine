@@ -209,7 +209,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
     }
 
     private void updateInfoPanel() {
-        final VmNetworkInterface vmNetworkInterface = (VmNetworkInterface) getModel().getSelectedItem();
+        final VmNetworkInterface vmNetworkInterface = getModel().getSelectedItem();
         if (vmNetworkInterface != null && !getTable().getSelectionModel().isSelected(vmNetworkInterface)) {
             // first let list of items get updated, only then select item
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {

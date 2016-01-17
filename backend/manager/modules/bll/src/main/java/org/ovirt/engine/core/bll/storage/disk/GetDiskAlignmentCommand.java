@@ -272,7 +272,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     protected Disk getDisk() {
         if (diskToScan == null) {
-            diskToScan = getDiskDao().get((Guid) getParameters().getDiskId());
+            diskToScan = getDiskDao().get(getParameters().getDiskId());
         }
         return diskToScan;
     }

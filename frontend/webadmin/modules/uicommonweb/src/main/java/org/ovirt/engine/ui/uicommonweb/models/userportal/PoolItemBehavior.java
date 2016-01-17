@@ -103,7 +103,7 @@ public class PoolItemBehavior extends ItemBehavior {
                         public void onSuccess(Object target, Object returnValue) {
 
                             if (returnValue != null) {
-                                VM vm = (VM) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                VM vm = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                 if (vm == null) {
                                     return;
                                 }

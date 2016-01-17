@@ -39,7 +39,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected List<Q> getBackendCollection(SearchType searchType) {
-        return getBackendCollection(searchType, QueryHelper.getConstraint(getUriInfo(), "",  modelType));
+        return getBackendCollection(searchType, QueryHelper.getConstraint(getUriInfo(), "", modelType));
     }
 
     protected List<Q> getBackendCollection(SearchType searchType, String constraint) {
@@ -165,7 +165,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     @SuppressWarnings("unchecked")
     protected <T> Q resolveCreated(VdcReturnValueBase result, IResolver<T, Q> entityResolver) {
         try {
-            return entityResolver.resolve((T) result.getActionReturnValue());
+            return entityResolver.resolve(result.getActionReturnValue());
         } catch (Exception e) {
             // Handling exception as we can't tolerate the failure
             return handleError(e, false);

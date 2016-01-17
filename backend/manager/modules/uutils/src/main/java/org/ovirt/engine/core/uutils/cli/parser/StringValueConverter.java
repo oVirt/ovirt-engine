@@ -37,7 +37,7 @@ class StringValueConverter {
                         r.add(getObjectValueByString(clazz.getComponentType(), c));
                     }
                 }
-                v = (Object)r.toArray((Object[]) Array.newInstance(clazz.getComponentType(), 0));
+                v = r.toArray((Object[]) Array.newInstance(clazz.getComponentType(), 0));
             }
         }
 

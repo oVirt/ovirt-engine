@@ -42,7 +42,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<StoragePool> actual = (List<StoragePool>) getQuery().getQueryReturnValue().getReturnValue();
+        List<StoragePool> actual = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VDS Groups", 1, actual.size());
         assertEquals("Wrong VDS Groups", expected, actual.get(0));
     }

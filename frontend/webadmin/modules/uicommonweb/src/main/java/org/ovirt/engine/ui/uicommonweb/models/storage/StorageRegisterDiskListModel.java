@@ -50,11 +50,6 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
         getSearchCommand().execute();
     }
 
-    @Override
-    public StorageDomain getEntity() {
-        return (StorageDomain) super.getEntity();
-    }
-
     public void setEntity(StorageDomain value) {
         super.setEntity(value);
     }

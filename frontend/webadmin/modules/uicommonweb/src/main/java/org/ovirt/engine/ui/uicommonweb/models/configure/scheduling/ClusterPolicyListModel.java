@@ -114,8 +114,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
                             ClusterPolicyListModel clusterPolicyListModel = (ClusterPolicyListModel) model;
-                            ArrayList<PolicyUnit> list =
-                                    (ArrayList<PolicyUnit>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ArrayList<PolicyUnit> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
                             clusterPolicyListModel.setPolicyUnits(list);
                             clusterPolicyListModel.fetchClusterPolicies();
                             if (policyUnitModel != null) {
@@ -134,8 +133,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ArrayList<ClusterPolicy> list =
-                        (ArrayList<ClusterPolicy>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ArrayList<ClusterPolicy> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 Collections.sort(list, new Linq.ClusterPolicyComparator());
                 setItems(list);
             }
@@ -201,7 +199,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     }
 
     private void edit() {
-        initClusterPolicy(CommandType.Edit, (ClusterPolicy) getSelectedItem());
+        initClusterPolicy(CommandType.Edit, getSelectedItem());
     }
 
     private void cloneEntity() {

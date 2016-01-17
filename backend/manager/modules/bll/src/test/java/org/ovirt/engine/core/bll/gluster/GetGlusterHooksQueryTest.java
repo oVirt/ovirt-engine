@@ -86,8 +86,7 @@ public class GetGlusterHooksQueryTest extends
     public void testExecuteQueryCommand1() {
         mockExpectedListFromDb();
         getQuery().executeQueryCommand();
-        List<GlusterHookEntity> hooks =
-                (List<GlusterHookEntity>) getQuery().getQueryReturnValue().getReturnValue();
+        List<GlusterHookEntity> hooks = getQuery().getQueryReturnValue().getReturnValue();
         assertNotNull(hooks);
         assertEquals(expected, hooks);
     }
@@ -96,8 +95,7 @@ public class GetGlusterHooksQueryTest extends
     public void testExecuteQueryCommand2() {
         mockEmptyListFromDb();
         getQuery().executeQueryCommand();
-        List<GlusterHookEntity> hooks =
-                (List<GlusterHookEntity>) getQuery().getQueryReturnValue().getReturnValue();
+        List<GlusterHookEntity> hooks = getQuery().getQueryReturnValue().getReturnValue();
         assertNotNull(hooks);
         assertEquals(emptyList, hooks);
     }

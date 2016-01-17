@@ -79,8 +79,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
 
         getQuery().executeQueryCommand();
 
-        Map<String, String> serverFingerprintMap =
-                (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();
+        Map<String, String> serverFingerprintMap = getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(serverFingerprintMap);
         assertEquals(EXPECTED_MAP, serverFingerprintMap);
