@@ -117,9 +117,9 @@ public class GlusterSnapshotSyncJobTest {
 
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getValidCluster()).when(clusterDao).get(any(Guid.class));
-        doReturn(getVolumes()).when(volumeDao).getByClusterId(argThat(validClusterId()));
+        doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);
         doReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1)).when(volumeDao)
-                .getByName(argThat(validClusterId()), argThat(validVolumeName()));
+                .getByName(CLUSTER_ID_1, VOLUME_NAME_1);
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
         when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_4), any(Guid.class))).thenReturn(false);
         when(glusterUtil.isGlusterSnapshotSupported(eq(Version.v3_5), any(Guid.class))).thenReturn(true);
@@ -130,7 +130,7 @@ public class GlusterSnapshotSyncJobTest {
 
     @Test
     public void testSyncSnapshotsList() {
-        doReturn(getExistingSnapshots()).when(snapshotDao).getAllByVolumeId(argThat(validVolumeId()));
+        doReturn(getExistingSnapshots()).when(snapshotDao).getAllByVolumeId(VOLUME_ID_1);
         doReturn(getSnapshotVDSReturnVal(true)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotInfo),
                         argThat(snapshotInfoParam()));
@@ -199,42 +199,6 @@ public class GlusterSnapshotSyncJobTest {
                     return false;
                 }
                 return ((GlusterVolumeSnapshotVDSParameters) argument).getClusterId().equals(CLUSTER_ID_1);
-            }
-        };
-    }
-
-    private ArgumentMatcher<Guid> validClusterId() {
-        return new ArgumentMatcher<Guid>() {
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Guid)) {
-                    return false;
-                }
-                return ((Guid) argument).equals(CLUSTER_ID_1);
-            }
-        };
-    }
-
-    private ArgumentMatcher<String> validVolumeName() {
-        return new ArgumentMatcher<String>() {
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof String)) {
-                    return false;
-                }
-                return ((String) argument).equals(VOLUME_NAME_1);
-            }
-        };
-    }
-
-    private ArgumentMatcher<Guid> validVolumeId() {
-        return new ArgumentMatcher<Guid>() {
-            @Override
-            public boolean matches(Object argument) {
-                if (!(argument instanceof Guid)) {
-                    return false;
-                }
-                return ((Guid) argument).equals(VOLUME_ID_1);
             }
         };
     }
