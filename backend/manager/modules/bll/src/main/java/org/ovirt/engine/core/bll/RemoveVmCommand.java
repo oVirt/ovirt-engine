@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
@@ -386,11 +386,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private void processUnremovedDisks(Collection<? extends DiskImage> diskImages) {
-        List<String> disksLeftInVm = new ArrayList<>();
-        for (DiskImage diskImage : diskImages) {
-            disksLeftInVm.add(diskImage.getDiskAlias());
-        }
-        addCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
+        addCustomValue("DisksNames", diskImages.stream().map(DiskImage::getDiskAlias).collect(Collectors.joining(",")));
     }
 
     @Override
