@@ -62,13 +62,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
             doNothing().when(getQuery()).fillImagesBySnapshots(expectedVM);
         }
 
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }).when(getQuery()).updateVmInit(expectedVM);
-
+        doNothing().when(getQuery()).updateVmInit(expectedVM);
         doNothing().when(getQuery()).updateVmGuestAgentVersion(expectedVM);
 
         getQuery().executeQueryCommand();
