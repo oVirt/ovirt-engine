@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +151,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         if (DiskStorageType.CINDER == getParameters().getDiskInfo().getDiskStorageType()) {
             CinderDisk cinderDisk = (CinderDisk) getParameters().getDiskInfo();
-            cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(getStorageDomainId())));
+            cinderDisk.setStorageIds(new ArrayList<>(Collections.singletonList(getStorageDomainId())));
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
             CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisk);
             return validate(storageDomainValidator.isDomainExistAndActive()) &&
