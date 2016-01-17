@@ -350,9 +350,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     }
 
     private UICommand getOnSaveCommand() {
-        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
-
-        return onSaveCommand;
+        return UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
     }
 
     @Override
