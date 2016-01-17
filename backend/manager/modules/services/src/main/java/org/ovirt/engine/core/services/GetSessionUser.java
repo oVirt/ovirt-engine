@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 public class GetSessionUser extends HttpServlet {
     private static final long serialVersionUID = -6984391651645165467L;
 
-    private String SESSION_ID_PARAMETER = "sessionID";
-    private int SUCCESS_CODE = HttpURLConnection.HTTP_OK;
-    private int FAILED_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
+    private static final String SESSION_ID_PARAMETER = "sessionID";
+    private static final int SUCCESS_CODE = HttpURLConnection.HTTP_OK;
+    private static final int FAILED_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
     private static final Logger log = LoggerFactory.getLogger(GetSessionUser.class);
 
