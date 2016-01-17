@@ -124,12 +124,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                 } else {
                                     ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
                                     VM currentVm = behavior.vm;
-                                    Cluster tempVar = new Cluster();
-                                    tempVar.setId(currentVm.getClusterId());
-                                    tempVar.setName(currentVm.getClusterName());
-                                    tempVar.setCompatibilityVersion(currentVm.getClusterCompatibilityVersion());
-                                    tempVar.setStoragePoolId(currentVm.getStoragePoolId());
-                                    Cluster cluster = tempVar;
+                                    Cluster cluster = new Cluster();
+                                    cluster.setId(currentVm.getClusterId());
+                                    cluster.setName(currentVm.getClusterName());
+                                    cluster.setCompatibilityVersion(currentVm.getClusterCompatibilityVersion());
+                                    cluster.setStoragePoolId(currentVm.getStoragePoolId());
                                     DataCenterWithCluster dataCenterWithCluster =
                                             new DataCenterWithCluster(null, cluster);
                                     model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
