@@ -118,7 +118,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private List<StatsInfo> getStatsInfo() {
         StatsInfo statInfo = new StatsInfo();
         statInfo.setDuration(2);
-        statInfo.setDurationFormatted(new Pair<>(new Integer(2), TimeUnit.SECONDS.toString()));
+        statInfo.setDurationFormatted(new Pair<>(2, TimeUnit.SECONDS.toString()));
         statInfo.setTotalRead(0);
         statInfo.setTotalWrite(0);
         statInfo.setBlockStats(getBlockStats());
