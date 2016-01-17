@@ -414,13 +414,6 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             return;
         }
 
-        // if (!DataProvider.IsRoleNameUnique(name) && name.compareToIgnoreCase(role.getname()) != 0)
-        // {
-        // model.getName().setIsValid(false);
-        // model.getName().getInvalidityReasons().add("Name must be unique.");
-        // return;
-        // }
-
         role.setName(model.getName().getEntity());
         role.setDescription(model.getDescription().getEntity());
 
