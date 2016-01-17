@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
@@ -41,11 +41,7 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     }
 
     private Set<String> hostNameSet(List<VDS> hosts) {
-        Set<String> existingHostNames = new HashSet<>();
-        for (VDS host : hosts) {
-            existingHostNames.add(host.getHostName());
-        }
-        return existingHostNames;
+        return hosts.stream().map(VDS::getHostName).collect(Collectors.toSet());
     }
 
     protected List<VDS> getProviderHosts(Provider hostProvider, String searchFilter) {
