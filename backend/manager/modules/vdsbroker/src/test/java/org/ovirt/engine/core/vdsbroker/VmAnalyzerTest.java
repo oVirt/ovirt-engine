@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
@@ -370,9 +369,8 @@ public class VmAnalyzerTest {
         when(resourceManager.getVdsManager(any(Guid.class))).thenReturn(vdsManager);
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);
-        when(vmsMonitoring.getResourceManager().runVdsCommand((VDSCommandType) anyObject(),
-                (org.ovirt.engine.core.common.vdscommands.VDSParametersBase) anyObject())).thenReturn(
-                vdsReturnValue);
+        when(vmsMonitoring.getResourceManager().runVdsCommand
+                (any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
         // -- default behaviors --
         // dst host is up
         mockDstHostStatus(VDSStatus.Up);
@@ -404,21 +402,21 @@ public class VmAnalyzerTest {
     }
 
     private void mockStatistics() {
-        when(vmStatisticsDao.get((Guid) anyObject())).thenReturn(mock(VmStatistics.class));
+        when(vmStatisticsDao.get(any(Guid.class))).thenReturn(mock(VmStatistics.class));
     }
 
     private void mockVmDynamic() {
-        when(vmDynamicDao.get((Guid) anyObject())).thenReturn(mock(VmDynamic.class));
+        when(vmDynamicDao.get(any(Guid.class))).thenReturn(mock(VmDynamic.class));
     }
 
     private void mockVmStatic(boolean stubExists) {
         Mockito.reset(vmStaticDao);
-        when(vmStaticDao.get((Guid) anyObject())).thenReturn(stubExists ? mock(VmStatic.class) : null);
+        when(vmStaticDao.get(any(Guid.class))).thenReturn(stubExists ? mock(VmStatic.class) : null);
     }
 
     private void mockVmJob() {
         Mockito.reset(vmJobsDao);
-        when(vmJobsDao.get((Guid) anyObject())).thenReturn(mock(VmJob.class));
+        when(vmJobsDao.get(any(Guid.class))).thenReturn(mock(VmJob.class));
     }
 
     private void mockCluster() {
