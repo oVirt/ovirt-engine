@@ -298,7 +298,7 @@ public class VmAnalyzer {
         if (dbVm.getStatus() == VMStatus.MigratingFrom) {
             // if a VM that was a source host in migration process is now down with normal
             // exit status that's OK, otherwise..
-            if (vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
+            if (vdsmVm != null && vdsmVm.getVmDynamic() != null && vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal) {
                 if (dbVm.getMigratingToVds() != null) {
                     VDSReturnValue destoryReturnValue = vmsMonitoring.getResourceManager().runVdsCommand(
                             VDSCommandType.DestroyVm,
