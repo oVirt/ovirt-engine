@@ -57,7 +57,7 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
     private void createParameters() {
         CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(CLUSTER_ID, PROFILE_NAME);
 
-        parameters = new CpuProfileParameters(cpuProfile, cpuProfile.getId());
+        parameters = new CpuProfileParameters(cpuProfile);
         parameters.setCorrelationId(CORRELATION_ID);
         parameters.setAddPermissions(true);
         parameters.setSessionId(SESSION_ID);

@@ -68,6 +68,6 @@ public abstract class DiskProfileBaseModel extends ProfileBaseModel<DiskProfile,
 
     @Override
     protected ProfileParametersBase<DiskProfile> getParameters() {
-        return new DiskProfileParameters(getProfile(), getProfile().getId());
+        return new DiskProfileParameters(getProfile());
     }
 }

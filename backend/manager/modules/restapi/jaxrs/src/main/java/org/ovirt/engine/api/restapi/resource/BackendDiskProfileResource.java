@@ -45,7 +45,7 @@ public class BackendDiskProfileResource extends AbstractBackendDiskProfileResour
         public VdcActionParametersBase getParameters(DiskProfile incoming,
                 org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
             org.ovirt.engine.core.common.businessentities.profiles.DiskProfile map = map(incoming, entity);
-            return new DiskProfileParameters(map, map.getId());
+            return new DiskProfileParameters(map);
         }
     }
 }

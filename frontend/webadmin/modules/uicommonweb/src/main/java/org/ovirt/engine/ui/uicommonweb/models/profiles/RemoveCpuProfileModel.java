@@ -26,7 +26,7 @@ public class RemoveCpuProfileModel extends RemoveProfileModel<CpuProfile> {
 
     @Override
     protected VdcActionParametersBase getRemoveProfileParams(CpuProfile profile) {
-        return new CpuProfileParameters(profile, profile.getId());
+        return new CpuProfileParameters(profile);
     }
 
 }

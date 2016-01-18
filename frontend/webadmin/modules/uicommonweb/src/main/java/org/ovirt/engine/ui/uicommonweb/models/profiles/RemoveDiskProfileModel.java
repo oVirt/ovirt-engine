@@ -26,7 +26,7 @@ public class RemoveDiskProfileModel extends RemoveProfileModel<DiskProfile> {
 
     @Override
     protected VdcActionParametersBase getRemoveProfileParams(DiskProfile profile) {
-        return new DiskProfileParameters(profile, profile.getId());
+        return new DiskProfileParameters(profile);
     }
 
 }

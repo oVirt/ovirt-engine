@@ -45,7 +45,7 @@ public class BackendCpuProfileResource extends AbstractBackendCpuProfileResource
         public VdcActionParametersBase getParameters(CpuProfile incoming,
                 org.ovirt.engine.core.common.businessentities.profiles.CpuProfile entity) {
             org.ovirt.engine.core.common.businessentities.profiles.CpuProfile map = map(incoming, entity);
-            return new CpuProfileParameters(map, map.getId());
+            return new CpuProfileParameters(map);
         }
     }
 }

@@ -103,7 +103,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(getParameters().getCluster().getId(),
                 getParameters().getCluster().getName());
 
-        CpuProfileParameters cpuProfileAddParameters = new CpuProfileParameters(cpuProfile, cpuProfile.getId());
+        CpuProfileParameters cpuProfileAddParameters = new CpuProfileParameters(cpuProfile);
         cpuProfileAddParameters.setAddPermissions(true);
         cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
         cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
