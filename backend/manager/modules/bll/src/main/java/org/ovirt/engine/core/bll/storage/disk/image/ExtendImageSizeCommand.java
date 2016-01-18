@@ -41,6 +41,10 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         super(parameters, cmdContext);
     }
 
+    public ExtendImageSizeCommand(T parameters) {
+        this(parameters, null);
+    }
+
     @Override
     protected void executeCommand() {
         VDSReturnValue vdsReturnValue = extendUnderlyingVolumeSize(getImage());

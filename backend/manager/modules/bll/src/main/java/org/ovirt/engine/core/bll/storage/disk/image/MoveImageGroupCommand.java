@@ -22,6 +22,10 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         super(parameters, cmdContext);
     }
 
+    public MoveImageGroupCommand(T parameters) {
+        this(parameters, null);
+    }
+
     private void removeImage(Guid storageDomainId) {
         RemoveImageParameters removeImageParams =
                 new RemoveImageParameters(getParameters().getImageId());
