@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper.isHostedEngineDomain;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -401,6 +403,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         StorageDomain storageDomain = getStorageDomain();
 
         for (StorageDomain dbStorageDomain : storageDomains) {
+            if (isHostedEngineDomain(dbStorageDomain)) {
+                continue;
+            }
             if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
                     .equals(storageDomain.getId())))
                     && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data)
