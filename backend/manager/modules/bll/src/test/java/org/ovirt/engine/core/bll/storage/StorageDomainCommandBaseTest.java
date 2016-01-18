@@ -3,16 +3,19 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,11 +23,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainCommandBaseTest {
@@ -33,8 +41,19 @@ public class StorageDomainCommandBaseTest {
             new Guid("22222222-2222-2222-2222-222222222222")
     };
 
+    private static final String HE_STORAGE_DOMAIN_NAME = "heStorageDomain";
+
     @Mock
     private LunDao lunDao;
+
+    @Mock
+    private StorageDomainDao storageDomainDao;
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.HostedEngineStorageDomainName, HE_STORAGE_DOMAIN_NAME)
+            );
+
 
     public StorageDomainCommandBase<StorageDomainParametersBase> cmd;
 
@@ -138,6 +157,46 @@ public class StorageDomainCommandBaseTest {
         assertEquals(messages.size(), 2);
         assertEquals(messages.get(0), EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
         assertEquals(messages.get(1), String.format("$lunIds %1$s", cmd.getFormattedLunId(lun1, lun1.getStorageDomainName())));
+    }
+
+    @Test
+    public void shouldElectActiveDataDomain() {
+        final StorageDomain domain = prepareStorageDomainForElection(StorageDomainStatus.Active, "not he domain name");
+        assertEquals(domain, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldNotElectActiveHostedEngineDomain() {
+        prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME);
+        assertEquals(null, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldNotElectUnknownHostedEngineDomain() {
+        prepareStorageDomainForElection(StorageDomainStatus.Unknown, HE_STORAGE_DOMAIN_NAME);
+        assertEquals(null, cmd.electNewMaster());
+    }
+
+    @Test
+    public void shouldNotElectInactiveHostedEngineDomain() {
+        prepareStorageDomainForElection(StorageDomainStatus.Inactive, HE_STORAGE_DOMAIN_NAME);
+        assertEquals(null, cmd.electNewMaster(false, true, false));
+    }
+
+    private StorageDomain prepareStorageDomainForElection(StorageDomainStatus status, String name) {
+        final StorageDomain domain = createDataStorageDomain(status, name);
+        doReturn(storageDomainDao).when(cmd).getStorageDomainDao();
+        when(storageDomainDao.getAllForStoragePool(any(Guid.class))).thenReturn(Arrays.asList(domain));
+        cmd.setStoragePool(new StoragePool());
+        return domain;
+    }
+
+    private StorageDomain createDataStorageDomain(StorageDomainStatus status, String name) {
+        final StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setStorageName(name);
+        storageDomain.setStatus(status);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
+        return storageDomain;
     }
 
     private void storagePoolExists() {
