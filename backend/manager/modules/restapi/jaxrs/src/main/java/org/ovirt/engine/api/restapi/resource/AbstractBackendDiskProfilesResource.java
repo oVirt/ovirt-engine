@@ -67,10 +67,9 @@ public abstract class AbstractBackendDiskProfilesResource
 
     protected Response add(DiskProfile diskProfile) {
         validateParameters(diskProfile);
-        DiskProfileParameters parameters =
-                new DiskProfileParameters();
         org.ovirt.engine.core.common.businessentities.profiles.DiskProfile map = map(diskProfile);
-        parameters.setProfile(map);
+        DiskProfileParameters parameters =
+                new DiskProfileParameters(map);
         return performCreate(VdcActionType.AddDiskProfile,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskProfileById, IdQueryParameters.class));

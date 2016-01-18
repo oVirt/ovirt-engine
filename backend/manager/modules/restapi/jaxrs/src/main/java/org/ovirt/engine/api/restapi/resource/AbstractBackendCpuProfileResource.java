@@ -53,7 +53,7 @@ public abstract class AbstractBackendCpuProfileResource
         org.ovirt.engine.core.common.businessentities.profiles.CpuProfile cpuProfile = getCpuProfile(id);
         return performAction(
             VdcActionType.RemoveCpuProfile,
-            new CpuProfileParameters(cpuProfile, cpuProfile.getId())
+            new CpuProfileParameters(cpuProfile)
         );
     }
 }

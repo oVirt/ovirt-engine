@@ -15,20 +15,17 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcAc
         this.addPermissions = addPermissions;
     }
 
-    public ProfileParametersBase(T profile, Guid profileId, boolean addPermissions) {
+    public ProfileParametersBase(T profile, boolean addPermissions) {
         this.profile = profile;
-        this.profileId = profileId;
         this.addPermissions = addPermissions;
     }
 
-    public ProfileParametersBase(T profile, Guid profileId) {
+    public ProfileParametersBase(T profile) {
         this.profile = profile;
-        this.profileId = profileId;
     }
 
     @Valid
     private T profile;
-    private Guid profileId;
 
     public ProfileParametersBase() {}
 
@@ -41,11 +38,11 @@ public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcAc
     }
 
     public Guid getProfileId() {
-        return profileId;
+        return profile.getId();
     }
 
     public void setProfileId(Guid profileId) {
-        this.profileId = profileId;
+        this.profile.setId(profileId);
     }
 
     public boolean isAddPermissions() {

@@ -53,7 +53,7 @@ public abstract class AbstractBackendDiskProfileResource
         org.ovirt.engine.core.common.businessentities.profiles.DiskProfile diskProfile = getDiskProfile(id);
         return performAction(
             VdcActionType.RemoveDiskProfile,
-            new DiskProfileParameters(diskProfile, diskProfile.getId())
+            new DiskProfileParameters(diskProfile)
         );
     }
 }
