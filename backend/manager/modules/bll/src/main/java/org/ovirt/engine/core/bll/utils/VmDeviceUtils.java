@@ -1305,7 +1305,8 @@ public class VmDeviceUtils {
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
-                                     boolean copySnapshotDevices) {
+                                     boolean copySnapshotDevices,
+                                     boolean copyHostDevices) {
         if (graphicsToSkip == null) {
             graphicsToSkip = Collections.emptySet();
         }
@@ -1428,6 +1429,9 @@ public class VmDeviceUtils {
                     break;
 
                 case HOSTDEV:
+                    if (!copyHostDevices) {
+                        continue;
+                    }
                     specParams.putAll(device.getSpecParams());
                     break;
 
@@ -1498,18 +1502,46 @@ public class VmDeviceUtils {
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices) {
-        VM dstVm = dbFacade.getVmDao().get(dstId);
-        VmBase dstVmBase = (dstVm != null) ? dstVm.getStaticData() : null;
 
-        if (dstVmBase == null) {
-            dstVmBase = dbFacade.getVmTemplateDao().get(dstId);
-        }
-
+        VmBase srcVmBase = getVmBase(srcId);
+        VmBase dstVmBase = getVmBase(dstId);
         List<VmDevice> srcDevices = dao.getVmDeviceByVmId(srcId);
 
         copyVmDevices(srcId, dstId, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
                 isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
-                copySnapshotDevices);
+                copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase));
+    }
+
+
+    /** @see #canCopyHostDevices(VmBase, VmBase) */
+    public static boolean canCopyHostDevices(Guid srcId, VmBase dstVm) {
+        return canCopyHostDevices(getVmBase(srcId), dstVm);
+    }
+
+    /**
+     * Determines whether it is safe to copy host devices from source VM/Template to destination.
+     * More specifically it checks that no discrepancy between source and destination 'dedicatedVmForVds' occurred,
+     * since host device consistency depends on this value.
+     */
+    public static boolean canCopyHostDevices(VmBase srcVm, VmBase dstVm) {
+        return new HashSet<>(srcVm.getDedicatedVmForVdsList()).equals(new HashSet<>(dstVm.getDedicatedVmForVdsList()));
+    }
+
+    /**
+     * Returns VmBase object regardless if passed ID is of VM or Template.
+     *
+     * @param vmId ID of a VM or Template
+     * @return VmStatic if a VM of given ID was found, VmTemplate otherwise.
+     */
+    private static VmBase getVmBase(Guid vmId) {
+        VM vm = dbFacade.getVmDao().get(vmId);
+        VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
+
+        if (vmBase == null) {
+            vmBase = dbFacade.getVmTemplateDao().get(vmId);
+        }
+
+        return vmBase;
     }
 
     /**
@@ -1674,6 +1706,11 @@ public class VmDeviceUtils {
                 case SOUND:
                     hasSound = true;
                     break;
+
+                case HOSTDEV:
+                    // it is currently unsafe to import host devices, due to possibility of invalid dedicatedVmForVds
+                    continue;
+
             }
             vmDevice.setIsManaged(true);
             vmDeviceToAdd.add(vmDevice);
