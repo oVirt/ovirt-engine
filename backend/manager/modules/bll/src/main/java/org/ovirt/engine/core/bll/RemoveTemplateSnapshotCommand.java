@@ -21,6 +21,10 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
         super(parameters, cmdContext);
     }
 
+    public RemoveTemplateSnapshotCommand(T parameters) {
+        this(parameters, null);
+    }
+
     @Override
     protected void executeCommand() {
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
