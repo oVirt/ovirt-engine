@@ -69,6 +69,9 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (model.getItems() == null) {
+                    return;
+                }
                 Iterator<TagModel> iterator = model.getItems().iterator();
                 if (iterator.hasNext()) {
                     TagModel root = model.cloneTagModel(iterator.next());

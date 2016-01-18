@@ -931,6 +931,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
                 StoragePool dataCenter = (StoragePool) returnValue;
+                if (dataCenter == null) {
+                    return;
+                }
 
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getCompatibilityVersion();
