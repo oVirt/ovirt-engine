@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -1094,9 +1095,7 @@ public class VmDeviceUtils {
      */
     public static void copyVmDevices(Guid srcId,
                                      Guid dstId,
-                                     VM dstVm,
                                      VmBase dstVmBase,
-                                     boolean dstIsVm,
                                      List<VmDevice> srcDevices,
                                      Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                                      boolean isSoundEnabled,
@@ -1110,6 +1109,7 @@ public class VmDeviceUtils {
         }
 
         String dstCdPath = dstVmBase.getIsoPath();
+        boolean dstIsVm = !(dstVmBase instanceof VmTemplate);
         boolean hasCd = hasCdDevice(dstVmBase.getId());
         boolean hasSound = false;
         boolean hasConsole = false;
@@ -1249,7 +1249,7 @@ public class VmDeviceUtils {
 
         if (isSoundEnabled && !hasSound) {
             if (dstIsVm) {
-                addSoundDevice(dstVm.getStaticData());
+                addSoundDevice(dstVmBase);
             } else {
                 addSoundDevice(dstVmBase.getId(), dstVmBase.getOsId(),
                         cluster != null ? cluster.getCompatibilityVersion() : null);
@@ -1288,15 +1288,14 @@ public class VmDeviceUtils {
                                      boolean copySnapshotDevices) {
         VM dstVm = dbFacade.getVmDao().get(dstId);
         VmBase dstVmBase = (dstVm != null) ? dstVm.getStaticData() : null;
-        boolean dstIsVm = (dstVmBase != null);
 
-        if (!dstIsVm) {
+        if (dstVmBase == null) {
             dstVmBase = dbFacade.getVmTemplateDao().get(dstId);
         }
 
         List<VmDevice> srcDevices = dao.getVmDeviceByVmId(srcId);
 
-        copyVmDevices(srcId, dstId, dstVm, dstVmBase, dstIsVm, srcDevices, srcDeviceIdToDstDeviceIdMapping,
+        copyVmDevices(srcId, dstId, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
                 isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
                 copySnapshotDevices);
     }
