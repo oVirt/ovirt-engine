@@ -78,38 +78,76 @@ public class HostNetwork {
         return getProperties() != null && !getProperties().isEmpty();
     }
 
-    public NetworkBootProtocol getBootProtocol() {
-        return hasIpConfiguration() && getIpConfiguration().hasPrimaryAddressSet()
-                ? getIpConfiguration().getPrimaryAddress().getBootProtocol()
-                : null;
-    }
-
-    public String getAddress() {
-        if (primaryAddressNotSet()) {
+    public NetworkBootProtocol getIpv4BootProtocol() {
+        if (primaryIpv4AddressNotSet()) {
             return null;
         }
 
-        return getIpConfiguration().getPrimaryAddress().getAddress();
+        return getIpConfiguration().getIpv4PrimaryAddress().getBootProtocol();
     }
 
-    public String getNetmask() {
-        if (primaryAddressNotSet()) {
+    public String getIpv4Address() {
+        if (primaryIpv4AddressNotSet()) {
             return null;
         }
 
-        return getIpConfiguration().getPrimaryAddress().getNetmask();
+        return getIpConfiguration().getIpv4PrimaryAddress().getAddress();
     }
 
-    public String getGateway() {
-        if (primaryAddressNotSet()) {
+    public String getIpv4Netmask() {
+        if (primaryIpv4AddressNotSet()) {
             return null;
         }
 
-        return getIpConfiguration().getPrimaryAddress().getGateway();
+        return getIpConfiguration().getIpv4PrimaryAddress().getNetmask();
     }
 
-    private boolean primaryAddressNotSet() {
-        return !hasIpConfiguration() || !getIpConfiguration().hasPrimaryAddressSet();
+    public String getIpv4Gateway() {
+        if (primaryIpv4AddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getIpv4PrimaryAddress().getGateway();
+    }
+
+    public NetworkBootProtocol getIpv6BootProtocol() {
+        if (primaryIpv6AddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getIpv6PrimaryAddress().getBootProtocol();
+    }
+
+    public String getIpv6Address() {
+        if (primaryIpv6AddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getIpv6PrimaryAddress().getAddress();
+    }
+
+    public Integer getIpv6Prefix() {
+        if (primaryIpv6AddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getIpv6PrimaryAddress().getPrefix();
+    }
+
+    public String getIpv6Gateway() {
+        if (primaryIpv6AddressNotSet()) {
+            return null;
+        }
+
+        return getIpConfiguration().getIpv6PrimaryAddress().getGateway();
+    }
+
+    private boolean primaryIpv4AddressNotSet() {
+        return !hasIpConfiguration() || !getIpConfiguration().hasIpv4PrimaryAddressSet();
+    }
+
+    private boolean primaryIpv6AddressNotSet() {
+        return !hasIpConfiguration() || !getIpConfiguration().hasIpv6PrimaryAddressSet();
     }
 
     private boolean hasIpConfiguration() {
@@ -148,10 +186,14 @@ public class HostNetwork {
                 .append("vmNetwork", isVmNetwork())
                 .append("stp", isStp())
                 .append("properties", getProperties())
-                .append("bootProtocol", getBootProtocol())
-                .append("address", getAddress())
-                .append("netmask", getNetmask())
-                .append("gateway", getGateway())
+                .append("ipv4BootProtocol", getIpv4BootProtocol())
+                .append("ipv4Address", getIpv4Address())
+                .append("ipv4Netmask", getIpv4Netmask())
+                .append("ipv4Gateway", getIpv4Gateway())
+                .append("ipv6BootProtocol", getIpv6BootProtocol())
+                .append("ipv6Address", getIpv6Address())
+                .append("ipv6Prefix", getIpv6Prefix())
+                .append("ipv6Gateway", getIpv6Gateway())
                 .build();
     }
 }

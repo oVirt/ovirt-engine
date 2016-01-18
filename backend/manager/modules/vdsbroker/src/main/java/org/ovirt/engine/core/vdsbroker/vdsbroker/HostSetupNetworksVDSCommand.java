@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
     protected static final String DHCP_BOOT_PROTOCOL = "dhcp";
+    protected static final String DHCPV6_BOOT_PROTOCOL = "dhcpv6";
     protected static final String BOOT_PROTOCOL = "bootproto";
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
@@ -56,8 +58,11 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
                 attributes.put(VdsProperties.STP, hostNetwork.isStp() ? "yes" : "no");
             }
 
-            if (hostNetwork.getBootProtocol() != null) {
-                addBootProtocol(attributes, hostNetwork);
+            if (hostNetwork.getIpv4BootProtocol() != null) {
+                addIpv4BootProtocol(attributes, hostNetwork);
+            }
+            if (hostNetwork.getIpv6BootProtocol() != null) {
+                addIpv6BootProtocol(attributes, hostNetwork);
             }
 
             if (hostNetwork.isDefaultRoute()) {
@@ -83,22 +88,37 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         return networks;
     }
 
-    private void addBootProtocol(Map<String, Object> opts, HostNetwork attachment) {
-        switch (attachment.getBootProtocol()) {
+    private void addIpv4BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
+        switch (attachment.getIpv4BootProtocol()) {
         case DHCP:
             opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
             break;
         case STATIC_IP:
-            putIfNotEmpty(opts, "ipaddr", attachment.getAddress());
-            putPrefixOrNetmaskIfNotEmpty(opts, attachment.getNetmask());
-            putIfNotEmpty(opts, "gateway", attachment.getGateway());
+            putIfNotEmpty(opts, "ipaddr", attachment.getIpv4Address());
+            putIpv4PrefixOrNetmaskIfNotEmpty(opts, attachment.getIpv4Netmask());
+            putIfNotEmpty(opts, "gateway", attachment.getIpv4Gateway());
             break;
         default:
             break;
         }
     }
 
-    private void putPrefixOrNetmaskIfNotEmpty(Map<String, Object> opts, String netmask) {
+    private void addIpv6BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
+        final NetworkBootProtocol ipv6BootProtocol = attachment.getIpv6BootProtocol();
+        opts.put(DHCPV6_BOOT_PROTOCOL, NetworkBootProtocol.DHCP == ipv6BootProtocol);
+        if (NetworkBootProtocol.STATIC_IP == ipv6BootProtocol) {
+            putIfNotEmpty(opts, "ipv6addr", getIpv6Address(attachment));
+            putIfNotEmpty(opts, "ipv6gateway", attachment.getIpv6Gateway());
+        }
+    }
+
+    private String getIpv6Address(HostNetwork attachment) {
+        final String ipv6Address = attachment.getIpv6Address();
+        final Integer ipv6Prefix = attachment.getIpv6Prefix();
+        return ipv6Prefix == null ? ipv6Address : String.format("%s/%d", ipv6Address, ipv6Prefix);
+    }
+
+    private void putIpv4PrefixOrNetmaskIfNotEmpty(Map<String, Object> opts, String netmask) {
         if (MaskValidator.getInstance().isPrefixValid(netmask)) {
             putIfNotEmpty(opts, "prefix", netmask.replace("/", ""));
         } else {

@@ -74,8 +74,8 @@ public interface InterfacePropertiesAccessor {
         public FromNetworkAttachment(NetworkAttachment networkAttachment, HostNetworkQos networkQos) {
             this.networkAttachment = networkAttachment;
             this.iPv4Address = networkAttachment.getIpConfiguration() == null ? null
-                    : networkAttachment.getIpConfiguration().hasPrimaryAddressSet()
-                            ? networkAttachment.getIpConfiguration().getPrimaryAddress() : null;
+                    : networkAttachment.getIpConfiguration().hasIpv4PrimaryAddressSet()
+                            ? networkAttachment.getIpConfiguration().getIpv4PrimaryAddress() : null;
             this.networkQos = networkQos;
         }
 

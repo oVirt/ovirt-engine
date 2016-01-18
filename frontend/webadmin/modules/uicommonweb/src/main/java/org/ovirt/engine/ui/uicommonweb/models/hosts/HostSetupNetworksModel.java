@@ -394,7 +394,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     if (!networkDialogModel.validate()) {
                         return;
                     }
-                    IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getPrimaryAddress();
+                    IPv4Address iPv4Address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
                     iPv4Address.setBootProtocol(networkDialogModel.getIpv4BootProtocol());
                     if (networkDialogModel.getIsStaticAddress()) {
                         iPv4Address.setAddress(networkDialogModel.getIpv4Address().getEntity());

@@ -144,8 +144,8 @@ public class NetworkAttachmentValidator {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         boolean failWhen = isRoleNetwork() &&
                 (ipConfiguration == null
-                        || !ipConfiguration.hasPrimaryAddressSet()
-                        || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE);
+                        || !ipConfiguration.hasIpv4PrimaryAddressSet()
+                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.NONE);
 
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
                 ReplacementUtils.createSetVariableString(
@@ -175,8 +175,8 @@ public class NetworkAttachmentValidator {
     public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(BusinessEntityMap<VdsNetworkInterface> existingInterfaces) {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         if (ipConfiguration != null
-                && ipConfiguration.hasPrimaryAddressSet()
-                && ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+                && ipConfiguration.hasIpv4PrimaryAddressSet()
+                && ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
             if (existingIface != null) {
                 String oldAddress = existingIface.getIpv4Address();
@@ -185,7 +185,7 @@ public class NetworkAttachmentValidator {
                         VAR_ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED_LIST,
                         getNetwork().getName()))
                     .when(StringUtils.equals(oldAddress, host.getHostName())
-                            && !StringUtils.equals(oldAddress, ipConfiguration.getPrimaryAddress().getAddress()));
+                            && !StringUtils.equals(oldAddress, ipConfiguration.getIpv4PrimaryAddress().getAddress()));
 
             }
         }

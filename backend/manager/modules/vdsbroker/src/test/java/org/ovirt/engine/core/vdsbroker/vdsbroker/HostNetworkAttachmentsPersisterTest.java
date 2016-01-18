@@ -28,28 +28,37 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostNetworkAttachmentsPersisterTest {
 
-    private static final String IP_ADDRESS = "192.168.1.10";
-    private static final String NETMASK = "255.255.255.0";
-    private static final String GATEWAY = "192.168.1.1";
+    private static final String IPV4_ADDRESS = "192.168.1.10";
+    private static final String IPV4_NETMASK = "255.255.255.0";
+    private static final String IPV4_GATEWAY = "192.168.1.1";
+
+    private static final String IPV6_ADDRESS = "ipv6 address";
+    private static final Integer IPV6_PREFIX = 666;
+    private static final String IPV6_GATEWAY = "ipv6 gateway";
 
     @Mock
     private NetworkAttachmentDao networkAttachmentDao;
+
+    @Captor
+    private ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor;
 
     private Guid hostId = Guid.newGuid();
     private Network clusterNetworkA;
@@ -79,9 +88,9 @@ public class HostNetworkAttachmentsPersisterTest {
         customPropertiesForNics.add(interfaceWithAttachedClusterNetworkA, createCustomProperties());
 
         interfaceWithAttachedClusterNetworkA.setIpv4BootProtocol(NetworkBootProtocol.STATIC_IP);
-        interfaceWithAttachedClusterNetworkA.setIpv4Address(IP_ADDRESS);
-        interfaceWithAttachedClusterNetworkA.setIpv4Subnet(NETMASK);
-        interfaceWithAttachedClusterNetworkA.setIpv4Gateway(GATEWAY);
+        interfaceWithAttachedClusterNetworkA.setIpv4Address(IPV4_ADDRESS);
+        interfaceWithAttachedClusterNetworkA.setIpv4Subnet(IPV4_NETMASK);
+        interfaceWithAttachedClusterNetworkA.setIpv4Gateway(IPV4_GATEWAY);
 
         // host interface not attached to any network.
         interfaceWithoutAttachedNetwork = createVdsNetworkInterfaceWithId("interfaceWithoutAttachedNetwork");
@@ -156,7 +165,7 @@ public class HostNetworkAttachmentsPersisterTest {
         networkAttachmentForClusterNetworkA.setProperties(
                 customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
         networkAttachmentForClusterNetworkA.setIpConfiguration(
-                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
+                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
 
         NetworkAttachment networkAttachmentForClusterNetworkB = createNetworkAttachment(clusterNetworkB);
         NetworkAttachment networkAttachmentWithoutNetworkAssigned = createNetworkAttachment(null);
@@ -187,7 +196,7 @@ public class HostNetworkAttachmentsPersisterTest {
         networkAttachmentForClusterNetworkA.setNicName("nonsense");
 
         IpConfiguration ipConfiguration =
-                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         networkAttachmentForClusterNetworkA.setIpConfiguration(ipConfiguration);
         networkAttachmentForClusterNetworkA.setProperties(customPropertiesForNics
                 .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
@@ -202,7 +211,7 @@ public class HostNetworkAttachmentsPersisterTest {
         upToDateNetworkAttachment.setNicId(interfaceWithAttachedClusterNetworkA.getId());
 
         IpConfiguration ipConfiguration =
-                NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
         upToDateNetworkAttachment.setIpConfiguration(ipConfiguration);
         upToDateNetworkAttachment.setProperties(customPropertiesForNics
                 .getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
@@ -229,7 +238,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 }
 
                 IpConfiguration ipConfiguration =
-                        NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
+                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
 
                 NetworkAttachment networkAttachment = (NetworkAttachment) o;
                 return networkAttachment.getId() != null
@@ -283,7 +292,7 @@ public class HostNetworkAttachmentsPersisterTest {
         userNetworkAttachment.setNicId(userNetworkAttachmentNicId);
 
         userNetworkAttachment.setProperties(customPropertiesForNics.getCustomPropertiesFor(interfaceWithAttachedClusterNetworkA));
-        userNetworkAttachment.setIpConfiguration(NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
+        userNetworkAttachment.setIpConfiguration(NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA));
 
         // when persisting new record user provided will be replaced.
         Guid userProvidedNetworkAttachmentId = userNetworkAttachment.getId();
@@ -336,35 +345,50 @@ public class HostNetworkAttachmentsPersisterTest {
 
 
         Map<String, String> propertiesBeingPersisted = attachmentBeingPersisted.getProperties();
-//        Map<String, String> interfaceCustomProperties = interfaceWithAttachedClusterNetworkA.getCustomProperties();
 
         assertCustomProperties(propertiesBeingPersisted, createCustomProperties());
 
-        assertIpConfiguration(attachmentBeingPersisted.getIpConfiguration(), createIpConfiguration());
-
+        assertIpConfigurationsEqual(attachmentBeingPersisted.getIpConfiguration(), createIpConfiguration());
 
         // verify that nothing else happens, no removals, no creations.
         verifyNoMoreInteractions(networkAttachmentDao);
     }
 
     private IpConfiguration createIpConfiguration() {
-        IPv4Address address = new IPv4Address();
-        address.setAddress(IP_ADDRESS);
-        address.setNetmask(NETMASK);
-        address.setGateway(GATEWAY);
-        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
-
         IpConfiguration result = new IpConfiguration();
-        result.setIPv4Addresses(Collections.singletonList(address));
+
+        IPv4Address ipv4Address = createIpv4Address();
+        IpV6Address ipv6Address = createIpv6Address();
+
+        result.setIPv4Addresses(Collections.singletonList(ipv4Address));
+        result.setIpV6Addresses(Collections.singletonList(ipv6Address));
 
         return result;
+    }
+
+    private IPv4Address createIpv4Address() {
+        IPv4Address address = new IPv4Address();
+        address.setAddress(IPV4_ADDRESS);
+        address.setNetmask(IPV4_NETMASK);
+        address.setGateway(IPV4_GATEWAY);
+        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        return address;
+    }
+
+    private IpV6Address createIpv6Address() {
+        IpV6Address address = new IpV6Address();
+        address.setAddress(IPV6_ADDRESS);
+        address.setPrefix(IPV6_PREFIX);
+        address.setGateway(IPV6_GATEWAY);
+        address.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        return address;
     }
 
     @Test
     public void testPersistNetworkAttachmentsForInterfaceWithoutNetworkNothingIsPersisted() {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
         HostNetworkAttachmentsPersister persister = createPersister(
-            Collections.<NetworkAttachment> emptyList(),
+            Collections.emptyList(),
             interfaceWithoutAttachedNetwork);
 
         persister.persistNetworkAttachments();
@@ -383,7 +407,7 @@ public class HostNetworkAttachmentsPersisterTest {
         interfaceWithUnreportedNetwork.setNetworkName("unreportedNetwork");
 
         HostNetworkAttachmentsPersister persister = createPersister(
-            Collections.<NetworkAttachment> emptyList(),
+            Collections.emptyList(),
             interfaceWithUnreportedNetwork);
 
         persister.persistNetworkAttachments();
@@ -398,12 +422,11 @@ public class HostNetworkAttachmentsPersisterTest {
     public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(new ArrayList<>());
 
-        createPersister(Collections.<NetworkAttachment>emptyList(), interfaceWithAttachedClusterNetworkA)
+        createPersister(Collections.emptyList(), interfaceWithAttachedClusterNetworkA)
                 .persistNetworkAttachments();
 
         verify(networkAttachmentDao).getAllForHost(any(Guid.class));
 
-        ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor = ArgumentCaptor.forClass(NetworkAttachment.class);
         verify(networkAttachmentDao).save(networkAttachmentCaptor.capture());
 
         NetworkAttachment attachmentBeingPersisted = networkAttachmentCaptor.getValue();
@@ -411,7 +434,7 @@ public class HostNetworkAttachmentsPersisterTest {
         assertThat(attachmentBeingPersisted.getNicId(), is(interfaceWithAttachedClusterNetworkA.getId()));
         assertThat(attachmentBeingPersisted.getId(), notNullValue());
 
-        assertIpConfiguration(attachmentBeingPersisted.getIpConfiguration());
+        assertNicIpConfiguration(attachmentBeingPersisted.getIpConfiguration(), interfaceWithAttachedClusterNetworkA);
 
         // verify that nothing else happens, namely, interfaceWithoutAttachedNetwork will not trigger persisting any data.
         verifyNoMoreInteractions(networkAttachmentDao);
@@ -472,22 +495,42 @@ public class HostNetworkAttachmentsPersisterTest {
         verifyNoMoreInteractions(networkAttachmentDao);
     }
 
-    private void assertIpConfiguration(IpConfiguration ipConfiguration) {
-        IPv4Address primaryAddress = ipConfiguration.getPrimaryAddress();
-
-        assertThat(primaryAddress.getBootProtocol(), is(interfaceWithAttachedClusterNetworkA.getIpv4BootProtocol()));
-        assertThat(primaryAddress.getAddress(), is(interfaceWithAttachedClusterNetworkA.getIpv4Address()));
-        assertThat(primaryAddress.getNetmask(), is(interfaceWithAttachedClusterNetworkA.getIpv4Subnet()));
-        assertThat(primaryAddress.getGateway(), is(interfaceWithAttachedClusterNetworkA.getIpv4Gateway()));
+    private void assertNicIpConfiguration(IpConfiguration ipConfiguration, VdsNetworkInterface nic) {
+        assertNicIpv4Configuration(ipConfiguration.getIpv4PrimaryAddress(), nic);
+        assertNicIpv6Configuration(ipConfiguration.getIpv6PrimaryAddress(), nic);
     }
 
-    private void assertIpConfiguration(IpConfiguration persistedIpConfiguration, IpConfiguration ipConfiguration) {
-        IPv4Address primaryAddress = persistedIpConfiguration.getPrimaryAddress();
+    private void assertNicIpv4Configuration(IPv4Address ipv4PrimaryAddress, VdsNetworkInterface nic) {
+        assertThat(ipv4PrimaryAddress.getBootProtocol(), is(nic.getIpv4BootProtocol()));
+        assertThat(ipv4PrimaryAddress.getAddress(), is(nic.getIpv4Address()));
+        assertThat(ipv4PrimaryAddress.getNetmask(), is(nic.getIpv4Subnet()));
+        assertThat(ipv4PrimaryAddress.getGateway(), is(nic.getIpv4Gateway()));
+    }
 
-        assertThat(primaryAddress.getBootProtocol(), is(ipConfiguration.getPrimaryAddress().getBootProtocol()));
-        assertThat(primaryAddress.getAddress(), is(ipConfiguration.getPrimaryAddress().getAddress()));
-        assertThat(primaryAddress.getNetmask(), is(ipConfiguration.getPrimaryAddress().getNetmask()));
-        assertThat(primaryAddress.getGateway(), is(ipConfiguration.getPrimaryAddress().getGateway()));
+    private void assertNicIpv6Configuration(IpV6Address ipv6PrimaryAddress, VdsNetworkInterface nic) {
+        assertThat(ipv6PrimaryAddress.getBootProtocol(), is(nic.getIpv6BootProtocol()));
+        assertThat(ipv6PrimaryAddress.getAddress(), is(nic.getIpv6Address()));
+        assertThat(ipv6PrimaryAddress.getPrefix(), is(nic.getIpv6Prefix()));
+        assertThat(ipv6PrimaryAddress.getGateway(), is(nic.getIpv6Gateway()));
+    }
+
+    private void assertIpConfigurationsEqual(IpConfiguration ipConfiguration1, IpConfiguration ipConfiguration2) {
+        assertIpv4AddressesEqual(ipConfiguration1.getIpv4PrimaryAddress(), ipConfiguration2.getIpv4PrimaryAddress());
+        assertIpv6AddressesEqual(ipConfiguration1.getIpv6PrimaryAddress(), ipConfiguration2.getIpv6PrimaryAddress());
+    }
+
+    private void assertIpv4AddressesEqual(IPv4Address ipv4Address1, IPv4Address ipv4Address2) {
+        assertThat(ipv4Address1.getBootProtocol(), is(ipv4Address2.getBootProtocol()));
+        assertThat(ipv4Address1.getAddress(), is(ipv4Address2.getAddress()));
+        assertThat(ipv4Address1.getNetmask(), is(ipv4Address2.getNetmask()));
+        assertThat(ipv4Address1.getGateway(), is(ipv4Address2.getGateway()));
+    }
+
+    private void assertIpv6AddressesEqual(IpV6Address ipv6Address1, IpV6Address ipv6Address2) {
+        assertThat(ipv6Address1.getBootProtocol(), is(ipv6Address2.getBootProtocol()));
+        assertThat(ipv6Address1.getAddress(), is(ipv6Address2.getAddress()));
+        assertThat(ipv6Address1.getPrefix(), is(ipv6Address2.getPrefix()));
+        assertThat(ipv6Address1.getGateway(), is(ipv6Address2.getGateway()));
     }
 
     private void assertCustomProperties(Map<String, String> propertiesBeingPersisted,

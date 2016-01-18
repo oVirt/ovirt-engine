@@ -271,7 +271,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     @Test
     public void testIsNetworkInSyncWhenIpConfigurationIsEmpty() throws Exception {
-        when(mockedIpConfiguration.hasPrimaryAddressSet()).thenReturn(false);
+        when(mockedIpConfiguration.hasIpv4PrimaryAddressSet()).thenReturn(false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
@@ -299,8 +299,8 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     private void initIpConfiguration() {
-        when(mockedIpConfiguration.hasPrimaryAddressSet()).thenReturn(true);
-        when(mockedIpConfiguration.getPrimaryAddress()).thenReturn(mockedIPv4Address);
+        when(mockedIpConfiguration.hasIpv4PrimaryAddressSet()).thenReturn(true);
+        when(mockedIpConfiguration.getIpv4PrimaryAddress()).thenReturn(mockedIPv4Address);
     }
 
     @Test
@@ -378,7 +378,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.BOOT_PROTOCOL,
                 iface.getIpv4BootProtocol().name(),
-                mockedIpConfiguration.getPrimaryAddress().getBootProtocol().name(),
+                mockedIpConfiguration.getIpv4PrimaryAddress().getBootProtocol().name(),
                 true));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
@@ -399,19 +399,19 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         List<ReportedConfiguration> expectedReportedConfigurations = createDefaultExpectedReportedConfigurations();
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.BOOT_PROTOCOL,
                 iface.getIpv4BootProtocol().name(),
-                mockedIpConfiguration.getPrimaryAddress().getBootProtocol().name(),
+                mockedIpConfiguration.getIpv4PrimaryAddress().getBootProtocol().name(),
                 true));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.NETMASK,
                 iface.getIpv4Subnet(),
-                mockedIpConfiguration.getPrimaryAddress().getNetmask(),
+                mockedIpConfiguration.getIpv4PrimaryAddress().getNetmask(),
                 syncNetmask));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.IP_ADDRESS,
                 iface.getIpv4Address(),
-                mockedIpConfiguration.getPrimaryAddress().getAddress(),
+                mockedIpConfiguration.getIpv4PrimaryAddress().getAddress(),
                 syncAddress));
         expectedReportedConfigurations.add(new ReportedConfiguration(ReportedConfigurationType.GATEWAY,
                 iface.getIpv4Gateway(),
-                mockedIpConfiguration.getPrimaryAddress().getGateway(),
+                mockedIpConfiguration.getIpv4PrimaryAddress().getGateway(),
                 syncGateway));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));

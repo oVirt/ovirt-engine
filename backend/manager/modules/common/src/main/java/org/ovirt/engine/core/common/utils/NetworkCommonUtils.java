@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,25 +73,6 @@ public class NetworkCommonUtils {
                         : new ArrayList<String>());
             }
         }
-    }
-
-    public static IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
-        if (nic == null) {
-            return createDefaultIpConfiguration();
-        }
-
-        IPv4Address ipv4Address = new IPv4Address();
-        if (nic.getIpv4BootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            ipv4Address.setAddress(nic.getIpv4Address());
-            ipv4Address.setNetmask(nic.getIpv4Subnet());
-            ipv4Address.setGateway(nic.getIpv4Gateway());
-        }
-        ipv4Address.setBootProtocol(nic.getIpv4BootProtocol());
-
-        IpConfiguration ipConfiguration = new IpConfiguration();
-        ipConfiguration.setIPv4Addresses(Collections.singletonList(ipv4Address));
-
-        return ipConfiguration;
     }
 
     public static IpConfiguration createDefaultIpConfiguration() {

@@ -38,14 +38,21 @@ public class IpConfiguration implements Serializable {
         return iPv4Addresses;
     }
 
-    public IPv4Address getPrimaryAddress() {
-        if (!hasPrimaryAddressSet()) {
+    public IPv4Address getIpv4PrimaryAddress() {
+        if (!hasIpv4PrimaryAddressSet()) {
             throw new IllegalStateException("IpConfiguration does not have IPv4 address set.");
         }
         return getIPv4Addresses().get(0);
     }
 
-    public boolean hasPrimaryAddressSet() {
+    public IpV6Address getIpv6PrimaryAddress() {
+        if (!hasIpv6PrimaryAddressSet()) {
+            throw new IllegalStateException("IpConfiguration does not have IPv6 address set.");
+        }
+        return getIpV6Addresses().get(0);
+    }
+
+    public boolean hasIpv4PrimaryAddressSet() {
         return iPv4Addresses != null && !iPv4Addresses.isEmpty() && iPv4Addresses.get(0) != null;
     }
 
@@ -55,6 +62,14 @@ public class IpConfiguration implements Serializable {
 
     public void setIPv4Addresses(List<IPv4Address> iPv4Addresses) {
         this.iPv4Addresses = iPv4Addresses;
+    }
+
+    public List<IpV6Address> getIpV6Addresses() {
+        return ipV6Addresses;
+    }
+
+    public void setIpV6Addresses(List<IpV6Address> ipV6Addresses) {
+        this.ipV6Addresses = ipV6Addresses;
     }
 
     @Override
@@ -81,13 +96,5 @@ public class IpConfiguration implements Serializable {
                 .append("ipv4Addresses", getIPv4Addresses())
                 .append("ipv6Addresses", getIpV6Addresses())
                 .build();
-    }
-
-    public List<IpV6Address> getIpV6Addresses() {
-        return ipV6Addresses;
-    }
-
-    public void setIpV6Addresses(List<IpV6Address> ipV6Addresses) {
-        this.ipV6Addresses = ipV6Addresses;
     }
 }

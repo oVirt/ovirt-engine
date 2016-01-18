@@ -65,7 +65,7 @@ public class LogicalNetworkModelParametersHelper {
     }
 
     private void fixBootProtocolOfMgmtNetworkIfNeeded(NetworkAttachment networkAttachment) {
-        IPv4Address ipV4address = networkAttachment.getIpConfiguration().getPrimaryAddress();
+        IPv4Address ipV4address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
         if (networkModel.isManagement() && (ipV4address.getBootProtocol() == null
                 || ipV4address.getBootProtocol() == NetworkBootProtocol.NONE)) {
             ipV4address.setBootProtocol(NetworkBootProtocol.DHCP);
@@ -74,7 +74,7 @@ public class LogicalNetworkModelParametersHelper {
 
     private void applyOnAttachmentParamsFrom(InterfacePropertiesAccessor interfacePropertiesAccessor,
             NetworkAttachment networkAttachment) {
-        IPv4Address ipV4address = networkAttachment.getIpConfiguration().getPrimaryAddress();
+        IPv4Address ipV4address = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
         ipV4address.setBootProtocol(interfacePropertiesAccessor.getBootProtocol());
         ipV4address.setAddress(interfacePropertiesAccessor.getAddress());
         ipV4address.setNetmask(interfacePropertiesAccessor.getNetmask());
@@ -104,13 +104,13 @@ public class LogicalNetworkModelParametersHelper {
         }
         NetworkParameters netParams = new NetworkParameters();
 
-        IPv4Address ipAdrdress = networkAttachment.getIpConfiguration().getPrimaryAddress();
+        IPv4Address primaryAddress = networkAttachment.getIpConfiguration().getIpv4PrimaryAddress();
 
-        if (ipAdrdress != null) {
-            netParams.setBootProtocol(ipAdrdress.getBootProtocol());
-            netParams.setAddress(ipAdrdress.getAddress());
-            netParams.setNetmask(ipAdrdress.getNetmask());
-            netParams.setGateway(ipAdrdress.getGateway());
+        if (primaryAddress != null) {
+            netParams.setBootProtocol(primaryAddress.getBootProtocol());
+            netParams.setAddress(primaryAddress.getAddress());
+            netParams.setNetmask(primaryAddress.getNetmask());
+            netParams.setGateway(primaryAddress.getGateway());
         }
 
         netParams.setHostNetworkQos(networkAttachment.getHostNetworkQos());

@@ -158,15 +158,15 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
 
     private void initIpConfigurationWithBootProtocol(NetworkBootProtocol networkBootProtocol) {
         initIpConfigurationWithPrimaryAddress();
-        getTestedNetworkAttachment().getIpConfiguration().getPrimaryAddress().setBootProtocol(networkBootProtocol);
+        getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setBootProtocol(networkBootProtocol);
     }
 
     private void initIpConfigurationAddress() {
-        getTestedNetworkAttachment().getIpConfiguration().getPrimaryAddress().setAddress(ADDRESS);
+        getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setAddress(ADDRESS);
     }
 
     private void initIpConfigurationNetmask() {
-        getTestedNetworkAttachment().getIpConfiguration().getPrimaryAddress().setNetmask(NETMASK);
+        getTestedNetworkAttachment().getIpConfiguration().getIpv4PrimaryAddress().setNetmask(NETMASK);
     }
 
 }

@@ -94,7 +94,6 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> extends VdsCommand<T> {
 
-
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
     private static final String DEFAULT_BOND_OPTIONS = "mode=4 miimon=100";
     private BusinessEntityMap<Network> networkBusinessEntityMap;
@@ -467,10 +466,21 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private boolean defaultRouteRequired(Network network, IpConfiguration ipConfiguration) {
         return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getClusterId())
                 && ipConfiguration != null
-                && ipConfiguration.hasPrimaryAddressSet()
-                && (ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
-                      || ipConfiguration.getPrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
-                            && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
+                && (isIpv4GatewaySet(ipConfiguration) || isIpv6GatewaySet(ipConfiguration));
+    }
+
+    private boolean isIpv4GatewaySet(IpConfiguration ipConfiguration) {
+        return ipConfiguration.hasIpv4PrimaryAddressSet()
+                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
+                        || ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                                && StringUtils.isNotEmpty(ipConfiguration.getIpv4PrimaryAddress().getGateway()));
+    }
+
+    private boolean isIpv6GatewaySet(IpConfiguration ipConfiguration) {
+        return ipConfiguration.hasIpv6PrimaryAddressSet()
+                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == NetworkBootProtocol.DHCP
+                        || ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                                && StringUtils.isNotEmpty(ipConfiguration.getIpv6PrimaryAddress().getGateway()));
     }
 
     private boolean noChangesDetected() {
@@ -565,6 +575,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 networkToConfigure.setBonding(isBonding(attachment, nics));
 
                 if (defaultRouteSupported() && defaultRouteRequired(network, attachment.getIpConfiguration())) {
+                    // TODO: YZ - should default route be set separately for IPv4 and IPv6
                     networkToConfigure.setDefaultRoute(true);
                 }
 

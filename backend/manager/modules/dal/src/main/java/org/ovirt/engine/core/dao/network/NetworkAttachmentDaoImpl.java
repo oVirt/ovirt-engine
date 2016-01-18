@@ -106,12 +106,12 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     }
 
     private void mapIpv4Configuration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
-        if (ipConfiguration.hasPrimaryAddressSet()) {
-            final IPv4Address primaryAddress = ipConfiguration.getPrimaryAddress();
-            mapper.addValue("boot_protocol", EnumUtils.nameOrNull(primaryAddress.getBootProtocol()))
-                    .addValue("address", primaryAddress.getAddress())
-                    .addValue("netmask", primaryAddress.getNetmask())
-                    .addValue("gateway", primaryAddress.getGateway());
+        if (ipConfiguration.hasIpv4PrimaryAddressSet()) {
+            final IPv4Address primaryIpv4Address = ipConfiguration.getIpv4PrimaryAddress();
+            mapper.addValue("boot_protocol", EnumUtils.nameOrNull(primaryIpv4Address.getBootProtocol()))
+                    .addValue("address", primaryIpv4Address.getAddress())
+                    .addValue("netmask", primaryIpv4Address.getNetmask())
+                    .addValue("gateway", primaryIpv4Address.getGateway());
         } else {
             mapper.addValue("boot_protocol", null)
                     .addValue("address", null)
@@ -122,7 +122,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
     private void mapIpv6Configuration(MapSqlParameterSource mapper, IpConfiguration ipConfiguration) {
         if (ipConfiguration.hasIpv6PrimaryAddressSet()) {
-            final IpV6Address primaryIpv6Address = ipConfiguration.getIpV6Addresses().get(0);
+            final IpV6Address primaryIpv6Address = ipConfiguration.getIpv6PrimaryAddress();
             mapper.addValue("ipv6_boot_protocol", EnumUtils.nameOrNull(primaryIpv6Address.getBootProtocol()))
                     .addValue("ipv6_address", primaryIpv6Address.getAddress())
                     .addValue("ipv6_prefix", primaryIpv6Address.getPrefix())

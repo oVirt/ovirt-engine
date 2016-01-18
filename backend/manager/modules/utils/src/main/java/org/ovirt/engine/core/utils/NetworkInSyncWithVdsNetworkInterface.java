@@ -131,11 +131,11 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private boolean isPrimaryAddressExist() {
         return networkDataCenterIpConfigurationDefinition != null
-                && networkDataCenterIpConfigurationDefinition.hasPrimaryAddressSet();
+                && networkDataCenterIpConfigurationDefinition.hasIpv4PrimaryAddressSet();
     }
 
     private IPv4Address getPrimaryAddress() {
-        return networkDataCenterIpConfigurationDefinition.getPrimaryAddress();
+        return networkDataCenterIpConfigurationDefinition.getIpv4PrimaryAddress();
     }
 
     private void addReportedIpConfiguration(ReportedConfigurations result) {

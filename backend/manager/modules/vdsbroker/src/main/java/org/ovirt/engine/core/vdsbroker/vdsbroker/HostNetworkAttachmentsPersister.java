@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class HostNetworkAttachmentsPersister {
 
@@ -142,7 +143,7 @@ public class HostNetworkAttachmentsPersister {
         NetworkAttachment networkAttachment =
                 new NetworkAttachment(getBaseInterfaceNicOrThis(nic),
                         clusterNetworks.get(networkName),
-                        NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(nic));
+                        NetworkUtils.createIpConfigurationFromVdsNetworkInterface(nic));
         networkAttachment.setId(Guid.newGuid());
 
         networkAttachmentDao.save(networkAttachment);

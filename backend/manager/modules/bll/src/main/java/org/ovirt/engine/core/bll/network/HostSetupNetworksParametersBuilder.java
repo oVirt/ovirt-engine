@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
-import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -75,7 +74,7 @@ public abstract class HostSetupNetworksParametersBuilder {
             attachmentToConfigure =
                     new NetworkAttachment(baseNic,
                             network,
-                            NetworkCommonUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(baseNic,
+                            NetworkUtils.createIpConfigurationFromVdsNetworkInterface(getVlanDevice(baseNic,
                                     network.getVlanId())));
         } else if (!attachmentToConfigure.getNicId().equals(baseNic.getId())) {
             // Move the attachment to the nic with the label
@@ -128,8 +127,8 @@ public abstract class HostSetupNetworksParametersBuilder {
             Network network,
             NetworkAttachment attachment) {
         if (NetworkUtils.isRoleNetwork(getNetworkCluster(nic, network))) {
-            if (attachment.getIpConfiguration() != null && attachment.getIpConfiguration().hasPrimaryAddressSet()) {
-                IPv4Address primaryAddress = attachment.getIpConfiguration().getPrimaryAddress();
+            if (attachment.getIpConfiguration() != null && attachment.getIpConfiguration().hasIpv4PrimaryAddressSet()) {
+                IPv4Address primaryAddress = attachment.getIpConfiguration().getIpv4PrimaryAddress();
 
                 if (primaryAddress.getBootProtocol() == null
                         || primaryAddress.getBootProtocol() == NetworkBootProtocol.NONE) {

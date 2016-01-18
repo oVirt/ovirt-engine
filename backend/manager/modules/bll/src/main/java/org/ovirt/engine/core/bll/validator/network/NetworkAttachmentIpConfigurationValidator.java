@@ -26,13 +26,13 @@ public class NetworkAttachmentIpConfigurationValidator {
         IPv4Address iPv4Address = null;
         for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
             networkAttachmentIpConfiguration = networkAttachment.getIpConfiguration();
-            if (networkAttachmentIpConfiguration == null || !networkAttachmentIpConfiguration.hasPrimaryAddressSet()) {
+            if (networkAttachmentIpConfiguration == null || !networkAttachmentIpConfiguration.hasIpv4PrimaryAddressSet()) {
                 return incompleteIpConfigurationValidationResult(
                         EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION,
                         networkAttachment.getNetworkName(),
                         networkAttachment.getNicName());
             }
-            iPv4Address = networkAttachmentIpConfiguration.getPrimaryAddress();
+            iPv4Address = networkAttachmentIpConfiguration.getIpv4PrimaryAddress();
             if (iPv4Address.getBootProtocol() == null) {
                 return incompleteIpConfigurationValidationResult(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
