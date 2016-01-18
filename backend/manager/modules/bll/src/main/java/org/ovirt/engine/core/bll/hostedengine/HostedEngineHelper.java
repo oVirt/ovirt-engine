@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -182,4 +183,9 @@ public class HostedEngineHelper {
     public StorageDomainStatic getStorageDomain() {
         return sd;
     }
+
+    public static boolean isHostedEngineDomain(final StorageDomain storageDomain) {
+        return Config.<String>getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName());
+    }
+
 }
