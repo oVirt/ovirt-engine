@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -274,23 +275,22 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + id.hashCode();
-        result = prime * result + device.hashCode();
-        result = prime * result + type.hashCode();
-        result = prime * result + address.hashCode();
-        result = prime * result + bootOrder;
-        result = prime * result + ((specParams == null) ? 0 : specParams.hashCode());
-        result = prime * result + (isManaged ? 1231 : 1237);
-        result = prime * result + (isPlugged ? 1231 : 1237);
-        result = prime * result + (getIsReadOnly() ? 1231 : 1237);
-        result = prime * result + alias.hashCode();
-        result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
-        result = prime * result + (snapshotId == null ? 0 : snapshotId.hashCode());
-        result = prime * result + (logicalName == null ? 0 : logicalName.hashCode());
-        result = prime * result + (usingScsiReservation ? 1231 : 1237);
-        return result;
+        return Objects.hash(
+                id,
+                device,
+                type,
+                address,
+                bootOrder,
+                specParams,
+                isManaged,
+                isPlugged,
+                getIsReadOnly(),
+                alias,
+                customProperties,
+                snapshotId,
+                logicalName,
+                usingScsiReservation
+        );
     }
 
     @Override
