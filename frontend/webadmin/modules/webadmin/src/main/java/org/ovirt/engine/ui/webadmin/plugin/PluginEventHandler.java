@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent;
 import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent.MessageReceivedHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeSelectionChangeEvent.SystemTreeSelectionChangeHandler;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -75,6 +76,8 @@ public class PluginEventHandler {
         eventBus.addHandler(RestApiSessionAcquiredEvent.getType(), new RestApiSessionAcquiredHandler() {
             @Override
             public void onRestApiSessionAcquired(RestApiSessionAcquiredEvent event) {
+                logger.warning("In future versions, RestApiSessionAcquired event will be replaced " + //$NON-NLS-1$
+                        "with API to create authenticated requests for Engine services"); //$NON-NLS-1$
                 manager.invokePluginsNowOrLater("RestApiSessionAcquired", //$NON-NLS-1$
                         JsArrayHelper.createStringArray(event.getSessionId()));
             }
