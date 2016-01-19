@@ -1293,6 +1293,9 @@ fi
 %endif
 
 %changelog
+* Tue Jan 19 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.2.6-1
+- Bump version to 3.6.2.6
+
 * Tue Jan 12 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.2.5-1
 - Bump version to 3.6.2.5
 
