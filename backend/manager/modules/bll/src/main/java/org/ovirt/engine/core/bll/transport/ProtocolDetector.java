@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.transport;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -79,7 +78,7 @@ public class ProtocolDetector implements AutoCloseable {
                 }
                 Thread.sleep(this.connectionTimeout);
             }
-        } catch (TimeoutException | InterruptedException ignored) {
+        } catch (Exception ignored) {
         }
         return connected;
     }
