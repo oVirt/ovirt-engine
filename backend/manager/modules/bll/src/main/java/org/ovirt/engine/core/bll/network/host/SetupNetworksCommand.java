@@ -185,7 +185,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 VdsHandler.handleVdsResult(retVal);
 
                 if (retVal.getSucceeded()) {
-                    try (EngineLock monitoringLock = acquireMonitorLock()) {
+                    try (EngineLock monitoringLock = acquireMonitorLock("Setup Networks")) {
                         VDSReturnValue returnValue =
                                 runVdsCommand(VDSCommandType.GetCapabilities,
                                         new VdsIdAndVdsVDSCommandParametersBase(getVds()));

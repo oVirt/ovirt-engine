@@ -25,8 +25,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
@@ -53,6 +51,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    private HostLocking hostLocking;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -268,28 +269,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
     }
 
-    protected EngineLock acquireMonitorLock() {
-        final VDS vds = getVds();
-        EngineLock monitoringLock =
-                new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
-                        new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
-        log.info("Before acquiring lock in order to prevent monitoring for host '{}' from data-center '{}'",
-                vds.getName(),
-                vds.getStoragePoolName());
-        getLockManager().acquireLockWait(monitoringLock);
-        log.info("Lock acquired, from now a monitoring of host will be skipped for host '{}' from data-center '{}'",
-                vds.getName(),
-                vds.getStoragePoolName());
-
-        return monitoringLock;
-    }
-
-    protected void logMonitorLockReleased(String commandName) {
-        final VDS vds = getVds();
-        log.info("{} finished. Lock released. Monitoring can run now for host '{}' from data-center '{}'",
-                commandName,
-                vds.getName(),
-                vds.getStoragePoolName());
+    public EngineLock acquireMonitorLock(String lockReleaseMessage) {
+        return this.hostLocking.acquireMonitorLock(getVds(), lockReleaseMessage, log);
     }
 
     protected void handleError(Exception e, VDSStatus status) {

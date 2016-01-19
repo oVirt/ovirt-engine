@@ -296,14 +296,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 VdsHandler.handleVdsResult(retVal);
 
                 if (retVal.getSucceeded()) {
-                    try (EngineLock monitoringLock = acquireMonitorLock()) {
+                    try (EngineLock monitoringLock = acquireMonitorLock("Host setup networks")) {
                         VDSReturnValue returnValue =
                             runVdsCommand(VDSCommandType.GetCapabilities,
                                 new VdsIdAndVdsVDSCommandParametersBase(getVds()));
                         VDS updatedHost = (VDS) returnValue.getReturnValue();
                         persistNetworkChanges(updatedHost);
                     }
-                    logMonitorLockReleased("Host setup networks");
 
                     setSucceeded(true);
                 }

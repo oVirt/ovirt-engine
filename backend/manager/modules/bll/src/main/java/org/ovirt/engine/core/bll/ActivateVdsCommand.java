@@ -59,7 +59,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
 
         final VDS vds = getVds();
-        try (EngineLock monitoringLock = acquireMonitorLock()) {
+        try (EngineLock monitoringLock = acquireMonitorLock("Activate host")) {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
             setSucceeded(setVdsStatus(VDSStatus.Unassigned).getSucceeded());
 
@@ -88,8 +88,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 }
             }
         }
-
-        logMonitorLockReleased("Activate");
     }
 
     @Override
