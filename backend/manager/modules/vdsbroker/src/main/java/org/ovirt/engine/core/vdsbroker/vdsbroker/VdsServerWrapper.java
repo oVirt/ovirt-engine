@@ -898,14 +898,25 @@ public class VdsServerWrapper implements IVdsServer {
             int replicaCount,
             int stripeCount,
             String[] transportList,
-            boolean force) {
+            boolean force,
+            boolean isArbiter) {
         try {
-            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
-                    brickList,
-                    replicaCount,
-                    stripeCount,
-                    transportList,
-                    force));
+            if (isArbiter) {
+                return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
+                        brickList,
+                        replicaCount,
+                        stripeCount,
+                        transportList,
+                        force,
+                        isArbiter));
+            } else {
+                return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
+                        brickList,
+                        replicaCount,
+                        stripeCount,
+                        transportList,
+                        force));
+            }
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

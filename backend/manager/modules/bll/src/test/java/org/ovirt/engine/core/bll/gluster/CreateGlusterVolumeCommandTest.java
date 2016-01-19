@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,14 +25,17 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
@@ -62,6 +67,12 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @InjectMocks
     private CreateGlusterVolumeCommand cmd = createTestCommand(getVolume(2, false));
 
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
+            mockConfig(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
+            );
+
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(volumeEntity);
         return new CreateGlusterVolumeCommand(parameters, null);
@@ -88,9 +99,10 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         return vds;
     }
 
-    private Cluster getCluster(boolean glusterEnabled) {
+    private Cluster getCluster(boolean glusterEnabled, Version clusterVersion) {
         Cluster cluster = new Cluster();
         cluster.setId(clusterId);
+        cluster.setCompatibilityVersion(clusterVersion);
         cluster.setVirtService(false);
         cluster.setGlusterService(glusterEnabled);
         return cluster;
@@ -100,16 +112,22 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getCluster(true)).when(clusterDao).get(any(Guid.class));
+        doReturn(getCluster(true, Version.v4_1)).when(clusterDao).get(any(Guid.class));
     }
 
-    private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
+    private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks){
+        return getVolume(brickCount, withDuplicateBricks, GlusterVolumeType.DISTRIBUTE, 0, false);
+    }
+
+    private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks, GlusterVolumeType volumeType, int replicaCount, boolean isArbiter) {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
         volumeEntity.setId(Guid.newGuid());
         volumeEntity.setClusterId(clusterId);
         volumeEntity.setName("vol1");
-        volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        volumeEntity.setVolumeType(volumeType);
         volumeEntity.setBricks(getBricks(volumeEntity.getId(), brickCount, withDuplicateBricks));
+        volumeEntity.setReplicaCount(replicaCount);
+        volumeEntity.setIsArbiter(isArbiter);
         return volumeEntity;
     }
 
@@ -138,8 +156,29 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void validateSucceedsWithArbiter() {
+        setVolume(getVolume(3, false, GlusterVolumeType.REPLICATE, 3, true));
+        assertTrue(cmd.validate());
+    }
+
+    @Test
+    public void validateFailsWithArbiterAndInvalidReplica() {
+        setVolume(getVolume(2, false, GlusterVolumeType.REPLICATE, 2, true));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_SHOULD_BE_REPLICA_3_VOLUME);
+    }
+
+    @Test
+    public void validateFailsWithArbiterWithClusterDoesNotArbiterVolume() {
+        setVolume(getVolume(3, false, GlusterVolumeType.REPLICATE, 3, true));
+        doReturn(getCluster(true, Version.v4_0)).when(clusterDao).get(any(Guid.class));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_NOT_SUPPORTED);
+    }
+
+    @Test
     public void validateFailsWithClusterDoesNotSupportGluster() {
-        doReturn(getCluster(false)).when(clusterDao).get(any(Guid.class));
+        doReturn(getCluster(false, Version.v4_1)).when(clusterDao).get(any(Guid.class));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
     }

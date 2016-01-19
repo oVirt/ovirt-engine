@@ -158,6 +158,9 @@ select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
+-- Gluster Arbiter Volume --
+select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'false', '4.0');
+
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
 

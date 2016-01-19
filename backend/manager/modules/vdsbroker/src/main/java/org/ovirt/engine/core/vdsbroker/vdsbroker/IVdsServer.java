@@ -230,7 +230,8 @@ public interface IVdsServer {
             int replicaCount,
             int stripeCount,
             String[] transportList,
-            boolean force);
+            boolean force,
+            boolean arbiter);
 
     StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
 

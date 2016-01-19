@@ -28,4 +28,12 @@ public class GlusterFeatureSupported {
     public static boolean glusterSelfHealMonitoring(Version version) {
         return supportedInConfig(ConfigValues.GlusterSelfHealMonitoringSupported, version);
     }
+
+    public static boolean glusterArbiterVolumeSupported(Version version) {
+        if (version != null) {
+            return supportedInConfig(ConfigValues.GlusterSupportArbiterVolume, version);
+        } else {
+            return false;
+        }
+    }
 }

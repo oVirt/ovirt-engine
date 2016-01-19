@@ -34,7 +34,8 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
                         volume.getReplicaCount(),
                         volume.getStripeCount(),
                         getTransportTypeArr(volume),
-                        isForce);
+                        isForce,
+                volume.getIsArbiter());
 
         // Handle errors if any
         proceedProxyReturnValue();

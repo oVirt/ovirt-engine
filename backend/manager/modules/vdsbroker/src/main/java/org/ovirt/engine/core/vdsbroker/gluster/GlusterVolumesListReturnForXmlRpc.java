@@ -42,6 +42,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String DISPERSE_COUNT = "disperseCount";
     private static final String REDUNDANCY_COUNT = "redundancyCount";
     private static final String BRICKS_INFO = "bricksInfo"; //contains brick name and server uuid
+    private static final String IS_ARBITER = "isArbiter";
     private static final String NAME = "name";
     private static final String HOST_UUID = "hostUuid";
 
@@ -82,6 +83,9 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         if (volume.getVolumeType() !=null) {
             if (volume.getVolumeType().isReplicatedType()) {
                 volume.setReplicaCount(Integer.valueOf((String) map.get(REPLICA_COUNT)));
+                boolean isArbiter = map.containsKey(IS_ARBITER)
+                        ? Boolean.valueOf(map.get(IS_ARBITER).toString()) : Boolean.FALSE;
+                volume.setIsArbiter(isArbiter);
             }
             if (volume.getVolumeType().isStripedType()) {
                 volume.setStripeCount(Integer.valueOf((String) map.get(STRIPE_COUNT)));
@@ -91,7 +95,6 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
                 volume.setRedundancyCount(Integer.valueOf((String) map.get(REDUNDANCY_COUNT)));
             }
         }
-
         for(Object transportType : (Object[])map.get(TRANSPORT_TYPE)) {
             volume.addTransportType(TransportType.valueOf((String)transportType));
         }
@@ -182,7 +185,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             return null;
         }
 
-        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, null, null);
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, null, null, false);
     }
 
     private GlusterBrickEntity getBrick(Guid clusterId, Guid volumeId, Map<String, Object> brickInfoMap, int brickOrder) {
@@ -196,6 +199,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         String hostUuid = (String) brickInfoMap.get(HOST_UUID);
         String brickDir = brickParts[1];
         String hostAddress = brickParts[0];
+        boolean isArbiter = brickInfoMap.containsKey(IS_ARBITER)
+                ? Boolean.valueOf(brickInfoMap.get(IS_ARBITER).toString()) : Boolean.FALSE;
 
         GlusterServer glusterServer = dbUtils.getServerByUuid(Guid.createGuidFromString(hostUuid));
         if (glusterServer == null) {
@@ -217,7 +222,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
                         clusterId);
             }
         }
-        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, networkAddress, networkId);
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, networkAddress, networkId, isArbiter);
     }
 
     private GlusterBrickEntity getBrickEntity(Guid clusterId,
@@ -226,11 +231,13 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             VdsStatic server,
             String brickDir,
             String networkAddress,
-            Guid networkId) {
+            Guid networkId,
+            boolean isArbiter) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setVolumeId(volumeId);
         brick.setBrickOrder(brickOrder);
         brick.setBrickDirectory(brickDir);
+        brick.setIsArbiter(isArbiter);
 
         brick.setServerId(server.getId());
         brick.setServerName(server.getHostName());

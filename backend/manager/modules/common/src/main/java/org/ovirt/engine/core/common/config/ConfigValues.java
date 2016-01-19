@@ -1503,6 +1503,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     SchedulerOverBookingThreshold,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterSupportArbiterVolume,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")

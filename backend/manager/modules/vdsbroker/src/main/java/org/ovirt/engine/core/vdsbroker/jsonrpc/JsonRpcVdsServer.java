@@ -1005,7 +1005,8 @@ public class JsonRpcVdsServer implements IVdsServer {
             int replicaCount,
             int stripeCount,
             String[] transportList,
-            boolean force) {
+            boolean force,
+            boolean isArbiter) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.create").withParameter("volumeName", volumeName)
                         .withParameter("bricklist", new ArrayList<>(Arrays.asList(brickList)))
@@ -1013,6 +1014,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("stripeCount", stripeCount)
                         .withParameter("transportList", new ArrayList<>(Arrays.asList(transportList)))
                         .withParameter("force", force)
+                        .withParameter("arbiter", isArbiter)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
