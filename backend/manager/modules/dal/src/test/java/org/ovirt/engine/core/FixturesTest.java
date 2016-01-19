@@ -33,15 +33,16 @@ public class FixturesTest {
 
     @Before
     public void setUp() throws Exception {
-        InputStream fixturesStream = FixturesTest.class.getResourceAsStream("/fixtures.xml");
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        fixturesDocument = documentBuilder.parse(fixturesStream);
+        try (InputStream fixturesStream = FixturesTest.class.getResourceAsStream("/fixtures.xml")) {
+            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            fixturesDocument = documentBuilder.parse(fixturesStream);
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+            XPath xPath = XPathFactory.newInstance().newXPath();
 
-        tablesOfDatasetExpression = xPath.compile("/dataset/table");
-        columnsExpression = xPath.compile("column");
-        rowExpression = xPath.compile("row");
+            tablesOfDatasetExpression = xPath.compile("/dataset/table");
+            columnsExpression = xPath.compile("column");
+            rowExpression = xPath.compile("row");
+        }
     }
 
     @Test
