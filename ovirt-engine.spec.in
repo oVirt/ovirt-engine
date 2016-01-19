@@ -290,12 +290,12 @@ Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssh
+Requires:	vdsm-jsonrpc-java >= 1.1.7
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.5.0
 Requires:	python-cheetah
 Requires:	spice-html5
-Requires:	vdsm-jsonrpc-java >= 1.1.6
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
