@@ -414,7 +414,7 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 --This SP returns all cluster with permissions to run the given action by user
-CREATE OR REPLACE FUNCTION fn_perms_get_cluster_with_permitted_action (
+CREATE OR REPLACE FUNCTION fn_perms_get_clusters_with_permitted_action (
     v_user_id UUID,
     v_action_group_id INT
     )

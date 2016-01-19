@@ -1151,7 +1151,7 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 --This SP returns all data centers containing cluster with permissions to run the given action by user
-CREATE OR REPLACE FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_cluster (
+CREATE OR REPLACE FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_clusters (
     v_user_id UUID,
     v_action_group_id INT,
     v_supports_virt_service boolean,
