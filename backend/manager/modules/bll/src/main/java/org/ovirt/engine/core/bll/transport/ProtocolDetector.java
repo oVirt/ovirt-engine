@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.transport;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -23,6 +24,9 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * We need to detect whether vdsm supports jsonrpc or only xmlrpc. It is confusing to users
@@ -34,6 +38,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
  */
 public class ProtocolDetector implements AutoCloseable {
 
+    private static Logger log = LoggerFactory.getLogger(ProtocolDetector.class);
     private Integer connectionTimeout = null;
     private Integer retryAttempts = null;
     private final ResourceManager resourceManager;
@@ -78,7 +83,10 @@ public class ProtocolDetector implements AutoCloseable {
                 }
                 Thread.sleep(this.connectionTimeout);
             }
-        } catch (Exception ignored) {
+        } catch (TimeoutException | InterruptedException | XmlRpcRunTimeException ignored) {
+        } catch (Exception e) {
+            log.warn("Failed to connect to host", e.getMessage());
+            log.debug("Exception", e);
         }
         return connected;
     }
