@@ -196,7 +196,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                                 if (detector.attemptFallbackProtocol()) {
                                     detector.setFallbackProtocol();
                                 } else {
-                                    throw new VdsInstallException(VDSStatus.InstallFailed, "Host not reachable");
+                                    throw new VdsInstallException(VDSStatus.InstallFailed, "Host is not reachable");
                                 }
                             }
                         }
