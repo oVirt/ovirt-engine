@@ -172,7 +172,7 @@ public enum VdcQueryType implements Serializable {
     GetAllInstanceTypes(VdcQueryAuthType.User),
     GetAllImageTypes(VdcQueryAuthType.User),
     GetVmTemplatesDisks(VdcQueryAuthType.User),
-    GetVmTemplatesByStoragePoolId,
+    GetVmTemplatesByStoragePoolId(VdcQueryAuthType.User),
     GetVmTemplatesByImageGuid,
     GetSystemPermissions,
     GetVmTemplatesByBaseTemplateId,
