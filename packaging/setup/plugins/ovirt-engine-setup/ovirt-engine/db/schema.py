@@ -172,10 +172,21 @@ class Plugin(plugin.PluginBase):
             ownConnection=True,
             transaction=False,
         )
-        clusterVersions = statement.execute(
+        clusterTable = statement.execute(
             statement="""
-                SELECT compatibility_version FROM vds_groups;
+                SELECT table_name FROM information_schema.tables
+                WHERE table_name IN ('vds_groups', 'cluster');
             """,
+            ownConnection=True,
+            transaction=False,
+        )
+        sql = _(
+            'SELECT compatibility_version FROM {table};'
+        ).format(
+            table=clusterTable[0]['table_name']
+        )
+        clusterVersions = statement.execute(
+            statement=sql,
             ownConnection=True,
             transaction=False,
         )
