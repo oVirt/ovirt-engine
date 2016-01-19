@@ -4,6 +4,9 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
+import java.util.Objects;
+
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -67,6 +70,13 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private boolean isNetworkSubnetInSync() {
         return getsSubnetUtilsInstance().equalSubnet(iface.getSubnet(), getPrimaryAddress().getNetmask());
+    }
+
+    private boolean isGatewayInSync() {
+        String gatewayDesiredValue = getPrimaryAddress().getGateway();
+        String gatewayActualValue = iface.getGateway();
+        boolean bothBlank = StringUtils.isBlank(gatewayDesiredValue) && StringUtils.isBlank(gatewayActualValue);
+        return bothBlank || Objects.equals(gatewayDesiredValue, gatewayActualValue);
     }
 
     public SubnetUtils getsSubnetUtilsInstance() {
@@ -142,7 +152,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
             result.add(ReportedConfigurationType.IP_ADDRESS,
                     iface.getAddress(), getPrimaryAddress().getAddress());
             result.add(ReportedConfigurationType.GATEWAY,
-                    iface.getGateway(), getPrimaryAddress().getGateway());
+                    iface.getGateway(), getPrimaryAddress().getGateway(), isGatewayInSync());
         }
     }
 }
