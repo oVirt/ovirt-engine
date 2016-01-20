@@ -382,6 +382,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("The selected snapshot to be previewed contains memory")
     String snapshotContainsMemory();
 
+    @DefaultStringValue("The selected snapshot's memory can't be properly restored since it was created in different " +
+            "cluster version. Please confirm the memory shall be restored anyway.")
+    String snapshotContainsMemoryIncompatibleCluster();
+
     @DefaultStringValue("Loading...")
     String loadingLabel();
 

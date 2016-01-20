@@ -1720,6 +1720,14 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         vmStatic.setOvfVersion(ovfVersion);
     }
 
+    public Version getClusterCompatibilityVersionOrigin() {
+        return vmStatic.getClusterCompatibilityVersionOrigin();
+    }
+
+    public void setClusterCompatibilityVersionOrigin(Version value) {
+        vmStatic.setClusterCompatibilityVersionOrigin(value);
+    }
+
     @Override
     public String getName() {
         return this.vmStatic.getName();
