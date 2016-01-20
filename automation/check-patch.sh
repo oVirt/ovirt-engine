@@ -46,6 +46,9 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
+# perform quick validations
+make validations
+
 # Get the tarball
 make dist
 
