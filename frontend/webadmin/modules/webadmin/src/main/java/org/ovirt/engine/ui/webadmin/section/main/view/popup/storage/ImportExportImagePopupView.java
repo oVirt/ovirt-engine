@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
@@ -84,6 +85,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @WithElementId("importAsTemplate")
     public EntityModelCheckBoxEditor importAsTemplateEditor;
 
+    @UiField(provided = true)
+    @Path(value = "templateName.entity")
+    @WithElementId
+    public StringEntityModelTextBoxEditor templateNameEditor;
+
     @Ignore
     EntityModelCellTable<ListModel> imageList;
 
@@ -111,6 +117,9 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         importAsTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         importAsTemplateEditor.setLabel(constants.importAsTemplate());
+
+        templateNameEditor = new StringEntityModelTextBoxEditor();
+        templateNameEditor.setLabel(constants.importTemplateName());
 
         imageListPanel = new SimplePanel();
 

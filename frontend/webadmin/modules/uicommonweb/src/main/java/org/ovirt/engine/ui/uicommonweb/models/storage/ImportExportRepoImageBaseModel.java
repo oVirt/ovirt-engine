@@ -41,6 +41,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
 
     protected List<EntityModel> entities;
     private EntityModel<Boolean> importAsTemplate;
+    private EntityModel<String> templateName;
 
     public EntityModel<Boolean> getImportAsTemplate() {
         return importAsTemplate;
@@ -68,6 +69,14 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         }
         this.entities = entities;
         onPropertyChanged(new PropertyChangedEventArgs("ImportExportEntities")); //$NON-NLS-1$
+    }
+
+    public EntityModel<String> getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(EntityModel<String> templateName) {
+        this.templateName = templateName;
     }
 
     public ListModel<StoragePool> getDataCenter() {
@@ -135,6 +144,8 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         getQuota().setIsEmpty(true);
         setImportAsTemplate(new EntityModel<Boolean>());
         getImportAsTemplate().setEntity(false);
+        setTemplateName(new EntityModel<String>());
+        getTemplateName().setEntity(""); //$NON-NLS-1$
 
         setOkCommand(new UICommand("Ok", this));  //$NON-NLS-1$
         getOkCommand().setTitle(constants.ok());
@@ -171,6 +182,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         getStorageDomain().setIsChangeable(!getStorageDomain().getIsEmpty());
         getCluster().setIsAvailable(getImportAsTemplate().getEntity());
         getCluster().setIsChangeable(!getCluster().getIsEmpty());
+        getTemplateName().setIsAvailable(getImportAsTemplate().getEntity());
         getQuota().setIsChangeable(!getQuota().getIsEmpty());
         getOkCommand().setIsExecutionAllowed(!getStorageDomain().getIsEmpty());
         setMessage(getStorageDomain().getIsEmpty() ? getNoDomainAvailableMessage() : null);

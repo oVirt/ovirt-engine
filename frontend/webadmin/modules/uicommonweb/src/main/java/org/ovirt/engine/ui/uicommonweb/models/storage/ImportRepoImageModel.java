@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -15,11 +16,15 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
@@ -75,6 +80,9 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
     @Override
     public void executeCommand(UICommand command) {
+        if (!validate()) {
+            return;
+        }
         super.executeCommand(command);
 
         startProgress();
@@ -106,6 +114,10 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
             if (importAsTemplate) {
                 importParameters.setClusterId(getCluster().getSelectedItem().getId());
+                String templateName = getTemplateName().getEntity();
+                if (StringUtils.isNotEmpty(templateName)) {
+                    importParameters.setTemplateName(templateName);
+                }
             }
 
             actionParameters.add(importParameters);
@@ -122,10 +134,20 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                 }, this);
     }
 
+    public boolean validate() {
+        getTemplateName().validateEntity(
+                new IValidation[] {
+                        new LengthValidation(BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE),
+                        new I18NExtraNameOrNoneValidation()
+                });
+        return getTemplateName().getIsValid();
+    }
+
     public void updateClusterEnabled() {
         boolean importAsTemplate = getImportAsTemplate().getEntity();
         getCluster().setIsAvailable(importAsTemplate);
         getCluster().setIsChangeable(!getCluster().getIsEmpty());
+        getTemplateName().setIsAvailable(importAsTemplate);
     }
 
 }

@@ -25,6 +25,7 @@
 				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
 				<e:ListModelListBoxEditor ui:field="quotaEditor" />
 				<ge:EntityModelCheckBoxEditor ui:field="importAsTemplateEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="templateNameEditor"/>
 				<e:ListModelListBoxEditor ui:field="clusterEditor" />
 				<g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
 				<g:SimplePanel ui:field="imageListPanel" addStyleNames="{style.imageListPanel}" />

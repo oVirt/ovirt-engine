@@ -1971,6 +1971,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Import as Template")
     String importAsTemplate();
 
+    @DefaultStringValue("Template Name")
+    String importTemplateName();
+
     @DefaultStringValue("Use custom migration downtime")
     String overrideMigrationDowntimeLabel();
 
