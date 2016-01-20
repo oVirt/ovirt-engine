@@ -128,7 +128,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
 
         // VDSM uses the connectivity timeout only if 'connectivityCheck' is set to true
         if (getParameters().isRollbackOnFailure()) {
-            options.put(VdsProperties.CONNECTIVITY_TIMEOUT, getParameters().getConectivityTimeout());
+            options.put(VdsProperties.CONNECTIVITY_TIMEOUT, getParameters().getConnectivityTimeout());
         }
 
         return options;

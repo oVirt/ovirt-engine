@@ -464,7 +464,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             getParameters().getBonds(),
             getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
-        hostCmdParams.setConectivityTimeout(timeout);
+        hostCmdParams.setConnectivityTimeout(timeout);
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getClusterCompatibilityVersion());
         hostCmdParams.setHostNetworkQosSupported(hostNetworkQosSupported);
         hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged());
