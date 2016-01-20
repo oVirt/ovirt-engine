@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -145,6 +146,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     EntityModelCheckBoxEditor optimizeForVirtStoreEditor;
 
+    @UiField
+    @Path(value = "arbiterVolume.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor arbiterVolumeEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -214,6 +220,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
         optimizeForVirtStoreEditor.setLabel(constants.optimizeForVirtStoreVolume());
         virtStoreOptimiseWarningLabel.setText(constants.newVolumeOptimiseForVirtStoreWarning());
+        arbiterVolumeEditor.setLabel(constants.arbiterVolume());
     }
 
     @Override

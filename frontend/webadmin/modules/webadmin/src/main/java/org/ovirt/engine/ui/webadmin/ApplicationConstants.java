@@ -3187,5 +3187,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String kvmBlockDomainWraning();
 
     String hostedEngineVmTooltip();
+
+    String arbiterVolume();
 }
 

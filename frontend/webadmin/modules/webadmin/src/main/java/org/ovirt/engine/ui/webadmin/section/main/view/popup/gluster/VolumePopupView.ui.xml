@@ -66,7 +66,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="600px">
+	<d:SimpleDialogPanel width="450px" height="620px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
@@ -75,6 +75,7 @@
 				</g:FlowPanel>
 				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:ListModelListBoxEditor ui:field="typeListEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="arbiterVolumeEditor"/>
 				<ge:IntegerEntityModelLabelEditor ui:field="replicaCountEditor" />
 				<ge:IntegerEntityModelLabelEditor ui:field="stripeCountEditor" />
 				

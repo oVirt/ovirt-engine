@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -47,6 +48,7 @@ public class VolumeModel extends Model {
     EntityModel<Boolean> cifs_accecssProtocol;
     EntityModel<String> allowAccess;
     EntityModel<Boolean> optimizeForVirtStore;
+    EntityModel<Boolean> arbiterVolume;
 
     private boolean forceAddBricks;
 
@@ -155,6 +157,7 @@ public class VolumeModel extends Model {
                         && getAddBricksCommand().getIsExecutionAllowed()) {
                     getAddBricksCommand().execute();
                 }
+                updateArbiterAvailability();
             }
         });
 
@@ -173,6 +176,10 @@ public class VolumeModel extends Model {
 
         setOptimizeForVirtStore(new EntityModel<Boolean>());
         getOptimizeForVirtStore().setEntity(false);
+
+        setArbiterVolume(new EntityModel<Boolean>());
+        getArbiterVolume().setEntity(false);
+        getArbiterVolume().setIsAvailable(false);
     }
 
     public EntityModel<String> getName() {
@@ -289,6 +296,19 @@ public class VolumeModel extends Model {
         this.forceAddBricks = forceAddBricks;
     }
 
+    public EntityModel<Boolean> getArbiterVolume() {
+        return arbiterVolume;
+    }
+
+    public void setArbiterVolume(EntityModel<Boolean> arbiterVolume) {
+        this.arbiterVolume = arbiterVolume;
+    }
+
+    private void updateArbiterAvailability() {
+        getArbiterVolume().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType()
+                && Version.v4_1.compareTo(getCluster().getSelectedItem().getCompatibilityVersion()) >= 0);
+    }
+
     public void addBricks(){
         if (getWindow() != null || getCluster().getSelectedItem() == null) {
             return;
@@ -362,6 +382,11 @@ public class VolumeModel extends Model {
             return;
         }
 
+        if (!validateArbiterVolume()) {
+            volumeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().arbiterVolumeShouldBeReplica3());
+            return;
+        }
+
         if ((volumeType == GlusterVolumeType.REPLICATE || volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE)
                 && !volumeBrickModel.validateReplicateBricks()) {
             ConfirmationModel confirmModel = new ConfirmationModel();
@@ -388,6 +413,13 @@ public class VolumeModel extends Model {
         else {
             onAddBricksInternal();
         }
+    }
+
+    public boolean validateArbiterVolume() {
+        if (getArbiterVolume().getIsAvailable() && getArbiterVolume().getEntity()) {
+            return getReplicaCount().getEntity() == 3;
+        }
+        return true;
     }
 
     private void onAddBricksInternal() {
@@ -418,7 +450,6 @@ public class VolumeModel extends Model {
         setBricks(brickListModel);
 
         setForceAddBricks(volumeBrickModel.getForce().getEntity());
-
         setWindow(null);
     }
 
@@ -460,7 +491,7 @@ public class VolumeModel extends Model {
 
         if (getCluster().getSelectedItem() != null) {
             final Cluster cluster = getCluster().getSelectedItem();
-
+            updateArbiterAvailability();
             AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery<>(new AsyncCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean returnValue) {

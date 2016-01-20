@@ -1188,10 +1188,10 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
         if (type.isReplicatedType()) {
             volume.setReplicaCount(volumeModel.getReplicaCountValue());
+            volume.setIsArbiter(volumeModel.getArbiterVolume().getEntity());
         }
 
         volume.setVolumeType(type);
-
         if (volumeModel.getTcpTransportType().getEntity()) {
             volume.getTransportTypes().add(TransportType.TCP);
         }

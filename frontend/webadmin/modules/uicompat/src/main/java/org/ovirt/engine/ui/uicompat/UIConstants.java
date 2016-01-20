@@ -2024,5 +2024,7 @@ public interface UIConstants extends Constants {
     String emptyImagePath();
 
     String kvmBlockDomainWraning();
+
+    String arbiterVolumeShouldBeReplica3();
 }
 
