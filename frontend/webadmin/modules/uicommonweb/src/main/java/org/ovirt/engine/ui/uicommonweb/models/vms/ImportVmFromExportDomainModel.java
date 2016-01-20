@@ -183,14 +183,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 });
     }
 
-    private void checkIfDefaultStorageApplicableForAllDisks() {
-        boolean isDefaultStorageApplicableForAllDisks = true;
-        if ((getMessage() == null || getMessage().isEmpty())
-                && !isDefaultStorageApplicableForAllDisks) {
-            setMessage(ConstantsManager.getInstance().getConstants().importNotApplicableForDefaultStorage());
-        }
-    }
-
     protected void checkDestFormatCompatibility() {
         for (Object item : getItems()) {
             VM vm = ((ImportVmData) item).getVm();
@@ -360,7 +352,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
     public void onDataLoad() {
-        checkIfDefaultStorageApplicableForAllDisks();
         onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
     }
 

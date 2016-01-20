@@ -2164,10 +2164,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             "another option is to Import missing templates first and then try import the VMs again")
     String importMissingStorages();
 
-    @DefaultStringValue("The selected default Storage Domain is not applicable for all disks " +
-            "(i.e. some disks will be imported to a different Storage Domain).")
-    String importNotApplicableForDefaultStorage();
-
     @DefaultStringValue("VM(s) cannot be imported: One of the templates cannot be found. Please verify that the template exists in both setup and export domain.")
     String errorTemplateCannotBeFoundMessage();
 
