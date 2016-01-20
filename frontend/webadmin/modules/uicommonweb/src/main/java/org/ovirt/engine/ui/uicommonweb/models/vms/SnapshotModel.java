@@ -152,6 +152,16 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         showMemorySnapshotWarning = value;
     }
 
+    private boolean oldClusterSnapshotWithMemory;
+
+    public boolean isOldClusterSnapshotWithMemory() {
+        return oldClusterSnapshotWithMemory;
+    }
+
+    public void setOldClusterSnapshotWithMemory(boolean value) {
+        oldClusterSnapshotWithMemory = value;
+    }
+
     private boolean showPartialSnapshotWarning;
 
     public boolean isShowPartialSnapshotWarning() {

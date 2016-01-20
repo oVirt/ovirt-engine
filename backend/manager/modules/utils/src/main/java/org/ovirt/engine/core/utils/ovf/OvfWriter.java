@@ -316,6 +316,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.getVmType().getValue()));
         _writer.WriteEndElement();
 
+        _writer.WriteStartElement(OvfProperties.CLUSTER_COMPATIBILITY_VERSION);
+        _writer.WriteRaw(String.valueOf(version));// cluster version the VM/Snapshot originates from
+        _writer.WriteEndElement();
+
         if (vmBase.getTunnelMigration() != null) {
             _writer.WriteStartElement(OvfProperties.TUNNEL_MIGRATION);
             _writer.WriteRaw(String.valueOf(vmBase.getTunnelMigration()));

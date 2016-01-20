@@ -99,6 +99,11 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
 
         partialSnapshotWarningPanel.setVisible(model.isShowPartialSnapshotWarning());
         memoryWarningPanel.setVisible(model.isShowMemorySnapshotWarning());
+        if (model.isOldClusterSnapshotWithMemory()) {
+            messageLabel.setText(constants.snapshotContainsMemoryIncompatibleCluster());
+            model.getMemory().setEntity(false);
+        }
+
         horizontalSeparator.setVisible(model.isShowPartialSnapshotWarning() && model.isShowMemorySnapshotWarning());
 
         vmDisksLabel.setText(messages.vmDisksLabel(model.getVmDisks().size(),

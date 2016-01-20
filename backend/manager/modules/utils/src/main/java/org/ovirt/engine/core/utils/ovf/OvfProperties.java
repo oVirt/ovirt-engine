@@ -79,4 +79,5 @@ public class OvfProperties {
     final static String USE_HOST_CPU = "UseHostCpu";
     final static String PREDEFINED_PROPERTIES = "PredefinedProperties";
     final static String USER_DEFINED_PROPERTIES = "UserDefinedProperties";
+    final static String CLUSTER_COMPATIBILITY_VERSION = "ClusterCompatibilityVersion";
 }

@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 @ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
@@ -261,6 +262,20 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     // not persisted to db
     private Date exportDate;
+
+    private Version clusterCompatibilityVersionOrigin;
+
+    /**
+     * The cluster version in which the VM configuration was created.
+     * Used by snapshots. Not persisted to DB, stored in OVF.
+     */
+    public Version getClusterCompatibilityVersionOrigin() {
+        return this.clusterCompatibilityVersionOrigin;
+    }
+
+    public void setClusterCompatibilityVersionOrigin(Version value) {
+        this.clusterCompatibilityVersionOrigin = value;
+    }
 
     /**
      * Maximum allowed downtime for live migration in milliseconds.
