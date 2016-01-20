@@ -45,6 +45,8 @@ public class OvfProperties {
     static final String DOMAIN = "Domain";
     static final String DESCRIPTION = "Description";
     static final String GENERATION = "Generation";
+    static final String CUSTOM_COMPATIBILITY_VERSION = "CustomCompatibilityVersion";
+    static final String CLUSTER_COMPATIBILITY_VERSION = "ClusterCompatibilityVersion";
     static final String NAME = "Name";
     static final String TEMPLATE_ID = "TemplateId";
     static final String TEMPLATE_NAME = "TemplateName";

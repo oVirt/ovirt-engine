@@ -522,6 +522,18 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setDbGeneration(1L);
         }
 
+        node = selectSingleNode(content, OvfProperties.CUSTOM_COMPATIBILITY_VERSION);
+        if (node != null) {
+            vmBase.setCustomCompatibilityVersion(new Version(node.innerText));
+        }
+
+        Version originVersion = new Version(getVersion()); // the originating ENGINE version
+        node = selectSingleNode(content, OvfProperties.CLUSTER_COMPATIBILITY_VERSION);
+        if (node != null) {
+            originVersion = new Version(node.innerText);
+        }
+        vmBase.setClusterCompatibilityVersionOrigin(originVersion);
+
         // Note: the fetching of 'default display type' should happen before reading
         // the hardware section
         node = selectSingleNode(content, getDefaultDisplayTypeStringRepresentation());

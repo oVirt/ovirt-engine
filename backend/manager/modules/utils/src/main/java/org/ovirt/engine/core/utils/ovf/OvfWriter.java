@@ -316,6 +316,16 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeRaw(String.valueOf(vmBase.getDbGeneration()));
         _writer.writeEndElement();
 
+        if (vmBase.getCustomCompatibilityVersion() != null) {
+            _writer.writeStartElement(OvfProperties.CUSTOM_COMPATIBILITY_VERSION);
+            _writer.writeRaw(String.valueOf(vmBase.getCustomCompatibilityVersion()));
+            _writer.writeEndElement();
+        }
+
+        _writer.writeStartElement(OvfProperties.CLUSTER_COMPATIBILITY_VERSION);
+        _writer.writeRaw(String.valueOf(version));// cluster version the VM/Snapshot originates from
+        _writer.writeEndElement();
+
         _writer.writeStartElement(OvfProperties.VM_TYPE);
         _writer.writeRaw(String.valueOf(vmBase.getVmType().getValue()));
         _writer.writeEndElement();

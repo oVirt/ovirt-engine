@@ -262,6 +262,20 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     // not persisted to db
     private Date exportDate;
 
+    private Version clusterCompatibilityVersionOrigin;
+
+    /**
+     * The cluster version in which the VM configuration was created.
+     * Used by snapshots. Not persisted to DB, stored in OVF.
+     */
+    public Version getClusterCompatibilityVersionOrigin() {
+        return this.clusterCompatibilityVersionOrigin;
+    }
+
+    public void setClusterCompatibilityVersionOrigin(Version value) {
+        this.clusterCompatibilityVersionOrigin = value;
+    }
+
     /**
      * Maximum allowed downtime for live migration in milliseconds.
      * Value of null indicates that the {@link ConfigValues.DefaultMaximumMigrationDowntime} value will be used.
