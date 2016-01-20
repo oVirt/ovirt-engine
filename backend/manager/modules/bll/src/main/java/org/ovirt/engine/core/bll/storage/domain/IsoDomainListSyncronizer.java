@@ -134,7 +134,7 @@ public class IsoDomainListSyncronizer {
      * Check and update if needed each Iso domain in each Data Center in the system.
      */
     @OnTimerMethodAnnotation("fetchIsoDomains")
-    public void fetchIsoDomains() {
+    public synchronized void fetchIsoDomains() {
         // Gets all the active Iso storage domains.
         List<RepoImage> repofileList = DbFacade.getInstance()
                 .getRepoFileMetaDataDao()
@@ -423,7 +423,7 @@ public class IsoDomainListSyncronizer {
      * Handling the list of problematic repository files, to maintain multi thread caching.
      * @see #resetProblematicList()
      */
-    private synchronized void addRepoFileToProblematicList(List<RepoImage> repoImageList) {
+    private void addRepoFileToProblematicList(List<RepoImage> repoImageList) {
         problematicRepoFileList.addAll(repoImageList);
     }
 
@@ -432,7 +432,7 @@ public class IsoDomainListSyncronizer {
      * uses for multy thread caching.
      * @see #addRepoFileToProblematicList(List)
      */
-    private synchronized void resetProblematicList() {
+    private void resetProblematicList() {
         problematicRepoFileList.clear();
     }
 
