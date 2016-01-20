@@ -19,12 +19,12 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1051,7 +1051,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                     model.getPmPort().setEntity(agent.getPort());
                 }
                 model.getPmEncryptOptions().setEntity(agent.getEncryptOptions());
-                model.setPmOptionsMap(VdsStatic.pmOptionsStringToMap(agent.getOptions()));
+                model.setPmOptionsMap(PowerManagementUtils.pmOptionsStringToMap(agent.getOptions()));
                 model.setOrder(agent.getOrder());
                 if (!examinedAgents.contains(new Pair<>(model.getManagementIp().getEntity(),
                         model.getPmType().getSelectedItem()))) {
