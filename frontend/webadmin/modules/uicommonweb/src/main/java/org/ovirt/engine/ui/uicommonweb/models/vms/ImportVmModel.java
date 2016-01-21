@@ -154,7 +154,9 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
                         Set<String> existingNames = new HashSet<>();
                         for (VM vm : vms) {
-                            existingNames.add(vm.getName());
+                            if (vm.getStoragePoolId().equals(getStoragePool().getId())) {
+                                existingNames.add(vm.getName());
+                            }
                         }
 
                         List<ImportVmData> vmDataList = new ArrayList<>();
