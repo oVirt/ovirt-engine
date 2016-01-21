@@ -66,7 +66,6 @@
     <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
     <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
     <javax.ejb.api.version>1.0.2.Final</javax.ejb.api.version>
-    <javax.servlet.api.version>1.0.1.Final</javax.servlet.api.version>
     <javax.jstl.api.version>1.0.3.Final</javax.jstl.api.version>
     <javax.interceptor.api.version>1.0.0.Final</javax.interceptor.api.version>
     <jcraft.jsch.version>0.1.42</jcraft.jsch.version>
@@ -182,8 +181,8 @@
       </dependency>
       <dependency>
         <groupId>org.jboss.spec.javax.servlet</groupId>
-        <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-        <version>${javax.servlet.api.version}</version>
+        <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+        <version>1.0.0.Final</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
