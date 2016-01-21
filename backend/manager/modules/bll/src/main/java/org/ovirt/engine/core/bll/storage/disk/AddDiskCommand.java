@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -471,6 +473,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return getVm().getStatus() == VMStatus.Down && !Boolean.FALSE.equals(getParameters().getPlugDiskToVm());
     }
 
+    protected boolean useCallback() {
+        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
+                && (parentHasCallback() || !isExecutedAsChildCommand());
+    }
+
     private void createDiskBasedOnImage() {
         if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
             getParameters().getDiskInfo().setWipeAfterDelete(getStorageDomain().getWipeAfterDelete());
@@ -486,12 +493,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setShouldRemainIllegalOnFailedExecution(getParameters().isShouldRemainIllegalOnFailedExecution());
         parameters.setStorageDomainId(getStorageDomainId());
 
-        if (isExecutedAsChildCommand()) {
-            parameters.setParentCommand(getParameters().getParentCommand());
-            parameters.setParentParameters(getParameters().getParentParameters());
-        } else {
+        if (useCallback()) {
             parameters.setParentCommand(VdcActionType.AddDisk);
             parameters.setParentParameters(getParameters());
+        } else {
+            parameters.setParentCommand(getParameters().getParentCommand());
+            parameters.setParentParameters(getParameters().getParentParameters());
         }
 
         parameters.setEntityInfo(getParameters().getEntityInfo());
@@ -505,8 +512,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                         getLock());
         // Setting lock to null because the lock is released in the child command
         setLock(null);
-        ArrayList<Guid> taskList = isExecutedAsChildCommand() ? getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
-        taskList.addAll(tmpRetValue.getInternalVdsmTaskIdList());
+        getTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
 
         if (getVm() != null) {
             getCompensationContext().snapshotNewEntity(addManagedDeviceForDisk(getParameters().getDiskInfo().getId()));
@@ -520,6 +526,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return useCallback() ? new ConcurrentChildCommandsExecutionCallback() :  null;
     }
 
     private void createDiskBasedOnCinder() {
