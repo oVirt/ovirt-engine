@@ -31,13 +31,4 @@ public class ConcurrentChildCommandsExecutionCallback extends ChildCommandsCallb
         command.setCommandStatus(newStatus, false);
         command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
     }
-
-
-    public void logEndWillBeExecutedByParent(CommandBase<?> command, CommandStatus status) {
-        log.info(
-                "Command '{}' id: '{}' Updating status to '{}', The command end method logic will be executed by one of its parent commands.",
-                command.getActionType(),
-                command.getCommandId(),
-                status);
-    }
 }

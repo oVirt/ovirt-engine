@@ -120,4 +120,12 @@ public abstract class ChildCommandsCallbackBase extends CommandCallback {
     protected CommandBase<?> getCommand(Guid cmdId) {
         return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
+
+    public void logEndWillBeExecutedByParent(CommandBase<?> command, CommandStatus status) {
+        log.info(
+                "Command '{}' id: '{}' Updating status to '{}', The command end method logic will be executed by one of its parent commands.",
+                command.getActionType(),
+                command.getCommandId(),
+                status);
+    }
 }

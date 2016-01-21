@@ -31,7 +31,7 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
                     return;
                 }
             } catch (Exception e) {
-                log.info("Command '{}' id: '{}' failed when attepting to perform the next operation, marking as FAILED '{}'",
+                log.info("Command '{}' id: '{}' failed when attempting to perform the next operation, marking as FAILED '{}'",
                         command.getActionType(),
                         cmdId,
                         childCmdIds,
@@ -46,9 +46,13 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
         command.getParameters().setTaskGroupSuccess(!anyFailed);
         CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
                 : CommandStatus.FAILED;
-        command.setCommandStatus(newStatus, false);
-        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
         log.info("Command '{}' id: '{}' child commands '{}' executions were completed, status '{}'",
                 command.getActionType(), cmdId, childCmdIds, command.getCommandStatus());
+
+        if (!shouldExecuteEndMethod(command)) {
+            logEndWillBeExecutedByParent(command, newStatus);
+        }
+        command.setCommandStatus(newStatus, false);
+        command.persistCommand(command.getParameters().getParentCommand(), command.getCallback() != null);
     }
 }
