@@ -9,6 +9,7 @@ public class LiveMigrateVmDisksParameters extends VdcActionParametersBase {
 
     private List<LiveMigrateDiskParameters> parametersList;
     private Guid vmId;
+    private LiveMigrateStage stage = LiveMigrateStage.CREATE_SNAPSHOT;
 
     public LiveMigrateVmDisksParameters() {
         // Empty constructor for serializing / deserializing
@@ -35,5 +36,18 @@ public class LiveMigrateVmDisksParameters extends VdcActionParametersBase {
         this.vmId = vmId;
     }
 
+    public LiveMigrateStage getStage() {
+        return stage;
+    }
+
+    public void setStage(LiveMigrateStage stage) {
+        this.stage = stage;
+    }
+
+    public enum LiveMigrateStage {
+        CREATE_SNAPSHOT,
+        LIVE_MIGRATE_DISK_EXEC_START,
+        LIVE_MIGRATE_DISK_EXEC_COMPLETED
+    }
 }
 

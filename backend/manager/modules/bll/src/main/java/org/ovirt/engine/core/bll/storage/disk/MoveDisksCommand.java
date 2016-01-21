@@ -201,7 +201,6 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         // Create LiveMigrateVmDisksParameters (multiple disks)
         LiveMigrateVmDisksParameters liveMigrateDisksParameters =
                 new LiveMigrateVmDisksParameters(liveMigrateDiskParametersList, vmId);
-        liveMigrateDisksParameters.setParentCommand(VdcActionType.MoveDisks);
 
         return liveMigrateDisksParameters;
     }

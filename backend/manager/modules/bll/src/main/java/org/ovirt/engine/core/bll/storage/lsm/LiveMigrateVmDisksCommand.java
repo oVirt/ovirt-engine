@@ -1,44 +1,51 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
+import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters.LiveMigrateStage;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -48,10 +55,11 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
-        implements TaskHandlerCommand<LiveMigrateVmDisksParameters>, QuotaStorageDependent {
+        implements QuotaStorageDependent, SerialChildExecutingCommand {
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
+    private Set<Guid> movedVmDiskIds;
 
     public LiveMigrateVmDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -71,72 +79,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
-    protected List<SPMAsyncTaskHandler> initTaskHandlers() {
-        return Arrays.<SPMAsyncTaskHandler> asList(
-                new LiveSnapshotTaskHandler(this),
-                new LiveMigrateDisksTaskHandler(this)
-                );
-    }
-
-    /**
-     * Ugly hack, but it is needed as the endAction method in this command is called only
-     * once and in that case it executes the next task handler, so we have no other option
-     * but to release the lock right after executing the next task handler, assuming it'll
-     * take the VM lock by himself so we won't end up in a state where the VM is not locked.
-     */
-    @Override
-    public VdcReturnValueBase endAction() {
-        try {
-            return super.endAction();
-        }
-        finally {
-            freeLock();
-        }
-    }
-
-    /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
-
-    @Override
-    public Guid createTask(
-            Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
-    @Override
-    public void preventRollback() {
-        getParameters().setExecutionIndex(0);
-    }
-
-    @Override
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
-        // Not implemented
-    }
-
-    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
 
@@ -151,9 +93,92 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return permissionList;
     }
 
+    private Set<Guid> getMovedDiskIds() {
+        if (movedVmDiskIds == null) {
+            movedVmDiskIds = new LinkedHashSet<>();
+            for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
+                movedVmDiskIds.add(parameters.getImageGroupID());
+            }
+        }
+        return movedVmDiskIds;
+    }
+
     @Override
     protected void executeCommand() {
+        ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(getMovedDiskIds(),
+                ImageStatus.LOCKED,
+                ImageStatus.OK,
+                getCompensationContext());
+        runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+                getCreateSnapshotParameters(),
+                ExecutionHandler.createInternalJobContext(getContext()));
+
         setSucceeded(true);
+    }
+
+    public CommandCallback getCallback() {
+        return new SerialChildCommandsExecutionCallback();
+    }
+
+    private void updateStage(LiveMigrateStage stage) {
+        getParameters().setStage(stage);
+        persistCommand(getParameters().getParentCommand(), getCallback() != null);
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        if (getParameters().getStage() == LiveMigrateStage.CREATE_SNAPSHOT) {
+            updateStage(LiveMigrateStage.LIVE_MIGRATE_DISK_EXEC_START);
+            for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
+                parameters.setSessionId(getParameters().getSessionId());
+                parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+                parameters.setParentCommand(getActionType());
+                parameters.setParentParameters(getParameters());
+                parameters.setDestinationImageId(((DiskImage)getDiskImageByDiskId(parameters.getImageGroupID()))
+                        .getImageId());
+
+                VdcReturnValueBase vdcReturnValue =
+                        runInternalAction(VdcActionType.LiveMigrateDisk,
+                                parameters, ExecutionHandler.createInternalJobContext());
+
+                if (!vdcReturnValue.getSucceeded()) {
+                    ImagesHandler.updateAllDiskImageSnapshotsStatus(parameters.getImageGroupID(), ImageStatus.OK);
+                }
+            }
+            updateStage(LiveMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED);
+            return true;
+        }
+        return false;
+    }
+
+    private List<DiskImage> getMovedDisks() {
+        Set<Guid> movedDiskIds = getMovedDiskIds();
+        List<DiskImage> disks = new ArrayList<>();
+
+        for (Guid diskId : movedDiskIds) {
+            DiskImage disk = new DiskImage();
+            disk.setId(diskId);
+            disks.add(disk);
+        }
+
+        return disks;
+    }
+
+    protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
+        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
+                (getParameters().getVmId(), "Auto-generated for Live Storage Migration");
+
+        params.setParentCommand(VdcActionType.LiveMigrateVmDisks);
+        params.setSnapshotType(SnapshotType.REGULAR);
+        params.setParentParameters(getParameters());
+        params.setImagesParameters(getParameters().getImagesParameters());
+        params.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+        params.setDisks(getMovedDisks());
+        params.setDiskIdsToIgnoreInChecks(getMovedDiskIds());
+        params.setNeedsLocking(false);
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+
+        return params;
     }
 
     @Override

@@ -1837,7 +1837,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return getTaskType();
     }
 
-    protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
+    public void startPollingAsyncTasks(Collection<Guid> taskIds) {
         taskIds.forEach(CommandCoordinatorUtil::startPollingTask);
     }
 
@@ -2446,7 +2446,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 context.clone().withExecutionContext(executionContext));
     }
 
-    protected VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
+    public VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
             VdcActionParametersBase parameters) {
         return runInternalActionWithTasksContext(actionType, parameters, null);
     }

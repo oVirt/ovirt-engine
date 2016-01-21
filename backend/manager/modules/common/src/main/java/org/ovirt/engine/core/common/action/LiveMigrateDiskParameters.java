@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
     private static final long serialVersionUID = 962820715327420896L;
 
+    private LiveDiskMigrateStage liveDiskMigrateStage = LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION;
+
     public LiveMigrateDiskParameters() {
         // Empty constructor for serializing / deserializing
     }
@@ -42,5 +44,21 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
         this.vmId = vmId;
     }
 
+    public LiveDiskMigrateStage getLiveDiskMigrateStage() {
+        return liveDiskMigrateStage;
+    }
+
+    public void setLiveDiskMigrateStage(LiveDiskMigrateStage liveDiskMigrateStage) {
+        this.liveDiskMigrateStage = liveDiskMigrateStage;
+    }
+
+    public enum LiveDiskMigrateStage {
+        IMAGE_PLACEHOLDER_CREATION,
+        VM_REPLICATE_DISK_START,
+        VM_REPLICATE_DISK_FINISH,
+        IMAGE_DATA_SYNC_EXEC_START,
+        IMAGE_DATA_SYNC_EXEC_END,
+        SOURCE_IMAGE_DELETION
+    }
 }
 

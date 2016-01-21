@@ -29,7 +29,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.VmUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -49,7 +48,6 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -77,7 +75,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @DisableInPrepareMode
-public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<CreateAllSnapshotsFromVmParameters> {
+public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     private List<DiskImage> cachedSelectedActiveDisks;
     private List<DiskImage> cachedImagesDisks;
@@ -364,9 +362,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image) {
-        VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
-                getParameters().getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
-
         ImagesActionsParametersBase result = new ImagesActionsParametersBase(image.getImageId());
         result.setDescription(getParameters().getDescription());
         result.setSessionId(getParameters().getSessionId());
@@ -374,14 +369,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setDiskProfileId(image.getDiskProfileId());
         result.setVmSnapshotId(newActiveSnapshotId);
         result.setEntityInfo(getParameters().getEntityInfo());
-
-        if (getCallback() != null) {
-            result.setParentCommand(getActionType());
-            result.setParentParameters(getParameters());
-        } else {
-            result.setParentCommand(parentCommand);
-            result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
-        }
+        result.setParentCommand(getActionType());
+        result.setParentParameters(getParameters());
         if (getParameters().getDiskIdsToIgnoreInChecks().contains(image.getId())) {
             result.setLeaveLocked(true);
         }
@@ -758,53 +747,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return list;
     }
 
-    /////////////////////////////////////////
-    /// TaskHandlerCommand implementation ///
-    /////////////////////////////////////////
-
-    @Override
-    public void preventRollback() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return super.createTask(taskId,
-                asyncTaskCreationInfo, parentCommand,
-                entityType, entityIds);
-    }
-
-    @Override
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    @Override
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    @Override
-    public void taskEndSuccessfully() {
-        // Not implemented
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    @Override
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
-    }
-
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? new ConcurrentChildCommandsExecutionCallback() : null;
+        return new ConcurrentChildCommandsExecutionCallback();
     }
 }

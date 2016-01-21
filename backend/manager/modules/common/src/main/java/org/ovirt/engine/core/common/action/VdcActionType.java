@@ -306,6 +306,8 @@ public enum VdcActionType {
     UploadImageStatus(1025, false, QuotaDependency.NONE),
     ScanStorageForUnregisteredDisks(1026, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     AllocateImageGroupVolume(1027, QuotaDependency.STORAGE),
+    CreateImagePlaceholder(1028, QuotaDependency.NONE),
+    SyncImageGroupData(1029, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
