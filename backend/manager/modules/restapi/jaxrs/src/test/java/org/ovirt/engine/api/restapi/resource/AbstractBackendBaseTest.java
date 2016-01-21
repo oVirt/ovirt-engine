@@ -690,6 +690,36 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
 
         @Override
+        public void addAll(K key, V... newValues) {
+            List<V> values = get(key);
+            if (values == null) {
+                values = new ArrayList<>(newValues.length);
+                put(key, values);
+            }
+            Collections.addAll(values, newValues);
+        }
+
+        @Override
+        public void addAll(K key, List<V> newValues) {
+            List<V> values = get(key);
+            if (values == null) {
+                values = new ArrayList<>(newValues.size());
+                put(key, values);
+            }
+            values.addAll(newValues);
+        }
+
+        @Override
+        public void addFirst(K key, V value) {
+            List<V> values = get(key);
+            if (values == null) {
+                values = new ArrayList<>(1);
+                put(key, values);
+            }
+            values.add(0, value);
+        }
+
+        @Override
         public V getFirst(K key) {
             List<V> values = get(key);
             if (values == null) {
@@ -699,6 +729,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 return null;
             }
             return values.get(0);
+        }
+
+        @Override
+        public boolean equalsIgnoreValueOrder(MultivaluedMap<K, V> other) {
+            // Note that this implemetation is wrong, but that isn't relevant for the test.
+            return false;
         }
     }
 }
