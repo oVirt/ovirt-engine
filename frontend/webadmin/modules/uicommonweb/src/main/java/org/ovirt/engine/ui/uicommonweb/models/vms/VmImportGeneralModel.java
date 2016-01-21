@@ -194,15 +194,14 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            VmGeneralModel model = (VmGeneralModel) target;
-                            VM localVm = model.getEntity();
+                            VM localVm = getEntity() != null ? getEntity().getVm() : null;
                             if (localVm == null) {
                                 return;
                             }
                             ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                             for (VDS host : hosts) {
                                 if (localVm.getDedicatedVmForVdsList().contains(host.getId())) {
-                                    model.setDefaultHost(host.getName());
+                                    setDefaultHost(host.getName());
                                     break;
                                 }
                             }
