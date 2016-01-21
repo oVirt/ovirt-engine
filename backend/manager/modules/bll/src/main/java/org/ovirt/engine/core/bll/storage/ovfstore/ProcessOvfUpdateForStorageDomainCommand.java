@@ -94,22 +94,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         List<StorageDomainOvfInfo> storageDomainOvfInfos =
                 getDbFacade().getStorageDomainOvfInfoDao().getAllForDomain(getStorageDomainId());
         ovfDiskCount = storageDomainOvfInfos.size();
-        // Ordering to provide consistent ovf update order - the order should be as follows, so that in case
-        // of failure we will have "previous" version of the data on other disk.
-        // 1. disks that were never ovf updated (getLastUpdated is null)
-        // 2. disk id
-        Collections.sort(storageDomainOvfInfos, new Comparator<StorageDomainOvfInfo>() {
-            @Override
-            public int compare(StorageDomainOvfInfo storageDomainOvfInfo, StorageDomainOvfInfo storageDomainOvfInfo2) {
-                int compareResult =
-                        ObjectUtils.compare(storageDomainOvfInfo.getLastUpdated(),
-                                storageDomainOvfInfo2.getLastUpdated());
-                if (compareResult != 0) {
-                    return compareResult;
-                }
-                return storageDomainOvfInfo.getOvfDiskId().compareTo(storageDomainOvfInfo2.getOvfDiskId());
-            }
-        });
+        Collections.sort(storageDomainOvfInfos, OVF_INFO_COMPARATOR);
 
         for (StorageDomainOvfInfo storageDomainOvfInfo : storageDomainOvfInfos) {
             if (storageDomainOvfInfo.getStatus() != StorageDomainOvfInfoStatus.DISABLED) {
@@ -414,4 +399,24 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
         return super.getAuditLogTypeValue();
     }
+
+    /**
+     * Ordering to provide consistent ovf update order - the order should be as follows, so that in case
+     * of failure we will have "previous" version of the data on other disk.
+     * 1. disks that were never ovf updated (getLastUpdated is null)
+     * 2. disk id
+     */
+    public static final Comparator<StorageDomainOvfInfo> OVF_INFO_COMPARATOR = new Comparator<StorageDomainOvfInfo>() {
+        @Override
+        public int compare(StorageDomainOvfInfo storageDomainOvfInfo, StorageDomainOvfInfo storageDomainOvfInfo2) {
+            int compareResult =
+                    ObjectUtils.compare(storageDomainOvfInfo.getLastUpdated(),
+                            storageDomainOvfInfo2.getLastUpdated());
+            if (compareResult != 0) {
+                return compareResult;
+            }
+            return storageDomainOvfInfo.getOvfDiskId().compareTo(storageDomainOvfInfo2.getOvfDiskId());
+        }
+    };
+
 }
