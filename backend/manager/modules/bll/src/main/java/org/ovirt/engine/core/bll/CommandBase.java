@@ -1860,8 +1860,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected ArrayList<Guid> getTaskIdList() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown ? getReturnValue().getInternalVdsmTaskIdList()
-                : getReturnValue().getVdsmTaskIdList();
+        return (getParameters().getParentCommand() != VdcActionType.Unknown  && !parentHasCallback()) ?
+                getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
     }
 
     private void cancelTasks() {
