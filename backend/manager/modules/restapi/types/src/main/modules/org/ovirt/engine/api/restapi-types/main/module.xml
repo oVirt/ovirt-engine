@@ -24,6 +24,7 @@ limitations under the License.
 
   <dependencies>
     <module name="javax.api"/>
+    <module name="javax.ws.rs.api"/>
     <module name="javax.xml.bind.api"/>
     <module name="org.apache.commons.codec"/>
     <module name="org.apache.commons.lang"/>

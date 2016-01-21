@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.ovirt.engine.api.common.util.PackageExplorer;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.api.restapi.utils.MappingException;
@@ -158,6 +160,8 @@ public class MappingLocator {
             } catch (InvocationTargetException ite) {
               if (ite.getTargetException() instanceof MalformedIdException) {
                    throw (MalformedIdException) ite.getTargetException();
+              } else if (ite.getTargetException() instanceof WebApplicationException) {
+                  throw (WebApplicationException) ite.getTargetException();
               } else {
                   throw new MappingException(ite);
               }

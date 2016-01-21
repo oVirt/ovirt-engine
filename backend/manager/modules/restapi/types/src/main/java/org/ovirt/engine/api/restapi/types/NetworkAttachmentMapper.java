@@ -1,18 +1,26 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.ovirt.engine.api.model.BootProtocol;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.IpAddressAssignment;
 import org.ovirt.engine.api.model.IpAddressAssignments;
+import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 
 public class NetworkAttachmentMapper {
@@ -63,9 +71,14 @@ public class NetworkAttachmentMapper {
             entity.setIpConfiguration(new org.ovirt.engine.core.common.businessentities.network.IpConfiguration());
             IpAddressAssignments ipAddressAssignments = model.getIpAddressAssignments();
             entity.getIpConfiguration().setIPv4Addresses(new ArrayList<>());
+            entity.getIpConfiguration().setIpV6Addresses(new ArrayList<>());
 
             for (IpAddressAssignment ipAddressAssignment : ipAddressAssignments.getIpAddressAssignments()) {
-                entity.getIpConfiguration().getIPv4Addresses().add(mapIpAddressAssignment(ipAddressAssignment));
+                if (IpVersion.V6 == getIpVersion(ipAddressAssignment)) {
+                    entity.getIpConfiguration().getIpV6Addresses().add(mapIpv6AddressAssignment(ipAddressAssignment));
+                } else {
+                    entity.getIpConfiguration().getIPv4Addresses().add(mapIpv4AddressAssignment(ipAddressAssignment));
+                }
             }
         }
 
@@ -76,7 +89,14 @@ public class NetworkAttachmentMapper {
         return entity;
     }
 
-    private static IPv4Address mapIpAddressAssignment(IpAddressAssignment ipAddressAssignment) {
+    private static IpVersion getIpVersion(IpAddressAssignment ipAddressAssignment) {
+        if (!(ipAddressAssignment.isSetIp() && ipAddressAssignment.getIp().isSetVersion())) {
+            return null;
+        }
+        return ipAddressAssignment.getIp().getVersion();
+    }
+
+    private static IPv4Address mapIpv4AddressAssignment(IpAddressAssignment ipAddressAssignment) {
         IPv4Address iPv4Address = new IPv4Address();
 
         if (ipAddressAssignment.isSetAssignmentMethod()) {
@@ -97,6 +117,49 @@ public class NetworkAttachmentMapper {
             }
         }
         return iPv4Address;
+    }
+
+    static IpV6Address mapIpv6AddressAssignment(IpAddressAssignment ipAddressAssignment) {
+        IpV6Address ipV6Address = new IpV6Address();
+
+        if (ipAddressAssignment.isSetAssignmentMethod()) {
+            NetworkBootProtocol assignmentMethod =
+                    BootProtocolMapper.map(ipAddressAssignment.getAssignmentMethod(), null);
+            ipV6Address.setBootProtocol(assignmentMethod);
+        }
+
+        if (ipAddressAssignment.isSetIp()) {
+            if (ipAddressAssignment.getIp().isSetAddress()) {
+                ipV6Address.setAddress(ipAddressAssignment.getIp().getAddress());
+            }
+            if (ipAddressAssignment.getIp().isSetGateway()) {
+                ipV6Address.setGateway(ipAddressAssignment.getIp().getGateway());
+            }
+            if (ipAddressAssignment.getIp().isSetNetmask()) {
+                final String netmask = ipAddressAssignment.getIp().getNetmask();
+                final Integer prefix;
+                try {
+                    prefix = Integer.valueOf(netmask);
+                } catch (NumberFormatException e) {
+                    final String message =
+                            MessageFormat.format("IPv6 prefix has to be integer number. '{}' is not a valid value",
+                                    netmask);
+                    throw new WebApplicationException(
+                            message,
+                            e,
+                            Response.status(Status.BAD_REQUEST).entity(fault("Invalid value", message)).build());
+                }
+                ipV6Address.setPrefix(prefix);
+            }
+        }
+        return ipV6Address;
+    }
+
+    private static Fault fault(String reason, String detail) {
+        Fault fault = new Fault();
+        fault.setReason(reason);
+        fault.setDetail(detail);
+        return fault;
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.network.NetworkAttachment.class,
@@ -132,11 +195,21 @@ public class NetworkAttachmentMapper {
 
         org.ovirt.engine.core.common.businessentities.network.IpConfiguration entityIpConfiguration =
                 entity.getIpConfiguration();
-        if (entityIpConfiguration != null && !entityIpConfiguration.getIPv4Addresses().isEmpty()) {
+        if (entityIpConfiguration != null) {
             model.setIpAddressAssignments(new IpAddressAssignments());
+            if (!entityIpConfiguration.getIPv4Addresses().isEmpty()) {
 
-            for (IPv4Address iPv4Address : entityIpConfiguration.getIPv4Addresses()) {
-                model.getIpAddressAssignments().getIpAddressAssignments().add(mapIpAddressAssignment(iPv4Address));
+                entityIpConfiguration.getIPv4Addresses()
+                        .stream()
+                        .map(NetworkAttachmentMapper::mapIpv4Address)
+                        .forEach(model.getIpAddressAssignments().getIpAddressAssignments()::add);
+            }
+
+            if (!entityIpConfiguration.getIpV6Addresses().isEmpty()) {
+                entityIpConfiguration.getIpV6Addresses()
+                        .stream()
+                        .map(NetworkAttachmentMapper::mapIpv6AddressAssignment)
+                        .forEach(model.getIpAddressAssignments().getIpAddressAssignments()::add);
             }
         }
 
@@ -152,9 +225,10 @@ public class NetworkAttachmentMapper {
         return model;
     }
 
-    private static IpAddressAssignment mapIpAddressAssignment(IPv4Address iPv4Address) {
+    private static IpAddressAssignment mapIpv4Address(IPv4Address iPv4Address) {
         IpAddressAssignment ipAddressAssignment = new IpAddressAssignment();
         Ip ip = new Ip();
+        ip.setVersion(IpVersion.V4);
         if (iPv4Address.getAddress() != null) {
             ip.setAddress(iPv4Address.getAddress());
         }
@@ -170,6 +244,28 @@ public class NetworkAttachmentMapper {
         ipAddressAssignment.setIp(ip);
         BootProtocol assignmentMethod = BootProtocolMapper.map(iPv4Address.getBootProtocol(), null);
         ipAddressAssignment.setAssignmentMethod(assignmentMethod);
+        return ipAddressAssignment;
+    }
+
+    static IpAddressAssignment mapIpv6AddressAssignment(IpV6Address ipV6Address) {
+        IpAddressAssignment ipAddressAssignment = new IpAddressAssignment();
+        Ip ip = new Ip();
+        ip.setVersion(IpVersion.V6);
+        if (ipV6Address.getAddress() != null) {
+            ip.setAddress(ipV6Address.getAddress());
+        }
+
+        if (ipV6Address.getGateway() != null) {
+            ip.setGateway(ipV6Address.getGateway());
+        }
+
+        if (ipV6Address.getPrefix() != null) {
+            ip.setNetmask(ipV6Address.getPrefix().toString());
+        }
+
+        ipAddressAssignment.setIp(ip);
+        BootProtocol assignmentMethod = BootProtocolMapper.map(ipV6Address.getBootProtocol(), null);
+        ipAddressAssignment.setAssignmentMethod(assignmentMethod == null ? null : assignmentMethod);
         return ipAddressAssignment;
     }
 
