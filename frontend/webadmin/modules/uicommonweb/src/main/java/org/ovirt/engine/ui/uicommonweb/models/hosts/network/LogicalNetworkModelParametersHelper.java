@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -81,7 +83,9 @@ public class LogicalNetworkModelParametersHelper {
         populateIpv6Details(interfacePropertiesAccessor, networkAttachment.getIpConfiguration().getIpv6PrimaryAddress());
 
         if (interfacePropertiesAccessor.isQosOverridden()) {
-            networkAttachment.setHostNetworkQos(interfacePropertiesAccessor.getHostNetworkQos());
+            AnonymousHostNetworkQos anonymousHostNetworkQos =
+                    AnonymousHostNetworkQos.fromHostNetworkQos(interfacePropertiesAccessor.getHostNetworkQos());
+            networkAttachment.setHostNetworkQos(anonymousHostNetworkQos);
         }
 
         networkAttachment.setProperties(interfacePropertiesAccessor.getCustomProperties());
@@ -120,7 +124,7 @@ public class LogicalNetworkModelParametersHelper {
             netParams.setIpv6Gateway(ipv6Address.getGateway());
         }
 
-        netParams.setHostNetworkQos(networkAttachment.getHostNetworkQos());
+        netParams.setHostNetworkQos(HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos()));
 
         netParams.setQosOverridden(networkAttachment.isQosOverridden());
         netParams.setCustomProperties(networkAttachment.getProperties());

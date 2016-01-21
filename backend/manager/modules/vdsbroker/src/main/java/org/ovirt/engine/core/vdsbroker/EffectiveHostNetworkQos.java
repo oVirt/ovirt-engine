@@ -23,8 +23,8 @@ public class EffectiveHostNetworkQos {
         Objects.requireNonNull(network);
 
         return networkAttachment != null && networkAttachment.isQosOverridden()
-            ? networkAttachment.getHostNetworkQos()
-            : getHostNetworkQosFromNetwork(network);
+            ? HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos())
+                : getHostNetworkQosFromNetwork(network);
     }
 
     private HostNetworkQos getHostNetworkQosFromNetwork(Network network) {

@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -83,7 +84,8 @@ public class NetworkAttachmentMapper {
         }
 
         if (model.isSetQos()) {
-            entity.setHostNetworkQos((HostNetworkQos) QosMapper.map(model.getQos(), null));
+            HostNetworkQos hostNetworkQos = (HostNetworkQos) QosMapper.map(model.getQos(), null);
+            entity.setHostNetworkQos(AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos));
         }
 
         return entity;
@@ -216,8 +218,9 @@ public class NetworkAttachmentMapper {
             model.setReportedConfigurations(ReportedConfigurationsMapper.map(entity.getReportedConfigurations(), null));
         }
 
-        if (entity.getHostNetworkQos() != null) {
-            model.setQos(QosMapper.map(entity.getHostNetworkQos(), null));
+        AnonymousHostNetworkQos hostNetworkQos = entity.getHostNetworkQos();
+        if (hostNetworkQos != null) {
+            model.setQos(QosMapper.map(HostNetworkQos.fromAnonymousHostNetworkQos(hostNetworkQos), null));
         }
 
         return model;

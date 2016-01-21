@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -149,19 +150,27 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Override
     public void save(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
-        hostNetworkQosDao.persistQosChanges(entity.getId(), entity.getHostNetworkQos());
+        hostNetworkQosDao.persistQosChanges(entity.getId(), asHostNetworkQos(entity.getHostNetworkQos()));
         super.save(entity);
+    }
+
+    private HostNetworkQos asHostNetworkQos(AnonymousHostNetworkQos anonymousHostNetworkQos) {
+        return HostNetworkQos.fromAnonymousHostNetworkQos(anonymousHostNetworkQos);
+    }
+
+    private AnonymousHostNetworkQos asAnonymousHostNetworkQos(HostNetworkQos hostNetworkQos) {
+        return AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos);
     }
 
     @Override
     public void update(NetworkAttachment entity) {
         verifyRelationWithHostNetworkQos(entity);
-        hostNetworkQosDao.persistQosChanges(entity.getId(), entity.getHostNetworkQos());
+        hostNetworkQosDao.persistQosChanges(entity.getId(), asHostNetworkQos(entity.getHostNetworkQos()));
         super.update(entity);
     }
 
     private void verifyRelationWithHostNetworkQos(NetworkAttachment entity) {
-        HostNetworkQos hostNetworkQos = entity.getHostNetworkQos();
+        AnonymousHostNetworkQos hostNetworkQos = entity.getHostNetworkQos();
         if (hostNetworkQos != null && !Objects.equals(hostNetworkQos.getId(), entity.getId())) {
             throw new IllegalArgumentException(
                 String.format("Overridden HostNetworkQos using id %s which does not related to given entity id %s",
@@ -197,7 +206,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
             if (bootProtocol != null || v6BootProtocol != null) {
                 entity.setIpConfiguration(ipConfiguration);
             }
-            entity.setHostNetworkQos(hostNetworkQosDao.get(entity.getId()));
+            entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosDao.get(entity.getId())));
 
             return entity;
         }

@@ -243,7 +243,8 @@ public class HostSetupNetworksValidator {
                 Network network = getNetworkRelatedToAttachment(networkAttachment);
                 String networkName = network.getName();
 
-                HostNetworkQos hostNetworkQos = networkAttachment.getHostNetworkQos();
+                HostNetworkQos hostNetworkQos =
+                        HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos());
                 HostNetworkQosValidator qosValidator = createHostNetworkQosValidator(hostNetworkQos);
 
                 ValidationResult requiredValuesPresent =

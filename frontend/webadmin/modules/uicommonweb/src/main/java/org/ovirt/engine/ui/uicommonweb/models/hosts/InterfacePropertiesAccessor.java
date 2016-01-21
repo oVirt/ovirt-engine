@@ -159,7 +159,7 @@ public interface InterfacePropertiesAccessor {
         @Override
         public HostNetworkQos getHostNetworkQos() {
             if (networkAttachment.isQosOverridden()) {
-                return networkAttachment.getHostNetworkQos();
+                return HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos());
             } else {
                 return networkQos;
             }

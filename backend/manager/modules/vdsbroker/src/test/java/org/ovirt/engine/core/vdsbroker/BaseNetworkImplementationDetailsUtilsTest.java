@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -288,7 +289,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         networkAttachment.setId(Guid.newGuid());
         networkAttachment.setNicId(baseIface.getId());
         networkAttachment.setNicName(baseIface.getName());
-        networkAttachment.setHostNetworkQos(qos);
+        networkAttachment.setHostNetworkQos(AnonymousHostNetworkQos.fromHostNetworkQos(qos));
         return networkAttachment;
     }
 

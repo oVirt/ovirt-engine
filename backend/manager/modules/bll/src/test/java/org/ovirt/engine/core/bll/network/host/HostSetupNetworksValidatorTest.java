@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -628,15 +629,6 @@ public class HostSetupNetworksValidatorTest {
         VdsNetworkInterface existingNic = new VdsNetworkInterface();
         existingNic.setId(Guid.newGuid());
         existingNic.setName(nicName);
-        return existingNic;
-    }
-
-    public VdsNetworkInterface createVlanNic(VdsNetworkInterface baseNic, String nicName, Integer vlanId) {
-        VdsNetworkInterface existingNic = new VdsNetworkInterface();
-        existingNic.setId(Guid.newGuid());
-        existingNic.setName(nicName);
-        existingNic.setVlanId(vlanId);
-        existingNic.setBaseInterface(baseNic.getName());
         return existingNic;
     }
 
@@ -1457,21 +1449,12 @@ public class HostSetupNetworksValidatorTest {
     private HostSetupNetworksValidator createValidatorForTestingValidateQosOverridden(Network network) {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkId(network.getId());
-        networkAttachment.setHostNetworkQos(new HostNetworkQos());
+        networkAttachment.setHostNetworkQos(new AnonymousHostNetworkQos());
 
         return new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addNetworkAttachments(networkAttachment))
             .addNetworks(network)
             .build();
-    }
-
-    private HostNetworkQos createHostNetworkQos(int outAverageRealtime,
-        int outAverageUpperlimit, int outAverageLinkshare) {
-        HostNetworkQos qos = new HostNetworkQos();
-        qos.setOutAverageRealtime(outAverageRealtime);
-        qos.setOutAverageUpperlimit(outAverageUpperlimit);
-        qos.setOutAverageLinkshare(outAverageLinkshare);
-        return qos;
     }
 
     private void attachmentAndNicLabelReferenceSameLabelCommonTest(boolean referenceSameNic, boolean valid) {

@@ -22,6 +22,17 @@ public class HostNetworkQos extends QosBase {
         super(QosType.HOSTNETWORK);
     }
 
+    public static HostNetworkQos fromAnonymousHostNetworkQos(AnonymousHostNetworkQos hostNetworkQos) {
+        if (hostNetworkQos == null) {
+            return null;
+        }
+
+        HostNetworkQos result = new HostNetworkQos();
+        result.setId(hostNetworkQos.getId());
+        result.hostNetworkQosProperties = new HostNetworkQosProperties(hostNetworkQos.getHostNetworkQosProperties());
+        return result;
+    }
+
     public Integer getOutAverageLinkshare() {
         return hostNetworkQosProperties.getOutAverageLinkshare();
     }
@@ -48,6 +59,10 @@ public class HostNetworkQos extends QosBase {
 
     public boolean isEmpty() {
         return hostNetworkQosProperties.isEmpty();
+    }
+
+    HostNetworkQosProperties getHostNetworkQosProperties() {
+        return hostNetworkQosProperties;
     }
 
     @Override
