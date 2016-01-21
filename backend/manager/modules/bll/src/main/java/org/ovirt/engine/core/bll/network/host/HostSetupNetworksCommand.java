@@ -177,6 +177,12 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     protected boolean validate() {
         VDS host = getVds();
 
+        final ValidationResult hostValidatorResult = new HostValidator(host, isInternalExecution()).validate();
+        if (!hostValidatorResult.isValid()) {
+            return validate(hostValidatorResult);
+        }
+
+        completeMissingDataInParameters();
         boolean requestValid = validateEntitiesFromRequest(getParameters().getNetworkAttachments()) &&
                 validateEntitiesFromRequest(getParameters().getBonds());
 
@@ -185,13 +191,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         fillInUnsetBondingOptions();
-
-        final ValidationResult hostValidatorResult = new HostValidator(host, isInternalExecution()).validate();
-        if (!hostValidatorResult.isValid()) {
-            return validate(hostValidatorResult);
-        }
-
-        completeMissingDataInParameters();
 
         IdQueryParameters idParameters = new IdQueryParameters(getVdsId());
         VdcQueryReturnValue existingBondsResponse = runInternalQuery(VdcQueryType.GetHostBondsByHostId, idParameters);
