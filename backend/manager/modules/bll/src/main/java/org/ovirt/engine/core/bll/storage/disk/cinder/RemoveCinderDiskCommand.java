@@ -144,11 +144,11 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
     private void freeVmSnapshotsWithWait() {
         if (getParameters().getVmId() != null) {
             EngineLock snapshotsEngineLock = new EngineLock();
-            Map<String, Pair<String, String>> snapshotsExlusiveLockMap =
+            Map<String, Pair<String, String>> snapshotsExclusiveLockMap =
                     Collections.singletonMap(getParameters().getVmId().toString(),
                             LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_SNAPSHOTS,
                                     EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-            snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
+            snapshotsEngineLock.setExclusiveLocks(snapshotsExclusiveLockMap);
             getLockManager().releaseLock(snapshotsEngineLock);
         }
     }
