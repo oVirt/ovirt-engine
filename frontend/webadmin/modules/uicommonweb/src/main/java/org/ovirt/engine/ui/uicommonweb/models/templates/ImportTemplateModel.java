@@ -93,7 +93,12 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             templateDataList.add(templateData);
                         }
                         setItems(templateDataList);
-                        doInit(storageDomainId);
+                        withDataCenterLoaded(storageDomainId, new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnValue) {
+                                doInit();
+                            }
+                        });
                     }
                 }));
 

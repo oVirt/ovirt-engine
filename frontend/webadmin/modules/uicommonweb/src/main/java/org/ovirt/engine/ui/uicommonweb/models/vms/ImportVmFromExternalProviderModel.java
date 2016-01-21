@@ -90,53 +90,61 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         return importInterfaceListModel;
     }
 
-    public void init(List<VM> externalVms, final Guid dataCenterId) {
+    public void init(final List<VM> externalVms, final Guid dataCenterId) {
         setCloseCommand(new UICommand(null, this)
         .setTitle(ConstantsManager.getInstance().getConstants().close())
         .setIsDefault(true)
         .setIsCancel(true));
 
         setTargetArchitecture(externalVms);
-        super.setItems(
-                new INewAsyncCallback() {
+        withDataCenterLoaded(dataCenterId, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setItems(new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        doInit(dataCenterId);
+                        doInit();
                     }
-                },
-                externalVms);
+                }, externalVms);
+            }
+        });
+    }
+
+    private void withDataCenterLoaded(Guid dataCenterId, final INewAsyncCallback callback) {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(null, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setStoragePool((StoragePool) returnValue);
+                callback.onSuccess(model, returnValue);
+            }
+        }), dataCenterId);
     }
 
     protected void setTargetArchitecture(List<VM> externalVms) {
         setTargetArchitecture(externalVms.iterator().next().getClusterArch());
     }
 
-    protected void doInit(final Guid dataCenterId) {
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+    protected void doInit() {
+        final StoragePool dataCenter = getStoragePool();
+        if (dataCenter == null) {
+            return;
+        }
+
+        setStoragePool(dataCenter);
+        getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
+        getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
+
+        // get cluster
+        getCluster().setItems(null);
+        AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery(ImportVmFromExternalProviderModel.this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                final StoragePool dataCenter = (StoragePool) returnValue;
-                if (dataCenter == null) {
-                    return;
-                }
-
-                setStoragePool(dataCenter);
-                getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
-                getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
-
-                // get cluster
-                getCluster().setItems(null);
-                AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery(ImportVmFromExternalProviderModel.this,  new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        networkProfiles = (List<VnicProfileView>) returnValue;
-                        initNetworksList();
-                        initClusterAndStorage(dataCenter);
-                    }
-                }), dataCenter.getId());
+                networkProfiles = (List<VnicProfileView>) returnValue;
+                initNetworksList();
+                initClusterAndStorage(dataCenter);
             }
-        }),
-        dataCenterId);
+        }), dataCenter.getId());
      }
 
     private void initClusterAndStorage(StoragePool dataCenter) {

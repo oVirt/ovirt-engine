@@ -75,24 +75,16 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel, vmImportAppListModel);
     }
 
-    protected void doInit(final Guid storageDomainId) {
-       // get Storage pool
-       AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
-
-           @Override
-           public void onSuccess(Object model, Object returnValue) {
-               List<StoragePool> pools = (List<StoragePool>) returnValue;
-               if (pools == null || pools.size() != 1) {
-                   return;
-               }
-
-               StoragePool dataCenter = pools.get(0);
-               setStoragePool(dataCenter);
-               getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
-               getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
-               // get cluster
-               getCluster().setItems(null);
-               AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
+    protected void doInit() {
+        StoragePool dataCenter = getStoragePool();
+        if (dataCenter == null) {
+            return;
+        }
+        getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
+        getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
+        // get cluster
+        getCluster().setItems(null);
+        AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
                    @Override
                    public void onSuccess(Object model, Object returnValue) {
                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
@@ -112,36 +104,32 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
                        // get storage domains
                        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
-                               new INewAsyncCallback() {
+                                       new INewAsyncCallback() {
 
-                           @Override
-                           public void onSuccess(Object model, Object returnValue) {
-                               ArrayList<StorageDomain> storageDomains =
-                                       (ArrayList<StorageDomain>) returnValue;
-                               // filter storage domains
-                               filteredStorageDomains = new ArrayList<>();
-                               for (StorageDomain domain : storageDomains) {
-                                   if (Linq.isDataActiveStorageDomain(domain)) {
-                                       filteredStorageDomains.add(domain);
-                                   }
-                               }
+                                           @Override
+                                           public void onSuccess(Object model, Object returnValue) {
+                                               ArrayList<StorageDomain> storageDomains =
+                                                       (ArrayList<StorageDomain>) returnValue;
+                                               // filter storage domains
+                                               filteredStorageDomains = new ArrayList<>();
+                                               for (StorageDomain domain : storageDomains) {
+                                                   if (Linq.isDataActiveStorageDomain(domain)) {
+                                                       filteredStorageDomains.add(domain);
+                                                   }
+                                               }
 
-                               if (getClusterQuota().getIsAvailable()) {
-                                   initQuotaForStorageDomains();
-                               } else {
-                                   initDisksStorageDomainsList();
-                               }
-                           }
+                                               if (getClusterQuota().getIsAvailable()) {
+                                                   initQuotaForStorageDomains();
+                                               } else {
+                                                   initDisksStorageDomainsList();
+                                               }
+                                           }
 
-                       }),
-                       getStoragePool().getId());
+                                       }),
+                               getStoragePool().getId());
                    }
 
-               }),
-               dataCenter.getId(), true, false);
-           }
-       }),
-       storageDomainId);
+               }), dataCenter.getId(), true, false);
     }
 
     private void initQuotaForStorageDomains() {
@@ -424,15 +412,35 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 && getClusterQuota().getIsValid();
     }
 
+    protected void withDataCenterLoaded(Guid storageDomainId, final INewAsyncCallback callback) {
+        // get Storage pool
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(null, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<StoragePool> pools = (List<StoragePool>) returnValue;
+                if (pools == null || pools.size() != 1) {
+                    return;
+                }
+
+                StoragePool dataCenter = pools.get(0);
+                setStoragePool(dataCenter);
+                callback.onSuccess(model, returnValue);
+            }
+        }), storageDomainId);
+    }
+
     public void init(final List<VM> externalVms, final Guid storageDomainId) {
-        super.setItems(
-                new INewAsyncCallback() {
+        withDataCenterLoaded(storageDomainId, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setItems(new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        doInit(storageDomainId);
+                        doInit();
                     }
-                },
-                externalVms);
+                }, externalVms);
+            }
+        });
     }
 
     @Override
