@@ -591,8 +591,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___AddPermission();
 
-    String VdcActionType___AddRole();
-
     String VdcActionType___RemoveRole();
 
     String VdcActionType___AddRoleWithActions();
