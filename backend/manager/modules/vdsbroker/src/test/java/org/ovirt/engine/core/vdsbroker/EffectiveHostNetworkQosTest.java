@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -61,7 +62,7 @@ public class EffectiveHostNetworkQosTest {
     public void testGetQosWhenNetworkAttachmentHasOverriddenQos() throws Exception {
         Network network = createNetworkWithQos(createHostNetworkQos());
         NetworkAttachment networkAttachment = createNetworkAttachentWithOverriddenQos();
-        HostNetworkQos networkAttachmentHostNetworkQos = networkAttachment.getHostNetworkQos();
+        HostNetworkQos networkAttachmentHostNetworkQos = HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos());
 
         assertThat(effectiveHostNetworkQos.getQos(networkAttachment, network), is(networkAttachmentHostNetworkQos));
         Mockito.verifyNoMoreInteractions(hostNetworkQosDao);
@@ -84,7 +85,7 @@ public class EffectiveHostNetworkQosTest {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         HostNetworkQos hostNetworkQos = createHostNetworkQos();
 
-        networkAttachment.setHostNetworkQos(hostNetworkQos);
+        networkAttachment.setHostNetworkQos(AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos));
 
         return networkAttachment;
     }

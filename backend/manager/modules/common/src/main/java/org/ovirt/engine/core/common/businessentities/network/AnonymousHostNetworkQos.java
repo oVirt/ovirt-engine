@@ -18,7 +18,16 @@ public class AnonymousHostNetworkQos implements BusinessEntity<Guid> {
     @Valid
     private HostNetworkQosProperties hostNetworkQosProperties = new HostNetworkQosProperties();
 
-    public AnonymousHostNetworkQos() {
+    public static AnonymousHostNetworkQos fromHostNetworkQos(HostNetworkQos hostNetworkQos) {
+        if (hostNetworkQos == null) {
+            return null;
+        }
+
+        AnonymousHostNetworkQos result = new AnonymousHostNetworkQos();
+        result.id = hostNetworkQos.getId();
+        result.hostNetworkQosProperties = hostNetworkQos.getHostNetworkQosProperties();
+
+        return result;
     }
 
     @Override
@@ -61,6 +70,10 @@ public class AnonymousHostNetworkQos implements BusinessEntity<Guid> {
 
     protected String renderQosParameter(Object qosParameter) {
         return (qosParameter == null) ? UNLIMITED : String.valueOf(qosParameter);
+    }
+
+    HostNetworkQosProperties getHostNetworkQosProperties() {
+        return hostNetworkQosProperties;
     }
 
     @Override

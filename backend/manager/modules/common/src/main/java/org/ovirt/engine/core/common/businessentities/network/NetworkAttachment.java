@@ -29,7 +29,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
     private Guid nicId;
 
     @Valid
-    private HostNetworkQos hostNetworkQos;
+    private AnonymousHostNetworkQos hostNetworkQos;
 
     private String nicName;
 
@@ -156,11 +156,11 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         this.networkName = networkName;
     }
 
-    public HostNetworkQos getHostNetworkQos() {
+    public AnonymousHostNetworkQos getHostNetworkQos() {
         return hostNetworkQos;
     }
 
-    public void setHostNetworkQos(HostNetworkQos hostNetworkQos) {
+    public void setHostNetworkQos(AnonymousHostNetworkQos hostNetworkQos) {
         this.hostNetworkQos = hostNetworkQos;
         if (this.hostNetworkQos != null) {
             this.hostNetworkQos.setId(this.getId());

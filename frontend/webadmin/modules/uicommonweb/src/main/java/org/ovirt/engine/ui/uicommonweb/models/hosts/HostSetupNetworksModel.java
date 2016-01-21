@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import static org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos.fromHostNetworkQos;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -402,7 +405,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         if (networkDialogModel.getQosOverridden().getEntity()) {
                             HostNetworkQos overriddenQos = new HostNetworkQos();
                             networkDialogModel.getQosModel().flush(overriddenQos);
-                            networkAttachment.setHostNetworkQos(overriddenQos);
+                            AnonymousHostNetworkQos hostNetworkQos = fromHostNetworkQos(overriddenQos);
+                            networkAttachment.setHostNetworkQos(hostNetworkQos);
                         } else {
                             networkAttachment.setHostNetworkQos(null);
                         }
