@@ -10,6 +10,8 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -112,6 +114,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     @Override
     protected void endWithFailure() {
         ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
+        removeCinderDisk();
         ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
         setSucceeded(true);
     }
@@ -119,5 +122,20 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     @Override
     protected Collection<SubjectEntity> getSubjectEntities() {
         return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getStorageDomainId()));
+    }
+
+    private void removeCinderDisk() {
+        if (getParameters().isDeleteOnFailure()) {
+            runInternalAction(VdcActionType.RemoveCinderDisk,
+                    buildRevertParameters(getParameters().getDestinationImageId()),
+                    null);
+        }
+    }
+
+    private RemoveCinderDiskParameters buildRevertParameters(Guid cinderDiskId) {
+        RemoveCinderDiskParameters removeDiskParams = new RemoveCinderDiskParameters(cinderDiskId);
+        removeDiskParams.setLockVM(false);
+        removeDiskParams.setShouldBeLogged(false);
+        return removeDiskParams;
     }
 }

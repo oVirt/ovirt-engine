@@ -9,11 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,9 +40,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
-import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
@@ -251,11 +248,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         createParams.setVolumeFormat(imageFromParams.getVolumeFormat());
         createParams.setVolumeType(imageFromParams.getVolumeType());
         return createParams;
-    }
-
-    private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
-        CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
-        return withRootCommandInfo(createParams);
     }
 
     @Override
@@ -781,25 +773,34 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return true;
         }
         // Create Cinder disk templates
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.CloneCinderDisks,
-                buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
-                cloneContext().withoutExecutionContext().withoutLock());
-        try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
-            if (vdcReturnValueBase.getSucceeded()) {
-                Map<Guid, Guid> diskImageMap = vdcReturnValueBase.getActionReturnValue();
-                srcDeviceIdToTargetDeviceIdMapping.putAll(diskImageMap);
-            } else {
+        Map<Guid, Guid> diskImageMap = new HashMap<>();
+        for (CinderDisk cinderDisk : cinderDisks) {
+            ImagesContainterParametersBase params = buildCloneCinderDiskCommandParameters(cinderDisk);
+            VdcReturnValueBase vdcReturnValueBase =
+                    runInternalAction(VdcActionType.CloneSingleCinderDisk,
+                            params,
+                            cloneContext().withoutExecutionContext().withoutLock());
+            if (!vdcReturnValueBase.getSucceeded()) {
+                log.error("Error cloning Cinder disk '{}'", cinderDisk.getDiskAlias());
                 getReturnValue().setFault(vdcReturnValueBase.getFault());
-                log.error("Error cloning Cinder disks for template");
                 return false;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error cloning Cinder disks for template", e);
-            return false;
+            Guid imageId = vdcReturnValueBase.getActionReturnValue();
+            diskImageMap.put(cinderDisk.getId(), imageId);
         }
+        srcDeviceIdToTargetDeviceIdMapping.putAll(diskImageMap);
         return true;
+    }
+
+    private ImagesContainterParametersBase buildCloneCinderDiskCommandParameters(CinderDisk cinderDisk) {
+        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getImageId());
+        DiskImage templateDisk = diskInfoDestinationMap.get(cinderDisk.getId());
+        createParams.setDiskAlias(templateDisk.getDiskAlias());
+        createParams.setStorageDomainId(templateDisk.getStorageIds().get(0));
+        createParams.setParentCommand(getActionType());
+        createParams.setParentParameters(getParameters());
+        createParams.setVmSnapshotId(getVmSnapshotId());
+        return createParams;
     }
 
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
