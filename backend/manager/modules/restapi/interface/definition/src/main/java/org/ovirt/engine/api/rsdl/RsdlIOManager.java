@@ -113,7 +113,7 @@ public class RsdlIOManager {
         // Copy the resource to the output directory:
         InputStream inputResource = RsdlIOManager.class.getResourceAsStream(resourcePath);
         File outputFile = new File(outputDirectory, resourceName);
-        System.out.printf("Copying resource \"%s\" to file \"%s\"\n", resourcePath, outputFile.getAbsolutePath());
+        System.out.printf("Copying resource \"%s\" to file \"%s\"%n", resourcePath, outputFile.getAbsolutePath());
         FileUtils.copyInputStreamToFile(inputResource, outputFile);
     }
 }
