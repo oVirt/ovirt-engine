@@ -294,7 +294,7 @@
                             <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
                                 <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_YESEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_YesLabel}" />
                                 <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_HA_ONLYEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_HaLabel}" />
-                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupOptimizationNoneLabel}" />
+                                <ge:EntityModelRadioButtonEditor ui:field="migrateOnErrorOption_NOEditor" addStyleNames="{style.label}" label="{constants.clusterPopupMigrateOnError_NoLabel}" />
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
